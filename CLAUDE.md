@@ -231,7 +231,10 @@ implementation.
 
 ## Git Workflow
 
-- Commit by default after completing a change.
+- **Never commit directly to `master`.** All work goes through
+  feature branches and pull requests. Branch naming:
+  `feat/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`
+  (e.g. `feat/indexed-assignment`, `fix/poseidon2-padding`).
 - Atomic commits — one logical change per commit.
 - Conventional prefixes: `feat:`, `fix:`, `refactor:`, `docs:`,
   `test:`, `chore:`.
