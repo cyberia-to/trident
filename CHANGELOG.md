@@ -3,7 +3,7 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
-## 0.1.0 / 512K — Developer Preview (2026-02-26)
+## 0.1.0 / 512K — Smelt (2026-02-26)
 
 First public release. Hot, experimental, not production ready.
 
