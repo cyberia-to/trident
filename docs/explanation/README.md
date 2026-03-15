@@ -44,4 +44,4 @@ it does, for readers who want the full picture.
 
 | Document | Description |
 |----------|-------------|
-| [Cyber License](cyber-license.md) | Don't trust. Don't fear. Don't beg. |
+| [Cyber License](https://github.com/mastercyb/cyber/blob/master/graph/cyber/license.md) | Don't trust. Don't fear. Don't beg. |
