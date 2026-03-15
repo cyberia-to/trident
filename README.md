@@ -351,6 +351,6 @@ without changing what a Trident program is.
 
 ## License
 
-[Cyber License](docs/explanation/cyber-license.md)
+[Cyber License](https://github.com/mastercyb/cyber/blob/master/license.md)
 
 Don't trust. Verify. Don't fear. Publish. Don't beg. Build.

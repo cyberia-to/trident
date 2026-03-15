@@ -76,7 +76,7 @@ Per-target documentation lives alongside its config:
 | [Privacy](explanation/privacy.md) | The privacy trilateral: ZK + FHE + MPC over one field |
 | [Quantum Computing](explanation/quantum.md) | Why prime field arithmetic is quantum-native |
 | [Verifiable AI](explanation/ai.md) | Why the next generation of zkML starts from prime fields |
-| [Cyber License](explanation/cyber-license.md) | Don't trust. Don't fear. Don't beg. |
+| [Cyber License](https://github.com/mastercyb/cyber/blob/master/license.md) | Don't trust. Don't fear. Don't beg. |
 
 ## 🗺️ Project
 
