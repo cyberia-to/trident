@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Stage 2: GFlowNet training with Trajectory Balance loss.
 //!
 //! After supervised pre-training, the model is fine-tuned using GFlowNets

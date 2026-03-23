@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Spec-driven code scaffolding.
 ///
 /// A spec file is a `.tri` file with function signatures, spec annotations

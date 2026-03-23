@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Type definitions for the TIR graph: EdgeKind, FieldType, OpKind.
 
 use crate::ir::tir::TIROp;

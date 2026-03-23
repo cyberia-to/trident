@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Graph neural network operations for burn.
 //!
 //! Provides scatter-based message passing primitives that burn

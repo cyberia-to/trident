@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Data augmentation for neural compiler training.
 //!
 //! Two families of augmentations:

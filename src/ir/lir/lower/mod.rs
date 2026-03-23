@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! RegisterLowering: consumes `&[LIROp]` and produces target machine code.
 //!
 //! Each register-machine target implements `RegisterLowering` to perform

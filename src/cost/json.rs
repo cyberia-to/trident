@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use std::path::Path;
 
 use super::analyzer::{FunctionCost, ProgramCost};

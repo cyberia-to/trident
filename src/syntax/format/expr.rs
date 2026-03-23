@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 pub(crate) use crate::ast::display::format_ast_type as format_type;
 use crate::ast::*;
 

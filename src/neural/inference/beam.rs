@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Beam search decoder (K=32).
 //!
 //! Runs the Transformer decoder autoregressively with beam search,

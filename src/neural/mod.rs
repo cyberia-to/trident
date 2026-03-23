@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Neural compiler v2: GNN encoder + Transformer decoder.
 //!
 //! Replaces the v1 MLP evolutionary model with a ~13M parameter

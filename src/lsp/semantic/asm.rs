@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use crate::syntax::span::Span;
 
 /// Token type indices (must match mod.rs constants).

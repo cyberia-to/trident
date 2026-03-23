@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Tree IR — lowering for combinator/tree-rewriting VMs.
 //!
 //! Tree machines are neither stack nor register. Data is binary trees

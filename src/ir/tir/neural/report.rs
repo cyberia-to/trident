@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Optimizer decision report for CLI display.
 //!
 //! Shows per-block decisions (neural vs classical), scores, reasons,

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TIR — Trident Intermediate Representation.
 //!
 //! The TIR is a list of stack operations with structural control flow.

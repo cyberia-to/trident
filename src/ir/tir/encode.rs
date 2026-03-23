@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TIR block encoding for neural optimizer input.
 //!
 //! Encodes TIR basic blocks as fixed-size tensors. Each node = 4 u64 words.

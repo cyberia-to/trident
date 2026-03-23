@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Documentation generation for Trident projects.
 //!
 //! Produces markdown documentation listing all public functions, structs,

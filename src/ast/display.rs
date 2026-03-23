@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Pretty-printing utilities for AST nodes.
 //!
 //! This module is the single source of truth for converting AST types,

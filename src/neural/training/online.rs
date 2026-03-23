@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Stage 3: Online learning with replay buffer and regression guard.
 //!
 //! Micro-finetunes the model on new build results as they accumulate.

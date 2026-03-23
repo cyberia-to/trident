@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Neural TIR→TASM optimizer.
 //!
 //! v2: GNN encoder + Transformer decoder trained via supervised learning

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Incremental lexing: re-lex only the dirty byte region after an edit,
 //! then splice the new tokens into the cached token list.
 

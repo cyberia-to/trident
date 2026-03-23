@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Inlay hints: inline cost estimates for functions and loops.
 
 use tower_lsp::lsp_types::*;

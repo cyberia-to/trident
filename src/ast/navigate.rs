@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! AST navigation: find functions by name or content hash.
 
 use std::collections::BTreeMap;

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! GNN Encoder — GATv2 (Graph Attention Network v2) in burn.
 //!
 //! Encodes a TirGraph into node embeddings + global context vector.

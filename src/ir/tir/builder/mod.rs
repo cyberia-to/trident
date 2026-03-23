@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TIRBuilder: lowers a type-checked AST into `Vec<TIROp>`.
 //!
 //! This is the core of Phase 2 — it replicates the Emitter's AST-walking

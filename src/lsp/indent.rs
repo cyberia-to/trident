@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use tower_lsp::lsp_types::*;
 
 use crate::syntax::lexeme::Lexeme;

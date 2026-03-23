@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Static grammar tables for TASM instruction set.
 //!
 //! Per-instruction stack effect tables derived from the Triton VM ISA spec.

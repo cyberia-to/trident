@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Poseidon2 hash function over the Goldilocks field (p = 2^64 - 2^32 + 1).
 //!
 //! Implements the Poseidon2 permutation (Grassi et al., 2023) with:

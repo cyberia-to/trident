@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TIRBuilder advanced unit tests (pass-through, multi-width).
 
 use crate::ast::*;

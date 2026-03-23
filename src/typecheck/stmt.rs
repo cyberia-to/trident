@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Statement type checking: check_fn, check_block, check_stmt, check_event_stmt, check_place.
 
 use crate::ast::*;

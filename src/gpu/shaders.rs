@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Goldilocks field arithmetic (canonical form).
 #[allow(dead_code)]
 pub const GOLDILOCKS: &str = include_str!("shaders/goldilocks.wgsl");

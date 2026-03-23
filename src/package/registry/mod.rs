@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Registry Client — HTTP client for interacting with a Trident registry.
 //!
 //! Provides a client for publishing and pulling content-addressed definitions

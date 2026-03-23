@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! KIR — Kernel IR for data-parallel GPU targets.
 //!
 //! KIR is not a separate IR representation — it takes TIR directly

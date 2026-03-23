@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Triton VM lowering — produces TASM from TIR.
 
 use super::StackLowering;

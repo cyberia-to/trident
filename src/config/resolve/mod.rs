@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 pub(crate) use std::collections::BTreeSet;
 pub(crate) use std::path::{Path, PathBuf};
 

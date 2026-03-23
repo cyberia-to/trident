@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Definitions store — hash-keyed definitions storage.
 //!
 //! Inspired by Unison: every function definition is stored by its content hash.

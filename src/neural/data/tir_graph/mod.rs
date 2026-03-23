@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TirGraph — graph representation of TIR for GNN encoding.
 //!
 //! Converts a flat `Vec<TIROp>` into a graph with typed edges:

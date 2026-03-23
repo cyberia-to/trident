@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Integration tests: every .tri program must compile to valid TASM.
 //!
 //! Programs that require runtime input (divine/pub_read) are expected to

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::{dsl::*, Grammar, Node};
 
 pub fn trident_grammar() -> Grammar {

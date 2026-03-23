@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Fixed-point arithmetic in the Goldilocks field.
 //!
 //! Scale factor S = 2^16 = 65536. Real values encoded as field elements.

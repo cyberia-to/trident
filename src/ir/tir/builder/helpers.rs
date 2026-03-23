@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Stack wrappers, label generation, cfg helpers, and spill parser.
 
 use crate::ast::*;

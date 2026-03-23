@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Universal STARK proof estimation and claim structure.
 //!
 //! These formulas apply to all FRI-based STARK provers regardless of

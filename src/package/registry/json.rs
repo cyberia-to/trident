@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::types::*;
 
 /// Maximum length for a single JSON string value (1 MB).

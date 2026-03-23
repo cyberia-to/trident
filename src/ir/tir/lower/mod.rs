@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! StackLowering: consumes `Vec<TIROp>` and produces target assembly text.
 //!
 //! Each target implements `StackLowering` to control instruction selection

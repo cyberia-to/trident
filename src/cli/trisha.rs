@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Shared trisha subprocess helpers.
 ///
 /// Used by both `trident bench` and `trident audit` to call trisha

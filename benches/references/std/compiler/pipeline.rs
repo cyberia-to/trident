@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use trident::api::CompileOptions;
 
 /// Test source: a small Trident program exercising the full pipeline.

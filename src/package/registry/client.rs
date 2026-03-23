@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Maximum allowed HTTP response body size (10 MiB).
 /// Responses exceeding this limit are rejected to prevent memory exhaustion
 /// from malicious or misconfigured servers.

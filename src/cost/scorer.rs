@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Dynamic TASM table profiler.
 //!
 //! Counts actual table row increments per TASM instruction to compute

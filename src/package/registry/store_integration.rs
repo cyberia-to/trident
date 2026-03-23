@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use crate::hash::ContentHash;
 use crate::store::{Codebase, Definition};
 

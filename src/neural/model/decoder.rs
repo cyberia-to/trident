@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Stack-Aware Transformer Decoder.
 //!
 //! 6-layer decoder with self-attention + cross-attention to GNN node

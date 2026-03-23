@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TirNode struct and feature vector encoding.
 
 use super::types::{FieldType, OpKind, NUM_OP_KINDS};

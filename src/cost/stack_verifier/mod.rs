@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Block-level TASM stack verifier for neural training.
 //!
 //! Executes straight-line TASM blocks on concrete u64 values using

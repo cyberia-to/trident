@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Type width helpers and struct layout registration/lookup.
 
 use std::collections::BTreeMap;

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TreeLowering: consumes `&[TIROp]` and produces tree-structured output.
 //!
 //! Each tree-machine target implements `TreeLowering` to translate

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use std::time::Instant;
 use trident::field::{poseidon2, Goldilocks, PrimeField};
 

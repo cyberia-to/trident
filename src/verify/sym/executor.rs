@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::*;
 
 /// Maximum iterations for constant-range for-loop unrolling in symbolic execution.

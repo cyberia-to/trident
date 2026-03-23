@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Composite neural compiler model: GNN encoder + Transformer decoder.
 //!
 //! Wraps the encoder and decoder into a single `Module` that can be

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// TIR peephole optimizer.
 ///
 /// Runs pattern-based rewrites on Vec<TIROp> to reduce instruction count.

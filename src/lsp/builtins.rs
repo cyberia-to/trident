@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Builtin function metadata for LSP hover, signature help, and completions.
 
 /// Hover info for builtin functions.

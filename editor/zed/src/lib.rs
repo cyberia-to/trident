@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use zed_extension_api::{self as zed, Result};
 
 struct TridentExtension;

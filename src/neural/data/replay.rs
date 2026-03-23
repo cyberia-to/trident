@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Replay buffer for online learning (Stage 3).
 //!
 //! Stores build results with prioritized experience replay.

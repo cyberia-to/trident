@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Machine-readable JSON verification reports for LLM consumption and CI/CD.
 //!
 //! Serializes `VerificationReport` and `ConstraintSystem` into a structured

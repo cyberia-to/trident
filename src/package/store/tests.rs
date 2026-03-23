@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::persist::{
     deserialize_definition, escape_newlines, serialize_definition,
     unescape_newlines,

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Per-document cached state for incremental LSP operations.
 
 use std::collections::BTreeMap;

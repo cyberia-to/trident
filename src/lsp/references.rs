@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Find references, rename, and document highlight.
 //!
 //! All three features share the same foundation: lex the source and

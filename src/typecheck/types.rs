@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Semantic types used by the type checker (distinct from AST syntactic types).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Ty {

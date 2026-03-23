@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Stage 1: Supervised pre-training with cross-entropy loss.
 //!
 //! Teacher forcing with grammar mask penalties. Trains the composite

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Prime field arithmetic and universal proving primitives.
 //!
 //! This module provides field-generic math that every target warrior reuses:

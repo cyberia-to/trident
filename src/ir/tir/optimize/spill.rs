@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Dead spill and dead store elimination.
 use super::TIROp;
 use std::collections::{BTreeMap, BTreeSet};

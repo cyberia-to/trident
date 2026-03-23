@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! LSP code actions: quick fixes triggered by diagnostics.
 
 use std::collections::BTreeMap;

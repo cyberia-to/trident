@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Type resolution: constant detection, size inference, type unification, AST->Ty lowering.
 
 use std::collections::BTreeMap;

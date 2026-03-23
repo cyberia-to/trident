@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::analyzer::{FunctionCost, ProgramCost};
 use super::visit::next_power_of_two;
 use crate::diagnostic::Diagnostic;

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Suggestion generation for verification reports.
 //!
 //! Analyzes verification results and constraint systems to produce

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! VOCAB v2 — full TASM instruction set vocabulary.
 //!
 //! Expands from v1's 64 tokens to the complete Triton VM ISA.

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! StackState: concrete TASM execution on Goldilocks field values.
 
 use crate::field::goldilocks::Goldilocks;

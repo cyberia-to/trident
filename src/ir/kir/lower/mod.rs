@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! KernelLowering: wraps scalar TIR programs into GPU compute kernels.
 //!
 //! Each GPU target implements `KernelLowering` to emit kernel source

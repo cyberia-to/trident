@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Content-addressed package manager for Trident.
 //!
 //! Parses `[dependencies]` from `trident.toml`, manages a lockfile

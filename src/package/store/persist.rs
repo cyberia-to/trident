@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Z3 process runner for SMT-LIB2 scripts.
 //!
 //! Locates Z3 in PATH, writes the SMT script to a temp file,

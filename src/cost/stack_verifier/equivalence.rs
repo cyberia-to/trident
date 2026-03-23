@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Equivalence verification: compare baseline and candidate TASM
 //! on diverse test stacks.
 

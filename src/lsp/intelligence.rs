@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! LSP intelligence: hover, completion, and signature help.
 
 use std::path::PathBuf;

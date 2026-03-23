@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Training pair extraction: (TirGraph, TASM token sequence).
 //!
 //! Builds training pairs from compiled Trident source files.

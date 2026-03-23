@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use crate::ast::{Block, File, Item, Stmt};
 use crate::syntax::lexer::Comment;
 use crate::syntax::span::Span;

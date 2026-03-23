@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Parallel validation and ranking of beam search candidates.
 //!
 //! Takes K candidate token sequences from beam search, decodes them

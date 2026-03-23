@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! CPU Grammar Mask — stack state machine for TASM validity.
 //!
 //! Tracks abstract stack state (depth + element types) and produces

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Multi-element return cleanup for the TIR builder.
 
 use crate::tir::TIROp;

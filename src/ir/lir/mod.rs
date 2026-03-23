@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! LIR — Low-level Intermediate Representation.
 //!
 //! Three-address form with virtual registers and flat control flow.

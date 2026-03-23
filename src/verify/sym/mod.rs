@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Symbolic execution engine for Trident programs.
 //!
 //! Transforms the AST into a symbolic constraint system suitable for

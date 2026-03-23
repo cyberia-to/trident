@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 // ─── Published Definition (wire format) ───────────────────────────
 
 /// A definition as published to the registry (JSON wire format).

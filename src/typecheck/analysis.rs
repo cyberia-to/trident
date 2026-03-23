@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Static analysis: recursion detection, call graph collection, used-module tracking.
 
 use std::collections::{BTreeMap, BTreeSet};

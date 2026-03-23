@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Program bundle: self-contained compilation artifact for warrior consumption.
 //!
 //! Contains the compiled assembly, metadata, cost analysis, and function

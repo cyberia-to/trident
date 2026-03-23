@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! BabyBear prime field: p = 2^31 - 2^27 + 1 = 0x7800_0001.
 //!
 //! Used by: SP1, RISC Zero, Jolt.

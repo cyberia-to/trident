@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Graph construction: flatten TIR ops, extract data deps and mem order edges.
 
 use crate::ir::tir::TIROp;

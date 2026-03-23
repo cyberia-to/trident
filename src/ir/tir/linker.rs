@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// Per-module TASM output ready for linking.
 #[derive(Clone, Debug)]
 pub(crate) struct ModuleTasm {

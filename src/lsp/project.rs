@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Project-level helpers: symbol index, exports, function costs.
 
 use std::collections::BTreeMap;

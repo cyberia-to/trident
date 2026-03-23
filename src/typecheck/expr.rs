@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Expression type checking: check_expr, check_binop.
 
 use std::collections::BTreeMap;

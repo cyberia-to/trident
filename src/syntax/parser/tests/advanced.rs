@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use crate::syntax::parser::Parser;
 use crate::ast::*;
 use crate::lexer::Lexer;

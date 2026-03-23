@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Fitness scoring for neural optimizer candidates.
 
 use super::equivalence::{generate_test_stack, verify_equivalent};

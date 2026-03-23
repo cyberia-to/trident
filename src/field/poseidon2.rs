@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Generic Poseidon2 hash function over any PrimeField.
 //!
 //! Implements the Poseidon2 permutation (Grassi et al., 2023) with

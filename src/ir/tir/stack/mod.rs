@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// LRU-based stack manager for stack-machine VMs.
 ///
 /// When live variables exceed the maximum stack depth, the manager automatically

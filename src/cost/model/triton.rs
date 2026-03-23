@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::{CostModel, TableCost};
 use crate::ast::BinOp;
 

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// A source location: file ID + byte offset range.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Span {

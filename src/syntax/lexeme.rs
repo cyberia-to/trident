@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 /// All lexemes in the Trident language.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Lexeme {

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 pub mod analyzer;
 mod json;
 /// Static cost analysis for Trident programs.

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::Node;
 
 pub fn seq(nodes: Vec<Node>) -> Node {

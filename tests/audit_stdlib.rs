@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use trident::compile_project;
 
 /// Helper: write a temp program file in the repo root (so module resolution

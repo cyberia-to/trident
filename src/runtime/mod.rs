@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Runtime traits for VM execution, proving, and deployment.
 //!
 //! Trident is the weapon. Warriors wield it. Trident defines these

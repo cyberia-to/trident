@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Algebraic solver and bounded model checker for Trident constraint systems.
 //!
 //! Takes the `ConstraintSystem` from `sym.rs` and checks it using:

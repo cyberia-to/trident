@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Compilation and verification cache for Trident.
 //!
 //! Caches are keyed by content hashes from `hash.rs`:

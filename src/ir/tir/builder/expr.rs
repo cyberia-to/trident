@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Expression emission: build_expr, build_var_expr, build_field_access, build_index.
 
 use crate::ast::*;

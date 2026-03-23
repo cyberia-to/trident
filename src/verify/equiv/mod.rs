@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Semantic equivalence checking for Trident functions.
 //!
 //! Given two functions f and g with the same signature, checks whether

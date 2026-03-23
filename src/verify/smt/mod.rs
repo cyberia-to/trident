@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! SMT-LIB2 encoder for Trident constraint systems.
 //!
 //! Encodes the `ConstraintSystem` from `sym.rs` as SMT-LIB2 queries

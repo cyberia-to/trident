@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! End-to-end latency benchmark for neural compiler v2.
 //!
 //! Measures each stage of the v2 inference pipeline:

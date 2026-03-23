@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Function call dispatch: intrinsic resolution and user-defined calls.
 
 use crate::ast::*;

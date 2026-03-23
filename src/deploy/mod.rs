@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Packaging: produce a self-contained artifact for Trident programs.
 //!
 //! `trident package` creates a `.deploy/` directory containing the compiled

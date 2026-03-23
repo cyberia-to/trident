@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Mersenne31 prime field: p = 2^31 - 1 = 0x7FFF_FFFF.
 //!
 //! Used by: Plonky3, Circle STARKs.

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! GPU compute infrastructure.
 //!
 //! Uses wgpu for cross-platform GPU acceleration (Metal, Vulkan, DX12).

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Content addressing for Trident: AST normalization + Poseidon2 hashing.
 //!
 //! Every function definition gets a cryptographic identity (Poseidon2 hash)

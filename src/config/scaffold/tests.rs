@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use super::*;
 use crate::ast::ArraySize;
 use crate::parse_source_silent;

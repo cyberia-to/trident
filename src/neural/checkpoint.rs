@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! Checkpoint management for neural compiler v2.
 //!
 //! Uses burn's native record format (NamedMpk) for model weights.

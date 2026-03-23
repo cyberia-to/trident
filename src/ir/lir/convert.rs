@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TIR → LIR conversion pass.
 //!
 //! Transforms stack-based TIR into register-based LIR by:

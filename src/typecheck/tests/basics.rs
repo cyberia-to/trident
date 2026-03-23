@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 //! TypeChecker unit tests.
 
 use super::{check, check_with_flags};

@@ -1,3 +1,8 @@
+// ---
+// tags: trident, rust
+// crystal-type: source
+// crystal-domain: comp
+// ---
 use std::collections::BTreeMap;
 
 use super::model::{create_cost_model, CostModel, TableCost};
