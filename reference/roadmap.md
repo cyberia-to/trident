@@ -26,9 +26,11 @@ CORE            256K         64K
 vm spec          32K         16K
 language         64K         32K
 TIR              64K         64K
+Noun            256K        128K      ← AST→Noun path (tree targets)
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
+cyber stack     256K        128K      ← nebu, hemera, nox, zheng, bbg
 tooling          64K         32K
 AI              256K        128K
 Privacy         256K        128K
@@ -40,47 +42,60 @@ Quantum         256K        128K
 ## 256K — primitives land
 
 ```
-- [ ] CORE      16 patterns implemented in Trident (reference evaluator)
-- [x] AI        Tensor operations (dot, matmul, relu, dense) — DONE: std.nn.tensor
-- [x] AI        Neural TIR-TASM optimizer (91K params, evolutionary training, speculative compilation)
-- [x] Privacy   Polynomial ops and NTT for FHE — DONE: std.private.poly
-- [x] Quantum   Quantum gate set (H, X, Y, Z, S, T, CNOT, CZ, SWAP) — DONE: std.quantum.gates
-- [ ] tooling   Amazing cli
-- [ ] tooling   Integration tests and formal verification
-- [ ] tooling   Beautiful website
-- [ ] tooling   Complete benchmark coverage
-- [ ] CORE      Hemera hash migration
+- [ ] CORE        16 patterns implemented in Trident (reference evaluator)
+- [x] AI          Tensor operations (dot, matmul, relu, dense) — DONE: std.nn.tensor
+- [x] AI          Neural TIR-TASM optimizer (91K params, evolutionary training, speculative compilation)
+- [x] Privacy     Polynomial ops and NTT for FHE — DONE: std.private.poly
+- [x] Quantum     Quantum gate set (H, X, Y, Z, S, T, CNOT, CZ, SWAP) — DONE: std.quantum.gates
+- [ ] tooling     Amazing cli
+- [ ] tooling     Integration tests and formal verification
+- [ ] tooling     Beautiful website
+- [ ] tooling     Complete benchmark coverage
+- [ ] cyber stack Hemera hash migration (replace blake3 + custom poseidon2)
+- [ ] cyber stack nebu field adoption (Goldilocks bridge)
+- [ ] cyber stack vm/nox/ target profile + registration
+- [ ] cyber stack os/cyber/ target profile + type definitions
+- [ ] Noun        NounBuilder: direct AST→Noun lowering (bypass TIR for tree targets)
+- [ ] Noun        SubjectManager: variable→axis mapping for tree subjects
+- [ ] Noun        Focus cost model (exact compile-time prediction)
 ```
 
 ## 128K — the machine assembles
 
 ```
-CORE      Poseidon + Merkle as CORE programs, BBG prototype
-TIR       Lowering works for stack, register, and tree targets
-compiler  ✓ All 6 stages + pipeline rewritten in .tri (9,195 LOC)
-            lexer (824) → parser (2,723) → typecheck (1,502) →
-            codegen (1,979) → optimize (733) → lower (1,121) →
-            pipeline (313)
-std.*     std.token, std.coin, std.card shipped
-os.*      os.neptune.* complete, Atlas on-chain registry live
-AI        Small model inference compiles to provable Trident
-Privacy   Trident programs compile to FHE circuits
-Quantum   Quantum circuit simulation backend
+CORE        Hemera + Merkle as CORE programs, BBG prototype
+TIR         Lowering works for stack, register, and tree targets
+Noun        AST→Noun optimized: subject sharing, dead axis elimination, parallel marking
+cyber stack nox executor integration (trident build → .nox → nox execute → trace)
+cyber stack zheng prover integration (trace → zheng prove → proof)
+cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
+compiler    ✓ All 6 stages + pipeline rewritten in .tri (9,195 LOC)
+              lexer (824) → parser (2,723) → typecheck (1,502) →
+              codegen (1,979) → optimize (733) → lower (1,121) →
+              pipeline (313)
+std.*       std.token, std.coin, std.card shipped
+os.*        os.neptune.* complete, Atlas on-chain registry live
+AI          Small model inference compiles to provable Trident
+Privacy     Trident programs compile to FHE circuits
+Quantum     Quantum circuit simulation backend
 ```
 
 ## 64K — proof of concept
 
 ```
-CORE      Transaction circuit, STARK verifier as CORE program
-language  Indexed assignment (arr[i] = val, s.field = val)
-TIR       ✓ TIR builder, optimizer, lowerer self-hosted in .tri
-compiler  ✓ All stages self-hosted — wire lower when core/warrior ready
-std.*     23 std.skill.* shipped
-os.*      3+ OS namespaces operational
-tooling   Web playground: compile .tri in browser
-AI        On-chain model registry — verified accuracy, no trust
-Privacy   Encrypted smart contracts — execute without revealing state
-Quantum   Hybrid programs: classical control + quantum subroutines
+CORE        Transaction circuit, STARK verifier as CORE program
+language    Indexed assignment (arr[i] = val, s.field = val)
+TIR         ✓ TIR builder, optimizer, lowerer self-hosted in .tri
+Noun        ✓ NounBuilder self-hosted in .tri
+cyber stack Full pipeline: .tri → nox → zheng → bbg (compile, execute, prove, verify)
+cyber stack Warrior binary for cyber target (like trisha for Triton)
+compiler    ✓ All stages self-hosted — wire lower when core/warrior ready
+std.*       23 std.skill.* shipped
+os.*        3+ OS namespaces operational (incl. os.cyber.*)
+tooling     Web playground: compile .tri in browser
+AI          On-chain model registry — verified accuracy, no trust
+Privacy     Encrypted smart contracts — execute without revealing state
+Quantum     Hybrid programs: classical control + quantum subroutines
 ```
 
 ## 32K — first release
@@ -88,32 +103,36 @@ Quantum   Hybrid programs: classical control + quantum subroutines
 Compiler compiles itself. Atlas live. Revolution demos ship.
 
 ```
-CORE      Self-verifying: CORE proves its own execution
-vm spec   Intrinsic set stable: no new vm.* builtins
-language  Protocols: compile-time structural typing, grammar frozen
-TIR       TIROp set stable (5+ OS, 1 VM per type prove op set complete)
-compiler  ✓ Pipeline in Trident — needs lower wiring + self-compilation
-std.*     #[requires]/#[ensures] contracts on all public functions
-os.*      Per-OS namespace governance established
-AI        Proven training: gradient computation inside proof
-Privacy   FHE + ZK: prove correctness of encrypted computation
-Quantum   Quantum error correction in std.quantum
+CORE        Self-verifying: CORE proves its own execution
+vm spec     Intrinsic set stable: no new vm.* builtins
+language    Protocols: compile-time structural typing, grammar frozen
+TIR         TIROp set stable (5+ OS, 1 VM per type prove op set complete)
+Noun        Noun type proposal (reference/props/noun-types.md) resolved
+cyber stack nox VM spec frozen, zheng prover stable
+compiler    ✓ Pipeline in Trident — needs lower wiring + self-compilation
+std.*       #[requires]/#[ensures] contracts on all public functions
+os.*        Per-OS namespace governance established
+AI          Proven training: gradient computation inside proof
+Privacy     FHE + ZK: prove correctness of encrypted computation
+Quantum     Quantum error correction in std.quantum
 ```
 
 ## 16K — the industries fall
 
 ```
-CORE      Recursive composition — proofs verify proofs
-vm spec   Triton backend emission proven correct
-language  Type system finalized — no new type rules
-TIR       Per-function benchmarks < 1.2x, optimization passes land
-compiler  Each compilation produces a proof certificate (self-proving)
-std.*     std.crypto.* formally verified (poseidon, merkle, ecdsa)
-os.*      os.neptune.* frozen
-tooling   GPU proving, ZK coprocessor integrations
-AI        GPT-class proven inference (billion+ parameters)
-Privacy   Multi-party FHE: N parties compute, none sees others' data
-Quantum   Real hardware backends (IBM, Google, IonQ)
+CORE        Recursive composition — proofs verify proofs
+vm spec     Triton + nox backends emission proven correct
+language    Type system finalized — no new type rules
+TIR         Per-function benchmarks < 1.2x, optimization passes land
+Noun        Per-function noun size < 1.2x vs hand-written nox
+cyber stack bbg state formally specified, cyber OS frozen
+compiler    Each compilation produces a proof certificate (self-proving)
+std.*       std.crypto.* formally verified (hemera, merkle, ecdsa)
+os.*        os.neptune.* frozen, os.cyber.* frozen
+tooling     GPU proving, ZK coprocessor integrations
+AI          GPT-class proven inference (billion+ parameters)
+Privacy     Multi-party FHE: N parties compute, none sees others' data
+Quantum     Real hardware backends (IBM, Google, IonQ)
 ```
 
 ## 8K — proven everything
