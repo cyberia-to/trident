@@ -1,0 +1,41 @@
+# ---
+# tags: trident, config
+# crystal-type: source
+# crystal-domain: comp
+# ---
+# Nox target configuration — proof-native VM
+# https://github.com/cyberia-to/nox
+
+[target]
+name = "nox"
+display_name = "NOX"
+architecture = "tree"
+output_extension = ".nox"
+
+[field]
+prime = "2^64 - 2^32 + 1"
+bits = 64
+limbs = 2
+
+[stack]
+depth = 0
+spill_ram_base = 0
+
+[hash]
+function = "Hemera"
+digest_width = 8
+rate = 8
+
+[extension_field]
+degree = 3
+
+[cost]
+tables = ["reductions"]
+
+[status]
+level = 3
+lowering = "NoxCompiler"
+lowering_path = "tree"
+cost_model = false
+tests = false
+notes = "Direct AST-to-Noun compilation. Phase 1: arithmetic, comparisons, branching."
