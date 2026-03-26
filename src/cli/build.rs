@@ -14,7 +14,7 @@ use super::{find_program_source, load_dep_dirs, resolve_input, resolve_options};
 pub struct BuildArgs {
     /// Input .tri file or directory with trident.toml
     pub input: PathBuf,
-    /// Output .tasm file (default: <input>.tasm)
+    /// Output file (default: <input>.<target ext>, e.g. .tasm, .nox)
     #[arg(short, long)]
     pub output: Option<PathBuf>,
     /// Print cost analysis report
@@ -89,19 +89,24 @@ pub fn cmd_build(args: BuildArgs) {
         options.dep_dirs = load_dep_dirs(proj);
     }
 
-    let tasm = match trident::compile_project_with_options(&ri.entry, &options) {
+    let compiled = match trident::compile_project_with_options(&ri.entry, &options) {
         Ok(t) => t,
         Err(_) => process::exit(1),
     };
 
+    // Use target's output_extension (e.g. ".tasm" for triton, ".nox" for nox)
+    let ext = options
+        .target_config
+        .output_extension
+        .trim_start_matches('.');
     let default_output = if let Some(ref proj) = ri.project {
-        proj.root_dir.join(format!("{}.tasm", proj.name))
+        proj.root_dir.join(format!("{}.{}", proj.name, ext))
     } else {
-        input.with_extension("tasm")
+        input.with_extension(ext)
     };
 
     let out_path = output.unwrap_or(default_output);
-    if let Err(e) = std::fs::write(&out_path, &tasm) {
+    if let Err(e) = std::fs::write(&out_path, &compiled) {
         eprintln!("error: cannot write '{}': {}", out_path.display(), e);
         process::exit(1);
     }

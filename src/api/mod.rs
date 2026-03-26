@@ -11,12 +11,13 @@ pub(crate) use crate::cost;
 pub(crate) use crate::diagnostic::{render_diagnostics, Diagnostic};
 pub(crate) use crate::resolve::resolve_modules;
 pub(crate) use crate::span;
-pub(crate) use crate::target::TerrainConfig;
+pub(crate) use crate::target::{Arch, TerrainConfig};
 pub(crate) use crate::tir::builder::TIRBuilder;
 pub(crate) use crate::tir::linker::{link, ModuleTasm};
 pub(crate) use crate::tir::lower::create_stack_lowering;
 pub(crate) use crate::tir::optimize::optimize as optimize_tir;
 pub(crate) use crate::typecheck::{ModuleExports, TypeChecker};
+use crate::ir::tree::lower::nox::NoxCompiler;
 pub(crate) use crate::{format, lexer, parser, project, solve, sym};
 
 #[cfg(test)]
@@ -68,7 +69,8 @@ pub fn compile(source: &str, filename: &str) -> Result<String, Vec<Diagnostic>> 
     compile_with_options(source, filename, &CompileOptions::default())
 }
 
-/// Compile a single Trident source string to TASM with options.
+/// Compile a single Trident source string with options.
+/// Stack targets produce TASM; tree targets (nox) produce noun formulas.
 pub fn compile_with_options(
     source: &str,
     filename: &str,
@@ -88,7 +90,16 @@ pub fn compile_with_options(
         }
     };
 
-    // Build IR, optimize, and lower to target assembly
+    // Tree targets: direct AST → Noun (bypass TIR)
+    if options.target_config.architecture == Arch::Tree {
+        let mut compiler = NoxCompiler::new();
+        let noun = compiler.compile_file(&file).map_err(|e| {
+            vec![Diagnostic::error(e, span::Span::dummy())]
+        })?;
+        return Ok(format!("{}", noun));
+    }
+
+    // Stack targets: AST → TIR → TASM
     let ir = TIRBuilder::new(options.target_config.clone())
         .with_cfg_flags(options.cfg_flags.clone())
         .with_mono_instances(exports.mono_instances)
@@ -106,6 +117,7 @@ pub fn compile_project(entry_path: &Path) -> Result<String, Vec<Diagnostic>> {
 }
 
 /// Compile a multi-module project with options.
+/// Stack targets produce linked TASM; tree targets (nox) produce noun formulas.
 pub fn compile_project_with_options(
     entry_path: &Path,
     options: &CompileOptions,
@@ -114,11 +126,29 @@ pub fn compile_project_with_options(
 
     let project = PreparedProject::build(entry_path, options)?;
 
+    // Tree targets: direct AST → Noun for the entry module (bypass TIR)
+    if options.target_config.architecture == Arch::Tree {
+        let entry_module = project
+            .modules
+            .iter()
+            .find(|pm| pm.file.kind == FileKind::Program)
+            .or_else(|| project.modules.first())
+            .ok_or_else(|| vec![Diagnostic::error(
+                "no entry module found".to_string(),
+                span::Span::dummy(),
+            )])?;
+        let mut compiler = NoxCompiler::new();
+        let noun = compiler.compile_file(&entry_module.file).map_err(|e| {
+            vec![Diagnostic::error(e, span::Span::dummy())]
+        })?;
+        return Ok(format!("{}", noun));
+    }
+
+    // Stack targets: AST → TIR → TASM per module, then link
     let intrinsic_map = project.intrinsic_map();
     let module_aliases = project.module_aliases();
     let external_constants = project.external_constants();
 
-    // Emit TASM for each module
     let mut tasm_modules = Vec::new();
     for (i, pm) in project.modules.iter().enumerate() {
         let is_program = pm.file.kind == FileKind::Program;

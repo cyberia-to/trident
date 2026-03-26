@@ -320,7 +320,7 @@ impl TerrainConfig {
         if name.is_empty() {
             return Err(err("missing target.name".to_string()));
         }
-        if stack_depth == 0 {
+        if stack_depth == 0 && architecture != "tree" {
             return Err(err("stack.depth must be > 0".to_string()));
         }
         if digest_width == 0 {

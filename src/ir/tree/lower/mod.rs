@@ -14,9 +14,11 @@
 //! - `lir::lower::RegisterLowering` — register targets → machine code
 //! - `kir::lower::KernelLowering` — GPU targets → kernel source
 
+pub mod nox;
+
 use crate::tir::TIROp;
 
-/// A Nock noun — the universal data type for tree machines.
+/// A noun — the universal data type for tree machines (Nock, nox).
 ///
 /// All data in Nock is a noun: either an atom (unsigned integer)
 /// or a cell (ordered pair of nouns). This recursive structure
@@ -130,9 +132,11 @@ pub trait TreeLowering {
 }
 
 /// Create a tree-lowering backend for the given target name.
-pub fn create_tree_lowering(_target: &str) -> Option<Box<dyn TreeLowering>> {
-    // No backends implemented yet. Implementers add match arms here.
-    None
+pub fn create_tree_lowering(target: &str) -> Option<Box<dyn TreeLowering>> {
+    match target {
+        "nox" => Some(Box::new(nox::NoxLowering::new())),
+        _ => None,
+    }
 }
 
 #[cfg(test)]
