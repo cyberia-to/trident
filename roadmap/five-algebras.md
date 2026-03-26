@@ -17,20 +17,28 @@ add four new primitive type families to Trident. each family maps to one algebra
 ### new primitive types
 
 ```
-// kuro algebra (F₂)
-BitVec          1-bit packed boolean vector (128 bits per machine word)
-BitMatrix       packed boolean matrix for quantized inference
+// kuro algebra (F₂ tower)
+Bit             F₂¹²⁸ packed tower element (128 bits per machine word, SIMD native)
+Nibble          F₂⁴ (lookup tables, activation functions)
+Byte            F₂⁸ (symmetric crypto, byte-level operations)
+F2<N>           F₂ⁿ generic fallback for non-standard tower widths
 
 // jali algebra (R_q)
-RingElement     polynomial over F_p[x]/(x^n+1), degree n compile-time const
-NTTForm         NTT-domain representation of RingElement (lazy conversion)
+Lattice         R_q = F_p[x]/(x^n+1) ring element, degree n compile-time const
+Eval            NTT-domain representation of Lattice (lazy conversion)
 
 // trop algebra (min,+)
-Tropical        field element with (min, +) semantics: a + b = min(a,b), a * b = a + b
+Cost            tropical element: add = min, mul = plus
 
 // genies algebra (F_q)
-Curve           Montgomery curve over F_q (supersingular)
-FqElement       element of F_q (8 × 64-bit limbs for CSIDH-512)
+Iso             supersingular curve (Montgomery form)
+Shade           F_q field element (8 × 64-bit limbs, 512 bits)
+Walk            isogeny walk exponents (secret key)
+Phantom         stealth address (receiver-anonymous)
+Mask            anonymous group signature (one-of-n, identity hidden)
+Blind           signer-blind signature (content hidden from signer)
+Fate            VRF output + proof (verifiable randomness)
+Pact            agreed shared secret (hemera digest)
 ```
 
 ### type → regime mapping
@@ -42,10 +50,10 @@ expression          type of operands    regime      lens
 ──────────          ────────────────    ──────      ────
 a + b               Field               nebu        Brakedown
 a + b               Fp2/Fp3/Fp4         nebu²/³/⁴   Brakedown (wider)
-a ^ b               BitVec              kuro        Binius
-a * b               RingElement         jali        Ring-aware
-a + b               Tropical            trop        Tropical
-group_action(s, c)  Secret, Curve       genies      Isogeny
+a ^ b               Bit                 kuro        Binius
+a * b               Lattice             jali        Ring-aware
+a + b               Cost                trop        Tropical
+group_action(w, c)  Walk, Iso           genies      Isogeny
 ```
 
 ### cross-type boundaries
@@ -53,11 +61,11 @@ group_action(s, c)  Secret, Curve       genies      Isogeny
 when operand types change between sub-expressions, the compiler inserts hemera commitments at the boundary. the programmer never sees this.
 
 ```trident
-fn mixed(x: Field, bits: BitVec, ring: RingElement) -> Field {
-    let q = bt::quantize(x);          // Field → BitVec: boundary inserted
-    let r = bt::xor(bits, q);         // BitVec ops: kuro regime
-    let f = bt::dequantize(r);        // BitVec → Field: boundary inserted
-    let w = wav::ntt_multiply(ring, ring); // RingElement: jali regime
+fn mixed(x: Field, bits: Bit, ring: Lattice) -> Field {
+    let q = bt::quantize(x);          // Field → Bit: boundary inserted
+    let r = bt::xor(bits, q);         // Bit ops: kuro regime
+    let f = bt::dequantize(r);        // Bit → Field: boundary inserted
+    let w = wav::ntt_multiply(ring, ring); // Lattice: jali regime
     f + wav::extract(w)               // back to Field: boundary inserted
 }
 // compiler inserts 3 hemera commitments at type transitions
@@ -74,10 +82,10 @@ build_expr(BinOp(Add, a, b)):
   type_a = typeof(a)
   match type_a:
     Field, Fp2, ... → emit [5 [build(a) build(b)]]     // nebu add
-    BitVec           → emit [11 [build(a) build(b)]]    // kuro xor (add in F₂)
-    Tropical         → emit [4 [10 [build(a) build(b)]] [build(a)] [build(b)]]  // min via branch+lt
-    RingElement      → emit jet_recognized composition  // jali ring add
-    Curve            → emit [5 ...]                     // genies F_q add (multi-limb)
+    Bit              → emit [11 [build(a) build(b)]]    // kuro xor (add in F₂)
+    Cost             → emit [4 [10 [build(a) build(b)]] [build(a)] [build(b)]]  // min via branch+lt
+    Lattice          → emit jet_recognized composition  // jali ring add
+    Iso              → emit [5 ...]                     // genies F_q add (multi-limb)
 ```
 
 ### new std modules
@@ -85,10 +93,10 @@ build_expr(BinOp(Add, a, b)):
 ```
 trident/std/
 ├── (existing: field, math, crypto, data, io, graph, nn, private, quantum, ...)
-├── bt/           BitVec, BitMatrix, quantize, dequantize, popcount
-├── wav/          RingElement, NTTForm, ntt_multiply, automorphism
-├── opt/          Tropical, CostMatrix, shortest_path, hungarian, viterbi
-└── sec/          Curve, FqElement, group_action, stealth_send, vrf_eval
+├── bt/           Bit, Nibble, Byte, quantize, dequantize, popcount
+├── wav/          Lattice, Eval, ntt_multiply, automorphism
+├── opt/          Cost, shortest_path, hungarian, viterbi, transport
+└── sec/          Iso, Shade, Walk, Phantom, Mask, Blind, Fate, Pact
 ```
 
 each module: ~500-2000 LOC Trident. type definitions + functions using new primitive types.
@@ -97,7 +105,7 @@ each module: ~500-2000 LOC Trident. type definitions + functions using new primi
 
 | component | change | scope |
 |-----------|--------|-------|
-| parser | new type keywords: `BitVec`, `RingElement`, `Tropical`, `Curve`, `FqElement` | grammar.md |
+| parser | new type keywords: `Bit`, `Nibble`, `Byte`, `Lattice`, `Eval`, `Cost`, `Iso`, `Shade`, `Walk`, `Phantom`, `Mask`, `Blind`, `Fate`, `Pact`, `F2<N>` | grammar.md |
 | type checker | regime inference from types, cross-type boundary detection | typecheck/ |
 | NounBuilder | type-aware pattern emission, boundary insertion | ir/noun/ |
 | cost model | per-regime costs (from nox vm.md cost table) | cost/ |
@@ -109,7 +117,7 @@ each module: ~500-2000 LOC Trident. type definitions + functions using new primi
 - 16 nox patterns (frozen, checkpoint 0)
 - Trident syntax (no new keywords beyond type names)
 - TIR path for stack/register/GPU targets (unchanged)
-- existing Field/Bool/U32/Digest types (unchanged)
+- existing Field/bool/u32/Digest types (unchanged)
 - existing std modules (unchanged)
 
 ## interaction with nox target
@@ -121,19 +129,20 @@ the nox target (vm/nox/target.toml) from cyber-stack-adoption.md gains:
 regimes = ["nebu", "kuro", "jali", "trop", "genies"]
 
 [types.nebu]
-primitives = ["Field", "Bool", "U32", "Digest", "Fp2", "Fp3", "Fp4"]
+primitives = ["Field", "bool", "u32", "Digest", "Fp2", "Fp3", "Fp4"]
 
 [types.kuro]
-primitives = ["BitVec", "BitMatrix"]
+primitives = ["Bit", "Nibble", "Byte"]
+generic = "F2<N>"
 
 [types.jali]
-primitives = ["RingElement", "NTTForm"]
+primitives = ["Lattice", "Eval"]
 
 [types.trop]
-primitives = ["Tropical"]
+primitives = ["Cost"]
 
 [types.genies]
-primitives = ["Curve", "FqElement"]
+primitives = ["Iso", "Shade", "Walk", "Phantom", "Mask", "Blind", "Fate", "Pact"]
 
 [boundary]
 cost = 766   # F_p constraints per type transition
@@ -150,10 +159,10 @@ the 16 [[cyber]] computation languages map 1:1 to Trident std modules:
 | Tok | std.token (existing) | Field (conservation) |
 | Arc | std.graph (existing) | Field (category) |
 | Ten | std.nn (existing) | Field (tensor) |
-| Bt | std.bt (NEW) | BitVec, BitMatrix |
-| Wav | std.wav (NEW) | RingElement, NTTForm |
-| Opt | std.opt (NEW) | Tropical, CostMatrix |
-| Sec | std.sec (NEW) | Curve, FqElement |
+| Bt | std.bt (NEW) | Bit, Nibble, Byte |
+| Wav | std.wav (NEW) | Lattice, Eval |
+| Opt | std.opt (NEW) | Cost |
+| Sec | std.sec (NEW) | Iso, Shade, Walk, Phantom, Mask, Blind, Fate, Pact |
 | ... | ... | ... |
 
 existing std modules already serve as languages — they just need the new types to reach all five algebras.
