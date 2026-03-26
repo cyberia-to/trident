@@ -6,6 +6,16 @@ desires documented for future consideration.
 Each proposal is a standalone markdown file. Status is tracked in the
 frontmatter.
 
+## Proposals
+
+| proposal | status | what |
+|----------|--------|------|
+| [[noun-types]] | draft | why nox drops cell? and what Trident does instead |
+| [[polynomial-target]] | draft | polynomial noun lowering for nox |
+| [[five-algebras]] | draft | type-driven regime dispatch: BitVec, RingElement, Tropical, Curve types + 4 new std modules |
+
+see also: `.claude/plans/cyber-stack-adoption.md` — nox target + NounBuilder (Phase 2 of bootstrap)
+
 ## Status values
 
 | Status | Meaning |
