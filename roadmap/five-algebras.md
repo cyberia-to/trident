@@ -14,6 +14,14 @@ the [[cyber]] stack requires five algebras (nebu, kuro, jali, trop, genies) with
 
 add four new primitive type families to Trident. each family maps to one algebra. the type system IS the dispatch mechanism — types determine nox regime, regime determines [[lens]], zero annotations needed.
 
+### two levels of types
+
+**primitive types** change proving execution: they determine regime, lens, constraints. adding or removing a primitive type changes how the zheng proof works.
+
+**semantic types** (structs) prevent programming errors within a regime. they don't change proving. a `Distribution` and a `Matrix` are both `[Field; N]` at the proof level — the struct prevents accidental confusion, not algebraic errors.
+
+test: "if I replace this type with Field, does the proof change?" yes → primitive. no → struct.
+
 ### new primitive types
 
 ```
@@ -28,18 +36,77 @@ Lattice         R_q = F_p[x]/(x^n+1) ring element, degree n compile-time const
 Eval            NTT-domain representation of Lattice (lazy conversion)
 
 // trop algebra (min,+)
-Cost            tropical element: add = min, mul = plus
+Cost            tropical (min, +): Cost + Cost = min(a,b), Cost * Cost = a + b
+Gain            tropical (max, +): Gain + Gain = max(a,b), Gain * Gain = a + b
 
 // genies algebra (F_q)
-Iso             supersingular curve (Montgomery form)
+Iso             supersingular curve (Montgomery form over F_q)
 Shade           F_q field element (8 × 64-bit limbs, 512 bits)
-Walk            isogeny walk exponents (secret key)
-Phantom         stealth address (receiver-anonymous)
-Mask            anonymous group signature (one-of-n, identity hidden)
-Blind           signer-blind signature (content hidden from signer)
-Fate            VRF output + proof (verifiable randomness)
-Pact            agreed shared secret (hemera digest)
 ```
+
+16 named primitives + 1 generic across 5 algebras:
+
+| algebra | primitives | count | capability |
+|---------|-----------|-------|-----------|
+| nebu | Field, bool, u32, Digest, Fp2, Fp3, Fp4 | 7 | truth, depth |
+| kuro | Bit, Nibble, Byte (+ F2<N>) | 3+generic | speed |
+| jali | Lattice, Eval | 2 | veil |
+| trop | Cost, Gain | 2 | choice |
+| genies | Iso, Shade | 2 | shadow |
+
+### trop: Cost vs Gain
+
+two tropical semirings are common enough to warrant separate types:
+
+```trident
+// Cost: shortest/cheapest — add = min
+let route: Cost = opt::shortest_path(&distances, source);
+
+// Gain: longest/most profitable — add = max
+let critical: Gain = opt::critical_path(&durations, start);
+```
+
+Cost + Cost = min(a, b). Gain + Gain = max(a, b). the patterns differ:
+```
+Cost add: branch(lt(a, b), a, b)     // min: take smaller
+Gain add: branch(lt(a, b), b, a)     // max: take larger
+```
+
+if a function expects Cost and receives Gain, the optimization is WRONG (minimizes instead of maximizes). type safety catches this at compile time.
+
+both types use the same trop regime and Tropical lens. the difference is pattern emission only.
+
+### jali: 2 types for FHE + signals
+
+Lattice and Eval are sufficient. everything else composes:
+
+```
+FHE ciphertext  = struct { a: Lattice, b: Lattice }     → std.wav
+FHE secret key  = struct { s: Lattice }                  → std.wav
+FHE public key  = struct { parts: [Lattice; K] }         → std.wav
+Signal          = Lattice (time domain)                  → std.wav
+Spectrum        = Eval (frequency domain)                → std.wav
+Convolution     = Eval * Eval                            → Lattice * Lattice
+Filter          = Eval (frequency-domain coefficients)   → std.wav
+```
+
+like Field: one type, but Matrix = [Field; N*M]. Lattice: one type, but Ciphertext = struct { Lattice, Lattice }.
+
+### genies: primitives vs protocol types
+
+only Iso and Shade are algebraic primitives (they change proving — F_q regime). protocol types are structs in std.sec:
+
+```trident
+// std.sec — protocol types (structs over Iso, Shade, Digest)
+pub struct Walk { exponents: [u32; 74] }       // secret isogeny path (nebu regime, enters via hint)
+pub struct Phantom { address: Digest }          // stealth address (derived from group action)
+pub struct Mask { responses: [Shade], c: Digest } // ring signature
+pub struct Blind { curve: Iso, s: Shade }       // blind signature
+pub struct Fate { output: Digest, proof: Iso }  // VRF output + proof
+pub struct Pact { secret: Digest }              // agreed shared secret
+```
+
+Walk is a struct, not a primitive: exponents are small integers ([u32; 74] in nebu regime), not F_q elements. group_action jet takes Walk + Iso → Iso. the cross-regime boundary (nebu → genies) happens INSIDE the jet. Walk enters via hint (Layer 2) because it is secret.
 
 ### type → regime mapping
 
@@ -52,8 +119,9 @@ a + b               Field               nebu        Brakedown
 a + b               Fp2/Fp3/Fp4         nebu²/³/⁴   Brakedown (wider)
 a ^ b               Bit                 kuro        Binius
 a * b               Lattice             jali        Ring-aware
-a + b               Cost                trop        Tropical
-group_action(w, c)  Walk, Iso           genies      Isogeny
+a + b               Cost                trop        Tropical (min)
+a + b               Gain                trop        Tropical (max)
+curve_op(iso, shade) Iso, Shade         genies      Isogeny
 ```
 
 ### cross-type boundaries
@@ -93,10 +161,10 @@ build_expr(BinOp(Add, a, b)):
 ```
 trident/std/
 ├── (existing: field, math, crypto, data, io, graph, nn, private, quantum, ...)
-├── bt/           Bit, Nibble, Byte, quantize, dequantize, popcount
-├── wav/          Lattice, Eval, ntt_multiply, automorphism
-├── opt/          Cost, shortest_path, hungarian, viterbi, transport
-└── sec/          Iso, Shade, Walk, Phantom, Mask, Blind, Fate, Pact
+├── bt/           primitives: Bit, Nibble, Byte. fns: quantize, dequantize, popcount
+├── wav/          primitives: Lattice, Eval. structs: Cipher, Signal. fns: ntt_multiply, automorphism, bootstrap
+├── opt/          primitives: Cost, Gain. fns: shortest_path, critical_path, hungarian, viterbi, transport
+└── sec/          primitives: Iso, Shade. structs: Walk, Phantom, Mask, Blind, Fate, Pact. fns: group_action, stealth_send, vrf_eval
 ```
 
 each module: ~500-2000 LOC Trident. type definitions + functions using new primitive types.
@@ -105,7 +173,7 @@ each module: ~500-2000 LOC Trident. type definitions + functions using new primi
 
 | component | change | scope |
 |-----------|--------|-------|
-| parser | new type keywords: `Bit`, `Nibble`, `Byte`, `Lattice`, `Eval`, `Cost`, `Iso`, `Shade`, `Walk`, `Phantom`, `Mask`, `Blind`, `Fate`, `Pact`, `F2<N>` | grammar.md |
+| parser | new primitive keywords: `Bit`, `Nibble`, `Byte`, `Lattice`, `Eval`, `Cost`, `Gain`, `Iso`, `Shade`, `F2<N>` (10 + generic) | grammar.md |
 | type checker | regime inference from types, cross-type boundary detection | typecheck/ |
 | NounBuilder | type-aware pattern emission, boundary insertion | ir/noun/ |
 | cost model | per-regime costs (from nox vm.md cost table) | cost/ |
@@ -139,10 +207,10 @@ generic = "F2<N>"
 primitives = ["Lattice", "Eval"]
 
 [types.trop]
-primitives = ["Cost"]
+primitives = ["Cost", "Gain"]
 
 [types.genies]
-primitives = ["Iso", "Shade", "Walk", "Phantom", "Mask", "Blind", "Fate", "Pact"]
+primitives = ["Iso", "Shade"]
 
 [boundary]
 cost = 766   # F_p constraints per type transition
@@ -161,8 +229,8 @@ the 16 [[cyber]] computation languages map 1:1 to Trident std modules:
 | Ten | std.nn (existing) | Field (tensor) |
 | Bt | std.bt (NEW) | Bit, Nibble, Byte |
 | Wav | std.wav (NEW) | Lattice, Eval |
-| Opt | std.opt (NEW) | Cost |
-| Sec | std.sec (NEW) | Iso, Shade, Walk, Phantom, Mask, Blind, Fate, Pact |
+| Opt | std.opt (NEW) | Cost, Gain |
+| Sec | std.sec (NEW) | Iso, Shade + structs: Walk, Phantom, Mask, Blind, Fate, Pact |
 | ... | ... | ... |
 
 existing std modules already serve as languages — they just need the new types to reach all five algebras.
