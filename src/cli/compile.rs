@@ -160,9 +160,35 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
+        "qasm" | "openqasm" | "quantum" => {
+            let q = trident::compile::qasm::compile_to_qasm(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&q, &output_path);
+        }
+        "qir" | "azure-quantum" => {
+            let q = trident::compile::qir::compile_to_qir(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&q, &output_path);
+        }
+        "onnx" => {
+            let o = trident::compile::onnx::compile_to_onnx(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            if output_path.is_empty() {
+                eprintln!("onnx: {} bytes", o.len());
+                use std::io::Write;
+                std::io::stdout().write_all(&o).unwrap();
+            } else {
+                write_file(&o, &output_path);
+            }
+        }
+        "xla" | "hlo" | "tpu" => {
+            let x = trident::compile::xla::compile_to_xla(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&x, &output_path);
+        }
         other => {
             eprintln!("unknown target: {}", other);
-            eprintln!("supported: wasm, arm64, x64, x64-sysv, rv64, rv32, ebpf, thumb2, ptx, ptx-parallel, wgsl, spirv, ane, ane-batch, verilog");
+            eprintln!("supported: wasm, arm64, x64, x64-sysv, rv64, rv32, ebpf, thumb2, ptx, ptx-parallel, wgsl, spirv, ane, ane-batch, verilog, qasm, qir, onnx, xla");
             std::process::exit(1);
         }
     }

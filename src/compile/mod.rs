@@ -18,7 +18,11 @@ pub mod spirv;
 pub mod ane;
 pub mod thumb2;
 pub mod verilog;
+pub mod qasm;
+pub mod xla;
 pub mod mir2nox;
+pub mod qir;
+pub mod onnx;
 
 /// Compiled value — either a constant or derived from computation.
 /// The compiler walks the formula tree and produces a sequence of
