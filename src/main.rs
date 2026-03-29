@@ -12,6 +12,7 @@ use clap::{Parser, Subcommand};
 use cli::audit::{AuditArgs, EquivArgs};
 use cli::bench::BenchArgs;
 use cli::build::BuildArgs;
+use cli::compile::{CompileNoxArgs, MirArgs};
 use cli::check::CheckArgs;
 use cli::deploy::DeployArgs;
 use cli::deps::DepsAction;
@@ -97,6 +98,10 @@ enum Command {
     Verify(VerifyProofArgs),
     /// Generate tree-sitter grammar.json from the Rust grammar definition
     TreeSitter(TreeSitterArgs),
+    /// Compile nox formula to native code (wasm, arm64, x64, rv64, ebpf, ptx, wgsl, spirv, ane)
+    Compile(CompileNoxArgs),
+    /// Compile Rust MIR JSON to nox formulas
+    Mir(MirArgs),
     /// Start the Language Server Protocol server
     Lsp,
 }
@@ -127,6 +132,8 @@ fn main() {
         Command::Prove(args) => cli::prove::cmd_prove(args),
         Command::Verify(args) => cli::verify::cmd_verify_proof(args),
         Command::TreeSitter(args) => cli::tree_sitter::cmd_tree_sitter(args),
+        Command::Compile(args) => cli::compile::cmd_compile_nox(args),
+        Command::Mir(args) => cli::compile::cmd_mir(args),
         Command::Lsp => cmd_lsp(),
     }
 }

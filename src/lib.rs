@@ -5,6 +5,7 @@
 // ---
 pub mod api;
 pub mod ast;
+pub mod compile;
 pub mod config;
 pub mod cost;
 pub mod deploy;

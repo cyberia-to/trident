@@ -91,7 +91,12 @@ pub fn cmd_build(args: BuildArgs) {
 
     let compiled = match trident::compile_project_with_options(&ri.entry, &options) {
         Ok(t) => t,
-        Err(_) => process::exit(1),
+        Err(errors) => {
+            for e in &errors {
+                eprintln!("{:?}", e);
+            }
+            process::exit(1);
+        }
     };
 
     // Use target's output_extension (e.g. ".tasm" for triton, ".nox" for nox)
