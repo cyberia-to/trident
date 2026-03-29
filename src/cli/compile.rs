@@ -186,9 +186,54 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&x, &output_path);
         }
+        "systemverilog" | "sv" | "asic" => {
+            let v = trident::compile::systemverilog::compile_to_systemverilog(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "vhdl" => {
+            let v = trident::compile::vhdl::compile_to_vhdl(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "amx" | "apple-amx" => {
+            let v = trident::compile::amx::compile_to_amx(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "intel-amx" | "amx-intel" => {
+            let v = trident::compile::intel_amx::compile_to_amx(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "tensor-cores" | "wmma" => {
+            let v = trident::compile::tensor_cores::compile_to_tensor_ptx(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "hexagon" | "qdsp" | "dsp" => {
+            let v = trident::compile::hexagon::compile_to_hexagon(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "rvv" | "riscv-vector" => {
+            let v = trident::compile::rvv::compile_to_rvv(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "cerebras" | "csl" | "wafer" => {
+            let v = trident::compile::cerebras::compile_to_csl(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
+        "upmem" | "pim" => {
+            let v = trident::compile::upmem::compile_to_upmem(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
         other => {
             eprintln!("unknown target: {}", other);
-            eprintln!("supported: wasm, arm64, x64, x64-sysv, rv64, rv32, ebpf, thumb2, ptx, ptx-parallel, wgsl, spirv, ane, ane-batch, verilog, qasm, qir, onnx, xla");
+            eprintln!("supported: wasm arm64 x64 x64-sysv rv64 rv32 rvv ebpf thumb2 hexagon ptx ptx-parallel tensor-cores wgsl spirv ane ane-batch amx intel-amx verilog systemverilog vhdl qasm qir onnx xla cerebras upmem");
             std::process::exit(1);
         }
     }

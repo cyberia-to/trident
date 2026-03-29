@@ -10,19 +10,28 @@ pub mod wasm;
 pub mod arm64;
 pub mod rv32;
 pub mod rv64;
+pub mod rvv;
 pub mod x86_64;
 pub mod ebpf;
 pub mod ptx;
+pub mod tensor_cores;
 pub mod wgsl;
 pub mod spirv;
+pub mod amx;
 pub mod ane;
 pub mod thumb2;
+pub mod hexagon;
 pub mod verilog;
+pub mod systemverilog;
+pub mod vhdl;
 pub mod qasm;
 pub mod xla;
 pub mod mir2nox;
 pub mod qir;
 pub mod onnx;
+pub mod cerebras;
+pub mod upmem;
+pub mod intel_amx;
 
 /// Compiled value — either a constant or derived from computation.
 /// The compiler walks the formula tree and produces a sequence of
