@@ -35,6 +35,8 @@ petgraph = "0.7"
 serde = { version = "1", features = ["derive"] }
 rkyv = { version = "0.8", features = ["bytecheck"] }
 statrs = "0.18"
+mir-format = { path = "../rs/mir-format" }
+serde_json = "1"
 
 [dev-dependencies]
 insta = "1"

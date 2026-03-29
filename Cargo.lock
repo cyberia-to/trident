@@ -3979,6 +3979,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "mir-format"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "moddef"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6514,11 +6522,13 @@ dependencies = [
  "clap",
  "criterion",
  "insta",
+ "mir-format",
  "petgraph 0.7.1",
  "pollster",
  "rayon",
  "rkyv",
  "serde",
+ "serde_json",
  "statrs",
  "tempfile",
  "tokio",
