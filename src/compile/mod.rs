@@ -8,6 +8,7 @@ use nox::noun::{Order, NounId, Noun};
 
 pub mod wasm;
 pub mod arm64;
+pub mod rv32;
 pub mod rv64;
 pub mod x86_64;
 pub mod ebpf;
@@ -15,6 +16,8 @@ pub mod ptx;
 pub mod wgsl;
 pub mod spirv;
 pub mod ane;
+pub mod thumb2;
+pub mod verilog;
 pub mod mir2nox;
 
 /// Compiled value — either a constant or derived from computation.
@@ -320,6 +323,22 @@ mod tests {
         let formula = make_binary(&mut o, 7, a0, a1);
         let code = x86_64::compile_to_x86_64(&o, formula, 2).unwrap();
         assert_eq!(*code.last().unwrap(), 0xC3, "should end with RET");
+    }
+
+    #[test]
+    fn rv32_add_compiles() {
+        let mut o = Order::<1024>::new();
+        let ax2 = make_atom(&mut o, 2);
+        let a0 = make_formula(&mut o, 0, ax2);
+        let ax6 = make_atom(&mut o, 6);
+        let a1 = make_formula(&mut o, 0, ax6);
+        let formula = make_binary(&mut o, 5, a0, a1);
+        let code = rv32::compile_to_rv32(&o, formula, 2).unwrap();
+        let len = code.len();
+        assert!(len >= 4);
+        // Should end with RET = JALR x0, x1, 0 = 0x00008067
+        let last4 = u32::from_le_bytes([code[len-4], code[len-3], code[len-2], code[len-1]]);
+        assert_eq!(last4, 0x00008067, "should end with RET");
     }
 
     #[test]

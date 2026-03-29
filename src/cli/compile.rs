@@ -145,9 +145,24 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&mil, &output_path);
         }
+        "rv32" | "riscv32" | "esp32" => {
+            let code = trident::compile::rv32::compile_to_rv32(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_binary(&code, &output_path, "rv32");
+        }
+        "thumb2" | "cortex-m" | "stm32" | "rp2040" => {
+            let code = trident::compile::thumb2::compile_to_thumb2(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_binary(&code, &output_path, "thumb2");
+        }
+        "verilog" | "fpga" | "hdl" => {
+            let v = trident::compile::verilog::compile_to_verilog(&order, formula, num_params)
+                .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
+            write_text(&v, &output_path);
+        }
         other => {
             eprintln!("unknown target: {}", other);
-            eprintln!("supported: wasm, arm64, x64, x64-sysv, rv64, ebpf, ptx, ptx-parallel, wgsl, spirv, ane, ane-batch");
+            eprintln!("supported: wasm, arm64, x64, x64-sysv, rv64, rv32, ebpf, thumb2, ptx, ptx-parallel, wgsl, spirv, ane, ane-batch, verilog");
             std::process::exit(1);
         }
     }
