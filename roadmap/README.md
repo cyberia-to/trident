@@ -16,6 +16,7 @@ frontmatter.
 | [[warrior-architecture]] | draft | core vs tooling vs warriors: workspace split, nox+native in core, stack/gpu/quantum opt-in |
 | [[cyber-stack-adoption]] | draft | nebu + hemera + nox + zheng integration, AST→Noun path, 14 sessions |
 | [[switch-to-hemera]] | draft | replace blake3 + custom poseidon2 with hemera, ContentHash 32→64 bytes |
+| [[trident-on-evm]] | draft | EvmLowering + os.ethereum.* + verifier-codegen — six capabilities Solidity/Fe can't deliver, 15 sessions |
 
 ## Status values
 
