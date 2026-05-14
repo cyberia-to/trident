@@ -107,7 +107,7 @@ Beyond neural networks: every polynomial evaluation, every linear algebra comput
 
 ## Stack Integration
 
-[[cybergraph]] queries return proofs of the answer. Dependent types on the query return type (`Vector<N>` where N is part of the type) let [[soft3]] callers verify response dimensions at compile time. A `query(cid, dimension)` call that returns `Vector<128>` cannot be accidentally used where `Vector<256>` is expected — the type mismatch is a compile error at the [[soft3]] call site, before any network round-trip.
+[[cybergraph]] queries return proofs of the answer. Dependent types on the query return type (`Vector<N>` where N is part of the type) let [[soft3]] callers verify response dimensions at compile time. A `query(particle, dimension)` call that returns `Vector<128>` cannot be accidentally used where `Vector<256>` is expected — the type mismatch is a compile error at the [[soft3]] call site, before any network round-trip.
 
 [[nox]]'s `ask(ν, object, formula, τ, a, v, t)` signature itself can carry dependent type constraints: `a` and `v` (alignment and variance parameters) must be within valid ranges — enforced at the type level. Every call to `ask` with dependent-typed arguments is statically verified before it reaches the VM.
 

@@ -11,7 +11,7 @@ Related: [[noun-types]], [[cyber-stack-adoption]], [[nox]], [[zheng]], [[hemera]
 
 ## Stack Integration
 
-NoxLowering is the bridge that makes every `.tri` program a first-class participant in the cyber substrate. The compiled noun output by NoxLowering IS the program: its [[hemera]] hash IS its identity in [[cybergraph]], its CID IS what [[soft3]]'s `particle()` registers, and running it means calling `ask(ν, noun, formula, τ, a, v, t)` — which checks the [[cybergraph]] cache first, runs on [[nox]] if not cached, and records `(formula_cid, object_cid) → (result_cid, proof_cid)` as a permanent cyberlink.
+NoxLowering is the bridge that makes every `.tri` program a first-class participant in the cyber substrate. The compiled noun output by NoxLowering IS the program: its [[hemera]] hash IS its identity in [[cybergraph]], its particle IS what [[soft3]]'s `particle()` registers, and running it means calling `ask(ν, noun, formula, τ, a, v, t)` — which checks the [[cybergraph]] cache first, runs on [[nox]] if not cached, and records `(formula_particle, object_particle) → (result_particle, proof_particle)` as a permanent cyberlink.
 
 The state jet recognition in the NoxLowering backend — where the compiler emits TRANSFER, INSERT, and UPDATE patterns — directly shapes the [[bbg]] focus cost. A transfer that would cost ~1,600 constraints as a generic [[nox]] trace costs 3 constraints via the state jet. This is not a micro-optimization: it determines whether the operation is economically viable within the focus budget τ at all.
 
@@ -19,7 +19,7 @@ The state jet recognition in the NoxLowering backend — where the compiler emit
 
 The [[CORE]] reduction patterns — 16 patterns that define the substrate's evaluation semantics — are what NoxLowering maps Trident TIR onto. NoxLowering is not just a code generator; it is an encoding of CORE's formal semantics into Trident's compilation pipeline. When CORE is updated, NoxLowering must reflect the change exactly — the two are in lockstep.
 
-Programs deployed via this target are registered in [[Atlas]] as content-addressed packages. The package CID is a [[hemera]] hash of the compiled noun. Future invocations retrieve the package from [[Atlas]], execute via [[nox]], and cache results in [[cybergraph]]. The entire lifecycle — compile, deploy, execute, prove, cache — is mediated by the same content-addressed identity system.
+Programs deployed via this target are registered in [[Atlas]] as content-addressed packages. The package particle is a [[hemera]] hash of the compiled noun. Future invocations retrieve the package from [[Atlas]], execute via [[nox]], and cache results in [[cybergraph]]. The entire lifecycle — compile, deploy, execute, prove, cache — is mediated by the same content-addressed identity system.
 
 ## the opportunity
 
@@ -218,7 +218,7 @@ polynomial: same gates, but proofs are ~2 KiB instead of ~200 KiB
 
 NoxLowering is the moment Trident programs stop being abstract computations and become living participants in a planetary knowledge substrate.
 
-A compiled Trident program, lowered through NoxLowering, produces a noun. That noun's [[hemera]] hash is its identity — permanent, global, unforgeable. Registering it with [[soft3]]'s `particle()` call writes it into [[cybergraph]] in one step. From that moment, any neuron anywhere in the network can retrieve and execute it by CID. There is no deployment server, no registry maintenance, no version management — the content address IS the deployment.
+A compiled Trident program, lowered through NoxLowering, produces a noun. That noun's [[hemera]] hash is its identity — permanent, global, unforgeable. Registering it with [[soft3]]'s `particle()` call writes it into [[cybergraph]] in one step. From that moment, any neuron anywhere in the network can retrieve and execute it by particle. There is no deployment server, no registry maintenance, no version management — the content address IS the deployment.
 
 When a neuron calls `ask(ν, object_cid, formula_cid)`, [[nox]] checks [[cybergraph]] first. If the answer exists as a cyberlink, execution is instantaneous — [[soft3]]'s `query()` returns the result and its [[zheng]] proof in one round trip. If not, [[warrior-cyber]] runs the program on the nearest available backend (cpu, webgpu, or metal), [[zheng]] generates the proof, and the cyberlink is written. The next call costs nothing.
 

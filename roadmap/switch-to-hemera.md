@@ -147,7 +147,7 @@ These are replaced by `cyber_hemera::hash()` and `cyber_hemera::Hasher`.
 
 ## Vision
 
-After the [[hemera]] switch, the [[cybergraph]]'s content addressing and [[zheng]]'s internal hashing use the same primitive. A particle's CID and the hash commitment inside its proof are computed by the same function. This creates an unexpected synergy: Merkle proofs over content-addressed data — using [[hemera]] — can be verified inside [[zheng]] proofs, which use [[hemera]] internally, at zero marginal cost. The graph and the proof system share a hash function and a security assumption.
+After the [[hemera]] switch, the [[cybergraph]]'s content addressing and [[zheng]]'s internal hashing use the same primitive. A particle and the hash commitment inside its proof are computed by the same function. This creates an unexpected synergy: Merkle proofs over content-addressed data — using [[hemera]] — can be verified inside [[zheng]] proofs, which use [[hemera]] internally, at zero marginal cost. The graph and the proof system share a hash function and a security assumption.
 
 The self-bootstrapped constants (from the "cyber" seed) matter more than they appear to. Every content address in the [[cybergraph]], every program digest in [[Atlas]], every Brakedown commitment in every [[zheng]] proof: all are rooted in the same cryptographic identity. One hash function, one trust root, one security assumption for the entire stack. The current split — BLAKE3 for round constant generation, custom Poseidon2 for content addressing — means two trust roots and two audit surfaces. After the switch, there is one.
 

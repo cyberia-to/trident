@@ -9,25 +9,25 @@ planned: 128K
 
 ## Motivation
 
-The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: TIR op sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates TIR and how [[warrior-cyber]] lowers TIR to [[nox]] traces.
+The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: nox reduction sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates nox sequences and how [[warrior-cyber]] proves them via [[zheng]].
 
-Peephole optimization in Trident operates at the TIR level (see `../reference/ir.md`): it rewrites windows of TIR ops before [[nox]] lowering. This is the correct level because TIR-level rewrites determine which [[nox]] reduction patterns are triggered — changing TIR changes [[nox]]. The goal is cheaper [[nox]] execution: fewer trace steps and fewer jet invocations, which determines both trace_length and jet invocation counts.
+Peephole optimization operates on nox reduction sequences (22-op vocabulary: 16 reduction patterns + 1 hint + 5 jets). The goal is cheaper [[nox]] execution: fewer trace steps and fewer jet invocations, which determines both trace_length and jet invocation counts.
 
-Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change at the TIR level, and can we replicate those changes as fast deterministic rules?"
+Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change at the nox level, and can we replicate those changes as fast deterministic rules?"
 
 Related proposals: [[algebraic-identity-explorer]], [[instruction-scheduling-nn]], [[neural-theorem-prover]], [[compiler-ensemble]].
 
 ## Vision
 
-Peephole rules are compiler knowledge made explicit. Once extracted by the [[learned-peephole]] system and validated by [[neural-theorem-prover]], they are added to the deterministic rule database — an [[Atlas]] package. Every future compilation automatically applies them. The neural discovery process is one-time; the economic benefit is forever. In the [[cybergraph]], the rule database version is a particle; each rule is a cyberlink from the pattern CID ([[hemera]]-addressed) to the replacement CID.
+Peephole rules are compiler knowledge made explicit. Once extracted by the [[learned-peephole]] system and validated by [[neural-theorem-prover]], they are added to the deterministic rule database — an [[Atlas]] package. Every future compilation automatically applies them. The neural discovery process is one-time; the economic benefit is forever. In the [[cybergraph]], the rule database version is a particle; each rule is a cyberlink from the pattern particle ([[hemera]]-addressed) to the replacement particle.
 
-Stack integration: Peephole rules operate at TIR level (before [[warrior-cyber]] lowering). The most impactful rules — those that reduce [[hemera]] jet invocations — have outsized impact because every [[hemera]] call touches the [[cybergraph]]'s identity layer. Rules are deployed as an [[Atlas]] package; compilers pin to a version and can reproduce compilation results exactly. As the [[bbg]] network accumulates more execution data, the rule database's economic value compounds — more usage means more pattern data means better rules means cheaper proofs for everyone.
+Stack integration: Peephole rules operate on nox reduction sequences. The most impactful rules — those that reduce [[hemera]] jet invocations — have outsized impact because every [[hemera]] call touches the [[cybergraph]]'s identity layer. Rules are deployed as an [[Atlas]] package; compilers pin to a version and can reproduce compilation results exactly. As the [[bbg]] network accumulates more execution data, the rule database's economic value compounds — more usage means more pattern data means better rules means cheaper proofs for everyone.
 
 ## Design
 
 ### What Peephole Optimization Is
 
-A peephole optimizer scans TIR op sequences with a sliding window (size 3–8 ops). At each window position, it checks whether the windowed sequence matches a known pattern and, if so, replaces it with a cheaper equivalent:
+A peephole optimizer scans nox reduction sequences with a sliding window (size 3–8 operations). At each window position, it checks whether the windowed sequence matches a known pattern and, if so, replaces it with a cheaper equivalent:
 
 ```
 Window [Mul(x, x)]           → detected as square pattern → replace with [Square(x)]

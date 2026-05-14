@@ -147,11 +147,11 @@ The Trident REPL is the entry point to the [[cybergraph]]. Every evaluated expre
 
 The REPL is also how developers build intuition for [[nox]] cost that no documentation can substitute. After 20 minutes of seeing `hash(x)` cost 198 steps and `x * x` cost 1, those numbers become visceral. After an hour, the developer thinks in proof cost naturally. Every optimization pattern the algebraic identity explorer discovers eventually surfaces as a REPL suggestion — the pattern library is the accumulated knowledge of the ecosystem expressed as interactive feedback.
 
-The `:query existing_cid` command completes the loop: fetch a previously computed result from the [[cybergraph]] without re-running it. If `hemera(x)` was computed before and its result is a particle, `:query` retrieves it in milliseconds. Memoization through the knowledge graph replaces redundant computation — the REPL is the developer-facing interface to the system's global memoization layer.
+The `:query existing_cid` command completes the loop: fetch a previously computed result from the [[cybergraph]] without re-running it. If `hemera(x)` was computed before and its result exists as a particle, `:query` retrieves it in milliseconds. Memoization through the knowledge graph replaces redundant computation — the REPL is the developer-facing interface to the system's global memoization layer.
 
 ## Stack Integration
 
-`:prove` in the REPL calls [[warrior-cyber]] directly, running the full [[zheng]] prover on the session trace and reporting real trace length, sumcheck rounds, and commitment sizes. `:submit` calls [[soft3]]'s `cyberlink()` to record the computation as a permanent particle in the [[cybergraph]] — the [[hemera]] CID of the result identifies it. `:query existing_cid` fetches a previously computed particle via [[soft3]]'s `query()` without re-running the computation. The REPL connects the interactive development loop to the planetary knowledge graph.
+`:prove` in the REPL calls [[warrior-cyber]] directly, running the full [[zheng]] prover on the session trace and reporting real trace length, sumcheck rounds, and commitment sizes. `:submit` calls [[soft3]]'s `cyberlink()` to record the computation as a permanent particle in the [[cybergraph]] — the [[hemera]] particle identifies it. `:query existing_particle` fetches a previously computed particle via [[soft3]]'s `query()` without re-running the computation. The REPL connects the interactive development loop to the planetary knowledge graph.
 
 ## Key Tradeoffs
 

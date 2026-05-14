@@ -126,7 +126,7 @@ The CI gate closes the loop: packages whose focus cost exceeds the declared boun
 
 ## Stack Integration
 
-The IDE queries [[cybergraph]] particles via [[soft3]]'s `query(cid, dimension)` to fetch previously measured [[nox]] step counts for known function signatures. [[hemera]] CIDs identify function variants: if `hemera(source_text)` matches a particle in the graph, the trace data is fetched directly rather than estimated. The [[bbg]] focus budget constraint is the unit the CI gate enforces — the same unit the state machine uses on-chain. IDE, CI, and runtime speak the same accounting language.
+The IDE queries [[cybergraph]] particles via [[soft3]]'s `query(particle, dimension)` to fetch previously measured [[nox]] step counts for known function signatures. [[hemera]] particles identify function variants: if `hemera(source_text)` matches a particle in the graph, the trace data is fetched directly rather than estimated. The [[bbg]] focus budget constraint is the unit the CI gate enforces — the same unit the state machine uses on-chain. IDE, CI, and runtime speak the same accounting language.
 
 ## Key Tradeoffs
 

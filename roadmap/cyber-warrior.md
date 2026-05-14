@@ -262,7 +262,7 @@ The three backends are not alternatives — they are a hierarchy. The metal back
 
 ## Stack Integration
 
-The warrior pipeline closes the full cyber stack loop: `.tri → NounBuilder → nox::reduce → zheng::prove → Proof`. The [[hemera]] jet (pattern 15) inside the [[nox]] reduction accelerates hash computations; the Brakedown Merkle tree inside [[zheng]] is built with [[hemera]] via the cpu/webgpu/metal backends. `FifoCallProvider` feeds the witness tape to [[nox]] pattern 16, enabling [[bbg]]-style privacy: private inputs stay in the prover, public outputs enter the proof. [[soft3]]'s `submit()` broadcasts the resulting proof; [[bbg]] accepts the first valid proof meeting the focus bound. [[Atlas]] receives the program bundle, identified by its [[hemera]] CID, once the proving pipeline is wired end-to-end.
+The warrior pipeline closes the full cyber stack loop: `.tri → NounBuilder → nox::reduce → zheng::prove → Proof`. The [[hemera]] jet (pattern 15) inside the [[nox]] reduction accelerates hash computations; the Brakedown Merkle tree inside [[zheng]] is built with [[hemera]] via the cpu/webgpu/metal backends. `FifoCallProvider` feeds the witness tape to [[nox]] pattern 16, enabling [[bbg]]-style privacy: private inputs stay in the prover, public outputs enter the proof. [[soft3]]'s `submit()` broadcasts the resulting proof; [[bbg]] accepts the first valid proof meeting the focus bound. [[Atlas]] receives the program bundle, identified by its [[hemera]] particle, once the proving pipeline is wired end-to-end.
 
 ## what is not in scope (PoC)
 

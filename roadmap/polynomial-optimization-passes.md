@@ -17,7 +17,7 @@ The NTT auto-vectorization in Pass 7 is a bridge to the [[nox]] `ntt` jet — a 
 
 The [[bbg]] focus budget τ is charged per [[nox]] reduction step. A convolution that costs 65,536 multiply steps naively costs 2,048 shift-add steps after Pass 7 — a 32× reduction in τ spent. Programs doing polynomial arithmetic (commitment schemes, NTT-based hashing, FHE operations over $R_q$) become affordable to neurons that would otherwise exhaust their focus budget.
 
-Pass-suite configuration and tuning results are deployed as [[Atlas]] packages alongside the field-arithmetic suite. The NTT crossover threshold, Pippenger bucket parameters, and domain registry seed tables are content-addressed artifacts — any [[warrior-cyber]] instance anywhere can reproduce the exact same optimization decisions by referencing the same package CID.
+Pass-suite configuration and tuning results are deployed as [[Atlas]] packages alongside the field-arithmetic suite. The NTT crossover threshold, Pippenger bucket parameters, and domain registry seed tables are content-addressed artifacts — any [[warrior-cyber]] instance anywhere can reproduce the exact same optimization decisions by referencing the same package particle.
 
 ## Motivation
 
@@ -135,4 +135,4 @@ When [[zheng]] is self-hosted in Trident — the verifier written in `.tri`, com
 
 At that point, every proof generated on the network is cheaper than it was at genesis — not because hardware improved, but because the compiler learned. The [[bbg]] focus budget required to run a proof drops with each pass improvement. Neurons that run complex computations — multi-step logic, polynomial commitment verification, FHE ring operations — find their focus expenditure shrinking as the [[Atlas]] package version increments.
 
-The Lagrange basis for a commitment domain of degree $2^{20}$ is computed once, embedded as a content-addressed particle in [[hemera]], and retrieved by every subsequent compilation that touches that domain. The [[cybergraph]] acts as the global basis cache: the cyberlink `domain_cid → basis_cid` is written once and read forever. No two [[warrior-cyber]] instances on the network ever recompute the same basis.
+The Lagrange basis for a commitment domain of degree $2^{20}$ is computed once, embedded as a particle in [[hemera]], and retrieved by every subsequent compilation that touches that domain. The [[cybergraph]] acts as the global basis cache: the cyberlink `domain_particle → basis_particle` is written once and read forever. No two [[warrior-cyber]] instances on the network ever recompute the same basis.
