@@ -163,8 +163,8 @@ Compute on data you cannot see. Prove you did it right.
 ```
 1. Client encrypts input under FHE:     ct = Enc(pk, data)
 2. Server evaluates circuit on ct:       ct' = Eval(circuit, ct)
-3. Server generates STARK proof:         π = Prove(circuit, ct, ct')
-4. Client verifies proof:                Verify(π) → accept/reject
+3. Server generates STARK proof:         φ* = Prove(circuit, ct, ct')
+4. Client verifies proof:                Verify(φ*) → accept/reject
 5. Client decrypts result:               result = Dec(sk, ct')
 ```
 
@@ -180,8 +180,8 @@ full witness.
 ```
 1. Each party holds secret share:        [x]_i = share_i(x)
 2. Parties run MPC to evaluate circuit:  [y]_i = MPC_Eval(circuit, [x]_i)
-3. Parties jointly construct STARK:      π = MPC_Prove([trace]_i)
-4. Anyone verifies proof:                Verify(π) → accept/reject
+3. Parties jointly construct STARK:      φ* = MPC_Prove([trace]_i)
+4. Anyone verifies proof:                Verify(φ*) → accept/reject
 ```
 
 ### FHE + MPC: Threshold Encrypted Computation
@@ -203,9 +203,9 @@ All three together. Private verifiable inference on encrypted data:
 1. MPC key ceremony:     Guardians generate (pk, [sk]_i)
 2. FHE encryption:       Alice encrypts data: ct = Enc(pk, data)
 3. FHE evaluation:       Node runs model: ct' = Model(ct)
-4. STARK proof:          Node generates proof π of correct execution
+4. STARK proof:          Node generates proof φ* of correct execution
 5. Threshold decryption: Guardians cooperate: result = MPC_Dec([sk]_i, ct')
-6. Verification:         Anyone checks Verify(π) → accept
+6. Verification:         Anyone checks Verify(φ*) → accept
 ```
 
 Alice's data never exposed (FHE). Result provably correct (ZK). No single
