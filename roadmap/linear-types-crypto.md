@@ -7,6 +7,9 @@ planned: 32K
 
 # Linear Types for Cryptographic Values
 
+**Related proposals:** [[refinement-types]], [[private-public-types]], [[contracts]]
+**Reference:** [language.md §11 — Type Checking Rules](../reference/language.md)
+
 ## Motivation
 
 Cryptographic hygiene failures are not runtime bugs. They are type errors that the type system fails to catch. A nonce used twice breaks security. A witness accessed twice leaks private data. A secret key copied into a public context reveals it. These errors are systematic, they occur across all cryptographic codebases, and they are invisible to conventional type systems because conventional type systems track data type — not data usage count.
@@ -82,7 +85,7 @@ The compiler verifies that `token` flows into exactly one expression (`hash(toke
 
 **Escape hatches**: Some legitimate patterns require breaking linearity temporarily. A value may need to be committed and also logged for debugging. The type system must support controlled escape with explicit annotation (`#[allow_copy]`), and these annotations should be auditable.
 
-**Interaction with the proof system**: A `Linear<Field>` value consumed in the program corresponds to a field element that appears exactly once in the execution trace. This is a STARK-provable property — the constraint system can verify linearity as part of the proof. The type-level check is a fast compile-time shortcut; the STARK provides the cryptographic guarantee.
+**Interaction with the proof system**: A `Linear<Field>` value consumed in the program corresponds to a field element that appears exactly once in the nox execution trace. This is a STARK-provable property — zheng's constraint system can verify linearity as part of the proof. The type-level check is a fast compile-time shortcut; the STARK provides the cryptographic guarantee. Linearity violations at the trace level would cause the zheng verifier to reject the proof.
 
 **Performance**: Linear type checking is a flow analysis over the control flow graph. For programs with complex control flow (many branches, nested loops), the analysis may be expensive. In practice, cryptographic code tends to be structured (limited branching over secrets), so the analysis should terminate quickly.
 

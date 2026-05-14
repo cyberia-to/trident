@@ -7,11 +7,14 @@ planned: 32K
 
 # Refinement Types over Field Arithmetic
 
+**Related proposals:** [[contracts]], [[linear-types-crypto]], [[dependent-types]]
+**Reference:** [language.md §7 — Attributes (#[requires], #[ensures])](../reference/language.md)
+
 ## Motivation
 
 Many field-arithmetic bugs are value-range bugs: division by zero when a denominator is expected nonzero, probability values that overflow their intended range, signed values that cross the field's midpoint. Conventional type systems cannot express these constraints — `Field` and `Field` are the same type regardless of value. Refinement types add predicates to types, making the constraint part of the type itself.
 
-In Trident, refinement types have a unique property: they compile to STARK constraints. Proving that the program's execution satisfies the predicate is part of the STARK proof itself. There is no separate verification step, no SMT solver at runtime, no assertion that can be disabled. The proof of execution IS the proof that all refinements were satisfied.
+In Trident, refinement types have a unique property: they compile to nox constraints checked by zheng. Proving that the program's execution satisfies the predicate is part of the STARK proof itself — specifically, zheng's SuperSpartan sumcheck over the nox execution trace. There is no separate verification step, no SMT solver at runtime, no assertion that can be disabled. The proof of execution IS the proof that all refinements were satisfied.
 
 ## Design
 
@@ -45,20 +48,20 @@ fn clamped_add(p: Probability, q: Probability) -> Probability {
 }
 ```
 
-### Compilation to STARK Constraints
+### Compilation to nox Constraints
 
-When a `NonZero` value is used, the compiler generates no additional TASM instructions for the check — the STARK constraint is synthesized at the constraint-generation level, not in the program's instruction stream. Checking $b \neq 0$ for a `NonZero` argument translates to a constraint polynomial that evaluates to zero only when $b$ is zero — and a valid proof means this constraint is never triggered.
+When a `NonZero` value is used, the compiler generates no additional nox reduction steps for the check — the constraint is synthesized at the zheng constraint-generation level, not in the nox reduction sequence. Checking $b \neq 0$ for a `NonZero` argument translates to a constraint polynomial that evaluates to zero only when $b$ is zero — and a valid zheng proof means this constraint is never triggered.
 
-More precisely: the verifier, upon receiving the STARK proof, checks that all constraint polynomials are satisfied over the execution trace. A violated refinement means a constraint polynomial that should be zero is nonzero — which means the proof is invalid. Invalid proofs are rejected. So the refinement is enforced by the proof system itself, not by the program's logic.
+More precisely: the zheng verifier, upon receiving the STARK proof, checks that all constraint polynomials are satisfied over the nox execution trace. A violated refinement means a constraint polynomial that should be zero is nonzero — which means the proof is invalid. Invalid proofs are rejected. The refinement is enforced by the proof system itself, not by the program's reduction logic.
 
 ```trident
 // Source:
 fn f(x: NonZero) -> Field { invert(x) }
 
-// Generated constraint (not TASM — constraint polynomial):
-// For every row where f is called:
+// Generated constraint (not a nox pattern — a zheng constraint polynomial):
+// For every nox trace row where f is evaluated:
 //   x_argument ≠ 0   →   (x_argument - 0) has a multiplicative inverse
-//   Encoded as:   x_argument * x_argument_inv - 1 = 0  (Processor row constraint)
+//   Encoded as:   x_argument * x_argument_inv - 1 = 0
 ```
 
 ### Predicate Subsumption
@@ -71,7 +74,7 @@ The compiler maintains a subtype lattice over refinements and uses it to avoid g
 
 **Predicate expressibility**: Refinements limited to efficiently-checkable predicates (no arbitrary recursion in the predicate). For predicates that require full proof machinery to verify (e.g., "x is a prime"), the refinement itself is not a compile-time type check but a STARK constraint generated at runtime — still valuable, but not statically eliminated.
 
-**Constraint cost**: Each non-discharged refinement generates additional STARK constraints. For high-frequency operations, this adds Processor rows. The compiler should report refinement constraint cost in the proof cost breakdown so developers can identify expensive predicates.
+**Constraint cost**: Each non-discharged refinement generates additional zheng constraints. For high-frequency operations, this adds to the nox trace size and hence proof cost. The compiler should report refinement constraint cost in the proof cost breakdown (see [[proof-cost-types]]) so developers can identify expensive predicates.
 
 **SMT solver integration**: For static discharge of refinements, an SMT solver (Z3 or CVC5) could verify predicate implication at compile time. This is expensive for complex predicates. The compiler starts with a simple syntactic subsumption check and falls back to constraint generation when that fails.
 
@@ -102,9 +105,9 @@ fn check_subtype(sub: &RefinedType, sup: &RefinedType) -> SubtypeResult {
     // Fall back to constraint generation
 }
 
-// cost/constraints.rs — generates STARK constraints for non-discharged refinements
-fn generate_refinement_constraint(pred: &Predicate, row_id: TraceRowId) -> Constraint {
-    // Translates predicate to constraint polynomial
+// cost/constraints.rs — generates zheng constraints for non-discharged refinements
+fn generate_refinement_constraint(pred: &Predicate, row_id: NoxTraceRowId) -> ZhengConstraint {
+    // Translates predicate to a SuperSpartan constraint polynomial over the nox trace
 }
 ```
 

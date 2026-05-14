@@ -9,11 +9,13 @@ planned: 128K
 
 ## Motivation
 
-The Goldilocks field $p = 2^{64} - 2^{32} + 1$ has algebraic structure that extends indefinitely: arithmetic identities, subgroup structure, roots of unity, extension field shortcuts, and interactions between Triton VM's instruction set and the field's geometry. Human algebraists find these one at a time, by studying theory and having insights. A neural system can search the space systematically, discovering identities no human would find, at a rate no human can match.
+The Goldilocks field $p = 2^{64} - 2^{32} + 1$ has algebraic structure that extends indefinitely: arithmetic identities, subgroup structure, roots of unity, extension field shortcuts, and interactions between nox's reduction patterns and the field's geometry. Human algebraists find these one at a time, by studying theory and having insights. A neural system can search the space systematically, discovering identities no human would find, at a rate no human can match.
 
 Every discovered identity is a new compiler optimization pass. The compiler improves forever. The program corpus gets cheaper to prove — retroactively, for every program that matches the pattern. There is no ceiling. Every branch of algebra offers new passes. The deeper the network explores, the more it finds.
 
 This changes the nature of compilation from a static engineering artifact to an open-ended learning system.
+
+Related proposals: [[field-arithmetic-passes]], [[polynomial-optimization-passes]], [[learned-peephole]], [[neural-theorem-prover]].
 
 ## Design
 
@@ -23,28 +25,32 @@ The field has identifiable layers of algebraic structure, each with its own opti
 
 | Layer | Example | Savings per match |
 |-------|---------|-------------------|
-| 0 — Arithmetic | `push 0; add` → ∅ | 1–2 rows |
-| 1 — Goldilocks constants | `push 2^32; mul` → shift trick | 3–10 rows |
-| 2 — Subgroup inversions | Fermat with exponent $2^{32}-2$ | 10–50 rows |
-| 3 — Roots of unity | NTT butterfly for ω-constants | 50–200 rows |
-| 4 — Hash shortcuts | Tip5 internal structure | 100–500 rows |
-| 5+ — Polynomial geometry | Evaluation at structured points | 200–1000+ rows |
+| 0 — Arithmetic | identity reduction: `add 0` → ∅ | 1–2 nox steps |
+| 1 — Goldilocks constants | `mul 2^32` → shift trick | 3–10 nox steps |
+| 2 — Subgroup inversions | Fermat with exponent $2^{32}-2$ | 10–50 nox steps |
+| 3 — Roots of unity | NTT butterfly for ω-constants | 50–200 nox steps |
+| 4 — Hash shortcuts | hemera (Poseidon2) internal structure | 100–500 nox steps |
+| 5+ — Polynomial geometry | Evaluation at structured points | 200–1000+ nox steps |
 
-Layer N is essentially unbounded: interactions between the field, the instruction set, and accumulated composed identities from lower layers.
+Layer N is essentially unbounded: interactions between the field, the nox reduction patterns + jets, and accumulated composed identities from lower layers.
+
+Proof cost in nox/zheng is `trace_length + sum(jet_costs)`. Every reduction in trace length or jet invocation count directly lowers proving cost. A match at Layer 3 that eliminates 100 nox steps saves 100 units of trace cost.
 
 ### Discovery Architecture
 
-**Proposer (GFlowNet)**: Generates candidate TASM sequence pairs (sequence_A, sequence_B) — the claim being that both sequences compute the same function. Input: known identity database, instruction vocabulary (~44 TASM ops), frequency data from real programs. Output: candidate pairs of 2–12 instructions. Reward: identity_found × usefulness_score. Diversity maintained via GFlowNet sampling.
+**Proposer (GFlowNet)**: Generates candidate nox pattern sequence pairs (sequence_A, sequence_B) — the claim being that both sequences compute the same function. Input: known identity database, nox reduction pattern vocabulary (16 patterns + 5 jets + 1 hint), frequency data from real programs. Output: candidate pairs of 2–12 pattern applications. Reward: identity_found × usefulness_score. Diversity maintained via GFlowNet sampling.
 
 **Validator (4 stages)**:
-1. Execute both sequences on 10,000 random inputs — any output disagreement rejects immediately
+1. Execute both nox sequences on 10,000 random inputs — any output disagreement rejects immediately
 2. Execute on 10,000,000 inputs — false positive probability below $10^{-7}$
 3. Symbolic execution → express both as polynomial maps → verify via Schwartz-Zippel
-4. Optional: STARK proof of equivalence for high-value identities
+4. Optional: zheng proof of equivalence for high-value identities (warrior-cyber runs the equivalence program, producing a full nox trace + zheng proof)
 
-**Usefulness scorer**: Scans the program corpus. For each validated identity: frequency (how often does sequence_A appear?), savings (cost(A) - cost(B)), table_criticality (extra weight if savings hit the current bottleneck table). Score = frequency × savings × table_criticality.
+**Usefulness scorer**: Scans the program corpus. For each validated identity: frequency (how often does sequence_A appear in nox traces?), savings (trace_cost(A) - trace_cost(B) in nox steps), jet_criticality (extra weight if savings reduce expensive jet invocations — hash jet via hemera, poly_eval jet). Score = frequency × savings × jet_criticality. The [[trace-predictor]] provides jet_criticality weights dynamically.
 
-**Rule database**: Each rule carries pattern, replacement, cost_savings, confidence (validation stage 1–4), frequency, layer, discovery date, composable_with list. Applied deterministically before the neural compiler runs. Sorted by (frequency × savings) descending. Longest-match wins for conflicts.
+**Rule database**: Each rule carries pattern, replacement, cost_savings (in nox trace steps), confidence (validation stage 1–4), frequency, layer, discovery date, composable_with list. Applied deterministically before the neural compiler runs. Sorted by (frequency × savings) descending. Longest-match wins for conflicts.
+
+The rule database applies at TIR level (see `../reference/ir.md` for TIR op definitions) and is also consulted by [[learned-peephole]] for its deterministic pass.
 
 ### The Compounding Flywheel
 
@@ -59,9 +65,11 @@ The rule database only grows. Savings compound multiplicatively across layers. A
 
 ### Self-Referential Closure
 
-The explorer is itself a Trident program. Its compilation benefits from the identities it discovers. The explorer optimizes its own execution. The fixed point: when the explorer can no longer improve its own compilation cost, it has extracted the maximum algebraic efficiency reachable by its architecture — a lower bound on the extractable efficiency of the Goldilocks field for Triton VM.
+The explorer is itself a Trident program. Its compilation benefits from the identities it discovers. The explorer optimizes its own execution. The fixed point: when the explorer can no longer improve its own compilation cost, it has extracted the maximum algebraic efficiency reachable by its architecture — a lower bound on the extractable efficiency of the Goldilocks field for nox.
 
 A larger explorer reaches a lower fixed point. The hierarchy of fixed points, indexed by explorer capacity, converges to the theoretical minimum proving cost — the algebraic Shannon limit of the field.
+
+The explorer runs 24/7 as a background process. Discovered rules are snapshotted weekly into the rule database and trigger a monthly corpus recompilation to measure cumulative savings.
 
 ### Estimated Cumulative Impact
 
@@ -77,14 +85,14 @@ Savings compound multiplicatively across layers. Programs reaching multiple laye
 
 ## Implementation Sketch
 
-**Phase A** (1 week): Brute-force random pair generator over sequences of length 2–4. Builds initial rule database, establishes validation pipeline. No NN.
+**Phase A** (1 week): Brute-force random pair generator over nox pattern sequences of length 2–4. Builds initial rule database, establishes validation pipeline. No NN.
 
-**Phase B** (2 weeks): Small MLP (~10K params) filters random proposals. 10× speedup over brute force.
+**Phase B** (2 weeks): Small MLP (~10K params) filters random proposals. 10× speedup over brute force. Uses [[nn-trd]] for field-native inference.
 
-**Phase C** (3 weeks): GFlowNet proposer. Reward-driven, diversity-guaranteed exploration across all algebraic layers.
+**Phase C** (3 weeks): GFlowNet proposer. Reward-driven, diversity-guaranteed exploration across all algebraic layers. The proposer is implemented in [[nn-trd]] and is itself a provable neural network.
 
 **Phase D** (2 weeks): Automated composition search. Depth-limited to 3. Runs asynchronously alongside Phase C.
 
 **Phase E** (ongoing): 24/7 continuous operation. Weekly rule database snapshots. Monthly corpus recompilation to measure cumulative savings.
 
-The explorer is scheduled for 128K — it requires the full compiler stack to be stable before meaningful corpus data accumulates, and its value compounds with the size and diversity of the program corpus.
+The explorer is scheduled for 128K — it requires the full compiler stack to be stable before meaningful corpus data accumulates, and its value compounds with the size and diversity of the program corpus. See also [[neural-theorem-prover]] for formal equivalence proofs of high-value identities.

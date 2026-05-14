@@ -7,11 +7,13 @@ planned: 32K
 
 # Invariant-Carrying Loops
 
+**Related:** [[contracts]] · [[termination-proofs]]
+
 ## Motivation
 
 Loop invariants are the standard technique for proving properties of iterative computations. In conventional verification tools (Dafny, Frama-C, Why3), invariants are checked by an SMT solver at the beginning and end of each loop iteration — the inductive step must hold. But the check is separate from the program's execution. A valid SMT proof does not guarantee that the running program maintains the invariant; it guarantees that the program, as modeled by the verifier, does.
 
-In Trident, loop invariants become inductive STARK constraints. The invariant is checked at every iteration as part of the execution trace. If the invariant fails at any point during execution, the STARK proof is invalid — not just flagged, but mathematically refuted. The running program and the verification are the same artifact.
+In Trident, loop invariants become inductive nox constraints. The invariant is checked at every reduction step of the nox trace that corresponds to a loop iteration. If the invariant fails at any point during execution, the zheng proof is invalid — not just flagged, but mathematically refuted. The running program and the verification are the same artifact.
 
 ## Design
 
@@ -29,11 +31,11 @@ fn sum_array(arr: [Field; N]) -> Field {
 }
 ```
 
-The `invariant` clause states a property that must hold at the start of every loop iteration. At $i = 0$: `acc == sum(arr[0..0]) == 0` — trivially true. After iteration $k$: `acc == sum(arr[0..k])`. The invariant is inductive if the loop body maintains it. If it does not, the STARK proof is invalid.
+The `invariant` clause states a property that must hold at the start of every loop iteration. At $i = 0$: `acc == sum(arr[0..0]) == 0` — trivially true. After iteration $k$: `acc == sum(arr[0..k])`. The invariant is inductive if the loop body maintains it. If it does not, the zheng proof is invalid.
 
 ### Compilation Model
 
-Each invariant clause compiles to a STARK constraint that is checked at every loop iteration. The constraint polynomial evaluates to zero if and only if the invariant holds. If the invariant fails at any iteration, the polynomial is nonzero at that trace row — producing an invalid proof.
+Each invariant clause compiles to a nox constraint checked at every loop iteration. In nox, each loop body execution is a sequence of reduction steps; the invariant constraint is injected at the start of each iteration's reduction sequence. The constraint evaluates to zero if and only if the invariant holds. If the invariant fails at any iteration, the constraint is nonzero at that nox trace position — the zheng proof (via Brakedown PCS + sumcheck) is invalid.
 
 ```trident
 // Invariant: acc == sum(arr[0..i])
@@ -68,7 +70,7 @@ Each invariant compiles to a separate constraint. The conjunction of all constra
 
 The postcondition of the loop (the state after the last iteration) follows directly from the invariant. For `sum_array`, at $i = N$: `acc == sum(arr[0..N])` — which is exactly what the function is supposed to return. The loop invariant is a proof of correctness for the algorithm.
 
-This connects to `ensures` clauses: when the loop invariant at termination implies the function's postcondition, the compiler can discharge the postcondition automatically — no separate STARK constraint needed.
+This connects to `#[ensures]` clauses (see [[contracts]]): when the loop invariant at termination implies the function's postcondition, the compiler can discharge the postcondition automatically — no separate nox constraint needed.
 
 ```trident
 fn sum_array(arr: [Field; N]) -> Field
@@ -86,13 +88,13 @@ fn sum_array(arr: [Field; N]) -> Field
 
 ## Key Tradeoffs
 
-**Invariant cost**: Each invariant adds STARK constraints at every loop iteration. For a loop of $N$ iterations with $k$ invariants, this adds $O(k \cdot N)$ constraint evaluations to the trace. For tight inner loops (thousands of iterations), expensive invariants dominate the proof cost. The developer must weigh verification value against proof cost.
+**Invariant cost**: Each invariant adds nox constraints at every loop iteration. For a loop of $N$ iterations with $k$ invariants, this adds $O(k \cdot N)$ constraint evaluations to the nox trace. The cost model is nox trace length (reduction steps) — not AET table heights. For tight inner loops (thousands of iterations), expensive invariants dominate the proof cost. The developer must weigh verification value against proof cost. See [[termination-proofs]] for how nox bounds total trace length.
 
-**Invariant choice**: The invariant must be inductive — the loop body must maintain it. Choosing an inductive invariant is often the hard part of loop verification. The compiler checks inductiveness (approximately) by symbolic execution of one iteration from a generic state satisfying the invariant. If it cannot verify inductiveness statically, it reports a warning and relies on the STARK constraint to catch failures at runtime.
+**Invariant choice**: The invariant must be inductive — the loop body must maintain it. Choosing an inductive invariant is often the hard part of loop verification. The compiler checks inductiveness (approximately) by symbolic execution of one iteration from a generic state satisfying the invariant. If it cannot verify inductiveness statically, it reports a warning and relies on the nox constraint to catch failures at runtime.
 
 **Helper functions in invariants**: Invariants that call complex helper functions (like `sum(arr[0..i])`) embed those function calls in the constraint. The compiler must either unfold the helper (increasing constraint complexity) or use the incremental compilation strategy (recognizing accumulation patterns). For invariants over non-accumulating properties, the helper is evaluated fresh each iteration — which may be acceptable or prohibitive depending on the helper's cost.
 
-**No infinite loops**: Trident already requires bounded loops (fixed bounds at compile time). This makes invariant reasoning decidable — the invariant must hold for exactly $N$ iterations where $N$ is a constant. No concerns about infinite loops or non-terminating invariant checking.
+**No infinite loops**: Trident already requires bounded loops (fixed bounds at compile time). This makes invariant reasoning decidable — the invariant must hold for exactly $N$ iterations where $N$ is a constant. No concerns about infinite loops or non-terminating invariant checking. See [[termination-proofs]] for how this bound is embedded in the nox trace.
 
 ## Implementation Sketch
 

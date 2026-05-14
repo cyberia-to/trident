@@ -7,11 +7,13 @@ planned: 64K
 
 # Speculative Execution with Proof Rollback
 
+**Related:** [[lazy-proving]] · [[incremental-proving]]
+
 ## Motivation
 
 Aggressive compiler optimizations are often "usually correct" — they work for the vast majority of inputs but fail on edge cases. In conventional systems, the developer must prove the optimization is always correct before deploying it. This prevents many worthwhile optimizations from ever shipping.
 
-In a proof system, the proof mechanism itself serves as a correctness oracle. Run the speculative path, generate the proof, verify it. If valid, commit the result. If invalid (edge case triggered), discard the speculative result, run the conservative fallback, prove that instead. The proof system catches failures that the optimizer missed.
+In a proof system, the proof mechanism itself serves as a correctness oracle. Run the speculative path, generate the proof, verify it. If valid, commit the result. If invalid (edge case triggered), discard the nox trace and re-execute the conservative fallback path, prove that instead. The proof system catches failures that the optimizer missed.
 
 Speculative execution with proof rollback decouples the "is this optimization always correct?" question from the "should I try this optimization?" question. The developer says "try this aggressive path, but fall back if the proof fails." Correctness is guaranteed by construction.
 
@@ -28,23 +30,23 @@ speculate {
     let result = slow_but_safe_algorithm(input);
 }
 // result is available here: either the speculative or fallback result
-// The STARK proof covers whichever path was actually taken
+// The zheng proof covers whichever nox trace path was actually taken
 ```
 
 The runtime:
-1. Attempts the speculative block
-2. Generates an intermediate proof of the speculative execution
+1. Attempts the speculative block, accumulating a nox trace
+2. Generates an intermediate zheng proof of the speculative nox trace
 3. Verifies the proof
-4. If valid: commits the result, uses the speculative proof as the final proof
-5. If invalid: discards the speculative result, executes the fallback, proves the fallback
+4. If valid: commits the result, uses the speculative zheng proof as the final proof
+5. If invalid: discards the speculative nox trace (rollback = trace discard), re-executes the fallback path, proves the fallback trace
 
 The caller receives a valid result in both cases. The proof covers the actual execution path taken.
 
 ### What "Proof Fails" Means
 
-A STARK proof fails when a constraint is violated. In the context of speculative execution, failure means the speculative algorithm produced a result that violates some constraint — either an explicit `assert!`, a `requires`/`ensures` contract, a refinement type predicate, or a loop invariant.
+A zheng proof fails when a nox constraint is violated. In the context of speculative execution, failure means the speculative algorithm produced a result that violates some nox constraint — either an explicit `assert!`, a `#[requires]`/`#[ensures]` contract (see [[contracts]]), a refinement type predicate, or a loop invariant (see [[loop-invariants]]).
 
-The failure is not a segfault or an exception. It is a mathematical refutation: the STARK proof oracle says "this execution trace does not satisfy the constraint polynomials." The runtime detects this and rolls back.
+The failure is not a segfault or an exception. It is a mathematical refutation: the zheng proof oracle says "this nox execution trace does not satisfy the constraint polynomials." The runtime detects this, discards the nox trace, and rolls back.
 
 ```trident
 speculate {
@@ -108,7 +110,7 @@ Each level has its own proof verification. The innermost speculative block is ch
 
 **Determinism of rollback**: The fallback block must be deterministic and always correct. If the fallback block can also fail (produce an invalid proof), the entire `speculate`/`fallback` construct fails. The type system could enforce that the fallback block has an `ensures` contract that proves it always succeeds, but this places a verification burden on the developer.
 
-**Incremental speculation**: For programs that are speculatively proven repeatedly (e.g., in a loop), incremental proving can amortize the cost of repeated speculation. A speculative block that succeeds in the first iteration and again in subsequent iterations reuses the stable Brakedown layers.
+**Incremental speculation**: For programs that are speculatively proven repeatedly (e.g., in a loop), [[incremental-proving]] can amortize the cost of repeated speculation. A speculative block that succeeds in the first iteration and again in subsequent iterations reuses the stable Brakedown PCS layers from the previous successful nox trace. See also [[lazy-proving]] for how `defer_proof` composes with speculation at block granularity.
 
 ## Implementation Sketch
 
@@ -118,23 +120,22 @@ pub fn execute_speculate(
     speculative: &TirBlock,
     fallback: &TirBlock,
     state: &ExecutionState,
-) -> (ExecutionResult, Proof) {
-    // Try speculative path
-    let spec_state = state.clone();
-    let (spec_result, spec_aet) = execute_block(speculative, &mut spec_state.clone());
-    let spec_proof = generate_proof(spec_aet);
+) -> (ExecutionResult, ZhengProof) {
+    // Try speculative path — accumulate a nox trace
+    let (spec_result, spec_trace) = execute_block(speculative, &mut state.clone());
+    let spec_proof = generate_zheng_proof(spec_trace);
 
-    match verify_proof(&spec_proof) {
+    match verify_zheng_proof(&spec_proof) {
         ProofValid => (spec_result, spec_proof),
         ProofInvalid => {
-            // Roll back and execute fallback
-            let fb_state = state.clone();
-            let (fb_result, fb_aet) = execute_block(fallback, &mut fb_state.clone());
-            let fb_proof = generate_proof(fb_aet);
+            // Proof rollback = nox trace discard + re-execute fallback path
+            // spec_trace is dropped here; no partial state escapes
+            let (fb_result, fb_trace) = execute_block(fallback, &mut state.clone());
+            let fb_proof = generate_zheng_proof(fb_trace);
             (fb_result, fb_proof)
         }
     }
 }
 ```
 
-The key implementation requirement: the speculative block runs in a fully isolated state copy. Rollback simply discards this copy. The fallback runs in a fresh copy of the original state. No partial state mutations escape before the proof is verified.
+The key implementation requirement: the speculative block runs in a fully isolated state copy. Rollback simply discards the nox trace accumulated during speculation. The fallback runs in a fresh copy of the original state. No partial state mutations escape before the zheng proof is verified.

@@ -4,19 +4,23 @@ date: 2026-05-14
 ---
 # warrior-cyber: PoC execution + proving on nox/zheng
 
+**Related:** [[cyber-stack-adoption]], [[warrior-architecture]], [[switch-to-hemera]], [[cross-vm-proofs]]
+
 ## context
 
-The only working warrior today is trisha — it takes compiled TASM from
-trident, executes on Triton VM, and proves with Triton's FRI/STARK prover.
-Triton is not the primary target. nox is.
+The only working warrior today is trisha — it takes compiled Triton VM
+assembly (TASM) from trident, executes on Triton VM / Neptune, and proves
+with Triton's FRI/STARK prover. Triton VM is not the primary target. nox is.
 
 `trident build --target nox` produces Noun trees via NounBuilder. There is
 no warrior to execute or prove them. The trident → nox → zheng pipeline is
 wired in three separate repos but never end-to-end.
 
 This proposal specifies a PoC warrior that closes the pipeline. One binary.
-Four commands. Three proving backends: CPU (acpu AMX/NEON), WebGPU (wgpu,
-cross-platform including browser), Metal (aruminium, Apple Silicon native).
+Four commands. Three proving backends:
+- **cpu** — acpu AMX/NEON via honeycrisp, portable aarch64 baseline
+- **webgpu** — wgpu crate + WGSL shaders, cross-platform (macOS/Linux/Windows/browser)
+- **metal** — aruminium, pure Metal API (not wgpu-based), unimem zero-copy on Apple Silicon
 
 ## what warrior-cyber does
 
@@ -41,19 +45,23 @@ production path once `trident build --target nox` is wired to emit bundles).
 trident::build_noun(src)        # NounBuilder: AST → Noun
     │
     ▼
-nox::reduce(noun, input, calls) # 16 patterns + hint (Layer 2)
+nox::reduce(noun, input, calls) # 16 patterns + 1 hint (pattern 16) + 5 jets
     │  calls: FifoCallProvider from witness tape
-    │  returns (output, ExecutionTrace)
+    │  returns (output, ExecutionTrace)   ← nox trace length = reduction step count
     ▼
-zheng::prove(trace, claim)      # SuperSpartan + sumcheck + Brakedown
+zheng::prove(trace, claim)      # SuperSpartan IOP + sumcheck + Brakedown PCS
     │  internally calls lens::brakedown::commit(trace_evals)
     │  field ops via honeycrisp::acpu::field::goldilocks
+    │  hemera (pattern 15 hash jet) used for Merkle tree in Brakedown
     ▼
 Proof + Claim
     │
     ▼
 zheng::verify(proof, claim)     # verifier: < 100ms on M-series
 ```
+
+nox's 7-field `ask(ν, object, formula, τ, a, v, t)` maps to a cyberlink.
+Execution and proof are one act — the nox trace IS the zheng witness.
 
 ## hint — non-deterministic witness
 
@@ -83,8 +91,10 @@ Witness tape format: newline-separated `tag:value` pairs. The warrior reads
 a `.wit` file and populates the tape before reduction begins.
 
 For trinity, the bench reference (`benches/references/std/trinity/inference.rs`)
-already computes all required values in `compute_bench_divine()`. The witness
-tape is the FIFO of divine values the prover must supply:
+already computes all required values in `compute_bench_divine()`. The round
+constants in the bench reference that previously used Poseidon2 now use hemera
+(see [[switch-to-hemera]], layer 9). The witness tape is the FIFO of divine
+values the prover must supply:
 
 | call site | tag | values supplied |
 |-----------|-----|-----------------|
@@ -150,17 +160,18 @@ Target: < 3s for trinity on discrete GPU; < 1s on M3 via Metal adapter.
 
 ### metal — aruminium (Apple Silicon native)
 
-Maximum throughput on Mac. aruminium directly calls Metal APIs via
-Objective-C FFI (2,286 LOC of `Gpu`, `Pipeline`, `Buffer`, `Dispatch`).
-Same WGSL shaders as the wgpu backend compile to Metal Shading Language at
-runtime, but aruminium's `Dispatch` layer skips wgpu's validation overhead
-and uses Metal's `MTLComputeCommandEncoder` directly.
+Maximum throughput on Mac. aruminium is pure Metal — it directly calls Metal
+APIs via Objective-C FFI (2,286 LOC of `Gpu`, `Pipeline`, `Buffer`,
+`Dispatch`). This backend does NOT use wgpu; it is a separate implementation
+that skips wgpu's validation overhead and drives `MTLComputeCommandEncoder`
+directly with WGSL shaders compiled to Metal Shading Language at runtime.
 
 Additional Metal-specific optimisations:
 - `unimem::IOSurface` for zero-copy transfer between acpu (AMX encoding)
-  and aruminium (GPU hashing) — the trace buffer is shared, no memcpy
+  and aruminium (GPU hashing) — the trace buffer is shared via unified
+  memory (UMA), no memcpy across PCIe
 - AMX for Brakedown linear encoding (CPU-side), Metal for parallel Merkle
-  hashing (GPU-side) — the two operations pipeline across PCIe-less UMA
+  hashing (GPU-side) — the two operations pipeline across UMA
 
 Target: < 1s for trinity (UMA removes transfer overhead entirely).
 
@@ -184,7 +195,7 @@ RING_N         = 128    # ring dimension for PBS (≥ 2×DOMAIN, required)
 Trace estimate:
 - Phase 1 LWE matvec: 16 × 32 × 2×16 ≈ 16 K field ops
 - Phase 2 dense + LUT: 32×16 + 32 lookups ≈ 550 ops
-- Phase 3 Poseidon2 + LUT sponge: ≈ 300 ops
+- Phase 3 hemera + LUT sponge: ≈ 300 ops  (hemera hash jet, pattern 15)
 - Phase 4 PBS (NTT): 128 × log₂(128) × 2 ≈ 1.8 K ring ops
 - Phase 5 Bell circuit: ≈ 20 field ops
 
@@ -257,12 +268,15 @@ one proof, all three backends. Correctness before recursive composition.
 
 ## relationship to trisha
 
-trisha is the Triton warrior. warrior-cyber is the nox warrior. They share
-no code except the trident ProgramBundle format. warrior-cyber does not
-depend on trisha or any Triton VM library.
+trisha is the Triton VM / Neptune warrior — it executes compiled Triton VM
+assembly (TASM) on Triton VM and proves with Triton's FRI/STARK prover.
+warrior-cyber is the nox warrior — it executes Nouns via nox::reduce and
+proves with zheng (SuperSpartan + Brakedown PCS, no FRI, no trusted setup).
+They share no code except the trident ProgramBundle format. warrior-cyber
+does not depend on trisha or any Triton VM library.
 
 Long-term: warrior-cyber is the primary warrior. trisha remains for
-Triton/Neptune programs. The warrior-architecture.md split (core vs
+Triton VM / Neptune programs. The [[warrior-architecture]] split (core vs
 tooling vs warriors) keeps them independent.
 
 ## estimate

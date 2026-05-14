@@ -1,5 +1,8 @@
 # Cyber Stack Adoption Plan
 
+**Related:** [[cyber-warrior]], [[switch-to-hemera]], [[warrior-architecture]], [[cross-vm-proofs]]
+**Reference:** [reference/ir.md](../reference/ir.md) (nox is the TreeLow target in TIR pipeline)
+
 ## Context
 
 The cyber protocol defines a nine-crate stack. Trident is the language
@@ -8,6 +11,9 @@ a new VM target and cyber as a new OS target, and introduces a direct
 AST→Noun compilation path that bypasses TIR for tree targets.
 
 Nock stays. Nox is an additional tree machine.
+
+Dependency chain: nebu → hemera → zheng → bbg. See [[switch-to-hemera]]
+for Phase 1 details (hemera replaces blake3 + custom poseidon2).
 
 ## The Stack
 
@@ -196,7 +202,8 @@ BabyBear and Mersenne31 keep their own implementations.
 Delete `src/field/poseidon2.rs` (295 LOC) and
 `src/package/poseidon2.rs` (340 LOC).
 
-ContentHash: `[u8; 32]` → `[u8; 64]`. hash_version: 1 → 2.
+ContentHash stays `[u8; 32]` — hemera also outputs 32 bytes. hash_version: 1 → 2
+(signals the algorithm change from BLAKE3-derived Poseidon2 to hemera).
 
 All call sites (~10 files): `poseidon2::hash_bytes()` → `hemera::hash()`.
 
@@ -205,8 +212,8 @@ All call sites (~10 files): `poseidon2::hash_bytes()` → `hemera::hash()`.
 - All hash test vectors change (new expected values)
 - Snapshot tests: `cargo insta review`
 - Benchmark references: rewrite using hemera
-- Integration: `trident hash` outputs 128 hex chars
-- Trisha rebuild + verify (Tip5 on-chain unchanged)
+- Integration: `trident hash` outputs 64 hex chars (32-byte hemera digest, unchanged width)
+- Trisha rebuild + verify (Tip5 on Triton VM on-chain unchanged)
 
 ### 1e. Documentation
 
@@ -273,7 +280,7 @@ notes = "Direct AST→Noun. Spec-aligned, awaiting nox crate."
 ### 2b. Register in target system
 
 - `src/config/target/mod.rs` — add nox to VM registry
-- `reference/vm.md` — add NOX row
+- `reference/vm.md` — add NOX row (nox is the TreeLow target; see reference/ir.md for the noun lowering section)
 - `reference/targets.md` — add nox entry
 - `vm/README.md` — add to table
 
@@ -550,10 +557,11 @@ When nox can execute and zheng can prove:
 
 ```
 .tri → trident build --target nox → .nox noun
-    → nox execute → trace → zheng prove → proof
+    → nox execute → nox trace → zheng prove (SuperSpartan + Brakedown PCS) → proof
 ```
 
-New warrior binary for cyber target.
+warrior-cyber closes this pipeline. See [[cyber-warrior]] for the PoC spec
+(~12.5 sessions, three backends: cpu/webgpu/metal).
 
 ### Estimate: 4-5 sessions when deps are ready
 
@@ -576,7 +584,9 @@ Phase 5 blocked until cyber stack crates have working code.
 ## Risk
 
 1. **nebu v0.1.0 API churn** — thin wrapper insulates.
-2. **ContentHash 64-byte ripple** — biggest Phase 1 change.
+2. **ContentHash algorithm change** — hash_version bump invalidates all existing
+   hashes. Width stays 32 bytes; only the algorithm changes. Biggest Phase 1
+   migration task is rehashing the content store.
 3. **NounBuilder complexity** — the SubjectManager (variable→axis)
    is the hard part. Stack machines have linear layout; tree machines
    have exponential branching. Axis calculation must be correct.
@@ -586,5 +596,6 @@ Phase 5 blocked until cyber stack crates have working code.
    Noun path is tree-target only. Two paths = more code, but each
    is simpler than a forced universal path.
 6. **bbg types draft** — os/cyber/ types will iterate.
-7. **Triton VM unaffected** — hemera replaces only off-chain content
-   addressing. trisha stays. Tip5 stays on-chain.
+7. **Triton VM / trisha unaffected** — hemera replaces only off-chain content
+   addressing. trisha stays. Tip5 stays on Triton VM on-chain. nox's `hash`
+   pattern (pattern 15) uses hemera.

@@ -7,11 +7,13 @@ date: 2026-03-25
 ---
 # polynomial target — nox engine for the polynomial proof system
 
+Related: [[noun-types]], [[cyber-stack-adoption]]
+
 ## the opportunity
 
-trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[recursive brakedown|~2 KiB proofs]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and an 89-constraint decider that verifies all history.
+trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the polynomial proof system: proof-carrying execution, ~2 KiB proofs via Brakedown PCS, O(1) data access via polynomial nouns, 3-5 constraint state operations via state jets, and an 89-constraint decider that verifies all history.
 
-no language change. no new syntax. one new compilation backend. the polynomial proof system becomes available to every `.tri` program.
+no language change. no new syntax. one new compilation backend (NoxLowering). the proof system — nox + zheng (SuperSpartan IOP + Brakedown PCS) — becomes available to every `.tri` program. see [`../reference/vm.md`](../reference/vm.md) for nox's 16 reduction patterns and 5 jets.
 
 ## what changes
 
@@ -44,18 +46,18 @@ nox is a STRICT UPGRADE over Nock for trident: every Nock operation maps to a no
 
 ### replace Tip5 with hemera
 
-trident's stdlib uses Tip5 (5-round Goldilocks hash). the polynomial proof system uses [[hemera]] (24-round Poseidon2, x⁻¹ S-box). one hash across the entire stack:
+trident's stdlib uses Tip5 (5-round Goldilocks hash). the polynomial proof system uses hemera: `Poseidon2(p=2^64-2^32+1, d=7, t=16, Rf=8, Rp=16, r=8, c=8)`. one hash across the entire stack:
 
 ```
 current:   trident uses Tip5, cyber stack uses hemera → two hashes, two security analyses
 polynomial: everything uses hemera → one hash, one security analysis, ~3 calls per execution
 ```
 
-change: `std.crypto.hash` implementation switches from Tip5 to hemera. API unchanged. programs recompile without source changes.
+change: `std.crypto.hash` implementation switches from Tip5 to hemera. API unchanged. programs recompile without source changes. see also [[switch-to-hemera]] for the migration plan.
 
 ### replace Tier 2-3 TIR operations
 
-12 of 54 TIR operations assume FRI/Merkle. replace with polynomial equivalents:
+12 of 54 TIR operations (see [`../reference/ir.md`](../reference/ir.md)) assume FRI/Merkle. replace with polynomial equivalents. zheng uses Brakedown PCS + sumcheck — no FRI, no trusted setup:
 
 **Tier 2 (provable) — hash tree operations → PCS operations:**
 
@@ -111,7 +113,7 @@ the programmer writes normal code. the compiler handles the optimization. state 
 
 ### cost model update
 
-trident's cost model (AIR table sizes for Triton) doesn't apply to the polynomial proof system. new cost model for nox engine:
+trident's existing cost model (AIR table sizes for Triton/trisha) doesn't apply to the nox engine. new cost model:
 
 ```
 nox cost model:
@@ -130,7 +132,7 @@ nox cost model:
   decider:              +89 constraints (once, at verification)
 ```
 
-simpler than Triton's multi-table model. the cost IS the polynomial degree, which IS the evaluation table size.
+simpler than trisha's multi-table AIR model. in nox/zheng, cost IS the polynomial degree, which IS the Brakedown evaluation table size. the nox execution trace is the STARK witness — no separate witness generation step.
 
 ```
 trident build main.tri --engine nox --costs
@@ -151,18 +153,20 @@ trident build main.tri --engine nox --costs
 ## what trident programs gain
 
 ```
-                        triton target (current)     nox target (polynomial)
+                        trisha target (Triton VM)    nox target (polynomial)
 proof size:             ~200 KiB                    ~2 KiB
 verify:                 ~50 ms                      ~5 μs (generic) / ~0.1 μs (decider jet)
-prover:                 O(N log N)                  O(N)
-recursion:              ~200K constraints/level      ~30 field ops/fold
+prover:                 O(N log N)                  O(N) (Brakedown, no FRI)
+recursion:              ~200K constraints/level      ~30 field ops/fold (HyperNova)
 data access:            O(log N) Merkle walk         O(1) PCS opening
 hash calls:             thousands (sponge-heavy)     ~3 (hemera trust anchor)
 state operations:       full trace                   3-5 constraints (state jets)
-proving latency:        separate phase (Trisha)      zero (proof-carrying)
+proving latency:        separate phase (trisha)      zero (proof-carrying)
 identity:               Tip5 hash                    hemera(PCS.commit ‖ tag)
 DAS:                    separate infrastructure       native (polynomial extension)
 ```
+
+the lowering path: trident TIR (54 ops, 4 tiers) → NoxLowering → nox formula (16 reduction patterns + 5 jets) → zheng proof (SuperSpartan IOP + Brakedown PCS). see [[noun-types]] for how Trident's type system enables this lowering without runtime type overhead.
 
 every `.tri` program recompiled with `--engine nox` gets these improvements. source code unchanged.
 

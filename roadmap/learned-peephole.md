@@ -9,37 +9,43 @@ planned: 128K
 
 ## Motivation
 
-The algebraic identity explorer discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: instruction sequences that, in practice, consistently appear in suboptimal TASM and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the compiler generates code and how Triton VM executes it.
+The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: TIR op sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates TIR and how warrior-cyber lowers TIR to nox traces.
 
-Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change, and can we replicate those changes as fast deterministic rules?"
+Peephole optimization in Trident operates at the TIR level (see `../reference/ir.md`): it rewrites windows of TIR ops before nox lowering. This is the correct level because nox is the target — changing TIR op sequences changes which nox reduction patterns are triggered, which determines both trace_length and jet invocation counts.
+
+Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change at the TIR level, and can we replicate those changes as fast deterministic rules?"
+
+Related proposals: [[algebraic-identity-explorer]], [[instruction-scheduling-nn]], [[neural-theorem-prover]], [[compiler-ensemble]].
 
 ## Design
 
 ### What Peephole Optimization Is
 
-A peephole optimizer scans TASM instruction sequences with a sliding window (size 3–8 instructions). At each window position, it checks whether the windowed sequence matches a known pattern and, if so, replaces it with a cheaper equivalent:
+A peephole optimizer scans TIR op sequences with a sliding window (size 3–8 ops). At each window position, it checks whether the windowed sequence matches a known pattern and, if so, replaces it with a cheaper equivalent:
 
 ```
-Window [push X; dup; mul] → detected as x^2 pattern → replace with [dup; mul]
-Window [push 0; add]      → detected as add-zero pattern → replace with []
-Window [push 1; mul]      → detected as mul-one pattern → replace with []
+Window [Mul(x, x)]           → detected as square pattern → replace with [Square(x)]
+Window [Add(x, Const(0))]    → detected as add-zero pattern → eliminate
+Window [Mul(x, Const(1))]    → detected as mul-one pattern → eliminate
 ```
 
-Classical peephole patterns are hand-coded by engineers who study compiler output. Learned peephole patterns are discovered automatically from data.
+These reductions lower the nox trace length (fewer reduction pattern applications) or eliminate jet invocations. Classical peephole patterns are hand-coded by engineers who study compiler output. Learned peephole patterns are discovered automatically from data.
+
+The patterns from the [[algebraic-identity-explorer]] (validated field-theoretic equivalences) feed directly into this system's rule database — they are the highest-confidence peephole rules.
 
 ### The Training Pipeline
 
 **Step 1**: Collect paired programs. For each of 10,000 training programs, generate:
-- Naive TASM: from the standard TIR→TASM lowering, no optimization
-- Evolved TASM: from the evolutionary compiler (many generations of optimization)
+- Naive TIR: from the standard Trident frontend lowering, no optimization
+- Evolved TIR: from the [[compiler-ensemble]] / [[evolutionary-training]] output (many optimization generations)
 
-**Step 2**: Align and diff. Find the minimal set of local changes that transforms naive TASM into evolved TASM. This produces per-window changes: `{position: 47, before: [A, B, C], after: [D, E]}`.
+**Step 2**: Align and diff at TIR op level. Find the minimal set of local changes that transforms naive TIR into evolved TIR. This produces per-window changes: `{position: 47, before: [OpA, OpB, OpC], after: [OpD, OpE]}`.
 
-**Step 3**: Train the peephole CNN. The model sees a window (5–8 instructions) and predicts whether it should be rewritten and, if so, which replacement from a learned vocabulary:
+**Step 3**: Train the peephole CNN. The model sees a window (5–8 TIR ops, each one of 54 kinds — see `../reference/ir.md`) and predicts whether it should be rewritten and, if so, which replacement from a learned vocabulary:
 
 ```
 Architecture:
-  Input: window of 8 instruction encodings (each: instruction_id + operands)
+  Input: window of 8 TIR op encodings (each: op_kind [54 kinds] + operand types)
   Conv1D(kernel=5, filters=32) → ReLU
   Conv1D(kernel=3, filters=32) → ReLU
   GlobalPool
@@ -48,27 +54,29 @@ Architecture:
   // N_REPLACEMENTS: number of learned replacement patterns (starts at 50, grows)
 ```
 
-Parameters: ~15,000 field elements. Inference: fast (microseconds per window).
+Parameters: ~15,000 field elements. Inference: fast (microseconds per window). Implemented as a [[nn-trd]] network — inference is itself a provable nox trace.
 
-**Step 4**: Extract high-confidence patterns as deterministic rules. When the CNN predicts a specific replacement with confidence > 95% over a diverse set of programs, extract the (before, after) pair as a deterministic rule. Add it to the rule database alongside algebraic identity explorer rules.
+**Step 4**: Extract high-confidence patterns as deterministic rules. When the CNN predicts a specific TIR op replacement with confidence > 95% over a diverse set of programs, extract the (before, after) pair as a deterministic rule. Add it to the rule database alongside [[algebraic-identity-explorer]] rules.
 
 ### Relationship to the Algebraic Identity Explorer
 
-The two systems discover patterns at different levels and through different mechanisms:
+The two systems discover TIR op rewrite patterns at different levels and through different mechanisms:
 
 | | Algebraic Identity Explorer | Peephole Learner |
 |--|--|--|
-| **Source** | Field theory, symbolic reasoning | Evolutionary compiler output |
-| **Claim** | "A ≡ B for all inputs" (mathematical) | "A is usually replaced by B" (empirical) |
-| **Validation** | 4-stage (brute force + symbolic + STARK) | Confidence threshold + correctness check |
-| **Rule type** | Universal equivalences | Compiler-specific heuristics |
+| **Source** | Field theory, symbolic reasoning over nox patterns | Evolutionary compiler TIR output |
+| **Claim** | "A ≡ B for all inputs" (mathematical, field-theoretic) | "A is usually replaced by B" (empirical) |
+| **Validation** | 4-stage (brute force + symbolic + zheng proof) | Confidence threshold + correctness check |
+| **Rule type** | Universal equivalences over Goldilocks | Compiler-specific TIR heuristics |
 | **Layer** | Algebraic layers 0–5+ | Compiler architecture layer |
 
-They feed the same rule database. Before any neural compiler runs, both algebraic identities and peephole patterns are applied as deterministic passes in order of (frequency × savings). The deterministic rules handle the majority of common patterns; the neural compiler focuses on unusual cases.
+They feed the same rule database. Before any neural compiler runs, both algebraic identities and peephole patterns are applied as deterministic TIR rewrite passes in order of (frequency × nox_cost_savings). The deterministic rules handle the majority of common patterns; the neural compiler (see `../reference/neural.md`) focuses on unusual cases.
+
+The [[instruction-scheduling-nn]] runs after peephole — peephole reduces the TIR op count first, then scheduling reorders the reduced sequence for minimal nox trace cost.
 
 ### Growing Rule Vocabulary
 
-As the evolutionary compiler improves (through better specialists, better GNN scheduling, more training data), the peephole learner retrains on the new output. New patterns emerge in the evolved TASM that weren't there before. The rule vocabulary grows:
+As the [[compiler-ensemble]] improves (through better specialists, better [[instruction-scheduling-nn]], more training data), the peephole learner retrains on the new evolved TIR output. New patterns emerge in the evolved TIR that weren't there before. The rule vocabulary grows:
 
 - Month 1: 50 patterns (obvious replacements)
 - Month 3: 200 patterns (learned sequences, multi-step rewrites)
@@ -79,14 +87,16 @@ Each growth phase reduces the compiler's workload: more patterns handled determi
 
 ### Correctness Validation
 
-Unlike algebraic identities (which are mathematically proven), peephole patterns extracted from evolutionary compiler output must be validated before deployment as deterministic rules. The validation pipeline:
+Unlike algebraic identities (which are mathematically proven via field theory and optionally by zheng proof), peephole patterns extracted from evolutionary compiler output must be validated before deployment as deterministic rules. The validation pipeline:
 
-1. Extract candidate rule: `before → after`
-2. Run both sequences on 1,000,000 random inputs — must agree on all
-3. Cross-validate on 100 programs not in the training set — must improve or equal cost
+1. Extract candidate TIR rule: `before → after`
+2. Lower both TIR sequences to nox traces via warrior-cyber and execute on 1,000,000 random inputs — output must agree on all
+3. Cross-validate on 100 programs not in the training set — must improve or equal nox proof cost
 4. If passes: add to rule database with confidence level "peephole_validated"
 
 The validation is less stringent than for algebraic identities (Stage 2 rather than Stage 3/4) because peephole rules are empirically discovered rather than theoretically derived. Borderline cases fail safe — they are not added to the deterministic database and remain as CNN predictions only.
+
+For high-value patterns (savings > 500 nox steps, frequency > 1000 matches), consider escalating to [[neural-theorem-prover]] for formal equivalence proof.
 
 ## Key Tradeoffs
 
@@ -94,32 +104,33 @@ The validation is less stringent than for algebraic identities (Stage 2 rather t
 
 **Interaction with algebraic identities**: Some peephole patterns may be rediscoveries of algebraic identities (the evolutionary compiler applied an algebraic identity, and the peephole learner picks it up empirically). These are redundant but harmless — both the algebraic and peephole versions will be in the database, and the longest match rule prevents double-application.
 
-**Rule ordering**: When a TASM window matches both an algebraic identity rule and a peephole rule, which takes precedence? The rule database uses (frequency × savings) ordering, so the more impactful rule fires first. For conflicts where both rules apply to the same window, the rule with higher savings wins.
+**Rule ordering**: When a TIR op window matches both an algebraic identity rule and a peephole rule, which takes precedence? The rule database uses (frequency × nox_cost_savings) ordering, so the more impactful rule fires first. For conflicts where both rules apply to the same window, the rule with higher nox cost savings wins.
 
 **Training data quality**: The evolutionary compiler's output quality determines what patterns are available to learn. Early in the system's development, when the evolutionary compiler is immature, peephole rules add little value. The peephole learner benefits most from a mature evolutionary compiler — schedule it for later in the 128K development arc.
 
 ## Implementation Sketch
 
 ```rust
-// tasm/peephole/learned.rs
+// tir/peephole/learned.rs
 pub struct LearnedPeepholeOptimizer {
     cnn: PeepholeCNN,
-    rule_db: RuleDatabase,  // shared with algebraic identity explorer
+    rule_db: RuleDatabase,  // shared with algebraic-identity-explorer
 }
 
 impl LearnedPeepholeOptimizer {
-    pub fn optimize(&self, tasm: &mut TasmProgram) {
-        // First pass: apply all deterministic rules (algebraic + confirmed peephole)
-        apply_rule_database(tasm, &self.rule_db);
+    pub fn optimize(&self, tir: &mut TirFunction) {
+        // First pass: apply all deterministic TIR rewrite rules
+        // (algebraic identities + confirmed peephole patterns)
+        apply_rule_database(tir, &self.rule_db);
 
-        // Second pass: CNN-guided optimization for remaining patterns
+        // Second pass: CNN-guided optimization for remaining TIR op windows
         let mut i = 0;
-        while i < tasm.len().saturating_sub(8) {
-            let window = &tasm[i..i+8];
+        while i < tir.ops().len().saturating_sub(8) {
+            let window = &tir.ops()[i..i+8];  // 8 TIR ops (54 kinds)
             if let Some((replacement, confidence)) = self.cnn.predict(window) {
                 if confidence > 0.80 {  // threshold for CNN-guided replacement
-                    tasm.replace_window(i, 8, replacement);
-                    // Don't advance i — re-check the position with new instructions
+                    tir.replace_window(i, 8, replacement);
+                    // Don't advance i — re-check the position with new ops
                 } else {
                     i += 1;
                 }
@@ -127,8 +138,10 @@ impl LearnedPeepholeOptimizer {
                 i += 1;
             }
         }
+        // After peephole: TIR is passed to instruction-scheduling-nn, then
+        // warrior-cyber lowers to nox trace for zheng proving
     }
 }
 ```
 
-The deterministic rule pass handles high-confidence patterns cheaply. The CNN pass handles residual patterns with a higher computational cost but lower frequency. Together, they cover the full peephole optimization surface.
+The deterministic rule pass handles high-confidence TIR patterns cheaply. The CNN pass handles residual patterns with a higher computational cost but lower frequency. Together, they cover the full peephole optimization surface at the TIR level.

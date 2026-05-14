@@ -5,6 +5,9 @@ author: mastercyb
 
 # Warrior Architecture: Core vs Tooling vs Warriors
 
+**Related:** [[cyber-warrior]], [[cyber-stack-adoption]]
+**Reference:** [reference/vm.md](../reference/vm.md), [reference/targets.md](../reference/targets.md)
+
 ## Problem
 
 Trident currently compiles for 20+ targets in one monolithic crate.
@@ -24,7 +27,7 @@ You always need:
 3. Run programs natively (testing, bootstrap, tools)
 
 You sometimes need:
-4. Cross-compile to provable VMs (Triton, Miden, SP1)
+4. Cross-compile to other provable VMs (Triton/Neptune via trisha, Miden, SP1)
 5. Accelerate proving on GPU
 6. Compile quantum circuits
 
@@ -41,7 +44,8 @@ Source → AST → TypeCheck → NounBuilder → Noun
 ```
 
 nox has no warrior. Execution and proving are handled by cyber stack
-crates (nox, zheng) called directly.
+crates (nox, zheng) called directly. See [[cyber-warrior]] for the
+warrior-cyber PoC that wires this pipeline end-to-end.
 
 ### Native (testing and bootstrap target)
 
@@ -70,13 +74,16 @@ This is core compiler infrastructure, not optional tooling.
 StackLowering is ~80% shared across all stack VMs. Per-VM specific:
 instruction names, encoding format, cost tables.
 
-Targets: Triton (TASM), Miden (MASM), and future stack VMs.
+Targets: Triton VM (for the trisha/Neptune target), Miden (MASM), and
+future stack VMs. nox is a tree machine — it uses NounBuilder, not
+StackLowering. See reference/vm.md for the full target list.
 
 ### trident-gpu — GPU acceleration
 
 KernelLowering → SPIR-V is shared. CUDA/Metal/Vulkan are final
 backends. GPU doesn't execute trident programs — it accelerates
-proving for other targets (Triton GPU prover, nox GPU prover).
+proving for other targets (nox GPU prover via warrior-cyber's webgpu
+and metal backends).
 
 ### trident-quantum — quantum circuit compilation
 
@@ -108,9 +115,10 @@ it is trident tooling, not a warrior.
 ## What is a warrior (separate repos)
 
 A warrior is an external binary that:
-1. Takes a compiled artifact (TASM, MASM, RISC-V asm)
+1. Takes a compiled artifact (Noun for nox, nox patterns trace for
+   nox; TASM for Triton VM; MASM for Miden; RISC-V asm for SP1 etc.)
 2. Executes it on a specific VM
-3. Generates a STARK proof of execution
+3. Generates a proof of execution
 4. Verifies the proof
 5. Deploys to a specific chain/network
 
@@ -118,7 +126,7 @@ Warriors exist because execution environments are complex, have their
 own dependencies (VM implementations, proof systems, chain SDKs), and
 evolve independently from the compiler.
 
-The warrior boundary: warriors receive lowered assembly, not TIR.
+The warrior boundary: warriors receive lowered artifacts, not TIR.
 Trident (core or tooling subcrate) does all compilation and lowering.
 The warrior adds runtime.
 
@@ -126,7 +134,16 @@ The warrior adds runtime.
 
 | Warrior | VM | Depends on | Repo |
 |---------|-----|-----------|------|
-| trisha | Triton VM | trident-stack[triton] | ~/git/trisha |
+| warrior-cyber | nox (PRIMARY) | trident-core (NounBuilder), nox, zheng | ~/git/warrior-cyber |
+| trisha | Triton VM (Neptune target) | trident-stack[triton] | ~/git/trisha |
+
+warrior-cyber is the primary warrior. It has three backends:
+- **cpu** — AMX/NEON via honeycrisp (acpu), portable aarch64 baseline
+- **webgpu** — wgpu crate + WGSL shaders, cross-platform (macOS/Linux/Windows/browser)
+- **metal** — aruminium, pure Metal API (not wgpu-based), unimem zero-copy on Apple Silicon
+
+trisha remains for Triton VM / Neptune programs. See reference/targets.md for
+the full target catalogue.
 
 ### Future warriors
 
@@ -175,7 +192,7 @@ trident/                          Cargo workspace
 │
 ├── trident-stack/                OPT-IN: provable stack VMs
 │   ├── lower/mod.rs              shared StackLowering
-│   ├── lower/triton.rs           TASM backend
+│   ├── lower/triton.rs           Triton VM / Neptune target (trisha warrior)
 │   ├── lower/miden.rs            MASM backend
 │   └── cost/                     per-VM cost models
 │
@@ -195,7 +212,8 @@ trident/                          Cargo workspace
     └── Cargo.toml                feature-gated dependencies
 
 warriors/                         SEPARATE REPOS
-├── trisha/                       Triton VM warrior
+├── warrior-cyber/                PRIMARY: nox warrior (cpu/webgpu/metal)
+├── trisha/                       Triton VM / Neptune warrior
 ├── warrior-miden/                Miden VM warrior
 ├── warrior-sp1/                  SP1 warrior
 └── ...
@@ -236,19 +254,21 @@ cargo install trident-lang --features all
 | **Default install** | **~24k** | **nebu, hemera, clap** |
 | **Full install** | **~34k** | **+ spirv-tools** |
 
-vs current monolith: ~36k LOC, blake3, growing.
+vs current monolith: ~36k LOC, hemera (replacing blake3 + custom poseidon2), growing.
 
 ## Target categories summary
 
 | Category | Targets | Where | Warrior? |
 |----------|---------|-------|----------|
-| Primary provable | nox | core (NounBuilder) | no — cyber stack |
+| Primary provable | nox | core (NounBuilder) | warrior-cyber (cpu/webgpu/metal) |
 | Native | x86, ARM, RISC-V, WASM | core (LIR) | no — run directly |
-| Provable stack | Triton, Miden | trident-stack | yes |
+| Provable stack | Triton VM (Neptune), Miden | trident-stack | trisha (Triton); warrior-miden |
 | Provable register | SP1, RiscZero, Jolt | core LIR + warrior | yes |
 | GPU accelerator | CUDA, Metal, Vulkan | trident-gpu | no — accelerator |
 | Quantum | IBM, Google, IonQ | trident-quantum | no — submit to hw |
 | Smart contract | EVM, Solana, Move | TBD | no — deploy |
+
+See reference/vm.md for the full registry of 20+ target VMs and their integration levels.
 
 ## Migration path
 

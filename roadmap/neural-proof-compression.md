@@ -7,9 +7,11 @@ planned: 128K
 
 # Neural Proof Compression
 
+**Related:** [[nn-prover-config]] · [[proof-carrying-code]]
+
 ## Motivation
 
-STARK proofs are large — typically hundreds of kilobytes. For proof distribution (proof-carrying code), proof storage (verifiable computation archives), and on-chain verification (where calldata costs gas), proof size is a practical constraint. Current STARK proofs are already well-optimized at the cryptographic level (FRI reduces proof size from $O(N)$ to $O(\log^2 N)$). Further reduction requires a different approach.
+zheng proofs are large — typically hundreds of kilobytes. For proof distribution (proof-carrying code), proof storage (verifiable computation archives), and on-chain verification (where calldata costs gas), proof size is a practical constraint. A zheng proof contains three main components: the Brakedown commitment (commitment matrix + hemera hashes), the sumcheck transcript (round-by-round challenge/response), and the opening queries. These components have different entropy profiles and different compressibility. Further reduction beyond zheng's existing optimizations requires a learned approach.
 
 Neural proof compression uses a learned predictor to anticipate redundant elements in the proof. The verifier runs an identical predictor — elements the predictor got right are transmitted at 1 bit ("predicted correctly"). Elements the predictor got wrong are transmitted at full field-element size. If the predictor achieves 80% accuracy, the effective proof size is approximately 5× smaller. The full proof is still verified — compression is transport-layer only.
 
@@ -44,19 +46,21 @@ The verifier reconstructs the complete proof before verification. The full STARK
 ### Predictor Architecture
 
 A small autoregressive model that conditions on:
-- The program being proved (encoded as TIR features or TASM embedding)
+- The program being proved (encoded as TIR features or nox trace embedding)
 - The public inputs
 - All previously seen proof elements (the context window)
 
+The predictor is aware of which proof component it is currently processing: Brakedown commitment elements are low-entropy (structured by the commitment matrix geometry), sumcheck transcript elements are moderately predictable (polynomial evaluations at challenge points), and opening query responses are the most entropic.
+
 ```
-Input: [program_features (32), public_inputs (32), proof_context (last 16 elements)]
+Input: [program_features (32), public_inputs (32), proof_context (last 16 elements), component_id (3)]
   → Dense(64) → ReLU
   → Dense(64) → ReLU
   → Dense(|Field|) → softmax over field elements
   // predicts the distribution over the next proof element
 ```
 
-The prediction is the mode of the softmax distribution — the most likely next element. If correct, it is transmitted as 1 bit.
+The `component_id` encodes which part of the proof structure is being predicted (Brakedown commitment / sumcheck round / opening query). The prediction is the mode of the softmax distribution — the most likely next element. If correct, it is transmitted as 1 bit.
 
 For practical implementation, the field has $p \approx 2^{64}$ elements — a softmax over all of them is intractable. Instead, the predictor outputs a smaller vocabulary of predicted values (top-K candidates), and the transmission encodes whether the actual value is in the top-K and, if so, which one:
 
@@ -67,32 +71,33 @@ Effective compression: if top-8 covers 80% of elements and each of those element
 
 ### What the Predictor Learns
 
-STARK proofs have structure. The FRI protocol's query responses are not independent — they are evaluations of a low-degree polynomial at specific points. A polynomial predictor can leverage this structure.
+zheng proofs have structure by component:
 
-Specifically:
-- **FRI query consistency**: If the polynomial has degree $d$ and the predictor has seen values at points $x_1, ..., x_k$ (where $k > d$), it can exactly predict values at all subsequent points via polynomial interpolation.
-- **AET row repetition**: Many rows in the AET have similar structure (e.g., consecutive Processor rows for a loop body are nearly identical). The predictor learns to extrapolate these patterns.
-- **Hash output entropy**: Hash function outputs are high-entropy and hard to predict. The predictor allocates more bits for these and less for predictable polynomial evaluations.
+- **Brakedown commitment**: The commitment matrix encodes the witness as a linear code. Matrix entries follow a structured distribution determined by the commitment dimensions. The predictor learns these matrix-level patterns and can anticipate many entries, especially in sparse witness regions.
+- **Sumcheck transcript**: Each sumcheck round produces a low-degree polynomial evaluated at the verifier's challenge. If the predictor has seen enough rounds, it can interpolate the polynomial and predict subsequent evaluations — analogous to polynomial interpolation over a few known points.
+- **Opening queries**: hemera hash outputs (used for Fiat-Shamir challenges) are high-entropy and not predictable. The predictor allocates more bits here. Opening responses at revealed positions are somewhat predictable given the commitment structure.
+
+This component-aware structure lets the predictor allocate its bit budget effectively — spending few bits on structured commitment entries and full bits on hash-derived challenges.
 
 ### Determinism Requirement
 
-Both the prover and verifier must run exactly the same predictor with exactly the same weights. Any divergence produces a reconstruction failure (the verifier reconstructs a different proof element, which causes STARK verification to fail). The predictor must be:
+Both the prover and verifier must run exactly the same predictor with exactly the same weights. Any divergence produces a reconstruction failure (the verifier reconstructs a different proof element, which causes zheng verification to fail). The predictor must be:
 
 1. **Deterministic**: same inputs → same outputs, always
 2. **Version-matched**: both sides must use the same model version
 3. **Bit-exact**: no floating-point that may differ across hardware
 
-Meeting requirement 3 means the predictor is implemented in field arithmetic (nn.trd) and compiled to TASM. The same compiled binary is used on both sides. This is where shipping the predictor as a Trident program becomes critical: the TASM is bit-exact across all platforms where Triton VM runs.
+Meeting requirement 3 means the predictor is implemented in field arithmetic (nn.trd) and compiled to nox patterns. The same compiled binary is used on both sides. This is where shipping the predictor as a Trident program becomes critical: the nox trace is bit-exact across all warrior-cyber backends (cpu/webgpu/metal).
 
 ### Compatibility
 
-The compression protocol is entirely at the transport layer. The prover generates a complete STARK proof exactly as before. The compressor post-processes it. The verifier decompresses before verification. No changes to the STARK protocol, the constraint system, or the trusted setup.
+The compression protocol is entirely at the transport layer. warrior-cyber generates a complete zheng proof exactly as before. The compressor post-processes it. The verifier decompresses before verification. No changes to the zheng protocol, the sumcheck relation, or the Brakedown commitment scheme.
 
-This means the compression layer can be added to any existing STARK system — not just Trident. A Miden proof, an SP1 proof, or a Groth16 proof can be compressed with the same architecture, using a predictor trained on proofs from that system.
+This means the compression layer can be added to any existing proof system — not just Trident. A Miden proof, an SP1 proof, or a Groth16 proof can be compressed with the same architecture, using a predictor trained on proofs from that system.
 
 ## Key Tradeoffs
 
-**Predictor accuracy ceiling**: Even a perfect predictor for polynomial evaluations (via interpolation) cannot predict hash outputs. The entropy of hash values in the proof is a hard lower bound on compressed proof size. For Triton VM proofs dominated by FRI polynomial evaluations, high compression ratios are achievable. For proofs with many hash commitments in the AET, compression is limited.
+**Predictor accuracy ceiling**: Even a perfect predictor for sumcheck polynomial evaluations (via interpolation) cannot predict hemera hash outputs used in Fiat-Shamir. The entropy of hash-derived challenges is a hard lower bound on compressed proof size. For programs with short nox traces where the sumcheck transcript dominates, high compression is achievable. For proofs where Brakedown opening queries dominate (many revealed positions), compression is limited.
 
 **Predictor training data**: The predictor must be trained on a corpus of STARK proofs. Collecting millions of proofs is expensive. Transfer learning from proofs of simpler programs (which are faster to generate) to complex programs may reduce data requirements.
 

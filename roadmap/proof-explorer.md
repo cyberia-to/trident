@@ -7,57 +7,60 @@ planned: 32K
 
 # Interactive Proof Explorer
 
+**Related proposals:** [[proof-cost-ide]], [[trident-repl]], [[trace-predictor]]
+
 ## Motivation
 
-A STARK proof is opaque to the developer. They write code, they prove it, they get a proof — and they have no visibility into what happened. Which AET tables are full? Which source lines generated the most trace rows? Where are the power-of-2 cliffs that will make the next small addition double the proof size? Without answers to these questions, proof optimization is guesswork.
+A zheng proof is opaque to the developer. They write code, they prove it, they get a proof — and they have no visibility into what happened. How long is the nox trace? How many sumcheck rounds did zheng run? How large are the Brakedown commitment layers? Where are the power-of-2 cliffs in trace length that will make the next small addition double the proving time? Without answers to these questions, proof optimization is guesswork.
 
-The interactive proof explorer makes the STARK proof transparent. It is a developer tool — not a verification tool — that lets developers navigate the execution trace, identify bottlenecks, understand cost distribution, and predict the impact of code changes before compiling them.
+The interactive proof explorer makes the zheng proof transparent. It is a developer tool — not a verification tool — that lets developers inspect the nox execution trace, understand the zheng proof structure, identify bottlenecks, and predict the impact of code changes before compiling them.
 
 ## Design
 
-### Table Fill Visualization
+### Proof Structure Overview
 
-The main view shows the AET table fill levels as a bar chart:
+The main view shows the inspectable dimensions of a zheng proof:
 
 ```
-AET TABLE HEIGHTS (current program)
+ZHENG PROOF STRUCTURE (current program)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Processor  ████████████████████░░░░░░░░░░░░░  1847/2048  (90.2%)  [cliff: 201 rows away]
-Hash       ████████████████████████████████░  498/512    (97.3%)  [cliff: 14 rows away!]
-RAM        ████████░░░░░░░░░░░░░░░░░░░░░░░░░  312/1024   (30.5%)
-U32        ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  87/256     (34.0%)
-OpStack    █████░░░░░░░░░░░░░░░░░░░░░░░░░░░░  198/512    (38.7%)
+nox trace length    ████████████████████░░░░░░░░░░░  1847/2048  (90.2%)  [cliff: 201 steps away]
+sumcheck rounds     ████████████████████████████████  21 rounds  (log₂ of trace vars)
+Brakedown cols      ████████░░░░░░░░░░░░░░░░░░░░░░░  312 cols   (commitment width)
+commitment size     ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  87 KB      (Brakedown layers)
+hemera calls        █████░░░░░░░░░░░░░░░░░░░░░░░░░░  198        (Poseidon2 hashes)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Bottleneck: Hash (97.3% full — near 512 cliff)
-Next power of 2: Hash → 1024 (+512 rows, doubles Hash table cost)
-Recommendation: reduce Hash rows by 15 to stay under 512 cliff
+Bottleneck: trace length (90.2% of next power-of-2 — 201 steps to cliff)
+Next cliff: 2048 → 4096 (+2048 nox steps, doubles sumcheck rounds)
+Recommendation: reduce trace by 201 steps to stay below the 2048 cliff
 ```
 
-The "cliff" indicator is critical: when a table is near a power-of-2 boundary, adding even a few rows doubles the proof cost for that table. The explorer highlights these cliffs prominently.
+The "cliff" indicator is the trace length power-of-2 boundary: zheng pads the nox trace to the next power of 2 before running sumcheck, so crossing a cliff doubles the number of sumcheck rounds and proportionally increases proving time. The explorer highlights these cliffs prominently.
 
 ### Click-to-Source Tracing
 
-The developer clicks on any section of a filled bar to see which source lines generated those trace rows.
+The developer clicks on any dimension in the overview bar to see which source lines generated those nox steps.
 
-For the Hash table at 498/512: clicking on the bar opens a source annotation view:
+Clicking on "trace length 1847/2048" opens a source annotation view:
 
 ```
-Hash table row contributions by source line:
+nox step contributions by source line:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-my_program.tri:42  hash(leaf)              198 rows  (39.8%)  [inside loop: × 3]
-my_program.tri:67  commit(secret)           87 rows  (17.5%)
-my_program.tri:23  verify(merkle_root, ...) 213 rows  (42.8%)
+my_program.tri:42  hash(leaf)              198 steps  (10.7%)  [hemera Poseidon2, inside loop: × 3]
+my_program.tri:67  commit(secret)           87 steps  ( 4.7%)  [hemera Poseidon2]
+my_program.tri:23  verify(merkle_root, ...) 213 steps  (11.5%)  [nox pattern: merkle-verify]
+...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Total Hash rows: 498
+Total nox steps: 1847
 ```
 
 Double-clicking a source line jumps to it in the editor. The connection between proof cost and source code is direct.
 
 ### Hot Zone Highlighting
 
-The explorer overlays "hot zone" markers on the AET timeline: regions where table height approaches a power-of-2 cliff within a configurable margin (default: 5%). These are displayed in orange and red in the bar chart and in the source code view.
+The explorer overlays "hot zone" markers when the trace length approaches a power-of-2 cliff within a configurable margin (default: 5% of the cliff value). These are displayed in orange and red in the overview and in the source annotation view.
 
-The hot zone detection is automatic. The developer does not need to know the power-of-2 boundaries — the explorer knows them and highlights the dangerous proximity.
+The hot zone detection is automatic. The developer does not need to know the power-of-2 boundaries — the explorer knows them and highlights the dangerous proximity. nox's 16 patterns + 1 hint + 5 jets each carry known step costs; the explorer aggregates these from the source map.
 
 ### Impact Simulation
 
@@ -66,31 +69,33 @@ Before compiling a proposed change, the developer can simulate its cost impact i
 ```
 SIMULATE: Replace hash(leaf) with batch_hash([leaf1, leaf2, leaf3])
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BEFORE:  Hash rows: 498/512  (97.3%)
-AFTER:   Hash rows: ~372/512 (72.7%)  [estimated -126 rows]
-CLIFF:   No longer near 512 cliff. Next cliff: 512 rows away.
-PROOF:   Current: ~1024-row Hash table → After: still 512-row Hash table
-         PROOF SIZE UNCHANGED (both below same cliff)
-         But: saved 126 rows of margin for future growth.
+BEFORE:  nox trace: 1847/2048 steps (90.2%)
+AFTER:   nox trace: ~1721/2048 steps (84.0%)  [estimated -126 steps]
+CLIFF:   No longer in hot zone. Margin to 2048 cliff: 327 steps.
+PROOF:   Both before and after are below the 2048 cliff.
+         sumcheck rounds: unchanged (same trace-length power-of-2 bucket)
+         Brakedown commitment: slightly smaller (fewer trace columns used)
+         But: saved 126 steps of margin for future growth.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-The simulation uses the TIR cost model — fast enough for interactive use. It shows both the row count change and the proof cost impact (which depends on cliff crossings, not just row count). A change that reduces rows by 10% but keeps the table on the same side of a cliff has no proof cost impact; a change that reduces rows by 1% but crosses a cliff halves the proof cost.
+The simulation uses the TIR cost model — fast enough for interactive use. It shows both the step count change and the proof cost impact (which depends on cliff crossings, not just step count). A change that reduces steps by 10% but stays in the same power-of-2 bucket leaves the sumcheck round count unchanged; a change that reduces steps by 1% but crosses a cliff halves the proving time.
 
-### Processor Table Navigation
+### Trace Timeline Navigation
 
-For fine-grained analysis, the explorer shows the Processor table as a timeline: each row is one executed TASM instruction, color-coded by source function:
+For fine-grained analysis, the explorer shows the nox execution trace as a timeline: each step is one nox reduction, colour-coded by source function. Jet invocations are highlighted separately (jets compress multiple nox steps into a single verified shortcut):
 
 ```
-PROCESSOR TABLE (1847 rows, showing 100-200)
+NOX TRACE (1847 steps, showing 100-200)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Row 100-115:  [compute_fee]  ████████████████  16 rows
-Row 116-210:  [hash(leaf)]   ██████████████... expanding to Hash table
-Row 211-240:  [verify_sig]   ██████████████████████████████  30 rows
+Steps 100-115:  [compute_fee]    ████████████████  16 steps
+Steps 116-210:  [hash(leaf)]     ██████████████... 95 steps (hemera Poseidon2)
+                                 [jet: poseidon2]  highlighted — jet covers steps 180-210
+Steps 211-240:  [verify_sig]     ██████████████████████████████  30 steps
 ...
 ```
 
-The timeline view enables identifying which functions consume Processor table rows and finding optimization opportunities at the instruction level.
+The timeline view enables identifying which functions consume nox trace steps and where jet invocations provide compression. See [[trident-repl]] for interactive step-by-step exploration.
 
 ## Key Tradeoffs
 
@@ -102,18 +107,20 @@ The timeline view enables identifying which functions consume Processor table ro
 
 ## Implementation Sketch
 
-The proof explorer is a TUI (terminal user interface) tool:
+The proof explorer is a TUI (terminal user interface) tool that reads a `ProgramBundle` and either uses an embedded zheng proof or generates one on demand:
 
 ```rust
 // tools/proof_explorer/main.rs
 fn main() {
-    let program = load_program(args.tasm_file);
-    let proof = load_or_generate_proof(&program, args.input);
-    let aet = extract_aet(&proof);
+    let bundle = ProgramBundle::load(args.bundle_path)?;
+    let proof  = bundle.zheng_proof
+        .unwrap_or_else(|| zheng_prove(&bundle.nox, &args.input));
+    let trace  = extract_nox_trace(&bundle.nox, &args.input);
 
     let ui = ProofExplorerUI {
-        aet,
-        source_map: SourceMap::from_program(&program),
+        trace,
+        proof_meta: ZhengProofMeta::from(&proof),  // sumcheck rounds, commitment sizes
+        source_map: SourceMap::from_bundle(&bundle),
         cost_model: CostModel::default(),
     };
 
@@ -122,22 +129,22 @@ fn main() {
 
 // tools/proof_explorer/ui.rs
 impl ProofExplorerUI {
-    fn render_table_bars(&self) -> Vec<Bar> {
-        Table::all().map(|t| {
-            let height = self.aet.height(t);
-            let cliff = next_power_of_2(height);
-            Bar { table: t, height, cliff, proximity: cliff - height }
-        }).collect()
+    fn render_overview(&self) -> Overview {
+        let trace_len  = self.trace.len();
+        let cliff      = next_power_of_2(trace_len);
+        let rounds     = self.proof_meta.sumcheck_rounds;
+        let commit_kb  = self.proof_meta.brakedown_commitment_size_kb;
+        Overview { trace_len, cliff, rounds, commit_kb }
     }
 
-    fn render_source_contribution(&self, table: Table) -> Vec<SourceLine> {
-        self.aet.rows(table)
-            .group_by(|row| self.source_map.line_of(row.origin))
-            .map(|(line, rows)| SourceLine { line, row_count: rows.len() })
-            .sorted_by(|a, b| b.row_count.cmp(&a.row_count))
+    fn render_source_contribution(&self) -> Vec<SourceLine> {
+        self.trace.steps()
+            .group_by(|step| self.source_map.line_of(step.origin))
+            .map(|(line, steps)| SourceLine { line, step_count: steps.len() })
+            .sorted_by(|a, b| b.step_count.cmp(&a.step_count))
             .collect()
     }
 }
 ```
 
-The tool is invoked as `trident explore my_program.warrior` or `trident explore my_program.tasm --input my_input.json`.
+The tool is invoked as `trident explore my_program.warrior` or `trident explore my_program --input my_input.json`.

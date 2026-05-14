@@ -5,6 +5,8 @@ author: mastercyb
 
 # Noun Types: Why Nox Drops cell? and What Trident Does Instead
 
+Related: [[polynomial-target]], [[dependent-types]], [[five-algebras]]
+
 ## Problem
 
 Nock op 3 tests whether a noun is an atom or a cell at runtime:
@@ -14,17 +16,17 @@ Nock op 3 tests whether a noun is an atom or a cell at runtime:
               1 if *[a b] is an atom
 ```
 
-Nox drops this. The question is whether to add it back.
+Nox drops this (nox op 3 is `cons` — cell construction, not cell predicate). The question is whether to add `cell?` back.
 
 ## Why not
 
-A STARK trace is a fixed-width table of field elements. Every nox
+A nox execution trace is a sequence of field elements over Goldilocks. Every nox
 pattern maps to a polynomial transition constraint selected by a
 4-bit tag. `cell?` breaks this model in one specific way: atoms and
 cells have structurally different representations. An atom is a
-Goldilocks field element. A cell is a pointer into the noun DAG.
+Goldilocks field element (nebu scalar). A cell is a pointer into the noun DAG.
 The distinction between them is not a field predicate — it is a type
-judgment that requires a separate witness column in the AIR trace.
+judgment that requires a separate witness column in the nox trace.
 
 That column either:
 
@@ -33,7 +35,7 @@ That column either:
   is dead weight
 
 Nock needs `cell?` because Hoon compiles through Nock at runtime:
-the evaluator is the runtime. Nox's evaluator is the proof system.
+the evaluator is the runtime. Nox's evaluator is zheng (SuperSpartan IOP + Brakedown PCS).
 Dynamic type dispatch at the VM level defeats static arithmetization.
 
 **Rule:** if a predicate is always a compile-time constant in the
@@ -103,8 +105,10 @@ types.
 ```
 
 No extra witness column. No runtime type oracle. The branch is a
-standard nox op 4, driven by a field element the compiler placed
-at a known axis.
+standard nox pattern 4 (branch), driven by a field element the compiler placed
+at a known axis. See [`../reference/vm.md`](../reference/vm.md) for the
+full nox pattern table and [`../reference/language.md`](../reference/language.md)
+for the type system that makes this possible.
 
 ## Design tension
 
@@ -119,10 +123,13 @@ but one-off magic.
 **Path B: Add sum types to the language.** Remove the "no enums"
 restriction. Noun becomes a library type defined in `vm/nock/`.
 Orthogonal and composable, but every sum type needs a tag —
-what does that cost in the AIR trace on stack targets?
+what does that cost in the nox trace, and on other compilation targets?
+See [[dependent-types]] for how dependent typing could eliminate the tag column
+entirely for statically provable cases.
 
 Leaning Path A until there's evidence other targets benefit from
-general sum types.
+general sum types. [[five-algebras]] may surface additional noun-like
+structures that would justify Path B.
 
 ## Summary
 
@@ -131,7 +138,9 @@ general sum types.
 | Atom vs cell dispatch | `cell?` op at runtime | Exhaustive match on Noun type, static |
 | Generic noun traversal | Runtime recursion + `cell?` | Parameterized functions over Noun |
 | Defensive input checking | Op 3 guard | Type-checked at Trident boundary; ill-typed input rejected before nox |
-| Circuit cost | Not applicable | Zero — branch compiles to op 4 |
+| Circuit cost | Not applicable | Zero — branch compiles to nox pattern 4 |
 
 The type system is the right layer. The VM should not carry type
 predicates that are always statically decidable in the source language.
+See [[polynomial-target]] for how this design enables clean lowering
+to nox without runtime type overhead.

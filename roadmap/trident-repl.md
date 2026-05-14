@@ -7,11 +7,13 @@ planned: 32K
 
 # REPL with Inline Proof Cost Feedback
 
+**Related proposals:** [[proof-cost-ide]], [[proof-explorer]]
+
 ## Motivation
 
-The proof cost of Trident code is not intuitive. A developer new to proof systems does not know that `hash(x)` costs 200 rows and `x * x` costs 1. They do not know that `invert(x)` costs 95 rows but `batch_invert([x, y, z])` costs 100 rows for all three combined. They do not know that crossing a power-of-2 cliff doubles the proof cost.
+The proof cost of Trident code is not intuitive. A developer new to proof systems does not know that `hash(x)` costs ~200 nox steps and `x * x` costs 1. They do not know that `invert(x)` costs ~95 nox steps but `batch_invert([x, y, z])` costs ~100 steps for all three combined. They do not know that crossing a power-of-2 trace-length cliff doubles the zheng proving time.
 
-The REPL is the fastest path to building this intuition. Every expression shows its proof cost immediately. The developer types an expression, sees the cost, types a variant, compares. After 20 minutes in the REPL, they have internalized the relative costs of all common operations. After an hour, they think in proof cost naturally.
+The REPL is the fastest path to building this intuition. Every expression shows its nox step count and jet invocations immediately. The developer types an expression, sees the cost, types a variant, compares. After 20 minutes in the REPL, they have internalized the relative costs of all common operations. After an hour, they think in proof cost naturally.
 
 No documentation can substitute for this immediate feedback loop.
 
@@ -22,47 +24,49 @@ No documentation can substitute for this immediate feedback loop.
 ```
 trident> let x = 42;
 x = 42
-  cost: 1 Processor row  |  tables: Processor
+  cost: 1 nox step  |  jets: none
 
 trident> let y = hash(x);
 y = 0x3f2a8c1d...
-  cost: 198 rows  |  tables: Processor(5) + Hash(193)
+  cost: 198 nox steps  |  jets: poseidon2 ×1  (hemera Poseidon2 hash)
 
 trident> let z = invert(y);
 z = 0x7b1c4e8f...
-  cost: 97 rows  |  tables: Processor(97)
+  cost: 97 nox steps  |  jets: none
 
 trident> let w = z * z;
 w = 0x2a9f3d...
-  cost: 1 row  |  tables: Processor(1)
+  cost: 1 nox step  |  jets: none
 ```
 
 Every expression shows:
 - The computed value (for immediate feedback that the computation is correct)
-- The total cost in AET rows
-- The per-table breakdown
+- The total cost in nox reduction steps
+- Jet invocations (jets are verified shortcuts that compress nox steps — showing them separately lets the developer see where the nox VM takes shortcuts vs. reduces fully)
 
 ### Proof Summary Command
 
-After building up several expressions, `:proof_summary` shows the accumulated state:
+After building up several expressions, `:proof_summary` shows the accumulated nox trace and zheng proof cost:
 
 ```
 trident> :proof_summary
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SESSION PROOF SUMMARY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Expressions:  4
-Total rows:   297
+Expressions:    4
+nox steps:      297
+Jet calls:      poseidon2 ×1
 
-Table breakdown:
-  Processor  103 rows  (34.7%)  ████████████░░░░░░░░░░░░░░░░░░░░
-  Hash       193 rows  (65.0%)  ████████████████████████████████
-  RAM          1 row   ( 0.3%)  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+Step breakdown by source:
+  let x = 42       1 steps   ( 0.3%)  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+  let y = hash(x)  198 steps (66.7%)  ████████████████████████████████
+  let z = invert   97 steps  (32.7%)  █████████████████████░░░░░░░░░░░
+  let w = z*z      1 step    ( 0.3%)  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-Pads to:     512 rows (next power of 2)
-Bottleneck:  Hash (65% of trace)
+Trace pads to:  512 steps (next power of 2 — zheng sumcheck boundary)
+Bottleneck:     hemera hash (66.7% of trace)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Suggestion: Your session is dominated by Hash. Batch hash calls:
+Suggestion: Session dominated by hemera Poseidon2. Batch hash calls:
             Instead of hash(a); hash(b); use hash_batch([a, b]).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -77,13 +81,13 @@ trident> :compare
   B> pow(x, p-2)
 
 Comparing A vs B:
-  A: invert(x)    →  97 rows  |  Processor(97)
-  B: pow(x, p-2)  →  95 rows  |  Processor(95)
-  Winner: B (-2 rows, -2.1%)
+  A: invert(x)    →  97 nox steps  |  jets: none
+  B: pow(x, p-2)  →  95 nox steps  |  jets: none
+  Winner: B (-2 steps, -2.1%)
   Note: For batch inversions, Montgomery's trick beats both significantly.
 ```
 
-The `:compare` mode is especially useful for evaluating optimization candidates without writing a full program.
+The `:compare` mode is especially useful for evaluating optimization candidates without writing a full program. For a deeper view of the trace differences, use [[proof-explorer]] after exporting the session.
 
 ### Pattern Library
 
@@ -92,9 +96,9 @@ The REPL includes a pattern library that suggests common optimizations when it d
 ```
 trident> invert(a); invert(b); invert(c);
 PATTERN DETECTED: 3 separate inversions
-Current cost: 97 + 97 + 97 = 291 Processor rows
-Better:       batch_invert([a, b, c]) = ~100 Processor rows
-              → 191 rows saved (65.6% reduction)
+Current cost: 97 + 97 + 97 = 291 nox steps
+Better:       batch_invert([a, b, c]) = ~100 nox steps
+              → 191 steps saved (65.6% reduction)
 
 Type `:accept` to rewrite or `:keep` to proceed as-is.
 ```
@@ -103,20 +107,20 @@ The pattern library is extensible — as the algebraic identity explorer discove
 
 ### Cliff Warning System
 
-When accumulated cost approaches a power-of-2 boundary, the REPL warns proactively:
+When accumulated nox trace length approaches a power-of-2 boundary, the REPL warns proactively. The boundary matters because zheng pads the trace to the next power of 2 before running sumcheck — crossing it doubles the sumcheck round count and proving time:
 
 ```
 trident> let expensive = [hash(x) for x in my_array];
 y = [...]
-  cost: 594 rows  |  tables: Hash(580) + Processor(14)
+  cost: 594 nox steps  |  jets: poseidon2 ×10
 
-WARNING: Hash table at 580/512 rows — already over 512 cliff!
-         Proof now pads Hash to 1024 rows.
-         To stay under 512: hash at most 2.5 items per session.
-         Recommendation: batch_hash(my_array) uses ~214 rows total.
+WARNING: Trace at 594 steps — already over 512 cliff!
+         zheng pads trace to 1024 steps for sumcheck.
+         To stay under 512: reduce hash calls by ~82 steps.
+         Recommendation: batch_hash(my_array) uses ~214 steps total.
 ```
 
-The cliff system knows all power-of-2 boundaries and predicts when they will be crossed.
+The cliff system tracks the accumulated session trace length and predicts when cliffs will be crossed. Use [[proof-explorer]] to visualise the full trace after a session.
 
 ### REPL History and Export
 
@@ -131,7 +135,7 @@ fn session_computation(x: Field) -> Field {
     let z = invert(y);
     z * z
 }
-// Proof cost: 297 rows, dominanted by Hash (193 rows)
+// Proof cost: 297 nox steps, dominated by hemera hash (198 steps)
 // File: saved to session_export.tri
 ```
 
@@ -139,7 +143,7 @@ This enables using the REPL as a rapid prototyping environment for cryptographic
 
 ## Key Tradeoffs
 
-**Actual vs. estimated costs**: The REPL can show either estimated costs (from the TIR cost model, fast) or actual costs (from running the prover, slow). For interactive use, estimated costs are shown by default. Actual costs are available via `:prove` which runs the full prover for the session.
+**Actual vs. estimated costs**: The REPL can show either estimated costs (from the TIR cost model, fast) or actual costs (from running zheng, slow). For interactive use, estimated nox step counts are shown by default. Actual costs are available via `:prove` which runs the full zheng prover for the session and reports real trace length, sumcheck rounds, and commitment sizes.
 
 **State accumulation**: The REPL accumulates state across expressions. The proof cost shown for each expression is its marginal cost — the additional rows it adds to the session's trace. This matches how the developer thinks ("how expensive is this one thing?") but may differ from the expression's standalone cost (if it reuses computations from earlier in the session).
 

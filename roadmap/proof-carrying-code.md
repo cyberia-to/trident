@@ -13,66 +13,69 @@ Software is distributed on trust today. A signed binary asserts that its author 
 
 Proof-carrying code replaces identity trust with mathematical trust. The distributed artifact is not just a binary — it is a binary paired with a STARK proof that the binary was compiled correctly from a verified source program. The recipient verifies the proof without re-executing the program. They learn what the program computes, not who wrote it. The author's identity is irrelevant; the proof is sufficient.
 
+**Related proposals:** [[cross-vm-proofs]], [[foreign-function-proofs]]
+**Reference:** [reference/ir.md — ProgramBundle](../reference/ir.md), [reference/atlas.md — on-chain registry](../reference/atlas.md), [reference/cli.md — trident verify](../reference/cli.md)
+
 ## Design
 
 ### Distribution Format
 
-```
-my_library.tri  →  trident build  →  my_library.tasm
-                                       my_library.stark_proof
+The pipeline boundary in the Trident compiler is `ProgramBundle` — defined in `reference/ir.md`. The bundle carries the compiled nox artifact and the program's public interface. This proposal adds the zheng proof as a companion field in that same bundle:
 
-# Combined in a bundle:
-my_library.warrior = {
-    tasm:       my_library.tasm,
-    proof:      my_library.stark_proof,
-    public_io:  { inputs: [...], outputs: [...] },
-    meta:       { source_hash, compiler_version, field }
-}
+```
+my_library.tri  →  trident build  →  ProgramBundle {
+                                         nox:        my_library (nox bytecode),
+                                         zheng_proof: Option<ZhengProof>,
+                                         public_io:  { inputs: [...], outputs: [...] },
+                                         meta:       { source_hash, compiler_version, field }
+                                      }
 ```
 
-The `.warrior` bundle is self-contained. It includes the compiled TASM (executable on any Triton VM), the STARK proof (verifiable by any standard verifier), the public input/output specification (so the verifier knows what was proven), and metadata for reproducibility.
+The `.tri` file is compiled to a nox trace; zheng proves that trace via SuperSpartan + Brakedown PCS. The resulting `ProgramBundle` is the distribution unit. `trident deploy` publishes it to Atlas (the on-chain package registry at `reference/atlas.md`). Recipients fetch from Atlas and verify locally with `trident verify`.
+
+The `.warrior` file format wraps a `ProgramBundle` into a self-contained executable recognised by warrior-cyber. Programs distributed as `.tri` → `ProgramBundle` → warrior-cyber ship with the zheng proof already embedded.
 
 ### What the Proof Proves
 
-The STARK proof in the bundle proves that the TASM binary is the correct output of compiling the Trident source program. More precisely, when the Trident compiler is itself a Trident program (self-hosting), the proof is a proof of compilation:
+The zheng proof in the bundle proves that the nox trace is the correct output of compiling the Trident source program. zheng uses SuperSpartan IOP over Brakedown PCS — no trusted setup, sub-millisecond verification. More precisely, when the Trident compiler is itself a Trident program (self-hosting), the proof is a proof of compilation:
 
 ```
 Input:  Trident source code S
-Output: TASM binary T
-Proof:  STARK proof that "compiling S produces T using compiler C"
+Output: nox trace N
+Proof:  zheng proof that "compiling S produces N using compiler C"
 ```
 
-A recipient who trusts the Trident compiler (or trusts the STARK verifier that validated the compiler's correctness) can accept T as a correctly compiled version of S without running the compiler themselves.
+A recipient who trusts the zheng verifier can accept N as the correct compilation of S without running the compiler themselves. The verifier is tiny — a single `trident verify` invocation — vastly simpler than trusting a full compiler and runtime.
 
-For non-self-hosting phases (compiler written in Rust), the proof is weaker: it proves the TASM binary executes the program's semantics correctly (the execution proof), not that the compilation was correct. Still valuable — the recipient can verify the binary's behavior without executing it.
+For non-self-hosting phases (compiler written in Rust), the proof covers execution semantics (this nox trace faithfully computes the program), not compilation provenance. Still valuable: the recipient verifies the program's behaviour without re-executing it.
 
 ### Verification Without Re-Execution
 
 The recipient workflow:
 
 ```
-Receive: my_library.warrior
-Step 1: Extract public_io and proof
-Step 2: verify_stark(proof, public_io) → bool
-Step 3: If true: accept the library's behavior as proven
-Step 4: Use my_library.tasm as a dependency
+Receive: my_library (ProgramBundle, fetched from Atlas or a direct transfer)
+Step 1: Extract public_io and zheng_proof
+Step 2: trident verify my_library  →  bool    (wraps zheng verifier)
+Step 3: If true: accept the library's behaviour as proven
+Step 4: Use my_library as a dependency
 ```
 
-Verification takes milliseconds (STARK verification is fast). Re-execution would take seconds to minutes for complex programs. For libraries distributed at scale, each recipient verifies rather than re-executes — the computational burden shifts from recipients to the single originator who generated the proof.
+zheng verification is sub-millisecond (Brakedown PCS skips FFTs; sumcheck is linear in the trace length). Re-execution would take seconds to minutes for non-trivial programs. The computational burden shifts from every recipient to the single originator who generated the proof.
 
 ### Composable Proof Chains
 
-When `my_library` depends on `other_library`, the bundle chain composes:
+When `my_library` depends on `other_library`, the bundle chain composes. See [[cross-vm-proofs]] for the general recursive mechanism; within a single nox/zheng stack the chain is simpler:
 
 ```
-other_library.warrior  (TASM + proof)
-       ↓ dependency
-my_library.warrior     (TASM + proof + embedded proof of other_library usage)
+other_library  (ProgramBundle + zheng proof)
+       ↓ dependency declared in trident.toml
+my_library     (ProgramBundle + zheng proof + dep_proofs[other_library])
        ↓
-final_program.warrior  (TASM + proof of entire program + proof of all dependencies)
+final_program  (ProgramBundle + zheng proof transitively covering all deps)
 ```
 
-The final program's proof transitively covers all its dependencies. A recipient who verifies `final_program.warrior` learns that the entire dependency chain executed correctly — not just the top-level program.
+The final program's proof transitively covers all its dependencies. A recipient who runs `trident verify final_program` learns that the entire dependency chain executed correctly. See [[foreign-function-proofs]] for the case where a dependency is not a Trident program.
 
 ### Trust Model
 
@@ -80,33 +83,33 @@ The trust model for proof-carrying code has two components:
 
 1. **Trust in the STARK verifier**: The recipient must trust that the STARK verification algorithm is implemented correctly. This is a small, auditable piece of code — vastly simpler than trusting a full compiler + runtime.
 
-2. **Trust in the Trident source**: The recipient must trust that the Trident source program, if they can read it, does what they expect. If they cannot read it, they trust the STARK proof that the TASM matches the source.
+2. **Trust in the Trident source**: The recipient must trust that the Trident source program, if they can read it, does what they expect. If they cannot read it, they trust the zheng proof that the nox artifact matches the source.
 
 What the recipient does NOT need to trust: the author's identity, reputation, or signature. Mathematics replaces identity.
 
 ## Key Tradeoffs
 
-**Source availability**: For the recipient to know what they are accepting, they should be able to read the Trident source. Distributing TASM without source is equivalent to distributing a signed binary — the proof is still valuable (behavioral correctness), but the recipient cannot independently verify the intent.
+**Source availability**: For the recipient to know what they are accepting, they should be able to read the Trident source. Distributing a nox artifact without source is equivalent to distributing a signed binary — the proof is still valuable (behavioural correctness), but the recipient cannot independently verify the intent.
 
-**Proof size**: STARK proofs are hundreds of kilobytes. Distributing proofs alongside binaries increases distribution size. For large programs with large proofs, this may be significant. Neural proof compression (a separate proposal) addresses this.
+**Proof size**: zheng proofs (Brakedown commitments + sumcheck transcript) are smaller than FRI-based STARK proofs but still tens to hundreds of kilobytes depending on trace length. Distributing proofs alongside bundles increases distribution size. Neural proof compression (a separate proposal) addresses this.
 
 **Compiler version pinning**: The proof is valid only for a specific compiler version. A recipient using a different verifier version may reject a valid proof or accept an invalid one. The `meta.compiler_version` field in the bundle allows recipients to check compatibility.
 
-**Dynamic behavior**: The STARK proof covers a specific execution with specific inputs. If the program's behavior is input-dependent, the proof only covers the specific inputs listed in `public_io`. For libraries that are called with many different inputs, the proof covers the compilation correctness (that this TASM corresponds to this source), not the execution for every possible input.
+**Dynamic behavior**: The zheng proof covers a specific nox execution with specific inputs. If the program's behaviour is input-dependent, the proof only covers the inputs listed in `public_io`. For libraries called with many different inputs, the proof covers compilation correctness (that this nox artifact corresponds to this source) rather than execution for every possible input.
 
 ## Implementation Sketch
 
-The bundle format and tooling:
+`ProgramBundle` already exists in `runtime/artifact.rs`. This proposal extends it with a `zheng_proof` field:
 
 ```rust
-// runtime/artifact.rs (already exists, extending)
+// runtime/artifact.rs (already exists — extending)
 #[derive(Serialize, Deserialize)]
 pub struct ProgramBundle {
-    pub tasm:       TasmBinary,
-    pub stark_proof: Option<StarkProof>,   // None for unproven bundles
-    pub public_io:  PublicIO,
-    pub meta:       BundleMeta,
-    pub dep_proofs: Vec<DependencyProof>,  // proofs of dependencies
+    pub nox:         NoxBinary,
+    pub zheng_proof: Option<ZhengProof>,   // None for unproven bundles
+    pub public_io:   PublicIO,
+    pub meta:        BundleMeta,
+    pub dep_proofs:  Vec<DependencyProof>,  // proofs of dependencies
 }
 
 #[derive(Serialize, Deserialize)]
@@ -117,22 +120,19 @@ pub struct BundleMeta {
     pub created_at:        u64,      // Unix timestamp
 }
 
-// cli/distribute.rs
-pub fn create_distribution_bundle(
-    source: &Path,
-    output: &Path,
-) -> Result<ProgramBundle> {
-    let tasm = compile(source)?;
-    let proof = prove(&tasm)?;
+// cli/build.rs (trident build --prove)
+pub fn create_proven_bundle(source: &Path, output: &Path) -> Result<ProgramBundle> {
+    let nox    = compile(source)?;
+    let proof  = zheng_prove(&nox)?;  // SuperSpartan + Brakedown
     let bundle = ProgramBundle {
-        tasm,
-        stark_proof: Some(proof),
-        public_io: extract_public_io(&tasm),
-        meta: BundleMeta::current(&source),
-        dep_proofs: collect_dependency_proofs(source)?,
+        nox,
+        zheng_proof: Some(proof),
+        public_io:   extract_public_io(&nox),
+        meta:        BundleMeta::current(source),
+        dep_proofs:  collect_dependency_proofs(source)?,
     };
     bundle.write_to(output)
 }
 ```
 
-The `trident distribute` command wraps this workflow and generates the `.warrior` bundle file. The `trident verify-bundle` command verifies a received bundle without executing it.
+The `trident deploy` command publishes the bundle to Atlas. The `trident verify` command (see `reference/cli.md`) verifies a received bundle by running the zheng verifier over the embedded proof — no re-execution of the nox trace required.

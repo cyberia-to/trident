@@ -5,45 +5,46 @@ area: AI
 planned: 128K
 ---
 
-# Neural Theorem Prover for TASM Equivalence
+# Neural Theorem Prover for TIR Equivalence
+
+**Related:** [[algebraic-identity-explorer]] · [[learned-peephole]] · [[neural-decompilation]]
 
 ## Motivation
 
-Showing that two TASM sequences compute the same function is the core problem of compiler correctness. The algebraic identity explorer validates identities empirically (random testing + Schwartz-Zippel). This is probabilistic: failure probability $< 10^{-7}$ is excellent, but not mathematical certainty. For high-assurance contexts — the identities that form the foundation of the compiler's optimization passes — mathematical proof is required.
+Showing that two TIR sequences compute the same function is the core problem of compiler correctness. The algebraic identity explorer validates identities empirically (random testing + Schwartz-Zippel). This is probabilistic: failure probability $< 10^{-7}$ is excellent, but not mathematical certainty. For high-assurance contexts — the identities that form the foundation of the compiler's optimization passes — mathematical proof is required.
 
-A neural theorem prover for TASM equivalence searches for a chain of valid rewrite steps that transforms one sequence into another. Each step is a proven-correct rewrite rule. The chain is a constructive proof of equivalence — not a probabilistic argument, but a step-by-step demonstration that the transformation is valid. Every successful chain is a new peephole pattern. Every new peephole pattern enriches the rewrite vocabulary. The system is self-amplifying.
+A neural theorem prover for TIR equivalence searches for a chain of valid rewrite steps that transforms one TIR sequence into another. Each step is a proven-correct rewrite rule. The chain is a constructive proof of equivalence — not a probabilistic argument, but a step-by-step demonstration that the transformation is valid. Every successful chain is a new peephole pattern. Every new peephole pattern enriches the rewrite vocabulary. The system is self-amplifying.
 
 ## Design
 
 ### Rewrite Rule Vocabulary
 
-The NTP operates over a vocabulary of atomic rewrite rules. Each rule is correct by construction or proven correct by the algebraic identity explorer:
+The NTP operates at TIR level — the same level as the neural compiler (see [reference/ir.md](../reference/ir.md) for the 54 ops across 4 tiers). Each rule is correct by construction or proven correct by the algebraic identity explorer:
 
 | Rule | Before | After | Condition |
 |------|--------|-------|-----------|
-| Dead push | `push X; pop` | ∅ | X unused by subsequent instructions |
-| Constant fold | `push X; push Y; add` | `push (X+Y)` | X, Y are constants |
-| Identity elim | `push 0; add` | ∅ | Always valid |
-| Swap cancel | `swap K; swap K` | ∅ | Always valid |
-| Commutativity | `push X; push Y; add` | `push Y; push X; add` | Always valid |
-| Reorder | `A; B` | `B; A` | No data dependency between A, B |
+| Dead push | `Const(X); Pop` | ∅ | X unused by downstream TIR nodes |
+| Constant fold | `Const(X); Const(Y); Add` | `Const(X+Y)` | X, Y are compile-time constants |
+| Identity elim | `Const(0); Add` | ∅ | Always valid |
+| Commutativity | `Const(X); Const(Y); Add` | `Const(Y); Const(X); Add` | Always valid for commutative TIR ops |
+| Reorder | `A; B` | `B; A` | No data dependency between A, B in TIR DAG |
 | **Explorer rules** | *from identity database* | *from identity database* | *proven valid* |
 
-The rule vocabulary starts with ~20 atomic rules and grows as the identity explorer validates new ones. Every rule added to the identity explorer's database is automatically available to the NTP.
+The rule vocabulary starts with ~20 atomic TIR-level rules and grows as the identity explorer validates new ones. Every rule added to the identity explorer's database is automatically available to the NTP.
 
 ### GNN Architecture for Sequence Embedding
 
-The NTP embeds TASM sequences as vectors using a GNN on the dependency DAG:
+The NTP embeds TIR sequences as vectors using a GNN on the TIR dependency DAG (the same `TirGraph` structure used by the neural compiler encoder):
 
 ```
-TASM sequence → Dependency DAG → GNN embedding → 128-dim vector
+TIR sequence → TirGraph (DataDep/ControlFlow/MemOrder edges) → GNN embedding → 128-dim vector
 ```
 
-The GNN uses the same architecture as the instruction scheduling GNN, but trained for a different task: producing embeddings that capture equivalence structure (two equivalent sequences should have similar embeddings).
+The GNN uses the same architecture as the neural compiler's encoder, but trained for a different task: producing embeddings that capture equivalence structure (two equivalent TIR sequences should have similar embeddings).
 
 ```
-Node features: instruction_type, operand_values (if constant), stack_depth, table_touched
-Edge features: dependency_type (data/control), edge_distance
+Node features: op_kind (54 ops), operand_values (if constant), tier (1–4), field_type
+Edge features: dependency_type (DataDep/ControlFlow/MemOrder), edge_distance
 Message passing: 3 layers
 Output: 128-dim graph-level embedding (mean pooling over node embeddings)
 ```
@@ -82,15 +83,15 @@ The three systems together — explorer, NTP, peephole — form a flywheel that 
 
 ### Proof Certificates
 
-Successful NTP proofs produce a certificate: the sequence of (rule, position) pairs that transforms the source into the target. This certificate is:
+Successful NTP proofs produce a certificate: the sequence of (rule, position) pairs that transforms the source TIR into the target TIR. This certificate is:
 - Checkable independently (without the NTP) by applying the rules mechanically
 - Storable in the rule database as evidence for the corresponding peephole pattern
 - Publishable as a formal proof of the identity for auditing
 
 ```rust
 struct ProofCertificate {
-    source: TasmSequence,
-    target: TasmSequence,
+    source: TirSequence,
+    target: TirSequence,
     steps: Vec<(RewriteRule, Position)>,
 }
 
@@ -120,7 +121,7 @@ Certificate verification is $O(\text{steps} \times \text{sequence\_length})$ —
 ```rust
 // tools/ntp/search.rs
 pub struct NeuralTheoremProver {
-    embedder: TasmGNN,
+    embedder: TirGNN,
     rule_predictor: RulePredMLP,
     rule_set: Vec<RewriteRule>,
 }
@@ -128,8 +129,8 @@ pub struct NeuralTheoremProver {
 impl NeuralTheoremProver {
     pub fn find_proof(
         &self,
-        source: &TasmSequence,
-        target: &TasmSequence,
+        source: &TirSequence,
+        target: &TirSequence,
         max_depth: usize,
     ) -> Option<ProofCertificate> {
         let e_target = self.embedder.embed(target);

@@ -7,9 +7,11 @@ planned: 16K
 
 # Supercompilation for Proof Machines
 
+Related: [[field-arithmetic-passes]], [[compiler-analysis-passes]], [[algebraic-identity-explorer]]
+
 ## Motivation
 
-Every algebraic pass in the compiler is a local transformation: see pattern, apply rewrite, move on. Local optimizations compose additively. Supercompilation — Valentin Turchin's technique of driving, folding, and generalization — is global. It symbolically executes the entire program, tracks the shape of every computation, and collapses iterative processes to closed forms. Applied to an algebraic virtual machine operating over Goldilocks, it produces gains no local pass can match: linear recurrences over field elements become single exponentiation expressions, and a loop of 1000 Processor rows becomes 10.
+Every algebraic pass in the compiler is a local transformation: see pattern, apply rewrite, move on. Local optimizations compose additively. Supercompilation — Valentin Turchin's technique of driving, folding, and generalization — is global. It symbolically executes the entire program, tracks the shape of every computation, and collapses iterative processes to closed forms. Applied to nox — the proof-native VM operating over Goldilocks — it produces gains no local pass can match: linear recurrences over field elements become single exponentiation expressions, and a loop of 1000 nox reduction steps becomes 10.
 
 No proof-native language has implemented supercompilation. The combination of symbolic field execution and closed-form discovery is entirely unexplored territory.
 
@@ -48,7 +50,7 @@ fn iterate(x0: Field, a: Field, b: Field, n: Field) -> Field {
 }
 ```
 
-Processor table rows: $n$ iterations → $O(\log n)$ for the exponentiation. For $n = 1000$, this is roughly 3 orders of magnitude.
+Nox reduction steps: $n$ iterations → $O(\log n)$ for the exponentiation. For $n = 1000$, this is roughly 3 orders of magnitude.
 
 **Goldilocks advantage**: Recurrences involving powers of 2 (common in cryptographic contexts) have compact closed forms because $2^k \bmod p$ reduces via the golden-ratio identity. The supercompiler discovers these automatically.
 
@@ -68,10 +70,10 @@ fn generic_hash<const ROUNDS: Field>(input: Field) -> Field {
 // Compile-time specialization with ROUNDS = 5:
 let hash_5 = specialize(generic_hash, ROUNDS = 5);
 // Result: fully unrolled, constant-folded, algebraically simplified
-// TASM output: ~10 straight-line instructions
+// nox output: ~10 straight-line reduction steps
 ```
 
-The specialized function carries no loop overhead, no dynamic dispatch, no runtime counter. Its STARK proof is minimal — exactly the cost of the 5 squarings and additions, after constant folding has absorbed the round constant arithmetic.
+The specialized function carries no loop overhead, no dynamic dispatch, no runtime counter. Its proof cost in nox/zheng is minimal — exactly the cost of the 5 squarings and additions, after constant folding has absorbed the round constant arithmetic.
 
 ## The Multiplicative Gain Stack
 
@@ -84,11 +86,11 @@ Supercompilation amplifies every other pass:
 5. Constant folder evaluates everything that depends only on constants
 6. Dead field eliminator removes the now-unused loop variables
 
-A loop of 1000 Processor rows becomes:
-- After supercompilation: $O(\log n)$ via closed form → ~10 multiply rows
-- After addition chain: ~9 rows (optimal chain for the specific $n$)
-- After multi-exponentiation fusion with other nearby pows: ~7 rows
-- After constant folding (if $a$ and $b$ are compile-time constants): 0 rows
+A loop of 1000 nox reduction steps becomes:
+- After supercompilation: $O(\log n)$ via closed form → ~10 reduction steps
+- After addition chain: ~9 steps (optimal chain for the specific $n$)
+- After multi-exponentiation fusion with other nearby pows: ~7 steps
+- After constant folding (if $a$ and $b$ are compile-time constants): 0 steps
 
 Each pass multiplies the benefit of the previous. This is why supercompilation must run first in the pass pipeline.
 
@@ -104,7 +106,7 @@ Each pass multiplies the benefit of the previous. This is why supercompilation m
 
 ## Implementation Sketch
 
-Supercompilation requires a symbolic evaluator over TIR:
+Supercompilation requires a symbolic evaluator over TIR (see [`../reference/ir.md`](../reference/ir.md) for the full op set). The symbolic evaluator must correctly model nox's 16 reduction patterns and 5 jets:
 
 ```rust
 // tir/supercompile/driver.rs

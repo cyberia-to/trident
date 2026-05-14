@@ -7,9 +7,14 @@ planned: 16K
 
 # Galois Theory for Extension Field Optimization
 
+**Related proposals:** [[algebraic-geometry-constraints]], [[field-arithmetic-passes]], [[compiler-analysis-passes]]
+**Reference:** [language.md §15 — XField type, `*.` operator, dot-step builtins](../reference/language.md)
+
 ## Motivation
 
 When Trident operates over extension fields ($\mathbb{F}_{p^2}$, $\mathbb{F}_{p^4}$), arithmetic costs multiply. Extension field multiplication in $\mathbb{F}_{p^2}$ requires 3 base-field multiplications (Karatsuba), vs 1 for base field. But the Galois group of the extension carries structure the compiler can exploit — structure that dramatically reduces the effective cost of many extension field operations.
+
+`language.md §15` already defines the `XField` type (the quadratic extension of the base field), the `*.` operator for extension field multiplication, and the dot-step builtins. This proposal adds Galois-theoretic rewrite rules on top of that existing type. The Frobenius automorphism is directly relevant: hemera (Poseidon2) operates internally over the extension field embedding, and Frobenius structure there can be exploited for cheaper round permutations.
 
 No existing compiler applies Galois theory to code generation. Trident can, because it controls the full pipeline from source to field arithmetic.
 
@@ -19,13 +24,15 @@ No existing compiler applies Galois theory to code generation. Trident can, beca
 
 The Frobenius map $\phi: x \mapsto x^p$ is an automorphism of $\mathbb{F}_{p^2}$ (it permutes elements while preserving the field structure). In the base field $\mathbb{F}_p$, the Frobenius is the identity — $x^p = x$ for all $x \in \mathbb{F}_p$.
 
-In $\mathbb{F}_{p^2}$ with elements $(a_0, a_1)$:
+In $\mathbb{F}_{p^2}$ with elements $(a_0, a_1)$ expressed using `XField` (`language.md §15`):
 
 $$\phi(a_0, a_1) = (a_0 + a_1 \cdot (p \bmod \text{irred}), \ldots)$$
 
-For many irreducible polynomials, the Frobenius has a simple closed form — conjugation: $\phi(a_0, a_1) = (a_0, -a_1)$. This is a sign flip, not a multiplication. Cost: 1 negation in the base field.
+For many irreducible polynomials, the Frobenius has a simple closed form — conjugation: $\phi(a_0, a_1) = (a_0, -a_1)$. This is a sign flip, not a multiplication. Cost: 1 negation in the base field vs. the Fermat-based approach.
 
-**Compiler optimization**: whenever the program computes `pow(x, p)` for an extension field element `x`, the compiler replaces it with the Frobenius application (conjugation), saving 2 base-field multiplications per call.
+**Compiler optimization**: whenever the program computes `pow(x, p)` for an `XField` element `x`, the compiler replaces it with the Frobenius application (conjugation), saving 2 base-field multiplications per call. This rewrite fires at the TIR level and is compatible with the existing field-arithmetic passes ([[field-arithmetic-passes]]).
+
+The Frobenius is also relevant to hemera's internal structure: Poseidon2 uses the extension field embedding for its MDS matrix, and Frobenius-aware simplification can reduce the number of `*.` operations in the round function.
 
 ### Norm and Trace Maps
 
@@ -59,13 +66,14 @@ For $\mathbb{F}_{p^4} = \mathbb{F}_{p^2}[y] / (y^2 - \alpha)$, the Galois group 
 
 **Irreducible polynomial choice**: The specific Frobenius formula depends on the irreducible polynomial defining the extension. The compiler must know which irreducible polynomial is in use and precompute the Frobenius formula at compile time. Different polynomial choices yield different Galois group presentations.
 
-**Proof overhead**: Frobenius optimizations change the instruction sequence. The STARK prover still verifies correctness, but the optimization must be algebraically sound — otherwise the proof fails. The compiler should carry a Lean proof of each Galois identity it applies.
+**Proof overhead**: Frobenius optimizations change the nox instruction sequence. The zheng prover still verifies correctness via SuperSpartan over the rewritten trace, but the optimization must be algebraically sound — otherwise the constraint check fails. The compiler should carry a Lean proof of each Galois identity it applies. See [[categorical-compiler]] for the framework in which these rewrites are natural transformations between compiler functors.
 
 ## Implementation Path
 
-1. Fix the irreducible polynomial for $\mathbb{F}_{p^2}$ in the field module
-2. Derive the Frobenius formula symbolically at compile time
-3. Add TIR-level detection of `pow(x, p)` for extension field types
-4. Implement norm/trace rewrite rules
-5. Add subfield element tracking via type annotations
-6. Validate each optimization by STARK-proving the identity over sample inputs
+1. Fix the irreducible polynomial for $\mathbb{F}_{p^2}$ in the field module (matches the `XField` type in `language.md §15`)
+2. Derive the Frobenius formula symbolically at compile time from the fixed irreducible polynomial
+3. Add TIR-level detection of `pow(x, p)` for `XField` elements and replace with conjugation
+4. Implement norm/trace rewrite rules at the TIR level
+5. Add subfield element tracking via type annotations (elements provably in the base subfield get the 2-multiplication form via the `*.` operator specialisation)
+6. Validate each optimization by zheng-proving the identity over sample inputs — the nox trace with and without the rewrite must produce the same public outputs
+7. Integrate with [[compiler-analysis-passes]] Pass 11 (extension field strength reduction) which targets the same `XField` arithmetic

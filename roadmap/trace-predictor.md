@@ -5,13 +5,17 @@ area: AI
 planned: 128K
 ---
 
-# Predictive AET Trace Analysis
+# Predictive Trace Cost Analysis
 
 ## Motivation
 
-Every optimization decision in the compiler depends on understanding the cost landscape: which tables will be tallest, how close each table is to its next power-of-2 cliff, and which optimization passes will move the bottleneck. Currently, the compiler must execute the program to measure actual table heights — which means full TASM generation, execution, and AET collection. This is expensive for interactive tools and for optimization passes that need to evaluate multiple candidate transformations.
+Every optimization decision in the compiler depends on understanding the cost landscape: what the nox trace length will be, how many jet invocations each candidate transformation produces, and which cost component is the bottleneck. In nox/zheng, `proof_cost = trace_length + sum(jet_costs)` — jet costs are fixed per-jet (hash jet via hemera is the most expensive), but trace length is program-dependent and only known after full lowering.
 
-A small neural network that predicts AET table heights from TIR features — before compilation and execution — changes this. Cost estimation becomes a millisecond operation. The compiler can evaluate hundreds of candidate transformations, pick the best one, and then compile that one. Interactive tools (REPL, IDE) get cost estimates without any compilation at all.
+Currently, the compiler must fully lower a TIR function to a nox trace and count reduction steps + jet calls to measure actual proof cost. This is expensive for interactive tools and for optimization passes that need to evaluate multiple candidate transformations.
+
+A small neural network that predicts nox trace length and jet invocation counts from TIR features — before lowering and execution — changes this. Cost estimation becomes a millisecond operation. The compiler can evaluate hundreds of candidate transformations, pick the predicted cheapest one, and then lower only that one. Interactive tools (REPL, IDE) get cost estimates without any lowering at all.
+
+Related proposals: [[nn-trd]], [[cost-surrogate]], [[compiler-ensemble]]. Reference: `../reference/neural.md` (canonical neural compiler spec).
 
 ## Design
 
@@ -35,43 +39,52 @@ These features are extractable from the TIR in O(n) time without any execution.
 
 ### Output
 
-Nine field elements: predicted height of each AET table.
+The nox/zheng cost model does not have 9 fixed AET tables. Proof cost has two components:
+
+- **trace_length**: total number of nox reduction pattern applications
+- **jet_costs**: per-jet invocation counts × fixed jet cost
+
+The predictor outputs these as separate values:
 
 ```
-[Processor, Hash, Cascade, Lookup, RAM, U32, OpStack, U32Aux, Cross]
+[trace_length, jet_hash_count, jet_poly_eval_count, jet_invert_count, jet_ntt_count, jet_other_count]
 ```
 
-Predictions are in log-scale (predicting log2 of the height) to compress the range and handle the fact that table heights vary from 1 to $2^{32}$.
+Six field elements in log-scale (predicting log2 of the value) to compress the range. Total predicted cost = predicted_trace_length + sum(predicted_jet_count[i] × jet_cost[i]).
+
+The `hash` jet is the most expensive: it invokes hemera (Poseidon2), which dominates proof cost for hash-heavy programs.
 
 ### Model Architecture
 
-Single hidden layer, 64 units, field-native implementation:
+Single hidden layer, 64 units, field-native implementation in [[nn-trd]]:
 
 ```trident
 // trace_predictor.trd
-fn predict_aet_heights(features: Vector<32>) -> Vector<9> {
+fn predict_trace_costs(features: Vector<32>) -> Vector<6> {
     // Layer 1: 32 → 64 (with ReLU)
     let h1 = relu(linear(W1, b1, features));   // W1: Matrix<64, 32>
-    // Layer 2: 64 → 9
-    let out = linear(W2, b2, h1);              // W2: Matrix<9, 64>
-    out  // log-scale heights
+    // Layer 2: 64 → 6 (trace_length + 5 jet counts)
+    let out = linear(W2, b2, h1);              // W2: Matrix<6, 64>
+    out  // log-scale: [trace_length, jet_hash, jet_poly_eval, jet_invert, jet_ntt, jet_other]
 }
 ```
 
-Parameters: $64 \times 32 + 64 + 9 \times 64 + 9 = 2048 + 64 + 576 + 9 = 2697$ field elements ≈ ~21 KB. Inference: ~3,000 TASM instructions. Trivial.
+Parameters: $64 \times 32 + 64 + 6 \times 64 + 6 = 2048 + 64 + 384 + 6 = 2502$ field elements ≈ ~20 KB. Inference: ~2,700 nox steps. Trivial.
+
+Trained by [[evolutionary-training]]. The model itself is a [[nn-trd]] network, making its inference a provable nox trace.
 
 ### Training Data Collection
 
-Training data is collected during compilation: for each compiled function, record (TIR features, actual AET heights). Start with ~1,000 programs; scale to ~100,000 as the program corpus grows.
+Training data is collected during compilation: for each compiled function, record (TIR features, actual nox trace costs). Start with ~1,000 programs; scale to ~100,000 as the program corpus grows.
 
 ```rust
 // compiler: collect training pairs during compilation
 fn compile_and_record(source: &TridentSource, dataset: &mut Dataset) {
     let tir = lower_to_tir(source);
     let features = extract_features(&tir);
-    let tasm = lower_to_tasm(&tir);
-    let aet = execute_and_measure(&tasm);
-    dataset.push(TrainingSample { features, heights: aet.heights() });
+    let trace = lower_to_nox_trace(&tir);  // warrior-cyber lowers TIR → nox
+    let costs = measure_trace_costs(&trace);  // trace_length + per-jet counts
+    dataset.push(TrainingSample { features, costs });
 }
 ```
 
@@ -79,20 +92,21 @@ Training runs on the collected dataset using evolutionary training (`evolutionar
 
 ### Accuracy Targets
 
-- **Bottleneck table identification**: correct >90% of the time
-- **Exact height**: within 20% of actual height
-- **Ranking**: correctly rank two implementations by cost >95% of the time
+- **Bottleneck component identification** (trace_length vs. hash jets): correct >90% of the time
+- **Exact cost**: within 20% of actual nox proof cost
+- **Ranking**: correctly rank two implementations by proof cost >95% of the time
 
 The ranking target is most important for compiler use — the predictor is used to choose between optimization candidates, not to predict absolute costs.
 
 ### Uses
 
-1. **Compilation cost estimation**: estimate cost of any TIR function without execution
-2. **Optimization candidate selection**: rank 8–16 optimization variants, compile only the predicted winner
-3. **CI/CD fast path**: estimate cost gate compliance without full proving
+1. **Compilation cost estimation**: estimate proof cost of any TIR function without nox lowering
+2. **Optimization candidate selection**: rank 8–16 optimization variants, lower only the predicted winner
+3. **CI/CD fast path**: estimate cost gate compliance without full proving by zheng
 4. **REPL cost hints**: show cost estimates without any compilation
-5. **Identity explorer usefulness scorer**: provides table_criticality weights dynamically
-6. **Cost surrogate input**: provides AET heights as features for the differentiable cost surrogate
+5. **[[algebraic-identity-explorer]] usefulness scorer**: provides jet_criticality weights dynamically
+6. **[[cost-surrogate]] input**: predicted trace costs feed the surrogate as additional features
+7. **[[compiler-ensemble]] meta-selector**: ranks specialist outputs in microseconds before committing to one
 
 ## Key Tradeoffs
 
@@ -100,7 +114,7 @@ The ranking target is most important for compiler use — the predictor is used 
 
 **Generalization**: The predictor trained on 1,000 programs may overfit to the programs' stylistic patterns. A diverse corpus (cryptographic code, neural inference, sorting algorithms, arithmetic circuits) is essential for generalization. Adversarial programs (generated by the adversarial compiler — separate proposal) stress-test generalization.
 
-**Update frequency**: As the compiler's optimization passes improve, the relationship between TIR features and AET heights changes. The predictor must be retrained periodically (at least after each major pass improvement). An online learning approach (update continuously as new programs are compiled) would maintain accuracy without periodic retraining.
+**Update frequency**: As the compiler's optimization passes improve, the relationship between TIR features and nox trace costs changes. The predictor must be retrained periodically (at least after each major pass improvement). An online learning approach (update continuously as new programs are compiled) would maintain accuracy without periodic retraining.
 
 **Cold start**: The first 1,000 programs must be compiled without the predictor. The compiler falls back to the cost model (approximation, always available) during the cold start period. Once the predictor is trained, it replaces the cost model for most purposes.
 
@@ -109,17 +123,18 @@ The ranking target is most important for compiler use — the predictor is used 
 ```rust
 // cost/trace_predictor.rs
 pub struct TracePredictor {
-    weights: NnWeights,  // trained by evolutionary method
+    weights: NnWeights,  // trained by evolutionary method (evolutionary-training.md)
 }
 
 impl TracePredictor {
-    pub fn predict(&self, tir: &TirFunction) -> AetHeights {
+    pub fn predict(&self, tir: &TirFunction) -> NoxTraceCosts {
         let features = extract_features(tir);
-        let log_heights = self.weights.infer(&features);
-        AetHeights::from_log_scale(log_heights)
+        let log_costs = self.weights.infer(&features);
+        NoxTraceCosts::from_log_scale(log_costs)
+        // returns: trace_length + per-jet invocation counts
     }
 
-    pub fn train(dataset: &[(Features, AetHeights)]) -> Self {
+    pub fn train(dataset: &[(Features, NoxTraceCosts)]) -> Self {
         let evolved = evolutionary_train(dataset, N_GENERATIONS);
         TracePredictor { weights: evolved }
     }
@@ -139,4 +154,4 @@ fn extract_features(tir: &TirFunction) -> Vector<32> {
 }
 ```
 
-The predictor is a small neural network trained by the evolutionary training system, predicting AET heights that guide every other optimization decision in the system. It is foundational — schedule its implementation early in the 128K milestone.
+The predictor is a small [[nn-trd]] network trained by [[evolutionary-training]], predicting nox trace costs (trace_length + jet invocation counts) that guide every other optimization decision in the system. It is foundational — schedule its implementation early in the 128K milestone. See `../reference/neural.md` for the canonical neural compiler architecture this integrates with.

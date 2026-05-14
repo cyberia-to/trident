@@ -7,11 +7,17 @@ planned: 64K
 
 # Merkle Proof Iterators
 
+**Related:** [[commitment-syntax]] · [language.md §15](../reference/language.md#15-merkle-authentication)
+
+## Current Status
+
+Language.md §15 already defines `merkle_step(idx: U32, d: Digest) -> (U32, Digest)` and `merkle_step_mem` as Tier 2 builtins. The reference spec even includes a worked example of a full Merkle path verification loop using `merkle_step`. This proposal is about an ergonomic iterator abstraction — `verified_walk` — that desugars to the existing `merkle_step` calls with hemera as the underlying hash, so the developer writes a loop but never manually manages authentication paths.
+
 ## Motivation
 
 Merkle trees are the standard data structure for proving membership in a set without revealing the full set. Implementing Merkle proof verification correctly requires managing authentication paths, computing hash sequences, and checking root equality — repeated for every leaf accessed. In practice, developers copy-paste Merkle verification logic, introduce subtle bugs in path indexing or hash ordering, and write code that is structurally identical across every project.
 
-When Merkle iteration is a language primitive, the compiler generates the authentication path management and hash chain computation automatically. The developer writes a loop; the compiler generates `merkle_step` TASM instructions. The STARK proof covers every Merkle membership check inside the loop body as part of the main execution proof — no separate proof structure needed.
+When Merkle iteration is a language primitive, the compiler generates the authentication path management and hash chain computation automatically. The developer writes a loop; the compiler generates `merkle_step` nox instructions. The zheng proof covers every Merkle membership check inside the loop body as part of the main nox execution proof — no separate proof structure needed.
 
 ## Design
 
@@ -23,7 +29,7 @@ for (leaf, auth_path) in merkle_tree.verified_walk(root) {
     //   - `leaf` is STARK-proven to be in the tree with the given root
     //   - `auth_path` is the current authentication path (for inspection/logging)
     //   - The merkle_step instructions have already been emitted
-    //   - A proof violation here is an invalid STARK proof
+    //   - A proof violation here is an invalid zheng proof
     process(leaf);
 }
 ```
@@ -33,26 +39,26 @@ The `verified_walk` method is a built-in iterator over a Merkle tree structure. 
 1. Read the leaf value from the tree
 2. Compute the authentication path hash sequence from leaf to root
 3. Verify the computed root equals the expected `root` parameter
-4. If verification fails, the STARK constraint is violated — invalid proof
+4. If verification fails, the nox constraint is violated — the zheng proof is invalid
 
 Inside the loop body, `leaf` carries the semantic guarantee: it is a member of the Merkle tree committed to by `root`. This guarantee is proven by the STARK, not by a runtime assertion.
 
-### Compiler-Generated TASM
+### Desugaring to `merkle_step`
 
-The compiler generates `merkle_step` instructions (a Triton VM primitive) for each level of the Merkle tree:
+`verified_walk` desugars to the existing `merkle_step` builtin (language.md §15). For a depth-4 tree, the compiler emits the pattern from the language spec reference example:
 
-```
+```trident
 // Compiler output for a depth-4 Merkle tree:
 // For each leaf at index i:
-read_leaf(tree, i)
-merkle_step(tree, auth_path[0], i >> 0)  // Level 0
-merkle_step(tree, auth_path[1], i >> 1)  // Level 1
-merkle_step(tree, auth_path[2], i >> 2)  // Level 2
-merkle_step(tree, auth_path[3], i >> 3)  // Level 3 (root level)
-assert_eq(computed_root, expected_root)   // STARK constraint: root must match
+let mut idx = leaf_index
+let mut current = leaf_hash  // hemera hash of the leaf value
+for _ in 0..4 bounded 64 {
+    (idx, current) = merkle_step(idx, current)  // one level up, hemera internally
+}
+assert_digest(current, root)  // nox constraint: root must match
 ```
 
-The `merkle_step` instruction is a TASM primitive that computes one hash combination step in the Merkle tree. It is optimized for Triton VM's hash table — more efficient than calling the general hash function manually.
+`merkle_step` is a nox jet (one of the 5 built-in jets: hash, poly_eval, merkle_verify, fri_fold, ntt). It computes one hash combination step using hemera (Poseidon2) internally — more efficient than calling the general hash function manually, because it maps to a single nox jet invocation rather than multiple reduction steps.
 
 ### Authentication Path Management
 
@@ -77,7 +83,7 @@ for leaf in tree2.verified_walk(root) { process2(leaf); }
 // Authentication paths are independent, but root hash need not be recomputed
 ```
 
-More powerfully, for leaves that share a common ancestor (partially overlapping authentication paths), the compiler can share the common hash computations, reducing total Hash table rows.
+More powerfully, for leaves that share a common ancestor (partially overlapping authentication paths), the compiler can share the common hash computations, reducing total nox reduction steps for the merkle_step jet.
 
 ### Integration with ZK Functions
 
@@ -106,7 +112,7 @@ The Merkle membership proof becomes a zero-knowledge membership proof: the prove
 
 **Authentication path supply**: The authentication paths must be supplied as part of the Merkle tree structure at runtime. For programs that prove Merkle membership over trees they don't control (e.g., blockchain state trees), the authentication paths must be fetched and provided by the caller. This is a runtime concern, not a compiler concern — the compiler assumes authentication paths are available.
 
-**Hash function choice**: The built-in Merkle operations use Tip5 as the hash function, matching Triton VM's native hash instruction. Programs that need compatibility with external Merkle trees using SHA-256 or Poseidon must use the general hash primitive, losing the `merkle_step` optimization.
+**Hash function choice**: The built-in Merkle operations use hemera (Poseidon2) as the hash function — `merkle_step` calls hemera internally. Programs that need compatibility with external Merkle trees using SHA-256 must use the general hash primitive, losing the `merkle_step` jet optimization. hemera replaced Tip5; any reference to Tip5-based Merkle trees refers to this implementation.
 
 ## Implementation Sketch
 
@@ -116,7 +122,7 @@ The Merkle iterator is a compiler builtin desugared during TIR construction:
 // tir/merkle.rs
 struct MerkleTreeType {
     depth: u32,
-    hash_fn: HashFn,
+    // hash_fn is always hemera (Poseidon2) for merkle_step jet
     leaf_type: Type,
 }
 
@@ -130,18 +136,19 @@ fn lower_verified_walk(
     let leaf_count = 1u64 << tree_ty.depth;
 
     for leaf_index in 0..leaf_count {
-        let leaf = tir.emit(TasmOp::ReadLeaf(tree.clone(), leaf_index));
-        let mut computed = leaf.clone();
+        let leaf = tir.emit(NoxOp::ReadLeaf(tree.clone(), leaf_index));
+        let mut idx = tir.const_u32(leaf_index as u32);
+        let mut current = leaf.clone();
 
-        for level in 0..tree_ty.depth {
-            let sibling_index = leaf_index ^ (1 << level);
-            let sibling = tir.emit(TasmOp::ReadLeaf(tree.clone(), sibling_index));
-            let is_left = leaf_index & (1 << level) == 0;
-            computed = tir.emit(TasmOp::MerkleStep(computed, sibling, is_left));
+        // Desugar to merkle_step calls (language.md §15, nox merkle_verify jet)
+        for _level in 0..tree_ty.depth {
+            let (new_idx, new_current) = tir.emit(NoxOp::MerkleStep(idx, current));
+            idx = new_idx;
+            current = new_current;
         }
 
-        // Root equality constraint — must match expected root
-        tir.emit_constraint(TirExpr::Eq(computed, root.clone()));
+        // Root equality nox constraint — must match expected root
+        tir.emit_constraint(TirExpr::AssertDigest(current, root.clone()));
 
         // Bind `leaf` and `auth_path` for the loop body
         let loop_env = tir.extend_env([("leaf", leaf), ("auth_path", ...)]);

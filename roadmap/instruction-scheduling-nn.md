@@ -5,23 +5,27 @@ area: AI
 planned: 128K
 ---
 
-# Learned Instruction Scheduling
+# Learned TIR Op Scheduling
 
 ## Motivation
 
-The order of TASM instructions within a dependency-respecting permutation affects AET table heights. Two orderings that are both correct (both respect data dependencies) can produce different table profiles. Interleaving hash instructions with arithmetic instructions forces the Hash table to fragment across the trace, potentially inflating its padded height. Clustering hash instructions reduces fragmentation. But the optimal clustering depends on the specific program — what works for one program may worsen another.
+The order of TIR ops within a dependency-respecting permutation affects nox proof cost. Two orderings that are both correct (both respect data dependencies) can produce different trace profiles. Interleaving hash-calling TIR ops with arithmetic ops forces the hash jet (hemera) to be invoked in scattered positions across the nox trace, potentially inflating its contribution to proof cost. Clustering hash-calling ops reduces jet invocation fragmentation. But the optimal clustering depends on the specific program — what works for one program may worsen another.
 
-Learned instruction scheduling treats ordering as a machine learning problem. A graph neural network on the TASM dependency DAG predicts a priority score for each instruction. The scheduler executes a greedy topological sort using these priorities. The key property: the scheduler only outputs dependency-respecting permutations — guaranteed by algorithm construction, not by model correctness. Correctness is free. Performance is learned.
+Trident optimizes at the TIR level (see `../reference/ir.md` for TIR op definitions), before nox lowering. Scheduling happens on the TIR dependency DAG: reordering TIR ops within the dependency constraints produces different nox traces when lowered by warrior-cyber.
+
+Learned TIR op scheduling treats ordering as a machine learning problem. A graph neural network on the TIR dependency DAG predicts a priority score for each TIR op. The scheduler executes a greedy topological sort using these priorities. The key property: the scheduler only outputs dependency-respecting permutations — guaranteed by algorithm construction, not by model correctness. Correctness is free. Performance is learned.
+
+Related proposals: [[cost-surrogate]], [[compiler-ensemble]], [[learned-peephole]].
 
 ## Design
 
 ### Problem Formulation
 
-Input: TASM dependency DAG — a directed acyclic graph where each node is a TASM instruction and each edge is a data dependency.
+Input: TIR dependency DAG — a directed acyclic graph where each node is a TIR op (one of 54 ops, see `../reference/ir.md`) and each edge is a data or control dependency (DataDep, ControlFlow, MemOrder — matching the edge types in the neural compiler's TirGraph, see `../reference/neural.md`).
 
-Output: a topological ordering of the DAG (a valid TASM sequence with all dependencies respected).
+Output: a topological ordering of the DAG (a valid TIR op sequence with all dependencies respected). warrior-cyber then lowers this ordered sequence to a nox trace.
 
-The scheduler chooses the ordering by priority scores: at each step, the instruction with the highest priority score among all dependency-free candidates is scheduled next. The priority scores are predicted by the GNN.
+The scheduler chooses the ordering by priority scores: at each step, the TIR op with the highest priority score among all dependency-free candidates is scheduled next. The priority scores are predicted by the GNN.
 
 ```
 DEPENDENCY DAG:         SCHEDULE (priority-ordered):
@@ -35,9 +39,9 @@ DEPENDENCY DAG:         SCHEDULE (priority-ordered):
 A Graph Neural Network is the natural architecture for this problem: the input (dependency DAG) is a graph, and the output (per-node priority) is a per-node regression.
 
 ```
-For each node:
-  node_features = [instruction_type, operand_count, stack_depth_at_node,
-                   tables_touched, distance_to_root, distance_to_leaf]
+For each node (TIR op):
+  node_features = [op_kind (54 kinds), jet_invoked (bool), hash_jet (bool),
+                   estimated_nox_cost, distance_to_root, distance_to_leaf]
 
 Message passing (2 layers):
   h_v^(1) = aggregate(h_u^(0) for u in neighbors(v))
@@ -47,58 +51,63 @@ Priority prediction:
   priority(v) = MLP(h_v^(2))
 ```
 
-Parameters: approximately 20,000 field elements. Inference: fast (milliseconds, even on large programs). The GNN runs on the CPU-side compilation infrastructure, not on Triton VM — it is a compilation tool, not a Trident program.
+Parameters: approximately 20,000 field elements. Inference: fast (milliseconds, even on large programs). The GNN runs on the CPU-side compilation infrastructure, not on nox — it is a compilation tool, not a Trident program.
+
+This architecture is a simplified variant of the GNN encoder in `../reference/neural.md` (GATv2, d=256). The scheduling GNN uses a lighter 2-layer message-passing network (d=32) since it only needs per-node priority scalars, not full node embeddings for decoding.
 
 ### What the GNN Learns
 
 Training reveals three robust scheduling heuristics that the GNN discovers without being explicitly taught:
 
-**Hash clustering**: Hash instructions (which write to the Hash table) should be grouped together. Interleaved hash + arithmetic forces the Hash table to stay active throughout a long trace segment, inflating its height. Clustered hash keeps the Hash table active only in a contiguous segment.
+**Hash jet clustering**: TIR ops that invoke the hash jet (hemera/Poseidon2) should be grouped together. Interleaved hash + arithmetic scatters hemera invocations across the nox trace; clustered hash minimizes the jet invocation overhead contribution to proof cost.
 
-**Front-loading RAM**: RAM read instructions should be scheduled early to fill the memory pipeline. Delaying RAM reads until they are needed creates sequential dependencies that serialize what could be parallel execution.
+**Front-loading memory ops**: TIR ops that result in RAM read instructions when lowered to nox should be scheduled early. Delaying them creates sequential nox reduction dependencies that inflate trace length unnecessarily.
 
-**Delaying U32 operations**: U32 table operations are often not on the critical path. Scheduling them late, after main arithmetic is complete, avoids inflating U32 table height during the dense arithmetic phase.
+**Deferring cheap arithmetic**: Low-cost arithmetic TIR ops are often not on the critical path. Scheduling them late, after jet-invoking ops, avoids inflating trace length during the high-jet-cost phase where bottleneck tracking matters most.
 
 The GNN learns these heuristics from data — thousands of (scheduling → table heights) pairs — without any of these rules being explicitly programmed.
 
 ### Training Protocol
 
 For each training program:
-1. Generate 1,000 random valid schedules (random topological sorts of the DAG)
-2. Execute each schedule and measure actual AET table heights
-3. The target: the schedule that minimizes max table height
-4. Train the GNN to reproduce this schedule's priority order
+1. Generate 1,000 random valid TIR op orderings (random topological sorts of the DAG)
+2. Lower each ordering to a nox trace via warrior-cyber and measure actual nox proof cost (`trace_length + sum(jet_costs)`)
+3. The target: the ordering that minimizes nox proof cost
+4. Train the GNN to reproduce this ordering's priority assignment
 
-Loss function: pairwise ranking loss over instruction priorities (instruction A should have higher priority than B if scheduling A before B reduces table height).
+Loss function: pairwise ranking loss over TIR op priorities (op A should have higher priority than B if scheduling A before B reduces nox proof cost).
 
 ```
 Training data: {(dag, best_schedule, random_schedules): 10,000 programs × 1,000 schedules}
 Total proving runs: 10M  (each takes ~10ms → ~28 hours total compute)
 ```
 
+The [[cost-surrogate]] can substitute for actual proving runs during training data collection, reducing compute from ~28 hours to ~minutes at the cost of some accuracy.
+
 This training compute is a one-time cost. The trained GNN is then applied to every new program at compile time.
 
 ### Correctness Guarantee
 
-The scheduler is correct by construction: the greedy topological sort with any priority function always produces a valid dependency-respecting ordering. The GNN affects performance, not correctness. Even a randomly initialized GNN (before training) produces correct TASM — just not optimally ordered.
+The scheduler is correct by construction: the greedy topological sort with any priority function always produces a valid dependency-respecting TIR ordering. The GNN affects performance, not correctness. Even a randomly initialized GNN (before training) produces a correct nox trace when warrior-cyber lowers the ordering — just not optimally efficient.
 
 This makes the scheduler safe to deploy incrementally: start with any set of weights (even random), deploy, collect performance data, retrain, improve. No risk of correctness regression.
 
 ### Integration with Compiler Ensemble
 
-The scheduler integrates with the multi-objective compiler ensemble (`compiler-ensemble.md`). Each specialist optimizer in the ensemble can use the GNN scheduler with different learned priorities:
+The scheduler integrates with the [[compiler-ensemble]]. Each specialist optimizer in the ensemble can use the GNN scheduler with different learned priorities:
 
-- Specialist 1 (minimize Processor): learns priorities that front-load Processor-heavy instructions to cluster them
-- Specialist 2 (minimize Hash): learns priorities that cluster Hash instructions
+- Specialist 1 (minimize trace_length): learns priorities that cluster pure-arithmetic TIR ops
+- Specialist 2 (minimize hash jet calls): learns priorities that cluster hemera-invoking TIR ops
+- Specialist 3 (minimize poly_eval jet calls): learns priorities that cluster poly_eval-invoking TIR ops
 - ...
 
-One GNN architecture, multiple learned priority functions. The ensemble uses the cost surrogate to select which specialist's schedule minimizes total proof cost.
+One GNN architecture, multiple learned priority functions. The ensemble uses the [[cost-surrogate]] to select which specialist's schedule minimizes total nox proof cost.
 
 ## Key Tradeoffs
 
 **Greedy suboptimality**: Greedy topological sort with learned priorities is not globally optimal. The optimal schedule requires lookahead — scheduling instruction A first might free instruction B which has the highest local priority later. Without lookahead, the greedy scheduler may miss globally optimal orderings.
 
-**Training data scale**: 10 million proving runs for training data generation is computationally expensive. A faster proxy — using the cost model or trace predictor rather than actual proving — reduces this cost at the expense of training accuracy.
+**Training data scale**: 10 million nox+zheng proving runs for training data generation is computationally expensive. A faster proxy — using the [[cost-surrogate]] or [[trace-predictor]] rather than actual warrior-cyber proving — reduces this cost at the expense of training accuracy.
 
 **Dynamic priorities**: The GNN assigns static priorities before scheduling begins. But the optimal priority of an instruction may depend on what other instructions have already been scheduled (dynamic scheduling). The GNN approximates this with context from the DAG structure, but pure static priority is an approximation.
 
@@ -106,19 +115,19 @@ One GNN architecture, multiple learned priority functions. The ensemble uses the
 
 ## Implementation Sketch
 
-The GNN scheduler is implemented as a Rust library (not a Trident program — it is a compiler tool, not a runtime computation):
+The GNN scheduler is implemented as a Rust library (not a Trident program — it is a compilation tool, not a runtime computation). It operates on the TirGraph structure (see `../reference/neural.md` §"Data Flow" for the TirGraph definition):
 
 ```rust
 // tir/scheduling/gnn.rs
 pub struct SchedulingGNN {
-    node_embed: Linear,       // instruction features → 32-dim
-    message_1: Linear,       // message passing layer 1
-    message_2: Linear,       // message passing layer 2
-    priority_head: Linear,   // 32-dim → scalar priority
+    node_embed: Linear,       // TIR op features → 32-dim (op_kind, jet_invoked, etc.)
+    message_1: Linear,        // message passing layer 1
+    message_2: Linear,        // message passing layer 2
+    priority_head: Linear,    // 32-dim → scalar priority
 }
 
 impl SchedulingGNN {
-    pub fn schedule(&self, dag: &TasmDag) -> Vec<InstructionId> {
+    pub fn schedule(&self, dag: &TirDag) -> Vec<TirOpId> {
         let mut features = dag.nodes().map(|n| self.extract_features(n)).collect();
         let embeddings = self.message_pass(&features, dag, 2);
         let priorities: Vec<f32> = embeddings.iter().map(|e| self.priority_head.forward(e)).collect();
@@ -126,7 +135,7 @@ impl SchedulingGNN {
     }
 }
 
-fn greedy_topological_sort(dag: &TasmDag, priorities: &[f32]) -> Vec<InstructionId> {
+fn greedy_topological_sort(dag: &TirDag, priorities: &[f32]) -> Vec<TirOpId> {
     let mut result = Vec::new();
     let mut available = dag.roots().collect::<BinaryHeap<_>>();
     while let Some(next) = available.pop_max_by(|id| priorities[*id]) {
@@ -140,5 +149,7 @@ fn greedy_topological_sort(dag: &TasmDag, priorities: &[f32]) -> Vec<Instruction
     result
 }
 ```
+
+The scheduled TIR op ordering is then passed to warrior-cyber for lowering to a nox trace. The [[learned-peephole]] optimizer can further refine the TIR sequence before lowering.
 
 The GNN weights are loaded from a file trained offline. The scheduler runs in microseconds per program — negligible compile time overhead.

@@ -7,11 +7,13 @@ planned: 64K
 
 # Lazy Proof Batching
 
+**Related:** [[incremental-proving]] · [[speculative-execution]] · [[proof-cost-types]]
+
 ## Motivation
 
-STARK proof generation has two cost components: variable cost (proportional to trace size) and fixed cost (Brakedown commitment, FRI queries, grinding). For small computations, the fixed cost dominates. Generating separate proofs for each individual computation is wasteful — each proof pays the full fixed cost regardless of trace size.
+Proof generation has two cost components: variable cost (proportional to nox trace length) and fixed cost (one Brakedown PCS commitment per proof, sumcheck overhead, grinding). For small computations, the fixed cost dominates. Generating separate proofs for each individual computation is wasteful — each proof pays the full fixed cost regardless of trace size.
 
-Lazy proof batching lets the developer explicitly group computations under a single proof. One STARK for the entire block, amortizing the fixed cost across all computations in the block. The developer controls the proof granularity — fine-grained for high-security operations that need individual attestation, coarse-grained for throughput-critical paths where amortization matters.
+Lazy proof batching lets the developer explicitly group computations under a single proof. `defer_proof { }` maps to chunking a nox trace and proving it as one zheng proof — one Brakedown PCS commitment for the entire block. The developer controls the proof granularity — fine-grained for high-security operations that need individual attestation, coarse-grained for throughput-critical paths where amortization matters.
 
 ## Design
 
@@ -24,12 +26,12 @@ defer_proof {
     let z = x + y;
     // ... more computations
 }
-// ONE STARK proof for the entire block
-// Fixed overhead paid once: Brakedown commitment, grinding, FRI queries
-// Variable cost: sum of all computation trace sizes
+// ONE zheng proof for the entire block
+// Fixed overhead paid once: one Brakedown PCS commitment, grinding, sumcheck
+// Variable cost: total nox trace length across all computations in the block
 ```
 
-Without `defer_proof`, three separate computations would generate three proofs — three Brakedown commitments, three grinding sessions, three FRI query sets. With `defer_proof`, these three computations share one proof structure. For small computations (say, 100 Processor rows each), the fixed proof overhead (say, equivalent to 1000 rows) would otherwise dominate each individual proof.
+Without `defer_proof`, three separate computations would generate three proofs — three Brakedown PCS commitments, three grinding sessions, three sumcheck instances. With `defer_proof`, these three computations share one zheng proof structure, one Brakedown commitment. For small computations (say, 100 nox reduction steps each), the fixed proof overhead (say, equivalent to 1000 steps) would otherwise dominate each individual proof.
 
 ### Economics of Batching
 
@@ -97,11 +99,11 @@ The developer chooses based on the application's latency/throughput tradeoff. Th
 
 **Proof availability**: Values computed inside `defer_proof` are not proven until the block exits. If a value needs to be proven before the block exits (e.g., for a security-critical decision that depends on proof validity), `defer_proof` cannot be used. The developer must split the computation out of the deferred block.
 
-**Memory pressure**: A large `defer_proof` block accumulates an AET table that grows throughout the block's execution. For very large blocks, the AET may exceed available RAM. The compiler can warn when estimated AET size approaches a configurable limit.
+**Memory pressure**: A large `defer_proof` block accumulates a nox trace that grows throughout the block's execution. For very large blocks, the trace may exceed available RAM. The compiler can warn when estimated trace length approaches a configurable limit. See [[incremental-proving]] for how Brakedown layer reuse across proof updates interacts with this.
 
 **Block boundaries and control flow**: `defer_proof` blocks must have static control flow — no `return` or `break` that exits the block prematurely. This ensures the entire block always executes before the proof is generated. The compiler enforces this constraint.
 
-**Error handling**: If a computation inside `defer_proof` would normally trigger an error (e.g., a division by zero), the error becomes a proof invalidity — the STARK constraint corresponding to the error is violated. This is correct behavior, but the developer must be aware that error discovery is deferred to proof generation time, not execution time.
+**Error handling**: If a computation inside `defer_proof` would normally trigger an error (e.g., a division by zero), the error becomes a proof invalidity — the nox constraint corresponding to the error is violated and the zheng proof cannot be generated. This is correct behavior, but the developer must be aware that error discovery is deferred to proof generation time, not execution time.
 
 ## Implementation Sketch
 
@@ -111,17 +113,19 @@ The developer chooses based on the application's latency/throughput tradeoff. Th
 // tir/deferred.rs
 struct DeferredProofBlock {
     body: TirBlock,
-    parent_proof: Option<ProofHandle>,  // for incremental reuse
+    parent_proof: Option<ProofHandle>,  // for incremental reuse (see [[incremental-proving]])
 }
 
-// The runtime executes the body, accumulates the AET, then proves once at block exit.
+// The runtime executes the body, accumulates the nox trace, then proves once at block exit.
 // tir/runtime.rs
 fn execute_deferred(block: &DeferredProofBlock, state: &mut ExecutionState) -> Proof {
-    let mut aet = AET::new();
-    execute_block(&block.body, state, &mut aet);
-    // One proof generation call for the entire accumulated AET:
-    generate_proof(aet, block.parent_proof.as_ref())
+    let mut trace = NoxTrace::new();
+    execute_block(&block.body, state, &mut trace);
+    // One zheng proof call for the entire accumulated nox trace:
+    // - One Brakedown PCS commitment to the trace polynomial
+    // - One sumcheck pass over the committed trace
+    generate_zheng_proof(trace, block.parent_proof.as_ref())
 }
 ```
 
-The key implementation detail: `execute_block` runs normally, accumulating trace rows into the AET without generating any proof. `generate_proof` is called once at the end, with the full AET. For incremental proofs, `generate_proof` receives the previous proof and reuses stable Brakedown layers.
+The key implementation detail: `execute_block` runs normally, accumulating nox reduction steps into the trace without generating any proof. `generate_zheng_proof` is called once at the end, with the full nox trace. For incremental proofs (see [[incremental-proving]]), `generate_zheng_proof` receives the previous proof and reuses stable Brakedown layers for unchanged trace segments.

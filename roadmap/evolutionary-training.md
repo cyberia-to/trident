@@ -11,7 +11,11 @@ planned: 128K
 
 Neural networks require training. Training requires updating weights to minimize loss. Gradient descent is the standard method: compute gradients, update weights in the gradient direction. In floating-point arithmetic, this works cleanly. In Goldilocks field arithmetic, it breaks: field elements have no notion of "direction," gradients don't have meaningful magnitude in modular arithmetic, and the field's multiplicative structure is incompatible with the smooth optimization landscape gradient descent requires.
 
-Evolutionary optimization sidesteps all of this. Evolution operates on populations of weight vectors. It selects survivors by fitness (low loss on training data), generates children by crossover and mutation, and repeats. No gradients required. The operations — comparison, conditional copy, random field element substitution — are pure field arithmetic. Every training step is a valid Triton VM trace. Training is provable.
+Evolutionary optimization sidesteps all of this. Evolution operates on populations of weight vectors. It selects survivors by fitness (low loss on training data), generates children by crossover and mutation, and repeats. No gradients required. The operations — comparison, conditional copy, random field element substitution — are pure field arithmetic. Field ops run via strata/honeycrisp on M4 Pro Metal: ~50μs per generation.
+
+Every training step is a valid nox trace. warrior-cyber runs the training program: nox executes the evolutionary step, zheng proves it. Training is provable.
+
+Related proposals: [[nn-trd]], [[trace-predictor]], [[cost-surrogate]].
 
 ## Design
 
@@ -57,7 +61,7 @@ For $N=16$, batch size 100, ~2000 inference ops per example:
 - Evolution: $16 \times 91{,}008 \approx 1.5\text{M}$ field ops
 - **Total: ~4.7M field ops per generation**
 
-On M4 Pro with Metal GPU (field ops vectorized):
+On M4 Pro with Metal GPU (field ops vectorized via strata/honeycrisp):
 - ~50μs per generation
 - 1,000 generations in ~50ms
 - 10,000 generations in ~500ms
@@ -105,13 +109,13 @@ Evolution from the cold-start population. The initialized weights provide a good
 
 ### Provable Training Steps
 
-Every generation of the evolutionary algorithm is a Trident program execution. Every training step is a valid Triton VM trace. The proof of training proves:
+Every generation of the evolutionary algorithm is a Trident program execution. Every training step is a valid nox trace. warrior-cyber runs the training program: nox executes each generation, zheng (SuperSpartan IOP + Brakedown PCS + sumcheck) proves the trace. The proof of training proves:
 
 - The population evolved from the previous generation according to the declared crossover and mutation rules
 - Fitness was evaluated correctly on the declared training examples
 - The best-performing individual at generation $G$ has the declared loss
 
-This enables verifiable machine learning: a party who receives the final weights can verify, via STARK proof, that the weights were produced by honest training on the declared dataset.
+This enables verifiable machine learning: a party who receives the final weights can verify, via zheng proof, that the weights were produced by honest training on the declared dataset.
 
 ## Key Tradeoffs
 
@@ -155,4 +159,6 @@ fn train_epoch<const N_WEIGHTS: Field>(
 }
 ```
 
-The training loop is a simple `for generation in 0..N_GENERATIONS { population = train_epoch(population, data); }`. Each epoch is a TASM trace. The final population contains the trained weights.
+The training loop is a simple `for generation in 0..N_GENERATIONS { population = train_epoch(population, data); }`. Each epoch is a nox trace proven by zheng. The final population contains the trained weights.
+
+The trained weights are used by [[nn-trd]] networks at inference time. The [[trace-predictor]] and [[cost-surrogate]] are the first consumers of this training method.

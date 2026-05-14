@@ -7,6 +7,11 @@ planned: 32K
 
 # Dependent Types over Field Dimensions
 
+**Related proposals:** [[refinement-types]], [[proof-cost-types]], [[noun-types]]
+**Reference:** [language.md §2 — Types](../reference/language.md)
+
+> **Language evolution note**: language.md §2 defines the current type system: Field, Bool, U32, Digest, arrays, structs, and XField (§15). Dependent types over const parameters extend beyond what is in §2. This is a language evolution proposal — it describes where the type system should go, not what it currently supports.
+
 ## Motivation
 
 Matrix dimension mismatches are runtime errors in every language that doesn't have dependent types. In proof systems, runtime errors are worse than in ordinary programs — a mismatched dimension doesn't produce a wrong answer the developer can debug; it produces a constraint violation that fails proof generation, with no clear indication of where the mismatch occurred.
@@ -88,9 +93,9 @@ let w = add_vectors(u, v);  // N = 3, inferred from u and v
 
 ### Interaction with the Proof System
 
-Dimension mismatch elimination directly reduces proof cost. Every bounds check that would have been a runtime assertion (`assert!(a.len() == b.len())`) is now absent from the TASM output. For programs over matrices — which includes most neural network layers, polynomial evaluation, and linear algebra — this can eliminate tens to hundreds of Processor rows.
+Dimension mismatch elimination directly reduces proof cost. Every bounds check that would have been a runtime assertion (`assert!(a.len() == b.len())`) is now absent from the nox trace. For programs over matrices — which includes most neural network layers, polynomial evaluation, and linear algebra — this can eliminate tens to hundreds of nox reduction steps.
 
-The STARK proof implicitly proves that all type-checked dimension constraints were satisfied, because the proof is only valid if the program was well-typed. The dimension guarantee flows through the type system to the proof system without any additional constraint generation.
+The zheng STARK proof implicitly proves that all type-checked dimension constraints were satisfied, because the proof is only valid if the program was well-typed. The dimension guarantee flows through the type system to the proof system without any additional constraint generation.
 
 ## Key Tradeoffs
 
@@ -132,4 +137,4 @@ impl DimExpr {
 }
 ```
 
-The dimension type checker runs before code generation. Its output is a substitution map from dimension variables to concrete field elements, used to generate correctly-sized TASM instructions (loop bounds, array indexing, etc.).
+The dimension type checker runs before code generation. Its output is a substitution map from dimension variables to concrete field elements, used to generate correctly-sized nox patterns (loop bounds, array indexing, etc.) without runtime checks.

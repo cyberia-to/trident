@@ -9,11 +9,13 @@ planned: 128K
 
 ## Motivation
 
-Every neural technique on this roadmap — the algebraic identity explorer's GFlowNet proposer, the trace predictor, the cost surrogate, the instruction scheduler — is a neural network. These networks must run inside Trident to be provable. Running inside Trident means operating over Goldilocks field arithmetic, with no floating point, no signed integers natively, and no smooth activation functions.
+Every neural technique on this roadmap — the algebraic identity explorer's GFlowNet proposer, the [[trace-predictor]], the [[cost-surrogate]], the instruction scheduler — is a neural network. These networks must run inside Trident to be provable. Running inside Trident means operating over Goldilocks field arithmetic, with no floating point, no signed integers natively, and no smooth activation functions.
 
-`nn.trd` is the foundation: a Trident library implementing neural network primitives entirely in field arithmetic. Building it first enables every subsequent neural technique to be compiled to TASM, proven on Triton VM, and progressively self-optimized by the algebraic identity explorer.
+`nn.trd` is the foundation: a Trident library implementing neural network primitives entirely in field arithmetic. Building it first enables every subsequent neural technique to produce a nox trace, be proven by zheng via warrior-cyber, and be progressively self-optimized by the [[algebraic-identity-explorer]].
 
-A neural network whose every inference produces a valid Triton VM trace is a world-first: provable AI.
+`nn.trd` corresponds to `std.nn` in the stdlib (see `../reference/stdlib.md` §"std.nn — Intelligence"). The roadmap deliverable implements the core of that namespace: field-native inference, with training handled separately by [[evolutionary-training]].
+
+A neural network whose every inference produces a valid nox trace is a world-first: provable AI.
 
 ## Design
 
@@ -112,17 +114,17 @@ The cost annotation is a dependent bound — scales with `OUT * IN` (the matrix 
 
 A 3-layer MLP with 64-wide hidden layers:
 - ~500 lines of Trident source across all modules
-- Compiles to ~2,000 TASM instructions
-- Inference: one Triton VM execution
-- Proof: one STARK over the inference trace (~3,000 Processor rows, no Hash table)
+- Compiles to ~2,000 TIR ops (see `../reference/ir.md` for TIR op definitions), lowered to a nox trace by warrior-cyber
+- Inference: one nox execution
+- Proof cost: trace_length ≈ 3,000 nox steps + jet costs (no hash jet invocations for pure arithmetic layers)
 
-The inference is provable in a single STARK. The proof certifies that the neural network computed this specific output from this specific input using these specific weights.
+The inference is provable in a single zheng proof. The proof certifies that the neural network computed this specific output from this specific input using these specific weights.
 
 ### What Provable Inference Enables
 
 - **Verifiable AI**: Any party can verify that a neural network produced a specific output without re-running the network. Relevant for AI-assisted decisions in high-stakes contexts.
 - **ZK inference**: With `zk fn` wrapping, the input can be private. The proof certifies the output is consistent with some valid input to this network, without revealing the input.
-- **Self-bootstrapping**: The algebraic identity explorer uses `nn.trd` for its GFlowNet proposer. The proposer is a provable neural network. Its inference is proven alongside the identities it discovers.
+- **Self-bootstrapping**: The [[algebraic-identity-explorer]] uses `nn.trd` for its GFlowNet proposer. The proposer is a provable neural network. Its inference is proven alongside the identities it discovers. The [[trace-predictor]] and [[cost-surrogate]] are also `nn.trd` networks, trained by [[evolutionary-training]].
 
 ## Key Tradeoffs
 
@@ -130,9 +132,9 @@ The inference is provable in a single STARK. The proof certifies that the neural
 
 **Scale factor choice**: The fixed-point scale factor determines the precision-cost tradeoff. Higher scale (more precision) requires larger multiplications (higher cost) and more careful overflow management. Scale 16 is a reasonable default; scale 24 gives better precision for deeper networks.
 
-**Matrix multiply cost**: Matrix multiply is $O(m \times n \times k)$ field multiplications. For the 64-wide hidden layers in the target MLP (~2,000 TASM instructions), this is manageable. For larger networks (256-wide, 8 layers), the Processor table may exceed practical bounds. Large models require the NTT auto-vectorization pass (Pass 7) to convert matmul to NTT convolution.
+**Matrix multiply cost**: Matrix multiply is $O(m \times n \times k)$ field multiplications. For the 64-wide hidden layers in the target MLP (~2,000 TIR ops), this is manageable. For larger networks (256-wide, 8 layers), the nox trace length may exceed practical bounds. Large models require the NTT auto-vectorization pass (Pass 7) to convert matmul to NTT convolution, reducing trace length significantly.
 
-**No backpropagation**: `nn.trd` is an inference library. Training uses the evolutionary method (separate proposal `evolutionary-training.md`). Gradient-based training in field arithmetic requires finite-difference approximation, which is noisy and expensive. Evolution is the preferred training method for field-native networks.
+**No backpropagation**: `nn.trd` is an inference library. Training uses the evolutionary method (see [[evolutionary-training]]). Gradient-based training in field arithmetic requires finite-difference approximation, which is noisy and expensive. Evolution is the preferred training method for field-native networks, and each training step is itself a valid nox trace proven by zheng via warrior-cyber.
 
 ## Implementation Sketch
 

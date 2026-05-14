@@ -4,6 +4,9 @@ date: 2026-03-26
 ---
 # five algebras: type-driven regime dispatch for nox
 
+**Related proposals:** [[dependent-types]], [[refinement-types]], [[noun-types]]
+**Reference:** [stdlib.md](../reference/stdlib.md), [language.md §2 — Types](../reference/language.md)
+
 ## problem
 
 Trident v0.5 has four primitive types: `Field`, `Bool`, `U32`, `Digest` (+ `XField` for extensions). all are Goldilocks scalars. this covers ONE of five execution algebras.

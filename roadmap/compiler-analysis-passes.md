@@ -7,15 +7,19 @@ planned: 32K
 
 # Advanced Compiler Analysis Passes
 
+Related: [[field-arithmetic-passes]], [[polynomial-optimization-passes]], [[proof-cost-types]]
+
 ## Motivation
 
-Passes 1–10 handle point-wise arithmetic and polynomial transforms. Passes 11–15 require deeper analysis: understanding extension field structure, tracking constant propagation across function boundaries, searching for optimal exponentiation sequences, eliminating dead operations that have proof-side effects, and normalizing algebraic expressions for CSE. These passes separate a competent field-arithmetic compiler from a world-class one. Combined, they can eliminate 30–50% of the execution trace for programs heavy on cryptographic constants.
+Passes 1–10 handle point-wise arithmetic and polynomial transforms. Passes 11–15 require deeper analysis: understanding extension field structure, tracking constant propagation across function boundaries, searching for optimal exponentiation sequences, eliminating dead operations that have proof-side effects, and normalizing algebraic expressions for CSE. These passes separate a competent field-arithmetic compiler from a world-class one. Combined, they can eliminate 30–50% of the nox execution trace for programs heavy on cryptographic constants.
+
+All passes operate at the TIR level (see [`../reference/ir.md`](../reference/ir.md) for the full 54-op spec). Proof cost is counted in nox reduction steps and jet invocations.
 
 ## Design
 
 ### Pass 11: Extension Field Strength Reduction
 
-In $\mathbb{F}_{p^2}$ (the quadratic extension used by Triton VM's hash function), general multiplication requires 3 base-field multiplies via Karatsuba. But specific cases are cheaper:
+In $\mathbb{F}_{p^2}$ (the quadratic extension; see [`../reference/language.md`](../reference/language.md) §15 for the `ExtField` type), general multiplication requires 3 base-field multiplies via Karatsuba. But specific cases are cheaper:
 
 - **Base-field scalar times extension element**: 2 multiplies (no cross term: $(a_0, 0) \cdot (b_0, b_1) = (a_0 b_0, a_0 b_1)$)
 - **Squaring in $\mathbb{F}_{p^2}$**: 2 multiplies using $(a+b)(a-b) = a^2 - b^2$
@@ -46,7 +50,7 @@ Constant propagation extends through function boundaries: if all arguments to a 
 ```trident
 const ALPHA: Field = 7;
 const BETA: Field = invert(ALPHA);  // compiler computes 7^{-1} mod p
-// BETA is now a literal constant in the TASM output — zero runtime cost
+// BETA is now a literal constant in the nox trace output — zero runtime cost
 ```
 
 ### Pass 13: Addition Chain Optimization for Known Exponents
@@ -60,7 +64,7 @@ The critical Goldilocks case: $p - 2 = 2^{64} - 2^{32} - 1$ (used for every fiel
 ```
 // Binary method for p-2: ~128 squarings + ~32 multiplies ≈ 160 ops
 // Optimal chain for p-2: ~95 ops — exploits 2^64 ≡ 2^32-1 structure
-// Savings: ~65 Processor rows per inversion call
+// Savings: ~65 nox reduction steps per inversion call
 ```
 
 ### Pass 14: Dead Field Operation Elimination
@@ -78,7 +82,7 @@ The pass requires cooperation with the constraint compiler: before eliminating a
 Standard CSE catches syntactically identical subexpressions. Algebraic CSE catches semantically identical ones:
 
 - **Commutativity**: `a*b + c*d` and `c*d + a*b` are the same — normalize by sorting operands canonically before CSE.
-- **Distributivity**: `a*(b+c)` and `a*b + a*c` are the same — choose the factored or distributed form based on AET impact.
+- **Distributivity**: `a*(b+c)` and `a*b + a*c` are the same — choose the factored or distributed form based on nox proof cost impact.
 
 The compiler canonicalizes field expressions into a normal form (operands sorted by hash, additions before multiplications at the same precedence level) before running CSE. This catches equivalences that syntactic CSE misses entirely.
 
@@ -86,7 +90,7 @@ For the distributivity decision:
 - Factored form (`a*(b+c)`): fewer multiplications, deeper dependency chain
 - Distributed form (`a*b + a*c`): more multiplications, enables parallelism
 
-The compiler chooses based on current AET table pressure. If Processor rows are the bottleneck, prefer factored. If the current program has sequential dependency chains limiting parallelism, prefer distributed.
+The compiler chooses based on current nox reduction step pressure. If multiply-heavy patterns dominate, prefer factored. If the current program has sequential dependency chains limiting parallelism, prefer distributed.
 
 ```trident
 // Normalized representations:
@@ -109,7 +113,7 @@ a*b + a*c + a*d   → a*(b+c+d)         // 3 multiplies → 1 multiply + 2 adds
 
 ## Implementation Sketch
 
-Passes 11–13 are local (per-expression) and straightforward to implement as TIR rewrite rules. Passes 14–15 require global analysis:
+Passes 11–13 are local (per-expression) and straightforward to implement as TIR rewrite rules (see [`../reference/ir.md`](../reference/ir.md)). Passes 14–15 require global analysis:
 
 ```rust
 // Pass 14 — tir/passes/dead_field_elim.rs
@@ -127,4 +131,4 @@ fn canonicalize(expr: &TirExpr) -> NormalForm {
 }
 ```
 
-All 15 algebraic passes together form the `AlgebraicPassSuite`. The suite runs in dependency order, iterating until convergence (at most 3 iterations in practice — passes rarely enable more than two rounds of new simplifications).
+All 15 algebraic passes together form the `AlgebraicPassSuite`. The suite runs in dependency order, iterating until convergence (at most 3 iterations in practice — passes rarely enable more than two rounds of new simplifications). The nox proof cost model (reduction steps + jet invocations) is the authoritative guide for deciding when to apply vs skip a pass — see [[proof-cost-types]] for the type-level representation of these costs that drives pass decisions.

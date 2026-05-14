@@ -1,29 +1,45 @@
 # Switch to Hemera
 
+**Related:** [[cyber-stack-adoption]], [[commitment-syntax]], [[merkle-iterators]]
+
 ## Context
 
 Trident currently uses two hash functions:
 - **BLAKE3** (external crate) — only for Poseidon2 round constant generation
 - **Custom Poseidon2** (two implementations) — content addressing, program digests
 
-Hemera (`cyber-hemera` on crates.io, `~/git/hemera`) is the canonical hash
-primitive of the cyber cyberstate. It is a Poseidon2 sponge over Goldilocks
-with self-bootstrapped constants derived from the seed "cyber". Output is
-always 64 bytes (8 Goldilocks elements).
+Hemera (`cyber-hemera` on crates.io, `/Users/master/cyberia-to/hemera/`) is
+the canonical hash primitive of the cyber stack. Parameters are fixed:
+Poseidon2 sponge over Goldilocks (p = 2^64 - 2^32 + 1), d=7, t=16, Rf=8,
+Rp=16. Output: 4 field elements × 8 bytes = 32 bytes (displayed as 64 hex
+chars). Constants self-bootstrapped from the seed "cyber". These parameters
+are permanent — hemera provides no algorithm agility. All content hashed
+under hemera is a permanent commitment.
+
+The `hash` jet in nox (pattern 15) uses hemera. ContentHash in trident
+stays `[u8; 32]` — the byte width does not change, because hemera also
+outputs 32 bytes. The breaking change is the hash algorithm: all existing
+BLAKE3/Poseidon2 content hashes become invalid and must be recomputed.
+`hash_version` bumps from 1 → 2 to signal the algorithm change.
 
 ## Why
 
 - One hash function for the entire ecosystem, not two custom Poseidon2 impls
 - Hemera is battle-tested with pinned test vectors and zero dependencies
 - Self-bootstrapped constants (from "cyber" seed) vs BLAKE3-derived constants
-- 64-byte output (256-bit collision resistance) vs current 32-byte output
+- 32-byte output (4 × u64 Goldilocks elements, 256-bit collision resistance) — same size as current
 - Tree hashing, XOF, keyed hashing, key derivation — all built in
 - Aligns trident with the cyberstate's cryptographic identity
+- Permanent commitment: no algorithm agility, no migration path after adoption
 
 ## Breaking Change
 
-ContentHash changes from 32 bytes to 64 bytes. All existing hashes
-(codebase store, lockfiles, program digests) become invalid. This is a
+ContentHash byte width stays 32 bytes — hemera also outputs 32 bytes (4
+Goldilocks elements). The breaking change is the hash algorithm: the
+BLAKE3-derived round constants and custom Poseidon2 parameters are replaced
+by hemera's "cyber"-seeded constants. All existing hashes (codebase store,
+lockfiles, program digests) are invalidated and must be recomputed.
+`hash_version` bumps 1 → 2 to distinguish old from new hashes. This is a
 clean break — all content must be rehashed.
 
 ## Inventory: What Changes
@@ -43,15 +59,15 @@ clean break — all content must be rehashed.
 
 These are replaced by `cyber_hemera::hash()` and `cyber_hemera::Hasher`.
 
-### Layer 3: Update ContentHash (32 → 64 bytes)
+### Layer 3: Update ContentHash (algorithm change, byte width unchanged)
 
 | File | What | Change |
 |------|------|--------|
-| `src/package/hash/mod.rs` | `ContentHash([u8; 32])` | Change to `ContentHash([u8; 64])` |
+| `src/package/hash/mod.rs` | `ContentHash([u8; 32])` | Stays `[u8; 32]` — hemera outputs 32 bytes |
 | `src/package/hash/mod.rs:118` | `hash_file_content()` | Replace `poseidon2::hash_bytes()` with `hemera::hash()` |
 | `src/package/hash/normalize.rs:180,193,204` | `hash_bytes()` calls | Replace with `hemera::hash().as_bytes()` |
-| `src/package/hash/mod.rs` | `hash_version: 1` | Bump to `hash_version: 2` |
-| `src/package/hash/mod.rs` | hex display (64 chars) | Update to 128 chars |
+| `src/package/hash/mod.rs` | `hash_version: 1` | Bump to `hash_version: 2` (algorithm change signal) |
+| `src/package/hash/mod.rs` | hex display (64 chars) | Stays 64 chars (32 bytes × 2 hex digits) |
 
 ### Layer 4: Update all hash call sites
 
@@ -61,7 +77,7 @@ These are replaced by `cyber_hemera::hash()` and `cyber_hemera::Hasher`.
 | `src/deploy/tests.rs` | 115 | determinism test | Update expected values |
 | `src/cli/deploy.rs` | 150 | dry-run hash | `hemera::hash()` |
 | `src/cli/package.rs` | 92 | dry-run hash | `hemera::hash()` |
-| `src/cli/hash.rs` | entire | `trident hash` command | Use hemera, update output format (128 hex chars) |
+| `src/cli/hash.rs` | entire | `trident hash` command | Use hemera, output stays 64 hex chars (32-byte digest) |
 | `src/package/manifest/resolve.rs` | 217 | source hash | `hemera::hash()` |
 | `src/package/manifest/mod.rs` | comment | mentions "BLAKE3" | Fix comment |
 
@@ -85,16 +101,16 @@ These are replaced by `cyber_hemera::hash()` and `cyber_hemera::Hasher`.
 
 | File | What | Change |
 |------|------|--------|
-| `src/runtime/artifact.rs` | `source_hash: String` | Now 128 hex chars |
-| `src/runtime/artifact.rs` | per-function `hash: String` | Now 128 hex chars |
+| `src/runtime/artifact.rs` | `source_hash: String` | Stays 64 hex chars (algorithm change only) |
+| `src/runtime/artifact.rs` | per-function `hash: String` | Stays 64 hex chars (algorithm change only) |
 
 ### Layer 8: Update store (on-disk format)
 
 | File | What | Change |
 |------|------|--------|
-| `src/package/store/mod.rs` | Def storage paths | 2-char prefix from 128-char hex |
-| `src/package/store/mod.rs` | Serialization | Update hash field widths |
-| `src/package/manifest/lockfile.rs` | Lockfile format | 128-char hex hashes |
+| `src/package/store/mod.rs` | Def storage paths | 2-char prefix from 64-char hex (format unchanged) |
+| `src/package/store/mod.rs` | Serialization | Update hash_version; all stored content must be rehashed |
+| `src/package/manifest/lockfile.rs` | Lockfile format | All hashes invalidated; users must `trident lock --force` |
 
 ### Layer 9: Update benchmarks and references
 
@@ -156,7 +172,7 @@ After complete switch:
 - `grep -r blake3 src/` — zero hits
 - `grep -r 'package::poseidon2' src/` — zero hits
 - `grep -r 'field::poseidon2' src/` — zero hits
-- `trident hash` — outputs 128 hex chars
+- `trident hash` — outputs 64 hex chars (32-byte hemera digest)
 - `trident bench` — no regressions
 - Content store rehashed under new scheme
 
@@ -166,11 +182,12 @@ After complete switch:
   switch atomically or use a version flag.
 - **Existing lockfiles**: All lockfiles become invalid. Users must `trident lock --force`.
 - **Test vectors**: Every hash-dependent test needs new expected values.
-- **Poseidon2 in TIR/cost model**: The compiler emits Poseidon2 instructions
-  for on-chain hashing. These target the VM's native hash (Tip5 on Triton),
-  NOT the content-addressing hash. Hemera replaces only the off-chain
-  content addressing, not the VM hash instruction. Verify this distinction
-  is preserved.
+- **VM hash instruction vs content addressing**: The compiler emits hash
+  instructions for on-chain hashing. For the Triton VM (trisha target),
+  the on-chain hash is Tip5 — unchanged. For the nox target, the `hash`
+  jet (pattern 15) uses hemera. Hemera replaces only the off-chain
+  content addressing in trident-core; trisha's on-chain Tip5 is unaffected.
+  Verify this distinction is preserved.
 
 ## Estimate
 

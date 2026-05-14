@@ -1,5 +1,8 @@
 # Trident on EVM
 
+**Related:** [[warrior-architecture]], [[proof-carrying-code]], [[cross-vm-proofs]]
+**Reference:** [reference/vm.md](../reference/vm.md) (EVM entry — one of 20 target VMs)
+
 ## Context
 
 EVM is declared in the target registry at integration level L1 — engine
@@ -22,13 +25,17 @@ ordered by which payoff Trident lands first.
 
 ### 1. One source for the zk circuit and its on-chain verifier
 
-The same `.tri` file proves off-chain on any provable engine (Triton,
-Miden, RISC Zero, SP1, OpenVM, Jolt) and emits the matching Ethereum
-verifier contract from the same normalized AST. One identity (the
-content hash) covers both the prover and the verifier. The current
-pipeline needs Circom or Noir for the circuit plus an auto-generated
-Solidity verifier as a separate artifact — two languages, two trust
-surfaces, no shared identity. Trident collapses them.
+The same `.tri` file proves off-chain on any provable engine (nox via
+warrior-cyber, Triton/Neptune via trisha, Miden, RISC Zero, SP1, OpenVM,
+Jolt) and emits the matching Ethereum verifier contract from the same
+normalized AST. One identity (the hemera content hash) covers both the
+prover and the verifier. The key case: a Trident program targeting nox is
+proved by zheng (SuperSpartan + Brakedown PCS), and the zheng proof is
+verified by a Solidity contract generated from the same source — on-chain
+zheng verification in EVM. The current pipeline needs Circom or Noir for
+the circuit plus an auto-generated Solidity verifier as a separate artifact
+— two languages, two trust surfaces, no shared identity. Trident collapses
+them.
 
 ### 2. Decidable automatic formal verification in the compiler
 
@@ -118,8 +125,10 @@ in the stdlib. No new work for the type system.
 
 - **Drop Tier 1.** Trident-on-EVM = Mode A. Loses zk story.
 - **Compile Tier 1 to a verifier contract.** Same `.tri` source: prove
-  off-chain on Triton (or any provable engine), emit a Solidity
-  verifier from the proof shape. Mode B — the novel claim.
+  off-chain on nox (via warrior-cyber) or any other provable engine, emit
+  a Solidity verifier from the zheng proof shape. The verifier checks the
+  Brakedown commitments + sumcheck transcript on-chain. Mode B — the novel
+  claim. No FRI, no trusted setup in the off-chain proof.
 
 Both can coexist. The build flag selects.
 
@@ -151,10 +160,11 @@ appear on Etherscan, must be testable from Foundry. Minimum surface:
 
 ### Phase 1: EvmLowering trait (NOW — 6 sessions)
 
-EVM is a stack machine, so the closest analog is `tir/lower/triton.rs`.
-Most of the structure transfers; the difference is instruction
+EVM is a stack machine — one of 20 target VMs in reference/vm.md. The
+closest analog is `tir/lower/triton.rs` (the Triton VM lowering used by
+trisha). Most of the structure transfers; the difference is instruction
 selection (PUSH/DUP/SWAP/ADD/MUL/SSTORE/SLOAD/CALL/JUMP) and word
-size (256-bit, not field).
+size (256-bit, not Goldilocks field).
 
 | Task | Pomodoros |
 |------|-----------|
@@ -198,17 +208,18 @@ Zero modules today. Minimum surface:
 ### Phase 3: Verifier-codegen path (Mode B) (NEXT — 4 sessions)
 
 The novel claim. From a Tier-1 `.tri` source plus a chosen proving
-backend (Triton, default), emit a Solidity verifier contract that
-checks proofs of that program's execution. Content-addressed by the
-same hash as the prover.
+backend (nox + zheng, default), emit a Solidity verifier contract that
+checks zheng proofs (Brakedown commitments + sumcheck transcript) of
+that program's execution. Content-addressed by the same hemera hash as
+the prover. No FRI, no trusted setup — zheng uses Brakedown PCS.
 
 | Task | Pomodoros |
 |------|-----------|
-| Proof-shape extraction from zheng output | 4 |
+| Proof-shape extraction from zheng output (Brakedown + sumcheck transcript) | 4 |
 | Verifier template in `os/ethereum/verifier.tri` | 6 |
 | `trident build --target ethereum --emit verifier` CLI | 2 |
-| Gas-cost estimation for emitted verifier | 2 |
-| End-to-end test: prove on Triton, deploy verifier, verify on geth | 6 |
+| Gas-cost estimation for emitted verifier (Brakedown verification on EVM) | 2 |
+| End-to-end test: prove on nox/zheng, deploy verifier, verify on geth | 6 |
 | Documentation: explanation/verifier-codegen.md | 4 |
 | **Total** | **24 pomodoros = 4 sessions** |
 
@@ -288,10 +299,10 @@ the only mode that delivers all six unique capabilities.
    verifier-codegen is the dimension Fe structurally cannot match.
 
 6. **Verifier-template maintenance.** Phase 3 ties an EVM
-   contract template to the zheng proof system. If zheng changes
-   proof shape, the template must be regenerated. Mitigation: emit
-   the template from the proof system's own claim format; do not
-   hand-maintain it.
+   contract template to the zheng proof system (SuperSpartan + Brakedown
+   PCS). If zheng changes its proof shape or Brakedown encoding, the
+   template must be regenerated. Mitigation: emit the template from the
+   proof system's own claim format; do not hand-maintain it.
 
 ## Decision
 

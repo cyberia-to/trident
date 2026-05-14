@@ -7,11 +7,27 @@ planned: 64K
 
 # Private/Public Type Modifier for Zero-Knowledge Functions
 
+**Related:** [[commitment-syntax]] · [[contracts]] · [[linear-types-crypto]]
+
 ## Motivation
 
 Building zero-knowledge proofs manually requires constructing circuits: defining which inputs are witnesses (private), which are public inputs, and which are public outputs. This is circuit-level programming. The developer must understand the constraint system, manually split inputs into witness and public categories, and ensure that private values never leak into public positions.
 
-This is exactly the kind of mechanical, error-prone work that compilers exist to eliminate. The `zk fn` modifier with `Private<T>` and `Public<T>` type annotations lets the developer express the privacy boundary at the language level. The compiler generates the witness/public-input split, validates that private values never flow into public outputs, and constructs the ZK-compatible TASM sequence. The developer writes normal Trident code; the compiler builds the zero-knowledge circuit.
+This is exactly the kind of mechanical, error-prone work that compilers exist to eliminate. The `zk fn` modifier with `Private<T>` and `Public<T>` type annotations lets the developer express the privacy boundary at the language level. The compiler generates the witness/public-input split, validates that private values never flow into public outputs, and constructs the ZK-compatible nox pattern sequence. The developer writes normal Trident code; the compiler builds the zero-knowledge circuit.
+
+### Connection to nox's Hint Mechanism
+
+The `Private<T>` type maps directly to nox's Layer 2 hint mechanism. In nox, `CallProvider::provide()` injects witness atoms into the trace — these are the private inputs. They are verified by Layer 1 nox constraints but never appear in the public proof transcript. `Private<T>` is syntactic sugar over this mechanism: the compiler generates a `CallProvider::provide()` call for each `Private<T>` parameter and wraps it in nox constraints that verify the witness satisfies the function's `#[requires]` conditions (see [[contracts]]).
+
+The hint pattern is the privacy boundary in nox. Layer 2 provides; Layer 1 constrains. The zheng proof certifies that the constraints were satisfied without revealing what was provided.
+
+### Connection to `seal`/`reveal` Events
+
+Language.md §10 already has two commitment events built into the language:
+- `reveal` — writes all fields to public output (visible to verifier)
+- `seal` — hashes all fields via the sponge; only the commitment digest is public
+
+`Public<T>` return values compile to `reveal` events. `Private<T>` values that need a public commitment (e.g., for cross-function verification) use `seal` internally. See [[commitment-syntax]] for the full commitment primitive design built on these events.
 
 ## Design
 
@@ -36,7 +52,7 @@ zk fn secret_transfer(
 
 When the compiler sees a `zk fn`, it generates:
 
-1. **Witness section**: All `Private<T>` parameters are placed in the witness input section of the TASM program. They appear in the Processor table but are not committed to in the public proof transcript.
+1. **Witness section**: All `Private<T>` parameters are placed in the witness input section of the nox execution. They appear in the nox trace (as Layer 2 hint atoms) but are not committed to in the public proof transcript.
 2. **Public input section**: Any explicitly `Public<T>` inputs appear here.
 3. **Public output section**: Return values typed `Public<T>` are committed to in the proof transcript and included in the verification interface.
 
@@ -62,14 +78,15 @@ zk fn correct_example(secret: Private<Field>) -> Public<Field> {
 
 The taint system prevents accidental leakage — returning a private value directly, concatenating it into a public string, or including it in a public commitment without hashing. Intentional transformations (like `hash(secret)`) are permitted.
 
-### Compilation to Zero-Knowledge TASM
+### Compilation to Zero-Knowledge nox Patterns
 
-The compiler wraps the `zk fn` body in TASM sequences that enforce the witness/public split at the virtual machine level. Triton VM's execution model distinguishes witness inputs from public inputs at the instruction level. The compiler maps:
+The compiler wraps the `zk fn` body in nox patterns that enforce the witness/public split at the VM level. nox's execution model distinguishes witness inputs (Layer 2 hint atoms injected via `CallProvider::provide()`) from public inputs at the pattern level. The compiler maps:
 
-- `Private<T>` parameters → `read_mem` from witness tape
-- `Public<T>` outputs → explicit public output instructions
+- `Private<T>` parameters → nox Layer 2 hint injection (`CallProvider::provide()`)
+- `Public<T>` outputs → `reveal` events (language.md §10), writing to public output
+- `Private<T>` values needing commitment → `seal` events (language.md §10)
 
-The STARK proof of the resulting TASM execution is a zero-knowledge proof: it proves that the function computed a valid output (the `Public<T>` return value) from some witness (the `Private<T>` inputs) without revealing the witness.
+The zheng proof of the resulting nox trace is a zero-knowledge proof: it proves that the function computed a valid output (the `Public<T>` return value) from some witness (the `Private<T>` hint inputs) without revealing the witness. Layer 1 nox constraints verify the witness was well-formed; zheng certifies the constraints held.
 
 ### The Developer Experience
 
@@ -86,7 +103,7 @@ zk fn vote(
     let commitment = commit(hash(voter_key) || encode(choice));
     commitment
 }
-// Compiler generates: witness split, taint check, ZK-compatible TASM
+// Compiler generates: hint injection, taint check, ZK-compatible nox patterns
 // Result: a zero-knowledge vote commitment provably computed from a valid voter+choice pair
 ```
 
@@ -94,11 +111,13 @@ zk fn vote(
 
 **Trust boundary at `hash`**: The taint system marks `hash(private_value)` as public-safe because the hash is a one-way function. But this assumes the output does not leak the input via other means (e.g., a length-leaking hash, or a hash collision). The type system cannot reason about cryptographic properties — it trusts the developer's choice of transformation.
 
-**Private input validation**: A `zk fn` often needs to validate its private inputs (e.g., `sender_balance >= amount`). These validations generate STARK constraints that are part of the proof. The verifier learns that the assertion held — not what the values were. This is correct ZK behavior, but the developer must be careful not to validate in a way that leaks information (e.g., `assert!(amount == 42)` effectively reveals `amount`).
+**Private input validation**: A `zk fn` often needs to validate its private inputs (e.g., `sender_balance >= amount`). These validations generate nox constraints (Layer 1) that are part of the zheng proof. The verifier learns that the assertion held — not what the values were. This is correct ZK behavior, but the developer must be careful not to validate in a way that leaks information (e.g., `assert!(amount == 42)` effectively reveals `amount`).
 
-**Nested `zk fn` calls**: A `zk fn` that calls another `zk fn` requires composing the witness structures. The compiler handles this by treating the inner function's private inputs as part of the outer function's witness. The composed proof is still a single STARK proof — no recursive proof needed for simple composition.
+**Nested `zk fn` calls**: A `zk fn` that calls another `zk fn` requires composing the witness structures. The compiler handles this by treating the inner function's private inputs as part of the outer function's witness (flattened hint injection). The composed proof is still a single zheng proof of the nox trace — no recursive proof needed for simple composition.
 
-**Performance**: Generating the witness requires executing the program with private inputs to produce the trace. This is the same as normal execution cost. There is no additional overhead from the ZK annotations themselves.
+**Performance**: Generating the witness requires executing the program with private inputs to produce the nox trace. This is the same as normal execution cost. There is no additional overhead from the ZK annotations themselves.
+
+**Proof composition for complex ZK**: For ZK functions that need to verify other proofs (e.g., proving knowledge of a valid inner computation), use `proof_block` (language.md §17, Tier 3). `Private<T>`/`Public<T>` handles the single-level case; `proof_block` handles the recursive case.
 
 ## Implementation Sketch
 
@@ -125,15 +144,15 @@ fn taint_check(expr: &TirExpr, taint: &TaintMap) -> Result<Privacy, TaintError> 
 
 // tir/zk_lowering.rs
 fn lower_zk_function(func: &ZkFunction, tir: &mut TirBuilder) {
-    // Emit witness read instructions for Private<T> parameters
+    // Emit nox Layer 2 hint injection for Private<T> parameters
     for param in func.private_params() {
-        tir.emit(ReadWitness(param.id, param.ty));
+        tir.emit(HintProvide(param.id, param.ty));  // CallProvider::provide()
     }
     // Lower body normally
     lower_body(&func.body, tir);
-    // Emit public output instructions for Public<T> returns
+    // Emit reveal events for Public<T> returns (language.md §10)
     for ret in func.public_returns() {
-        tir.emit(WritePublicOutput(ret.id, ret.ty));
+        tir.emit(RevealEvent(ret.id, ret.ty));
     }
 }
 ```
