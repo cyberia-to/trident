@@ -35,13 +35,14 @@ production path once `trident build --target nox` is wired to emit bundles).
 ## pipeline
 
 ```
-.tri source
-    │
-    ▼
+.tri source   witness tape (.wit)
+    │               │
+    ▼               ▼
 trident::build_noun(src)        # NounBuilder: AST → Noun
     │
     ▼
-nox::reduce(noun, input)        # 16 patterns, deterministic reduction
+nox::reduce(noun, input, calls) # 16 patterns + hint (Layer 2)
+    │  calls: FifoCallProvider from witness tape
     │  returns (output, ExecutionTrace)
     ▼
 zheng::prove(trace, claim)      # SuperSpartan + sumcheck + Brakedown
@@ -53,6 +54,51 @@ Proof + Claim
     ▼
 zheng::verify(proof, claim)     # verifier: < 100ms on M-series
 ```
+
+## hint — non-deterministic witness
+
+nox Layer 2 is pattern 16 (`call_witness`). The prover injects a witness
+atom; the pattern evaluates a `check_formula` against it; if check returns 0
+the witness is accepted and written into the trace. zheng proves the check
+passed — the verifier never sees the witness itself.
+
+```rust
+pub trait CallProvider<const N: usize>: LookProvider {
+    fn provide(&self, order: &mut Order<N>, tag: Goldilocks, object: NounId)
+        -> Option<NounId>;
+}
+```
+
+`reduce()` already accepts `hints: &dyn CallProvider<N>`. The PoC passes
+`NullCalls` today; warrior-cyber replaces it with `FifoCallProvider` — a
+FIFO tape of field elements indexed by call tag:
+
+```rust
+struct FifoCallProvider {
+    tape: HashMap<u64, VecDeque<Goldilocks>>,  // tag → values in FIFO order
+}
+```
+
+Witness tape format: newline-separated `tag:value` pairs. The warrior reads
+a `.wit` file and populates the tape before reduction begins.
+
+For trinity, the bench reference (`benches/references/std/trinity/inference.rs`)
+already computes all required values in `compute_bench_divine()`. The witness
+tape is the FIFO of divine values the prover must supply:
+
+| call site | tag | values supplied |
+|-----------|-----|-----------------|
+| Phase 1b: `lwe.decrypt` per neuron | 0x01 | plaintext m for each ciphertext (32 values) |
+| Phase 3: LUT sponge `reduce_mod` | 0x02 | (r, k) pairs — 14 rounds × 8 elems × 2 = 224 values |
+| Phase 4: PBS `build_test_poly` | 0x03 | table_idx for each ring position (128 values) |
+| Phase 4: PBS `blind_rotate` | 0x04 | rotation, then src+sign pairs (1 + 2×128×2 values) |
+| Phase 4: PBS `key_switch` | 0x05 | switched ciphertext components (17 values) |
+| Phase 4: PBS `lwe.decrypt` | 0x01 | final plaintext (1 value) |
+
+Privacy property: the secret key `s` and all intermediate ciphertexts stay
+in the prover's witness tape. The proof covers only the constraint that each
+decryption satisfied the noise bound check. The verifier learns nothing about
+`s`.
 
 ## proving backends
 
@@ -167,7 +213,8 @@ warrior-cyber/
 └── src/
     ├── main.rs              # CLI: subcommand dispatch, --backend flag
     ├── compile.rs           # .tri → Noun via trident NounBuilder
-    ├── execute.rs           # Noun → (output, ExecutionTrace) via nox::reduce
+    ├── execute.rs           # Noun + witness → (output, ExecutionTrace) via nox::reduce
+    ├── witness.rs           # FifoCallProvider: .wit tape → CallProvider<N>
     ├── prove.rs             # ExecutionTrace → Proof (dispatches to backend)
     ├── verify.rs            # (Proof, Claim) → bool via zheng
     └── backend/
@@ -198,12 +245,12 @@ honeycrisp    = { path = "../honeycrisp" }   # aruminium + acpu + unimem
 
 - Network deployment (radio, bbg) — local only
 - os.cyber.* programs — trident + nox target only, no OS layer
-- `hint` (non-deterministic input) — pure computation only
 - Recursive proof composition — flat proofs only
 - ANE (rane) acceleration — inference runtime path, not prover path
 
 These are 128K items. The PoC proves that the pipeline closes across all
-three proving backends. Correctness before networked deployment.
+three proving backends, including full hint/witness support for trinity.
+Correctness before networked deployment.
 
 ## relationship to trisha
 
@@ -222,6 +269,7 @@ tooling vs warriors) keeps them independent.
 | Cargo workspace + deps wired | 0.5 |
 | compile.rs: trident → Noun | 0.5 |
 | execute.rs: nox::reduce integration | 1 |
+| witness.rs: FifoCallProvider + .wit tape format | 1 |
 | prove.rs: ProveBackend trait + dispatch | 0.5 |
 | zheng + lens::brakedown wiring | 2 |
 | backend/cpu.rs: acpu AMX/NEON bridge | 1 |
@@ -231,7 +279,7 @@ tooling vs warriors) keeps them independent.
 | CLI + --backend flag + bench command | 0.5 |
 | trinity parameters fixed in .tri + reference | 0.5 |
 | integration test: trinity proves on all 3 backends | 1 |
-| **total** | **~11.5 sessions** |
+| **total** | **~12.5 sessions** |
 
 depends on: nox::reduce stable API, zheng::prove accepting ExecutionTrace,
 lens::brakedown::commit callable from zheng. All three exist; API alignment

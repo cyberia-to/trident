@@ -66,9 +66,11 @@ cyber stack integration
 - [ ] lens        Brakedown PCS integrated into zheng (expander + tensor + commit)
 
 warrior
-- [ ] warrior-cyber PoC — run + prove + verify on nox/zheng
-                  honeycrisp AMX acceleration for Brakedown encoding and
-                  sumcheck field ops (plan: roadmap/cyber-warrior.md, ~8 sessions)
+- [ ] warrior-cyber PoC — run + prove + verify on nox/zheng, full hint/witness
+                  three backends: cpu (acpu AMX/NEON), webgpu (wgpu WGSL),
+                  metal (aruminium + unimem zero-copy)
+                  FifoCallProvider wires .wit witness tape into nox::reduce()
+                  (plan: roadmap/cyber-warrior.md, ~12.5 sessions)
 
 trinity
 - [ ] parameters  fix geometric inconsistency — RING_N=128 ≥ 2×DOMAIN=64,
@@ -84,7 +86,6 @@ not in 256K scope
 - CORE .tri reference evaluator (nox 16 patterns exist in Rust — .tri evaluator is 64K)
 - os/cyber/ target profile (128K)
 - five-algebra type primitives (Bit, Lattice, Cost, Iso) (128K)
-- GPU proving via aruminium (128K)
 - Atlas on-chain registry (128K)
 - self-hosting compiler wiring (128K — stages written in .tri, lower needs warrior)
 ```
