@@ -9,7 +9,7 @@ planned: 128K
 
 ## Motivation
 
-A single TIR optimizer cannot be optimal for all programs. In [[nox]]/[[zheng]], proof cost = `trace_length + sum(jet_costs)`. Which component dominates varies by program: a hash-heavy program is dominated by [[hemera]] jet invocations; a polynomial-heavy program is dominated by poly_eval jet calls; a pure-arithmetic program is dominated by trace length. No single optimizer can dominate across all program types.
+A single nox optimizer cannot be optimal for all programs. In [[nox]]/[[zheng]], proof cost = `trace_length + sum(jet_costs)`. Which component dominates varies by program: a hash-heavy program is dominated by [[hemera]] jet invocations; a polynomial-heavy program is dominated by poly_eval jet calls; a pure-arithmetic program is dominated by trace length. No single optimizer can dominate across all program types.
 
 The ensemble solution: 8–16 specialist optimizers, each tuned to minimize a specific [[nox]] cost component. For each program, run all specialists in parallel (~800μs combined), use the [[trace-predictor]] or [[cost-surrogate]] to predict which specialist's output will prove cheapest via [[zheng]], and lower only that one. The meta-selector eliminates the need to run [[warrior-cyber]] on all 16 variants.
 

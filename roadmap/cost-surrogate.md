@@ -49,24 +49,24 @@ The [[trace-predictor]] output (predicted trace_length + jet invocation counts) 
 
 ### Why 1D CNN vs. Other Architectures
 
-TIR op sequences are sequential — the op at position $i$ contributes to nox proof cost based on the surrounding ops (e.g., three adjacent hash-calling ops dominate jet costs). A 1D CNN captures local context (kernel size 5 = 5 consecutive ops) efficiently. Compared to:
+Nox reduction sequences are sequential — the operation at position $i$ contributes to nox proof cost based on the surrounding operations (e.g., three adjacent hash-calling operations dominate jet costs). A 1D CNN captures local context (kernel size 5 = 5 consecutive operations) efficiently. Compared to:
 
-- **MLP over flat features**: ignores positional structure — misses patterns like "three hemera-calling ops in a row dominate hash jet cost"
+- **MLP over flat features**: ignores positional structure — misses patterns like "three hemera-calling operations in a row dominate hash jet cost"
 - **RNN/LSTM**: captures global context but is harder to train with evolutionary methods
-- **Transformer**: captures global attention but is larger (~50K params) and overkill for sequences of 128 TIR ops
+- **Transformer**: captures global attention but is larger (~50K params) and overkill for sequences of 128 nox operations
 
 The 1D CNN matches the problem's local-sequential structure at minimal parameter count.
 
 ### Training Data
 
-Training pairs: (TIR op sequence, actual [[zheng]] proving time) from real proving runs via [[warrior-cyber]].
+Training pairs: (nox reduction sequence, actual [[zheng]] proving time) from real proving runs via [[warrior-cyber]].
 
 ```rust
 // Collect training data:
-fn collect_surrogate_data(programs: &[TirFunction]) -> Vec<(TirOpSequence, f64)> {
-    programs.iter().map(|func| {
-        let time = warrior_cyber_prove_and_measure(func);  // [[nox]] execution + [[zheng]] proof time
-        (func.ops().take(128), time)
+fn collect_surrogate_data(programs: &[NoxSequence]) -> Vec<(NoxOpSequence, f64)> {
+    programs.iter().map(|seq| {
+        let time = warrior_cyber_prove_and_measure(seq);  // [[nox]] execution + [[zheng]] proof time
+        (seq.ops().take(128), time)
     }).collect()
 }
 ```
@@ -86,15 +86,15 @@ This directly optimizes for ranking accuracy rather than absolute cost predictio
 Once the surrogate is trained, it enables gradient flow through cost:
 
 ```
-TIR → (differentiable compilation process) → TIR op ordering → surrogate → cost prediction
-         ↑                                                                        |
-         ←←←←←←←←←←←←←←←←←←←←←←←← gradient ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+nox sequence → (differentiable ordering process) → nox reduction ordering → surrogate → cost prediction
+         ↑                                                                                      |
+         ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←← gradient ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 ```
 
-The gradient of the surrogate with respect to TIR op embedding vectors guides which ops to change or reorder. This is not directly applicable to discrete TIR optimization (ops are discrete, not continuous), but it guides two uses:
+The gradient of the surrogate with respect to nox operation embedding vectors guides which operations to change or reorder. This is not directly applicable to discrete nox optimization (operations are discrete, not continuous), but it guides two uses:
 
-1. **Continuous relaxation**: Optimize over a soft probability distribution over TIR op choices, then round to discrete ops. Analogous to Gumbel-softmax in NLP.
-2. **Gradient as ranking signal**: Use gradient direction to select which of several candidate TIR op sequences to prefer, without requiring the gradient to exactly specify the optimal modification.
+1. **Continuous relaxation**: Optimize over a soft probability distribution over nox operation choices, then round to discrete operations. Analogous to Gumbel-softmax in NLP.
+2. **Gradient as ranking signal**: Use gradient direction to select which of several candidate nox reduction sequences to prefer, without requiring the gradient to exactly specify the optimal modification.
 
 ### Combination with Evolutionary Optimization
 
@@ -107,18 +107,18 @@ The hybrid strategy: run evolutionary optimization to reach a good region, then 
 
 ### Interaction with the Trace Predictor
 
-The [[trace-predictor]] predicts nox trace_length + jet invocation counts from TIR features. The cost surrogate predicts zheng proving time from TIR op sequences. Both are cost predictors, at different levels:
+The [[trace-predictor]] predicts nox trace_length + jet invocation counts from nox graph features. The cost surrogate predicts zheng proving time from nox reduction sequences. Both are cost predictors, at different levels:
 
-- Trace predictor: TIR feature level, fast, approximate, guides TIR optimization
-- Cost surrogate: TIR sequence level, slower, more precise, guides finer TIR optimization
+- Trace predictor: nox graph feature level, fast, approximate, guides high-level optimization
+- Cost surrogate: nox reduction sequence level, slower, more precise, guides finer optimization
 
-The trace predictor's output (predicted trace_length + jet counts) can feed the cost surrogate as additional input features, improving accuracy by providing bottleneck component information that the op sequence alone might not reveal.
+The trace predictor's output (predicted trace_length + jet counts) can feed the cost surrogate as additional input features, improving accuracy by providing bottleneck component information that the operation sequence alone might not reveal.
 
 ## Key Tradeoffs
 
 **Smoothness vs. accuracy**: The surrogate is smooth by construction (differentiable). The actual [[nox]] proof cost function (`trace_length + jet_costs`) is piecewise linear with discrete jumps per pattern application. The surrogate cannot predict step transitions accurately. For optimization near cost thresholds, the surrogate may suggest changes that look like 10% improvement but actually trigger a larger cost increase. Note that [[zheng]] uses Brakedown PCS, not FRI — there are no FRI folding factor cliffs. Any cliff-like structure comes from [[zheng]] prover padding choices, which are configuration-dependent. Gradient-guided optimization should be used cautiously near threshold regions.
 
-**Distribution shift**: The surrogate is trained on a corpus of TIR op sequences. If the optimizer generates TIR sequences that are structurally different from the training corpus (e.g., very unusual op sequences from aggressive optimization), the surrogate may be inaccurate. The training corpus should include outputs from the [[compiler-ensemble]] itself (online training) to prevent this.
+**Distribution shift**: The surrogate is trained on a corpus of nox reduction sequences. If the optimizer generates nox sequences that are structurally different from the training corpus (e.g., very unusual operation sequences from aggressive optimization), the surrogate may be inaccurate. The training corpus should include outputs from the [[compiler-ensemble]] itself (online training) to prevent this.
 
 **Ranking vs. absolute accuracy**: Training for pairwise ranking rather than absolute cost prediction means the surrogate may have poor calibration — "program A costs 1.2, program B costs 1.5" may not mean anything in absolute terms. The surrogate's output should only be used for comparison, never for absolute cost claims.
 
@@ -128,9 +128,9 @@ The trace predictor's output (predicted trace_length + jet counts) can feed the 
 
 ```trident
 // cost_surrogate.trd  (a std.nn network — see ../reference/stdlib.md §std.nn)
-fn predict_cost(tir_ops: [OpId; 128]) -> Field {
-    // Embedding: 54 TIR op kinds (see ../reference/ir.md)
-    let embedded: Matrix<128, 16> = tir_ops.map(|id| EMBEDDINGS[id]);
+fn predict_cost(nox_ops: [OpId; 128]) -> Field {
+    // Embedding: 22 nox operation kinds (16 patterns + 1 hint + 5 jets)
+    let embedded: Matrix<128, 16> = nox_ops.map(|id| EMBEDDINGS[id]);
     // Conv layer 1 (kernel 5, filters 32)
     let conv1: Matrix<124, 32> = conv1d(embedded, CONV1_WEIGHTS, 5);
     let relu1 = relu_matrix(conv1);
