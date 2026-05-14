@@ -17,6 +17,7 @@ frontmatter.
 | [[cyber-stack-adoption]] | draft | nebu + hemera + nox + zheng integration, AST→Noun path, 14 sessions |
 | [[switch-to-hemera]] | draft | replace blake3 + custom poseidon2 with hemera, ContentHash 32→64 bytes |
 | [[trident-on-evm]] | draft | EvmLowering + os.ethereum.* + verifier-codegen — six capabilities Solidity/Fe can't deliver, 15 sessions |
+| [[cyber-warrior]] | draft | warrior-cyber PoC — nox/zheng pipeline, honeycrisp AMX acceleration, trinity parameters, ~11.5 sessions |
 
 ## Status values
 
