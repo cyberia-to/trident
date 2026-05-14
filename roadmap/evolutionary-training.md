@@ -13,9 +13,15 @@ Neural networks require training. Training requires updating weights to minimize
 
 Evolutionary optimization sidesteps all of this. Evolution operates on populations of weight vectors. It selects survivors by fitness (low loss on training data), generates children by crossover and mutation, and repeats. No gradients required. The operations — comparison, conditional copy, random field element substitution — are pure field arithmetic. Field ops run via strata/honeycrisp on M4 Pro Metal: ~50μs per generation.
 
-Every training step is a valid nox trace. warrior-cyber runs the training program: nox executes the evolutionary step, zheng proves it. Training is provable.
+Every training step is a valid [[nox]] trace. [[warrior-cyber]] runs the training program: [[nox]] executes the evolutionary step, [[zheng]] proves it. Training is provable.
 
 Related proposals: [[nn-trd]], [[trace-predictor]], [[cost-surrogate]].
+
+## Vision
+
+Training neural networks entirely in the Goldilocks field means training IS proving. Each generation of the evolutionary optimizer runs on [[nox]], and [[zheng]] produces a proof of the entire training step. The trained model's weights are accompanied by a proof that they were derived by a valid optimization procedure. No black-box training — the entire learning process is verifiable. Deploy to [[Atlas]] with the training proof; auditors verify not just the model but how it was trained.
+
+Stack integration: honeycrisp (AMX acceleration) makes ~50μs/generation viable on Apple Silicon. On other devices, the webgpu [[warrior-cyber]] backend runs the same Trident training code at GPU speed. The training computation is device-agnostic — the [[cybergraph]] doesn't care which device produced the proof, only that it's valid. Each training checkpoint is a particle in [[cybergraph]], [[hemera]]-addressed; the proof of honest training is a cyberlink from the checkpoint to the [[zheng]] proof of the evolutionary step.
 
 ## Design
 
@@ -109,7 +115,7 @@ Evolution from the cold-start population. The initialized weights provide a good
 
 ### Provable Training Steps
 
-Every generation of the evolutionary algorithm is a Trident program execution. Every training step is a valid nox trace. warrior-cyber runs the training program: nox executes each generation, zheng (SuperSpartan IOP + Brakedown PCS + sumcheck) proves the trace. The proof of training proves:
+Every generation of the evolutionary algorithm is a Trident program execution. Every training step is a valid [[nox]] trace. [[warrior-cyber]] runs the training program: [[nox]] executes each generation, [[zheng]] (SuperSpartan IOP + Brakedown PCS + sumcheck) proves the trace. The proof of training proves:
 
 - The population evolved from the previous generation according to the declared crossover and mutation rules
 - Fitness was evaluated correctly on the declared training examples
@@ -161,4 +167,4 @@ fn train_epoch<const N_WEIGHTS: Field>(
 
 The training loop is a simple `for generation in 0..N_GENERATIONS { population = train_epoch(population, data); }`. Each epoch is a nox trace proven by zheng. The final population contains the trained weights.
 
-The trained weights are used by [[nn-trd]] networks at inference time. The [[trace-predictor]] and [[cost-surrogate]] are the first consumers of this training method.
+The trained weights are used by [[nn-trd]] networks at inference time. The [[trace-predictor]] and [[cost-surrogate]] are the first consumers of this training method. Weights are published as [[Atlas]] packages — content-addressed by [[hemera]], versioned, and provably tied to the training proof that produced them.

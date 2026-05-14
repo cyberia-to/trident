@@ -76,6 +76,20 @@ extern fn hemera_hash(input: [Field; 8]) -> Field
 
 The hash jet uses hemera (Poseidon2, p=2^64-2^32+1) as the underlying primitive. Its cost is expressed in jet invocations, not internal hash rounds.
 
+## Vision
+
+When proof-cost types are live, [[bbg]] can statically bound the focus budget any function will consume before executing it. A transfer function annotated `#[cost(steps: 800..1200)]` tells the network: "this program will never exceed 1200 [[nox]] steps." BBG enforces the bound at the state-transition level — not as a soft limit, but as a hard conservation law. No overruns, no DoS, no unexpected focus depletion. Smart contract economics become predictable. The focus market price of any operation is determined at compile time, before a single proof is generated.
+
+This changes the economics of the [[cybergraph]] fundamentally. Today, the cost of a computation is known only after execution. With proof-cost types, the cost is part of the function's public interface — visible in IDE tooltips, queryable by callers, enforced by the compiler. The focus budget τ becomes a programmable resource, not a runtime surprise.
+
+## Stack Integration
+
+Cost bounds propagate into the [[Atlas]] package manifest. When a package is deployed, its declared cost bounds are part of the on-chain record — every function's `#[cost(...)]` annotation becomes a registry entry. Callers browsing [[Atlas]] see focus costs alongside API documentation.
+
+[[soft3]]'s `query()` call can estimate focus cost before submission. A client building a transaction can sum the declared cost bounds of all functions it plans to call and determine whether the available focus budget is sufficient — without executing anything. This is pre-flight focus budgeting.
+
+The cost model feeds into [[bbg]]'s focus dynamics: when the network's aggregate focus budget (τ) is under pressure, BBG can prioritize execution of low-cost-bound programs over high-cost-bound ones, implementing a fair-queuing policy provably consistent with conservation laws. [[warrior-cyber]] instances report their per-execution actual step counts; over time, the network can validate that declared bounds match observed traces, tightening the ecosystem's cost discipline.
+
 ## Key Tradeoffs
 
 **Static vs. dynamic cost**: For programs with data-dependent control flow (branches, loops with runtime-determined counts), static cost bounds must be conservative worst-case estimates. This may over-report cost for programs whose expensive path is rarely taken. A mitigation: allow probabilistic cost annotations for expected-case bounds, with separate worst-case bounds.

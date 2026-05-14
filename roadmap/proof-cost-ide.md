@@ -116,6 +116,18 @@ The LSP server:
 
 The incremental TIR compilation ensures that cost highlighting updates quickly (target: <100ms for single-line edits in typical files).
 
+## Vision
+
+When [[bbg]] focus pricing becomes visible in the editor, smart contract economics are no longer emergent surprises — they are first-class design constraints. A developer sees every line annotated inline: "this [[hemera]] call costs 32 [[nox]] steps — the rest of your program costs 18 total." The bottleneck is highlighted in red before it reaches production. Before a package reaches [[Atlas]], the CI gate rejects it if the declared focus bound is exceeded.
+
+The [[cybergraph]] makes this richer than a local cost model alone. The IDE queries the graph for existing benchmarks of similar programs. If `hemera(x)` has been profiled before — its trace is a particle in the graph — the IDE shows the actual [[nox]] step count from that particle, not a model estimate. The more programs the ecosystem runs, the more accurate the inline annotations become. Cost intelligence accumulates in the knowledge graph and is shared across every developer's IDE simultaneously.
+
+The CI gate closes the loop: packages whose focus cost exceeds the declared bound are rejected before they reach [[Atlas]]. Focus economy becomes legible. The developer who once shipped a program that dominated proving time because it called a hash function in a loop now sees that problem on line 1, highlighted red, before writing line 2.
+
+## Stack Integration
+
+The IDE queries [[cybergraph]] particles via [[soft3]]'s `query(cid, dimension)` to fetch previously measured [[nox]] step counts for known function signatures. [[hemera]] CIDs identify function variants: if `hemera(source_text)` matches a particle in the graph, the trace data is fetched directly rather than estimated. The [[bbg]] focus budget constraint is the unit the CI gate enforces — the same unit the state machine uses on-chain. IDE, CI, and runtime speak the same accounting language.
+
 ## Key Tradeoffs
 
 **Cost model accuracy**: The TIR cost model is an approximation. It does not run proving — it estimates from the instruction mix. Accuracy is typically within 10–20% of actual proving cost. This is sufficient for IDE guidance but may misclassify borderline cases in CI gates. The CI gate should use a conservative estimate (upper bound) to avoid false passes.

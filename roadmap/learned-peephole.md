@@ -9,13 +9,19 @@ planned: 128K
 
 ## Motivation
 
-The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: TIR op sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates TIR and how warrior-cyber lowers TIR to nox traces.
+The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: TIR op sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates TIR and how [[warrior-cyber]] lowers TIR to [[nox]] traces.
 
-Peephole optimization in Trident operates at the TIR level (see `../reference/ir.md`): it rewrites windows of TIR ops before nox lowering. This is the correct level because nox is the target — changing TIR op sequences changes which nox reduction patterns are triggered, which determines both trace_length and jet invocation counts.
+Peephole optimization in Trident operates at the TIR level (see `../reference/ir.md`): it rewrites windows of TIR ops before [[nox]] lowering. This is the correct level because [[nox]] is the target — changing TIR op sequences changes which [[nox]] reduction patterns are triggered, which determines both trace_length and jet invocation counts.
 
 Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change at the TIR level, and can we replicate those changes as fast deterministic rules?"
 
 Related proposals: [[algebraic-identity-explorer]], [[instruction-scheduling-nn]], [[neural-theorem-prover]], [[compiler-ensemble]].
+
+## Vision
+
+Peephole rules are compiler knowledge made explicit. Once extracted by the [[learned-peephole]] system and validated by [[neural-theorem-prover]], they are added to the deterministic rule database — an [[Atlas]] package. Every future compilation automatically applies them. The neural discovery process is one-time; the economic benefit is forever. In the [[cybergraph]], the rule database version is a particle; each rule is a cyberlink from the pattern CID ([[hemera]]-addressed) to the replacement CID.
+
+Stack integration: Peephole rules operate at TIR level (before [[warrior-cyber]] lowering). The most impactful rules — those that reduce [[hemera]] jet invocations — have outsized impact because every [[hemera]] call touches the [[cybergraph]]'s identity layer. Rules are deployed as an [[Atlas]] package; compilers pin to a version and can reproduce compilation results exactly. As the [[bbg]] network accumulates more execution data, the rule database's economic value compounds — more usage means more pattern data means better rules means cheaper proofs for everyone.
 
 ## Design
 
@@ -31,7 +37,7 @@ Window [Mul(x, Const(1))]    → detected as mul-one pattern → eliminate
 
 These reductions lower the nox trace length (fewer reduction pattern applications) or eliminate jet invocations. Classical peephole patterns are hand-coded by engineers who study compiler output. Learned peephole patterns are discovered automatically from data.
 
-The patterns from the [[algebraic-identity-explorer]] (validated field-theoretic equivalences) feed directly into this system's rule database — they are the highest-confidence peephole rules.
+The patterns from the [[algebraic-identity-explorer]] (validated field-theoretic equivalences, some with full [[zheng]] proofs) feed directly into this system's rule database — they are the highest-confidence peephole rules.
 
 ### The Training Pipeline
 
@@ -54,7 +60,7 @@ Architecture:
   // N_REPLACEMENTS: number of learned replacement patterns (starts at 50, grows)
 ```
 
-Parameters: ~15,000 field elements. Inference: fast (microseconds per window). Implemented as a [[nn-trd]] network — inference is itself a provable nox trace.
+Parameters: ~15,000 field elements. Inference: fast (microseconds per window). Implemented as a [[nn-trd]] network — inference is itself a provable [[nox]] trace proved by [[zheng]].
 
 **Step 4**: Extract high-confidence patterns as deterministic rules. When the CNN predicts a specific TIR op replacement with confidence > 95% over a diverse set of programs, extract the (before, after) pair as a deterministic rule. Add it to the rule database alongside [[algebraic-identity-explorer]] rules.
 
@@ -70,7 +76,7 @@ The two systems discover TIR op rewrite patterns at different levels and through
 | **Rule type** | Universal equivalences over Goldilocks | Compiler-specific TIR heuristics |
 | **Layer** | Algebraic layers 0–5+ | Compiler architecture layer |
 
-They feed the same rule database. Before any neural compiler runs, both algebraic identities and peephole patterns are applied as deterministic TIR rewrite passes in order of (frequency × nox_cost_savings). The deterministic rules handle the majority of common patterns; the neural compiler (see `../reference/neural.md`) focuses on unusual cases.
+They feed the same rule database. Before any neural compiler runs, both algebraic identities and peephole patterns are applied as deterministic TIR rewrite passes in order of (frequency × [[nox]]_cost_savings). The deterministic rules handle the majority of common patterns; the neural compiler (see `../reference/neural.md`) focuses on unusual cases.
 
 The [[instruction-scheduling-nn]] runs after peephole — peephole reduces the TIR op count first, then scheduling reorders the reduced sequence for minimal nox trace cost.
 
@@ -90,8 +96,8 @@ Each growth phase reduces the compiler's workload: more patterns handled determi
 Unlike algebraic identities (which are mathematically proven via field theory and optionally by zheng proof), peephole patterns extracted from evolutionary compiler output must be validated before deployment as deterministic rules. The validation pipeline:
 
 1. Extract candidate TIR rule: `before → after`
-2. Lower both TIR sequences to nox traces via warrior-cyber and execute on 1,000,000 random inputs — output must agree on all
-3. Cross-validate on 100 programs not in the training set — must improve or equal nox proof cost
+2. Lower both TIR sequences to [[nox]] traces via [[warrior-cyber]] and execute on 1,000,000 random inputs — output must agree on all
+3. Cross-validate on 100 programs not in the training set — must improve or equal [[nox]] proof cost
 4. If passes: add to rule database with confidence level "peephole_validated"
 
 The validation is less stringent than for algebraic identities (Stage 2 rather than Stage 3/4) because peephole rules are empirically discovered rather than theoretically derived. Borderline cases fail safe — they are not added to the deterministic database and remain as CNN predictions only.
@@ -138,8 +144,8 @@ impl LearnedPeepholeOptimizer {
                 i += 1;
             }
         }
-        // After peephole: TIR is passed to instruction-scheduling-nn, then
-        // warrior-cyber lowers to nox trace for zheng proving
+        // After peephole: TIR is passed to [[instruction-scheduling-nn]], then
+        // [[warrior-cyber]] lowers to [[nox]] trace for [[zheng]] proving
     }
 }
 ```

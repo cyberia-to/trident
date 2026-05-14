@@ -99,6 +99,22 @@ Both postconditions compile to nox constraints. A proof of `sort_array` executio
 
 Loop body contracts connect directly to [[loop-invariants]]: when the loop invariant at termination implies the function's `#[ensures]` postcondition, the compiler can discharge the postcondition without a separate nox constraint.
 
+## Vision
+
+Every function deployed to [[bbg]] carries formal contracts. `#[requires]`/`#[ensures]` aren't optional documentation — they compile to [[nox]] constraints verified by [[zheng]] on every execution. A token transfer function's postcondition `#[ensures(sender.balance >= 0)]` is checked not by a guard clause but by a polynomial constraint that is mathematically impossible to violate. Code audits shrink to proofs; security disclosures become impossible for the verified properties.
+
+This changes the trust model of [[Atlas]] deployment. Today, deploying a package to a registry requires trust in the author's correctness. With contracts, deploying a package to [[Atlas]] means publishing a function whose `#[ensures]` postconditions are machine-checkable by any verifier. Users of the package don't need to trust the author — they trust the [[zheng]] proof that runs on every call. The author's intent and the program's behavior are the same artifact.
+
+At the network scale, this compounds: the [[cybergraph]] fills with cyberlinks whose answers are covered by formal guarantees. A memo table entry for a contracted function doesn't just record "this input produced this output" — it records "this input produced this output, and the output satisfies these postconditions, proven by this [[zheng]] certificate."
+
+## Stack Integration
+
+[[CORE]]'s 16 reduction patterns, once written in Trident, carry contracts. Pattern correctness — "reduce always terminates with a valid noun or returns Halt" — is a formal contract verified every time the compiler self-hosts. The Trident compiler compiling itself is simultaneously a proof that [[CORE]]'s reduction semantics are maintained across the compilation pipeline.
+
+The contract system integrates with [[bbg]] state transitions. A BBG state update function with `#[ensures(is_valid_state(new_state))]` produces a [[zheng]] proof that includes the postcondition check. BBG's state machine can require this postcondition proof before accepting the update — a governance-free correctness gate enforced by math.
+
+[[soft3]]'s `verify()` operation verifies the [[zheng]] proof, which includes all contract constraints. A caller who receives a verified result from `soft3.verify()` implicitly receives a proof that all `#[requires]` preconditions were met at the call site and all `#[ensures]` postconditions held at return. The contract is part of the proof, not a separate document.
+
 ## Key Tradeoffs
 
 **Constraint cost**: Each `#[requires]`/`#[ensures]` clause adds nox constraints. For functions called in tight loops, these constraints appear at every reduction step in the loop's trace — potentially doubling the reduction step count for the function. The developer must be deliberate about where contracts are placed. See [[loop-invariants]] for the interaction with loop-level invariants.

@@ -11,11 +11,19 @@ planned: 128K
 
 Every neural technique on this roadmap — the algebraic identity explorer's GFlowNet proposer, the [[trace-predictor]], the [[cost-surrogate]], the instruction scheduler — is a neural network. These networks must run inside Trident to be provable. Running inside Trident means operating over Goldilocks field arithmetic, with no floating point, no signed integers natively, and no smooth activation functions.
 
-`nn.trd` is the foundation: a Trident library implementing neural network primitives entirely in field arithmetic. Building it first enables every subsequent neural technique to produce a nox trace, be proven by zheng via warrior-cyber, and be progressively self-optimized by the [[algebraic-identity-explorer]].
+`nn.trd` is the foundation: a Trident library implementing neural network primitives entirely in field arithmetic. Building it first enables every subsequent neural technique to produce a [[nox]] trace, be proven by [[zheng]] via [[warrior-cyber]], and be progressively self-optimized by the [[algebraic-identity-explorer]].
 
 `nn.trd` corresponds to `std.nn` in the stdlib (see `../reference/stdlib.md` §"std.nn — Intelligence"). The roadmap deliverable implements the core of that namespace: field-native inference, with training handled separately by [[evolutionary-training]].
 
-A neural network whose every inference produces a valid nox trace is a world-first: provable AI.
+A neural network whose every inference produces a valid [[nox]] trace is a world-first: provable AI.
+
+## Vision
+
+`std.nn` is the first provable neural network library in any programming language. When a developer trains a model using `std.nn` and deploys it to [[Atlas]], every inference call produces a [[zheng]] proof. The model's predictions are not just outputs — they are verified computations. In the cyber ecosystem, an AI agent's recommendations carry proofs: "I classified this input as X, and here is the mathematical proof that my inference circuit computed correctly." Privacy (via the hint mechanism) means the input can remain private while the output is publicly proved.
+
+`std.nn` runs on [[nox]]. Every `matmul`, `layer_norm`, `activation` is a [[nox]] trace segment. The [[cybergraph]] memoizes common inference patterns — if the same layer computation has been proved before (same weights, same input hash via [[hemera]]), the result is fetched from cache with zero compute.
+
+Stack integration: `std.nn` connects to `std.private` (via `Private<T>` for encrypted inputs) and `std.quantum` (future quantum-classical hybrid inference). Every inference result is a particle in [[cybergraph]]; the proof is a cyberlink from the input hash to the output hash. Models are published as [[Atlas]] packages, making every version of every model's weights content-addressed and permanently retrievable.
 
 ## Design
 
@@ -85,7 +93,7 @@ fn relu(x: Field) -> Field {
 
 // tanh: Padé approximant P(x)/Q(x) for |x| ≤ 4, clamped outside
 fn tanh(x: Field) -> Field {
-    // NOTE: clamp to ±20 before calling tanh in MSL kernels (GPU NaN bug)
+    // NOTE: clamp to ±20 before calling tanh in MSL kernels — [[hemera]]-backed GPU NaN bug
     let clamped = clamp(x, NEG_20, POS_20);
     let x2 = fixed_mul(clamped, clamped);
     (clamped * (P1 + P2 * x2)) * invert(Q1 + Q2 * x2 + x2 * x2)
@@ -118,12 +126,12 @@ A 3-layer MLP with 64-wide hidden layers:
 - Inference: one nox execution
 - Proof cost: trace_length ≈ 3,000 nox steps + jet costs (no hash jet invocations for pure arithmetic layers)
 
-The inference is provable in a single zheng proof. The proof certifies that the neural network computed this specific output from this specific input using these specific weights.
+The inference is provable in a single [[zheng]] proof. The proof certifies that the neural network computed this specific output from this specific input using these specific weights.
 
 ### What Provable Inference Enables
 
-- **Verifiable AI**: Any party can verify that a neural network produced a specific output without re-running the network. Relevant for AI-assisted decisions in high-stakes contexts.
-- **ZK inference**: With `zk fn` wrapping, the input can be private. The proof certifies the output is consistent with some valid input to this network, without revealing the input.
+- **Verifiable AI**: Any party can verify that a neural network produced a specific output without re-running the network. The [[zheng]] proof is the receipt. Relevant for AI-assisted decisions in high-stakes contexts.
+- **ZK inference**: With `zk fn` wrapping, the input can be private. The proof certifies the output is consistent with some valid input to this network, without revealing the input. [[bbg]] privacy (BBG privacy model) applies: the individual's input stays private; the aggregate result is public and verifiable.
 - **Self-bootstrapping**: The [[algebraic-identity-explorer]] uses `nn.trd` for its GFlowNet proposer. The proposer is a provable neural network. Its inference is proven alongside the identities it discovers. The [[trace-predictor]] and [[cost-surrogate]] are also `nn.trd` networks, trained by [[evolutionary-training]].
 
 ## Key Tradeoffs
@@ -134,7 +142,7 @@ The inference is provable in a single zheng proof. The proof certifies that the 
 
 **Matrix multiply cost**: Matrix multiply is $O(m \times n \times k)$ field multiplications. For the 64-wide hidden layers in the target MLP (~2,000 TIR ops), this is manageable. For larger networks (256-wide, 8 layers), the nox trace length may exceed practical bounds. Large models require the NTT auto-vectorization pass (Pass 7) to convert matmul to NTT convolution, reducing trace length significantly.
 
-**No backpropagation**: `nn.trd` is an inference library. Training uses the evolutionary method (see [[evolutionary-training]]). Gradient-based training in field arithmetic requires finite-difference approximation, which is noisy and expensive. Evolution is the preferred training method for field-native networks, and each training step is itself a valid nox trace proven by zheng via warrior-cyber.
+**No backpropagation**: `nn.trd` is an inference library. Training uses the evolutionary method (see [[evolutionary-training]]). Gradient-based training in field arithmetic requires finite-difference approximation, which is noisy and expensive. Evolution is the preferred training method for field-native networks, and each training step is itself a valid [[nox]] trace proven by [[zheng]] via [[warrior-cyber]].
 
 ## Implementation Sketch
 

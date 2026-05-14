@@ -9,13 +9,19 @@ planned: 128K
 
 ## Motivation
 
-The order of TIR ops within a dependency-respecting permutation affects nox proof cost. Two orderings that are both correct (both respect data dependencies) can produce different trace profiles. Interleaving hash-calling TIR ops with arithmetic ops forces the hash jet (hemera) to be invoked in scattered positions across the nox trace, potentially inflating its contribution to proof cost. Clustering hash-calling ops reduces jet invocation fragmentation. But the optimal clustering depends on the specific program — what works for one program may worsen another.
+The order of TIR ops within a dependency-respecting permutation affects [[nox]] proof cost. Two orderings that are both correct (both respect data dependencies) can produce different trace profiles. Interleaving hash-calling TIR ops with arithmetic ops forces the hash jet ([[hemera]]) to be invoked in scattered positions across the [[nox]] trace, potentially inflating its contribution to proof cost. Clustering hash-calling ops reduces jet invocation fragmentation. But the optimal clustering depends on the specific program — what works for one program may worsen another.
 
-Trident optimizes at the TIR level (see `../reference/ir.md` for TIR op definitions), before nox lowering. Scheduling happens on the TIR dependency DAG: reordering TIR ops within the dependency constraints produces different nox traces when lowered by warrior-cyber.
+Trident optimizes at the TIR level (see `../reference/ir.md` for TIR op definitions), before [[nox]] lowering. Scheduling happens on the TIR dependency DAG: reordering TIR ops within the dependency constraints produces different [[nox]] traces when lowered by [[warrior-cyber]].
 
 Learned TIR op scheduling treats ordering as a machine learning problem. A graph neural network on the TIR dependency DAG predicts a priority score for each TIR op. The scheduler executes a greedy topological sort using these priorities. The key property: the scheduler only outputs dependency-respecting permutations — guaranteed by algorithm construction, not by model correctness. Correctness is free. Performance is learned.
 
 Related proposals: [[cost-surrogate]], [[compiler-ensemble]], [[learned-peephole]].
+
+## Vision
+
+TIR op scheduling is invisible to the developer but visible in focus costs. A program with optimal scheduling costs 30% less focus than one with naive ordering — same output, same correctness, different economic reality. In the cyber network, where [[bbg]] charges focus for every [[nox]] step, this 30% reduction is the difference between a viable program and an uneconomical one. The scheduling GNN makes every Trident developer an expert optimizer without requiring them to understand the details.
+
+Stack integration: The scheduling GNN operates at TIR level before [[warrior-cyber]] lowering. Its decisions affect the [[nox]] trace structure, which affects the Brakedown commitment shape in [[zheng]], which affects proof size and verification cost. The optimal schedule minimizes focus cost across the full pipeline. Scheduling decisions and their resulting trace costs are recorded in [[cybergraph]] as cyberlinks — each (DAG structure, chosen schedule, actual cost) triple contributes to the GNN's training corpus automatically.
 
 ## Design
 
@@ -59,7 +65,7 @@ This architecture is a simplified variant of the GNN encoder in `../reference/ne
 
 Training reveals three robust scheduling heuristics that the GNN discovers without being explicitly taught:
 
-**Hash jet clustering**: TIR ops that invoke the hash jet (hemera/Poseidon2) should be grouped together. Interleaved hash + arithmetic scatters hemera invocations across the nox trace; clustered hash minimizes the jet invocation overhead contribution to proof cost.
+**Hash jet clustering**: TIR ops that invoke the hash jet ([[hemera]]/Poseidon2) should be grouped together. Interleaved hash + arithmetic scatters [[hemera]] invocations across the [[nox]] trace; clustered hash minimizes the jet invocation overhead contribution to proof cost.
 
 **Front-loading memory ops**: TIR ops that result in RAM read instructions when lowered to nox should be scheduled early. Delaying them creates sequential nox reduction dependencies that inflate trace length unnecessarily.
 
@@ -71,8 +77,8 @@ The GNN learns these heuristics from data — thousands of (scheduling → table
 
 For each training program:
 1. Generate 1,000 random valid TIR op orderings (random topological sorts of the DAG)
-2. Lower each ordering to a nox trace via warrior-cyber and measure actual nox proof cost (`trace_length + sum(jet_costs)`)
-3. The target: the ordering that minimizes nox proof cost
+2. Lower each ordering to a [[nox]] trace via [[warrior-cyber]] and measure actual [[nox]] proof cost (`trace_length + sum(jet_costs)`)
+3. The target: the ordering that minimizes [[nox]] proof cost
 4. Train the GNN to reproduce this ordering's priority assignment
 
 Loss function: pairwise ranking loss over TIR op priorities (op A should have higher priority than B if scheduling A before B reduces nox proof cost).
@@ -97,7 +103,7 @@ This makes the scheduler safe to deploy incrementally: start with any set of wei
 The scheduler integrates with the [[compiler-ensemble]]. Each specialist optimizer in the ensemble can use the GNN scheduler with different learned priorities:
 
 - Specialist 1 (minimize trace_length): learns priorities that cluster pure-arithmetic TIR ops
-- Specialist 2 (minimize hash jet calls): learns priorities that cluster hemera-invoking TIR ops
+- Specialist 2 (minimize hash jet calls): learns priorities that cluster [[hemera]]-invoking TIR ops
 - Specialist 3 (minimize poly_eval jet calls): learns priorities that cluster poly_eval-invoking TIR ops
 - ...
 
@@ -150,6 +156,6 @@ fn greedy_topological_sort(dag: &TirDag, priorities: &[f32]) -> Vec<TirOpId> {
 }
 ```
 
-The scheduled TIR op ordering is then passed to warrior-cyber for lowering to a nox trace. The [[learned-peephole]] optimizer can further refine the TIR sequence before lowering.
+The scheduled TIR op ordering is then passed to [[warrior-cyber]] for lowering to a [[nox]] trace. The [[learned-peephole]] optimizer can further refine the TIR sequence before lowering.
 
 The GNN weights are loaded from a file trained offline. The scheduler runs in microseconds per program — negligible compile time overhead.

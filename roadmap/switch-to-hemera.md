@@ -145,6 +145,18 @@ These are replaced by `cyber_hemera::hash()` and `cyber_hemera::Hasher`.
 | Any hash verification | Must match hemera output format |
 | Program digest checking | 64-byte digests |
 
+## Vision
+
+After the [[hemera]] switch, the [[cybergraph]]'s content addressing and [[zheng]]'s internal hashing use the same primitive. A particle's CID and the hash commitment inside its proof are computed by the same function. This creates an unexpected synergy: Merkle proofs over content-addressed data — using [[hemera]] — can be verified inside [[zheng]] proofs, which use [[hemera]] internally, at zero marginal cost. The graph and the proof system share a hash function and a security assumption.
+
+The self-bootstrapped constants (from the "cyber" seed) matter more than they appear to. Every content address in the [[cybergraph]], every program digest in [[Atlas]], every Brakedown commitment in every [[zheng]] proof: all are rooted in the same cryptographic identity. One hash function, one trust root, one security assumption for the entire stack. The current split — BLAKE3 for round constant generation, custom Poseidon2 for content addressing — means two trust roots and two audit surfaces. After the switch, there is one.
+
+The permanent commitment aspect is a feature of the [[cybergraph]] design: no migration path, no algorithm agility. Every particle ever created will be addressed by hemera permanently. The breaking change is clean and one-time. Everything after it compounds indefinitely on a single foundation.
+
+## Stack Integration
+
+The [[nox]] `hash` jet (Layer 3, pattern 15) accelerates [[hemera]] calls. After the switch, every `hash()` call in Trident code invokes [[hemera]] via this jet, at ~200 [[nox]] steps instead of the software fallback. The [[zheng]] Brakedown commitment's internal Merkle tree is built with [[hemera]] — the same crate, the same constants, the same output format as the content-addressed particle CIDs in the [[cybergraph]]. [[bbg]] state transitions that read or write particles use [[hemera]] addresses. The entire stack becomes one-crate-deep in hashing: `cyber-hemera`, and nothing else.
+
 ## Execution Order
 
 1. **Add hemera dependency, remove blake3** (Cargo.toml)

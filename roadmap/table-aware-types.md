@@ -76,6 +76,22 @@ When two segments have disjoint operation constraints, separate warrior-cyber in
 
 For programs with natural parallelism (batch operations, independent sub-proofs), operation-constraint types enable horizontal scaling of proving cost across warrior-cyber instances.
 
+## Vision
+
+A program with table-aware types can be split into independent subtrace segments proved by separate [[warrior-cyber]] instances in parallel. The [[zheng]] proofs compose — SuperSpartan supports subtrace composition via the sumcheck protocol. A program that would take 10 seconds to prove on a single warrior takes 1 second when split across 10 warriors in a [[cybergraph]]-coordinated proving network. This is the foundation for distributed proving.
+
+Today, proving is a serial bottleneck: one warrior, one trace, one proof. Table-constraint types break that bottleneck structurally, at the type level. The compiler encodes parallelism opportunities into the types themselves — the type checker verifies that segments are provably independent, so the proving network doesn't need to coordinate at runtime. Each segment's independence is a compile-time certificate.
+
+At scale, this transforms [[bbg]]'s throughput. A complex state transition that involves arithmetic sub-computations and hemera hash sub-computations can prove both sides simultaneously. The on-chain verification time remains constant — [[zheng]] verifies the composed proof in the same time as any single proof.
+
+## Stack Integration
+
+[[bbg]] orchestrates the proving network. Each [[warrior-cyber]] instance receives its subtrace assignment, generates a partial [[zheng]] proof, and submits it as a cyberlink into [[cybergraph]]: `formula → partial_proof_commitment`. BBG aggregates the partial proofs — the aggregation itself is a state transition with a conservation check that the subtrace boundaries are consistent.
+
+Focus cost is split across participating warriors. A computation that consumes τ total focus budget can be distributed: warrior A receives τ/2, warrior B receives τ/2, each proves its half independently. BBG tracks the total focus expenditure across the distributed proving round, enforcing TSP-2 (each subtrace owned by exactly one warrior at a time).
+
+[[soft3]]'s `query()` interface remains unchanged from the caller's perspective — the distribution is transparent. The `verify()` call checks the composed proof, which is structurally identical to a single-warrior proof. Table-constraint types make parallelism an implementation detail, not an API concern.
+
 ## Key Tradeoffs
 
 **Annotation burden**: Requiring explicit operation annotations on every function is verbose. The compiler should infer operation constraints automatically and only require explicit annotation when the developer wants to enforce a contract. The inferred constraint appears in IDE tooltips for discoverability.

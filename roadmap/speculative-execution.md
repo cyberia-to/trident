@@ -7,7 +7,23 @@ planned: 64K
 
 # Speculative Execution with Proof Rollback
 
-**Related:** [[lazy-proving]] · [[incremental-proving]]
+**Related:** [[lazy-proving]] · [[incremental-proving]] · [[cybergraph]] · [[nox]] · [[soft3]] · [[bbg]]
+
+## Vision
+
+The [[cybergraph]] is an oracle — it knows which (formula, object) pairs have been computed before. Speculative execution exploits this: the fast path assumes the answer is cached in the graph, the fallback computes it. [[soft3]]'s `query()` call is itself a speculative execution: check the [[cybergraph]] cache first, compute only on miss. Trident programs can encode this pattern explicitly with `speculate`/`fallback`, and the [[zheng]] proof system ensures the fallback always produces a valid result.
+
+```trident
+speculate {
+    // Fast path: assume cybergraph has the answer
+    let result = soft3::query(formula, object);
+} fallback {
+    // Miss: compute from scratch, proven by zheng
+    let result = compute(formula, object);
+}
+```
+
+[[nox]]'s lazy branch evaluation (pattern 4 — only the taken path generates reduction steps) makes speculative execution natural. The untaken speculative branch never generates [[nox]] reduction steps, so it contributes nothing to the [[zheng]] proof cost. A cache hit is provably free: zero nox trace, zero sumcheck rows, zero focus charged by [[bbg]]. The `speculate` construct makes this explicit and compiler-enforced rather than a manual optimization.
 
 ## Motivation
 

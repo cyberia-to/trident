@@ -7,7 +7,17 @@ planned: 32K
 
 # Field Arithmetic Simplification Passes
 
-Related: [[polynomial-optimization-passes]], [[compiler-analysis-passes]], [[supercompilation]]
+Related: [[polynomial-optimization-passes]], [[compiler-analysis-passes]], [[supercompilation]], [[nox]], [[zheng]], [[bbg]], [[Atlas]], [[cybergraph]], [[algebraic-identity-explorer]]
+
+## Stack Integration
+
+These passes sit at the junction of three subsystems. The rule database they implement is deployed as an [[Atlas]] package — `atlas.cyber/trident-passes/arithmetic` — so every compiler instance in the network shares the same verified identity table without shipping it per-binary. When the [[algebraic-identity-explorer]] discovers a new algebraic identity empirically, it updates that package; all subsequent compilations against the updated package automatically apply the new rule, and previously compiled programs can be recompiled retroactively against it.
+
+The cost model driving each pass — which form of inversion to choose, what the Hamming-weight threshold should be — is denominated in [[nox]] reduction steps, because reduction steps are what [[zheng]] must arithmetize and [[bbg]] charges from the focus budget τ. A program that inverts 10 field elements in a tight loop consumes 10× the focus if batch inversion is not applied; with Pass 4 active, the same program costs τ for a single inversion. This directly affects which computations neurons in the [[cybergraph]] can afford to run.
+
+The strata library (field arithmetic implementation) provides the constant tables that Pass 3 consults at compile time. Strata's root-of-unity table is the canonical source; the compiler references it as a content-addressed particle via [[hemera]], so the table's identity is verifiable.
+
+The compiler itself, once self-hosted in Trident and compiled with `--engine nox`, is a [[nox]] program. Every compilation it performs is recorded as a cyberlink `compilation_hash → optimized_artifact` in [[cybergraph]] — permanent, memoized, verifiable.
 
 ## Motivation
 
@@ -100,3 +110,11 @@ fn emit_montgomery_batch(calls: Vec<TirNodeId>, block: &mut TirBlock) { ... }
 ```
 
 Passes are ordered: Fermat reduction first (simplifies exponents before chain optimization), then strength reduction (constants may be revealed by Fermat), then batch inversion (requires all invert calls to be visible), then quadratic residue short-circuit (depends on constant propagation results). Supercompilation ([[supercompilation]]) runs before this suite and can expose additional constant structure that these passes then exploit.
+
+## Vision
+
+Far in the future, the algebraic pass suite is a living, planetary resource. Every Trident program compiled anywhere runs against `atlas.cyber/trident-passes/arithmetic`, a package that has accumulated thousands of field identities discovered by the [[algebraic-identity-explorer]] running continuously across the network. No individual compiler developer maintains this table — the network grows it.
+
+When a new identity is added to the [[Atlas]] package, the [[cybergraph]] marks every `compilation_hash → optimized_artifact` cyberlink derived from a previous version as stale. Programs registered with a recompile policy automatically queue against the updated package. The next time a neuron calls `ask(ν, program_cid, formula)`, [[nox]] checks the [[cybergraph]] cache first — if the recompiled artifact is already there, the answer costs zero compute. If not, [[warrior-cyber]] runs the recompilation, [[zheng]] proves it, and the new `compilation_hash → optimized_artifact` link is written permanently.
+
+The result: bringing a program closer to the theoretical minimum proving cost for the Goldilocks field is not a one-time compile-time event. It is an ongoing process, driven by the network, verified by [[zheng]], recorded in [[cybergraph]], and charged from the [[bbg]] focus budget only when genuinely new work occurs. Programs get cheaper over time without their authors doing anything.

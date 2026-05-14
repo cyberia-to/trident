@@ -7,7 +7,15 @@ planned: 64K
 
 # Lazy Proof Batching
 
-**Related:** [[incremental-proving]] · [[speculative-execution]] · [[proof-cost-types]]
+**Related:** [[incremental-proving]] · [[speculative-execution]] · [[proof-cost-types]] · [[cybergraph]] · [[bbg]] · [[zheng]]
+
+## Vision
+
+A Trident program that processes a batch of [[cybergraph]] queries — computing PageRank over a subgraph, resolving a chain of `ask(formula, object)` calls, or aggregating signals across particles — produces one [[zheng]] proof covering the entire computation. The [[bbg]] network sees one proof, one cyberlink, one focus charge. Amortizing the fixed Brakedown commitment cost across thousands of operations makes complex graph analytics economically viable on-chain.
+
+In the future, an AI agent running continuously as a Trident program uses `defer_proof` to batch its activity into hourly proofs — cheap, fully verifiable, and settled into the [[cybergraph]] as a single cyberlink from the agent's identity particle to the result particle. The agent's entire reasoning trace for that hour is proven in one shot.
+
+Lazy proving interacts with the [[cybergraph]] memo cache. The [[cybergraph]] is a global memoization layer: `ask(formula, object)` checks the graph before computing. If sub-computations within a `defer_proof` block are already memoized — their answers already exist as cyberlinks — those steps execute for free (cache hit, no nox trace generated). The [[zheng]] proof covers only the unmemoized steps, further shrinking the fixed cost. [[bbg]]'s focus conservation law means this matters: every unprovable step charged to focus that could have been cached is τ wasted.
 
 ## Motivation
 

@@ -256,6 +256,22 @@ existing std modules already serve as languages — they just need the new types
 
 depends on: nox target (cyber-stack-adoption Phase 2), nox VM implementation (Phase 1 of bootstrap plan).
 
+## Vision
+
+When BitVec, RingElement, Tropical, and Curve types are first-class in Trident, the language can natively express every layer of the cyber stack in a single program: cryptographic operations (Curve/`Iso` types for elliptic curve arithmetic in `std.sec`), network optimization (Tropical `Cost`/`Gain` algebra for shortest paths over the [[cybergraph]]), lattice cryptography (`Lattice`/`Eval` for post-quantum operations in `std.wav`), and bitwise protocol encoding (`Bit`/`Byte` for packet formats in `std.bt`). One language for every layer.
+
+Today, programs that need to cross algebraic regimes must leave Trident and invoke foreign primitives. The five algebras proposal closes that gap permanently. A [[bbg]] state transition that involves private witness aggregation (lattice crypto), routing optimization (tropical), and hash commitments ([[hemera]]/Poseidon2) can be written end-to-end in a single Trident function. The compiler handles regime transitions transparently, inserting [[hemera]] commitments at type boundaries — ~766 constraints per crossing, paid once, not repeatedly.
+
+This is the foundation for [[CORE]] being fully self-expressing. All 16 computation languages in the cyber stack — Tri, Tok, Arc, Ten, Bt, Wav, Opt, Sec — map to Trident std modules. Every language the network needs to speak, Trident speaks natively.
+
+## Stack Integration
+
+The five algebras feed into [[zheng]]'s constraint system via type-specific lowering paths. Curve (`Iso`/`Shade`) types lower to multi-scalar multiplication circuits — the natural representation for group actions in the `genies` regime. `Lattice`/`Eval` types lower to NTT-based polynomial multiplication circuits in the `jali` regime. `Cost`/`Gain` types lower to comparison-and-branch patterns in the `trop` regime. Each algebra has its own optimal constraint representation, and the [[nox]] cost table captures the per-regime costs.
+
+[[warrior-cyber]]'s three backends benefit directly. The `metal` backend (aruminium) can execute binary tower arithmetic (`Bit`/`Byte` types, `kuro` regime) on GPU with SIMD efficiency. The `cpu` (AMX) backend handles lattice NTT operations natively. The `webgpu` backend serves as a universal fallback across all regimes. Type-driven regime dispatch tells each backend which kernel to invoke — no runtime checks, no dispatch tables.
+
+[[soft3]]'s five operations (`particle`, `cyberlink`, `query`, `verify`, `submit`) work identically across all five algebras from the caller's perspective. A `submit()` call that bundles a lattice-crypto witness alongside a tropical-routing proof is structurally identical to a simple field-arithmetic submission. The algebra is an implementation detail the type system resolves at compile time; [[soft3]] sees typed particles and links, not regimes.
+
 ## relationship to other proposals
 
 - **cyber-stack-adoption.md**: nox target + NounBuilder. THIS proposal extends it with type-driven regime dispatch

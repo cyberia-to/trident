@@ -9,15 +9,21 @@ planned: 128K
 
 ## Motivation
 
-The actual nox/zheng proving cost function is `cost = trace_length + sum(jet_costs)` where jet costs are fixed per-jet (the hash jet via hemera is the most expensive) but trace_length is program-dependent. This function has properties that make gradient-based optimization difficult:
+The actual [[nox]]/[[zheng]] proving cost function is `cost = trace_length + sum(jet_costs)` where jet costs are fixed per-jet (the hash jet via [[hemera]] is the most expensive) but trace_length is program-dependent. This function has properties that make gradient-based optimization difficult:
 
-1. **Non-differentiable at boundaries**: trace_length changes in discrete steps (each nox reduction pattern application adds 1). No smooth gradient.
+1. **Non-differentiable at boundaries**: trace_length changes in discrete steps (each [[nox]] reduction pattern application adds 1). No smooth gradient.
 2. **Non-locally-structured**: the cost contribution of a single TIR op depends on which reduction patterns are triggered across the full program — not just locally.
-3. **Cliff discontinuities**: if a zheng configuration has cliff-based pricing (e.g., next power-of-2 padding), reducing trace_length by 1 may have zero effect or 2× effect depending on where you are. Note: zheng uses Brakedown PCS (not FRI), so there is no FRI folding factor; cliff structure, if present, comes from padding choices in the zheng prover configuration.
+3. **Cliff discontinuities**: if a [[zheng]] configuration has cliff-based pricing (e.g., next power-of-2 padding), reducing trace_length by 1 may have zero effect or 2× effect depending on where you are. Note: [[zheng]] uses Brakedown PCS (not FRI), so there is no FRI folding factor; cliff structure, if present, comes from padding choices in the [[zheng]] prover configuration.
 
-A learned smooth surrogate approximates this cost function in a way that gradient-based optimization can exploit. The surrogate doesn't need to predict absolute cost accurately — it needs to correctly rank TIR op sequences by nox proof cost. Pairwise ranking accuracy above 95% is sufficient for useful gradient guidance.
+A learned smooth surrogate approximates this cost function in a way that gradient-based optimization can exploit. The surrogate doesn't need to predict absolute cost accurately — it needs to correctly rank TIR op sequences by [[nox]] proof cost. Pairwise ranking accuracy above 95% is sufficient for useful gradient guidance.
 
 Related proposals: [[trace-predictor]], [[instruction-scheduling-nn]], [[compiler-ensemble]], [[algebraic-identity-explorer]].
+
+## Vision
+
+The differentiable cost surrogate is the gradient signal that drives the neural compiler. In the cyber ecosystem, where [[bbg]] charges real focus for every computation, lowering proof cost has direct economic value. The cost surrogate translates this economic pressure into a gradient that flows through the compiler's optimization decisions. Programs get cheaper automatically as the surrogate improves — no developer action required. The cyber network's economic incentives and the neural compiler's optimization objective are aligned: cheaper proofs = lower focus costs = more usage = more training data = better surrogate.
+
+Stack integration: The surrogate's training data comes from [[warrior-cyber]] proving runs recorded in the [[cybergraph]]. Every (TIR program, actual [[nox]] trace length) pair is a training example, stored as a cyberlink. The surrogate is deployed as an [[Atlas]] package updated continuously as new data arrives — each update version-stamped and [[hemera]]-addressed, so every compiler installation can pin to a specific surrogate version and reproduce results exactly.
 
 ## Design
 
@@ -37,7 +43,7 @@ Input: TIR op sequence (padded to 128 ops; 54 op kinds — see ../reference/ir.m
   → Dense(1)   → scalar cost prediction (proxy for nox trace_length + jet_costs)
 ```
 
-Parameters: approximately 15,000 field elements. Inference: ~20,000 nox steps in [[nn-trd]]. Still fast enough for interactive use.
+Parameters: approximately 15,000 field elements. Inference: ~20,000 [[nox]] steps in [[nn-trd]]. Still fast enough for interactive use.
 
 The [[trace-predictor]] output (predicted trace_length + jet invocation counts) can be appended as additional input features, improving accuracy for programs with unusual jet usage patterns.
 
@@ -53,13 +59,13 @@ The 1D CNN matches the problem's local-sequential structure at minimal parameter
 
 ### Training Data
 
-Training pairs: (TIR op sequence, actual zheng proving time) from real proving runs via warrior-cyber.
+Training pairs: (TIR op sequence, actual [[zheng]] proving time) from real proving runs via [[warrior-cyber]].
 
 ```rust
 // Collect training data:
 fn collect_surrogate_data(programs: &[TirFunction]) -> Vec<(TirOpSequence, f64)> {
     programs.iter().map(|func| {
-        let time = warrior_cyber_prove_and_measure(func);  // nox execution + zheng proof time
+        let time = warrior_cyber_prove_and_measure(func);  // [[nox]] execution + [[zheng]] proof time
         (func.ops().take(128), time)
     }).collect()
 }
@@ -110,13 +116,13 @@ The trace predictor's output (predicted trace_length + jet counts) can feed the 
 
 ## Key Tradeoffs
 
-**Smoothness vs. accuracy**: The surrogate is smooth by construction (differentiable). The actual nox proof cost function (`trace_length + jet_costs`) is piecewise linear with discrete jumps per pattern application. The surrogate cannot predict step transitions accurately. For optimization near cost thresholds, the surrogate may suggest changes that look like 10% improvement but actually trigger a larger cost increase. Note that zheng uses Brakedown PCS, not FRI — there are no FRI folding factor cliffs. Any cliff-like structure comes from zheng prover padding choices, which are configuration-dependent. Gradient-guided optimization should be used cautiously near threshold regions.
+**Smoothness vs. accuracy**: The surrogate is smooth by construction (differentiable). The actual [[nox]] proof cost function (`trace_length + jet_costs`) is piecewise linear with discrete jumps per pattern application. The surrogate cannot predict step transitions accurately. For optimization near cost thresholds, the surrogate may suggest changes that look like 10% improvement but actually trigger a larger cost increase. Note that [[zheng]] uses Brakedown PCS, not FRI — there are no FRI folding factor cliffs. Any cliff-like structure comes from [[zheng]] prover padding choices, which are configuration-dependent. Gradient-guided optimization should be used cautiously near threshold regions.
 
 **Distribution shift**: The surrogate is trained on a corpus of TIR op sequences. If the optimizer generates TIR sequences that are structurally different from the training corpus (e.g., very unusual op sequences from aggressive optimization), the surrogate may be inaccurate. The training corpus should include outputs from the [[compiler-ensemble]] itself (online training) to prevent this.
 
 **Ranking vs. absolute accuracy**: Training for pairwise ranking rather than absolute cost prediction means the surrogate may have poor calibration — "program A costs 1.2, program B costs 1.5" may not mean anything in absolute terms. The surrogate's output should only be used for comparison, never for absolute cost claims.
 
-**Field arithmetic limitations**: The surrogate inference operates in field arithmetic via [[nn-trd]] (producing a provable nox trace). Field arithmetic approximations of floating-point costs may limit accuracy. A hybrid where the surrogate trains in floating-point (outside Trident) and only inference is re-implemented in field arithmetic is the practical approach — matching the pattern used by all [[nn-trd]] networks.
+**Field arithmetic limitations**: The surrogate inference operates in field arithmetic via [[nn-trd]] (producing a provable [[nox]] trace). Field arithmetic approximations of floating-point costs may limit accuracy. A hybrid where the surrogate trains in floating-point (outside Trident) and only inference is re-implemented in field arithmetic is the practical approach — matching the pattern used by all [[nn-trd]] networks.
 
 ## Implementation Sketch
 
@@ -140,6 +146,6 @@ fn predict_cost(tir_ops: [OpId; 128]) -> Field {
 }
 ```
 
-Training runs outside Trident (in Rust with actual zheng proving times from warrior-cyber), producing weight values that are then embedded as constants in `cost_surrogate.trd`. The inference is field-native and provable via nox/zheng. The training is floating-point and fast.
+Training runs outside Trident (in Rust with actual [[zheng]] proving times from [[warrior-cyber]]), producing weight values that are then embedded as constants in `cost_surrogate.trd`. The inference is field-native and provable via [[nox]]/[[zheng]]. The training is floating-point and fast.
 
 The [[instruction-scheduling-nn]] and [[compiler-ensemble]] both use the surrogate's ranking signal to select among candidate orderings and specialist outputs.

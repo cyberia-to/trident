@@ -70,6 +70,22 @@ The type checker can discharge refinement checks statically when it can prove th
 
 The compiler maintains a subtype lattice over refinements and uses it to avoid generating constraints that are already implied by the argument types.
 
+## Vision
+
+[[CORE]]'s conservation laws are refinement type predicates. `TSP-1: sum(balances) = supply` — written as `#[ensures(sum(balances) == supply)]` on the transfer function — compiles to a [[nox]] constraint that [[zheng]] verifies on every execution. The conservation law doesn't just hold by convention or by test suite; it holds by math, proven fresh for every transaction.
+
+This is what "trust the math, not the institution" means in practice. No auditor needs to check that the transfer function maintains supply conservation — the [[zheng]] proof does it, automatically, for every execution, forever. A protocol that encodes TSP-1 as a refinement type cannot have a supply inflation bug. The constraint is mathematically impossible to violate while producing a valid proof.
+
+The same principle extends across [[bbg]]'s full state machine. Every state predicate that matters — balance bounds, ownership uniqueness (TSP-2), focus budget constraints — can be expressed as a refinement type predicate and compiled to a [[zheng]] constraint. The network's invariants become the language's type invariants.
+
+## Stack Integration
+
+[[bbg]] state transitions enforce conservation laws structurally. When transfer functions carry refinement-type conservation constraints, [[bbg]] can reject any state update whose proof doesn't include the conservation check. No governance vote needed — the math blocks bad state. A malformed state transition that violates `sum(balances) == supply` produces an invalid [[zheng]] proof; the proof is rejected; the state transition is rolled back. The network is self-enforcing.
+
+[[CORE]]'s 16 reduction patterns, once written in Trident with refinement types on their inputs and outputs, carry machine-verified correctness properties. The pattern `wut` (pattern 2: `*[a b] → *[a b]`) carries a refinement that the output is always a well-formed noun — verified by [[zheng]] on every application.
+
+[[soft3]]'s `verify()` call checks the [[zheng]] proof, which includes all refinement constraint verifications. A caller who receives a verified proof from `soft3.verify()` knows that all annotated preconditions and postconditions held during that execution — including any conservation laws declared on the called functions.
+
 ## Key Tradeoffs
 
 **Predicate expressibility**: Refinements limited to efficiently-checkable predicates (no arbitrary recursion in the predicate). For predicates that require full proof machinery to verify (e.g., "x is a prime"), the refinement itself is not a compile-time type check but a STARK constraint generated at runtime — still valuable, but not statically eliminated.

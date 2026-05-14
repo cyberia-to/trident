@@ -7,7 +7,13 @@ planned: 128K
 
 # Neural Theorem Prover for TIR Equivalence
 
-**Related:** [[algebraic-identity-explorer]] · [[learned-peephole]] · [[neural-decompilation]]
+**Related:** [[algebraic-identity-explorer]] · [[learned-peephole]] · [[neural-decompilation]] · [[cybergraph]] · [[nox]] · [[zheng]] · [[hemera]] · [[Atlas]]
+
+## Vision
+
+The NTP is the formal verification oracle for the [[cybergraph]]'s program corpus. Every TIR equivalence it proves is a permanent theorem in the knowledge graph — a cyberlink from the LHS TIR to the RHS TIR, with the proof chain as the edge data. Other compilers, other languages, other systems can query this theorem database. In the future, a new proof system that wants to verify a Trident program can look up pre-proved TIR equivalences in the [[cybergraph]] and reuse them. Theorems, once proved, exist forever.
+
+The NTP and the [[algebraic-identity-explorer]] form a closed loop: the explorer discovers empirical identities, the NTP formally proves them, the proved theorems become axioms for future explorer searches. Mathematical knowledge compounds. The NTP is a Trident program running on [[nox]], proved by [[zheng]]. Its theorem outputs are particles in the [[cybergraph]], addressed by [[hemera]]. The proof chain for each equivalence is a sequence of cyberlinks. [[Atlas]] distributes the NTP model; the [[cybergraph]] accumulates its output permanently.
 
 ## Motivation
 

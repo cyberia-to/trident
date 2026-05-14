@@ -9,11 +9,17 @@ planned: 128K
 
 ## Motivation
 
-A single TIR optimizer cannot be optimal for all programs. In nox/zheng, proof cost = `trace_length + sum(jet_costs)`. Which component dominates varies by program: a hash-heavy program is dominated by hemera jet invocations; a polynomial-heavy program is dominated by poly_eval jet calls; a pure-arithmetic program is dominated by trace length. No single optimizer can dominate across all program types.
+A single TIR optimizer cannot be optimal for all programs. In [[nox]]/[[zheng]], proof cost = `trace_length + sum(jet_costs)`. Which component dominates varies by program: a hash-heavy program is dominated by [[hemera]] jet invocations; a polynomial-heavy program is dominated by poly_eval jet calls; a pure-arithmetic program is dominated by trace length. No single optimizer can dominate across all program types.
 
-The ensemble solution: 8–16 specialist optimizers, each tuned to minimize a specific nox cost component. For each program, run all specialists in parallel (~800μs combined), use the [[trace-predictor]] or [[cost-surrogate]] to predict which specialist's output will prove cheapest via zheng, and lower only that one. The meta-selector eliminates the need to run warrior-cyber on all 16 variants.
+The ensemble solution: 8–16 specialist optimizers, each tuned to minimize a specific [[nox]] cost component. For each program, run all specialists in parallel (~800μs combined), use the [[trace-predictor]] or [[cost-surrogate]] to predict which specialist's output will prove cheapest via [[zheng]], and lower only that one. The meta-selector eliminates the need to run [[warrior-cyber]] on all 16 variants.
 
 Related proposals: [[cost-surrogate]], [[instruction-scheduling-nn]], [[trace-predictor]], [[learned-peephole]].
+
+## Vision
+
+The 16 specialist optimizers are like competing warriors — each one bids on proving the program the cheapest way, biased by its specialty. The meta-selector picks the winner based on the [[trace-predictor]]'s estimate. This mirrors [[bbg]]'s focus market: multiple provers compete, the cheapest valid proof wins. The compiler ensemble is a simulation of the proving market at compile time, optimizing for the same objective the network will optimize at runtime.
+
+Stack integration: Each specialist's TIR output is lowered by [[warrior-cyber]] to a [[nox]] trace. The trace lengths are compared (or estimated via [[cost-surrogate]]). The cheapest trace wins. In the limit, the compiler ensemble and the [[bbg]] proving market converge on the same program representation. Competition results and actual proving costs are cyberlinked in [[cybergraph]] — the ensemble's meta-selector improves continuously as more competition data accumulates.
 
 ## Design
 
@@ -24,7 +30,7 @@ Each specialist is a TIR optimizer with a different nox cost fitness function. T
 ```
 specialist_0:  minimize total proof cost (trace_length + all jet_costs)  — general optimizer
 specialist_1:  minimize trace_length only                                — pure arithmetic programs
-specialist_2:  minimize hash jet invocations (hemera calls)              — hash-dominated programs
+specialist_2:  minimize hash jet invocations ([[hemera]] calls)            — hash-dominated programs
 specialist_3:  minimize poly_eval jet invocations                        — polynomial-heavy programs
 specialist_4:  minimize invert jet invocations                           — inversion-heavy programs
 specialist_5:  minimize (trace_length + hash_jet_cost)                   — joint trace+hash bottleneck
@@ -44,7 +50,7 @@ Each specialist is an evolutionary-trained neural compiler (see `../reference/ne
 - Trained on programs where its target nox cost component was the bottleneck
 - Parameters: ~728KB (91,000 field elements)
 
-Training: run [[evolutionary-training]] on programs curated for each specialist's bottleneck scenario. Specialist 2 (hash jet minimizer) trains on programs where hemera jet invocations dominate proof cost after compilation with a naive optimizer.
+Training: run [[evolutionary-training]] on programs curated for each specialist's bottleneck scenario. Specialist 2 (hash jet minimizer) trains on programs where [[hemera]] jet invocations dominate proof cost after compilation with a naive optimizer.
 
 ### Meta-Selection
 
@@ -78,7 +84,7 @@ Total meta-selection overhead: 800μs + 800μs = 1.6ms. Still negligible compare
 
 Why does the ensemble dominate a single optimizer?
 
-In nox/zheng, proof cost = `trace_length + sum(jet_costs)`. Which term dominates depends on the program, and the bottleneck can shift mid-optimization (reducing hash jet invocations may reveal that trace_length is now the dominant cost, requiring a different strategy). Note: zheng uses Brakedown PCS, not FRI — there are no FRI folding factor cliffs. Cost structure is linear in trace length and jet counts, not power-of-2 stepped (unless the zheng prover configuration adds explicit padding — check the zheng prover configuration for cliff behavior).
+In [[nox]]/[[zheng]], proof cost = `trace_length + sum(jet_costs)`. Which term dominates depends on the program, and the bottleneck can shift mid-optimization (reducing hash jet invocations may reveal that trace_length is now the dominant cost, requiring a different strategy). Note: [[zheng]] uses Brakedown PCS, not FRI — there are no FRI folding factor cliffs. Cost structure is linear in trace length and jet counts, not power-of-2 stepped (unless the [[zheng]] prover configuration adds explicit padding — check the [[zheng]] prover configuration for cliff behavior).
 
 A single optimizer trained on diverse programs learns to balance all cost components, which is suboptimal for programs with a dominant bottleneck. Specialist optimizers learn to aggressively minimize their target cost component. For programs dominated by hash jet calls, the hash specialist wins. For programs dominated by trace length, the trace specialist wins. For balanced programs, the balance specialist (specialist_6) wins. The meta-selector ensures the right specialist is applied to each program.
 
@@ -136,7 +142,7 @@ impl CompilerEnsemble {
             .map(|(i, _)| i)
             .unwrap();
 
-        warrior_cyber_lower(&tir_variants[best_idx])  // nox trace + zheng proof
+        warrior_cyber_lower(&tir_variants[best_idx])  // [[nox]] trace + [[zheng]] proof
     }
 }
 ```

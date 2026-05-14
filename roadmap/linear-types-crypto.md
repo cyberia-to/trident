@@ -79,6 +79,22 @@ zk fn spend(
 
 The compiler verifies that `token` flows into exactly one expression (`hash(token)`), that the result flows into a `Public<Field>` output, and that `token` itself never appears in any public context.
 
+## Vision
+
+In a world where [[cybergraph]] stores cryptographic state — nonces, witnesses, private keys used for [[bbg]] participation — linear types prevent the most dangerous class of protocol bugs at compile time. A nonce used twice creates a catastrophic vulnerability; a leaked witness breaks privacy. With linear types, these bugs cannot compile. Every deployed [[Atlas]] package carrying linear type annotations is provably free of cryptographic misuse.
+
+This is not a linter. It is not a test suite. It is a mathematical guarantee embedded in the type system: any program that compiles with `Linear<Field>` nonces has, by construction, never reused a nonce. The [[zheng]] proof of the [[nox]] execution trace inherits this guarantee — the proof certifies not just that the computation ran correctly, but that cryptographic hygiene was maintained throughout.
+
+For [[bbg]]'s participation model — where individual contributions are private and the aggregate is publicly verifiable — this is foundational. Every participant's focus contribution involves a witness that must not be reused. Linear types enforce this at the language level, before any proof is generated.
+
+## Stack Integration
+
+The privacy model of [[bbg]] relies on the hint mechanism (Layer 2). Linear types enforce that each hint witness is consumed exactly once — matching the Layer 2 semantic that each hint atom is popped from the tape exactly once per `call_witness` pattern in [[nox]]. The type system and the VM semantics are in structural correspondence.
+
+When a [[soft3]] `submit()` call packages a transaction involving private witnesses, the linear type checker has already verified that no witness appears twice in the submission. The [[zheng]] proof then provides the cryptographic certificate. Two layers of guarantee: compile-time (type system) and runtime (proof system).
+
+Double-spending prevention becomes a type error rather than a protocol check. A token represented as `Linear<TokenCommitment>` cannot be passed to two different spend functions — the second use is a compile error. [[Atlas]] packages that handle token transfers with linear types are provably double-spend-free, and this property is visible in the package manifest at deploy time.
+
 ## Key Tradeoffs
 
 **Ergonomics**: Linear types require explicit drops for values consumed in only one branch of a conditional. This is more verbose than conventional code. The tradeoff is that every cryptographic misuse becomes a type error — the developer is never silently wrong.

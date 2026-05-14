@@ -7,7 +7,13 @@ planned: 128K
 
 # Transfer Learning Across Proof Backends
 
-**Related:** [[warrior-architecture]] · [[compiler-ensemble]] · [[cost-surrogate]] · [reference/vm.md](../reference/vm.md)
+**Related:** [[warrior-architecture]] · [[compiler-ensemble]] · [[cost-surrogate]] · [[cybergraph]] · [[bbg]] · [[Atlas]] · [[soft3]] · [[warrior-cyber]] · [reference/vm.md](../reference/vm.md)
+
+## Vision
+
+Transfer learning means every new chain, every new VM, every new proof system gets a Trident compiler immediately — not after months of training, but with 10% of the data. When a new L2 deploys with a custom proving backend, Trident supports it in days. The compiler ecosystem expands horizontally with the [[cybergraph]]'s reach. Each new warrior is a new node in the proving network; each new proving network node increases [[bbg]]'s capacity for parallel computation. The planetary intelligence network grows not just in knowledge but in proving bandwidth.
+
+New warriors register in [[Atlas]] as packages (`atlas.cyber/warriors/miden`, etc.). The shared TIR encoder — frozen from [[nox]] training — lives as an [[Atlas]] package version. The new backend decoder is added as a companion. [[soft3]]'s `submit()` can route computations to the cheapest available warrior for any target. The [[warrior-cyber]] cpu/webgpu/metal backend split demonstrates the pattern at the hardware level; transfer learning scales the same pattern to entire new proving ecosystems.
 
 ## Motivation
 

@@ -7,7 +7,15 @@ planned: 64K
 
 # Private/Public Type Modifier for Zero-Knowledge Functions
 
-**Related:** [[commitment-syntax]] · [[contracts]] · [[linear-types-crypto]]
+**Related:** [[commitment-syntax]] · [[contracts]] · [[linear-types-crypto]] · [[bbg]] · [[cybergraph]] · [[nox]] · [[zheng]]
+
+## Vision
+
+[[bbg]]'s core privacy guarantee — individual contributions private, aggregate publicly verifiable — finds its language-level expression here. A neuron contributes a private vote: `zk fn vote(choice: Private<Candidate>, voter_key: Private<Field>) -> Public<VoteCommitment>`. The aggregate vote count is [[cybergraph]]-visible; no individual ballot ever appears on-chain.
+
+The neural network running in Trident takes `Private<[Field; 16]>` (private inputs) and returns `Public<Field>` (public class label). The [[cybergraph]] records the public output and its [[zheng]] proof via a cyberlink from the inference request to the result. Individual inputs never appear on-chain. This is the architecture for AGI that respects individual sovereignty while enabling collective intelligence.
+
+`Private<T>` values are injected via [[nox]]'s hint mechanism (Layer 2 `CallProvider::provide()`). The `seal` event in language.md §10 commits a `Private<T>` value into the [[cybergraph]] without revealing it — the commitment particle exists in the graph as a hemera-addressed node. The `reveal` event publishes the `Public<T>` output with its [[zheng]] proof, creating a cyberlink from the computation request to the proven result. The privacy boundary is enforced by the VM, not by convention.
 
 ## Motivation
 

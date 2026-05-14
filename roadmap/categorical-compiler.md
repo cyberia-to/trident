@@ -67,6 +67,18 @@ This is a precise statement of what it means for an optimization to be correct: 
 
 Decompilation (nox → TIR) is a functor in the opposite direction. A correct compiler/decompiler pair forms an adjunction — the unit $\eta : Id_{\mathbf{Trident}} \Rightarrow \mathcal{D} \circ \mathcal{C}$ and counit $\epsilon : \mathcal{C} \circ \mathcal{D} \Rightarrow Id_{\mathbf{nox}}$ express that compilation and decompilation are inverse up to coherent isomorphism.
 
+## Vision
+
+When the categorical compiler proof is complete, the Trident compiler is the first compiler in history whose correctness is a theorem rather than a test suite result. The proof lives in the [[cybergraph]] as a particle — the [[hemera]] CID of the Lean proof file. Any auditor anywhere can verify the proof by fetching the particle and checking it. The compiler's correctness is not maintained by a team — it is maintained by mathematics, permanently, immutably, in the global knowledge graph.
+
+The functor theorem applies transitively. Every [[Atlas]] package compiled with Trident benefits automatically: its compilation is correct because the compiler is proved correct. The audit effort for any deployed program collapses to verifying the program's own contracts — not the compiler's behavior, not the lowering passes, not the [[nox]] codegen. Those are all covered by the functor proof. An auditor who trusts the Lean proof needs to read only the source file.
+
+This is the end-state of [[CORE]] as self-verifying substrate: the 16 [[nox]] patterns are provable, the compiler that targets them is proved correct, and every program in the ecosystem inherits both proofs for free.
+
+## Stack Integration
+
+The compiler functor theorem spans the full pipeline from Trident types to [[nox]] instruction sequences (the 16 patterns + 1 hint + 5 jets). Each [[galois-optimization]] rewrite that fires at the TIR level must be a natural transformation between compiler functors — the categorical framework is the criterion for whether an optimization is sound. [[zheng]] verifies the output of each compilation via SuperSpartan over the [[nox]] trace; the functor proof guarantees the trace is the correct trace. These two verification layers — categorical proof of compiler structure, and proof-system verification of program execution — are complementary and non-redundant.
+
 ## Key Tradeoffs
 
 **Proof granularity**: Proving the full functor law requires formalizing the entire Trident type system and nox semantics in a proof assistant (Lean, Coq). This is a multi-year project. A practical intermediate: prove the functor law holds for each individual IR lowering pass (there are 54 TIR ops to cover — `reference/ir.md`), then compose the partial proofs.

@@ -49,6 +49,18 @@ The Krull dimension of $V(I)$ determines the effective degrees of freedom in the
 
 The compiler can sometimes reduce dimension by identifying algebraic dependencies between witness columns in the SuperSpartan constraint matrix and encoding those dependencies as additional constraints that eliminate redundant columns. Fewer columns means a narrower Brakedown commitment, which reduces both commitment size and sumcheck witness complexity.
 
+## Vision
+
+The minimal constraint system for a Trident program is a scientific result — it characterizes the algebraic structure of that computation. When minimal constraint systems for common patterns (hemera rounds, [[bbg]] state transitions, token transfers) are stored as [[Atlas]] packages, the entire Trident ecosystem benefits retroactively. Any program whose constraint structure matches a known template gets the minimal system automatically. [[zheng]] proofs shrink. Focus costs drop. The [[cybergraph]] accumulates this knowledge permanently.
+
+The mechanism is self-reinforcing: as more programs are proved and their constraint structures are analyzed, more templates are deposited in [[Atlas]]. Each new template reduces the cost of all future programs that share that structure. Common patterns — the hemera round function appears in every program that uses hashing — become progressively cheaper to prove as the template library grows. The ecosystem's proving cost decreases as a function of accumulated knowledge, not just hardware improvement.
+
+Singular point detection has a security dimension beyond performance: a constraint system with singular points inside the valid trace domain has proof-system vulnerabilities at those points. Every Trident program compiled through this pass is audited for algebraic soundness at compile time, before it reaches [[Atlas]] or [[bbg]]. The constraint system is not just an optimization target — it is a security surface.
+
+## Stack Integration
+
+SuperSpartan in [[zheng]] generates the polynomial constraint system from the [[nox]] trace. This proposal's Gröbner basis analysis applies to that constraint system directly — it is a post-processing step after trace generation, before Brakedown commitment. The output is a reduced constraint set that [[zheng]]'s sumcheck processes more efficiently. The template library lives in [[Atlas]] as content-addressed packages, identified by [[hemera]] CIDs. The Krull dimension analysis feeds directly into [[zheng]]'s Brakedown witness column count — fewer columns means a narrower commitment, smaller proofs, and faster verification. [[galois-optimization]]'s Frobenius rewrites interact with this analysis: XField-heavy programs whose constraint systems include extension field structure benefit from both passes in sequence.
+
 ## Key Tradeoffs
 
 **Gröbner basis computation cost**: Computing a Gröbner basis is worst-case doubly exponential in the number of variables. For large programs with many witness columns in the SuperSpartan constraint matrix, this becomes infeasible at compile time. The compiler must apply this analysis selectively — to hot constraint clusters (those that dominate the sumcheck cost) rather than the entire constraint system. The trace-length bottleneck identified by [[proof-explorer]] or [[trace-predictor]] points the compiler at the right clusters.

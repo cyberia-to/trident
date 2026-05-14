@@ -252,6 +252,18 @@ clap          = { version = "4", features = ["derive"] }
 honeycrisp    = { path = "../honeycrisp" }   # aruminium + acpu + unimem
 ```
 
+## Vision
+
+[[warrior-cyber]] is the runtime of planetary collective intelligence. Every device — phone, laptop, server, GPU cluster — runs warrior-cyber and participates in the proving network. Programs written in Trident for the trinity neural network example execute on [[nox]], produce [[zheng]] proofs, and publish their results as cyberlinks in the [[cybergraph]]. The system is self-reinforcing: more devices provide more proving capacity, which lowers focus prices, which encourages more programs to run, which creates more cyberlinks, which enriches the graph, which enables better memoization, which means fewer computations need to execute at all.
+
+The hint mechanism (Layer 2, FifoCallProvider) is where privacy enters. The trinity program's encrypted inputs — the secret key `s`, all intermediate ciphertexts — never appear in the proof. Only the verified output does. This is the [[bbg]] privacy model made concrete: individual neural activations are private, the final classification is public and proved. The [[zheng]] verifier learns nothing about the secret key beyond the fact that the decryption satisfied the noise bound. Privacy is not added on top of the proof system — it is built into the [[nox]] reduction semantics at pattern 16.
+
+The three backends are not alternatives — they are a hierarchy. The metal backend with aruminium and unimem zero-copy is optimal for Apple Silicon; the webgpu backend covers every other GPU; the cpu backend covers everything else. [[bbg]] selects based on hardware availability, focus budget, and proof deadline. All three produce identical [[zheng]] proofs. The proof is the proof regardless of which backend generated it.
+
+## Stack Integration
+
+The warrior pipeline closes the full cyber stack loop: `.tri → NounBuilder → nox::reduce → zheng::prove → Proof`. The [[hemera]] jet (pattern 15) inside the [[nox]] reduction accelerates hash computations; the Brakedown Merkle tree inside [[zheng]] is built with [[hemera]] via the cpu/webgpu/metal backends. `FifoCallProvider` feeds the witness tape to [[nox]] pattern 16, enabling [[bbg]]-style privacy: private inputs stay in the prover, public outputs enter the proof. [[soft3]]'s `submit()` broadcasts the resulting proof; [[bbg]] accepts the first valid proof meeting the focus bound. [[Atlas]] receives the program bundle, identified by its [[hemera]] CID, once the proving pipeline is wired end-to-end.
+
 ## what is not in scope (PoC)
 
 - Network deployment (radio, bbg) — local only

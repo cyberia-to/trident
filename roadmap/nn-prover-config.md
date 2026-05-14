@@ -7,11 +7,17 @@ planned: 128K
 
 # NN-Guided Prover Configuration
 
-**Related:** [[cost-surrogate]] · [[trace-predictor]] · [[warrior-architecture]]
+**Related:** [[cost-surrogate]] · [[trace-predictor]] · [[warrior-architecture]] · [[zheng]] · [[bbg]] · [[Atlas]] · [[warrior-cyber]]
+
+## Vision
+
+The RL agent configuring [[zheng]] prover parameters is the auto-tuner for the proving economy. In the cyber network, where [[bbg]] charges focus based on proving time, an agent that finds 20% faster configurations is saving real economic value for every proof submitted. Over millions of daily proofs, this compounds. The agent's learned configurations are deployed as [[Atlas]] packages, version-tagged per hardware type and program class. A mobile device running [[warrior-cyber]] webgpu backend uses the mobile-optimal config; an Apple Silicon server uses the metal-optimal config. Proof times drop across the board without developer intervention.
+
+[[warrior-cyber]]'s three backends (cpu, webgpu, metal) have different optimal configurations. The RL agent learns separate policies per backend, sharing a common program feature representation. Hardware specs (from the device) + nox trace length (from [[trace-predictor]]) are the key inputs. When a new [[Atlas]] package version of the agent ships, every node in the network immediately benefits — no human intervention, no manual tuning cycle.
 
 ## Motivation
 
-The zheng prover has multiple tunable parameters. Current practice: use a single fixed configuration for all programs. This leaves performance on the table — different programs benefit from different configurations. A program with a long nox trace (high proof cost) may benefit from different Brakedown commitment dimensions than a short one. A program running on a machine with many CPU cores benefits from a different parallelism strategy than one on a single-threaded warrior-cyber backend.
+The [[zheng]] prover has multiple tunable parameters. Current practice: use a single fixed configuration for all programs. This leaves performance on the table — different programs benefit from different configurations. A program with a long nox trace (high proof cost) may benefit from different Brakedown commitment dimensions than a short one. A program running on a machine with many CPU cores benefits from a different parallelism strategy than one on a single-threaded warrior-cyber backend.
 
 A learned configuration selector — an MLP that takes program features and hardware specs as input and predicts the optimal prover configuration — can reduce proving time by 10–30% without any changes to the zheng protocol itself. The proof remains valid regardless of which configuration is chosen; the agent affects only speed.
 
@@ -19,7 +25,7 @@ A learned configuration selector — an MLP that takes program features and hard
 
 ### Configurable Parameters
 
-zheng uses SuperSpartan + Brakedown PCS + sumcheck. Its tunable parameters differ from FRI-based provers:
+[[zheng]] uses SuperSpartan + Brakedown PCS + sumcheck. Its tunable parameters differ from FRI-based provers:
 
 | Parameter | Current | Range | Impact |
 |-----------|---------|-------|--------|

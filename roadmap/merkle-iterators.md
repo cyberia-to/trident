@@ -7,7 +7,15 @@ planned: 64K
 
 # Merkle Proof Iterators
 
-**Related:** [[commitment-syntax]] · [language.md §15](../reference/language.md#15-merkle-authentication)
+**Related:** [[commitment-syntax]] · [[cybergraph]] · [[nox]] · [[hemera]] · [language.md §15](../reference/language.md#15-merkle-authentication)
+
+## Vision
+
+Every noun in [[nox]] is Merkle-addressed — `cons(a, b)` computes `hemera(a_hash ∥ b_hash)` and stores it as the parent hash. [[hemera]] (Poseidon2) is the hash function throughout, so every internal node is itself a particle address in the [[cybergraph]]. `verified_walk(root)` traverses this structure with zero extra cost — the Merkle proofs fall out of the [[nox]] execution trace naturally, covered by the [[zheng]] proof of the execution.
+
+In a program that traverses a subgraph of the [[cybergraph]], `verified_walk` over the Merkle tree of cyberlinks gives the developer authenticated iteration: every link encountered is proven to be in the graph at the given root, without any additional network round-trips. The traversal generates a sequence of `merkle_step` jet calls; [[zheng]] proves the whole walk in one proof. The [[cybergraph]] serves as both the data source and the global root anchor — the root hash is itself a [[hemera]] CID stored in the graph.
+
+The `merkle_verify` jet (Layer 3 in [[nox]]) accelerates the `merkle_step` computation. `verified_walk` generates a sequence of `merkle_step` calls that the jet handles in a single precomputed batch — one jet invocation covers multiple levels of the tree. This is how [[warrior-cyber]] (the nox execution engine) achieves fast authenticated traversal of the [[cybergraph]]'s Merkle structure without blowing up the proof trace.
 
 ## Current Status
 

@@ -581,6 +581,18 @@ warrior-cyber closes this pipeline. See [[cyber-warrior]] for the PoC spec
 Phases 1-4 (9.5 sessions) can run without waiting for nox/zheng.
 Phase 5 blocked until cyber stack crates have working code.
 
+## Vision
+
+When cyber stack adoption is complete, [[nox]] + [[zheng]] is the universal proving pipeline for all Trident programs. Every program written in Trident, regardless of the developer's background, produces [[nox]] traces proved by [[zheng]]. The [[cybergraph]] fills with these proofs. By 256K, the pipeline closes: write Trident, get a [[zheng]] proof, the proof is a cyberlink. By 128K, the compiler itself is in the loop — every compilation is a proved computation recorded in the graph.
+
+The direct AST→Noun path is where the compounding effects begin. Source-shaped nouns produce sub-trees that match across similar programs, generating cache hits in the [[cybergraph]]'s memoization layer. A computation that was proved last week by a different program need not be proved again — the graph returns the cached result identified by `H(formula, object)`. The more programs that run through [[warrior-cyber]], the denser the memoization layer becomes, and the fewer computations need to execute at all. The graph grows more efficient as it grows larger.
+
+The NounBuilder preserves type information that TIR discards, enabling domain separation in [[hemera]] hashing and exact focus cost prediction at compile time. Every pattern in the structural correspondence table has a known cost — add=1, hash=200, inv=64 — and the compiler can report the exact [[bbg]] focus budget for any program before it runs.
+
+## Stack Integration
+
+The dependency chain (nebu → [[hemera]] → [[zheng]] → [[bbg]]) means that as each layer matures, all layers above it benefit. Nebu optimizations make [[hemera]] cheaper; [[hemera]] improvements make [[zheng]] commitments cheaper (the Brakedown Merkle tree is built with [[hemera]]); [[zheng]] improvements make [[bbg]] state transitions cheaper. Phase 1 (nebu + [[hemera]]) and Phase 2 (vm/nox/ + direct AST→Noun) can run without waiting for [[nox]]/[[zheng]]. Phase 5 (full pipeline) gates on [[warrior-cyber]] closing the loop: `.tri → NounBuilder → nox::reduce → zheng::prove → proof`. [[soft3]] and [[Atlas]] land on top of that complete proving pipeline.
+
 ## Risk
 
 1. **nebu v0.1.0 API churn** — thin wrapper insulates.

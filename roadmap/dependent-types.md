@@ -97,6 +97,22 @@ Dimension mismatch elimination directly reduces proof cost. Every bounds check t
 
 The zheng STARK proof implicitly proves that all type-checked dimension constraints were satisfied, because the proof is only valid if the program was well-typed. The dimension guarantee flows through the type system to the proof system without any additional constraint generation.
 
+## Vision
+
+Matrix dimensions in neural network programs written in Trident are dependent types. A `Linear<Field, 256, 512>` layer has its dimensions verified at compile time. When `std.nn` models are deployed as [[Atlas]] packages, their architecture is part of the type — there's no way to load a 512-wide model into a 256-wide slot at runtime. The [[cybergraph]]'s AI inference layer becomes dimensionally safe by construction.
+
+This matters for a network where computation is memoized globally. When [[cybergraph]] caches the result of a neural inference call, it caches the proof alongside the answer. That proof certifies that the computation was performed by a correctly-typed model — the proof includes the dimension constraint. A cache hit on a `Linear<Field, 256, 512>` computation is a cache hit that can only be served by a query with matching dimensions. Dimension-unsafe operations cannot contaminate the global memo table.
+
+Beyond neural networks: every polynomial evaluation, every linear algebra computation, every batch hash — all of these involve arrays whose lengths must match. Dependent types eliminate an entire class of constraint violations before they reach the [[zheng]] prover, reducing proof failures to a vanishing edge case.
+
+## Stack Integration
+
+[[cybergraph]] queries return proofs of the answer. Dependent types on the query return type (`Vector<N>` where N is part of the type) let [[soft3]] callers verify response dimensions at compile time. A `query(cid, dimension)` call that returns `Vector<128>` cannot be accidentally used where `Vector<256>` is expected — the type mismatch is a compile error at the [[soft3]] call site, before any network round-trip.
+
+[[nox]]'s `ask(ν, object, formula, τ, a, v, t)` signature itself can carry dependent type constraints: `a` and `v` (alignment and variance parameters) must be within valid ranges — enforced at the type level. Every call to `ask` with dependent-typed arguments is statically verified before it reaches the VM.
+
+[[warrior-cyber]]'s three backends (cpu/AMX, webgpu, metal) handle matrix operations natively. Dependent types on matrix dimensions enable the compiler to select the optimal kernel at compile time — a `Matrix<256, 256>` operation routes to AMX tile instructions, a `Matrix<8, 8>` operation routes to scalar code. No runtime dispatch, no branch on dimension, just the right code for the right shape.
+
 ## Key Tradeoffs
 
 **Compile-time restriction**: Dimensions must be `const` — known at compile time. Programs that allocate arrays of size determined at runtime cannot use dependent types directly. A separate dynamic-dimension path exists (runtime-sized arrays with runtime bounds checks), but it foregoes the proof cost savings.

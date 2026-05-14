@@ -82,6 +82,22 @@ Supercompilation can change the step count dramatically (collapsing a 1000-itera
 
 Two zheng proofs for the same function (before and after optimization) can be compared: both commit to the same input/output relationship, but different nox trace lengths. The smaller count is the tighter termination proof.
 
+## Vision
+
+In the cyber network, every [[nox]] computation is bounded by a focus budget (τ). The termination proof IS the focus budget commitment — the prover commits to exactly τ steps via the Brakedown PCS commitment to the [[nox]] trace length. [[bbg]] can verify this commitment before executing anything, enabling pre-authorization of complex computations.
+
+A governance proposal that says "this upgrade requires no more than 50,000 [[nox]] steps" is verifiable without running it. The compiler produces the step count as a static artifact. Any node can check the claim by reviewing the TIR step-count analysis output — no execution, no proof generation, just a deterministic analysis pass. The proposal's computational cost is public knowledge before the vote, not a surprise revealed at execution time.
+
+This transforms how the network reasons about focus economics. Today, focus pricing is reactive — you pay after you compute. With termination proofs embedded at compile time, focus pricing becomes predictive. The network can implement futures markets for focus: "I'll prove this computation for τ steps at price P, and here's the compiler's termination certificate that τ is sufficient." The certificate is the market instrument.
+
+## Stack Integration
+
+[[soft3]]'s `query(cid, dimension)` returns a termination proof alongside the result. The caller knows not just the answer but exactly how expensive the computation was — the [[zheng]] proof commits to it via the [[nox]] trace length. This is the foundation for honest focus pricing: every result comes with a certified computation receipt.
+
+[[bbg]] uses termination proofs for focus accounting. When a [[warrior-cyber]] instance submits a completed computation, it submits the [[zheng]] proof (which commits to the trace length) alongside the result. BBG reads the committed step count from the proof, deducts the corresponding focus from the participant's budget, and updates the state. No self-reporting, no estimation — the proof is the bill.
+
+The interaction with [[cybergraph]] is particularly powerful. [[cybergraph]]'s global memoization means that as the graph grows, fewer computations execute over time. Termination proofs make this efficiency gain visible: a cache hit returns not just the cached result but the original computation's termination proof. A caller can see that the computation was previously proven to terminate in N steps — and know they paid zero steps for the cache hit. The difference between "computed" and "looked up" is visible in the proof structure, and the focus savings are mathematically certified.
+
 ## Key Tradeoffs
 
 **Static bound requirement**: The termination proof system requires all loop bounds to be statically known. Programs with data-dependent loop bounds (`for i in 0..x where x is runtime`) cannot generate precise termination proofs. The compiler must either reject these or fall back to a worst-case upper bound, which produces a weaker termination claim ("terminates in at most N steps" rather than "terminates in exactly N steps").

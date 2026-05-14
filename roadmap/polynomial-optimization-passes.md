@@ -7,7 +7,17 @@ planned: 32K
 
 # Polynomial and Transform Optimization Passes
 
-Related: [[field-arithmetic-passes]], [[supercompilation]]
+Related: [[field-arithmetic-passes]], [[supercompilation]], [[nox]], [[zheng]], [[bbg]], [[Atlas]], [[warrior-cyber]]
+
+## Stack Integration
+
+The NTT auto-vectorization in Pass 7 is a bridge to the [[nox]] `ntt` jet — a Layer 3 jet that executes an entire transform in a single verifiable step. When the compiler recognizes a convolution loop and emits a `ntt_convolve` intrinsic, [[warrior-cyber]]'s three backends (cpu/AMX, webgpu/WGSL, metal/aruminium) each have a native path to execute it at hardware speed. The jet's output is a single verified step in the [[nox]] trace, so [[zheng]] arithmetizes it as one constraint rather than 2048 butterfly operations.
+
+[[zheng]] itself uses Brakedown PCS with sumcheck internally. The vanishing polynomial evaluations in Pass 9 and Lagrange basis caching in Pass 10 apply directly when the [[zheng]] prover is written in Trident — the same passes that optimize application code also optimize the proof infrastructure. This recursive closure means the prover gets cheaper as the compiler matures.
+
+The [[bbg]] focus budget τ is charged per [[nox]] reduction step. A convolution that costs 65,536 multiply steps naively costs 2,048 shift-add steps after Pass 7 — a 32× reduction in τ spent. Programs doing polynomial arithmetic (commitment schemes, NTT-based hashing, FHE operations over $R_q$) become affordable to neurons that would otherwise exhaust their focus budget.
+
+Pass-suite configuration and tuning results are deployed as [[Atlas]] packages alongside the field-arithmetic suite. The NTT crossover threshold, Pippenger bucket parameters, and domain registry seed tables are content-addressed artifacts — any [[warrior-cyber]] instance anywhere can reproduce the exact same optimization decisions by referencing the same package CID.
 
 ## Motivation
 
@@ -118,3 +128,11 @@ fn optimize_interpolation(call: &TirCall, registry: &mut DomainRegistry) {
 ```
 
 All five passes share the invariant that they never change program semantics — only nox proof cost (reduction steps + jet invocations). Each pass should be individually togglable for debugging cost contributions. See [[field-arithmetic-passes]] for the point-wise passes that run before this suite, and [[supercompilation]] for the global pass that runs before all of them.
+
+## Vision
+
+When [[zheng]] is self-hosted in Trident — the verifier written in `.tri`, compiled with `--engine nox` — a striking recursive property emerges. The NTT auto-vectorization pass optimizes the NTT calls inside the [[zheng]] verifier itself, and the Lagrange basis caching pass eliminates redundant basis computation across sumcheck rounds. The prover that proves Trident programs is also a Trident program, optimized by the same passes it relies on.
+
+At that point, every proof generated on the network is cheaper than it was at genesis — not because hardware improved, but because the compiler learned. The [[bbg]] focus budget required to run a proof drops with each pass improvement. Neurons that run complex computations — multi-step logic, polynomial commitment verification, FHE ring operations — find their focus expenditure shrinking as the [[Atlas]] package version increments.
+
+The Lagrange basis for a commitment domain of degree $2^{20}$ is computed once, embedded as a content-addressed particle in [[hemera]], and retrieved by every subsequent compilation that touches that domain. The [[cybergraph]] acts as the global basis cache: the cyberlink `domain_cid → basis_cid` is written once and read forever. No two [[warrior-cyber]] instances on the network ever recompute the same basis.

@@ -7,7 +7,15 @@ planned: 64K
 
 # Commitment Schemes as Language Primitives
 
-**Related:** [[private-public-types]] · [[merkle-iterators]]
+**Related:** [[private-public-types]] · [[merkle-iterators]] · [[cybergraph]] · [[hemera]] · [[nox]] · [[soft3]] · [[bbg]]
+
+## Vision
+
+In the cyber ecosystem, every commitment is a [[hemera]]-addressed particle in the [[cybergraph]]. `commit(v)` = `sponge_absorb(v)` → `sponge_squeeze()` → hemera CID. The commitment particle exists in the graph as a first-class node. Later, `reveal(c)` submits the opening proof as a cyberlink from the commitment particle to the opened value. The verifier calls [[soft3]]'s `verify(commitment_cid, proof)` to check it, reading the cyberlink and validating the [[zheng]] proof inline.
+
+Commitment schemes become a first-class interaction pattern in the knowledge graph, not a one-off cryptographic construction. Every protocol that commits-then-reveals leaves a permanent, proven trail in the [[cybergraph]]: commit particle → reveal cyberlink → opened value particle. The graph accumulates cryptographic history by construction.
+
+`commit_batch` optimizes multiple commits into one [[hemera]] sponge invocation — one [[nox]] jet call, reducing both the nox trace length and the focus cost charged by [[bbg]]. Batch commits correspond to fewer cyberlinks in the [[cybergraph]] (one sponge session, one proof segment) while preserving the same semantic guarantees. The [[bbg]] network prices computation by focus (τ); batch commitment is how developers minimize the cost of privacy-preserving protocols.
 
 ## Current Status
 

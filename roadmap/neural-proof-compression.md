@@ -7,11 +7,17 @@ planned: 128K
 
 # Neural Proof Compression
 
-**Related:** [[nn-prover-config]] · [[proof-carrying-code]]
+**Related:** [[nn-prover-config]] · [[proof-carrying-code]] · [[zheng]] · [[soft3]] · [[cybergraph]] · [[hemera]] · [[Atlas]] · [[warrior-cyber]]
+
+## Vision
+
+Compressed [[zheng]] proofs are the bandwidth layer of the cyber network. In [[soft3]]'s `submit()` call, the proof is transmitted to the network. 5x compression means 5x more proofs per unit of bandwidth, 5x lower latency for mobile devices, and 5x cheaper proof storage in the [[cybergraph]]. As more proofs accumulate in the graph, the predictor trains on more data and compression improves further. The network's proof storage becomes self-compressing over time.
+
+The predictor is deployed as an [[Atlas]] package. Both prover and verifier download the same version. Version mismatch means the predictor doesn't help but the proof still verifies — graceful degradation. The [[cybergraph]] stores the compressed proof format; any node can decompress and verify. [[hemera]] addresses identify the compressed and uncompressed forms separately, with a cyberlink between them recording the compression mapping. The [[warrior-cyber]] nox trace is bit-exact across all backends (cpu/webgpu/metal), which is precisely what makes the deterministic predictor deployable across the full hardware spectrum.
 
 ## Motivation
 
-zheng proofs are large — typically hundreds of kilobytes. For proof distribution (proof-carrying code), proof storage (verifiable computation archives), and on-chain verification (where calldata costs gas), proof size is a practical constraint. A zheng proof contains three main components: the Brakedown commitment (commitment matrix + hemera hashes), the sumcheck transcript (round-by-round challenge/response), and the opening queries. These components have different entropy profiles and different compressibility. Further reduction beyond zheng's existing optimizations requires a learned approach.
+[[zheng]] proofs are large — typically hundreds of kilobytes. For proof distribution (proof-carrying code), proof storage (verifiable computation archives), and on-chain verification (where calldata costs gas), proof size is a practical constraint. A zheng proof contains three main components: the Brakedown commitment (commitment matrix + hemera hashes), the sumcheck transcript (round-by-round challenge/response), and the opening queries. These components have different entropy profiles and different compressibility. Further reduction beyond zheng's existing optimizations requires a learned approach.
 
 Neural proof compression uses a learned predictor to anticipate redundant elements in the proof. The verifier runs an identical predictor — elements the predictor got right are transmitted at 1 bit ("predicted correctly"). Elements the predictor got wrong are transmitted at full field-element size. If the predictor achieves 80% accuracy, the effective proof size is approximately 5× smaller. The full proof is still verified — compression is transport-layer only.
 
@@ -71,11 +77,11 @@ Effective compression: if top-8 covers 80% of elements and each of those element
 
 ### What the Predictor Learns
 
-zheng proofs have structure by component:
+[[zheng]] proofs have structure by component:
 
 - **Brakedown commitment**: The commitment matrix encodes the witness as a linear code. Matrix entries follow a structured distribution determined by the commitment dimensions. The predictor learns these matrix-level patterns and can anticipate many entries, especially in sparse witness regions.
 - **Sumcheck transcript**: Each sumcheck round produces a low-degree polynomial evaluated at the verifier's challenge. If the predictor has seen enough rounds, it can interpolate the polynomial and predict subsequent evaluations — analogous to polynomial interpolation over a few known points.
-- **Opening queries**: hemera hash outputs (used for Fiat-Shamir challenges) are high-entropy and not predictable. The predictor allocates more bits here. Opening responses at revealed positions are somewhat predictable given the commitment structure.
+- **Opening queries**: [[hemera]] hash outputs (used for Fiat-Shamir challenges) are high-entropy and not predictable. The predictor allocates more bits here. Opening responses at revealed positions are somewhat predictable given the commitment structure.
 
 This component-aware structure lets the predictor allocate its bit budget effectively — spending few bits on structured commitment entries and full bits on hash-derived challenges.
 
@@ -87,7 +93,7 @@ Both the prover and verifier must run exactly the same predictor with exactly th
 2. **Version-matched**: both sides must use the same model version
 3. **Bit-exact**: no floating-point that may differ across hardware
 
-Meeting requirement 3 means the predictor is implemented in field arithmetic (nn.trd) and compiled to nox patterns. The same compiled binary is used on both sides. This is where shipping the predictor as a Trident program becomes critical: the nox trace is bit-exact across all warrior-cyber backends (cpu/webgpu/metal).
+Meeting requirement 3 means the predictor is implemented in field arithmetic (nn.trd) and compiled to nox patterns. The same compiled binary is used on both sides. This is where shipping the predictor as a Trident program becomes critical: the nox trace is bit-exact across all [[warrior-cyber]] backends (cpu/webgpu/metal).
 
 ### Compatibility
 

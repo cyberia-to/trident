@@ -7,7 +7,13 @@ planned: 128K
 
 # Adversarial Compiler Hardening
 
-**Related:** [[algebraic-identity-explorer]] · [[compiler-ensemble]] · [[neural-theorem-prover]]
+**Related:** [[algebraic-identity-explorer]] · [[compiler-ensemble]] · [[neural-theorem-prover]] · [[cybergraph]] · [[warrior-cyber]] · [[Atlas]] · [[nox]]
+
+## Vision
+
+The adversarial hardening loop is the immune system of the cyber compiler ecosystem. Adversarial programs that defeat the current compiler are a form of adversarial knowledge — they reveal blind spots. In the [[cybergraph]], these programs are published as particles with cyberlinks to the compiler versions they defeated. Future compilers must handle them. The hardening loop is a continuous red-teaming process, automated, running 24/7 as a [[nox]] computation, building a permanent corpus of hard programs in the knowledge graph.
+
+The adversary and compiler run as [[nox]] programs on [[warrior-cyber]]. Their competition is recorded in the [[cybergraph]]: for each adversarial program, the graph records (adversary_output, compiler_improvement, proof_of_improvement). The [[Atlas]] compiler package version history shows each hardening update and the adversarial programs that triggered it. Every compiler release is traceable back to the exact adversarial curriculum that shaped it — a permanent, auditable record of how the compiler grew stronger.
 
 ## Motivation
 

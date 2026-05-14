@@ -9,13 +9,21 @@ planned: 128K
 
 ## Motivation
 
-Every optimization decision in the compiler depends on understanding the cost landscape: what the nox trace length will be, how many jet invocations each candidate transformation produces, and which cost component is the bottleneck. In nox/zheng, `proof_cost = trace_length + sum(jet_costs)` — jet costs are fixed per-jet (hash jet via hemera is the most expensive), but trace length is program-dependent and only known after full lowering.
+Every optimization decision in the compiler depends on understanding the cost landscape: what the [[nox]] trace length will be, how many jet invocations each candidate transformation produces, and which cost component is the bottleneck. In [[nox]]/[[zheng]], `proof_cost = trace_length + sum(jet_costs)` — jet costs are fixed per-jet (hash jet via [[hemera]] is the most expensive), but trace length is program-dependent and only known after full lowering.
 
-Currently, the compiler must fully lower a TIR function to a nox trace and count reduction steps + jet calls to measure actual proof cost. This is expensive for interactive tools and for optimization passes that need to evaluate multiple candidate transformations.
+Currently, the compiler must fully lower a TIR function to a [[nox]] trace and count reduction steps + jet calls to measure actual proof cost. This is expensive for interactive tools and for optimization passes that need to evaluate multiple candidate transformations.
 
-A small neural network that predicts nox trace length and jet invocation counts from TIR features — before lowering and execution — changes this. Cost estimation becomes a millisecond operation. The compiler can evaluate hundreds of candidate transformations, pick the predicted cheapest one, and then lower only that one. Interactive tools (REPL, IDE) get cost estimates without any lowering at all.
+A small neural network that predicts [[nox]] trace length and jet invocation counts from TIR features — before lowering and execution — changes this. Cost estimation becomes a millisecond operation. The compiler can evaluate hundreds of candidate transformations, pick the predicted cheapest one, and then lower only that one. Interactive tools (REPL, IDE) get cost estimates without any lowering at all.
 
 Related proposals: [[nn-trd]], [[cost-surrogate]], [[compiler-ensemble]]. Reference: `../reference/neural.md` (canonical neural compiler spec).
+
+## Vision
+
+The trace cost predictor is the economic oracle of the cyber network. Before [[bbg]] executes any program, it can query the predictor: "how much focus will this cost?" The predictor is a small [[nn-trd]] network, running on [[nox]], whose output is a [[zheng]]-proved estimate. Focus pricing becomes predictable. Users see cost estimates before submitting. The trace predictor turns the focus market from an opaque auction into a transparent quoted price.
+
+The predictor's training data is the [[cybergraph]] itself — every computation ever run has its actual cost recorded as a cyberlink. The predictor learns from all of history. As more programs run, the predictor improves. The [[cybergraph]]'s accumulation of execution data directly improves the quality of the economic oracle.
+
+Stack integration: [[soft3]]'s `query()` call can use the trace predictor to estimate focus cost before `submit()`. [[bbg]] can use the predictor for focus budget pre-allocation. The predictor is deployed as an [[Atlas]] package with version-stamped training checkpoints — each checkpoint a particle in [[cybergraph]], provably derived from all execution data up to that point.
 
 ## Design
 
@@ -52,7 +60,7 @@ The predictor outputs these as separate values:
 
 Six field elements in log-scale (predicting log2 of the value) to compress the range. Total predicted cost = predicted_trace_length + sum(predicted_jet_count[i] × jet_cost[i]).
 
-The `hash` jet is the most expensive: it invokes hemera (Poseidon2), which dominates proof cost for hash-heavy programs.
+The `hash` jet is the most expensive: it invokes [[hemera]] (Poseidon2), which dominates proof cost for hash-heavy programs.
 
 ### Model Architecture
 
@@ -71,7 +79,7 @@ fn predict_trace_costs(features: Vector<32>) -> Vector<6> {
 
 Parameters: $64 \times 32 + 64 + 6 \times 64 + 6 = 2048 + 64 + 384 + 6 = 2502$ field elements ≈ ~20 KB. Inference: ~2,700 nox steps. Trivial.
 
-Trained by [[evolutionary-training]]. The model itself is a [[nn-trd]] network, making its inference a provable nox trace.
+Trained by [[evolutionary-training]]. The model itself is a [[nn-trd]] network, making its inference a provable [[nox]] trace proved by [[zheng]].
 
 ### Training Data Collection
 
@@ -88,7 +96,7 @@ fn compile_and_record(source: &TridentSource, dataset: &mut Dataset) {
 }
 ```
 
-Training runs on the collected dataset using evolutionary training (`evolutionary-training.md`) — a self-referential loop where the predictor itself is trained using the same evolutionary method it will later assist.
+Training runs on the collected dataset using [[evolutionary-training]] — a self-referential loop where the predictor itself is trained using the same evolutionary method it will later assist.
 
 ### Accuracy Targets
 
@@ -154,4 +162,4 @@ fn extract_features(tir: &TirFunction) -> Vector<32> {
 }
 ```
 
-The predictor is a small [[nn-trd]] network trained by [[evolutionary-training]], predicting nox trace costs (trace_length + jet invocation counts) that guide every other optimization decision in the system. It is foundational — schedule its implementation early in the 128K milestone. See `../reference/neural.md` for the canonical neural compiler architecture this integrates with.
+The predictor is a small [[nn-trd]] network trained by [[evolutionary-training]], predicting [[nox]] trace costs (trace_length + jet invocation counts) that guide every other optimization decision in the system. It is foundational — schedule its implementation early in the 128K milestone. See `../reference/neural.md` for the canonical neural compiler architecture this integrates with.

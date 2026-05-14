@@ -7,8 +7,16 @@ planned: 128K
 
 # Cross-VM Recursive Proof Composition
 
-**Related proposals:** [[proof-carrying-code]], [[foreign-function-proofs]], [[cyber-stack-adoption]]
+**Related proposals:** [[proof-carrying-code]], [[foreign-function-proofs]], [[cyber-stack-adoption]], [[nox]], [[zheng]], [[cybergraph]], [[Atlas]], [[warrior-cyber]]
 **Reference:** [language.md §16 — proof_block](../reference/language.md), [reference/ir.md](../reference/ir.md)
+
+## Vision
+
+The cyber network bridges to every major blockchain. A Trident program running on [[nox]] verifies an Ethereum state proof, an Aptos Move proof, and a Solana program execution proof — all inside a single [[zheng]]-proved nox execution. The result: a unified cross-chain truth layer. Any claim from any chain can be verified against the [[cybergraph]]'s proof record.
+
+The internet of blockchains becomes the internet of proofs, mediated by the cyber stack. Each verified foreign proof becomes a cyberlink in the [[cybergraph]]: source_chain_claim → verified_fact. The [[cybergraph]] accumulates cross-chain truth permanently — once a Miden proof is verified by a [[nox]] execution and the result is committed to the graph, any subsequent `ask(verify, miden_proof_cid)` returns the cached result. Re-verification is free.
+
+The [[zheng]] verifier written in Trident (running on [[nox]]) is the 128K milestone. Once self-hosted, it recursively verifies [[zheng]] proofs from other nox executions — STARK-in-STARK recursion within the cyber stack. Each verified foreign proof is deployed as an [[Atlas]] package: `std/interop/verify_miden.tri`, `std/interop/verify_sp1.tri`. The verifier programs are themselves proof-carrying code, their [[hemera]] CIDs stored in the [[cybergraph]], their correctness proven by [[zheng]].
 
 ## Motivation
 

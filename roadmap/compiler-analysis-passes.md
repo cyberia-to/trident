@@ -7,7 +7,17 @@ planned: 32K
 
 # Advanced Compiler Analysis Passes
 
-Related: [[field-arithmetic-passes]], [[polynomial-optimization-passes]], [[proof-cost-types]]
+Related: [[field-arithmetic-passes]], [[polynomial-optimization-passes]], [[proof-cost-types]], [[nox]], [[zheng]], [[hemera]], [[bbg]], [[cybergraph]], [[Atlas]], [[algebraic-identity-explorer]]
+
+## Stack Integration
+
+Pass 11 (extension field strength reduction) has the deepest coupling to the live stack. [[hemera]] — the Poseidon2 hash used for all content addressing in [[cybergraph]] — operates over $\mathbb{F}_{p^2}$ in its internal round computation. Every Trident program that calls `hemera()` to create or verify a particle CID goes through extension field arithmetic. When Pass 11 recognizes that one operand is in the base field, it emits the 2-multiply variant instead of the 3-multiply general case. Across a Poseidon2 round with 16 S-box applications, this cuts 16 multiplications per invocation — measurable in [[bbg]] focus budget terms.
+
+Pass 12 (constant expression evaluation) interacts with [[Atlas]] package constants. Round constants, generator values, and fixed domain parameters are defined once in an Atlas package and referenced as content-addressed particles. When the compiler inlines these from the package at compile time, Pass 12 folds them entirely — the runtime trace sees literal field elements, not dynamic lookups.
+
+Passes 11 and 13 feed the [[algebraic-identity-explorer]] as high-value targets. Every identified extension field shortcut that Pass 11 applies is a candidate rule for the explorer to verify empirically across a wider range of programs. Every Goldilocks-specific addition chain that Pass 13 hardcodes is a pattern the explorer can search for automatically in new contexts. The two systems form a feedback loop: the compiler implements rules the explorer discovers, and the explorer searches for patterns the compiler's analysis exposes.
+
+Pass 14 (dead field operation elimination) requires cooperation with the [[nox]] constraint compiler — specifically, which TIR node IDs are referenced by generated constraints. In the polynomial target, these constraints are the [[zheng]] arithmetic circuit. A node that is unused in program logic but anchors a [[zheng]] sumcheck round must be preserved. Pass 14 must query this boundary correctly.
 
 ## Motivation
 
@@ -132,3 +142,11 @@ fn canonicalize(expr: &TirExpr) -> NormalForm {
 ```
 
 All 15 algebraic passes together form the `AlgebraicPassSuite`. The suite runs in dependency order, iterating until convergence (at most 3 iterations in practice — passes rarely enable more than two rounds of new simplifications). The nox proof cost model (reduction steps + jet invocations) is the authoritative guide for deciding when to apply vs skip a pass — see [[proof-cost-types]] for the type-level representation of these costs that drives pass decisions.
+
+## Vision
+
+[[hemera]] is the identity layer of [[cybergraph]]: every particle, every program, every proof carries a [[hemera]] address. Programs that call `hemera()` frequently — content-addressable data structures, Merkle-less commitment schemes, zero-knowledge input encodings — pay a multiplicative cost in [[bbg]] focus every time they hash. Pass 11 makes each of those calls cheaper. At planetary scale, where millions of neurons compute [[hemera]] addresses every second, the aggregate focus savings from a single 16-multiplication reduction per round are enormous.
+
+Pass 12 (constant folding) has a compounding effect across the [[Atlas]] ecosystem. When an Atlas package publishes a new version of a constant table — updated round constants, revised generator parameters — programs compiled against it fold the new constants at compile time. The [[cybergraph]] cyberlink `compilation_hash → optimized_artifact` is updated; the old artifact is superseded but remains accessible at its original CID. Programs can verify they were compiled against a specific constant set by checking the compilation link. The full compilation provenance is permanently auditable.
+
+The 30–50% trace reduction from the combined 15-pass suite means programs that previously required the full [[bbg]] focus budget τ can now run within a fraction of it. This unlocks computations that were economically infeasible: complex recursive proofs, long inference chains, deep [[cybergraph]] traversals. The compiler's algebraic intelligence directly expands the frontier of what the network can afford to know.

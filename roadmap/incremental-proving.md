@@ -7,7 +7,15 @@ planned: 64K
 
 # Incremental Proof Updates
 
-**Related:** [[lazy-proving]] · [[neural-developer-tools]] · [[proof-cost-ide]]
+**Related:** [[lazy-proving]] · [[neural-developer-tools]] · [[proof-cost-ide]] · [[CORE]] · [[zheng]] · [[cybergraph]] · [[bbg]] · [[warrior-cyber]]
+
+## Vision
+
+The [[CORE]] spec — 16 reduction patterns, [[bbg]] state machine, focus dynamics — is written in Trident and proved by [[zheng]] on every change. When a single reduction pattern's implementation changes, incremental proving re-proves only that pattern's constraint, not the entire [[CORE]] spec. The spec re-proves itself in seconds instead of hours.
+
+This enables continuous formal verification: every commit to the CORE repo triggers an incremental proof update via `trident watch`, and the spec's proof is a living artifact in the [[cybergraph]], always current. The proof lives as a cyberlink from the source CID to the verified CORE spec particle — anyone querying `ask(verify, core_spec_cid)` gets the current proof back instantly, cached in the graph.
+
+[[bbg]] checkpoints track which segments of long computations have been proved. Incremental proving lets [[warrior-cyber]] resume from checkpoints, reusing Brakedown layers that haven't changed. The checkpoint particles are stored in the [[cybergraph]] — each is a [[hemera]]-addressed node representing a proven segment of the computation. On a change, [[warrior-cyber]] loads the relevant checkpoint particle, restores its Brakedown state, and reproves only the affected delta. The development loop closes: edit → 47ms incremental proof → updated [[cybergraph]] artifact.
 
 ## Motivation
 

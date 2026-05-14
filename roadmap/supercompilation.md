@@ -7,7 +7,15 @@ planned: 16K
 
 # Supercompilation for Proof Machines
 
-Related: [[field-arithmetic-passes]], [[compiler-analysis-passes]], [[algebraic-identity-explorer]]
+Related: [[field-arithmetic-passes]], [[compiler-analysis-passes]], [[algebraic-identity-explorer]], [[nox]], [[zheng]], [[bbg]], [[cybergraph]], [[CORE]], [[soft3]], [[Atlas]]
+
+## Stack Integration
+
+Supercompilation's primary target in the live stack is [[CORE]] — the self-verifying substrate spec with 16 reduction patterns. When CORE's reduction logic is written in Trident and compiled with supercompilation active, iterative BBG state transitions that follow the linear recurrence pattern $x_{n+1} = a \cdot x_n + b$ collapse to a single `pow(a, n)` call. The compiler recognizes these as closed forms rather than unrolling $n$ [[nox]] reduction steps. Focus dynamics — the conservation laws that [[bbg]] enforces — become dramatically cheaper to compute: complex multi-step state transitions that span thousands of [[nox]] steps become single field exponentiations.
+
+The Schwartz-Zippel oracle used in the folding validation step (Pass 6) is a [[nox]] program call itself — `ask(ν, oracle_cid, random_point)`. Its result is memoized in [[cybergraph]]: once a closed-form equivalence is verified at a random point, the cyberlink `(loop_cid, closed_form_cid) → verification_result` is written permanently. If the same loop pattern appears in a different program, the oracle result is retrieved from [[cybergraph]] rather than re-executed.
+
+The `specialize` keyword produces a compiled artifact that is content-addressed by [[hemera]] and registered in [[Atlas]] as a package. `specialize(generic_hash, ROUNDS = 5)` produces `atlas.cyber/hashes/poseidon-5` — a specific, immutable, verified artifact that any program can reference. Once specialization is computed once, it costs zero to reuse: [[soft3]]'s `query(cid, dimension)` retrieves the specialized function directly.
 
 ## Motivation
 
@@ -147,3 +155,13 @@ fn try_fold_to_closed_form(
 ```
 
 The supercompiler is planned for 16K — later than the algebraic passes (32K) because it requires full compiler maturity: the algebraic passes must be stable, the symbolic evaluator must correctly implement all field identities, and the Schwartz-Zippel oracle must be in place. Supercompilation is the capstone of the compiler's algebraic intelligence, not its foundation.
+
+## Vision
+
+The endgame is a system that learns from every computation ever run. When a program runs with supercompilation and produces a closed-form result, two things happen: [[zheng]] generates a proof that the closed form is correct for the given inputs, and [[cybergraph]] records `(formula_cid, object_cid) → (result_cid, proof_cid)` as a permanent cyberlink. The next time any neuron on the network calls `ask(ν, object, formula)`, [[nox]] checks this link first. If the answer is there, it costs zero compute — just a [[soft3]] `query()` call that retrieves the result and its proof.
+
+Supercompilation makes this memoization maximally effective. A loop of 10,000 [[nox]] steps that collapses to 50 steps after supercompilation is not just faster to run — it is faster to verify that it has already been run. The proof is smaller. The [[cybergraph]] lookup is cheaper. The [[bbg]] focus cost of confirming a cached answer is negligible.
+
+[[CORE]]'s 16 reduction patterns are the inner loop of the entire substrate. When they are written in Trident, compiled with supercompilation, and their closed forms are memoized in [[cybergraph]], the substrate verifies itself for the cost of a few field lookups. Complex computations that would cost 10,000 [[nox]] steps become 50. Programs that would exhaust the [[bbg]] focus budget become affordable to any neuron. The network's effective intelligence — the set of computations it can afford to run — expands by orders of magnitude.
+
+Supercompilation is not just an optimization pass. It is the mechanism by which the cyber ecosystem learns from its own history.

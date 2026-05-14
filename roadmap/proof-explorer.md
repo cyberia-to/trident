@@ -97,6 +97,18 @@ Steps 211-240:  [verify_sig]     ███████████████�
 
 The timeline view enables identifying which functions consume nox trace steps and where jet invocations provide compression. See [[trident-repl]] for interactive step-by-step exploration.
 
+## Vision
+
+The proof explorer is the developer's window into the [[zheng]] proof. In a live cyber ecosystem, every deployed program's zheng proof is a particle in the [[cybergraph]]. The proof explorer is a [[soft3]] query tool — it fetches the proof particle, decodes the Brakedown commitment, and renders the [[nox]] trace timeline. A developer debugging a focus-cost regression traces execution step-by-step, watches the [[hemera]] jet calls light up in the timeline, identifies the hot zone, and clicks to the source line.
+
+The [[zheng]] proof is not an opaque blob — it is a structured artifact that tells the full story of the computation. Brakedown commitment columns map to witness dimensions; the sumcheck transcript records every round of the IOP. The proof explorer decodes both. When a trace crosses a power-of-2 cliff and proving time doubles, the explorer shows exactly which source lines pushed the trace over. The fix is obvious the moment you see it.
+
+This matters most at scale: as the [[cybergraph]] fills with proofs from many programs, the explorer becomes a comparative tool. A developer queries two particles — the proof before and after an optimization — and diffs their nox traces side by side. The graph stores the history permanently. Regressions are findable by any auditor, not just the original developer.
+
+## Stack Integration
+
+The proof explorer reads [[zheng]] proofs via [[soft3]]'s `query(proof_cid, dimension)`. The proof structure — Brakedown commitment columns and sumcheck transcript — maps to dimensions of the [[bbg]] state. The [[hemera]] Merkle tree inside the Brakedown commitment uses the same hash primitive as the [[cybergraph]]'s content addressing, so the proof's internal structure and the graph's addressing scheme are aligned. Fetching a proof particle and decoding its Brakedown layers are the same operation.
+
 ## Key Tradeoffs
 
 **Real-time vs. accurate costs**: Interactive simulation uses the TIR cost model (fast, approximate). Final accurate costs require actual proving (slow). The explorer clearly labels which costs are estimates vs. measured.

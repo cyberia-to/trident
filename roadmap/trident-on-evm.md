@@ -97,6 +97,18 @@ Mode A ships Tier 0 only; competes with Fe head-on. Mode B unifies
 circuit and verifier — the unique claim. Mode C runs and proves on
 Triton/Neptune; Ethereum is settlement glue.
 
+## Vision
+
+Ethereum becomes a client of the cyber stack. EVM programs that include a Trident-generated verifier can accept [[zheng]] proofs as input — Trident computations are verifiable on Ethereum. In the other direction, Trident programs can read Ethereum state, and cross-VM proofs bridge the result back to [[cybergraph]]. The cyber network is not competing with Ethereum — it is extending it with proof-native computation. Every major chain gets a verifier. The [[cybergraph]] becomes the cross-chain truth layer.
+
+The Mode B claim is the novel one: the same `.tri` source file that compiles to a [[nox]] program proved by [[zheng]] also emits the Solidity verifier contract that checks that proof on-chain. One source, both ends. The [[hemera]] CID identifies both the prover artifact and the verifier contract — they share a cryptographic identity. No other EVM language can offer this because no other EVM language has [[zheng]] as its native proof system.
+
+The long-term picture extends beyond Ethereum. EvmLowering is one target among twenty in reference/vm.md. As each major chain gets a Trident-generated verifier, the [[cybergraph]] accumulates cross-chain proofs — computations that are verifiable on multiple chains simultaneously, all identified by the same [[hemera]] CID. The knowledge graph becomes chain-agnostic: truth is recorded once, verified everywhere.
+
+## Stack Integration
+
+EvmLowering is one of 20 targets in reference/vm.md. The Trident-generated Solidity verifier checks [[zheng]] proofs on-chain: the Brakedown commitment columns and sumcheck transcript map to EVM calldata. The [[hemera]] content hash provides the shared identity between the prover artifact (a [[nox]] Noun proved by [[zheng]]) and the on-chain verifier contract. [[bbg]] focus costs for off-chain proving have no EVM equivalent, but the [[proof-cost-ide]] tooling exposes both: nox steps for off-chain, gas for on-chain. The [[cybergraph]] stores the cross-chain proof as a particle; [[soft3]]'s `cyberlink()` records the relationship between the source program, the [[zheng]] proof, and the on-chain verification transaction.
+
 ## Design Questions
 
 ### Q1: Word size and field

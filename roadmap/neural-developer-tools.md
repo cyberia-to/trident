@@ -7,7 +7,13 @@ planned: 128K
 
 # Neural Developer Tools (Type Inference, Incremental Recompile, Program Synthesis)
 
-**Related:** [[proof-cost-ide]] · [[proof-explorer]] · [[trident-repl]] · [[cost-surrogate]] · [reference/ir.md](../reference/ir.md)
+**Related:** [[proof-cost-ide]] · [[proof-explorer]] · [[trident-repl]] · [[cost-surrogate]] · [[cybergraph]] · [[Atlas]] · [[soft3]] · [[warrior-cyber]] · [[nox]] · [[zheng]] · [reference/ir.md](../reference/ir.md)
+
+## Vision
+
+Neural developer tools make every programmer a world-class Trident developer. Type inference prevents the most expensive type choices. Incremental recompile makes the edit-compile-test loop milliseconds. Program synthesis generates correct-by-construction code from examples. Together, they change who can build for the cyber network: not just experts who know the intricacies of [[nox]] proof costs, but any developer with a clear specification.
+
+In the far future, the REPL + program synthesis loop becomes the primary way to contribute to the [[cybergraph]]: a developer describes what they want (input/output examples), the synthesizer generates a Trident function, [[warrior-cyber]] proves it correct, and [[soft3]] submits it as a cyberlink. The barrier between "have an idea" and "publish a proved computation" collapses to a few seconds. Type inference and incremental recompile improve the local development experience before [[Atlas]] deployment. Program synthesis generates functions that can be immediately deployed — the synthesized TIR → [[nox]] → [[zheng]] pipeline runs automatically, and if the proof succeeds, the function is [[Atlas]]-deployable. The [[cybergraph]]'s existing proved functions become the synthesizer's training corpus, improving with every deployment.
 
 ## Motivation
 

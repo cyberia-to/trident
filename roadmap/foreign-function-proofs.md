@@ -7,8 +7,16 @@ planned: 64K
 
 # Foreign Function Proofs
 
-**Related proposals:** [[proof-carrying-code]], [[cross-vm-proofs]], [[warrior-architecture]]
+**Related proposals:** [[proof-carrying-code]], [[cross-vm-proofs]], [[warrior-architecture]], [[cybergraph]], [[warrior-cyber]], [[Atlas]], [[zheng]]
 **Reference:** [reference/ir.md — Asm passthrough (inline assembly precedent)](../reference/ir.md)
+
+## Vision
+
+Legacy code — Rust libraries, C cryptographic primitives, GPU kernels — enters the [[cybergraph]] through `extern verified fn`. Each foreign call produces a [[zheng]] proof of its execution. The proof is submitted as a cyberlink: the foreign function's input particle → the proven output particle. Over time, the [[cybergraph]] accumulates verified execution traces of the world's most important computations.
+
+A researcher who wants to use a result doesn't need to re-run the computation — they call `ask(verify, result_cid)` and receive the cached proof. The global research computation graph becomes a layer of the [[cybergraph]]: every numerical library, every cryptographic primitive, every GPU kernel that has ever run under `extern verified fn` leaves a permanent, proven trace.
+
+`extern verified fn` bridges [[warrior-cyber]] (which runs [[nox]]) and external proving systems. For Rust functions, the initial implementation uses the native backend (x86-64/ARM64) with a proof adapter: the Rust function executes natively, [[warrior-cyber]] wraps the execution in a [[zheng]] proof. For GPU kernels, the [[warrior-cyber]] metal backend calls out to aruminium (pure Metal, unimem zero-copy) — aruminium executes the kernel, warrior-cyber seals the result with a [[hemera]]-addressed proof and submits it to the [[cybergraph]] as a cyberlink. The `#[pure]` annotation enables proof caching: once `external_hash(42)` is proven and its result cyberlinked in the graph, subsequent calls hit the [[cybergraph]] cache at zero cost.
 
 ## Motivation
 

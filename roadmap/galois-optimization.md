@@ -62,6 +62,16 @@ Elements of the form $(a_0, 0)$ are in the base field embedded in the extension.
 
 For $\mathbb{F}_{p^4} = \mathbb{F}_{p^2}[y] / (y^2 - \alpha)$, the Galois group has 4 elements. The compiler applies Galois-theoretic shortcuts at each level of the tower: Frobenius at the top level folds into a Frobenius at the bottom level, both of which are just conjugations.
 
+## Vision
+
+[[hemera]] (Poseidon2) uses extension field arithmetic internally — its round function involves XField elements. When Galois-theoretic optimizations apply to hemera's round computation in Trident, every hemera call in every Trident program gets cheaper. Since hemera is the identity function of the entire [[cybergraph]] — every particle address is a hemera output — making hemera cheaper reduces the cost of every knowledge graph operation. The compounding effect: cheaper addresses mean more particles are created, which means a denser graph, which means more memoization, which means fewer computations execute. The graph accelerates itself.
+
+The Frobenius automorphism is not an abstract algebraic curiosity in this context — it is a concrete optimization that propagates through the entire ecosystem. Every `hash()` call in every Trident program, every content-addressed particle in the [[cybergraph]], every [[bbg]] state transition that touches a hemera commitment: all of them benefit when the XField round function gets cheaper. The optimization lives at the TIR level, invisible to the programmer, but its effect is felt everywhere.
+
+## Stack Integration
+
+These rewrites apply at the TIR level, before [[warrior-cyber]] lowering. The Frobenius-aware optimization of XField operations interacts with the `*.` operator and dot-step builtins (language.md §15), which are the language-level interface to the field extension used in hemera. [[zheng]] still verifies correctness of the rewritten trace via SuperSpartan — the optimization must be algebraically sound or the constraint check fails. Each rewrite rule should carry a Lean proof, as described in [[categorical-compiler]], confirming it is a natural transformation between compiler functors. The [[algebraic-geometry-constraints]] Gröbner basis analysis applies to the rewritten constraint system afterward, potentially finding additional reductions.
+
 ## Key Tradeoffs
 
 **Irreducible polynomial choice**: The specific Frobenius formula depends on the irreducible polynomial defining the extension. The compiler must know which irreducible polynomial is in use and precompute the Frobenius formula at compile time. Different polynomial choices yield different Galois group presentations.

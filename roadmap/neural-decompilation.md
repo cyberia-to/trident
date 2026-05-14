@@ -7,7 +7,13 @@ planned: 128K
 
 # Neural Decompilation (nox trace → TIR)
 
-**Related:** [[learned-peephole]] · [[neural-theorem-prover]] · [[backend-transfer-learning]] · [reference/ir.md](../reference/ir.md)
+**Related:** [[learned-peephole]] · [[neural-theorem-prover]] · [[backend-transfer-learning]] · [[cybergraph]] · [[soft3]] · [[hemera]] · [[zheng]] · [reference/ir.md](../reference/ir.md)
+
+## Vision
+
+Nox trace → TIR reconstruction is the reverse-engineering of proven computation. In the [[cybergraph]], every answer cyberlink carries a nox trace (compressed, via the [[zheng]] proof). Neural decompilation lets any agent read a proof, reconstruct the TIR, and extract the computation's structure — without access to the original Trident source. This enables cross-program learning at the ecosystem level: an AI agent studying the [[cybergraph]]'s proof corpus learns how programs are structured by reconstructing their TIR from traces. The knowledge graph doesn't just store results — it stores recoverable computational structure.
+
+[[soft3]]'s `query(proof_cid)` returns the [[zheng]] proof. The decompilation model processes this to produce TIR. The reconstructed TIR is submitted back as a particle ([[hemera]]-addressed), creating a cyberlink from the proof to the reconstructed structure. Future queries can retrieve this reconstruction without re-running the model. The [[cybergraph]] accumulates computational intelligence with every proof that passes through it.
 
 ## Motivation
 

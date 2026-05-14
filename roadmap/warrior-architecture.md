@@ -270,6 +270,18 @@ vs current monolith: ~36k LOC, hemera (replacing blake3 + custom poseidon2), gro
 
 See reference/vm.md for the full registry of 20+ target VMs and their integration levels.
 
+## Vision
+
+The warrior architecture means every device is a prover. A mobile phone runs the webgpu [[warrior-cyber]] backend; an Apple Silicon Mac runs the metal backend with aruminium and unimem zero-copy; a data center server runs the cpu backend with full honeycrisp AMX acceleration. [[bbg]] orchestrates them all — a computation request arrives, warriors bid on proving it, the cheapest valid proof wins. The proof economy is global, permissionless, and accelerating.
+
+The clarity of the boundary matters as much as the architecture itself: core does exactly what you always need, warriors add exactly what each runtime environment requires, and nothing is entangled. A developer writing Trident code targeting [[nox]] does not carry the weight of EVM lowering or quantum circuit compilation in their build. The 24K default install proves this — a lean core that compiles to the primary target without optional complexity. Warriors are separate repos because they evolve at different speeds and depend on fundamentally different runtime environments, not because of organizational preference.
+
+As the warrior ecosystem grows — warrior-miden, warrior-sp1, warrior-risczero, warrior-jolt — each new warrior extends the set of environments where Trident programs can execute and be proved, without touching the compiler core. The [[cybergraph]] sees proofs arriving from all of these environments, identified by the same [[hemera]] CIDs regardless of which warrior generated them.
+
+## Stack Integration
+
+[[soft3]]'s `submit()` broadcasts a computation request. Any [[warrior-cyber]] instance — on any device, using any backend — can respond with a proof. [[bbg]] accepts the first valid proof that meets the focus budget constraint. The three warrior-cyber backends (cpu/webgpu/metal) allow [[bbg]] to select the most appropriate prover based on hardware availability, focus budget, and proof deadline. The metal backend with aruminium and unimem zero-copy is optimal for Apple Silicon; the webgpu backend runs in browsers. All three produce identical [[zheng]] proofs — same SuperSpartan protocol, same Brakedown PCS, different field arithmetic engines underneath.
+
 ## Migration path
 
 1. Split current `src/` into workspace subcrates (no behavior change)
