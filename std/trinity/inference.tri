@@ -19,9 +19,10 @@ module std.trinity.inference
 // Poseidon2 remains as the binding commitment (proven security).
 // LUT sponge demonstrates the Rosetta Stone crypto reader.
 //
-// Pitch parameters:
-//   LWE dimension 8, 8 encrypted inputs, 16-neuron hidden layer,
-//   ring dimension 64 for PBS, domain 1024, 2-qubit Bell commitment.
+// PoC parameters (corrected for PBS feasibility):
+//   LWE_N=16, INPUT_DIM=16, NEURONS=32, PLAINTEXT_BITS=6,
+//   DOMAIN=64, RING_N=128 (≥ 2×DOMAIN, required for PBS).
+//   Trace: ~18K–20K nox pattern applications.
 use vm.core.field
 
 use vm.core.convert

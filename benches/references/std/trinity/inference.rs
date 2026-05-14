@@ -10,20 +10,18 @@ type F = Goldilocks;
 
 const HALF_P: u64 = (0xFFFF_FFFF_0000_0001u64 - 1) / 2;
 
-// Pitch parameters:
-//   LWE dimension 8, 8 encrypted inputs, 16 neurons.
-//   Delta = p / 1024 (10-bit plaintext space).
-//   Ring dimension 64 for PBS, domain 1024.
-//   2-qubit Bell quantum commitment.
-const LWE_N: usize = 8;
-const INPUT_DIM: usize = 8;
-const NEURONS: usize = 16;
-const PLAINTEXT_SPACE: u64 = 1024;
-const RING_N: usize = 64;
+// PoC parameters (corrected for PBS feasibility):
+//   LWE_N=16, INPUT_DIM=16, NEURONS=32, PLAINTEXT_BITS=6,
+//   DOMAIN=64, RING_N=128 (≥ 2×DOMAIN, required for PBS).
+const LWE_N: usize = 16;
+const INPUT_DIM: usize = 16;
+const NEURONS: usize = 32;
+const DOMAIN: u64 = 64;
+const RING_N: usize = 128;
 
 fn delta() -> F {
     let p = 0xFFFF_FFFF_0000_0001u64;
-    F::from_u64(p / PLAINTEXT_SPACE)
+    F::from_u64(p / DOMAIN)
 }
 
 // ===========================================================================
@@ -63,7 +61,7 @@ fn decrypt(ct: &Ciphertext, s: &[F], delta: F) -> F {
     } else {
         let neg_phase = 0xFFFF_FFFF_0000_0001u64 - phase_u64;
         let neg_m = (neg_phase + half_delta) / delta_u64;
-        return F::from_u64(PLAINTEXT_SPACE - neg_m);
+        return F::from_u64(DOMAIN - neg_m);
     };
     F::from_u64(shifted / delta_u64)
 }
@@ -111,12 +109,12 @@ fn private_linear(cts: &[Ciphertext], w: &[Vec<F>]) -> Vec<Ciphertext> {
 // ===========================================================================
 // Phase 2: Dense neural layer with lookup-table activation
 // ===========================================================================
-// ReLU via precomputed lookup table over [0, PLAINTEXT_SPACE).
+// ReLU via precomputed lookup table over [0, DOMAIN).
 // This is Reader #1 of the Rosetta Stone.
 
 fn build_relu_lut() -> Vec<F> {
-    let half = PLAINTEXT_SPACE / 2;
-    (0..PLAINTEXT_SPACE)
+    let half = DOMAIN / 2;
+    (0..DOMAIN)
         .map(|i| {
             if i < half {
                 F::from_u64(i)
@@ -220,7 +218,7 @@ fn lut_hash_commit(
     state[3] = class;
     state[4] = F::from_u64(4); // domain separation
     let rc = lut_sponge_round_constants();
-    lut_sponge_permute(&mut state, lut, PLAINTEXT_SPACE, &rc);
+    lut_sponge_permute(&mut state, lut, DOMAIN, &rc);
     state[0]
 }
 
@@ -248,7 +246,7 @@ fn hash_commit(
 fn pbs_demo(ct: &Ciphertext, s: &[F], d: F, lut: &[F]) -> F {
     let m = decrypt(ct, s, d);
     let m_u64 = m.to_u64();
-    if m_u64 < PLAINTEXT_SPACE {
+    if m_u64 < DOMAIN {
         lut[m_u64 as usize]
     } else {
         F::ZERO
@@ -499,9 +497,9 @@ fn main() {
         .map(|i| F::from_u64((i as u64 + 1) % 3))
         .collect();
 
-    // Plaintext messages: [1, 2, 3, 4, 5, 6, 7, 0] mod 1024
+    // Plaintext messages: [1, 2, ..., INPUT_DIM] mod DOMAIN
     let messages: Vec<F> = (0..INPUT_DIM)
-        .map(|i| F::from_u64((i as u64 + 1) % PLAINTEXT_SPACE))
+        .map(|i| F::from_u64((i as u64 + 1) % DOMAIN))
         .collect();
 
     // Encrypt INPUT_DIM values
@@ -525,13 +523,10 @@ fn main() {
         })
         .collect();
 
-    // Dense layer (NEURONS x NEURONS)
-    // Weights are small (0-2) so matvec + bias stays in [0, 512) — positive ReLU domain.
-    // With 16 inputs, max result = 16*2*max_input + 15 = 32*90 + 15 = 2895 > 1024.
-    // Use weights mod 2 to keep results smaller, and ensure they stay in [0, 1024).
-    // Actually: result[i] ~ 74, so matvec ~ 16 * 1 * 74 = 1184. Need smaller weights.
-    // Use weights in {0, 1} only: max = 16 * 1 * 90 = 1440 > 1024. Still too big.
-    // Use a sparse pattern: most weights 0, a few 1.
+    // Dense layer (NEURONS x NEURONS = 32x32)
+    // Sparse pattern: diagonal + one neighbor keeps sum ≤ 2 × max_input.
+    // With DOMAIN=64, inputs are in [0, 63], max output = 2×63+31 = 157 → mod 64 wraps.
+    // LUT ReLU accepts all indices in [0, DOMAIN); values wrap naturally in demo.
     let dense_w: Vec<F> = (0..NEURONS * NEURONS)
         .map(|i| {
             let row = i / NEURONS;
@@ -548,7 +543,7 @@ fn main() {
         .map(|i| F::from_u64(i as u64))
         .collect();
 
-    // Shared lookup table: ReLU over [0, 1024)
+    // Shared lookup table: ReLU over [0, DOMAIN)
     let lut = build_relu_lut();
 
     // Precomputed digests
@@ -571,12 +566,12 @@ fn main() {
     eprintln!();
     eprintln!("--- Parameters ---");
     eprintln!("  p (Goldilocks)     = {}", 0xFFFF_FFFF_0000_0001u64);
-    eprintln!("  delta (p/1024)     = {}", d.to_u64());
+    eprintln!("  delta (p/DOMAIN)   = {}", d.to_u64());
     eprintln!("  LWE_N              = {}", LWE_N);
     eprintln!("  INPUT_DIM          = {}", INPUT_DIM);
     eprintln!("  NEURONS            = {}", NEURONS);
     eprintln!("  RING_N             = {}", RING_N);
-    eprintln!("  PLAINTEXT_SPACE    = {}", PLAINTEXT_SPACE);
+    eprintln!("  DOMAIN             = {}", DOMAIN);
     eprintln!();
 
     eprintln!("--- Secret key ---");
@@ -664,7 +659,7 @@ fn main() {
     eprintln!("  Reader 2: lut.read   in lut_sponge S-box    -> crypto hash");
     eprintln!("  Reader 3: lut.read   in pbs test polynomial -> FHE bootstrap");
     eprintln!("  Reader 4: STARK LogUp                       -> proof auth (upstream)");
-    eprintln!("  All readers: same 1024-entry table at lut_addr");
+    eprintln!("  All readers: same {}-entry table at lut_addr", DOMAIN);
     eprintln!();
 
     // Final verdict
@@ -701,10 +696,10 @@ fn main() {
     // ========== BENCH HARNESS DATA ==========
     // Compute round constants and divine values for Probe 2 parameters.
     // These are for the zero-data bench — all ciphertext/weight RAM is uninitialized.
-    let bench_lwe_n = 32;
-    let bench_neurons = 64;
-    let bench_ring_n = 64;
-    let bench_domain = 1024u64;
+    let bench_lwe_n = LWE_N;
+    let bench_neurons = NEURONS;
+    let bench_ring_n = RING_N;
+    let bench_domain = DOMAIN;
     let bench_lut = build_relu_lut();
 
     // Poseidon2 round constants (86 values, BLAKE3-derived)

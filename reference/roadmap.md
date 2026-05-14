@@ -12,12 +12,14 @@ Lower layers freeze first.
 Developer preview and request for comment.
 `cargo install trident-lang` · [GitHub](https://github.com/cyberia-to/trident/releases/tag/v0.1.0)
 
-Three targets before 256k release:
+One target before 256k release:
 
-1. Self-hosting — compiler compiles itself in Trident
-2. Atlas — on-chain package registry live
-3. Revolution demos — small proven inference, FHE circuit
-   compilation, quantum circuit simulation
+1. Pipeline closes — a `.tri` program executes on nox and produces a
+   zheng proof, verified locally. Trinity runs end-to-end.
+
+The primary proving target is nox + zheng (SuperSpartan + Brakedown),
+not Triton. trisha remains for Neptune programs. warrior-cyber is the
+new primary warrior.
 
 ```
 Layer           Current   First Release
@@ -30,7 +32,8 @@ Noun            256K        128K      ← AST→Noun path (tree targets)
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
-cyber stack     256K        128K      ← nebu, hemera, nox, zheng, bbg
+cyber stack     256K        128K      ← strata, hemera, nox, zheng, lens, bbg
+warrior         256K        128K      ← warrior-cyber PoC
 tooling          64K         32K
 AI              256K        128K
 Privacy         256K        128K
@@ -39,25 +42,51 @@ Quantum         256K        128K
 
 ---
 
-## 256K — primitives land
+## 256K — pipeline closes
 
 ```
-- [ ] CORE        16 patterns implemented in Trident (reference evaluator)
-- [x] AI          Tensor operations (dot, matmul, relu, dense) — DONE: std.nn.tensor
-- [x] AI          Neural TIR-TASM optimizer (91K params, evolutionary training, speculative compilation)
-- [x] Privacy     Polynomial ops and NTT for FHE — DONE: std.private.poly
-- [x] Quantum     Quantum gate set (H, X, Y, Z, S, T, CNOT, CZ, SWAP) — DONE: std.quantum.gates
-- [ ] tooling     Amazing cli
-- [ ] tooling     Integration tests and formal verification
-- [ ] tooling     Beautiful website
-- [ ] tooling     Complete benchmark coverage
-- [ ] cyber stack Hemera hash migration (replace blake3 + custom poseidon2)
-- [ ] cyber stack nebu field adoption (Goldilocks bridge)
-- [ ] cyber stack vm/nox/ target profile + registration
-- [ ] cyber stack os/cyber/ target profile + type definitions
-- [ ] Noun        NounBuilder: direct AST→Noun lowering (bypass TIR for tree targets)
-- [ ] Noun        SubjectManager: variable→axis mapping for tree subjects
-- [ ] Noun        Focus cost model (exact compile-time prediction)
+done
+- [x] AI          std.nn.tensor — dot, matmul, relu, dense, argmax
+- [x] AI          Neural TIR-TASM optimizer — GATv2 encoder + 6-layer Transformer
+                  decoder, ~91K params (PoC); 13M-param target is 128K scope
+- [x] Privacy     std.private.poly — polynomial ops and NTT for FHE
+- [x] Quantum     std.quantum.gates — H, X, Y, Z, S, T, CNOT, CZ, SWAP
+- [x] trinity     std.trinity.inference — Rosetta Stone: LWE + dense NN +
+                  LUT sponge + PBS + Bell commitment, five phases one proof
+- [x] Noun        NounBuilder (NoxCompiler) — direct AST→Noun, bypass TIR
+- [x] Noun        SubjectManager (Scope) — variable→axis mapping
+
+cyber stack integration
+- [ ] hemera      migrate blake3 + custom Poseidon2 → cyber-hemera
+                  (plan: roadmap/switch-to-hemera.md, ~2 sessions)
+- [ ] strata      adopt as field arithmetic floor — goldilocks.rs delegates
+                  to strata::nebu; four-tier trait hierarchy wired
+- [ ] nox         wire NounBuilder output → nox::reduce() in warrior-cyber
+- [ ] zheng       wire nox ExecutionTrace → zheng::prove() via lens::brakedown
+- [ ] lens        Brakedown PCS integrated into zheng (expander + tensor + commit)
+
+warrior
+- [ ] warrior-cyber PoC — run + prove + verify on nox/zheng
+                  honeycrisp AMX acceleration for Brakedown encoding and
+                  sumcheck field ops (plan: roadmap/cyber-warrior.md, ~8 sessions)
+
+trinity
+- [ ] parameters  fix geometric inconsistency — RING_N=128 ≥ 2×DOMAIN=64,
+                  LWE_N=16, NEURONS=32, PLAINTEXT_BITS=6
+                  targets: prove < 10s, proof < 100KB, verify < 100ms
+
+tooling
+- [ ] integration tests  end-to-end: trinity compiles → executes → proves → verifies
+- [ ] bench harnesses    nn + private + quantum harnesses (compiler + trinity exist)
+- [ ] Noun cost model    nox pattern costs wired into cost/model/ (currently triton-only)
+
+not in 256K scope
+- CORE .tri reference evaluator (nox 16 patterns exist in Rust — .tri evaluator is 64K)
+- os/cyber/ target profile (128K)
+- five-algebra type primitives (Bit, Lattice, Cost, Iso) (128K)
+- GPU proving via aruminium (128K)
+- Atlas on-chain registry (128K)
+- self-hosting compiler wiring (128K — stages written in .tri, lower needs warrior)
 ```
 
 ## 128K — the machine assembles
@@ -66,18 +95,22 @@ Quantum         256K        128K
 CORE        Hemera + Merkle as CORE programs, BBG prototype
 TIR         Lowering works for stack, register, and tree targets
 Noun        AST→Noun optimized: subject sharing, dead axis elimination, parallel marking
-cyber stack nox executor integration (trident build → .nox → nox execute → trace)
-cyber stack zheng prover integration (trace → zheng prove → proof)
 cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
+cyber stack bbg prototype — persistent state across 10 dimensions
+cyber stack GPU proving via aruminium (Metal compute shaders for large traces)
+warrior     warrior-cyber full — hint support, os.cyber.* programs, on-chain deploy
 compiler    ✓ All 6 stages + pipeline rewritten in .tri (9,195 LOC)
               lexer (824) → parser (2,723) → typecheck (1,502) →
               codegen (1,979) → optimize (733) → lower (1,121) →
               pipeline (313)
+              wire lower → warrior-cyber (self-hosting compilation)
 std.*       std.token, std.coin, std.card shipped
 os.*        os.neptune.* complete, Atlas on-chain registry live
-AI          Small model inference compiles to provable Trident
-Privacy     Trident programs compile to FHE circuits
-Quantum     Quantum circuit simulation backend
+AI          five-algebra type primitives land — Bit (kuro), Lattice (jali),
+            Cost/Gain (trop), Iso/Shade (genies) + std.bt, std.wav, std.opt, std.sec
+AI          Neural optimizer scaled to 13M params — proven outputs only
+Privacy     Trident programs compile to FHE circuits via jali + Ikat lens
+Quantum     Quantum circuit simulation backend, Binius lens for kuro regime
 ```
 
 ## 64K — proof of concept
