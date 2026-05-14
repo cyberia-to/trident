@@ -364,7 +364,7 @@ Every invocation of the model in production generates a `BuildResult`:
 
 ```rust
 pub struct BuildResult {
-    pub tir_hash: [u8; 32],                 // Poseidon2 particle of the TIR input
+    pub tir_hash: [u8; 32],                 // Poseidon2 CID of the TIR input
     pub generated_tasm: Vec<Instruction>,
     pub valid: bool,
     pub clock_cycles: Option<u64>,          // from triton_vm::clock_cycles (simulation)

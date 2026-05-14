@@ -15,7 +15,7 @@ use std::path::{Path, PathBuf};
 #[derive(Archive, Serialize, Deserialize, Clone, Debug)]
 #[rkyv(derive(Debug))]
 pub struct BuildResult {
-    /// Poseidon2 particle of the TIR input.
+    /// Poseidon2 CID of the TIR input.
     pub tir_hash: [u8; 32],
     /// Generated TASM instructions.
     pub generated_tasm: Vec<String>,
