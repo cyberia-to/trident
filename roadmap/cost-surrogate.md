@@ -12,10 +12,10 @@ planned: 128K
 The actual [[nox]]/[[zheng]] proving cost function is `cost = trace_length + sum(jet_costs)` where jet costs are fixed per-jet (the hash jet via [[hemera]] is the most expensive) but trace_length is program-dependent. This function has properties that make gradient-based optimization difficult:
 
 1. **Non-differentiable at boundaries**: trace_length changes in discrete steps (each [[nox]] reduction pattern application adds 1). No smooth gradient.
-2. **Non-locally-structured**: the cost contribution of a single TIR op depends on which reduction patterns are triggered across the full program — not just locally.
+2. **Non-locally-structured**: the cost contribution of a single nox operation depends on which reduction patterns are triggered across the full program — not just locally.
 3. **Cliff discontinuities**: if a [[zheng]] configuration has cliff-based pricing (e.g., next power-of-2 padding), reducing trace_length by 1 may have zero effect or 2× effect depending on where you are. Note: [[zheng]] uses Brakedown PCS (not FRI), so there is no FRI folding factor; cliff structure, if present, comes from padding choices in the [[zheng]] prover configuration.
 
-A learned smooth surrogate approximates this cost function in a way that gradient-based optimization can exploit. The surrogate doesn't need to predict absolute cost accurately — it needs to correctly rank TIR op sequences by [[nox]] proof cost. Pairwise ranking accuracy above 95% is sufficient for useful gradient guidance.
+A learned smooth surrogate approximates this cost function in a way that gradient-based optimization can exploit. The surrogate doesn't need to predict absolute cost accurately — it needs to correctly rank nox reduction sequences by [[nox]] proof cost. Pairwise ranking accuracy above 95% is sufficient for useful gradient guidance.
 
 Related proposals: [[trace-predictor]], [[instruction-scheduling-nn]], [[compiler-ensemble]], [[algebraic-identity-explorer]].
 
@@ -23,16 +23,16 @@ Related proposals: [[trace-predictor]], [[instruction-scheduling-nn]], [[compile
 
 The differentiable cost surrogate is the gradient signal that drives the neural compiler. In the cyber ecosystem, where [[bbg]] charges real focus for every computation, lowering proof cost has direct economic value. The cost surrogate translates this economic pressure into a gradient that flows through the compiler's optimization decisions. Programs get cheaper automatically as the surrogate improves — no developer action required. The cyber network's economic incentives and the neural compiler's optimization objective are aligned: cheaper proofs = lower focus costs = more usage = more training data = better surrogate.
 
-Stack integration: The surrogate's training data comes from [[warrior-cyber]] proving runs recorded in the [[cybergraph]]. Every (TIR program, actual [[nox]] trace length) pair is a training example, stored as a cyberlink. The surrogate is deployed as an [[Atlas]] package updated continuously as new data arrives — each update version-stamped and [[hemera]]-addressed, so every compiler installation can pin to a specific surrogate version and reproduce results exactly.
+Stack integration: The surrogate's training data comes from [[warrior-cyber]] proving runs recorded in the [[cybergraph]]. Every (nox reduction sequence, actual [[nox]] trace length) pair is a training example, stored as a cyberlink. The surrogate is deployed as an [[Atlas]] package updated continuously as new data arrives — each update version-stamped and [[hemera]]-addressed, so every compiler installation can pin to a specific surrogate version and reproduce results exactly.
 
 ## Design
 
-### Architecture: 1D CNN over TIR Op Sequences
+### Architecture: 1D CNN over Nox Reduction Sequences
 
-The cost surrogate takes a TIR op sequence as input and predicts a scalar proof cost. A 1D convolutional architecture processes the sequence naturally:
+The cost surrogate takes a nox reduction sequence as input and predicts a scalar proof cost. A 1D convolutional architecture processes the sequence naturally:
 
 ```
-Input: TIR op sequence (padded to 128 ops; 54 op kinds — see ../reference/ir.md)
+Input: nox reduction sequence (padded to 128 ops; 22 operation kinds: 16 patterns + 1 hint + 5 jets)
   → Embedding layer: op_id → 16-dim vector
   → Conv1D(kernel=5, filters=32, stride=1)
   → ReLU

@@ -19,13 +19,13 @@ Related proposals: [[cost-surrogate]], [[instruction-scheduling-nn]], [[trace-pr
 
 The 16 specialist optimizers are like competing warriors — each one bids on proving the program the cheapest way, biased by its specialty. The meta-selector picks the winner based on the [[trace-predictor]]'s estimate. This mirrors [[bbg]]'s focus market: multiple provers compete, the cheapest valid proof wins. The compiler ensemble is a simulation of the proving market at compile time, optimizing for the same objective the network will optimize at runtime.
 
-Stack integration: Each specialist's TIR output is lowered by [[warrior-cyber]] to a [[nox]] trace. The trace lengths are compared (or estimated via [[cost-surrogate]]). The cheapest trace wins. In the limit, the compiler ensemble and the [[bbg]] proving market converge on the same program representation. Competition results and actual proving costs are cyberlinked in [[cybergraph]] — the ensemble's meta-selector improves continuously as more competition data accumulates.
+Stack integration: Each specialist produces a [[nox]] reduction sequence. The nox proof costs are compared (or estimated via [[cost-surrogate]]). The cheapest sequence wins. In the limit, the compiler ensemble and the [[bbg]] proving market converge on the same program representation. Competition results and actual proving costs are cyberlinked in [[cybergraph]] — the ensemble's meta-selector improves continuously as more competition data accumulates.
 
 ## Design
 
 ### Specialist Objectives
 
-Each specialist is a nox cost optimizer operating through TIR transformations. The specialists cover the space of possible bottleneck scenarios:
+Each specialist is a nox cost optimizer — it directly produces nox reduction sequences optimized for its target cost component. The specialists cover the space of possible bottleneck scenarios:
 
 ```
 specialist_0:  minimize total proof cost (trace_length + all jet_costs)  — general optimizer
@@ -45,8 +45,8 @@ The specific objectives are tunable. The key principle: cover the space of possi
 ### Specialist Architecture
 
 Each specialist is an evolutionary-trained neural compiler (see `../reference/neural.md` for the canonical architecture):
-- Input: TIR graph features (TirGraph: 54 op kinds, 3 edge types, 59-dim node features)
-- Output: TIR op ordering decisions (lowered to nox trace by warrior-cyber)
+- Input: nox computation graph features (22 op kinds: 16 patterns + 1 hint + 5 jets, dependency edge types)
+- Output: nox reduction sequence optimized for the specialist's cost objective
 - Trained on programs where its target nox cost component was the bottleneck
 - Parameters: ~728KB (91,000 field elements)
 
@@ -58,18 +58,18 @@ Running all 16 specialists for every program costs $16 \times 50\mu s \approx 80
 
 ```
 For each program P:
-1. Run all 16 specialists on P's TIR              → 16 TIR op orderings
-2. Run trace predictor on each ordering's features → 16 predicted nox costs
-                                                     (trace_length + jet_costs)
-3. Select ordering with minimum predicted cost     → LOWER THIS ONE via warrior-cyber
+1. Run all 16 specialists on P              → 16 nox reduction sequences
+2. Run trace predictor on each sequence's features → 16 predicted nox costs
+                                                      (trace_length + jet_costs)
+3. Select sequence with minimum predicted cost     → PROVE THIS ONE via warrior-cyber
 ```
 
-Step 2 uses the [[trace-predictor]] (fast, no lowering required) rather than the [[cost-surrogate]] (requires TIR op sequence encoding). The predictor runs on TIR graph features of each specialist's output, providing cost predictions in microseconds.
+Step 2 uses the [[trace-predictor]] (fast) rather than the [[cost-surrogate]] (requires nox reduction sequence encoding). The predictor runs on nox graph features of each specialist's output, providing cost predictions in microseconds.
 
 Alternatively, for higher accuracy, use the cost surrogate:
 
 ```
-Step 2': Encode each TIR ordering as op sequence
+Step 2': Encode each nox reduction sequence
          Run cost surrogate on each sequence  → 16 predicted nox costs
          (cost surrogate: ~50μs per variant × 16 = 800μs additional)
 ```
@@ -92,7 +92,7 @@ A single optimizer trained on diverse programs learns to balance all cost compon
 
 The ensemble improves online:
 
-1. Each program compiled produces actual proving data: (TIR features, specialist chosen, actual proving time)
+1. Each program compiled produces actual proving data: (nox sequence features, specialist chosen, actual proving time)
 2. This data improves the meta-selector's accuracy (train on the ground truth: which specialist was actually cheapest?)
 3. Specialists that consistently lose to others on specific program types are retrained on those types
 4. New specialists can be added as new bottleneck patterns emerge
@@ -112,39 +112,39 @@ The ensemble is not a static artifact — it grows and improves with usage.
 ## Implementation Sketch
 
 ```rust
-// tir/ensemble.rs
+// nox/ensemble.rs
 pub struct CompilerEnsemble {
-    specialists: Vec<Box<dyn TirOptimizer>>,   // each produces a TIR op ordering
-    meta_selector: TracePredictor,              // predicts nox proof cost per ordering
+    specialists: Vec<Box<dyn NoxOptimizer>>,   // each produces a nox reduction sequence
+    meta_selector: TracePredictor,              // predicts nox proof cost per sequence
 }
 
 impl CompilerEnsemble {
-    pub fn compile(&self, tir: &TirFunction) -> NoxTrace {
-        // Run all specialists in parallel — each produces a TIR op ordering
-        let tir_variants: Vec<OrderedTir> = self.specialists
+    pub fn compile(&self, program: &NoxProgram) -> NoxTrace {
+        // Run all specialists in parallel — each produces a nox reduction sequence
+        let nox_variants: Vec<NoxSequence> = self.specialists
             .par_iter()
-            .map(|s| s.optimize(tir))
+            .map(|s| s.optimize(program))
             .collect();
 
-        // Predict nox proof costs for each TIR ordering (no lowering needed)
-        let predicted_costs: Vec<f64> = tir_variants.iter()
-            .map(|ordered_tir| {
-                let features = extract_tir_features(ordered_tir);
+        // Predict nox proof costs for each sequence
+        let predicted_costs: Vec<f64> = nox_variants.iter()
+            .map(|seq| {
+                let features = extract_nox_features(seq);
                 let costs = self.meta_selector.predict(&features);
                 costs.total_proof_cost()  // trace_length + sum(jet_costs)
             })
             .collect();
 
-        // Select minimum predicted cost and lower to nox via warrior-cyber
+        // Select minimum predicted cost and prove via warrior-cyber
         let best_idx = predicted_costs.iter()
             .enumerate()
             .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
             .map(|(i, _)| i)
             .unwrap();
 
-        warrior_cyber_lower(&tir_variants[best_idx])  // [[nox]] trace + [[zheng]] proof
+        warrior_cyber_prove(&nox_variants[best_idx])  // [[nox]] trace + [[zheng]] proof
     }
 }
 ```
 
-The `par_iter()` uses Rayon for parallel execution. Each specialist runs in a separate thread. The 800μs total latency assumes all specialists complete within 50μs each — the budget for a specialist's forward pass over a typical TIR function. [[learned-peephole]] patterns are applied to the winning TIR ordering before warrior-cyber lowering.
+The `par_iter()` uses Rayon for parallel execution. Each specialist runs in a separate thread. The 800μs total latency assumes all specialists complete within 50μs each — the budget for a specialist's forward pass over a typical nox program. [[learned-peephole]] patterns are applied to the winning nox sequence before proving.
