@@ -1,0 +1,139 @@
+---
+status: draft
+author: mastercyb
+area: verification
+planned: 32K
+---
+
+# Requires/Ensures Contracts Compiled to STARK Constraints
+
+## Motivation
+
+Formal verification usually involves a separate tool. You write your program, you write specifications in a verification language, you run the verifier, you get a separate proof artifact. Two artifacts, two trust chains, two maintenance burdens. Every change to the program potentially invalidates the verification, and the developer must re-verify separately.
+
+In Trident, program execution and formal verification share the same artifact: the STARK proof. When a function carries `requires`/`ensures` clauses, those clauses compile to additional STARK constraints. The execution proof IS the verification proof. One STARK, one verification, one trust chain. The proof is valid if and only if both the program terminated correctly AND all specifications were satisfied.
+
+## Design
+
+### Syntax
+
+```trident
+fn sqrt_approx(x: Field) -> Field
+  requires x < p/2
+  ensures |result * result - x| < EPSILON
+{
+    // Padé approximant or Newton-Raphson implementation
+    let y = x * INITIAL_GUESS;
+    for _ in 0..3 {
+        y = (y + x * invert(y)) * INV_2;
+    }
+    y
+}
+```
+
+The `requires` clause is a precondition: the caller must ensure it holds before the call. The `ensures` clause is a postcondition: the callee guarantees it holds when the function returns. `result` in `ensures` refers to the return value.
+
+### Compilation Model
+
+`requires` clauses compile to STARK constraints on the inputs at the call site. When `sqrt_approx` is called with argument `x`:
+
+1. The constraint `x < p/2` is emitted as a polynomial constraint on the Processor row corresponding to the call
+2. If this constraint is not satisfied (i.e., `x ≥ p/2`), the constraint polynomial evaluates to a nonzero value in the AET
+3. A nonzero value in the constraint polynomial means the STARK proof is invalid
+4. The verifier rejects an invalid STARK proof
+
+The result: calling `sqrt_approx` with an out-of-range input does not produce a wrong answer — it produces an unprovable computation. The proof system enforces the contract.
+
+`ensures` clauses compile similarly, but constrain the output rather than the input. The constraint is checked on the return value before it flows back to the caller.
+
+### One Proof, Two Purposes
+
+The same STARK proof serves as both:
+- Proof of execution (the program ran and produced this output)
+- Proof of specification compliance (all `requires` and `ensures` clauses were satisfied)
+
+A verifier who checks the STARK proof learns both simultaneously. This is the key property: verification is not a post-hoc step. It is embedded in the proof of execution. If you trust the STARK proof, you trust the specification compliance.
+
+### Caller Obligations
+
+When a function has a `requires` clause, the caller carries the obligation to satisfy it. The compiler tracks this obligation through the call chain:
+
+```trident
+fn caller(x: Field) -> Field {
+    // ERROR: must prove x < p/2 before calling sqrt_approx
+    sqrt_approx(x)
+}
+
+fn safe_caller(x: Field) -> Field {
+    // Option 1: runtime check (generates a STARK constraint)
+    assert!(x < p/2);
+    sqrt_approx(x)
+
+    // Option 2: type-level proof (x: Positive implies x < p/2)
+    // If x: Positive is in scope, no runtime constraint needed
+}
+```
+
+The compiler attempts to discharge preconditions statically from the type context. If it cannot, it generates a runtime constraint (STARK row). If the precondition is violated at runtime, the proof is invalid.
+
+### Ensures and Result Types
+
+The `ensures` clause can reference the result value, other parameters, and pre-call values of mutable parameters. A standard pattern for preservation properties:
+
+```trident
+fn sort_array(arr: [Field; N]) -> [Field; N]
+  ensures is_permutation(arr, result)  // result is a permutation of input
+  ensures is_sorted(result)            // result is sorted
+{
+    // sorting implementation
+}
+```
+
+Both postconditions compile to STARK constraints. A proof of `sort_array` execution is also a proof that the output is a sorted permutation of the input.
+
+## Key Tradeoffs
+
+**Constraint cost**: Each `requires`/`ensures` clause adds STARK constraints. For functions called in tight loops, these constraints appear in every iteration of the loop's trace — potentially doubling the Processor rows for the function. The developer must be deliberate about where contracts are placed.
+
+**Static discharge**: The compiler attempts to statically discharge preconditions from type information (refinement types, linear types, etc.). This is the preferred path — zero runtime cost. For conditions that cannot be discharged statically, the runtime constraint is unavoidable.
+
+**Quantified specifications**: The `ensures` example `is_permutation(arr, result)` is itself a non-trivial predicate. If `is_permutation` is an expensive function to compute, its evaluation at the call site adds significant STARK rows. Specifications must be efficient to evaluate, not just correct to state.
+
+**No separate verifier**: The power of this approach is also a constraint: specifications must be expressible as polynomial constraints over the execution trace. Specifications that require reasoning about infinite sets or unbounded computation cannot be expressed as STARK constraints. In practice, most preconditions and postconditions are efficiently checkable.
+
+## Implementation Sketch
+
+Contracts integrate with TIR construction. The compiler generates constraint nodes from `requires`/`ensures` clauses and inserts them at the appropriate trace locations:
+
+```rust
+// tir/contracts.rs
+struct Contract {
+    requires: Vec<TirExpr>,   // must hold on entry
+    ensures: Vec<TirExpr>,    // must hold on exit
+}
+
+fn lower_function_with_contract(
+    func: &AstFunction,
+    contract: &Contract,
+    tir: &mut TirBuilder,
+) {
+    // Emit requires constraints at function entry
+    for req in &contract.requires {
+        let constraint_node = tir.emit_constraint(req.clone());
+        tir.mark_as_proof_relevant(constraint_node);
+    }
+
+    // Lower function body
+    lower_body(&func.body, tir);
+
+    // Emit ensures constraints at function exit, binding `result`
+    let result_var = tir.current_return_value();
+    for ens in &contract.ensures {
+        let bound = ens.bind("result", result_var);
+        let constraint_node = tir.emit_constraint(bound);
+        tir.mark_as_proof_relevant(constraint_node);
+    }
+}
+```
+
+The `mark_as_proof_relevant` call ensures these nodes survive dead field operation elimination (Pass 14) — they must appear in the trace even if the computed values are not used elsewhere in the program logic.

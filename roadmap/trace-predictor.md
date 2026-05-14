@@ -1,0 +1,142 @@
+---
+status: draft
+author: mastercyb
+area: AI
+planned: 128K
+---
+
+# Predictive AET Trace Analysis
+
+## Motivation
+
+Every optimization decision in the compiler depends on understanding the cost landscape: which tables will be tallest, how close each table is to its next power-of-2 cliff, and which optimization passes will move the bottleneck. Currently, the compiler must execute the program to measure actual table heights — which means full TASM generation, execution, and AET collection. This is expensive for interactive tools and for optimization passes that need to evaluate multiple candidate transformations.
+
+A small neural network that predicts AET table heights from TIR features — before compilation and execution — changes this. Cost estimation becomes a millisecond operation. The compiler can evaluate hundreds of candidate transformations, pick the best one, and then compile that one. Interactive tools (REPL, IDE) get cost estimates without any compilation at all.
+
+## Design
+
+### Input Features
+
+The predictor takes TIR graph features as input — approximately 32 field elements:
+
+| Feature | Description |
+|---------|-------------|
+| node_count | Total TIR nodes in the function |
+| op_histogram[16] | Count of each major operation type (mul, add, hash, invert, ...) |
+| max_nesting_depth | Maximum loop/branch nesting depth |
+| branch_count | Total number of conditional branches |
+| loop_bound_sum | Sum of all loop iteration counts |
+| memory_access_count | Number of RAM read/write operations |
+| has_hash | Binary: does the function call any hash? |
+| has_invert | Binary: does the function call invert? |
+| max_array_size | Largest static array size |
+
+These features are extractable from the TIR in O(n) time without any execution.
+
+### Output
+
+Nine field elements: predicted height of each AET table.
+
+```
+[Processor, Hash, Cascade, Lookup, RAM, U32, OpStack, U32Aux, Cross]
+```
+
+Predictions are in log-scale (predicting log2 of the height) to compress the range and handle the fact that table heights vary from 1 to $2^{32}$.
+
+### Model Architecture
+
+Single hidden layer, 64 units, field-native implementation:
+
+```trident
+// trace_predictor.trd
+fn predict_aet_heights(features: Vector<32>) -> Vector<9> {
+    // Layer 1: 32 → 64 (with ReLU)
+    let h1 = relu(linear(W1, b1, features));   // W1: Matrix<64, 32>
+    // Layer 2: 64 → 9
+    let out = linear(W2, b2, h1);              // W2: Matrix<9, 64>
+    out  // log-scale heights
+}
+```
+
+Parameters: $64 \times 32 + 64 + 9 \times 64 + 9 = 2048 + 64 + 576 + 9 = 2697$ field elements ≈ ~21 KB. Inference: ~3,000 TASM instructions. Trivial.
+
+### Training Data Collection
+
+Training data is collected during compilation: for each compiled function, record (TIR features, actual AET heights). Start with ~1,000 programs; scale to ~100,000 as the program corpus grows.
+
+```rust
+// compiler: collect training pairs during compilation
+fn compile_and_record(source: &TridentSource, dataset: &mut Dataset) {
+    let tir = lower_to_tir(source);
+    let features = extract_features(&tir);
+    let tasm = lower_to_tasm(&tir);
+    let aet = execute_and_measure(&tasm);
+    dataset.push(TrainingSample { features, heights: aet.heights() });
+}
+```
+
+Training runs on the collected dataset using evolutionary training (`evolutionary-training.md`) — a self-referential loop where the predictor itself is trained using the same evolutionary method it will later assist.
+
+### Accuracy Targets
+
+- **Bottleneck table identification**: correct >90% of the time
+- **Exact height**: within 20% of actual height
+- **Ranking**: correctly rank two implementations by cost >95% of the time
+
+The ranking target is most important for compiler use — the predictor is used to choose between optimization candidates, not to predict absolute costs.
+
+### Uses
+
+1. **Compilation cost estimation**: estimate cost of any TIR function without execution
+2. **Optimization candidate selection**: rank 8–16 optimization variants, compile only the predicted winner
+3. **CI/CD fast path**: estimate cost gate compliance without full proving
+4. **REPL cost hints**: show cost estimates without any compilation
+5. **Identity explorer usefulness scorer**: provides table_criticality weights dynamically
+6. **Cost surrogate input**: provides AET heights as features for the differentiable cost surrogate
+
+## Key Tradeoffs
+
+**Feature completeness**: The 32 input features capture the most important cost drivers but miss subtle interactions. Programs with unusual instruction mixes (e.g., heavy U32 operations from bit manipulation, or deep Lookup table chains) may be poorly predicted. The feature set should grow as the corpus reveals new cost drivers.
+
+**Generalization**: The predictor trained on 1,000 programs may overfit to the programs' stylistic patterns. A diverse corpus (cryptographic code, neural inference, sorting algorithms, arithmetic circuits) is essential for generalization. Adversarial programs (generated by the adversarial compiler — separate proposal) stress-test generalization.
+
+**Update frequency**: As the compiler's optimization passes improve, the relationship between TIR features and AET heights changes. The predictor must be retrained periodically (at least after each major pass improvement). An online learning approach (update continuously as new programs are compiled) would maintain accuracy without periodic retraining.
+
+**Cold start**: The first 1,000 programs must be compiled without the predictor. The compiler falls back to the cost model (approximation, always available) during the cold start period. Once the predictor is trained, it replaces the cost model for most purposes.
+
+## Implementation Sketch
+
+```rust
+// cost/trace_predictor.rs
+pub struct TracePredictor {
+    weights: NnWeights,  // trained by evolutionary method
+}
+
+impl TracePredictor {
+    pub fn predict(&self, tir: &TirFunction) -> AetHeights {
+        let features = extract_features(tir);
+        let log_heights = self.weights.infer(&features);
+        AetHeights::from_log_scale(log_heights)
+    }
+
+    pub fn train(dataset: &[(Features, AetHeights)]) -> Self {
+        let evolved = evolutionary_train(dataset, N_GENERATIONS);
+        TracePredictor { weights: evolved }
+    }
+}
+
+fn extract_features(tir: &TirFunction) -> Vector<32> {
+    let mut f = Vector::zero();
+    f[0] = tir.node_count() as Field;
+    for node in tir.nodes() {
+        f[1 + node.op_id()] += 1;  // op histogram
+    }
+    f[17] = tir.max_nesting_depth() as Field;
+    f[18] = tir.branch_count() as Field;
+    f[19] = tir.loop_bound_sum() as Field;
+    // ... remaining features
+    f
+}
+```
+
+The predictor is a small neural network trained by the evolutionary training system, predicting AET heights that guide every other optimization decision in the system. It is foundational — schedule its implementation early in the 128K milestone.

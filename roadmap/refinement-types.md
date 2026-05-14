@@ -1,0 +1,111 @@
+---
+status: draft
+author: mastercyb
+area: type system
+planned: 32K
+---
+
+# Refinement Types over Field Arithmetic
+
+## Motivation
+
+Many field-arithmetic bugs are value-range bugs: division by zero when a denominator is expected nonzero, probability values that overflow their intended range, signed values that cross the field's midpoint. Conventional type systems cannot express these constraints — `Field` and `Field` are the same type regardless of value. Refinement types add predicates to types, making the constraint part of the type itself.
+
+In Trident, refinement types have a unique property: they compile to STARK constraints. Proving that the program's execution satisfies the predicate is part of the STARK proof itself. There is no separate verification step, no SMT solver at runtime, no assertion that can be disabled. The proof of execution IS the proof that all refinements were satisfied.
+
+## Design
+
+### Refined Types
+
+```trident
+type Positive     = { x: Field | x > 0 && x < p/2 };
+type Probability  = { x: Field | x >= 0 && x <= SCALE_FACTOR };
+type NonZero      = { x: Field | x != 0 };
+type InRange<A, B> = { x: Field | x >= A && x <= B };
+```
+
+The predicate is a boolean expression over the value `x`. Any expression valid in Trident can be used as a refinement predicate, including field arithmetic, function calls, and comparisons.
+
+### Usage
+
+```trident
+fn safe_divide(a: Field, b: NonZero) -> Field {
+    a * invert(b)  // invert is safe — b cannot be zero by type
+}
+
+fn probability_add(p: Probability, q: Probability) -> Probability {
+    // Compiler checks: p + q could exceed SCALE_FACTOR
+    // ERROR: result not proven to be Probability without additional constraint
+    p + q  // type error unless we can prove the sum stays in range
+}
+
+fn clamped_add(p: Probability, q: Probability) -> Probability {
+    let sum = p + q;
+    if sum > SCALE_FACTOR { SCALE_FACTOR } else { sum }  // now provably Probability
+}
+```
+
+### Compilation to STARK Constraints
+
+When a `NonZero` value is used, the compiler generates no additional TASM instructions for the check — the STARK constraint is synthesized at the constraint-generation level, not in the program's instruction stream. Checking $b \neq 0$ for a `NonZero` argument translates to a constraint polynomial that evaluates to zero only when $b$ is zero — and a valid proof means this constraint is never triggered.
+
+More precisely: the verifier, upon receiving the STARK proof, checks that all constraint polynomials are satisfied over the execution trace. A violated refinement means a constraint polynomial that should be zero is nonzero — which means the proof is invalid. Invalid proofs are rejected. So the refinement is enforced by the proof system itself, not by the program's logic.
+
+```trident
+// Source:
+fn f(x: NonZero) -> Field { invert(x) }
+
+// Generated constraint (not TASM — constraint polynomial):
+// For every row where f is called:
+//   x_argument ≠ 0   →   (x_argument - 0) has a multiplicative inverse
+//   Encoded as:   x_argument * x_argument_inv - 1 = 0  (Processor row constraint)
+```
+
+### Predicate Subsumption
+
+The type checker can discharge refinement checks statically when it can prove the predicate holds from the types of the arguments. If a function argument is typed `Positive` and the predicate `Positive ⊆ NonZero` holds (which it does — positive values are nonzero), then passing a `Positive` value where `NonZero` is expected requires no additional constraint.
+
+The compiler maintains a subtype lattice over refinements and uses it to avoid generating constraints that are already implied by the argument types.
+
+## Key Tradeoffs
+
+**Predicate expressibility**: Refinements limited to efficiently-checkable predicates (no arbitrary recursion in the predicate). For predicates that require full proof machinery to verify (e.g., "x is a prime"), the refinement itself is not a compile-time type check but a STARK constraint generated at runtime — still valuable, but not statically eliminated.
+
+**Constraint cost**: Each non-discharged refinement generates additional STARK constraints. For high-frequency operations, this adds Processor rows. The compiler should report refinement constraint cost in the proof cost breakdown so developers can identify expensive predicates.
+
+**SMT solver integration**: For static discharge of refinements, an SMT solver (Z3 or CVC5) could verify predicate implication at compile time. This is expensive for complex predicates. The compiler starts with a simple syntactic subsumption check and falls back to constraint generation when that fails.
+
+**Interaction with constant folding**: If a refined value is a compile-time constant, the refinement predicate can be evaluated at compile time. No constraint generated — zero runtime cost. For programs heavy on constant values, most refinements disappear entirely.
+
+## Implementation Sketch
+
+Refinement types integrate with the type checker and constraint compiler:
+
+```rust
+// typecheck/refinement.rs
+struct RefinedType {
+    base: Type,
+    predicate: Predicate,
+}
+
+enum Predicate {
+    Gt(FieldExpr, FieldExpr),
+    Lt(FieldExpr, FieldExpr),
+    Eq(FieldExpr, FieldExpr),
+    Ne(FieldExpr, FieldExpr),
+    And(Box<Predicate>, Box<Predicate>),
+    // ...
+}
+
+fn check_subtype(sub: &RefinedType, sup: &RefinedType) -> SubtypeResult {
+    // Try syntactic inclusion first
+    // Fall back to constraint generation
+}
+
+// cost/constraints.rs — generates STARK constraints for non-discharged refinements
+fn generate_refinement_constraint(pred: &Predicate, row_id: TraceRowId) -> Constraint {
+    // Translates predicate to constraint polynomial
+}
+```
+
+The refinement system is designed to fail loudly and early: if a predicate cannot be discharged statically and generating a STARK constraint for it would be too expensive, the compiler reports this explicitly rather than silently generating expensive proof overhead.

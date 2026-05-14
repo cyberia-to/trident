@@ -22,7 +22,6 @@ it does, for readers who want the full picture.
 | [How STARK Proofs Work](stark-proofs.md) | From traces to quantum-safe proofs |
 | [Provable Computing](provable-computing.md) | Comparative analysis of ZK systems |
 | [Formal Verification](formal-verification.md) | Symbolic execution, SMT, invariant synthesis |
-| [Techniques](techniques.md) | Everything that makes a proof-native language unprecedented |
 
 ## 🌐 Ecosystem
 
