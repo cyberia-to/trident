@@ -92,15 +92,15 @@ Loop invariants in Trident programs that implement [[bbg]] consensus rounds prov
 
 Today, a long nox trace is an all-or-nothing bet: either the proof covers the entire trace, or it covers nothing. Loop invariants break this binary. An invariant that holds at every iteration boundary is a checkpoint: at any point in the proof, the verifier knows the intermediate state is valid. If a computation is interrupted — by a focus budget limit, by a network partition, by a validator going offline — the last verified checkpoint is recoverable. The computation can resume from a mathematically certified intermediate state.
 
-This is the foundation for long-running [[cybergraph]] computations that span multiple [[bbg]] blocks. A proof-of-training computation that runs for thousands of iterations can be checkpointed at every epoch boundary. Each checkpoint is a [[hemera]] CID committing to the model state at that point, covered by a [[zheng]] invariant proof.
+This is the foundation for long-running [[cybergraph]] computations that span multiple [[bbg]] blocks. A proof-of-training computation that runs for thousands of iterations can be checkpointed at every epoch boundary. Each checkpoint is a [[hemera]] particle committing to the model state at that point, covered by a [[zheng]] invariant proof.
 
 ## Stack Integration
 
-[[bbg]] uses checkpointed [[nox]] traces. Loop invariants become checkpoint proofs — each iteration's state is a commitment that can be resumed independently. The checkpoint CID is a [[hemera]] hash of the invariant predicate's value at that iteration boundary, stored as a cyberlink in [[cybergraph]]: `(formula, iteration_N) → (checkpoint_commitment, partial_proof)`.
+[[bbg]] uses checkpointed [[nox]] traces. Loop invariants become checkpoint proofs — each iteration's state is a commitment that can be resumed independently. The checkpoint particle is a [[hemera]] hash of the invariant predicate's value at that iteration boundary, stored as a cyberlink in [[cybergraph]]: `(formula, iteration_N) → (checkpoint_commitment, partial_proof)`.
 
 A [[warrior-cyber]] instance that crashes mid-computation can hand off its partial trace to a replacement warrior. The replacement warrior resumes from the last checkpoint, generating the continuation proof. [[bbg]] validates that the handoff is consistent: the checkpoint proof from warrior A and the continuation proof from warrior B compose into a single valid [[zheng]] proof of the full computation.
 
-[[soft3]]'s `query()` can return intermediate checkpoints rather than only final results. A caller can request the state after N iterations of a long computation, receive a [[zheng]] proof of the loop invariant at iteration N, and use that as a certified intermediate result. Partial results become first-class citizens of the [[cybergraph]] memo table.
+[[soft3]]'s `query(particle, dimension)` can return intermediate checkpoints rather than only final results. A caller can request the state after N iterations of a long computation, receive a [[zheng]] proof of the loop invariant at iteration N, and use that as a certified intermediate result. Partial results become first-class citizens of the [[cybergraph]] memo table.
 
 ## Key Tradeoffs
 

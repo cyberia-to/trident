@@ -13,7 +13,7 @@ planned: 128K
 
 Neural developer tools make every programmer a world-class Trident developer. Type inference prevents the most expensive type choices. Incremental recompile makes the edit-compile-test loop milliseconds. Program synthesis generates correct-by-construction code from examples. Together, they change who can build for the cyber network: not just experts who know the intricacies of [[nox]] proof costs, but any developer with a clear specification.
 
-In the far future, the REPL + program synthesis loop becomes the primary way to contribute to the [[cybergraph]]: a developer describes what they want (input/output examples), the synthesizer generates a Trident function, [[warrior-cyber]] proves it correct, and [[soft3]] submits it as a cyberlink. The barrier between "have an idea" and "publish a proved computation" collapses to a few seconds. Type inference and incremental recompile improve the local development experience before [[Atlas]] deployment. Program synthesis generates functions that can be immediately deployed — the synthesized TIR → [[nox]] → [[zheng]] pipeline runs automatically, and if the proof succeeds, the function is [[Atlas]]-deployable. The [[cybergraph]]'s existing proved functions become the synthesizer's training corpus, improving with every deployment.
+In the far future, the REPL + program synthesis loop becomes the primary way to contribute to the [[cybergraph]]: a developer describes what they want (input/output examples), the synthesizer generates a Trident function, [[warrior-cyber]] proves it correct, and [[soft3]] submits it as a cyberlink. The barrier between "have an idea" and "publish a proved computation" collapses to a few seconds. Type inference and incremental recompile improve the local development experience before [[Atlas]] deployment. Program synthesis generates functions that compile to nox and can be immediately deployed — the synthesized code goes through TIR → [[nox]] → [[zheng]] automatically, and if the proof succeeds, the function is [[Atlas]]-deployable. The [[cybergraph]]'s existing proved functions become the synthesizer's training corpus, improving with every deployment.
 
 ## Motivation
 
@@ -37,7 +37,7 @@ A Tree-LSTM operating on the Trident AST predicts type annotations that minimize
 
 ### Incremental Recompilation via Neural Diff
 
-Incremental recompile works at the TIR level — the neural diff identifies which TIR nodes are invalidated by a source change, avoiding full TIR reconstruction and re-lowering. Full recompilation is expensive for large programs. `trident watch` should recompile only the parts affected by a source edit. The challenge: dependency analysis for field arithmetic programs is non-trivial — a change to one function can propagate through the TIR in non-obvious ways.
+Incremental recompile works at the TIR level — the neural diff identifies which TIR nodes are invalidated by a source change, avoiding full TIR reconstruction and re-lowering to nox. The goal is to avoid re-lowering clean TIR regions to nox unnecessarily, since nox lowering (and the subsequent STARK witness generation) is the expensive step. Full recompilation is expensive for large programs. `trident watch` should recompile only the parts affected by a source edit. The challenge: dependency analysis for field arithmetic programs is non-trivial — a change to one function can propagate through the TIR in non-obvious ways.
 
 A GNN operating on the TIR dependency graph (the same `TirGraph` with DataDep/ControlFlow/MemOrder edges, see [reference/ir.md](../reference/ir.md)) predicts which nodes are affected by a source edit:
 
@@ -51,7 +51,7 @@ A GNN operating on the TIR dependency graph (the same `TirGraph` with DataDep/Co
 
 ### Fuzzing-Guided Program Synthesis
 
-Program synthesis produces TIR directly — the output of the decoder is a TIR graph, which then follows the standard TIR → nox lowering path. Specification-first development: write input/output examples as field element pairs, let the system synthesize a Trident program satisfying the spec, then get a zheng proof of correctness.
+Program synthesis targets nox — the decoder outputs a TIR graph, which warrior-cyber immediately lowers to nox. TIR is the intermediate representation the decoder works with; nox is the actual compilation target and the zheng witness. Specification-first development: write input/output examples as field element pairs, let the system synthesize a Trident program satisfying the spec, then get a zheng proof of correctness.
 
 ```trident
 synthesize fn mystery(x: Field) -> Field from {
@@ -65,7 +65,7 @@ synthesize fn mystery(x: Field) -> Field from {
 
 **Architecture**: seq2seq model
 - Encoder: processes the set of (input, output) examples → fixed-size latent representation (order-invariant, uses permutation-invariant pooling)
-- Decoder: autoregressive over TIR operations (vocab: 54 ops across 4 tiers, see [reference/ir.md](../reference/ir.md)), max length 32
+- Decoder: autoregressive over TIR operations (vocab: 54 ops across 4 tiers, see [reference/ir.md](../reference/ir.md)), max length 32; the TIR graph it produces is immediately lowered to nox by warrior-cyber
 - Beam search: K=16 candidates
 
 **Verification**: compile each TIR candidate to nox, execute on all spec examples via warrior-cyber. Match → generate zheng proof. No match → generate more candidates.

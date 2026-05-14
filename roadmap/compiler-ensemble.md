@@ -25,7 +25,7 @@ Stack integration: Each specialist's TIR output is lowered by [[warrior-cyber]] 
 
 ### Specialist Objectives
 
-Each specialist is a TIR optimizer with a different nox cost fitness function. The specialists cover the space of possible bottleneck scenarios:
+Each specialist is a nox cost optimizer operating through TIR transformations. The specialists cover the space of possible bottleneck scenarios:
 
 ```
 specialist_0:  minimize total proof cost (trace_length + all jet_costs)  — general optimizer

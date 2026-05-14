@@ -13,13 +13,13 @@ planned: 128K
 
 Transfer learning means every new chain, every new VM, every new proof system gets a Trident compiler immediately — not after months of training, but with 10% of the data. When a new L2 deploys with a custom proving backend, Trident supports it in days. The compiler ecosystem expands horizontally with the [[cybergraph]]'s reach. Each new warrior is a new node in the proving network; each new proving network node increases [[bbg]]'s capacity for parallel computation. The planetary intelligence network grows not just in knowledge but in proving bandwidth.
 
-New warriors register in [[Atlas]] as packages (`atlas.cyber/warriors/miden`, etc.). The shared TIR encoder — frozen from [[nox]] training — lives as an [[Atlas]] package version. The new backend decoder is added as a companion. [[soft3]]'s `submit()` can route computations to the cheapest available warrior for any target. The [[warrior-cyber]] cpu/webgpu/metal backend split demonstrates the pattern at the hardware level; transfer learning scales the same pattern to entire new proving ecosystems.
+New warriors register in [[Atlas]] as packages (`atlas.cyber/warriors/miden`, etc.). The shared TIR encoder — frozen from [[nox]] training — lives as an [[Atlas]] package version; [[warrior-cyber]] (the nox warrior) is the primary and reference warrior, the one against which the encoder is fully trained. Legacy backend decoders are added as companions to the same frozen encoder. [[soft3]]'s `submit()` can route computations to the cheapest available warrior for any target. The [[warrior-cyber]] cpu/webgpu/metal backend split demonstrates the pattern at the hardware level; transfer learning scales the same pattern to entire new proving ecosystems.
 
 ## Motivation
 
 Trident already targets 20 VMs (see [reference/vm.md](../reference/vm.md)). Each new warrior — Miden, SP1, OpenVM, or a future system — requires the neural compiler to learn its specific cost model. Training from scratch requires thousands of (program, proving time) pairs and weeks of compute. Transfer learning reuses the knowledge already encoded in the nox-targeting neural compiler, reducing new-warrior training data requirements to ~10% of the original.
 
-The key insight: TIR-level optimization patterns generalize across warriors. The IR is the same — only the lowering to the specific instruction set changes. The shared encoder learns TIR-level patterns (control flow, data dependencies, field arithmetic idioms); each backend decoder learns its specific lowering and cost model.
+The key insight: TIR-level optimization patterns generalize across warriors. The IR is the same — only the lowering to the specific instruction set changes. The shared encoder learns TIR-level patterns (control flow, data dependencies, field arithmetic idioms) through full training on nox; each legacy backend decoder learns its specific lowering and cost model by fine-tuning on top of that nox-pretrained encoder.
 
 ## Design
 
@@ -28,12 +28,15 @@ The key insight: TIR-level optimization patterns generalize across warriors. The
 The neural compiler is structured as two separable components:
 
 ```
-TIR graph → [SHARED ENCODER] → latent representation → [BACKEND DECODER] → nox patterns / MASM / ...
+TIR graph → [SHARED ENCODER] → latent representation → [NOX DECODER (primary)]
+                                                      → [MASM DECODER (legacy)]
+                                                      → [SP1 DECODER (legacy)]
+                                                      → ...
 ```
 
-The **shared encoder** learns the general structure of Trident programs at the TIR level: control flow patterns, data dependencies, loop structures, field arithmetic idioms. This knowledge is backend-agnostic — it operates purely on the 54 TIR ops across 4 tiers.
+The **shared encoder** learns the general structure of Trident programs at the TIR level: control flow patterns, data dependencies, loop structures, field arithmetic idioms. It is trained primarily on nox — the native VM of the cyber network — and its representations are anchored to nox semantics.
 
-The **backend decoder** learns the specific instruction set and cost model of a particular warrior. For warrior-cyber targeting nox, cost = trace length. For a Miden warrior, cost = Miden cycle count. For an SP1 warrior, cost = SP1 constraint count. The decoder is the only part that must be retrained for a new warrior.
+The **backend decoder** learns the specific instruction set and cost model of a particular warrior. For warrior-cyber targeting nox (the primary target), cost = trace length — the direct input to zheng's STARK witness. Legacy backend decoders (Miden MASM, SP1, EVM, and others in [reference/vm.md](../reference/vm.md)) are secondary targets: they receive the nox-pretrained encoder and add only the backend-specific lowering. The decoder is the only part that must be retrained for a new warrior.
 
 ### Transfer Protocol
 

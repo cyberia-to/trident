@@ -11,7 +11,7 @@ planned: 128K
 
 The order of TIR ops within a dependency-respecting permutation affects [[nox]] proof cost. Two orderings that are both correct (both respect data dependencies) can produce different trace profiles. Interleaving hash-calling TIR ops with arithmetic ops forces the hash jet ([[hemera]]) to be invoked in scattered positions across the [[nox]] trace, potentially inflating its contribution to proof cost. Clustering hash-calling ops reduces jet invocation fragmentation. But the optimal clustering depends on the specific program — what works for one program may worsen another.
 
-Trident optimizes at the TIR level (see `../reference/ir.md` for TIR op definitions), before [[nox]] lowering. Scheduling happens on the TIR dependency DAG: reordering TIR ops within the dependency constraints produces different [[nox]] traces when lowered by [[warrior-cyber]].
+The scheduler works on the TIR dependency DAG to produce the [[nox]] trace with the lowest cost. TIR provides the dependency structure — the 54-op DAG where correctness constraints are visible and provable; [[nox]] trace length is the objective. Reordering TIR ops within the dependency constraints produces different [[nox]] traces when lowered by [[warrior-cyber]].
 
 Learned TIR op scheduling treats ordering as a machine learning problem. A graph neural network on the TIR dependency DAG predicts a priority score for each TIR op. The scheduler executes a greedy topological sort using these priorities. The key property: the scheduler only outputs dependency-respecting permutations — guaranteed by algorithm construction, not by model correctness. Correctness is free. Performance is learned.
 
@@ -71,7 +71,7 @@ Training reveals three robust scheduling heuristics that the GNN discovers witho
 
 **Deferring cheap arithmetic**: Low-cost arithmetic TIR ops are often not on the critical path. Scheduling them late, after jet-invoking ops, avoids inflating trace length during the high-jet-cost phase where bottleneck tracking matters most.
 
-The GNN learns these heuristics from data — thousands of (scheduling → table heights) pairs — without any of these rules being explicitly programmed.
+The GNN learns these heuristics from data — thousands of (scheduling → nox trace lengths) pairs — without any of these rules being explicitly programmed.
 
 ### Training Protocol
 

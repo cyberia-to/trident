@@ -11,7 +11,7 @@ planned: 128K
 
 The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: TIR op sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates TIR and how [[warrior-cyber]] lowers TIR to [[nox]] traces.
 
-Peephole optimization in Trident operates at the TIR level (see `../reference/ir.md`): it rewrites windows of TIR ops before [[nox]] lowering. This is the correct level because [[nox]] is the target — changing TIR op sequences changes which [[nox]] reduction patterns are triggered, which determines both trace_length and jet invocation counts.
+Peephole optimization in Trident operates at the TIR level (see `../reference/ir.md`): it rewrites windows of TIR ops before [[nox]] lowering. This is the correct level because TIR-level rewrites determine which [[nox]] reduction patterns are triggered — changing TIR changes [[nox]]. The goal is cheaper [[nox]] execution: fewer trace steps and fewer jet invocations, which determines both trace_length and jet invocation counts.
 
 Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change at the TIR level, and can we replicate those changes as fast deterministic rules?"
 
@@ -70,7 +70,7 @@ The two systems discover TIR op rewrite patterns at different levels and through
 
 | | Algebraic Identity Explorer | Peephole Learner |
 |--|--|--|
-| **Source** | Field theory, symbolic reasoning over nox patterns | Evolutionary compiler TIR output |
+| **Source** | Field theory, symbolic reasoning over nox patterns | Evolutionary compiler output — TIR diffs that reduce nox costs |
 | **Claim** | "A ≡ B for all inputs" (mathematical, field-theoretic) | "A is usually replaced by B" (empirical) |
 | **Validation** | 4-stage (brute force + symbolic + zheng proof) | Confidence threshold + correctness check |
 | **Rule type** | Universal equivalences over Goldilocks | Compiler-specific TIR heuristics |

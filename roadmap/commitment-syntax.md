@@ -11,7 +11,7 @@ planned: 64K
 
 ## Vision
 
-In the cyber ecosystem, every commitment is a [[hemera]]-addressed particle in the [[cybergraph]]. `commit(v)` = `sponge_absorb(v)` → `sponge_squeeze()` → hemera CID. The commitment particle exists in the graph as a first-class node. Later, `reveal(c)` submits the opening proof as a cyberlink from the commitment particle to the opened value. The verifier calls [[soft3]]'s `verify(commitment_cid, proof)` to check it, reading the cyberlink and validating the [[zheng]] proof inline.
+In the cyber ecosystem, every commitment is a [[hemera]]-addressed particle in the [[cybergraph]]. `commit(v)` = `sponge_absorb(v)` → `sponge_squeeze()` → particle. The commitment particle exists in the graph as a first-class node. Later, `reveal(c)` submits the opening proof as a cyberlink from the commitment particle to the opened value. The verifier calls [[soft3]]'s `verify(commitment_particle, proof)` to check it, reading the cyberlink and validating the [[zheng]] proof inline.
 
 Commitment schemes become a first-class interaction pattern in the knowledge graph, not a one-off cryptographic construction. Every protocol that commits-then-reveals leaves a permanent, proven trail in the [[cybergraph]]: commit particle → reveal cyberlink → opened value particle. The graph accumulates cryptographic history by construction.
 

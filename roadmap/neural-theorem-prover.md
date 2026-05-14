@@ -5,13 +5,13 @@ area: AI
 planned: 128K
 ---
 
-# Neural Theorem Prover for TIR Equivalence
+# Neural Theorem Prover for nox Sequence Equivalence
 
 **Related:** [[algebraic-identity-explorer]] · [[learned-peephole]] · [[neural-decompilation]] · [[cybergraph]] · [[nox]] · [[zheng]] · [[hemera]] · [[Atlas]]
 
 ## Vision
 
-The NTP is the formal verification oracle for the [[cybergraph]]'s program corpus. Every TIR equivalence it proves is a permanent theorem in the knowledge graph — a cyberlink from the LHS TIR to the RHS TIR, with the proof chain as the edge data. Other compilers, other languages, other systems can query this theorem database. In the future, a new proof system that wants to verify a Trident program can look up pre-proved TIR equivalences in the [[cybergraph]] and reuse them. Theorems, once proved, exist forever.
+The NTP is the formal verification oracle for the [[cybergraph]]'s program corpus. Every nox sequence equivalence it proves is a permanent theorem in the knowledge graph — a cyberlink from the LHS nox sequence to the RHS nox sequence, with the TIR rewrite chain as the edge data. Other compilers, other languages, other systems can query this theorem database. In the future, a new proof system that wants to verify a Trident program can look up pre-proved nox sequence equivalences in the [[cybergraph]] and reuse them. Theorems, once proved, exist forever.
 
 The NTP and the [[algebraic-identity-explorer]] form a closed loop: the explorer discovers empirical identities, the NTP formally proves them, the proved theorems become axioms for future explorer searches. Mathematical knowledge compounds. The NTP is a Trident program running on [[nox]], proved by [[zheng]]. Its theorem outputs are particles in the [[cybergraph]], addressed by [[hemera]]. The proof chain for each equivalence is a sequence of cyberlinks. [[Atlas]] distributes the NTP model; the [[cybergraph]] accumulates its output permanently.
 
@@ -19,7 +19,7 @@ The NTP and the [[algebraic-identity-explorer]] form a closed loop: the explorer
 
 Showing that two TIR sequences compute the same function is the core problem of compiler correctness. The algebraic identity explorer validates identities empirically (random testing + Schwartz-Zippel). This is probabilistic: failure probability $< 10^{-7}$ is excellent, but not mathematical certainty. For high-assurance contexts — the identities that form the foundation of the compiler's optimization passes — mathematical proof is required.
 
-A neural theorem prover for TIR equivalence searches for a chain of valid rewrite steps that transforms one TIR sequence into another. Each step is a proven-correct rewrite rule. The chain is a constructive proof of equivalence — not a probabilistic argument, but a step-by-step demonstration that the transformation is valid. Every successful chain is a new peephole pattern. Every new peephole pattern enriches the rewrite vocabulary. The system is self-amplifying.
+A neural theorem prover for nox sequence equivalence searches for a chain of valid TIR rewrite steps that transforms one TIR sequence into another whose nox lowering is identical. Each step is a proven-correct rewrite rule. The chain is a constructive proof of nox equivalence — not a probabilistic argument, but a step-by-step demonstration that the transformation produces the same nox trace. Every successful chain is a new peephole pattern. Every new peephole pattern enriches the rewrite vocabulary. The system is self-amplifying.
 
 ## Design
 

@@ -58,7 +58,7 @@ Proof cost in nox/zheng is `trace_length + sum(jet_costs)`. Every reduction in t
 
 **Rule database**: Each rule carries pattern, replacement, cost_savings (in [[nox]] trace steps), confidence (validation stage 1–4), frequency, layer, discovery date, composable_with list. Applied deterministically before the neural compiler runs. Sorted by (frequency × savings) descending. Longest-match wins for conflicts.
 
-The rule database applies at TIR level (see `../reference/ir.md` for TIR op definitions) and is also consulted by [[learned-peephole]] for its deterministic pass.
+The rule database contains nox pattern sequence equivalences — it is applied during nox code generation, when TIR ops are being lowered to nox reduction patterns. It is also consulted by [[learned-peephole]] for its deterministic pass.
 
 ### The Compounding Flywheel
 

@@ -69,7 +69,7 @@ Decompilation (nox → TIR) is a functor in the opposite direction. A correct co
 
 ## Vision
 
-When the categorical compiler proof is complete, the Trident compiler is the first compiler in history whose correctness is a theorem rather than a test suite result. The proof lives in the [[cybergraph]] as a particle — the [[hemera]] CID of the Lean proof file. Any auditor anywhere can verify the proof by fetching the particle and checking it. The compiler's correctness is not maintained by a team — it is maintained by mathematics, permanently, immutably, in the global knowledge graph.
+When the categorical compiler proof is complete, the Trident compiler is the first compiler in history whose correctness is a theorem rather than a test suite result. The proof lives in the [[cybergraph]] as a particle — the [[hemera]] particle of the Lean proof file. Any auditor anywhere can verify the proof by fetching the particle and checking it. The compiler's correctness is not maintained by a team — it is maintained by mathematics, permanently, immutably, in the global knowledge graph.
 
 The functor theorem applies transitively. Every [[Atlas]] package compiled with Trident benefits automatically: its compilation is correct because the compiler is proved correct. The audit effort for any deployed program collapses to verifying the program's own contracts — not the compiler's behavior, not the lowering passes, not the [[nox]] codegen. Those are all covered by the functor proof. An auditor who trusts the Lean proof needs to read only the source file.
 

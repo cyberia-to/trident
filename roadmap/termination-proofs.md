@@ -92,7 +92,7 @@ This transforms how the network reasons about focus economics. Today, focus pric
 
 ## Stack Integration
 
-[[soft3]]'s `query(cid, dimension)` returns a termination proof alongside the result. The caller knows not just the answer but exactly how expensive the computation was — the [[zheng]] proof commits to it via the [[nox]] trace length. This is the foundation for honest focus pricing: every result comes with a certified computation receipt.
+[[soft3]]'s `query(particle, dimension)` returns a termination proof alongside the result. The caller knows not just the answer but exactly how expensive the computation was — the [[zheng]] proof commits to it via the [[nox]] trace length. This is the foundation for honest focus pricing: every result comes with a certified computation receipt.
 
 [[bbg]] uses termination proofs for focus accounting. When a [[warrior-cyber]] instance submits a completed computation, it submits the [[zheng]] proof (which commits to the trace length) alongside the result. BBG reads the committed step count from the proof, deducts the corresponding focus from the participant's budget, and updates the state. No self-reporting, no estimation — the proof is the bill.
 
