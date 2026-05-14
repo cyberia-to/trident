@@ -12,14 +12,17 @@ Lower layers freeze first.
 Developer preview and request for comment.
 `cargo install trident-lang` · [GitHub](https://github.com/cyberia-to/trident/releases/tag/v0.1.0)
 
-One target before 256k release:
+The primary proving target is self-hosting on the native cyber stack:
+nox + zheng (SuperSpartan + Brakedown), all field arithmetic through
+strata + honeycrisp, hashing through hemera. trisha remains for
+Neptune programs. warrior-cyber is the new primary warrior.
 
-1. Pipeline closes — a `.tri` program executes on nox and produces a
-   zheng proof, verified locally. Trinity runs end-to-end.
+Two milestones define the path:
 
-The primary proving target is nox + zheng (SuperSpartan + Brakedown),
-not Triton. trisha remains for Neptune programs. warrior-cyber is the
-new primary warrior.
+1. Pipeline closes (256K) — a `.tri` program executes on nox and produces
+   a zheng proof, verified locally. Trinity runs end-to-end.
+2. Compiler proves itself (128K) — the .tri compiler runs on nox, warrior-cyber
+   proves the compilation, recursive proof composition makes stage proofs composable.
 
 ```
 Layer           Current   First Release
@@ -99,12 +102,16 @@ Noun        AST→Noun optimized: subject sharing, dead axis elimination, parall
 cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
 cyber stack bbg prototype — persistent state across 10 dimensions
 cyber stack GPU proving via aruminium (Metal compute shaders for large traces)
-warrior     warrior-cyber full — hint support, os.cyber.* programs, on-chain deploy
+cyber stack recursive proof composition — zheng verifier written in .tri, runs on nox;
+            warrior-cyber proves the verifier's execution; stage proofs compose.
+            prerequisite for self-hosting: each compiler stage proves itself,
+            next stage verifies the previous proof as part of its own nox execution.
+warrior     warrior-cyber full — recursive composition, os.cyber.* programs, on-chain deploy
 compiler    ✓ All 6 stages + pipeline rewritten in .tri (9,195 LOC)
               lexer (824) → parser (2,723) → typecheck (1,502) →
               codegen (1,979) → optimize (733) → lower (1,121) →
               pipeline (313)
-              wire lower → warrior-cyber (self-hosting compilation)
+              wire lower → warrior-cyber (self-hosting compilation via recursive proofs)
 std.*       std.token, std.coin, std.card shipped
 os.*        os.neptune.* complete, Atlas on-chain registry live
 AI          five-algebra type primitives land — Bit (kuro), Lattice (jali),

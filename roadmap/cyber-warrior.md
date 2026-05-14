@@ -245,12 +245,15 @@ honeycrisp    = { path = "../honeycrisp" }   # aruminium + acpu + unimem
 
 - Network deployment (radio, bbg) — local only
 - os.cyber.* programs — trident + nox target only, no OS layer
-- Recursive proof composition — flat proofs only
 - ANE (rane) acceleration — inference runtime path, not prover path
 
-These are 128K items. The PoC proves that the pipeline closes across all
-three proving backends, including full hint/witness support for trinity.
-Correctness before networked deployment.
+These are 128K items. Recursive proof composition is also a 128K item:
+at 128K, the zheng verifier is written in .tri and runs on nox, so
+warrior-cyber proves the verifier's execution — that is recursion.
+Self-hosting compilation (compiler proving its own stages) depends on it.
+
+The 256K PoC proves the pipeline closes with a flat trace: one program,
+one proof, all three backends. Correctness before recursive composition.
 
 ## relationship to trisha
 
