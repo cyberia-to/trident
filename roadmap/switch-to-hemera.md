@@ -8,7 +8,7 @@ Trident currently uses two hash functions:
 - **BLAKE3** (external crate) — only for Poseidon2 round constant generation
 - **Custom Poseidon2** (two implementations) — content addressing, program digests
 
-Hemera (`cyber-hemera` on crates.io, `/Users/master/cyberia-to/hemera/`) is
+Hemera (`cyber-hemera` on crates.io, `/Users/master/cyber/hemera/`) is
 the canonical hash primitive of the cyber stack. Parameters are fixed:
 Poseidon2 sponge over Goldilocks (p = 2^64 - 2^32 + 1), d=7, t=16, Rf=8,
 Rp=16. Output: 4 field elements × 8 bytes = 32 bytes (displayed as 64 hex
