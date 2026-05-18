@@ -6,6 +6,8 @@
 
 use nox::noun::{Order, NounId, Noun};
 
+pub mod arm64_encoders;
+pub mod arm64_lir;
 pub mod wasm;
 pub mod arm64;
 pub mod rv32;
@@ -88,7 +90,7 @@ pub fn axis_to_param(axis: u64) -> Result<u32, CompileError> {
 
 /// Extract pattern tag and body from a formula noun.
 pub fn formula_parts<const N: usize>(order: &Order<N>, formula: NounId) -> Result<(u64, NounId), CompileError> {
-    match order.get(formula).inner {
+    match order.get(formula).unwrap().inner {
         Noun::Cell { left, right } => {
             match order.atom_value(left) {
                 Some((v, _)) => Ok((v.as_u64(), right)),
@@ -101,7 +103,7 @@ pub fn formula_parts<const N: usize>(order: &Order<N>, formula: NounId) -> Resul
 
 /// Extract binary op pair [a b] from body.
 pub fn body_pair<const N: usize>(order: &Order<N>, body: NounId) -> Result<(NounId, NounId), CompileError> {
-    match order.get(body).inner {
+    match order.get(body).unwrap().inner {
         Noun::Cell { left, right } => Ok((left, right)),
         _ => Err(CompileError::Malformed),
     }
@@ -116,7 +118,7 @@ pub fn body_triple<const N: usize>(order: &Order<N>, body: NounId) -> Result<(No
 
 /// Get atom value from a noun (for quote literals).
 pub fn atom_u64<const N: usize>(order: &Order<N>, r: NounId) -> Result<u64, CompileError> {
-    match order.get(r).inner {
+    match order.get(r).unwrap().inner {
         Noun::Atom { value, .. } => Ok(value.as_u64()),
         _ => Err(CompileError::Malformed),
     }

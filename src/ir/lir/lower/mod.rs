@@ -12,6 +12,7 @@
 //! which produces assembly text for stack machines.
 
 use super::LIROp;
+use crate::compile::arm64_lir::Arm64LirBackend;
 
 /// Lowers LIR operations into target machine code (binary).
 pub trait RegisterLowering {
@@ -28,7 +29,9 @@ pub trait RegisterLowering {
 }
 
 /// Create a register-lowering backend for the given target name.
-pub fn create_register_lowering(_target: &str) -> Option<Box<dyn RegisterLowering>> {
-    // No backends implemented yet. Implementers add match arms here.
-    None
+pub fn create_register_lowering(target: &str) -> Option<Box<dyn RegisterLowering>> {
+    match target {
+        "arm64" | "aarch64" => Some(Box::new(Arm64LirBackend::new())),
+        _ => None,
+    }
 }

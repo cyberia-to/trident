@@ -119,17 +119,26 @@ pub enum LIROp {
     // I/O, memory, hashing, events, storage.
     // ═══════════════════════════════════════════════════════════════
 
-    // ── Register (2) ──
+    // ── Register (3) ──
     /// Load an immediate value into a register.
     LoadImm(Reg, u64),
     /// Register-to-register move.
     Move(Reg, Reg),
+    /// Load the address of a named global symbol into dst.
+    /// Emits ADRP+ADD on arm64, LEA on x86_64, AUIPC+ADDI on rv64.
+    LoadAddr { dst: Reg, symbol: String },
 
-    // ── Arithmetic (15) ──
-    /// dst = src1 + src2 (mod p)
+    // ── Arithmetic (19) ──
+    /// dst = src1 + src2 (wrapping for native targets; mod p for proof targets)
     Add(Reg, Reg, Reg),
-    /// dst = src1 * src2 (mod p)
+    /// dst = src1 - src2 (wrapping)
+    Sub(Reg, Reg, Reg),
+    /// dst = src1 * src2 (wrapping low 64 bits for native; mod p for proof)
     Mul(Reg, Reg, Reg),
+    /// dst = -src (wrapping negation)
+    Neg(Reg, Reg),
+    /// dst = !src (bitwise NOT)
+    Not(Reg, Reg),
     /// dst = (src1 == src2) ? 1 : 0
     Eq(Reg, Reg, Reg),
     /// dst = (src1 < src2) ? 1 : 0
@@ -285,8 +294,12 @@ impl fmt::Display for LIROp {
             // Tier 1
             LIROp::LoadImm(dst, val) => write!(f, "li {}, {}", dst, val),
             LIROp::Move(dst, src) => write!(f, "mv {}, {}", dst, src),
+            LIROp::LoadAddr { dst, symbol } => write!(f, "la {}, {}", dst, symbol),
             LIROp::Add(d, a, b) => write!(f, "add {}, {}, {}", d, a, b),
+            LIROp::Sub(d, a, b) => write!(f, "sub {}, {}, {}", d, a, b),
             LIROp::Mul(d, a, b) => write!(f, "mul {}, {}, {}", d, a, b),
+            LIROp::Neg(d, s) => write!(f, "neg {}, {}", d, s),
+            LIROp::Not(d, s) => write!(f, "not {}, {}", d, s),
             LIROp::Eq(d, a, b) => write!(f, "eq {}, {}, {}", d, a, b),
             LIROp::Lt(d, a, b) => write!(f, "lt {}, {}, {}", d, a, b),
             LIROp::And(d, a, b) => write!(f, "and {}, {}, {}", d, a, b),
