@@ -17,7 +17,7 @@ The state jet recognition in the NoxLowering backend — where the compiler emit
 
 [[warrior-cyber]] executes the nox formulas emitted by NoxLowering across three backends: cpu (AMX), webgpu (WGSL), metal (aruminium). The same compiled noun runs on a server, a browser, or a mobile device — the backend adapts, the proof remains valid everywhere. [[zheng]] (SuperSpartan IOP + Brakedown PCS) verifies the execution trace in sub-millisecond time regardless of which backend ran it.
 
-The [[CORE]] reduction patterns — 16 patterns that define the substrate's evaluation semantics — are what NoxLowering maps Trident TIR onto. NoxLowering is not just a code generator; it is an encoding of CORE's formal semantics into Trident's compilation pipeline. When CORE is updated, NoxLowering must reflect the change exactly — the two are in lockstep.
+The [[CORE]] reduction patterns — 18 patterns (16 compute + call + look) that define the substrate's evaluation semantics — are what NoxLowering maps Trident TIR onto. NoxLowering is not just a code generator; it is an encoding of CORE's formal semantics into Trident's compilation pipeline. When CORE is updated, NoxLowering must reflect the change exactly — the two are in lockstep.
 
 Programs deployed via this target are registered in [[Atlas]] as content-addressed packages. The package particle is a [[hemera]] hash of the compiled noun. Future invocations retrieve the package from [[Atlas]], execute via [[nox]], and cache results in [[cybergraph]]. The entire lifecycle — compile, deploy, execute, prove, cache — is mediated by the same content-addressed identity system.
 
@@ -25,19 +25,19 @@ Programs deployed via this target are registered in [[Atlas]] as content-address
 
 trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the polynomial proof system: proof-carrying execution, ~2 KiB proofs via Brakedown PCS, O(1) data access via polynomial nouns, 3-5 constraint state operations via state jets, and an 89-constraint decider that verifies all history.
 
-no language change. no new syntax. one new compilation backend (NoxLowering). the proof system — nox + zheng (SuperSpartan IOP + Brakedown PCS) — becomes available to every `.tri` program. see [`../reference/vm.md`](../reference/vm.md) for nox's 16 reduction patterns and 5 jets.
+no language change. no new syntax. one new compilation backend (NoxLowering). the proof system — nox + zheng (SuperSpartan IOP + Brakedown PCS) — becomes available to every `.tri` program. see [`../reference/vm.md`](../reference/vm.md) for nox's 18 patterns (16 compute + call + look) and 5 jets.
 
 ## what changes
 
 ### new engine: nox
 
 ```
-trident → NoxLowering → nox formula (16 patterns) → proof-carrying execution → done
+trident → NoxLowering → nox formula (18 patterns) → proof-carrying execution → done
 ```
 
 NoxLowering is structurally similar to the existing TreeLowering (Nock target). both emit tree-structured combinators. the difference:
 - Nock: 12 rules, natural number arithmetic, increment-based
-- nox: 16 patterns, [[Goldilocks field]] arithmetic, inverse, hash, hint
+- nox: 18 patterns (16 compute + call + look), [[Goldilocks field]] arithmetic, inverse, hash, witness injection
 
 the mapping:
 
@@ -52,7 +52,7 @@ the mapping:
 | construction | Nock cons | nox pattern 3 (cons) |
 | function call | Nock 9 (invoke) | nox pattern 2 (compose) |
 | hash | not native | nox pattern 15 (hemera) |
-| witness | not native | nox pattern 16 (hint) |
+| witness | not native | nox pattern 16 (call) |
 
 nox is a STRICT UPGRADE over Nock for trident: every Nock operation maps to a nox pattern, plus field arithmetic (O(1) instead of increment loops), cryptographic hash (native), and witness injection (privacy).
 
@@ -136,7 +136,8 @@ nox cost model:
   patterns 5-10:        1 field op each (field arithmetic)
   patterns 11-14:       1 field op each (bitwise, but ~32 constraints in F_p)
   pattern 15 (hash):    736 constraints (hemera, rare — ~3 per execution)
-  pattern 16 (hint):    1 (witness injection)
+  pattern 16 (call):    1 (witness injection)
+  pattern 17 (look):    1 (BBG state read)
 
   fold overhead:        +30 field ops per step (proof-carrying)
 
@@ -232,7 +233,7 @@ With the polynomial noun representation feeding directly into [[zheng]]'s constr
 phase 1: NoxLowering backend                          ~4 sessions
   add vm/nox/ engine config
   implement NoxLowering trait (similar to TreeLowering)
-  map TIR operations to nox 16 patterns
+  map TIR operations to nox 18 patterns (16 compute + call + look)
   emit nox formulas from trident AST
 
 phase 2: hemera migration                              ~2 sessions
@@ -279,6 +280,6 @@ trident's 14 algebraically irreducible languages ALL compile through nox:
 | Bt | F₂ tower | F₂ | Binius | binary ops native |
 | Rs | Z/2ⁿ words | split | split | systems programming proved |
 
-14 languages → 16 nox patterns → 1 polynomial proof system → ~2 KiB proofs, ~5 μs verify.
+14 languages → 18 nox patterns → 1 polynomial proof system → ~2 KiB proofs, ~5 μs verify.
 
-see [[polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[recursive brakedown]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
+see [[polynomial proof system]] for the proof architecture, [[nox]] for the 18 patterns (16 compute + call + look), [[polynomial nouns]] for the data model, [[recursive brakedown]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash

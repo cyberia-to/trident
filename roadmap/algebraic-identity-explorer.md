@@ -46,7 +46,7 @@ Proof cost in nox/zheng is `trace_length + sum(jet_costs)`. Every reduction in t
 
 ### Discovery Architecture
 
-**Proposer (GFlowNet)**: Generates candidate [[nox]] pattern sequence pairs (sequence_A, sequence_B) — the claim being that both sequences compute the same function. Input: known identity database, [[nox]] reduction pattern vocabulary (16 patterns + 5 jets + 1 hint), frequency data from real programs. Output: candidate pairs of 2–12 pattern applications. Reward: identity_found × usefulness_score. Diversity maintained via GFlowNet sampling.
+**Proposer (GFlowNet)**: Generates candidate [[nox]] pattern sequence pairs (sequence_A, sequence_B) — the claim being that both sequences compute the same function. Input: known identity database, [[nox]] reduction pattern vocabulary (18 patterns + 5 jets), frequency data from real programs. Output: candidate pairs of 2–12 pattern applications. Reward: identity_found × usefulness_score. Diversity maintained via GFlowNet sampling.
 
 **Validator (4 stages)**:
 1. Execute both nox sequences on 10,000 random inputs — any output disagreement rejects immediately

@@ -32,7 +32,7 @@ Two programs are equivalent (equal as morphisms) if they produce identical outpu
 ### The nox Category
 
 Objects: nox state types (sequences of field elements on the nox stack)
-Morphisms: nox instruction sequences (drawn from nox's 16 patterns + 1 hint + 5 jets)
+Morphisms: nox instruction sequences (drawn from nox's 18 patterns + 5 jets)
 Composition: sequential reduction
 Identity: the empty reduction sequence
 
@@ -77,7 +77,7 @@ This is the end-state of [[CORE]] as self-verifying substrate: the 16 [[nox]] pa
 
 ## Stack Integration
 
-The compiler functor theorem spans the full pipeline from Trident types to [[nox]] instruction sequences (the 16 patterns + 1 hint + 5 jets). Each [[galois-optimization]] rewrite that fires at the TIR level must be a natural transformation between compiler functors — the categorical framework is the criterion for whether an optimization is sound. [[zheng]] verifies the output of each compilation via SuperSpartan over the [[nox]] trace; the functor proof guarantees the trace is the correct trace. These two verification layers — categorical proof of compiler structure, and proof-system verification of program execution — are complementary and non-redundant.
+The compiler functor theorem spans the full pipeline from Trident types to [[nox]] instruction sequences (18 patterns + 5 jets). Each [[galois-optimization]] rewrite that fires at the TIR level must be a natural transformation between compiler functors — the categorical framework is the criterion for whether an optimization is sound. [[zheng]] verifies the output of each compilation via SuperSpartan over the [[nox]] trace; the functor proof guarantees the trace is the correct trace. These two verification layers — categorical proof of compiler structure, and proof-system verification of program execution — are complementary and non-redundant.
 
 ## Key Tradeoffs
 
@@ -88,7 +88,7 @@ The compiler functor theorem spans the full pipeline from Trident types to [[nox
 ## Implementation Path
 
 1. Formalize Trident's core type system in Lean (types + function types, no dependent types first)
-2. Formalize nox semantics (stack machine, 16 patterns + 1 hint + 5 jets, instruction denotations)
+2. Formalize nox semantics (stack machine, 18 patterns + 5 jets, instruction denotations)
 3. Formalize TIR semantics (54 ops, 4 tiers — `reference/ir.md` is the specification)
 4. Prove $\mathcal{C}_1$ (TIR lowering) preserves morphism equivalence for each of the 54 TIR ops
 5. Prove $\mathcal{C}_2$ (nox codegen) preserves morphism equivalence

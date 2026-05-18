@@ -60,7 +60,7 @@ Double-clicking a source line jumps to it in the editor. The connection between 
 
 The explorer overlays "hot zone" markers when the trace length approaches a power-of-2 cliff within a configurable margin (default: 5% of the cliff value). These are displayed in orange and red in the overview and in the source annotation view.
 
-The hot zone detection is automatic. The developer does not need to know the power-of-2 boundaries — the explorer knows them and highlights the dangerous proximity. nox's 16 patterns + 1 hint + 5 jets each carry known step costs; the explorer aggregates these from the source map.
+The hot zone detection is automatic. The developer does not need to know the power-of-2 boundaries — the explorer knows them and highlights the dangerous proximity. nox's 18 patterns + 5 jets each carry known step costs; the explorer aggregates these from the source map.
 
 ### Impact Simulation
 

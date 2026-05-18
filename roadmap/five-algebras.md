@@ -109,7 +109,7 @@ pub struct Fate { output: Digest, proof: Iso }  // VRF output + proof
 pub struct Pact { secret: Digest }              // agreed shared secret
 ```
 
-Walk is a struct, not a primitive: exponents are small integers ([u32; 74] in nebu regime), not F_q elements. group_action jet takes Walk + Iso → Iso. the cross-regime boundary (nebu → genies) happens INSIDE the jet. Walk enters via hint (Layer 2) because it is secret.
+Walk is a struct, not a primitive: exponents are small integers ([u32; 74] in nebu regime), not F_q elements. group_action jet takes Walk + Iso → Iso. the cross-regime boundary (nebu → genies) happens INSIDE the jet. Walk enters via call (Layer 2, pattern 16) because it is secret.
 
 ### type → regime mapping
 

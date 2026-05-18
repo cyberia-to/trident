@@ -11,7 +11,7 @@ planned: 128K
 
 The [[algebraic-identity-explorer]] discovers identities from field theory — it knows that a pattern is equivalent to another pattern because both represent the same mathematical function over Goldilocks. But not all valuable compiler patterns are algebraic identities. Some are compiler-specific heuristics: nox reduction sequences that, in practice, consistently appear in suboptimal programs and can be replaced with cheaper alternatives — not because of field-theoretic equivalence, but because of how the Trident compiler generates nox sequences and how [[warrior-cyber]] proves them via [[zheng]].
 
-Peephole optimization operates on nox reduction sequences (22-op vocabulary: 16 reduction patterns + 1 hint + 5 jets). The goal is cheaper [[nox]] execution: fewer trace steps and fewer jet invocations, which determines both trace_length and jet invocation counts.
+Peephole optimization operates on nox reduction sequences (23-op vocabulary: 18 patterns + 5 jets). The goal is cheaper [[nox]] execution: fewer trace steps and fewer jet invocations, which determines both trace_length and jet invocation counts.
 
 Learned peephole patterns extract these compiler-specific heuristics from observing the difference between naive compiler output and evolved (optimized) compiler output. Where the algebraic explorer asks "what is mathematically equivalent?", the peephole learner asks "what did the evolutionary compiler change at the nox level, and can we replicate those changes as fast deterministic rules?"
 
@@ -47,11 +47,11 @@ The patterns from the [[algebraic-identity-explorer]] (validated field-theoretic
 
 **Step 2**: Align and diff at nox operation level. Find the minimal set of local changes that transforms the naive nox sequence into the evolved nox sequence. This produces per-window changes: `{position: 47, before: [OpA, OpB, OpC], after: [OpD, OpE]}`.
 
-**Step 3**: Train the peephole CNN. The model sees a window (5–8 nox operations, each one of 22 kinds: 16 patterns + 1 hint + 5 jets) and predicts whether it should be rewritten and, if so, which replacement from a learned vocabulary:
+**Step 3**: Train the peephole CNN. The model sees a window (5–8 nox operations, each one of 23 kinds: 18 patterns + 5 jets) and predicts whether it should be rewritten and, if so, which replacement from a learned vocabulary:
 
 ```
 Architecture:
-  Input: window of 8 nox operation encodings (each: op_kind [22 kinds] + operand types)
+  Input: window of 8 nox operation encodings (each: op_kind [23 kinds] + operand types)
   Conv1D(kernel=5, filters=32) → ReLU
   Conv1D(kernel=3, filters=32) → ReLU
   GlobalPool

@@ -8,14 +8,14 @@ rationale, proof composition examples, and skill architecture.
 
 ---
 
-## 1. The 10-Field Leaf Model
+## 1. The 10-Field Box
 
-Every PLUMB leaf contains exactly 10 field elements. The first 5 are
+Every PLUMB box contains exactly 10 field elements. The first 5 are
 shared across all standards. The last 5 are standard-specific.
 
 ```
-leaf = hash(id, value, nonce, auth_hash, lock_until,
-            standard_field_5, ..., standard_field_9)
+box = (id, value, nonce, auth_hash, lock_until,
+       standard_field_5, ..., standard_field_9)
 ```
 
 | Position | Framework name | TSP-1 (Coin) | TSP-2 (Card) |
@@ -90,9 +90,9 @@ config = hash(admin_auth, pay_auth, lock_auth, mint_auth, burn_auth,
 
 ### Auth Hash
 
-Every leaf stores `auth_hash = hash(secret)`. To authorize an operation,
+Every box stores `auth_hash = hash(secret)`. To authorize an operation,
 the prover divines the secret and the circuit verifies
-`hash(secret) == leaf.auth_hash`. The secret is never revealed — only
+`hash(secret) == box.auth_hash`. The secret is never revealed — only
 proven to exist. Any preimage scheme works (private key, multisig hash,
 biometric hash), providing account abstraction at the protocol level.
 
@@ -105,16 +105,16 @@ operation to succeed.
 
 ### Controller Authorization
 
-When `leaf.controller != 0` (TSP-1), every operation additionally
+When `box.controller != 0` (TSP-1), every operation additionally
 requires a composed proof from the controller program. Enables
-program-controlled accounts: fund collateral, escrow, protocol
+program-controlled boxes: fund collateral, escrow, protocol
 treasuries.
 
 ---
 
 ## 4. Nonce and Replay Prevention
 
-Every leaf contains a monotonic `nonce` counter. On every state change,
+Every box contains a monotonic `nonce` counter. On every state change,
 `nonce += 1`. The circuit rejects any proof where the new nonce is not
 exactly `old_nonce + 1`.
 
@@ -124,7 +124,7 @@ On state-changing operations, a nullifier is emitted:
 nullifier = hash(id, old_nonce)
 ```
 
-The nullifier uniquely identifies the consumed leaf state. The consensus
+The nullifier uniquely identifies the consumed box state. The consensus
 layer rejects duplicate nullifiers, preventing replay of old proofs
 against current state.
 
@@ -140,8 +140,8 @@ Every PLUMB operation follows this verification pattern:
 4. Verify authorization (account auth, dual auth if authority != 0)
 5. Verify time-lock (`current_time >= lock_until`) where applicable
 6. Apply state transition (standard-specific constraints)
-7. Update Merkle root (old leaf → new leaf)
-8. Emit nullifier for consumed leaf state
+7. Update Merkle root (old box → new box)
+8. Emit nullifier for consumed box
 9. Emit public I/O (op code, old root, new root, amounts, config digest)
 
 The proof envelope guarantees that every operation is bound to an
@@ -155,7 +155,7 @@ change.
 | Op | Name | Purpose | Modifies state | Modifies supply/count |
 |----|------|---------|:--------------:|:---------------------:|
 | 0 | Pay | Transfer value or ownership | Yes | No |
-| 1 | Lock | Time-lock leaf until future timestamp | Yes | No |
+| 1 | Lock | Time-lock box until future timestamp | Yes | No |
 | 2 | Update | Change token configuration | No | No |
 | 3 | Mint | Create new value or asset | Yes | Yes (+) |
 | 4 | Burn | Destroy value or asset | Yes | Yes (-) |
@@ -183,12 +183,12 @@ as new `config_hash`.
 
 **Op 3 — Mint:**
 Config verified. `mint_auth != 0` (zero = minting disabled). Mint
-authorization verified against `config.mint_auth`. New leaf inserted
+authorization verified against `config.mint_auth`. New box inserted
 into tree. Supply/count incremented.
 
 **Op 4 — Burn:**
 Config verified. Account auth required. Dual auth if `burn_auth != 0`.
-`current_time >= lock_until`. Nonce incremented. Leaf removed or zeroed.
+`current_time >= lock_until`. Nonce incremented. Box removed or zeroed.
 Supply/count decremented.
 
 ---
@@ -196,11 +196,11 @@ Supply/count decremented.
 ## 7. Merkle Tree
 
 - Binary tree of depth `TREE_DEPTH` (e.g. 20)
-- Leaf: `hash(field_0, ..., field_9)` — the 10-field leaf hash
+- Leaf node: `hash(box.field_0, ..., box.field_9)` — box commitment hash
 - Internal node: `hash(left[0..5], right[0..5])`
 - Root is the public state commitment
 
-Every operation proves a Merkle inclusion path from the leaf to the
+Every operation proves a Merkle inclusion path from the box to the
 root, applies the state transition, and produces a new root. The
 verifier checks that the old root matches the current on-chain state
 and that the new root is correctly derived.
@@ -213,7 +213,7 @@ Each token maintains these public values on-chain:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `state_root` | Digest | Merkle root of all leaves |
+| `state_root` | Digest | Merkle root of all boxes |
 | `supply` or `count` | Field | Total value (TSP-1: sum of balances) or total items (TSP-2: number of assets) |
 | `config_hash` | Digest | Token configuration commitment |
 | `metadata_hash` | Digest | Token or collection metadata commitment |

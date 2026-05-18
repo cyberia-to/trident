@@ -11,7 +11,7 @@ planned: 128K
 
 The order of [[nox]] reductions within a dependency-respecting permutation affects proof cost. Two orderings that are both correct (both respect data dependencies) can produce different trace profiles. Interleaving hash-calling reductions with arithmetic reductions forces the hash jet ([[hemera]]) to be invoked in scattered positions across the trace, potentially inflating its contribution to proof cost. Clustering hash-calling reductions minimizes jet invocation fragmentation. But the optimal clustering depends on the specific program — what works for one program may worsen another.
 
-[[nox]] has 22 operations: 16 deterministic reduction patterns, 1 hint (Layer 2), and 5 jets (hash, poly_eval, merkle_verify, fri_fold, ntt). Scheduling is the problem of ordering these operations, within the constraints imposed by data dependencies, to minimize total proof cost: `trace_length + sum(jet_costs)`.
+[[nox]] has 23 operations: 18 patterns (16 deterministic compute + call (Layer 2) + look (Layer 2)), and 5 jets (hash, poly_eval, merkle_verify, fri_fold, ntt). Scheduling is the problem of ordering these operations, within the constraints imposed by data dependencies, to minimize total proof cost: `trace_length + sum(jet_costs)`.
 
 Learned [[nox]] reduction scheduling treats ordering as a machine learning problem. A graph neural network on the [[nox]] computation dependency DAG predicts a priority score for each operation. The scheduler executes a greedy topological sort using these priorities. The key property: the scheduler only outputs dependency-respecting permutations — guaranteed by algorithm construction, not by model correctness. Correctness is free. Performance is learned.
 
@@ -27,7 +27,7 @@ Stack integration: The scheduling GNN operates directly on the [[nox]] computati
 
 ### Problem Formulation
 
-Input: [[nox]] computation dependency DAG — a directed acyclic graph where each node is a [[nox]] operation (one of 22: 16 reduction patterns, 1 hint, 5 jets) and each edge is a data or control dependency.
+Input: [[nox]] computation dependency DAG — a directed acyclic graph where each node is a [[nox]] operation (one of 23: 18 patterns + 5 jets) and each edge is a data or control dependency.
 
 Output: a topological ordering of the DAG — the [[nox]] reduction sequence, with all dependencies respected and jet invocations clustered for minimum trace cost.
 
@@ -46,7 +46,7 @@ A Graph Neural Network is the natural architecture for this problem: the input (
 
 ```
 For each node (nox operation):
-  node_features = [op_kind (22 kinds: 16 patterns + 1 hint + 5 jets),
+  node_features = [op_kind (23 kinds: 18 patterns + 5 jets),
                    is_jet (bool), jet_kind (0–4),
                    estimated_nox_cost, distance_to_root, distance_to_leaf]
 

@@ -126,7 +126,7 @@ What NounBuilder replaces:
 | `if c { a } else { b }` | branch (4) | `[4 [c_noun] [a_noun] [b_noun]]` |
 | `f(x)` | compose (2) | `[2 [x_subject] [f_formula]]` |
 | `42` | quote (1) | `[1 42]` |
-| `secret_read()` | hint (16) | `[16 [constraint] [formula]]` |
+| `secret_read()` | call (16) | `[16 [constraint] [formula]]` |
 | `(a, b)` | cons (3) | `[3 [a_noun] [b_noun]]` |
 | `s.field` | axis (0) | `[0 axis_of_field]` |
 
@@ -378,7 +378,7 @@ Pattern costs (canonical):
   lt (10): 1 (exec), ~64 (constraints)
   bitwise (11-14): 1 (exec), ~32 (constraints)
   hash (15): 200
-  hint (16): 1 + sub-costs
+  call (16): 1 + sub-costs
 ```
 
 Focus cost is calculable at compile time from the noun tree.

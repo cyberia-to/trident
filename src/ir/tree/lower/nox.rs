@@ -21,7 +21,7 @@ use crate::ast::{self, BinOp, Block, Expr, FnDef, Item, Literal, Pattern, Stmt};
 use crate::span::Spanned;
 use super::Noun;
 
-// ─── nox formula constructors (tags 0-16) ────────────────────────
+// ─── nox formula constructors (tags 0-17) ────────────────────────
 
 fn nox_axis(addr: u64) -> Noun {
     Noun::cell(Noun::atom(0), Noun::atom(addr))

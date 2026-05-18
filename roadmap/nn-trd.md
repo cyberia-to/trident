@@ -19,7 +19,7 @@ A neural network whose every inference produces a valid [[nox]] trace is a world
 
 ## Vision
 
-`std.nn` is the first provable neural network library in any programming language. When a developer trains a model using `std.nn` and deploys it to [[Atlas]], every inference call produces a [[zheng]] proof. The model's predictions are not just outputs — they are verified computations. In the cyber ecosystem, an AI agent's recommendations carry proofs: "I classified this input as X, and here is the mathematical proof that my inference circuit computed correctly." Privacy (via the hint mechanism) means the input can remain private while the output is publicly proved.
+`std.nn` is the first provable neural network library in any programming language. When a developer trains a model using `std.nn` and deploys it to [[Atlas]], every inference call produces a [[zheng]] proof. The model's predictions are not just outputs — they are verified computations. In the cyber ecosystem, an AI agent's recommendations carry proofs: "I classified this input as X, and here is the mathematical proof that my inference circuit computed correctly." Privacy (via the call mechanism, pattern 16) means the input can remain private while the output is publicly proved.
 
 `std.nn` runs on [[nox]]. Every `matmul`, `layer_norm`, `activation` is a [[nox]] trace segment. The [[cybergraph]] memoizes common inference patterns — if the same layer computation has been proved before (same weights, same input hash via [[hemera]]), the result is fetched from cache with zero compute.
 

@@ -45,7 +45,7 @@ production path once `trident build --target nox` is wired to emit bundles).
 trident::build_noun(src)        # NounBuilder: AST → Noun
     │
     ▼
-nox::reduce(noun, input, calls) # 16 patterns + 1 hint (pattern 16) + 5 jets
+nox::reduce(noun, input, calls) # 18 patterns (16 compute + call + look) + 5 jets
     │  calls: FifoCallProvider from witness tape
     │  returns (output, ExecutionTrace)   ← nox trace length = reduction step count
     ▼
@@ -63,7 +63,7 @@ zheng::verify(proof, claim)     # verifier: < 100ms on M-series
 nox's 7-field `ask(ν, object, formula, τ, a, v, t)` maps to a cyberlink.
 Execution and proof are one act — the nox trace IS the zheng witness.
 
-## hint — non-deterministic witness
+## call — non-deterministic witness (pattern 16)
 
 nox Layer 2 is pattern 16 (`call_witness`). The prover injects a witness
 atom; the pattern evaluates a `check_formula` against it; if check returns 0
@@ -256,7 +256,7 @@ honeycrisp    = { path = "../honeycrisp" }   # aruminium + acpu + unimem
 
 [[warrior-cyber]] is the runtime of planetary collective intelligence. Every device — phone, laptop, server, GPU cluster — runs warrior-cyber and participates in the proving network. Programs written in Trident for the trinity neural network example execute on [[nox]], produce [[zheng]] proofs, and publish their results as cyberlinks in the [[cybergraph]]. The system is self-reinforcing: more devices provide more proving capacity, which lowers focus prices, which encourages more programs to run, which creates more cyberlinks, which enriches the graph, which enables better memoization, which means fewer computations need to execute at all.
 
-The hint mechanism (Layer 2, FifoCallProvider) is where privacy enters. The trinity program's encrypted inputs — the secret key `s`, all intermediate ciphertexts — never appear in the proof. Only the verified output does. This is the [[bbg]] privacy model made concrete: individual neural activations are private, the final classification is public and proved. The [[zheng]] verifier learns nothing about the secret key beyond the fact that the decryption satisfied the noise bound. Privacy is not added on top of the proof system — it is built into the [[nox]] reduction semantics at pattern 16.
+The call mechanism (Layer 2, pattern 16, FifoCallProvider) is where privacy enters. The trinity program's encrypted inputs — the secret key `s`, all intermediate ciphertexts — never appear in the proof. Only the verified output does. This is the [[bbg]] privacy model made concrete: individual neural activations are private, the final classification is public and proved. The [[zheng]] verifier learns nothing about the secret key beyond the fact that the decryption satisfied the noise bound. Privacy is not added on top of the proof system — it is built into the [[nox]] reduction semantics at pattern 16.
 
 The three backends are not alternatives — they are a hierarchy. The metal backend with aruminium and unimem zero-copy is optimal for Apple Silicon; the webgpu backend covers every other GPU; the cpu backend covers everything else. [[bbg]] selects based on hardware availability, focus budget, and proof deadline. All three produce identical [[zheng]] proofs. The proof is the proof regardless of which backend generated it.
 

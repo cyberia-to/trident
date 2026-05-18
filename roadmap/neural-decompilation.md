@@ -31,7 +31,7 @@ Why is this valuable? Three reasons:
 
 ### Model Architecture
 
-Sequence-to-graph: the input is a nox instruction sequence (a 1D sequence of tokens from nox's 16 patterns + 1 hint + 5 jets); the output is a TIR graph (a directed acyclic graph of 54 ops across 4 tiers, as defined in [reference/ir.md](../reference/ir.md)).
+Sequence-to-graph: the input is a nox instruction sequence (a 1D sequence of tokens from nox's 18 patterns + 5 jets); the output is a TIR graph (a directed acyclic graph of 54 ops across 4 tiers, as defined in [reference/ir.md](../reference/ir.md)).
 
 ```
 Input: nox instruction sequence (up to 256 instructions)
@@ -137,7 +137,7 @@ pub struct NeuralDecompiler {
 
 impl NeuralDecompiler {
     pub fn decompile(&self, trace: &NoxTrace) -> TirGraph {
-        let tokens = tokenize(trace);  // nox patterns: 16 patterns + 1 hint + 5 jets
+        let tokens = tokenize(trace);  // nox patterns: 18 patterns + 5 jets
         let encoded = self.encoder.forward(&tokens);
 
         // Autoregressive graph construction:

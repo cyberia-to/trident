@@ -48,7 +48,7 @@ The type checker enforces the constraint: if a function is annotated `ArithOnly`
 
 ### Subset Syntax
 
-For more granular control, operation constraint types use set operations over the nox operation taxonomy (16 patterns + 5 jets):
+For more granular control, operation constraint types use set operations over the nox operation taxonomy (18 patterns + 5 jets):
 
 ```trident
 // Subset constraint: only arithmetic patterns, no jets

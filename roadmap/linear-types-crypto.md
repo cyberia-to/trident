@@ -89,7 +89,7 @@ For [[bbg]]'s participation model — where individual contributions are private
 
 ## Stack Integration
 
-The privacy model of [[bbg]] relies on the hint mechanism (Layer 2). Linear types enforce that each hint witness is consumed exactly once — matching the Layer 2 semantic that each hint atom is popped from the tape exactly once per `call_witness` pattern in [[nox]]. The type system and the VM semantics are in structural correspondence.
+The privacy model of [[bbg]] relies on the call mechanism (Layer 2, pattern 16). Linear types enforce that each call witness is consumed exactly once — matching the Layer 2 semantic that each call atom is popped from the tape exactly once per `call_witness` pattern in [[nox]]. The type system and the VM semantics are in structural correspondence.
 
 When a [[soft3]] `submit()` call packages a transaction involving private witnesses, the linear type checker has already verified that no witness appears twice in the submission. The [[zheng]] proof then provides the cryptographic certificate. Two layers of guarantee: compile-time (type system) and runtime (proof system).
 

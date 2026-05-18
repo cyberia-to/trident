@@ -32,7 +32,7 @@ Stack integration: The surrogate's training data comes from [[warrior-cyber]] pr
 The cost surrogate takes a nox reduction sequence as input and predicts a scalar proof cost. A 1D convolutional architecture processes the sequence naturally:
 
 ```
-Input: nox reduction sequence (padded to 128 ops; 22 operation kinds: 16 patterns + 1 hint + 5 jets)
+Input: nox reduction sequence (padded to 128 ops; 23 operation kinds: 18 patterns + 5 jets)
   → Embedding layer: op_id → 16-dim vector
   → Conv1D(kernel=5, filters=32, stride=1)
   → ReLU
@@ -129,7 +129,7 @@ The trace predictor's output (predicted trace_length + jet counts) can feed the 
 ```trident
 // cost_surrogate.trd  (a std.nn network — see ../reference/stdlib.md §std.nn)
 fn predict_cost(nox_ops: [OpId; 128]) -> Field {
-    // Embedding: 22 nox operation kinds (16 patterns + 1 hint + 5 jets)
+    // Embedding: 23 nox operation kinds (18 patterns + 5 jets)
     let embedded: Matrix<128, 16> = nox_ops.map(|id| EMBEDDINGS[id]);
     // Conv layer 1 (kernel 5, filters 32)
     let conv1: Matrix<124, 32> = conv1d(embedded, CONV1_WEIGHTS, 5);

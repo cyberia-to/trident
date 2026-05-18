@@ -45,7 +45,7 @@ The specific objectives are tunable. The key principle: cover the space of possi
 ### Specialist Architecture
 
 Each specialist is an evolutionary-trained neural compiler (see `../reference/neural.md` for the canonical architecture):
-- Input: nox computation graph features (22 op kinds: 16 patterns + 1 hint + 5 jets, dependency edge types)
+- Input: nox computation graph features (23 op kinds: 18 patterns + 5 jets, dependency edge types)
 - Output: nox reduction sequence optimized for the specialist's cost objective
 - Trained on programs where its target nox cost component was the bottleneck
 - Parameters: ~728KB (91,000 field elements)
