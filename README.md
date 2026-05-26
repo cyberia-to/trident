@@ -1,3 +1,10 @@
+---
+tags: trident, core
+crystal-type: entity
+crystal-domain: cyber
+icon: "🔱"
+alias: the provable language
+---
 # Trident
 
 > The weapon is their language. They gave it all to us.
