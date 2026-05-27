@@ -1,4 +1,5 @@
 ---
+title: Trident
 tags: trident, core
 crystal-type: entity
 crystal-domain: cyber
