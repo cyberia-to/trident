@@ -4,7 +4,7 @@ tags: trident, core
 crystal-type: entity
 crystal-domain: cyber
 icon: "🔱"
-alias: the provable language
+alias: Tri, tri, the provable language
 ---
 # Trident
 
