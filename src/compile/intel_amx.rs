@@ -11,7 +11,7 @@
 //! Matrix operations use AMX tiles (tmm0-tmm7) for batched dot products.
 //! All values are u64 in Goldilocks field (p = 2^64 - 2^32 + 1).
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 

@@ -4,7 +4,7 @@
 //! Subject = cons-list of atoms → function parameters.
 //! Patterns 0,1,4,5-14 supported. 2,3,15-17 → Phase 2.
 
-use nox::noun::{Order, NounId, Noun};
+use nox::{data::Data as Noun, Order as NounId, Reduction as Order};
 
 pub mod wasm;
 pub mod arm64;
@@ -88,10 +88,10 @@ pub fn axis_to_param(axis: u64) -> Result<u32, CompileError> {
 
 /// Extract pattern tag and body from a formula noun.
 pub fn formula_parts<const N: usize>(order: &Order<N>, formula: NounId) -> Result<(u64, NounId), CompileError> {
-    match order.get(formula).inner {
-        Noun::Cell { left, right } => {
+    match order.get(formula).ok_or(CompileError::Malformed)?.inner {
+        Noun::Pair { left, right } => {
             match order.atom_value(left) {
-                Some((v, _)) => Ok((v.as_u64(), right)),
+                Some(v) => Ok((v.as_u64(), right)),
                 None => Err(CompileError::Malformed),
             }
         }
@@ -101,8 +101,8 @@ pub fn formula_parts<const N: usize>(order: &Order<N>, formula: NounId) -> Resul
 
 /// Extract binary op pair [a b] from body.
 pub fn body_pair<const N: usize>(order: &Order<N>, body: NounId) -> Result<(NounId, NounId), CompileError> {
-    match order.get(body).inner {
-        Noun::Cell { left, right } => Ok((left, right)),
+    match order.get(body).ok_or(CompileError::Malformed)?.inner {
+        Noun::Pair { left, right } => Ok((left, right)),
         _ => Err(CompileError::Malformed),
     }
 }
@@ -116,7 +116,7 @@ pub fn body_triple<const N: usize>(order: &Order<N>, body: NounId) -> Result<(No
 
 /// Get atom value from a noun (for quote literals).
 pub fn atom_u64<const N: usize>(order: &Order<N>, r: NounId) -> Result<u64, CompileError> {
-    match order.get(r).inner {
+    match order.get(r).ok_or(CompileError::Malformed)?.inner {
         Noun::Atom { value, .. } => Ok(value.as_u64()),
         _ => Err(CompileError::Malformed),
     }
@@ -181,17 +181,17 @@ pub fn count_loop_slots(inits: &[NounId]) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nox::noun::{Order, Tag};
+    use nox::Reduction as Order;
     use nebu::Goldilocks;
 
     fn g(v: u64) -> Goldilocks { Goldilocks::new(v) }
 
     /// Helper: build a formula noun in an order from a text-like structure.
     fn make_cell<const N: usize>(order: &mut Order<N>, left: NounId, right: NounId) -> NounId {
-        order.cell(left, right).unwrap()
+        order.pair(left, right).unwrap()
     }
     fn make_atom<const N: usize>(order: &mut Order<N>, v: u64) -> NounId {
-        order.atom(g(v), Tag::Field).unwrap()
+        order.atom(g(v)).unwrap()
     }
     /// Build [tag body]
     fn make_formula<const N: usize>(order: &mut Order<N>, tag: u64, body: NounId) -> NounId {

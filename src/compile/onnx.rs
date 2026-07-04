@@ -11,7 +11,7 @@
 
 
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
@@ -461,16 +461,16 @@ impl OnnxEmitter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nox::noun::{Order, Tag};
+    use nox::Reduction as Order;
     use nebu::Goldilocks;
 
     fn g(v: u64) -> Goldilocks { Goldilocks::new(v) }
 
     fn make_cell<const N: usize>(order: &mut Order<N>, left: NounId, right: NounId) -> NounId {
-        order.cell(left, right).unwrap()
+        order.pair(left, right).unwrap()
     }
     fn make_atom<const N: usize>(order: &mut Order<N>, v: u64) -> NounId {
-        order.atom(g(v), Tag::Field).unwrap()
+        order.atom(g(v)).unwrap()
     }
     fn make_formula<const N: usize>(order: &mut Order<N>, tag: u64, body: NounId) -> NounId {
         let t = make_atom(order, tag);

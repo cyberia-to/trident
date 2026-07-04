@@ -38,7 +38,7 @@ statrs = "0.18"
 mir-format = { path = "../rs/mir-format" }
 serde_json = "1"
 nox = { path = "../nox/rs" }
-nebu = { path = "../nebu/rs" }
+nebu = { package = "cyb-nebu", path = "../strata/nebu/rs" }
 
 [dev-dependencies]
 insta = "1"
