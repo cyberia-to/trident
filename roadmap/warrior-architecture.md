@@ -99,7 +99,7 @@ that use these gates into executable quantum circuits.
 The deep connection: quantum gates are unitary matrices over complex
 amplitudes. Discretized to prime fields, they become field operations
 — the same operations trident already compiles. A quantum circuit
-over Goldilocks is natively provable on nox: you can STARK-prove
+over Goldilocks is natively provable on nox: you can zheng-prove
 that the circuit was correctly compiled and correctly simulated.
 
 Quantum is opt-in because not everyone needs it, but architecturally
@@ -110,7 +110,7 @@ it is trident tooling, not a warrior.
 A warrior is an external binary that:
 1. Takes a compiled artifact (TASM, MASM, RISC-V asm)
 2. Executes it on a specific VM
-3. Generates a STARK proof of execution
+3. Generates a proof of execution (STARK on Triton/Miden, sumcheck-based on Jolt)
 4. Verifies the proof
 5. Deploys to a specific chain/network
 

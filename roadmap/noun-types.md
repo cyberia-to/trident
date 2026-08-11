@@ -18,13 +18,13 @@ Nox drops this. The question is whether to add it back.
 
 ## Why not
 
-A STARK trace is a fixed-width table of field elements. Every nox
+A zheng execution trace is a fixed-width table of field elements. Every nox
 pattern maps to a polynomial transition constraint selected by a
 4-bit tag. `cell?` breaks this model in one specific way: atoms and
 cells have structurally different representations. An atom is a
 Goldilocks field element. A cell is a pointer into the noun DAG.
 The distinction between them is not a field predicate — it is a type
-judgment that requires a separate witness column in the AIR trace.
+judgment that requires a separate witness column in the trace.
 
 That column either:
 
