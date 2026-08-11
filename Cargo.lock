@@ -3,15 +3,6 @@
 version = 4
 
 [[package]]
-name = "acpu"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81089272e2a248781b1e2c38ad7247a98bea63a602c0a445dc63e955b2035375"
-dependencies = [
- "unimem",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1551,15 +1542,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "crossbeam-queue"
-version = "0.3.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f58bbc28f91df819d0aa2a2c00cd19754769c2fad90579b3592b1c9ba7a3115"
-dependencies = [
- "crossbeam-utils",
-]
-
-[[package]]
 name = "crossbeam-utils"
 version = "0.8.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2055,7 +2037,6 @@ dependencies = [
 name = "cyb-nebu"
 version = "0.1.0"
 dependencies = [
- "acpu",
  "strata-compute",
  "strata-core",
  "strata-ext",
@@ -4054,12 +4035,6 @@ dependencies = [
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "mutants"
-version = "0.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc0287524726960e07b119cebd01678f852f147742ae0d925e6a520dca956126"
 
 [[package]]
 name = "naga"
@@ -6715,16 +6690,6 @@ name = "unicode_categories"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39ec24b3121d976906ece63c9daad25b85969647682eee313cb5779fdd69e14e"
-
-[[package]]
-name = "unimem"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a91794fe345844d09b134c55fde134bc9d51593964b906dde2f667162e49918d"
-dependencies = [
- "crossbeam-queue",
- "mutants",
-]
 
 [[package]]
 name = "unindent"
