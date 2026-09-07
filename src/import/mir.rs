@@ -71,8 +71,10 @@ fn translate_function(
 struct FnContext<'a> {
     /// local_index → (stack_slot, width)
     locals: BTreeMap<u32, (u32, u32)>,
+    #[allow(dead_code)]
     structs: &'a BTreeMap<String, &'a MirStruct>,
     /// Current stack depth (number of field elements).
+    #[allow(dead_code)]
     stack_depth: u32,
 }
 
@@ -100,6 +102,7 @@ impl<'a> FnContext<'a> {
         self.locals.get(&index).map(|&(_, w)| w).unwrap_or(1)
     }
 
+    #[allow(dead_code)]
     fn type_width(&self, ty: &MirType) -> u32 {
         types::field_width(ty, self.structs)
     }

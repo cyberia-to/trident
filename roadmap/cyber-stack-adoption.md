@@ -48,7 +48,7 @@ constraints, and the same computational model.
 | Control | if/else, for, match | branch (pattern 4) |
 | Hash | hemera (content addressing) | hemera (pattern 15) |
 | Determinism | Required for proofs | Confluence theorem |
-| Proofs | STARK target | Execution trace IS STARK witness |
+| Proofs | STARK target | Execution trace IS zheng witness |
 
 ### Why TIR is the wrong path for nox
 

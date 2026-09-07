@@ -14,7 +14,7 @@
 //! All values are u64 in Goldilocks field (p = 2^64 - 2^32 + 1).
 //! Output: RV64GV assembly text with .text/.globl directives.
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
@@ -47,6 +47,7 @@ pub fn compile_to_rvv_parallel<const N: usize>(
 
 struct RvvEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_reg: u32,
     next_label: u32,
@@ -59,6 +60,7 @@ struct RvvEmitter {
 #[derive(Clone)]
 struct RvvLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

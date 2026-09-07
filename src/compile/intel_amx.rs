@@ -11,7 +11,7 @@
 //! Matrix operations use AMX tiles (tmm0-tmm7) for batched dot products.
 //! All values are u64 in Goldilocks field (p = 2^64 - 2^32 + 1).
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
@@ -58,6 +58,7 @@ const SCRATCH_REGS: &[&str] = &[
 ];
 
 /// Caller-saved registers for temporaries.
+#[allow(dead_code)]
 const TEMP_REGS: &[&str] = &[
     "r8", "r9", "r10", "r11",
 ];
@@ -70,6 +71,7 @@ const PARAM_REGS: &[&str] = &[
 #[derive(Clone)]
 struct AmxLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

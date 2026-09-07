@@ -11,6 +11,7 @@
 use std::collections::BTreeMap;
 
 /// MIR JSON types (minimal, matching rsc output)
+#[allow(non_snake_case)] // serde mirror of rustc MIR JSON — field names ARE the keys
 mod mir {
     use serde::Deserialize;
 
@@ -144,8 +145,10 @@ struct LoopInfo {
     /// These become the loop subject slots.
     carried_locals: Vec<u32>,
     /// Block that exits the loop (target of the condition branch when false)
+    #[allow(dead_code)]
     exit_block: u32,
     /// Block that enters the loop body (target of condition when true)
+    #[allow(dead_code)]
     body_entry: u32,
 }
 

@@ -5,7 +5,7 @@
 
 use clap::Args;
 use nebu::Goldilocks;
-use nox::noun::{Order, NounId, Noun, Tag};
+use nox::{Reduction as Order, Order as NounId};
 
 const ORDER_SIZE: usize = 1 << 16; // 64K nouns
 
@@ -325,7 +325,7 @@ fn parse_expr(
     match &tokens[*pos] {
         Token::Num(v) => {
             *pos += 1;
-            order.atom(Goldilocks::new(*v), Tag::Field)
+            order.atom(Goldilocks::new(*v))
                 .ok_or_else(|| "order full".to_string())
         }
         Token::Open => {
@@ -347,7 +347,7 @@ fn parse_expr(
             }
             let mut result = elems.pop().unwrap();
             while let Some(head) = elems.pop() {
-                result = order.cell(head, result)
+                result = order.pair(head, result)
                     .ok_or_else(|| "order full".to_string())?;
             }
             Ok(result)

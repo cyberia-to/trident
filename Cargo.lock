@@ -2035,7 +2035,15 @@ dependencies = [
 
 [[package]]
 name = "cyber-hemera"
-version = "0.2.0"
+version = "0.3.0"
+
+[[package]]
+name = "cyber-nox"
+version = "0.1.2"
+dependencies = [
+ "cyber-hemera",
+ "strata-nebu",
+]
 
 [[package]]
 name = "darling"
@@ -4156,10 +4164,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "nebu"
-version = "0.1.0"
-
-[[package]]
 name = "new_debug_unreachable"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4195,14 +4199,6 @@ name = "noop_proc_macro"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
-
-[[package]]
-name = "nox"
-version = "0.1.0"
-dependencies = [
- "cyber-hemera",
- "nebu",
-]
 
 [[package]]
 name = "ntapi"
@@ -5794,6 +5790,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "strata-compute"
+version = "0.1.0"
+dependencies = [
+ "strata-core",
+]
+
+[[package]]
+name = "strata-core"
+version = "0.1.0"
+
+[[package]]
+name = "strata-ext"
+version = "0.1.0"
+dependencies = [
+ "strata-core",
+]
+
+[[package]]
+name = "strata-nebu"
+version = "0.1.0"
+dependencies = [
+ "strata-compute",
+ "strata-core",
+ "strata-ext",
+ "strata-proof",
+]
+
+[[package]]
+name = "strata-proof"
+version = "0.1.0"
+dependencies = [
+ "strata-core",
+]
+
+[[package]]
 name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6537,10 +6568,9 @@ dependencies = [
  "bytemuck",
  "clap",
  "criterion",
+ "cyber-nox",
  "insta",
  "mir-format",
- "nebu",
- "nox",
  "petgraph 0.7.1",
  "pollster",
  "rayon",
@@ -6548,6 +6578,7 @@ dependencies = [
  "serde",
  "serde_json",
  "statrs",
+ "strata-nebu",
  "tempfile",
  "tokio",
  "tower-lsp",

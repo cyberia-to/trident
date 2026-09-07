@@ -28,7 +28,7 @@
 //!   x16-x17: intra-procedure-call scratch (used for constants)
 //!   sp-relative: AMX memory staging area (512-bit aligned)
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
@@ -67,6 +67,7 @@ pub fn compile_to_amx<const N: usize>(
 
 struct AmxEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_scratch: u32,
     next_label: u32,
@@ -82,6 +83,7 @@ struct AmxEmitter {
 #[derive(Clone)]
 struct AmxLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }
@@ -617,16 +619,16 @@ impl AmxEmitter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nox::noun::{Order, Tag};
+    use nox::Reduction as Order;
     use nebu::Goldilocks;
 
     fn g(v: u64) -> Goldilocks { Goldilocks::new(v) }
 
     fn make_cell<const N: usize>(order: &mut Order<N>, left: NounId, right: NounId) -> NounId {
-        order.cell(left, right).unwrap()
+        order.pair(left, right).unwrap()
     }
     fn make_atom<const N: usize>(order: &mut Order<N>, v: u64) -> NounId {
-        order.atom(g(v), Tag::Field).unwrap()
+        order.atom(g(v)).unwrap()
     }
     fn make_formula<const N: usize>(order: &mut Order<N>, tag: u64, body: NounId) -> NounId {
         let t = make_atom(order, tag);

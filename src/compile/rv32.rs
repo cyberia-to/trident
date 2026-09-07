@@ -10,7 +10,7 @@
 //! with carry-propagating add/sub and 4-partial-product mul.
 //! That is Phase 2 (register-pair mode for ESP32 IoT use cases).
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
@@ -36,6 +36,7 @@ pub fn compile_to_rv32<const N: usize>(
 #[derive(Clone)]
 struct Rv32LoopState {
     carried: Vec<u8>,         // registers holding carried locals
+    #[allow(dead_code)]
     formula_reg: u8,          // register for formula slot
     header_offset: usize,     // byte offset of loop header in code
 }

@@ -17,7 +17,7 @@
 
 
 
-use nox::noun::{Order, NounId};
+use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
@@ -44,12 +44,14 @@ struct QirEmitter {
     subject: Vec<String>,
     loop_state: Option<QirLoopState>,
     /// Total qubits allocated (params + intermediates).
+    #[allow(dead_code)]
     next_qubit: u32,
 }
 
 #[derive(Clone)]
 struct QirLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }
@@ -83,6 +85,7 @@ impl QirEmitter {
         l
     }
 
+    #[allow(dead_code)]
     fn alloc_qubit_array(&mut self) -> u32 {
         let base = self.next_qubit;
         self.next_qubit += QUBITS_PER_REG;
