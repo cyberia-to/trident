@@ -6,7 +6,7 @@
 //! Equivalence verification: compare baseline and candidate TASM
 //! on diverse test stacks.
 
-use crate::field::goldilocks::MODULUS;
+use nebu::field::P as MODULUS;
 
 use super::executor::StackState;
 

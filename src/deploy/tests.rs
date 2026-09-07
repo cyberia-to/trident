@@ -117,8 +117,8 @@ fn test_manifest_null_os() {
 #[test]
 fn test_program_digest_deterministic() {
     let tasm = "push 1\npush 2\nadd\nwrite_io 1\nhalt\n";
-    let hash1 = ContentHash(crate::poseidon2::hash_bytes(tasm.as_bytes()));
-    let hash2 = ContentHash(crate::poseidon2::hash_bytes(tasm.as_bytes()));
+    let hash1 = ContentHash(crate::hash::content_hash_bytes(tasm.as_bytes()));
+    let hash2 = ContentHash(crate::hash::content_hash_bytes(tasm.as_bytes()));
     assert_eq!(hash1.to_hex(), hash2.to_hex());
 }
 

@@ -185,7 +185,7 @@ fn generate_test_stack_deterministic() {
 
 #[test]
 fn generate_test_stack_in_range() {
-    use crate::field::goldilocks::MODULUS;
+    use nebu::field::P as MODULUS;
     let stack = generate_test_stack(99, 100);
     for val in &stack {
         assert!(*val < MODULUS, "value {} >= MODULUS", val);

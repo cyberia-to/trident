@@ -219,7 +219,7 @@ pub(super) fn resolve_path_dep(
     })?;
 
     // Content-hash the source with Poseidon2 (SNARK-friendly).
-    let hash_raw = crate::poseidon2::hash_bytes(source.as_bytes());
+    let hash_raw = crate::hash::content_hash_bytes(source.as_bytes());
     let hash_hex: String = hash_raw.iter().map(|b| format!("{:02x}", b)).collect();
 
     let source_desc = format!("path:{}", rel_path.display());

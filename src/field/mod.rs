@@ -5,25 +5,24 @@
 // ---
 //! Prime field arithmetic and universal proving primitives.
 //!
-//! This module provides field-generic math that every target warrior reuses:
-//! - `PrimeField` trait with concrete implementations (Goldilocks, BabyBear, Mersenne31)
-//! - `poseidon2` — generic Poseidon2 sponge hash over any PrimeField
+//! Foreign-target field arithmetic and universal proving primitives.
+//!
+//! - `PrimeField` trait with the foreign-target fields (BabyBear, Mersenne31)
+//! - `fixed` — fixed-point arithmetic over Goldilocks (via strata-nebu)
 //! - `proof` — universal STARK proof estimation (padded height, FRI params, proof size)
 //!
-//! Three fields cover all 20 supported VMs:
-//! - Goldilocks (2^64 - 2^32 + 1): Triton, Miden, OpenVM, Plonky3
+//! The Goldilocks path speaks strata-nebu's API directly (`nebu::Goldilocks`)
+//! — the stack's algebra, one implementation on the planet. The `PrimeField`
+//! trait remains only for fields of foreign targets:
 //! - BabyBear (2^31 - 2^27 + 1): SP1, RISC Zero, Jolt
 //! - Mersenne31 (2^31 - 1): Plonky3, Circle STARKs
 
 pub mod babybear;
 pub mod fixed;
-pub mod goldilocks;
 pub mod mersenne31;
-pub mod poseidon2;
 pub mod proof;
 
 pub use babybear::BabyBear;
-pub use goldilocks::Goldilocks;
 pub use mersenne31::Mersenne31;
 
 /// Trait for prime field arithmetic.
@@ -146,11 +145,6 @@ mod tests {
     }
 
     #[test]
-    fn goldilocks_field_laws() {
-        test_field_laws::<Goldilocks>();
-    }
-
-    #[test]
     fn babybear_field_laws() {
         test_field_laws::<BabyBear>();
     }
@@ -192,17 +186,6 @@ mod tests {
 
         // pow(p-1, 2) = 1
         assert_eq!(p_minus_1.pow(2), one);
-    }
-
-    #[test]
-    fn goldilocks_edge_cases() {
-        test_field_edge_cases::<Goldilocks>();
-
-        // Goldilocks-specific: test reduce128 with large products
-        let large = Goldilocks::from_u64(u64::MAX);
-        let result = large.mul(large);
-        // (u64::MAX mod p)^2 mod p — just verify it doesn't panic
-        assert!(result.to_u64() < goldilocks::MODULUS);
     }
 
     #[test]

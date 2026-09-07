@@ -182,7 +182,7 @@ impl Normalizer {
     pub fn hash_fn(func: &FnDef, fn_hashes: BTreeMap<String, ContentHash>) -> ContentHash {
         let mut normalizer = Normalizer::new().with_fn_hashes(fn_hashes);
         let bytes = normalizer.normalize_fn(func);
-        ContentHash(crate::poseidon2::hash_bytes(&bytes))
+        ContentHash(crate::hash::content_hash_bytes(&bytes))
     }
 
     /// Hash all functions in a file.
@@ -195,7 +195,7 @@ impl Normalizer {
                 let mut normalizer = Normalizer::new();
                 normalizer.fn_hashes.clone_from(&fn_hashes);
                 let bytes = normalizer.normalize_fn(func);
-                let hash = ContentHash(crate::poseidon2::hash_bytes(&bytes));
+                let hash = ContentHash(crate::hash::content_hash_bytes(&bytes));
                 fn_hashes.insert(func.name.node.clone(), hash);
             }
         }
@@ -206,7 +206,7 @@ impl Normalizer {
         for item in &file.items {
             if let Item::Fn(func) = &item.node {
                 let bytes = normalizer.normalize_fn(func);
-                let hash = ContentHash(crate::poseidon2::hash_bytes(&bytes));
+                let hash = ContentHash(crate::hash::content_hash_bytes(&bytes));
                 stable.insert(func.name.node.clone(), hash);
             }
         }

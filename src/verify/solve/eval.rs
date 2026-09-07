@@ -4,36 +4,36 @@
 // crystal-domain: comp
 // ---
 use super::*;
-use crate::field::{Goldilocks, PrimeField};
+use nebu::Goldilocks;
 
 // ─── Field Arithmetic (thin wrappers over Goldilocks) ──────────────
 
 pub(crate) fn field_add(a: u64, b: u64) -> u64 {
-    Goldilocks::from_u64(a)
-        .add(Goldilocks::from_u64(b))
-        .to_u64()
+    (Goldilocks::new(a) + Goldilocks::new(b)).as_u64()
 }
 
 pub(crate) fn field_sub(a: u64, b: u64) -> u64 {
-    Goldilocks::from_u64(a)
-        .sub(Goldilocks::from_u64(b))
-        .to_u64()
+    (Goldilocks::new(a) - Goldilocks::new(b)).as_u64()
 }
 
 pub(crate) fn field_mul(a: u64, b: u64) -> u64 {
-    Goldilocks::from_u64(a)
-        .mul(Goldilocks::from_u64(b))
-        .to_u64()
+    (Goldilocks::new(a) * Goldilocks::new(b)).as_u64()
 }
 
 pub(crate) fn field_neg(a: u64) -> u64 {
-    Goldilocks::from_u64(a).neg().to_u64()
+    Goldilocks::new(a).field_neg().as_u64()
 }
 
 /// Multiplicative inverse: a^(p-2) mod p (Fermat's little theorem).
 /// Returns `None` for zero (which has no inverse).
 pub(crate) fn field_inv(a: u64) -> Option<u64> {
-    Goldilocks::from_u64(a).inv().map(|v| v.to_u64())
+    // nebu's inv() returns 0 for 0 (0^(p-2)); zero has no inverse, keep None.
+    let g = Goldilocks::new(a);
+    if g.is_zero() {
+        None
+    } else {
+        Some(g.inv().as_u64())
+    }
 }
 
 // ─── Pseudo-Random Number Generator ────────────────────────────────

@@ -8,8 +8,8 @@
 //! Scale factor S = 2^16 = 65536. Real values encoded as field elements.
 //! Multiply with rescale: (a * b) * inv(S). 16-bit fractional precision.
 
-use super::goldilocks::{Goldilocks, MODULUS};
-use super::PrimeField;
+use nebu::field::P as MODULUS;
+use nebu::Goldilocks;
 
 /// Scale factor: 2^16 = 65536.
 pub const SCALE: u64 = 1 << 16;
@@ -20,7 +20,7 @@ const HALF_P: u64 = MODULUS / 2;
 /// Precomputed inverse of the scale factor: inv(65536) mod p.
 fn inv_scale() -> Goldilocks {
     static INV: std::sync::OnceLock<Goldilocks> = std::sync::OnceLock::new();
-    *INV.get_or_init(|| Goldilocks::from_u64(SCALE).inv().expect("SCALE is nonzero"))
+    *INV.get_or_init(|| Goldilocks::new(SCALE).inv())
 }
 
 /// Fixed-point value in Goldilocks field (scale factor 2^16).
@@ -28,8 +28,8 @@ fn inv_scale() -> Goldilocks {
 pub struct Fixed(pub Goldilocks);
 
 impl Fixed {
-    pub const ZERO: Self = Self(Goldilocks(0));
-    pub const ONE: Self = Self(Goldilocks(SCALE));
+    pub const ZERO: Self = Self(Goldilocks::ZERO);
+    pub const ONE: Self = Self(Goldilocks::new(SCALE));
 
     /// Encode an f64 as a fixed-point field element.
     ///
@@ -37,11 +37,11 @@ impl Fixed {
     pub fn from_f64(v: f64) -> Self {
         let scaled = v * SCALE as f64;
         if scaled >= 0.0 {
-            Self(Goldilocks::from_u64(scaled.round() as u64))
+            Self(Goldilocks::new(scaled.round() as u64))
         } else {
             // Negative: p - |scaled|
             let abs = (-scaled).round() as u64;
-            Self(Goldilocks::from_u64(MODULUS - abs))
+            Self(Goldilocks::new(MODULUS - abs))
         }
     }
 
@@ -49,7 +49,7 @@ impl Fixed {
     ///
     /// Values in the upper half of the field are treated as negative.
     pub fn to_f64(self) -> f64 {
-        let raw = self.0.to_u64();
+        let raw = self.0.as_u64();
         if raw <= HALF_P {
             raw as f64 / SCALE as f64
         } else {
@@ -70,25 +70,25 @@ impl Fixed {
     /// Fixed-point addition (field add, no rescale needed).
     #[inline]
     pub fn add(self, rhs: Self) -> Self {
-        Self(self.0.add(rhs.0))
+        Self(self.0 + rhs.0)
     }
 
     /// Fixed-point subtraction (field sub, no rescale needed).
     #[inline]
     pub fn sub(self, rhs: Self) -> Self {
-        Self(self.0.sub(rhs.0))
+        Self(self.0 - rhs.0)
     }
 
     /// Fixed-point multiplication: (a * b) * inv(S).
     #[inline]
     pub fn mul(self, rhs: Self) -> Self {
-        Self(self.0.mul(rhs.0).mul(inv_scale()))
+        Self(self.0 * rhs.0 * inv_scale())
     }
 
     /// Additive inverse.
     #[inline]
     pub fn neg(self) -> Self {
-        Self(self.0.neg())
+        Self(self.0.field_neg())
     }
 
     /// Multiplicative inverse: result * self = ONE.
@@ -96,15 +96,16 @@ impl Fixed {
     /// self encodes real value v = self.0 / S.
     /// We want 1/v = S / self.0, encoded as fixed-point: S^2 / self.0 = S^2 * inv(self.0).
     pub fn inv(self) -> Self {
-        let raw_inv = self.0.inv().expect("cannot invert zero");
-        let s = Goldilocks::from_u64(SCALE);
-        Self(raw_inv.mul(s).mul(s))
+        assert!(!self.0.is_zero(), "cannot invert zero");
+        let raw_inv = self.0.inv();
+        let s = Goldilocks::new(SCALE);
+        Self(raw_inv * s * s)
     }
 
     /// ReLU: if value is "positive" (< p/2) return self, else zero.
     #[inline]
     pub fn relu(self) -> Self {
-        if self.0.to_u64() <= HALF_P {
+        if self.0.as_u64() <= HALF_P {
             self
         } else {
             Self::ZERO
@@ -136,26 +137,26 @@ pub struct RawAccum(pub Goldilocks);
 impl RawAccum {
     #[inline]
     pub fn zero() -> Self {
-        Self(Goldilocks(0))
+        Self(Goldilocks::ZERO)
     }
 
     /// Accumulate one product: self += a.0 * b.0 (raw, no rescale).
     #[inline]
     pub fn add_prod(&mut self, a: Fixed, b: Fixed) {
-        self.0 = self.0.add(a.0.mul(b.0));
+        self.0 = self.0 + a.0 * b.0;
     }
 
     /// Accumulate a pre-scaled addition: self += bias.0 * SCALE.
     /// Used when adding a Fixed bias to a raw accumulator.
     #[inline]
     pub fn add_bias(&mut self, bias: Fixed) {
-        self.0 = self.0.add(bias.0.mul(Goldilocks(SCALE)));
+        self.0 = self.0 + bias.0 * Goldilocks::new(SCALE);
     }
 
     /// Finalize: apply inv(SCALE) once to produce a proper Fixed value.
     #[inline]
     pub fn finish(self) -> Fixed {
-        Fixed(self.0.mul(inv_scale()))
+        Fixed(self.0 * inv_scale())
     }
 }
 

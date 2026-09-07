@@ -94,7 +94,7 @@ pub fn cmd_package(args: PackageArgs) {
 
     if dry_run {
         let program_digest =
-            trident::hash::ContentHash(trident::poseidon2::hash_bytes(art.tasm.as_bytes()));
+            trident::hash::ContentHash(trident::hash::content_hash_bytes(art.tasm.as_bytes()));
         eprintln!("Dry run — would package:");
         eprintln!("  Name:            {}", art.name);
         eprintln!("  Version:         {}", art.version);

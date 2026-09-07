@@ -36,7 +36,6 @@ pub use config::target;
 pub use package::cache;
 pub use package::hash;
 pub use package::manifest;
-pub use package::poseidon2;
 pub use package::registry;
 pub use package::store;
 pub use syntax::format;

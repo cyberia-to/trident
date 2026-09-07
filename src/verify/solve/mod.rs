@@ -26,7 +26,7 @@
 
 use std::collections::BTreeMap;
 
-use crate::field::goldilocks::MODULUS as GOLDILOCKS_P;
+use nebu::field::P as GOLDILOCKS_P;
 use crate::sym::{Constraint, ConstraintSystem, SymValue};
 
 mod eval;
