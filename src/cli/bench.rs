@@ -57,6 +57,10 @@ struct ModuleBench {
     neural: DimTiming,
     /// Per-function breakdown (only collected with --functions)
     functions: Vec<trident::FunctionBenchmark>,
+    /// Upper-bound nox reduction count (None if the program is outside the nox
+    /// surface, e.g. uses streaming I/O). Unit: reductions — NOT comparable to
+    /// the Triton instruction columns; no ratio is computed against them.
+    nox_reductions: Option<u64>,
 }
 
 pub fn cmd_bench(args: BenchArgs) {
@@ -79,6 +83,14 @@ pub fn cmd_bench(args: BenchArgs) {
 
     let options = trident::CompileOptions::default();
     let has_trisha = args.full && trisha_available();
+
+    // Options for the nox reduction column (None if the nox target config is
+    // not resolvable from here). Cost unit is reductions, not cycles.
+    let nox_options = trident::target::TerrainConfig::resolve("nox").ok().map(|cfg| {
+        let mut o = trident::CompileOptions::default();
+        o.target_config = cfg;
+        o
+    });
 
     // Load neural model once for all modules (unless --skip-neural)
     let wgpu_device = WgpuDevice::default();
@@ -192,6 +204,10 @@ pub fn cmd_bench(args: BenchArgs) {
             hand: DimTiming::default(),
             neural: DimTiming::default(),
             functions: fn_results,
+            nox_reductions: nox_options
+                .as_ref()
+                .and_then(|o| trident::nox_cost_project(&source_path, o).ok())
+                .map(|c| c.max_reductions()),
         };
 
         // Run trisha passes for --full
@@ -310,15 +326,16 @@ fn render_insn_table(modules: &[ModuleBench], show_functions: bool) {
         .max(6)
         + 2;
     eprintln!(
-        "{:<w$} {:>6} {:>6} {:>6} {:>7}",
+        "{:<w$} {:>6} {:>6} {:>6} {:>7} {:>9}",
         "Module",
         "Tri",
         "Hand",
         "Neural",
         "Ratio",
+        "Nox(r)",
         w = w,
     );
-    eprintln!("{}", "-".repeat(w + 30));
+    eprintln!("{}", "-".repeat(w + 40));
 
     for mb in modules {
         let ratio = if mb.hand_insn > 0 {
@@ -331,13 +348,18 @@ fn render_insn_table(modules: &[ModuleBench], show_functions: bool) {
         } else {
             "-".to_string()
         };
+        let nox_str = match mb.nox_reductions {
+            Some(r) => r.to_string(),
+            None => "-".to_string(),
+        };
         eprintln!(
-            "{:<w$} {:>6} {:>6} {:>6} {:>7}",
+            "{:<w$} {:>6} {:>6} {:>6} {:>7} {:>9}",
             mb.name,
             mb.classic_insn,
             mb.hand_insn,
             neural_str,
             ratio,
+            nox_str,
             w = w,
         );
         if show_functions {
@@ -367,7 +389,7 @@ fn render_insn_table(modules: &[ModuleBench], show_functions: bool) {
         }
     }
 
-    eprintln!("{}", "-".repeat(w + 30));
+    eprintln!("{}", "-".repeat(w + 40));
     let sum_classic: usize = modules.iter().map(|m| m.classic_insn).sum();
     let sum_hand: usize = modules.iter().map(|m| m.hand_insn).sum();
     let sum_neural: usize = modules.iter().map(|m| m.neural_insn).sum();
@@ -381,14 +403,29 @@ fn render_insn_table(modules: &[ModuleBench], show_functions: bool) {
     } else {
         "-".to_string()
     };
+    let nox_count = modules.iter().filter(|m| m.nox_reductions.is_some()).count();
+    let nox_total: u64 = modules.iter().filter_map(|m| m.nox_reductions).sum();
+    let nox_total_str = if nox_count > 0 {
+        nox_total.to_string()
+    } else {
+        "-".to_string()
+    };
     eprintln!(
-        "{:<w$} {:>6} {:>6} {:>6} {:>7}",
+        "{:<w$} {:>6} {:>6} {:>6} {:>7} {:>9}",
         format!("TOTAL ({} modules)", modules.len()),
         sum_classic,
         sum_hand,
         neural_total,
         avg_ratio,
+        nox_total_str,
         w = w,
+    );
+    eprintln!(
+        "\nTri/Hand/Neural = Triton instruction counts (Ratio = Tri/Hand). \
+         Nox(r) = upper-bound nox reductions ({} of {} modules within the nox \
+         surface); reductions are not comparable to instruction counts.",
+        nox_count,
+        modules.len(),
     );
 }
 
