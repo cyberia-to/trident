@@ -38,6 +38,22 @@ impl PreparedProject {
     /// across `compile_project`, `run_tests`, `analyze_costs_project`,
     /// and `generate_docs`.
     pub fn build(entry_path: &Path, options: &CompileOptions) -> Result<Self, Vec<Diagnostic>> {
+        Self::build_inner(entry_path, options, true)
+    }
+
+    /// Like [`build`], but never renders diagnostics — the caller decides what
+    /// to do with the returned errors. Used by best-effort probes (e.g. the
+    /// nox reduction column in `trident bench`) that expect many programs to
+    /// fall outside the target surface and must not spam the terminal.
+    pub fn build_quiet(entry_path: &Path, options: &CompileOptions) -> Result<Self, Vec<Diagnostic>> {
+        Self::build_inner(entry_path, options, false)
+    }
+
+    fn build_inner(
+        entry_path: &Path,
+        options: &CompileOptions,
+        render: bool,
+    ) -> Result<Self, Vec<Diagnostic>> {
         let resolved = if options.dep_dirs.is_empty() {
             resolve_modules(entry_path)?
         } else {
@@ -63,7 +79,7 @@ impl PreparedProject {
             }
             match tc.check_file(&pm.file) {
                 Ok(e) => {
-                    if !e.warnings.is_empty() {
+                    if render && !e.warnings.is_empty() {
                         render_diagnostics(
                             &e.warnings,
                             &pm.file_path.to_string_lossy(),
@@ -73,7 +89,9 @@ impl PreparedProject {
                     exports.push(e);
                 }
                 Err(errors) => {
-                    render_diagnostics(&errors, &pm.file_path.to_string_lossy(), &pm.source);
+                    if render {
+                        render_diagnostics(&errors, &pm.file_path.to_string_lossy(), &pm.source);
+                    }
                     return Err(errors);
                 }
             }
