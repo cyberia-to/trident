@@ -33,6 +33,14 @@ const HASH_VERSION: u8 = 1;
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ContentHash(pub [u8; 32]);
 
+/// Hash bytes into a 32-byte content identifier using cyber-hemera —
+/// the one hash of the soft3 stack. This replaced the in-tree Poseidon2
+/// (M5: "hashing is cyber-hemera everywhere"); content hashes changed
+/// value at that point (see CHANGELOG 0.2.0).
+pub fn content_hash_bytes(data: &[u8]) -> [u8; 32] {
+    *hemera::hash(data).as_bytes()
+}
+
 impl ContentHash {
     /// Zero hash (used as placeholder).
     pub fn zero() -> Self {
@@ -120,7 +128,7 @@ pub fn hash_file_content(file: &File) -> ContentHash {
         buf.extend_from_slice(name.as_bytes());
         buf.extend_from_slice(&hash.0);
     }
-    ContentHash(crate::poseidon2::hash_bytes(&buf))
+    ContentHash(content_hash_bytes(&buf))
 }
 
 /// Parse a single hex digit (0-9, a-f, A-F) to its numeric value.

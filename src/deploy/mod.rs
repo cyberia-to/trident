@@ -89,7 +89,7 @@ pub fn generate_artifact(
     output_base: &Path,
 ) -> Result<PackageResult, String> {
     // 1. Compute program_digest = Poseidon2(tasm bytes)
-    let digest_bytes = crate::poseidon2::hash_bytes(tasm.as_bytes());
+    let digest_bytes = crate::hash::content_hash_bytes(tasm.as_bytes());
     let program_digest = ContentHash(digest_bytes);
 
     // 2. Compute source_hash from AST
