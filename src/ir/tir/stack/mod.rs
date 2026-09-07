@@ -240,6 +240,13 @@ impl StackManager {
 
     /// Find depth, width, and elem_width of a named variable.
     /// Like find_var_depth_and_width but also returns elem_width for arrays.
+    /// True if a variable of this name is currently live (on the operand
+    /// stack or spilled). Does not mutate or reload.
+    pub(crate) fn has_var(&self, name: &str) -> bool {
+        self.on_stack.iter().any(|e| e.name.as_deref() == Some(name))
+            || self.spilled.iter().any(|v| v.name.as_deref() == Some(name))
+    }
+
     pub(crate) fn find_var_with_elem_width(&mut self, name: &str) -> Option<(u32, u32, u32)> {
         let ts = self.tick();
         let mut depth: u32 = 0;

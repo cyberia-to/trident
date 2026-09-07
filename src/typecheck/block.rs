@@ -162,14 +162,26 @@ impl TypeChecker {
         }
     }
 
-    pub(super) fn check_place(&self, place: &Place, _span: Span) -> (Ty, bool) {
+    pub(super) fn check_place(&mut self, place: &Place, _span: Span) -> (Ty, bool) {
         match place {
             Place::Var(name) => {
                 if let Some(info) = self.lookup_var(name) {
-                    (info.ty.clone(), info.mutable)
-                } else {
-                    (Ty::Field, false)
+                    return (info.ty.clone(), info.mutable);
                 }
+                // Dotted name = struct field assignment (`p.x`, `p.q.r`). The
+                // mutability comes from the base variable; the type is that of
+                // the addressed field.
+                if let Some(base) = name.split('.').next() {
+                    if name.contains('.') {
+                        if let Some(info) = self.lookup_var(base) {
+                            let is_mut = info.mutable;
+                            if let Some(ty) = self.resolve_nested_field_access(name, _span) {
+                                return (ty, is_mut);
+                            }
+                        }
+                    }
+                }
+                (Ty::Field, false)
             }
             Place::FieldAccess(inner, field) => {
                 let (inner_ty, is_mut) = self.check_place(&inner.node, inner.span);
@@ -183,8 +195,9 @@ impl TypeChecker {
                     (Ty::Field, false)
                 }
             }
-            Place::Index(inner, _) => {
+            Place::Index(inner, index) => {
                 let (inner_ty, is_mut) = self.check_place(&inner.node, inner.span);
+                self.check_expr(&index.node, index.span);
                 if let Ty::Array(elem_ty, _) = &inner_ty {
                     (*elem_ty.clone(), is_mut)
                 } else {
