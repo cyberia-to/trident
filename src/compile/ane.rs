@@ -53,15 +53,18 @@ pub fn compile_to_mil_batch<const N: usize>(
 
 struct MilEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_var: u32,
     reg_stack: Vec<String>,
     subject: Vec<String>,
+    #[allow(dead_code)]
     loop_state: Option<MilLoopState>,
 }
 
 #[derive(Clone)]
 struct MilLoopState {
+    #[allow(dead_code)]
     carried: Vec<String>,
 }
 

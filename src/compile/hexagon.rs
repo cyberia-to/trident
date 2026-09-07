@@ -51,6 +51,7 @@ pub fn compile_to_hexagon<const N: usize>(
 
 struct HexagonEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_scratch: u32,
     next_pred: u32,
@@ -64,6 +65,7 @@ struct HexagonEmitter {
 #[derive(Clone)]
 struct HexagonLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

@@ -36,6 +36,7 @@ pub fn compile_to_ebpf<const N: usize>(
 #[derive(Clone)]
 struct EbpfLoopState {
     carried: Vec<u8>,         // registers holding carried locals
+    #[allow(dead_code)]
     formula_reg: u8,          // register for formula slot
     header_idx: usize,        // instruction index of loop header
 }

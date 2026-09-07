@@ -67,6 +67,7 @@ pub fn compile_to_amx<const N: usize>(
 
 struct AmxEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_scratch: u32,
     next_label: u32,
@@ -82,6 +83,7 @@ struct AmxEmitter {
 #[derive(Clone)]
 struct AmxLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

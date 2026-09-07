@@ -67,6 +67,7 @@ pub fn compile_to_wasm<const N: usize>(
 #[derive(Clone)]
 struct LoopState {
     carried: Vec<u32>,
+    #[allow(dead_code)]
     formula_local: u32,
 }
 
@@ -244,7 +245,7 @@ impl FormulaEmitter {
         let (_formula_ref, rest) = body_pair(order, cons_body)?;
         // rest is cons chain of carried values
         let mut cur = rest;
-        for (i, &local) in ls.carried.iter().enumerate() {
+        for (_i, &local) in ls.carried.iter().enumerate() {
             let (tag, cb) = formula_parts(order, cur)?;
             if tag != 3 {
                 // Last item might not be cons — might be the params tail

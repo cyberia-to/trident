@@ -45,6 +45,7 @@ pub fn compile_to_thumb2<const N: usize>(
 #[derive(Clone)]
 struct Thumb2LoopState {
     carried: Vec<u8>,
+    #[allow(dead_code)]
     formula_reg: u8,
     header_offset: usize,
 }

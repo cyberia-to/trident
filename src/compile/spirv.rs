@@ -27,6 +27,7 @@ pub fn compile_to_spirv<const N: usize>(
 
 // SPIR-V opcodes
 const OP_CAPABILITY: u16 = 17;
+#[allow(dead_code)]
 const OP_EXT_INST_IMPORT: u16 = 11;
 const OP_MEMORY_MODEL: u16 = 14;
 const OP_ENTRY_POINT: u16 = 15;
@@ -45,26 +46,37 @@ const OP_FUNCTION: u16 = 54;
 const OP_FUNCTION_END: u16 = 56;
 const OP_LABEL: u16 = 248;
 const OP_RETURN: u16 = 253;
+#[allow(dead_code)]
 const OP_ACCESS_CHAIN: u16 = 65;
+#[allow(dead_code)]
 const OP_LOAD: u16 = 61;
+#[allow(dead_code)]
 const OP_STORE: u16 = 62;
 const OP_IADD: u16 = 128;
 const OP_ISUB: u16 = 130;
 const OP_IMUL: u16 = 132;
+#[allow(dead_code)]
 const OP_UMOD: u16 = 137;
 const OP_BITWISE_AND: u16 = 199;
+#[allow(dead_code)]
 const OP_BITWISE_OR: u16 = 200;
 const OP_BITWISE_XOR: u16 = 198;
 const OP_SHIFT_LEFT: u16 = 196;
+#[allow(dead_code)]
 const OP_SHIFT_RIGHT_LOGICAL: u16 = 197;
 const OP_IEQUAL: u16 = 170;
 const OP_INOTEQUAL: u16 = 171;
+#[allow(dead_code)]
 const OP_ULESS_THAN: u16 = 176;
 const OP_UGREATER_THAN_EQUAL: u16 = 178;
 const OP_SELECT: u16 = 169;
+#[allow(dead_code)]
 const OP_BRANCH: u16 = 249;
+#[allow(dead_code)]
 const OP_BRANCH_CONDITIONAL: u16 = 250;
+#[allow(dead_code)]
 const OP_LOOP_MERGE: u16 = 246;
+#[allow(dead_code)]
 const OP_SELECTION_MERGE: u16 = 247;
 const OP_TYPE_BOOL: u16 = 20;
 
@@ -92,15 +104,21 @@ struct SpvBuilder {
     const_mask32: u32,
 
     entry_point_id: u32,
+    #[allow(dead_code)]
     global_invocation_id: u32,
+    #[allow(dead_code)]
     loop_state: Option<SpvLoopState>,
 }
 
 #[derive(Clone)]
 struct SpvLoopState {
+    #[allow(dead_code)]
     carried: Vec<u32>,     // variable IDs for carried state
+    #[allow(dead_code)]
     header_label: u32,
+    #[allow(dead_code)]
     merge_label: u32,
+    #[allow(dead_code)]
     continue_label: u32,
 }
 
@@ -362,9 +380,9 @@ impl SpvBuilder {
         Ok(())
     }
 
-    fn finish(mut self, result: u32, num_params: u32) -> Vec<u8> {
+    fn finish(mut self, _result: u32, _num_params: u32) -> Vec<u8> {
         // Entry point references
-        let entry_label = self.alloc_id();
+        let _entry_label = self.alloc_id();
 
         // Build entry point (needs to list all interface variables)
         let ep = &mut self.preamble;
@@ -375,7 +393,7 @@ impl SpvBuilder {
         ep_words.push(0); // null terminator padded
 
         let word_count = (1 + ep_words.len()) as u16;
-        let header = ((word_count as u32) << 16) | (OP_ENTRY_POINT as u32);
+        let _header = ((word_count as u32) << 16) | (OP_ENTRY_POINT as u32);
         // Insert at beginning after capabilities
         // Actually, just build the full binary at the end.
 

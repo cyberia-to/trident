@@ -58,6 +58,7 @@ const SCRATCH_REGS: &[&str] = &[
 ];
 
 /// Caller-saved registers for temporaries.
+#[allow(dead_code)]
 const TEMP_REGS: &[&str] = &[
     "r8", "r9", "r10", "r11",
 ];
@@ -70,6 +71,7 @@ const PARAM_REGS: &[&str] = &[
 #[derive(Clone)]
 struct AmxLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

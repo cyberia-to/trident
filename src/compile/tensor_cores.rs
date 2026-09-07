@@ -73,6 +73,7 @@ struct TensorPtxEmitter {
 #[derive(Clone)]
 struct TensorLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

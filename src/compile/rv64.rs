@@ -35,6 +35,7 @@ pub fn compile_to_rv64<const N: usize>(
 #[derive(Clone)]
 struct Rv64LoopState {
     carried: Vec<u8>,         // registers holding carried locals
+    #[allow(dead_code)]
     formula_reg: u8,          // register for formula slot
     header_offset: usize,     // byte offset of loop header in code
 }

@@ -47,6 +47,7 @@ pub fn compile_to_rvv_parallel<const N: usize>(
 
 struct RvvEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_reg: u32,
     next_label: u32,
@@ -59,6 +60,7 @@ struct RvvEmitter {
 #[derive(Clone)]
 struct RvvLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

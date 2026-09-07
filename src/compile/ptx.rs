@@ -57,6 +57,7 @@ struct PtxEmitter {
 #[derive(Clone)]
 struct PtxLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     formula_reg: String,
     header_label: String,
 }

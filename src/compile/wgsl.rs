@@ -15,7 +15,9 @@ use nox::{Reduction as Order, Order as NounId};
 use super::{CompileError, formula_parts, body_pair, body_triple, atom_u64, axis_to_param,
             detect_loop_setup, detect_back_edge};
 
+#[allow(dead_code)]
 const P_LO: u32 = 0x00000001;
+#[allow(dead_code)]
 const P_HI: u32 = 0xFFFFFFFF;
 
 pub fn compile_to_wgsl<const N: usize>(
@@ -31,6 +33,7 @@ pub fn compile_to_wgsl<const N: usize>(
 
 struct WgslEmitter {
     body: String,
+    #[allow(dead_code)]
     num_params: u32,
     next_var: u32,
     reg_stack: Vec<String>,
@@ -41,6 +44,7 @@ struct WgslEmitter {
 #[derive(Clone)]
 struct WgslLoopState {
     carried: Vec<String>,
+    #[allow(dead_code)]
     header_label: u32,
 }
 
