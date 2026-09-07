@@ -4,7 +4,7 @@
 // crystal-domain: comp
 // ---
 use super::*;
-use crate::field::{Goldilocks, PrimeField};
+use nebu::Goldilocks;
 
 // ─── Step 2: Polynomial Normalization ──────────────────────────────
 
@@ -38,7 +38,7 @@ pub(crate) fn normalize_polynomial(val: &SymValue) -> Option<Vec<PolyTerm>> {
             let pb = normalize_polynomial(b)?;
             let neg_pb: Vec<PolyTerm> = pb
                 .into_iter()
-                .map(|(c, vars)| (Goldilocks::from_u64(c).neg().to_u64(), vars))
+                .map(|(c, vars)| (Goldilocks::new(c).field_neg().as_u64(), vars))
                 .collect();
             let mut combined = pa;
             combined.extend(neg_pb);
@@ -48,7 +48,7 @@ pub(crate) fn normalize_polynomial(val: &SymValue) -> Option<Vec<PolyTerm>> {
             let pa = normalize_polynomial(a)?;
             let negated: Vec<PolyTerm> = pa
                 .into_iter()
-                .map(|(c, vars)| (Goldilocks::from_u64(c).neg().to_u64(), vars))
+                .map(|(c, vars)| (Goldilocks::new(c).field_neg().as_u64(), vars))
                 .collect();
             Some(canonicalize_poly(negated))
         }
@@ -58,9 +58,7 @@ pub(crate) fn normalize_polynomial(val: &SymValue) -> Option<Vec<PolyTerm>> {
             let mut product = Vec::new();
             for (ca, va) in &pa {
                 for (cb, vb) in &pb {
-                    let coeff = Goldilocks::from_u64(*ca)
-                        .mul(Goldilocks::from_u64(*cb))
-                        .to_u64();
+                    let coeff = (Goldilocks::new(*ca) * Goldilocks::new(*cb)).as_u64();
                     if coeff != 0 {
                         let mut vars = va.clone();
                         vars.extend(vb.iter().cloned());
@@ -96,9 +94,7 @@ fn canonicalize_poly(mut terms: Vec<PolyTerm>) -> Vec<PolyTerm> {
     for (coeff, vars) in terms {
         if let Some(last) = canonical.last_mut() {
             if last.1 == vars {
-                last.0 = Goldilocks::from_u64(last.0)
-                    .add(Goldilocks::from_u64(coeff))
-                    .to_u64();
+                last.0 = (Goldilocks::new(last.0) + Goldilocks::new(coeff)).as_u64();
                 continue;
             }
         }

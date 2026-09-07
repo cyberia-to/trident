@@ -151,13 +151,13 @@ Beyond the pipeline stages (`syntax/`, `ast/`, `typecheck/`, `ir/`),
 key support modules:
 
 ```
-field/             ~870 LOC   Universal field arithmetic + primitives
-  mod.rs           ~156         PrimeField trait + module declarations
-  goldilocks.rs    ~101         Goldilocks field (p = 2^64 - 2^32 + 1)
-  babybear.rs       ~60         BabyBear field (p = 2^31 - 2^27 + 1)
-  mersenne31.rs     ~77         Mersenne31 field (p = 2^31 - 1)
-  poseidon2.rs     ~295         Generic Poseidon2 sponge over PrimeField
-  proof.rs         ~179         Claim, padded_height, FRI params, proof size
+field/             ~950 LOC   Foreign-target fields + universal primitives
+  mod.rs           ~200         PrimeField trait (foreign targets only)
+  babybear.rs       ~65         BabyBear field (p = 2^31 - 2^27 + 1) — SP1/RISC Zero
+  mersenne31.rs     ~82         Mersenne31 field (p = 2^31 - 1) — Plonky3
+  fixed.rs         ~440         Fixed-point over Goldilocks (nebu-backed)
+  proof.rs         ~184         Claim, padded_height, FRI params, proof size
+  (Goldilocks arithmetic = strata-nebu; hashing = cyber-hemera — M5)
 
 runtime/           ~416 LOC   Warrior interface definitions
   mod.rs            ~96         Runner, Prover, Verifier, Deployer traits

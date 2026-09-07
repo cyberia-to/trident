@@ -5,8 +5,7 @@
 // ---
 //! StackState: concrete TASM execution on Goldilocks field values.
 
-use crate::field::goldilocks::Goldilocks;
-use crate::field::PrimeField;
+use nebu::Goldilocks;
 
 /// Stack state after executing a TASM sequence.
 /// Tracks side-channel logs alongside the stack so verification can
@@ -69,15 +68,13 @@ impl StackState {
             "push" => {
                 let val = if let Some(v) = arg {
                     if v < 0 {
-                        Goldilocks::from_u64(0)
-                            .sub(Goldilocks::from_u64((-v) as u64))
-                            .to_u64()
+                        (Goldilocks::ZERO - Goldilocks::new((-v) as u64)).as_u64()
                     } else {
-                        Goldilocks::from_u64(v as u64).to_u64()
+                        Goldilocks::new(v as u64).as_u64()
                     }
                 } else if let Some(v) = arg_u {
                     // Large positive literal (exceeds i64 range)
-                    Goldilocks::from_u64(v).to_u64()
+                    Goldilocks::new(v).as_u64()
                 } else {
                     0
                 };
@@ -139,18 +136,18 @@ impl StackState {
                     self.error = true;
                     return;
                 }
-                let b = Goldilocks(self.stack.pop().unwrap());
-                let a = Goldilocks(self.stack.pop().unwrap());
-                self.stack.push(a.add(b).to_u64());
+                let b = Goldilocks::new(self.stack.pop().unwrap());
+                let a = Goldilocks::new(self.stack.pop().unwrap());
+                self.stack.push((a + b).as_u64());
             }
             "mul" => {
                 if self.stack.len() < 2 {
                     self.error = true;
                     return;
                 }
-                let b = Goldilocks(self.stack.pop().unwrap());
-                let a = Goldilocks(self.stack.pop().unwrap());
-                self.stack.push(a.mul(b).to_u64());
+                let b = Goldilocks::new(self.stack.pop().unwrap());
+                let a = Goldilocks::new(self.stack.pop().unwrap());
+                self.stack.push((a * b).as_u64());
             }
             "invert" => {
                 // BUG: this implements negation, but Triton VM invert is
@@ -160,8 +157,8 @@ impl StackState {
                     self.error = true;
                     return;
                 }
-                let a = Goldilocks(self.stack.pop().unwrap());
-                self.stack.push(a.neg().to_u64());
+                let a = Goldilocks::new(self.stack.pop().unwrap());
+                self.stack.push(a.field_neg().as_u64());
             }
 
             // --- Comparison ---
@@ -237,18 +234,8 @@ impl StackState {
                     return;
                 }
                 let exp = self.stack.pop().unwrap();
-                let base = Goldilocks(self.stack.pop().unwrap());
-                let mut result = Goldilocks::ONE;
-                let mut b = base;
-                let mut e = exp;
-                while e > 0 {
-                    if e & 1 == 1 {
-                        result = result.mul(b);
-                    }
-                    b = b.mul(b);
-                    e >>= 1;
-                }
-                self.stack.push(result.to_u64());
+                let base = Goldilocks::new(self.stack.pop().unwrap());
+                self.stack.push(base.exp(exp).as_u64());
             }
             "log_2_floor" => {
                 if self.stack.is_empty() {

@@ -29,7 +29,7 @@ use crate::ast::*;
 use crate::span::Spanned;
 
 /// The prime modulus for the Goldilocks field.
-pub const GOLDILOCKS_P: u64 = crate::field::goldilocks::MODULUS;
+pub const GOLDILOCKS_P: u64 = nebu::field::P;
 
 mod executor;
 mod expr;
