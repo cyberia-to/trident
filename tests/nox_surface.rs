@@ -196,20 +196,22 @@ fn structs_and_fields() {
     let src = "program test
 struct Point { x: Field, y: Field }
 pub fn f() -> Field {
-    let p = Point { x: 10, y: 20 }
+    let mut p = Point { x: 10, y: 20 }
+    p.x = 5
     p.x + p.y
 }";
-    assert_eq!(run(src, &[]), 30);
+    assert_eq!(run(src, &[]), 25);
 }
 
 #[test]
 fn arrays_and_indexing() {
     let src = "program test
 pub fn f() -> Field {
-    let a: [Field; 4] = [10, 20, 30, 40]
+    let mut a: [Field; 4] = [1, 2, 3, 4]
+    a[2] = 30
     a[0] + a[2] + a[3]
 }";
-    assert_eq!(run(src, &[]), 80);
+    assert_eq!(run(src, &[]), 35);
 }
 
 #[test]

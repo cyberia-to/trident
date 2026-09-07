@@ -273,3 +273,47 @@ fn test_pure_fn_compiles() {
     assert!(result.is_ok(), "pure fn should compile: {:?}", result.err());
 }
 
+
+#[test]
+fn test_struct_field_assignment_compiles_triton() {
+    // p.x = v — struct field assignment must reach codegen (was rejected by
+    // the mutability checker as "immutable"). Verify it compiles to TASM
+    // with no error marker and a real store (swap/pop), not a silent no-op.
+    let source = "program test\nstruct Point { x: Field, y: Field }\nfn main() {\n    let mut p = Point { x: pub_read(), y: pub_read() }\n    p.x = 42\n    pub_write(p.x)\n    pub_write(p.y)\n}";
+    let result = compile(source, "test.tri");
+    assert!(
+        result.is_ok(),
+        "struct field assignment should compile for triton: {:?}",
+        result.err()
+    );
+    let tasm = result.unwrap();
+    assert!(!tasm.contains("ERROR"), "no error marker: {}", tasm);
+    assert!(tasm.contains("swap"), "field store emits a swap");
+}
+
+#[test]
+fn test_array_element_assignment_compiles_triton() {
+    // a[i] = v — array element assignment used to collapse to Place::Var("_error_").
+    let source = "program test\nfn main() {\n    let mut a: [Field; 3] = [pub_read(), pub_read(), pub_read()]\n    a[1] = 99\n    pub_write(a[0])\n    pub_write(a[1])\n    pub_write(a[2])\n}";
+    let result = compile(source, "test.tri");
+    assert!(
+        result.is_ok(),
+        "array element assignment should compile for triton: {:?}",
+        result.err()
+    );
+    let tasm = result.unwrap();
+    assert!(!tasm.contains("ERROR"), "no error marker: {}", tasm);
+    assert!(tasm.contains("swap"), "element store emits a swap");
+}
+
+#[test]
+fn test_field_and_index_assignment_immutable_still_rejected() {
+    // Mutability is still enforced through the field path: assigning a field
+    // of an immutable binding must error.
+    let source = "program test\nstruct Point { x: Field, y: Field }\nfn main() {\n    let p = Point { x: 1, y: 2 }\n    p.x = 5\n    pub_write(p.x)\n}";
+    let result = compile(source, "test.tri");
+    assert!(
+        result.is_err(),
+        "assigning a field of an immutable struct must be rejected"
+    );
+}
