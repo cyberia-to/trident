@@ -384,7 +384,7 @@ fn find_merge(then_target: u32, else_target: u32, succs: &BTreeMap<u32, Vec<u32>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use mir_format::{MirBlock, MirOperand, MirConstValue, MirPlace, MirTerminator};
+    use mir_format::{MirBlock, MirOperand, MirConstValue, MirTerminator};
 
     fn linear_blocks() -> Vec<MirBlock> {
         vec![
