@@ -2078,18 +2078,29 @@ pub fn f() -> Field {
     }
 
     #[test]
-    fn array_element_assignment_is_honest_error() {
-        // trident's parser collapses `a[i] = v` to an unsupported place
-        // (`_error_`); the nox lowering must reject it, not miscompile.
+    fn array_element_assignment() {
+        // `a[i] = v` now parses to Place::Index and lowers to a subject edit.
         let src = "program test
 pub fn f() -> Field {
     let mut a: [Field; 3] = [1, 2, 3]
     a[1] = 20
+    a[0] + a[1] + a[2]
+}";
+        assert_eq!(run_src(src, &[]), 24);
+    }
+
+    #[test]
+    fn dynamic_array_index_assignment_is_honest_error() {
+        // A runtime index has no compile-time axis; the lowering must reject it.
+        let src = "program test
+pub fn f(i: Field) -> Field {
+    let mut a: [Field; 3] = [1, 2, 3]
+    a[i] = 20
     a[0]
 }";
         let file = crate::parse_source_silent(src, "t.tri").unwrap();
         let err = NoxCompiler::new().compile_file(&file).unwrap_err();
-        assert!(err.contains("unsupported assignment target"), "{}", err);
+        assert!(err.contains("compile-time constant"), "{}", err);
     }
 
     #[test]

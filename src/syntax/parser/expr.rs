@@ -289,7 +289,26 @@ impl Parser {
 
     pub(super) fn expr_to_place(&self, expr: &Spanned<Expr>) -> Spanned<Place> {
         match &expr.node {
+            // `x` and dotted field access `p.x` (the parser encodes field
+            // access as a dotted variable name) both become Place::Var; the
+            // dotted form is split downstream (typecheck + lowering).
             Expr::Var(name) => Spanned::new(Place::Var(name.clone()), expr.span),
+            // `a[i] = v` — array/element assignment.
+            Expr::Index { expr: inner, index } => {
+                let base = self.expr_to_place(inner);
+                Spanned::new(
+                    Place::Index(Box::new(base), index.clone()),
+                    expr.span,
+                )
+            }
+            // `p.x = v` when it arrives as a structured field access.
+            Expr::FieldAccess { expr: inner, field } => {
+                let base = self.expr_to_place(inner);
+                Spanned::new(
+                    Place::FieldAccess(Box::new(base), field.clone()),
+                    expr.span,
+                )
+            }
             _ => Spanned::new(Place::Var("_error_".to_string()), expr.span),
         }
     }

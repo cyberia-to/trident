@@ -443,7 +443,7 @@ impl TypeChecker {
     /// Resolve nested field access from a dotted name like "st.s00.lo".
     /// Tries every prefix that could be a variable, then walks the
     /// remaining dot-separated fields through struct types.
-    fn resolve_nested_field_access(&mut self, name: &str, span: Span) -> Option<Ty> {
+    pub(super) fn resolve_nested_field_access(&mut self, name: &str, span: Span) -> Option<Ty> {
         let parts: Vec<&str> = name.splitn(name.len(), '.').collect();
         // Try increasingly long prefixes as the base variable.
         // For "st.s00.lo", tries "st" first, then "st.s00".
