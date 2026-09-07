@@ -4,7 +4,10 @@
 // crystal-domain: comp
 // ---
 use std::time::Instant;
-use trident::field::{Goldilocks, PrimeField};
+#[allow(dead_code)]
+#[path = "../../common/poseidon2_fixture.rs"]
+mod field_fixture;
+use field_fixture::Goldilocks;
 
 type F = Goldilocks;
 

@@ -7,7 +7,6 @@
 //!
 //! This module provides field-generic math that every target warrior reuses:
 //! - `PrimeField` trait with concrete implementations (Goldilocks, BabyBear, Mersenne31)
-//! - `poseidon2` — generic Poseidon2 sponge hash over any PrimeField
 //! - `proof` — universal STARK proof estimation (padded height, FRI params, proof size)
 //!
 //! Three fields cover all 20 supported VMs:
@@ -19,7 +18,6 @@ pub mod babybear;
 pub mod fixed;
 pub mod goldilocks;
 pub mod mersenne31;
-pub mod poseidon2;
 pub mod proof;
 
 pub use babybear::BabyBear;

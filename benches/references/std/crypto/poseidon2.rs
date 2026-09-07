@@ -4,7 +4,10 @@
 // crystal-domain: comp
 // ---
 use std::time::Instant;
-use trident::field::{poseidon2, Goldilocks, PrimeField};
+#[allow(dead_code)]
+#[path = "../../common/poseidon2_fixture.rs"]
+mod poseidon2;
+use poseidon2::Goldilocks;
 
 fn main() {
     let input: Vec<Goldilocks> = (0..4).map(|i| Goldilocks::from_u64(i + 1)).collect();
