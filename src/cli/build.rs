@@ -143,6 +143,27 @@ pub fn cmd_build(args: BuildArgs) {
         None => return,
     };
     let cost_options = resolve_options(&target, &profile, None);
+
+    // Tree targets (nox) use a reduction cost model, not AET table heights.
+    if cost_options.target_config.architecture == trident::target::Arch::Tree {
+        match trident::nox_cost_project(&source_path, &cost_options) {
+            Ok(nox_cost) => {
+                if costs || hotspots {
+                    eprintln!("\n{}", nox_cost.format_report());
+                }
+                if let Some(ref save_path) = save_costs {
+                    eprintln!(
+                        "note: --save-costs is not supported for the nox reduction model; \
+                         skipping {}",
+                        save_path.display()
+                    );
+                }
+            }
+            Err(_) => eprintln!("error: could not analyze nox reduction cost"),
+        }
+        return;
+    }
+
     let program_cost = match trident::analyze_costs_project(&source_path, &cost_options) {
         Ok(c) => c,
         Err(_) => return,
