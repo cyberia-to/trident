@@ -37,5 +37,5 @@ level = 3
 lowering = "NoxCompiler"
 lowering_path = "tree"
 cost_model = false
-tests = false
-notes = "Direct AST-to-Noun compilation. Phase 1: arithmetic, comparisons, branching."
+tests = true
+notes = "Direct AST-to-Noun compilation. M1 surface: literals, let, arithmetic, comparison, if/else, early return, mutable assignment (subject edit), bounded for (static unroll + dynamic-bound guard), function inlining, structs/arrays/tuples (cons-trees, const index), hash builtin, assert family, sub/neg/inv/field ops. Every mapping reduces on the real nox VM (tests/nox_surface.rs + unit tests)."
