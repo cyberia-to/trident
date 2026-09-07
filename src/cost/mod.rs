@@ -5,6 +5,7 @@
 // ---
 pub mod analyzer;
 mod json;
+pub mod nox;
 /// Static cost analysis for Trident programs.
 ///
 /// Computes the trace heights of all Algebraic Execution Tables for the

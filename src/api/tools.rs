@@ -39,6 +39,40 @@ pub fn analyze_costs_project(
     }
 }
 
+/// Compute the honest nox reduction cost of a project by lowering the entry
+/// module to a Noun formula and walking it. This is the tree-target
+/// counterpart of [`analyze_costs_project`], whose AET-table model does not
+/// apply to nox (its cost unit is reductions, not trace-table heights).
+pub fn nox_cost_project(
+    entry_path: &Path,
+    options: &CompileOptions,
+) -> Result<cost::nox::NoxCost, Vec<Diagnostic>> {
+    use crate::ast::FileKind;
+    use crate::ir::tree::lower::nox::NoxCompiler;
+    use crate::pipeline::PreparedProject;
+
+    // Quiet build: many programs fall outside the nox surface; the caller
+    // (e.g. the bench nox column) handles the error without terminal spam.
+    let project = PreparedProject::build_quiet(entry_path, options)?;
+    let entry_module = project
+        .modules
+        .iter()
+        .find(|pm| pm.file.kind == FileKind::Program)
+        .or_else(|| project.modules.first())
+        .ok_or_else(|| {
+            vec![Diagnostic::error(
+                "no entry module found".to_string(),
+                span::Span::dummy(),
+            )]
+        })?;
+
+    let mut compiler = NoxCompiler::new();
+    let noun = compiler
+        .compile_file(&entry_module.file)
+        .map_err(|e| vec![Diagnostic::error(e, span::Span::dummy())])?;
+    Ok(cost::nox::NoxCost::analyze(&noun))
+}
+
 /// Parse, type-check, and verify a project using symbolic execution + solver.
 ///
 /// Analyzes all functions across all modules, not just `main`.

@@ -220,6 +220,7 @@ per-function annotations, `--costs` flag — works identically across all VMs.
 | [TRITON](../../vm/triton/README.md) | Table rows | Tallest of 6 tables, padded to next power of 2 |
 | [MIDEN](../../vm/miden/README.md) | Table rows | Tallest of 4 tables |
 | [NOCK](../../vm/nock/README.md) | Nock reductions | Formula evaluation steps (jet calls count as 1) |
+| [NOX](../../vm/nox/target.toml) | Reductions | Pattern applications, per-pattern weight (axis/quote/compose/cons/branch/add/sub/mul/eq/call = 1, xor/and/not/shl = 32, hash = 25, inv/lt = 64). `if`/`else` and dynamic-bounded loops make the executed cost branch-dependent, so `--costs` reports a range `min..=max` (an honest "≤ max"), exact only for straight-line code. |
 | [SP1](../../vm/sp1/README.md) | Cycles | Total cycle count |
 | [OPENVM](../../vm/openvm/README.md) | Cycles | Total cycle count |
 | [RISCZERO](../../vm/risczero/README.md) | Cycles (segments) | Cycle count, split into segments for parallel proving |
