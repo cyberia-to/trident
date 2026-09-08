@@ -64,32 +64,38 @@ program. Quantum-safe. No trusted setup. No elliptic curves. On Triton
   |
   |  trident build
   v
-Target assembly (TASM)  +  static cost report
+.nox formula  +  static cost report          (--target triton: .tasm)
   |
-  |  target VM executes
+  |  joy runs it on nox                        (trisha on Triton VM)
   v
-Execution trace
+Execution trace  =  the zheng witness
   |
-  |  target VM proves
+  |  joy proves
   v
-proof + claim (zheng on nox, STARK on Triton)
+zheng proof + statement                      (STARK on Triton)
   |
-  |  target VM verifies
+  |  joy verifies — no re-execution
   v
 true / false
 ```
 
-Trident owns **source -> assembly + cost**. The backend owns
+Trident owns **source -> formula + cost**. The warrior owns
 **execute -> trace -> prove -> verify**. The compiler exists to expose
-cost, not hide it.
+cost, not hide it:
 
 ```
-$ trident build coin.tri --cost
-  Total: 14,832 cycles
-  Hash:   8,440 (57%)
-  Field:  4,192 (28%)
-  Stack:  2,200 (15%)
+$ trident build hello.tri --costs
+  Cost model: reductions (nox)
+    reductions:  5
+    formula nodes: 15
+    by pattern (static, all arms):
+      axis     ×3     = 3 reductions
+      add      ×1     = 1 reductions
+      mul      ×1     = 1 reductions
 ```
+
+Five reductions billed before running; `joy run` executes in exactly
+five. Branch-dependent programs get an honest `min..=max` range.
 
 You know the proving bill before you run.
 
@@ -97,7 +103,7 @@ You know the proving bill before you run.
 
 ## Neptune
 
-[Neptune Cash](https://neptune.cash/) is where Trident programs run.
+[Neptune Cash](https://neptune.cash/) is where Trident programs run on Triton (`--target triton`).
 It is the only blockchain with recursive STARK proofs in production —
 a proof verifies another proof inside itself, so any chain of
 transactions collapses into a single cryptographic check. No other
