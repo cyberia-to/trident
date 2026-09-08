@@ -98,7 +98,7 @@ enum Command {
     Verify(VerifyProofArgs),
     /// Generate tree-sitter grammar.json from the Rust grammar definition
     TreeSitter(TreeSitterArgs),
-    /// Compile nox formula to native code (wasm, arm64, x64, rv64, ebpf, ptx, wgsl, spirv, ane)
+    /// Compile a nox formula to native code — 28 backends: CPU, GPU, accelerators, eBPF/wasm, quantum (qasm, qir), hardware (verilog, systemverilog, vhdl)
     Compile(CompileNoxArgs),
     /// Compile Rust MIR JSON to nox formulas
     Mir(MirArgs),
