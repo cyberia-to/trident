@@ -208,6 +208,16 @@
             td b { color: var(--pink); }
 
             .neptune { font-size: 0.85rem; color: var(--dim); max-width: 44rem; }
+            .targets { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .tier { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 1.1rem; }
+            .tier b { display: block; color: var(--pink-soft); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
+            .tier i { font-style: normal; color: var(--dim); font-size: 0.7rem; }
+            .tier p { margin: 0.35rem 0 0; font-size: 0.82rem; line-height: 1.7; }
+            .tier code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.74rem; color: var(--ink); background: rgba(255,255,255,0.05); padding: 0.05rem 0.35rem; border-radius: 5px; }
+            .tier .live { color: var(--pink); }
+            .unions { margin-top: 0.9rem; font-size: 0.8rem; color: var(--dim); line-height: 1.8; }
+            .unions code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink); }
+            @media (max-width: 820px) { .targets { grid-template-columns: 1fr; } }
             .neptune b { color: var(--ink); }
 
             footer {
@@ -368,7 +378,53 @@
             </section>
 
             <section>
-                <h2>where it <i>runs</i></h2>
+                <h2>one source, <i>21</i> targets</h2>
+                <p class="neptune" style="margin-bottom: 0.9rem">
+                    a trident program is written once against field elements;
+                    the target is a config, not a rewrite. 21 engines are
+                    declared in <code>vm/</code>, each at an honest integration
+                    level — declared → documented → lowering → costed → tested.
+                    <code>trident build --target &lt;engine&gt;</code> picks one.
+                </p>
+                <div class="targets">
+                    <div class="tier">
+                        <b>tested <i>— end-to-end, proofs land</i></b>
+                        <p><span class="live">nox</span> <i>(default · zheng via joy · Goldilocks)</i> ·
+                        <code>triton</code> <i>(Triton VM · STARK via trisha)</i> ·
+                        <code>miden</code> <i>(Miden VM · Goldilocks)</i></p>
+                    </div>
+                    <div class="tier">
+                        <b>costed <i>— lowering + static cost model</i></b>
+                        <p><code>sp1</code> <i>(Mersenne31)</i> · <code>openvm</code> · <code>cairo</code> <i>(Starknet field)</i></p>
+                    </div>
+                    <div class="tier">
+                        <b>lowering <i>— native code, no proofs yet</i></b>
+                        <p><code>arm64</code> · <code>x86-64</code> · <code>riscv</code> · <code>nock</code> <i>(Nockchain)</i></p>
+                    </div>
+                    <div class="tier">
+                        <b>declared + documented <i>— config and reference, no lowering</i></b>
+                        <p><code>risczero</code> · <code>jolt</code> · <code>aztec</code> · <code>avm</code> <i>(Aleo)</i> ·
+                        <code>evm</code> · <code>wasm</code> · <code>sbpf</code> <i>(Solana)</i> ·
+                        <code>movevm</code> · <code>polkavm</code> · <code>ckb</code> · <code>tvm</code> <i>(TON)</i></p>
+                    </div>
+                </div>
+                <p class="unions">
+                    above the engines sit <b>25 unions</b> — the operating systems and chains a
+                    program can be deployed into, each binding an engine:
+                    <code>neptune</code> (bound: runtime bindings in trident, on triton) ·
+                    <code>linux</code> <code>macos</code> <code>android</code> <code>browser</code> <code>wasi</code>
+                    on native and wasm engines ·
+                    <code>ethereum</code> <code>arbitrum</code> <code>solana</code> <code>polkadot</code> <code>ton</code>
+                    <code>near</code> <code>cosmwasm</code> <code>icp</code> <code>sui</code> <code>aptos</code>
+                    <code>starknet</code> <code>aztec</code> <code>aleo</code> <code>miden</code> <code>nervos</code>
+                    <code>nockchain</code> <code>succinct</code> <code>boundless</code> <code>openvm-network</code>
+                    — declared and documented, awaiting bindings. the honest map is
+                    <a href="https://github.com/cyberia-to/trident/blob/master/reference/targets.md">reference/targets.md</a>.
+                </p>
+            </section>
+
+            <section>
+                <h2>where it <i>runs today</i></h2>
                 <p class="neptune" style="margin-bottom: 0.8rem">
                     <b><a href="https://soft3.org">soft3</a></b> — the default.
                     <code>trident build</code> emits a nox formula; the
