@@ -127,15 +127,15 @@ produce identical artifacts.
 
 | Level | Name | Artifact | Example |
 |-------|------|----------|---------|
-| L0 | Declared | `vm/<engine>/target.toml` exists | All 20 engines |
-| L1 | Documented | `reference/vm/<engine>.md` exists | All 20 engines |
+| L0 | Declared | `vm/<engine>/target.toml` exists | All 21 engines |
+| L1 | Documented | `reference/vm/<engine>.md` exists | none — `reference/vm/` is not in the tree; the column below records an earlier layout |
 | L2 | Scaffold | Legacy `StackBackend` in `src/legacy/backend/` | SP1, OPENVM, CAIRO |
 | L3 | Lowering | New-pipeline lowering trait in `src/tir/lower/`, `src/tree/lower/`, or `src/lir/lower/` | Triton, Miden, Nock, x86-64 |
-| L4 | Costed | `CostModel` in `src/cost/model/` | TRITON, MIDEN, SP1, OPENVM, CAIRO |
-| L5 | Tested | End-to-end compilation tests pass | Triton, Miden |
+| L4 | Costed | `CostModel` in `src/cost/model/` (nox: `src/cost/nox.rs`) | nox, TRITON, MIDEN, SP1, OPENVM, CAIRO |
+| L5 | Tested | End-to-end compilation tests pass | nox, Triton, Miden |
 
 L2 and L3 are not cumulative. Some engines skip L2 and go straight to L3
-(e.g., Nock has TreeLowering but no legacy StackBackend). Levels
+(e.g., Nock and nox have TreeLowering but no legacy StackBackend). Levels
 describe what artifacts exist.
 
 ### Union Levels (L0 -- L3)
@@ -151,10 +151,11 @@ describe what artifacts exist.
 
 ## Engine (VM/Terrain) Integration Matrix
 
-20 engines. Checkmarks indicate the level is complete.
+21 engines. Checkmarks indicate the level is complete.
 
 | Engine | L0 | L1 | L2 | L3 | L4 | L5 | Path | Notes |
 |----|:--:|:--:|:--:|:--:|:--:|:--:|------|-------|
+| nox | Y | -- | -- | Y | Y | Y | tree (NoxCompiler) | **Default target** (0.2.0). Full M1 surface; reduction cost model; `tests/nox_surface.rs` + `tests/differential.rs`; proves via joy (zheng). |
 | triton | Y | Y | Y | Y | Y | Y | tir (StackLowering) | Primary target. 6-table cost model. 30+ lowering tests. |
 | miden | Y | Y | Y | Y | Y | Y | tir (StackLowering) | 4-table cost model. 8+ Miden-specific tests. |
 | nock | Y | Y | -- | Y | -- | -- | tree (TreeLowering) | Jets stubbed. Noun-based lowering. |
