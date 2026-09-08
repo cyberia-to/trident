@@ -348,10 +348,20 @@
                     gap to byte-emulating zkVMs is not marginal:
                 </p>
                 <table class="mono">
-                    <tr><th>operation</th><th>trident on Triton VM</th><th>Rust on SP1</th><th>Rust on RISC Zero</th></tr>
-                    <tr><td>one hash (Tip5 / SHA-256)</td><td><b>1 cycle</b></td><td>~3,000</td><td>~1,000</td></tr>
-                    <tr><td>Merkle proof (depth 32)</td><td><b>~100 cycles</b></td><td>~96,000</td><td>~32,000</td></tr>
+                    <tr><th>operation</th><th>trident on nox <i>(default)</i></th><th>trident on Triton VM</th><th>Rust on SP1</th><th>Rust on RISC Zero</th></tr>
+                    <tr><td>one hash (Poseidon2 / Tip5 / SHA-256)</td><td><b>25 reductions</b></td><td>1 cycle</td><td>~3,000</td><td>~1,000</td></tr>
+                    <tr><td>Merkle path (depth 32)</td><td><b>1,906 reductions</b> <i>(825 in hashes)</i></td><td>~100 cycles</td><td>~96,000</td><td>~32,000</td></tr>
                 </table>
+                <p class="neptune" style="margin-top: 0.6rem; font-size: 0.74rem">
+                    units are the machine's own: a nox <b>reduction</b> is one
+                    trace row — one CCS step the prover folds — so the number
+                    <i>is</i> the proving bill (a hash is 24 Poseidon2 rounds +
+                    1 squeeze row, and the Merkle path above is 33 of them plus
+                    limb plumbing); a Triton <b>cycle</b> is one instruction across
+                    six tables. both are exact and static, from
+                    <code>trident build --costs</code>. the zkVM columns are
+                    cycle counts of RISC-V code emulating field arithmetic.
+                </p>
             </section>
 
             <section>
