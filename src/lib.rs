@@ -12,7 +12,6 @@ pub mod deploy;
 pub mod diagnostic;
 pub mod field;
 pub mod gpu;
-pub mod import;
 pub mod ir;
 pub mod lsp;
 pub mod neural;
