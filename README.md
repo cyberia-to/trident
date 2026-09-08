@@ -13,7 +13,7 @@ alias: Tri, tri, the provable language
 > the way that they do. So you can see what's to come.
 
 <p align="center">
-  <img src="media/tri.gif" width="100%" alt="Trident" />
+  <img src="https://raw.githubusercontent.com/cyberia-to/trident/master/media/tri.gif" width="100%" alt="Trident" />
 </p>
 
 Trident is a provable programming language.
