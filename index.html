@@ -272,11 +272,11 @@
             </div>
 
             <div class="numbers">
-                <div class="num"><b>1</b><span>cycle per hash<br />(Tip5, native)</span></div>
-                <div class="num"><b>~100</b><span>cycles, Merkle<br />proof depth 32</span></div>
-                <div class="num"><b>20 KB</b><span>zheng proof,<br />4 ms to prove</span></div>
+                <div class="num"><b>4 ms</b><span>to prove a program<br />on nox (zheng)</span></div>
+                <div class="num"><b>5.4 KB</b><span>the proof — verified<br />without re-running</span></div>
+                <div class="num"><b>1</b><span>reduction per<br />field operation</span></div>
                 <div class="num"><b>0</b><span>trusted setup,<br />elliptic curves</span></div>
-                <div class="num"><b>∞</b><span>proofs compose:<br />chains collapse to one</span></div>
+                <div class="num"><b>2</b><span>targets: nox (default)<br />and Triton VM</span></div>
             </div>
 
             <section>
@@ -300,8 +300,8 @@
 <pre><span class="d">$</span> trident build hello.tri
   <span class="c">Compiled -> hello.nox</span>
 <span class="d">$</span> trident prove hello.tri --secret 7,13
-  <span class="c">Proved in 15 ms: 17 reductions, 73809 bytes</span>
-<span class="d">$</span> trident verify hello.zheng.json
+  <span class="c">Proved in 14 ms: 17 reductions, 19969 bytes</span>
+<span class="d">$</span> trident verify hello.zheng
   <span class="k">Verification: PASS</span> (zheng proof) · output: [20]
 <span class="d">$</span> trident audit transfer.tri
   <span class="c">All 3 properties verified (0.2s)</span>
@@ -321,8 +321,14 @@
                 <p class="neptune" style="margin-bottom: 0.8rem">
                     provable VMs are not CPUs. the machine word is a field
                     element, not a byte — Rust compiled to RISC-V wraps every
-                    field operation in byte-level emulation. the gap is not
-                    marginal:
+                    field operation in byte-level emulation. trident's word is
+                    the field element itself. on <b>nox</b>, the default
+                    target, a program is a formula over 18 reduction patterns:
+                    every field operation is one reduction, the execution
+                    trace <i>is</i> the zheng witness, and the cost report
+                    before you run equals the reduction count after. on
+                    <b>Triton VM</b> the same source compiles to TASM, and the
+                    gap to byte-emulating zkVMs is not marginal:
                 </p>
                 <table class="mono">
                     <tr><th>operation</th><th>trident on Triton VM</th><th>Rust on SP1</th><th>Rust on RISC Zero</th></tr>
@@ -336,7 +342,7 @@
                 <div class="cards">
                     <div class="card">
                         <b>field elements all the way down</b>
-                        <p><code>Field</code> · <code>Digest</code> · <code>XField</code> map directly to what the VM computes. costs are known before you run: <code>trident build --cost</code> shows the proving bill statically.</p>
+                        <p><code>Field</code> · <code>Digest</code> · <code>XField</code> map directly to what the VM computes. costs are known before you run: <code>trident build --costs</code> bills reductions on nox, instructions on Triton — statically.</p>
                     </div>
                     <div class="card">
                         <b>formal verification, decidable</b>
@@ -363,9 +369,22 @@
 
             <section>
                 <h2>where it <i>runs</i></h2>
+                <p class="neptune" style="margin-bottom: 0.8rem">
+                    <b><a href="https://soft3.org">soft3</a></b> — the default.
+                    <code>trident build</code> emits a nox formula; the
+                    <a href="https://github.com/cyberia-to/joy">joy</a> warrior
+                    executes it on <a href="https://github.com/cyberia-to/nox">nox</a>,
+                    proves it with <a href="https://github.com/cyberia-to/zheng">zheng</a>
+                    (SuperSpartan + Brakedown + HyperNova folding — hash-based,
+                    post-quantum, no trusted setup), reads state from
+                    <a href="https://github.com/cyberia-to/bbg">bbg</a> with
+                    proofs. one algebra (strata), one hash (hemera), one
+                    field, from source to proof.
+                </p>
                 <p class="neptune">
-                    <b><a href="https://neptune.cash/">Neptune Cash</a></b> — the
-                    only blockchain with recursive STARK proofs in production.
+                    <b><a href="https://neptune.cash/">Neptune Cash</a></b> —
+                    <code>--target triton</code>. the only blockchain with
+                    recursive STARK proofs in production.
                     trident is its native language, targeting
                     <a href="https://triton-vm.org/">Triton VM</a>: fungible
                     tokens, cards, locks and type scripts are specified in
