@@ -114,6 +114,38 @@ impl TerrainConfig {
         }
     }
 
+    /// Built-in nox target configuration (hardcoded fallback).
+    ///
+    /// Mirrors `vm/nox/target.toml`. Installed binaries invoked outside the
+    /// trident repo cannot find that file by path search — this fallback is
+    /// nox's counterpart to `triton()` so `--target nox` works everywhere,
+    /// the same way `--target triton` always has. If the two drift, the
+    /// repo file wins (`resolve()` tries the file first).
+    pub fn nox() -> Self {
+        Self {
+            name: "nox".to_string(),
+            display_name: "NOX".to_string(),
+            architecture: Arch::Tree,
+            field_prime: "2^64 - 2^32 + 1".to_string(),
+            field_bits: 64,
+            field_limbs: 2,
+            emulated_fields: Vec::new(),
+            stack_depth: 0,
+            spill_ram_base: 0,
+            digest_width: 4,
+            xfield_width: 3,
+            hash_rate: 8,
+            output_extension: ".nox".to_string(),
+            cost_tables: vec!["reductions".to_string()],
+            warrior: Some(WarriorConfig {
+                name: "joy".to_string(),
+                crate_name: "joy".to_string(),
+                runner: true,
+                prover: true,
+            }),
+        }
+    }
+
     /// Load a target configuration from a TOML file.
     pub fn load(path: &Path) -> Result<Self, Diagnostic> {
         let content = std::fs::read_to_string(path).map_err(|e| {
@@ -180,11 +212,16 @@ impl TerrainConfig {
             return Self::load(&cwd_path);
         }
 
+        // Built-in fallback for installed binaries with no repo tree nearby.
+        if name == "nox" {
+            return Ok(Self::nox());
+        }
+
         Err(Diagnostic::error(
             format!("unknown target '{}' (looked for '{}')", name, primary),
             Span::dummy(),
         )
-        .with_help("available targets: triton, miden, openvm, sp1, cairo, nock".to_string()))
+        .with_help("available targets: triton, nox, miden, openvm, sp1, cairo, nock".to_string()))
     }
 
     fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {

@@ -37,7 +37,7 @@ tables = ["reductions"]
 name = "joy"
 crate = "joy"
 runner = true
-prover = false   # flip in M4 when joy prove emits zheng proofs
+prover = true    # joy prove emits real zheng proofs (M4, 2026-09-08)
 
 [status]
 level = 4
