@@ -6,13 +6,13 @@
         <title>trident — the provable language</title>
         <meta
             name="description"
-            content="Trident is a provable programming language. Every program compiles to field arithmetic and produces a STARK proof — post-quantum, zero-knowledge, no trusted setup. cargo install trident-lang"
+            content="Trident is a provable programming language. Every program compiles to field arithmetic and produces a zheng proof on nox by default (STARK on Triton) — post-quantum, no trusted setup. cargo install trident-lang cyber-joy"
         />
         <meta name="theme-color" content="#0a0714" />
         <meta property="og:title" content="trident — the provable language" />
         <meta
             property="og:description"
-            content="Every program produces a STARK proof. 1 cycle per hash. 11 KB proofs. No trusted setup. cargo install trident-lang"
+            content="Every program produces a proof — zheng on nox by default. 1 cycle per hash. 20 KB proofs. No trusted setup. cargo install trident-lang cyber-joy"
         />
         <meta property="og:image" content="https://trident.pink/media/og.jpg" />
         <meta property="og:url" content="https://trident.pink/" />
@@ -246,8 +246,8 @@
                     <h1>the <em>provable</em><br />language</h1>
                     <p class="tag">
                         every program compiles to prime-field arithmetic and
-                        produces a STARK proof — post-quantum, zero-knowledge,
-                        no trusted setup.
+                        produces a proof — zheng on nox by default, STARK on
+                        Triton — post-quantum, no trusted setup.
                     </p>
                     <p class="quote">
                         The weapon is their language. They gave it all to us.
@@ -256,11 +256,11 @@
                         what's to come.
                     </p>
                     <div class="cta mono">
-                        <code>$ <b>cargo install trident-lang</b></code>
-                        <button id="copy" data-cmd="cargo install trident-lang">copy</button>
+                        <code>$ <b>cargo install trident-lang cyber-joy</b></code>
+                        <button id="copy" data-cmd="cargo install trident-lang cyber-joy">copy</button>
                     </div>
                     <p class="then mono">
-                        then: trident build · prove · verify · audit · bench · fmt · lsp
+                        the compiler + joy, the nox warrior · then: trident build · run · prove · verify · audit · bench
                     </p>
                 </div>
                 <div class="figure">
@@ -274,7 +274,7 @@
             <div class="numbers">
                 <div class="num"><b>1</b><span>cycle per hash<br />(Tip5, native)</span></div>
                 <div class="num"><b>~100</b><span>cycles, Merkle<br />proof depth 32</span></div>
-                <div class="num"><b>11 KB</b><span>proof for<br />hello_proof</span></div>
+                <div class="num"><b>20 KB</b><span>zheng proof,<br />4 ms to prove</span></div>
                 <div class="num"><b>0</b><span>trusted setup,<br />elliptic curves</span></div>
                 <div class="num"><b>∞</b><span>proofs compose:<br />chains collapse to one</span></div>
             </div>
@@ -285,10 +285,10 @@
                     <div>
 <pre><span class="k">program</span> hello_proof
 
-<span class="k">fn</span> <span class="c">main</span>() {
-    <span class="k">let</span> a: <span class="c">Field</span> = secret_read()
-    <span class="k">let</span> b: <span class="c">Field</span> = secret_read()
-    pub_write(a + b)
+<span class="k">fn</span> <span class="c">main</span>() -> <span class="c">Field</span> {
+    <span class="k">let</span> a: <span class="c">Field</span> = divine()
+    <span class="k">let</span> b: <span class="c">Field</span> = divine()
+    a + b
 }</pre>
                         <p>
                             a cryptographic proof that <span class="mono">a + b = 20</span>
@@ -298,10 +298,11 @@
                     </div>
                     <div>
 <pre><span class="d">$</span> trident build hello.tri
-<span class="d">$</span> trident prove hello --secret 7 --secret 13
-  <span class="c">Proof generated (924 cycles, 11 KB)</span>
-<span class="d">$</span> trident verify hello
-  <span class="k">Valid</span>: output = 20, inputs hidden
+  <span class="c">Compiled -> hello.nox</span>
+<span class="d">$</span> trident prove hello.tri --secret 7,13
+  <span class="c">Proved in 15 ms: 17 reductions, 73809 bytes</span>
+<span class="d">$</span> trident verify hello.zheng.json
+  <span class="k">Verification: PASS</span> (zheng proof) · output: [20]
 <span class="d">$</span> trident audit transfer.tri
   <span class="c">All 3 properties verified (0.2s)</span>
   No counterexample exists for any input</pre>
@@ -347,7 +348,7 @@
                     </div>
                     <div class="card">
                         <b>the trust chain, broken</b>
-                        <p>the compiler self-hosts and emits a STARK proof that compilation was faithful. Ken Thompson's 1984 backdoor dies here — not audited, proven.</p>
+                        <p>the compiler self-hosts and emits a proof that compilation was faithful. Ken Thompson's 1984 backdoor dies here — not audited, proven.</p>
                     </div>
                     <div class="card">
                         <b>the rosetta stone</b>
