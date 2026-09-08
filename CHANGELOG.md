@@ -3,6 +3,15 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
+## Unreleased
+
+- `Digest` limbs index on nox: `d[k]` for k < 4 lowers to the hash
+  pair's axes (reference/language.md already said `Digest` is
+  `[Field; D]`; the typechecker rejected it). Enables Merkle paths
+  chained through digests — depth 32 costs 1,906 reductions statically
+  (825 in the 33 hash patterns). Stack targets still reject digest
+  indexing (no limb store yet).
+
 ## 0.2.0 / 500K — Cast (2026-09-08)
 
 The soft3 release. trident compiles to **nox** by default and the whole

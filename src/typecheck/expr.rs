@@ -260,6 +260,14 @@ impl TypeChecker {
                 let _idx_ty = self.check_expr(&index.node, index.span);
                 match &inner_ty {
                     Ty::Array(elem_ty, _) => *elem_ty.clone(),
+                    // reference/language.md: Digest is `[Field; D]`. Limb access
+                    // is lowered on tree targets (nox: D = 4, a balanced pair);
+                    // the stack path has no digest-limb store yet.
+                    Ty::Digest(_)
+                        if self.target_config.architecture == crate::target::Arch::Tree =>
+                    {
+                        Ty::Field
+                    }
                     _ => {
                         self.error(
                             format!("index access on non-array type {}", inner_ty.display()),

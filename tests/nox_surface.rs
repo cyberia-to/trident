@@ -346,3 +346,37 @@ pub fn f() -> Field {
 }";
     run_expect_error(src, &[]);
 }
+
+/// reference/language.md: `Digest` is `[Field; D]`; on nox D = 4 and the
+/// limbs live at axes 4..7 of the hash pair. Limb access must reduce.
+#[test]
+fn digest_limbs_index_on_nox() {
+    let limbs: Vec<u64> = (0..4)
+        .map(|k| {
+            run(
+                &format!(
+                    "program limb\nfn main(a: Field) -> Field {{\n    let d: Digest = hash(a, 0, 0, 0, 0, 0, 0, 0)\n    d[{k}]\n}}\n"
+                ),
+                &[42],
+            )
+        })
+        .collect();
+    assert!(limbs.iter().all(|&l| l != 0), "limbs {limbs:?}");
+    assert_eq!(limbs.iter().collect::<std::collections::BTreeSet<_>>().len(), 4, "limbs distinct {limbs:?}");
+    // the same hash, summed limbs in-program == summed limbs out of program
+    let sum = run(
+        "program sum\nfn main(a: Field) -> Field {\n    let d: Digest = hash(a, 0, 0, 0, 0, 0, 0, 0)\n    d[0] + d[1] + d[2] + d[3]\n}\n",
+        &[42],
+    );
+    let p: u128 = 0xFFFF_FFFF_0000_0001;
+    assert_eq!(sum as u128, limbs.iter().map(|&l| l as u128).sum::<u128>() % p);
+}
+
+/// A depth-32 Merkle path chained through digest limbs — the operation the
+/// README compares across VMs — compiles and reduces on nox.
+#[test]
+fn merkle_path_depth_32_reduces_on_nox() {
+    let src = "program merkle32\n\nfn main(leaf: Field, s0: Field) -> Field {\n    let mut acc: Digest = hash(leaf, 0, 0, 0, 0, 0, 0, 0)\n    for i in 0..32 bounded 32 {\n        acc = hash(acc[0], acc[1], acc[2], acc[3], s0, 0, 0, 0)\n    }\n    acc[0]\n}\n";
+    let root = run(src, &[7, 9]);
+    assert_ne!(root, 0);
+}
