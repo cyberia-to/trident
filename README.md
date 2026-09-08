@@ -72,7 +72,7 @@ Execution trace
   |
   |  target VM proves
   v
-STARK proof + claim
+proof + claim (zheng on nox, STARK on Triton)
   |
   |  target VM verifies
   v
@@ -250,7 +250,7 @@ opaque. Ken Thompson showed in 1984 that a compiler can inject
 backdoors invisible in the source.
 
 Trident breaks the chain. The compiler self-hosts: Trident source
-compiles Trident source, and the execution produces a STARK proof that
+compiles Trident source, and the execution produces a proof that
 compilation was faithful. Not "we audited the binary." Not "we
 reproduced the build." A cryptographic proof, from the mathematics
 itself, that the output corresponds to the input.
@@ -280,13 +280,16 @@ model is training. When it beats the compiler, the number appears.
 ## Quick Start
 
 ```
-cargo build --release
-trident build main.tri           # compile to TASM
-trident check main.tri           # type-check only
-trident test main.tri            # run #[test] functions
-trident fmt main.tri             # format source
-trident audit main.tri           # formal verification
-trident bench main.tri           # instruction count + cost
+cargo install trident-lang cyber-joy       # the compiler + the nox warrior
+trident build main.tri                     # compile to .nox (--target triton for TASM)
+trident run main.tri --input-values 3,5    # execute on nox (via joy)
+trident prove main.tri                     # zheng proof -> main.zheng.json
+trident verify main.zheng.json             # verify, no re-execution
+trident check main.tri                     # type-check only
+trident test main.tri                      # run #[test] functions
+trident fmt main.tri                       # format source
+trident audit main.tri                     # formal verification
+trident bench main.tri                     # cost: reductions (nox), instructions (triton)
 ```
 
 ---
@@ -298,14 +301,14 @@ trident bench main.tri           # instruction count + cost
 3. **Compile-time everything.** Types, array sizes, and costs known statically.
 4. **Constraints are features.** No heap, no dynamic dispatch — safety guarantees.
 5. **Provable first.** Designed for ZK. These constraints make great conventional programs too.
-6. **Minimal dependencies.** 5 runtime crates: clap, ariadne, blake3, tower-lsp, tokio.
+6. **Minimal dependencies.** Nothing outside the soft3 stack: strata (algebra), hemera (hash), nox (target) — plus clap, ariadne, tower-lsp, tokio, blake3.
 
 ---
 
 ## Source Tree
 
 ```
-src/          Compiler in Rust            ~36K lines, 5 runtime dependencies
+src/          Compiler in Rust            ~36K lines, soft3-native (strata · hemera · nox)
 vm/           VM intrinsics in Trident    Compiler primitives (hash, I/O, field ops)
 std/          Standard library in Trident Crypto, math, neural networks, compiler
 os/           OS bindings in Trident      Per-OS config, programs, and extensions

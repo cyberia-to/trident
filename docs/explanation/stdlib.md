@@ -27,7 +27,7 @@ neural networks, polynomial commitment, and quantum gate application.
 
 The Goldilocks field F_p (p = 2^64 - 2^32 + 1) is the bedrock. Every
 computation reduces to operations over this field. Every function compiles
-to an arithmetic circuit. Every circuit produces a STARK proof.
+to an arithmetic circuit. Every circuit produces a proof — zheng on nox, STARK on Triton.
 
 Most standard libraries organize around data structures: lists, maps,
 strings, I/O. Trident's stdlib organizes around a mathematical insight.

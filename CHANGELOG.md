@@ -3,7 +3,93 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
-## 0.2.0 — Unreleased
+## 0.2.0 / 512K — Cast (2026-09-08)
+
+The soft3 release. trident compiles to **nox** by default and the whole
+soft3 stack stands behind it — strata algebra and hemera hashes inside
+the compiler, nox execution, zheng proofs, bbg state — through a new
+warrior, **joy**. `cargo install trident-lang cyber-joy` gives
+build → run → prove → verify with a zheng proof, out of the box:
+
+```
+$ trident build hello.tri                  # hello.nox
+$ trident prove hello.tri --secret 7,13    # Proved in 15 ms: 17 reductions, 74 KB
+$ trident verify hello.zheng.json          # Verification: PASS (zheng proof)
+```
+
+Kelvin: the project stays at 512K. The cyber stack and Noun layers
+cleared most of their 256K checklists (see `reference/roadmap.md`), but
+a layer cools only when its whole tier clears — Cast is a hot release
+that poured the language into the soft3 mold.
+
+### nox is the default target
+- every command's `--target` defaults to `nox`; `--target triton` keeps
+  TASM and the trisha warrior. `TerrainConfig::nox()` is a built-in
+  fallback (like `triton()`), so an installed binary works from any
+  directory. `vm/nox/target.toml`: level 4, cost model, tests, joy as
+  warrior with `prover = true`.
+
+### the full language surface lowers to nox (M1)
+- statements lower to composable subject transformers; mutable
+  assignment is a subject edit (fixes lost mutations inside `if`/loop
+  arms); bounded `for` unrolls static bounds and guards dynamic ends;
+  function calls inline (recursion rejected, node budget); tuples,
+  structs and fixed arrays are cons-trees; `hash`, `assert*`, field
+  builtins lower to patterns. `divine()` emitted a malformed call —
+  fixed. every mapping is verified by reducing on the real nox VM.
+- struct-field and array-element assignment now reach the front end on
+  **both** targets. the Triton path previously compiled `a[i] = v` to
+  a silent `swap 0; pop 1` no-op; it now emits a real store or an
+  honest error (multi-word writes, runtime indices).
+- `os.state.read(key)` lowers to the look pattern (BBG dimension 0);
+  `ProgramBundle.reads_state` is additive and JSON-backward-compatible.
+- unsupported on nox is an explicit compile error, never wrong code:
+  sponge/Merkle/RAM/IO builtins, xfield ops, dynamic array index,
+  `return` inside loops.
+
+### honest cost model (M2)
+- `trident build --costs` bills reductions from the emitted noun;
+  branch-dependent cost is a `min..=max` range, exact only for
+  straight-line code; `trident bench` grows a `Nox(r)` column (2 of 42
+  baselines are inside the nox surface — the rest are `-`). the static
+  bill equals the runtime bill on straight-line programs.
+
+### joy — the cyber warrior (M3, M4)
+- `joy run` / `joy prove` / `joy verify` on nox: zheng proofs
+  (SuperSpartan + Brakedown + HyperNova folding), verified without
+  re-execution; hash blocks and BBG `look` reads prove; artifacts are
+  self-contained `.zheng.json`. `trident run/prove/verify` delegate to
+  it. Measured (release): add proves in 4 ms / 20 KB, a hash in 71 ms /
+  189 KB, two `divine()` secrets in 15 ms / 74 KB. github.com/cyberia-to/joy
+
+### differential harness
+- `tests/differential.rs`: the stdlib modules inside the nox surface
+  (fibonacci, poseidon) execute on nox and must equal independent Rust
+  ground truth; a census pin fails whenever the surface grows without
+  coverage. Triton×nox agreement pends trisha's build repair (trisha#1).
+
+### fixed in the stack, surfaced by this release
+- zheng: four silent soundness holes — `pattern_quote` constrained a
+  stale register, the relaxed-fold loophole, the whole arithmetic family
+  on a stale register map (mul/eq/branch violations were silently
+  accepted), relaxed-proof pairing at m>1 — and the axis / hash-rate /
+  look bindings that were the release blocker. zheng 0.2.0.
+- nox: call rows carried the arena Order of the check result instead of
+  its value, so every `divine()` proof failed verification; the branch
+  selector r10 was clobbered on success; the arena-forking parallel
+  executor hijacked std builds. cyber-nox 0.2.0. Filed: arena hang at
+  N ≥ 8192 (nox#2), spec/code budget drift (nox#1).
+- bbg: cli broken on master; QueryProof/Commitment/Opening serde. bbg
+  0.2.0, cyber-lens 0.1.3. lens: porphyry/genies drift filed (lens#2).
+
+### removed
+- the Rs → Trident MIR importer (`src/import/`, `mir-format`) leaves the
+  published crate: `mir-format` is `publish = false` by design and
+  `cargo publish` rejects any reference to an unpublished dependency
+  (path, git and optional forms alike). it returns as a companion crate.
+- `trident::poseidon2` — see BREAKING below.
+- `media/` is excluded from the package (a 9 MB gif was 70% of the
+  crate); the README image is an absolute URL.
 
 ### BREAKING: content hashes are now cyber-hemera
 
@@ -28,7 +114,14 @@ infrastructure.
 
 The compiler's Goldilocks arithmetic is now `strata-nebu`'s (bit-exact
 migration — field arithmetic values are unchanged; only the
-implementation moved).
+implementation moved). `babybear.rs`/`mersenne31.rs` stay: they are
+foreign-target fields (risczero, sp1), not stack algebra.
+
+### Install
+
+```
+cargo install trident-lang cyber-joy
+```
 
 ## 0.1.0 / 512K — Smelt (2026-02-26)
 

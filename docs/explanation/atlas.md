@@ -231,7 +231,7 @@ Y." Anyone can verify this claim without re-compiling, without trusting
 the publisher's toolchain, without trusting anything except mathematics.
 
 The endgame is provable compilation. The Trident compiler self-hosts on
-Triton VM. Every compilation produces a STARK proof. Every Atlas package
+the target VM. Every compilation produces a proof (zheng on nox, STARK on Triton). Every Atlas package
 comes with a mathematical guarantee that it was compiled correctly --
 source to assembly, each transformation proven, chained into a single
 certificate. Trust becomes optional because verification is cheap.

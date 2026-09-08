@@ -2,9 +2,28 @@
 
 This guide covers everything about the Trident compilation process: how source code becomes Triton Assembly, how to invoke the compiler, how to read errors, and how to analyze proving cost before you ever run a program. It is the second stage of the Trident lifecycle (Writing -> Compiling -> Running -> Deploying -> Generating Proofs -> Verifying Proofs).
 
+> **Two targets, two proof systems.** Since 0.2.0 the default target is
+> **nox** (the soft3 stack): `trident build` emits `.nox`, and the
+> **joy** warrior runs, proves and verifies it — a **zheng** proof
+> (SuperSpartan + Brakedown + HyperNova folding), verified without
+> re-execution. Triton VM and its STARK remain fully supported via
+> `--target triton` and the trisha warrior. On the default target the
+> whole chain is:
+>
+> ```
+> trident build hello.tri                 # hello.nox
+> trident prove hello.tri --secret 7,13   # hello.zheng.json (via joy, ~15 ms)
+> trident verify hello.zheng.json         # Verification: PASS (zheng proof)
+> ```
+>
+> `trident run/prove/verify` delegate to the warrior registered for the
+> target. The Triton-specific material below stays accurate for
+> `--target triton`; zheng's construction lives in the zheng repo
+> (`specs/superspartan.md`, `accumulator.md`, `decider.md`).
+
 ## 🔧 The Compilation Pipeline
 
-Trident compiles `.tri` source files directly to [TASM](https://triton-vm.org/spec/) (Triton Assembly) with no intermediate representation. The pipeline has six stages:
+Trident compiles `.tri` source files directly to a nox formula (default target) or to [TASM](https://triton-vm.org/spec/) (Triton Assembly, `--target triton`). The pipeline has six stages:
 
 ```trident
 source (.tri)
@@ -45,10 +64,10 @@ trident build main.tri
 Output:
 
 ```text
-Compiled -> main.tasm
+Compiled -> main.nox
 ```
 
-The default output file replaces the `.tri` extension with `.tasm`. To specify a different path:
+The default output file replaces the `.tri` extension with the target's extension (`.nox` by default, `.tasm` with `--target triton`). To specify a different path:
 
 ```nu
 trident build main.tri -o output/program.tasm
@@ -419,4 +438,4 @@ where it is identified by its [content-addressed hash](../explanation/content-ad
 
 ## 🚀 Next Step
 
-[Running a Program](running-a-program.md) -- execute your compiled TASM in Triton VM.
+[Running a Program](running-a-program.md) -- execute your compiled program (joy on nox, Triton VM on `--target triton`).

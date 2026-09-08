@@ -8,9 +8,11 @@ state, focus dynamics — all written in Trident, all provable.
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower layers freeze first.
 
-512K released 2026-02-26. Hot, not production ready.
-Developer preview and request for comment.
-`cargo install trident-lang` · [GitHub](https://github.com/cyberia-to/trident/releases/tag/v0.1.0)
+512K released 2026-02-26 (0.1.0 Smelt). Hot, not production ready.
+0.2.0 Cast released 2026-09-08 — still 512K: the language poured into
+the soft3 mold (nox default target, joy warrior, zheng proofs), the
+cyber stack and Noun layers cleared most of their 256K items.
+`cargo install trident-lang cyber-joy` · [GitHub](https://github.com/cyberia-to/trident/releases/tag/v0.2.0)
 
 Three targets before 256k release:
 
@@ -24,13 +26,13 @@ Layer           Current   First Release
 ───────────────────────────────────────
 CORE            256K         64K
 vm spec          32K         16K
-language         64K         32K
+language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun            256K        128K      ← AST→Noun path (tree targets)
+Noun            128K        128K      ← 256K cleared in 0.2.0 (NounBuilder, subject, cost)
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
-cyber stack     256K        128K      ← nebu, hemera, nox, zheng, bbg
+cyber stack     256K        128K      ← 3/4 of 256K + nox/zheng integration done (0.2.0); os/cyber types open
 tooling          64K         32K
 AI              256K        128K
 Privacy         256K        128K
@@ -51,13 +53,13 @@ Quantum         256K        128K
 - [ ] tooling     Integration tests and formal verification
 - [ ] tooling     Beautiful website
 - [ ] tooling     Complete benchmark coverage
-- [ ] cyber stack Hemera hash migration (replace blake3 + custom poseidon2)
-- [ ] cyber stack nebu field adoption (Goldilocks bridge)
-- [ ] cyber stack vm/nox/ target profile + registration
+- [x] cyber stack Hemera hash migration (replace blake3 + custom poseidon2) — 0.2.0
+- [x] cyber stack nebu field adoption (Goldilocks bridge) — 0.2.0
+- [x] cyber stack vm/nox/ target profile + registration — 0.2.0, default target
 - [ ] cyber stack os/cyber/ target profile + type definitions
-- [ ] Noun        NounBuilder: direct AST→Noun lowering (bypass TIR for tree targets)
-- [ ] Noun        SubjectManager: variable→axis mapping for tree subjects
-- [ ] Noun        Focus cost model (exact compile-time prediction)
+- [x] Noun        NounBuilder: direct AST→Noun lowering (bypass TIR for tree targets) — 0.2.0
+- [x] Noun        SubjectManager: variable→axis mapping for tree subjects — 0.2.0
+- [x] Noun        Focus cost model (exact compile-time prediction) — 0.2.0: exact for straight-line code, min..=max ranges where bounds are dynamic
 ```
 
 ## 128K — the machine assembles
@@ -66,8 +68,8 @@ Quantum         256K        128K
 CORE        Hemera + Merkle as CORE programs, BBG prototype
 TIR         Lowering works for stack, register, and tree targets
 Noun        AST→Noun optimized: subject sharing, dead axis elimination, parallel marking
-cyber stack nox executor integration (trident build → .nox → nox execute → trace)
-cyber stack zheng prover integration (trace → zheng prove → proof)
+cyber stack ✓ nox executor integration (trident build → .nox → nox execute → trace) — joy, 0.2.0
+cyber stack ✓ zheng prover integration (trace → zheng prove → proof) — joy, 0.2.0
 cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
 compiler    ✓ All 6 stages + pipeline rewritten in .tri (9,195 LOC)
               lexer (824) → parser (2,723) → typecheck (1,502) →
@@ -84,11 +86,11 @@ Quantum     Quantum circuit simulation backend
 
 ```
 CORE        Transaction circuit, STARK verifier as CORE program
-language    Indexed assignment (arr[i] = val, s.field = val)
+language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ✓ TIR builder, optimizer, lowerer self-hosted in .tri
 Noun        ✓ NounBuilder self-hosted in .tri
-cyber stack Full pipeline: .tri → nox → zheng → bbg (compile, execute, prove, verify)
-cyber stack Warrior binary for cyber target (like trisha for Triton)
+cyber stack ✓ Full pipeline: .tri → nox → zheng → bbg (compile, execute, prove, verify) — 0.2.0
+cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ✓ All stages self-hosted — wire lower when core/warrior ready
 std.*       23 std.skill.* shipped
 os.*        3+ OS namespaces operational (incl. os.cyber.*)

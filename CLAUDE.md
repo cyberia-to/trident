@@ -103,13 +103,16 @@ reference is wrong or incomplete, update the reference to match reality.
 Four namespaces: `vm.*` (intrinsics), `std.*` (libraries), `os.*`
 (portable runtime), `os.<os>.*` (OS-specific). Source: `src/` (Rust
 compiler), `vm/` `std/` `os/` (Trident code). Compiler self-hosts
-toward provable compilation on Triton VM.
+toward provable compilation on nox (default target) and Triton VM.
 
 Use `tokei src/` or `find src/ -name '*.rs'` to explore module structure.
 
 ## Companion Repos
 
-- **trisha** (`~/git/trisha`) — Triton VM warrior. Executes, proves,
+- **joy** (`~/cyber/joy`) — nox warrior, the cyber battlefield: executes,
+  proves (zheng), verifies programs on the default target. Published as
+  `cyber-joy` (binary `joy`). Depends on trident via `path = "../trident"`.
+- **trisha** (`~/cyber/trisha`) — Triton VM warrior. Executes, proves,
   verifies, deploys programs compiled by trident. Depends on trident
   via `path = "../trident"`. ~2k LOC Rust + WGSL.
 - trisha patches triton-vm at build time via `patches/apply.nu`
@@ -119,7 +122,8 @@ Use `tokei src/` or `find src/ -name '*.rs'` to explore module structure.
 - When referencing files across repos, use repo-qualified paths
   (e.g. `trident/src/cli/mod.rs` vs `trisha/src/cli.rs`).
 - After editing trident code, rebuild trisha too:
-  `cargo install --path . --force && cd ../trisha && cargo install --path . --force`
+  `cargo install --path . --force && cd ../joy && cargo install --path cli --force`
+  (and trisha when the Triton path is touched).
 
 ## Five-Layer Architecture
 
@@ -316,9 +320,10 @@ baseline, neural optimizer. All must agree on correctness.
 - Classic TASM — `trident build` output
 - Neural TASM — neural optimizer output
 
-Four metrics: correctness (`trisha run` vs reference), execution speed
-(cycle count), proving time (`trisha prove`), verification time
-(`trisha verify`). Block-level training uses inline stack verifier
+Four metrics: correctness (`joy run` on nox / `trisha run` on Triton vs
+reference — `tests/differential.rs` anchors nox against Rust ground
+truth), execution speed (reductions / cycles), proving time (`joy prove`
+/ `trisha prove`), verification time (`joy verify` / `trisha verify`). Block-level training uses inline stack verifier
 (`src/cost/stack_verifier.rs`) for fast feedback.
 
 ## Compaction Survival

@@ -1,5 +1,11 @@
 # trident 0.2.0 — the soft3 release
 
+**STATUS: shipped 2026-09-08.** trident-lang 0.2.0 + cyber-joy 0.2.1 on
+crates.io, GitHub releases cut, the whole harness republished
+(strata-nebu 0.1.1, cyber-hemera 0.3.1, cyber-lens 0.1.3, cyber-nox
+0.2.0, zheng 0.2.0, bbg 0.2.0). M0–M7 done; residuals recorded in
+CHANGELOG. Kelvin: still 512K (see roadmap).
+
 **One sentence:** trident compiles to nox by default with soft3 as its
 infrastructure — strata algebra and hemera hashes in the compiler, and a new
 warrior **joy** (the cyber battlefield, built the way trisha is built) doing
