@@ -59,6 +59,21 @@ impl TypeChecker {
             );
         }
 
+        // Portable OS state — currently lowered only on tree targets (nox:
+        // pattern 17 look over BBG). Other targets keep their existing
+        // "undefined function" diagnostic until their lowering lands, so
+        // registration is gated by architecture. See reference/os.md
+        // ("Per-OS Lowering", Graph row).
+        if self.target_config.architecture == crate::target::Arch::Tree {
+            b.insert(
+                "os.state.read".into(),
+                FnSig {
+                    params: vec![("key".into(), Ty::Field)],
+                    return_ty: Ty::Field,
+                },
+            );
+        }
+
         // Non-deterministic input
         b.insert(
             "divine".into(),

@@ -320,6 +320,9 @@ pub struct NoxCompiler {
     structs: BTreeMap<String, Vec<(String, ast::Type)>>,
     /// Names of functions currently being inlined (cycle guard).
     call_stack: Vec<String>,
+    /// Set when the program lowers an `os.state.read` — the bundle declares
+    /// this so the runner supplies the subject as `[bbg_root [params…]]`.
+    reads_state: bool,
     /// Running count of nodes emitted by inlining (exponential-blowup guard).
     inline_nodes: usize,
 }
@@ -333,7 +336,15 @@ impl NoxCompiler {
             structs: BTreeMap::new(),
             call_stack: Vec::new(),
             inline_nodes: 0,
+            reads_state: false,
         }
+    }
+
+    /// Whether the compiled program reads persistent state (nox look). The
+    /// runner must then cons the BBG state root onto the subject:
+    /// `[root_tree [param_last … [param0 0]]]`.
+    pub fn reads_state(&self) -> bool {
+        self.reads_state
     }
 
     /// Compile an AST file. Returns the Noun formula for the entry function.
@@ -392,6 +403,19 @@ impl NoxCompiler {
         for param in &func.params {
             self.scope.bind(&param.name.node);
             self.scope.note_type(&param.name.node, param.ty.node.clone());
+        }
+        // A program that reads state receives the BBG root as the subject
+        // head, above the parameters: `[root_tree [param_last … [param0 0]]]`.
+        // Each `os.state.read` site re-conses this root to the head so the
+        // look pattern finds its limbs at the fixed axes 4/10/22/23.
+        if func
+            .body
+            .as_ref()
+            .map(|b| block_uses_state(&b.node))
+            .unwrap_or(false)
+        {
+            self.scope.bind("$bbg_root");
+            self.reads_state = true;
         }
         self.check_depth()?;
 
@@ -1182,6 +1206,42 @@ impl NoxCompiler {
                             name
                         ))
                     }
+                    "os.state.read" => {
+                        if args.len() != 1 {
+                            return Err("os.state.read takes 1 argument (key)".to_string());
+                        }
+                        if !self.call_stack.is_empty() {
+                            return Err(
+                                "nox: os.state.read inside a called function is not yet \
+                                 supported — read state in the entry function"
+                                    .to_string(),
+                            );
+                        }
+                        let root_pos = self.scope.lookup("$bbg_root").ok_or_else(|| {
+                            "nox: os.state.read site without a bound state root \
+                             (compiler bug — entry pre-scan missed it)"
+                                .to_string()
+                        })?;
+                        let root_axis = stack_axis(root_pos);
+                        // The look object is [root_tree | subject]: the key
+                        // formula runs against it, so compile the key with one
+                        // extra anonymous head binding.
+                        self.scope.push_frame();
+                        self.scope.bind("$look");
+                        let key_f = self.compile_expr(&args[0].node);
+                        self.scope.pop_frame();
+                        let key_f = key_f?;
+                        // [17 [[1 0] key]] — BBG dimension 0 at `key`
+                        // (reference/os.md, Per-OS Lowering, Graph row).
+                        let look_f = Noun::cell(
+                            Noun::atom(17),
+                            Noun::cell(nox_quote(Noun::atom(0)), key_f),
+                        );
+                        Ok(nox_compose(
+                            nox_cons(nox_axis(root_axis), nox_axis(1)),
+                            nox_quote(look_f),
+                        ))
+                    }
                     "divine" | "std.io.divine" => {
                         if !args.is_empty() {
                             return Err("divine takes no arguments".to_string());
@@ -1269,6 +1329,76 @@ impl NoxCompiler {
 }
 
 // ─── structural helpers ──────────────────────────────────────────
+
+/// Does this block (transitively) contain an `os.state.read` call?
+fn block_uses_state(block: &Block) -> bool {
+    block.stmts.iter().any(|s| stmt_uses_state(&s.node))
+        || block
+            .tail_expr
+            .as_ref()
+            .map(|e| expr_uses_state(&e.node))
+            .unwrap_or(false)
+}
+
+fn stmt_uses_state(stmt: &Stmt) -> bool {
+    match stmt {
+        Stmt::Let { init, .. } => expr_uses_state(&init.node),
+        Stmt::Assign { value, .. } => expr_uses_state(&value.node),
+        Stmt::TupleAssign { value, .. } => expr_uses_state(&value.node),
+        Stmt::If {
+            cond,
+            then_block,
+            else_block,
+        } => {
+            expr_uses_state(&cond.node)
+                || block_uses_state(&then_block.node)
+                || else_block
+                    .as_ref()
+                    .map(|b| block_uses_state(&b.node))
+                    .unwrap_or(false)
+        }
+        Stmt::For {
+            start, end, body, ..
+        } => {
+            expr_uses_state(&start.node)
+                || expr_uses_state(&end.node)
+                || block_uses_state(&body.node)
+        }
+        Stmt::Expr(e) => expr_uses_state(&e.node),
+        Stmt::Return(e) => e.as_ref().map(|e| expr_uses_state(&e.node)).unwrap_or(false),
+        Stmt::Match { expr, arms } => {
+            expr_uses_state(&expr.node)
+                || arms.iter().any(|a| block_uses_state(&a.body.node))
+        }
+        Stmt::Reveal { fields, .. } | Stmt::Seal { fields, .. } => {
+            fields.iter().any(|(_, e)| expr_uses_state(&e.node))
+        }
+        Stmt::Asm { .. } => false,
+    }
+}
+
+fn expr_uses_state(expr: &Expr) -> bool {
+    match expr {
+        Expr::Call { path, args, .. } => {
+            path.node.as_dotted() == "os.state.read"
+                || args.iter().any(|a| expr_uses_state(&a.node))
+        }
+        Expr::BinOp { lhs, rhs, .. } => {
+            expr_uses_state(&lhs.node) || expr_uses_state(&rhs.node)
+        }
+        Expr::FieldAccess { expr, .. } => expr_uses_state(&expr.node),
+        Expr::Index { expr, index } => {
+            expr_uses_state(&expr.node) || expr_uses_state(&index.node)
+        }
+        Expr::StructInit { fields, .. } => {
+            fields.iter().any(|(_, e)| expr_uses_state(&e.node))
+        }
+        Expr::ArrayInit(es) | Expr::Tuple(es) => {
+            es.iter().any(|e| expr_uses_state(&e.node))
+        }
+        Expr::Literal(_) | Expr::Var(_) => false,
+    }
+}
 
 /// Does this block (transitively) contain a `return` statement?
 fn block_has_return(block: &Block) -> bool {
@@ -2185,6 +2315,131 @@ pub fn f() -> Field {
         };
         let err = c.compile_expr(&expr).unwrap_err();
         assert!(err.contains("sponge") || err.contains("Merkle"), "{}", err);
+    }
+
+    // ── os.state.read → look (pattern 17) ────────────────────────
+
+    /// Answers BBG dimension-0 looks with `key * 10 + 7`, but only when the
+    /// commitment limb matches the root this provider was built with.
+    struct StateProvider {
+        l0: u64,
+    }
+
+    impl nox::LookProvider for StateProvider {
+        fn look(&self, c: Goldilocks, ns: Goldilocks, key: Goldilocks) -> Option<Goldilocks> {
+            if c == Goldilocks::new(self.l0) && ns == Goldilocks::new(0) {
+                Some(Goldilocks::new(key.as_u64() * 10 + 7))
+            } else {
+                None
+            }
+        }
+    }
+
+    impl<const N: usize> nox::CallProvider<N> for StateProvider {
+        fn provide(
+            &self,
+            _reduction: &mut Reduction<N>,
+            _tag: Goldilocks,
+            _object: nox::Order,
+        ) -> Option<nox::Order> {
+            None
+        }
+    }
+
+    /// Subject for a state-reading program: `[root_tree [p_last … [p0 0]]]`.
+    fn state_subject(root: [u64; 4], params: &[u64]) -> Noun {
+        let root_tree = Noun::cell(
+            Noun::atom(root[0]),
+            Noun::cell(
+                Noun::atom(root[1]),
+                Noun::cell(Noun::atom(root[2]), Noun::atom(root[3])),
+            ),
+        );
+        Noun::cell(root_tree, subject(params))
+    }
+
+    fn run_state(src: &str, root: [u64; 4], params: &[u64]) -> u64 {
+        let noun = lower(src);
+        let mut ar = Reduction::<4096>::new();
+        let s = load(&mut ar, &state_subject(root, params));
+        let f = load(&mut ar, &noun);
+        let provider = StateProvider { l0: root[0] };
+        match reduce(&mut ar, s, f, 1_000_000, &provider, &mut NoTrace) {
+            Outcome::Ok(r, _) => ar.atom_value(r).unwrap().as_u64(),
+            o => panic!("state reduction failed: {:?}", o),
+        }
+    }
+
+    #[test]
+    fn os_state_read_lowers_to_look() {
+        let src = "program test\npub fn f(k: Field) -> Field { os.state.read(k) }";
+        let noun = lower(src);
+        let text = format!("{}", noun);
+        assert!(
+            text.contains("[17 [[1 0]"),
+            "must contain a look with quoted namespace 0: {}",
+            text
+        );
+        // key 4 → 47 from the provider
+        assert_eq!(run_state(src, [11, 22, 33, 44], &[4]), 47);
+    }
+
+    #[test]
+    fn os_state_read_key_expression_and_lets() {
+        // The key is an expression and the read happens under let bindings —
+        // the root axis and the key axes must both survive the shifts.
+        let src = "program test
+pub fn f(k: Field) -> Field {
+    let a: Field = 100
+    let v: Field = os.state.read(k + 1)
+    v + a
+}";
+        // key = 4+1 = 5 → look gives 57 → +100 = 157
+        assert_eq!(run_state(src, [9, 8, 7, 6], &[4]), 157);
+    }
+
+    #[test]
+    fn os_state_read_marks_reads_state() {
+        let src = "program test\npub fn f(k: Field) -> Field { os.state.read(k) }";
+        let file = crate::parse_source_silent(src, "t.tri").unwrap();
+        let mut c = NoxCompiler::new();
+        c.compile_file(&file).unwrap();
+        assert!(c.reads_state());
+
+        let src2 = "program test\npub fn f(k: Field) -> Field { k + 1 }";
+        let file2 = crate::parse_source_silent(src2, "t.tri").unwrap();
+        let mut c2 = NoxCompiler::new();
+        c2.compile_file(&file2).unwrap();
+        assert!(!c2.reads_state());
+    }
+
+    #[test]
+    fn os_state_read_in_helper_is_honest_error() {
+        let src = "program test
+fn helper(k: Field) -> Field { os.state.read(k) }
+pub fn f(k: Field) -> Field { helper(k) }";
+        let file = crate::parse_source_silent(src, "t.tri").unwrap();
+        let err = NoxCompiler::new().compile_file(&file).unwrap_err();
+        assert!(err.contains("entry function"), "{}", err);
+    }
+
+    #[test]
+    fn look_against_wrong_root_is_unavailable() {
+        // Provider bound to a different root: the look must fail the
+        // reduction (Unavailable), never fabricate a value.
+        let src = "program test\npub fn f(k: Field) -> Field { os.state.read(k) }";
+        let noun = lower(src);
+        let mut ar = Reduction::<4096>::new();
+        let s = load(&mut ar, &state_subject([1, 2, 3, 4], &[4]));
+        let f = load(&mut ar, &noun);
+        let provider = StateProvider { l0: 999 };
+        match reduce(&mut ar, s, f, 1_000_000, &provider, &mut NoTrace) {
+            Outcome::Ok(r, _) => panic!(
+                "expected failure, got {:?}",
+                ar.atom_value(r).map(|g| g.as_u64())
+            ),
+            _ => {}
+        }
     }
 
     // Helper: wrap a value in a dummy span
