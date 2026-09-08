@@ -11,8 +11,8 @@ use clap::Args;
 pub struct VerifyProofArgs {
     /// Path to the proof file
     pub proof: PathBuf,
-    /// Target VM or OS (default: triton)
-    #[arg(long, default_value = "triton")]
+    /// Target VM or OS (default: nox)
+    #[arg(long, default_value = "nox")]
     pub target: String,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]

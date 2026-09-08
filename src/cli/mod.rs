@@ -163,9 +163,9 @@ pub fn resolve_options(
         _ => (target, profile),
     };
 
-    // Project may override the default "triton" target
+    // Project may override the default "nox" target
     let effective_target = match (vm_target, project) {
-        ("triton", Some(proj)) if proj.target.is_some() => {
+        ("nox", Some(proj)) if proj.target.is_some() => {
             proj.target.as_deref().expect("guarded by is_some() check")
         }
         _ => vm_target,

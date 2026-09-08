@@ -35,8 +35,8 @@ pub struct BuildArgs {
     /// Compare costs with a previous cost JSON file
     #[arg(long, value_name = "PATH")]
     pub compare: Option<PathBuf>,
-    /// Target VM (default: triton)
-    #[arg(long, default_value = "triton")]
+    /// Target VM (default: nox)
+    #[arg(long, default_value = "nox")]
     pub target: String,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
