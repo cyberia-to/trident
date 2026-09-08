@@ -249,7 +249,7 @@ see [How STARK Proofs Work](../explanation/stark-proofs.md).
 
 ## The Lifecycle: Build, Prove, Verify
 
-Every Trident program follows three phases: compile to target assembly (`trident build`), execute and generate a STARK proof (via the target VM), verify the proof (milliseconds, by anyone). The [Tutorial](../tutorials/tutorial.md) walks through each phase. The [Guides](../guides/compiling-a-program.md) cover each step in depth.
+Every Trident program follows three phases: compile to target assembly (`trident build`), execute and generate a proof via the target's warrior (zheng on nox by default, STARK on Triton), verify the proof (milliseconds, by anyone). The [Tutorial](../tutorials/tutorial.md) walks through each phase. The [Guides](../guides/compiling-a-program.md) cover each step in depth.
 
 ---
 

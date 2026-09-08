@@ -34,7 +34,7 @@ application, from a four-line proof to a sovereign DAO.
 | [Compiling a Program](guides/compiling-a-program.md) | Build, check, cost analysis |
 | [Running a Program](guides/running-a-program.md) | Execute, test, debug |
 | [Deploying a Program](guides/deploying-a-program.md) | Neptune scripts, multi-target deployment |
-| [Generating Proofs](guides/generating-proofs.md) | Execution trace to STARK proof |
+| [Generating Proofs](guides/generating-proofs.md) | Execution trace to proof — zheng on nox (default), STARK on Triton |
 | [Verifying Proofs](guides/verifying-proofs.md) | Proof checking, on-chain verification |
 | [Optimization](guides/optimization.md) | Cost reduction strategies |
 | [Prompt Templates](guides/prompts.md) | AI-assisted development prompts |

@@ -3,9 +3,28 @@
 This is the third stage of the Trident program lifecycle:
 Writing -> Compiling -> Running -> Deploying -> Generating Proofs -> Verifying Proofs.
 
-Trident is a compiler, not a runtime. After `trident build` produces a `.tasm` file, execution happens inside [Triton VM](https://triton-vm.org/) -- a STARK-based zero-knowledge virtual machine. Trident's job ends at code generation; the VM takes it from there.
+Trident is a compiler, not a runtime. After `trident build` produces a `.nox` formula (default) or a `.tasm` file (`--target triton`), execution happens inside the target VM — nox via the joy warrior, or [Triton VM](https://triton-vm.org/) via trisha. Trident's job ends at code generation; `trident run` hands the bundle to the warrior.
 
 This guide covers how compiled Trident programs execute, how to feed them input, and how to test and debug them using the tools available today.
+
+> **Two targets, two proof systems.** Since 0.2.0 the default target is
+> **nox** (the soft3 stack): `trident build` emits `.nox`, and the
+> **joy** warrior runs, proves and verifies it — a **zheng** proof
+> (SuperSpartan + Brakedown + HyperNova folding), verified without
+> re-execution. Triton VM and its STARK remain fully supported via
+> `--target triton` and the trisha warrior. On the default target the
+> whole chain is:
+>
+> ```
+> trident build hello.tri                 # hello.nox
+> trident prove hello.tri --secret 7,13   # hello.zheng.json (via joy, ~15 ms)
+> trident verify hello.zheng.json         # Verification: PASS (zheng proof)
+> ```
+>
+> `trident run/prove/verify` delegate to the warrior registered for the
+> target. The Triton-specific material below stays accurate for
+> `--target triton`; zheng's construction lives in the zheng repo
+> (`specs/superspartan.md`, `accumulator.md`, `decider.md`).
 
 ## ▶️ From TASM to Execution
 
@@ -16,7 +35,7 @@ trident build main.tri              # produces main.tasm
 trident build main.tri -o out.tasm  # custom output path
 ```
 
-The resulting `.tasm` file is a complete, self-contained program in Triton VM's instruction set. To actually run it, you load the TASM into Triton VM. Trident itself has no `run` subcommand and no built-in interpreter -- it is purely a source-to-assembly compiler.
+The resulting `.tasm` file is a complete, self-contained program in Triton VM's instruction set. To actually run it, you load the TASM into Triton VM. `trident run` itself contains no interpreter -- it delegates to the warrior for the target (joy for nox, trisha for Triton).
 
 ## 📡 The I/O Model
 

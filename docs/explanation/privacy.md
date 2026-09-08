@@ -80,7 +80,7 @@ Goldilocks field F_p.
 - **Private transfers.** Prove conservation (inputs = outputs + fee)
   without revealing amounts or owners. The STARK guarantees correctness;
   commitments guarantee privacy.
-- **Provable computation.** Every state transition produces a STARK proof.
+- **Provable computation.** Every state transition produces a proof (zheng on nox, STARK on Triton).
   Any node verifies any transition without re-executing it. A phone
   verifies what a datacenter computed.
 - **Selective disclosure.** Prove properties about state without revealing

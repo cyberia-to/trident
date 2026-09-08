@@ -711,10 +711,7 @@ All cryptographic security comes from hash functions (Tip5) and FRI commitments 
 ### 1. Install Trident
 
 ```nu
-git clone https://github.com/nicktriton/trident
-cd trident
-cargo build --release
-# Add target/release/trident to your PATH
+cargo install trident-lang cyber-joy   # compiler + nox warrior; Triton needs trisha
 ```
 
 ### 2. Create a Project and Read the Hello World

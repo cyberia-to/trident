@@ -6,6 +6,25 @@ Given a proof and the public inputs, anyone can verify that a computation was pe
 
 For how proofs are generated, see [Generating Proofs](generating-proofs.md). For the underlying proof system, see [How STARK Proofs Work](../explanation/stark-proofs.md).
 
+> **Two targets, two proof systems.** Since 0.2.0 the default target is
+> **nox** (the soft3 stack): `trident build` emits `.nox`, and the
+> **joy** warrior runs, proves and verifies it — a **zheng** proof
+> (SuperSpartan + Brakedown + HyperNova folding), verified without
+> re-execution. Triton VM and its STARK remain fully supported via
+> `--target triton` and the trisha warrior. On the default target the
+> whole chain is:
+>
+> ```
+> trident build hello.tri                 # hello.nox
+> trident prove hello.tri --secret 7,13   # hello.zheng.json (via joy, ~15 ms)
+> trident verify hello.zheng.json         # Verification: PASS (zheng proof)
+> ```
+>
+> `trident run/prove/verify` delegate to the warrior registered for the
+> target. The Triton-specific material below stays accurate for
+> `--target triton`; zheng's construction lives in the zheng repo
+> (`specs/superspartan.md`, `accumulator.md`, `decider.md`).
+
 ---
 
 ## ✅ 1. What Is Proof Verification?
