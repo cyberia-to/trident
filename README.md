@@ -20,7 +20,16 @@ Trident is a provable programming language.
 
 Every variable, every operation, every function compiles to arithmetic
 over the Goldilocks prime field (p = 2^64 - 2^32 + 1). Programs produce
-STARK proofs — hash-based, post-quantum secure, no trusted setup.
+cryptographic proofs of correct execution — hash-based, post-quantum
+secure, no trusted setup, no elliptic curves.
+
+The default target is **nox**, the proof-native VM of the
+[soft3](https://soft3.org) stack: `trident build` emits a `.nox`
+formula, and the [joy](https://github.com/cyberia-to/joy) warrior runs,
+proves and verifies it — a real [zheng](https://github.com/cyberia-to/zheng)
+proof, by default, out of the box. Triton VM remains fully supported via
+`--target triton` and the [trisha](https://github.com/cyberia-to/trisha)
+warrior — the original STARK path.
 
 ---
 
@@ -29,23 +38,22 @@ STARK proofs — hash-based, post-quantum secure, no trusted setup.
 ```trident
 program hello_proof
 
-fn main() {
-    let a: Field = secret_read()
-    let b: Field = secret_read()
-    pub_write(a + b)
+fn main(a: Field, b: Field) -> Field {
+    a + b
 }
 ```
 
 ```
-$ trident build hello.tri
-$ trident prove hello --secret 7 --secret 13
-  Proof generated (924 cycles, 11 KB)
-$ trident verify hello
-  Valid: output = 20, inputs hidden
+$ trident build hello.tri              # -> hello.nox (default target)
+$ joy prove hello.tri --input-values 7,13 --output hello.zheng.json
+  Proved in 4 ms: 5 reductions, 3 accumulator groups, 19608 bytes
+$ joy verify hello.tri --proof hello.zheng.json
+  Verification: PASS (zheng proof)
 ```
 
-A cryptographic proof that `a + b = 20` without revealing `a` or `b`.
-Quantum-safe. Zero-knowledge. No trusted setup. No elliptic curves.
+A cryptographic proof that `a + b = 20`, verified without re-running the
+program. Quantum-safe. No trusted setup. No elliptic curves. On Triton
+(`--target triton`), the same source proves with a STARK via `trisha`.
 
 ---
 

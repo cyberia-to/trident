@@ -2035,11 +2035,11 @@ dependencies = [
 
 [[package]]
 name = "cyber-hemera"
-version = "0.3.0"
+version = "0.3.1"
 
 [[package]]
 name = "cyber-nox"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "cyber-hemera",
  "strata-nebu",
@@ -3991,14 +3991,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mir-format"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "moddef"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5791,25 +5783,25 @@ dependencies = [
 
 [[package]]
 name = "strata-compute"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "strata-core",
 ]
 
 [[package]]
 name = "strata-core"
-version = "0.1.0"
+version = "0.1.1"
 
 [[package]]
 name = "strata-ext"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "strata-core",
 ]
 
 [[package]]
 name = "strata-nebu"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "strata-compute",
  "strata-core",
@@ -5819,7 +5811,7 @@ dependencies = [
 
 [[package]]
 name = "strata-proof"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "strata-core",
 ]
@@ -6560,7 +6552,7 @@ dependencies = [
 
 [[package]]
 name = "trident-lang"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ariadne",
  "blake3",
@@ -6571,7 +6563,6 @@ dependencies = [
  "cyber-hemera",
  "cyber-nox",
  "insta",
- "mir-format",
  "petgraph 0.7.1",
  "pollster",
  "rayon",
