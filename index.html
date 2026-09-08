@@ -218,6 +218,13 @@
             .unions { margin-top: 0.9rem; font-size: 0.8rem; color: var(--dim); line-height: 1.8; }
             .unions code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink); }
             @media (max-width: 820px) { .targets { grid-template-columns: 1fr; } }
+            .silicon { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 0.9rem; }
+            .chip { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.75rem 0.9rem; }
+            .chip b { display: block; color: var(--cyan); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; }
+            .chip p { margin: 0; font-size: 0.78rem; line-height: 1.7; }
+            .chip code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink); background: rgba(255,255,255,0.05); padding: 0.05rem 0.35rem; border-radius: 5px; }
+            .chip i { font-style: normal; color: var(--dim); font-size: 0.7rem; }
+            @media (max-width: 820px) { .silicon { grid-template-columns: 1fr; } }
             .neptune b { color: var(--ink); }
 
             footer {
@@ -421,6 +428,28 @@
                     — declared and documented, awaiting bindings. the honest map is
                     <a href="https://github.com/cyberia-to/trident/blob/master/reference/targets.md">reference/targets.md</a>.
                 </p>
+            </section>
+
+            <section>
+                <h2>the same formula, <i>on silicon</i></h2>
+                <p class="neptune" style="margin-bottom: 0.2rem">
+                    a nox formula is a tree over 18 patterns — small enough to
+                    hand-emit for any machine. <code>trident compile -t
+                    &lt;backend&gt;</code> turns the very formula joy proves into
+                    native code for <b>28 backends</b>: every one below emitted
+                    real output for <code>hello.nox</code> today. these are
+                    emitters — execution and proving on this hardware are not
+                    wired yet; the point is that one program already speaks to
+                    all of it.
+                </p>
+                <div class="silicon">
+                    <div class="chip"><b>CPU</b><p><code>x86-64</code> <code>arm64</code> <i>(JIT)</i> <code>rv64</code> <code>rv32</code> <i>(ESP32)</i> <code>rvv</code> <i>(RISC-V vector)</i> <code>thumb2</code> <i>(Cortex-M · STM32 · RP2040)</i> <code>hexagon</code> <i>(Qualcomm DSP)</i></p></div>
+                    <div class="chip"><b>GPU</b><p><code>ptx</code> <i>(CUDA)</i> <code>tensor-cores</code> <i>(wmma)</i> <code>wgsl</code> <i>(WebGPU)</i> <code>spirv</code> <i>(Vulkan)</i></p></div>
+                    <div class="chip"><b>accelerators</b><p><code>ane</code> <i>(Apple Neural Engine)</i> <code>amx</code> <i>(Apple matrix)</i> <code>intel-amx</code> <code>xla</code> <i>(TPU)</i> <code>onnx</code> <code>cerebras</code> <i>(wafer-scale CSL)</i> <code>upmem</code> <i>(processing-in-memory)</i></p></div>
+                    <div class="chip"><b>kernel · web</b><p><code>ebpf</code> <i>(Linux kernel)</i> <code>wasm</code> <i>(browser · WASI · every wasm chain)</i></p></div>
+                    <div class="chip"><b>quantum</b><p><code>qasm</code> <i>(OpenQASM 3.0 circuits)</i> <code>qir</code> <i>(Quantum IR · Azure Quantum)</i></p></div>
+                    <div class="chip"><b>hardware</b><p><code>verilog</code> <i>(FPGA)</i> <code>systemverilog</code> <i>(ASIC)</i> <code>vhdl</code></p></div>
+                </div>
             </section>
 
             <section>
