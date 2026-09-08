@@ -14,8 +14,8 @@ use super::{open_codebase, prepare_artifact, registry_client, try_load_and_parse
 pub struct DeployArgs {
     /// Input .tri file, project directory, or .deploy/ artifact
     pub input: PathBuf,
-    /// Target VM or OS (default: triton)
-    #[arg(long, default_value = "triton")]
+    /// Target VM or OS (default: nox)
+    #[arg(long, default_value = "nox")]
     pub target: String,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]

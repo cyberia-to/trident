@@ -17,8 +17,8 @@ pub struct PackageArgs {
     /// Output directory for the .deploy/ artifact (default: project root or cwd)
     #[arg(short, long)]
     pub output: Option<PathBuf>,
-    /// Target VM or OS (default: triton)
-    #[arg(long, default_value = "triton")]
+    /// Target VM or OS (default: nox)
+    #[arg(long, default_value = "nox")]
     pub target: String,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
