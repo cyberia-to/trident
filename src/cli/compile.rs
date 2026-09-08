@@ -19,7 +19,7 @@ pub struct CompileNoxArgs {
     #[arg(short = 'e')]
     expr: Option<String>,
 
-    /// Target: wasm, arm64, x64, x64-sysv, rv64, ebpf, ptx, ptx-parallel, wgsl, spirv, ane, ane-batch
+    /// Target: wasm, arm64, x64, x64-sysv, rv32, rv64, rvv, thumb2, hexagon, ebpf, ptx, ptx-parallel, tensor-cores, wgsl, spirv, ane, ane-batch, amx, intel-amx, xla, onnx, cerebras, upmem, qasm, qir, verilog, systemverilog, vhdl
     #[arg(short = 't', long = "target", default_value = "wasm")]
     target: String,
 
