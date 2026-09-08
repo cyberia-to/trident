@@ -317,3 +317,15 @@ fn test_field_and_index_assignment_immutable_still_rejected() {
         "assigning a field of an immutable struct must be rejected"
     );
 }
+
+#[test]
+fn test_os_state_read_still_undefined_on_triton() {
+    // os.state.read is registered only for tree targets; the triton path
+    // must keep its existing "undefined function" diagnostic unchanged.
+    let source =
+        "program test\nfn main() {\n    let v: Field = os.state.read(1)\n    pub_write(v)\n}";
+    let result = compile(source, "test.tri");
+    assert!(result.is_err(), "os.state.read must not typecheck on triton");
+    let msg = format!("{:?}", result.err());
+    assert!(msg.contains("undefined function"), "{}", msg);
+}

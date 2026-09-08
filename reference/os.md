@@ -160,6 +160,7 @@ The developer writes `state.read(key)` — the proof machinery is invisible.
 | Object | Sui, Aptos | `dynamic_field.borrow(context_object, key)` |
 | UTXO | Neptune, Nockchain, Nervos, Aleo, Aztec | `divine()` + `merkle_authenticate(key, root)` |
 | Process | Linux, macOS, WASI, Browser, Android | File / environment read |
+| Graph | Cyber (nox) | `look(dimension, key)` — nox pattern 17, a deterministic BBG polynomial read proven with a Brakedown opening. `state.read(key)` reads BBG dimension 0 at cell `key`; the runtime subject carries the BBG state root as its head (`[root [params…]]`), declared by the bundle's `reads_state` flag. Richer dimension access is `os.cyber.*` territory (future). |
 | Journal | Boundless, Succinct, OpenVM Network | Compile error — no persistent state |
 
 ### `os.token` — Token Operations (PLUMB)

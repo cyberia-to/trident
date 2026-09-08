@@ -573,6 +573,21 @@ pub fn compile_to_bundle(
         .unwrap_or("program")
         .to_string();
 
+    // Tree targets: ask the lowering (the source of truth) whether the
+    // program reads persistent state, so the bundle can declare it and the
+    // runner knows to cons the BBG root onto the subject.
+    let reads_state = if options.target_config.architecture == crate::target::Arch::Tree {
+        entry_file
+            .map(|pm| {
+                let mut compiler = NoxCompiler::new();
+                let _ = compiler.compile_file(&pm.file);
+                compiler.reads_state()
+            })
+            .unwrap_or(false)
+    } else {
+        false
+    };
+
     Ok(ProgramBundle {
         name,
         version: "0.1.0".to_string(),
@@ -590,5 +605,6 @@ pub fn compile_to_bundle(
             estimated_proving_ns: program_cost.estimated_proving_ns,
         },
         source_hash,
+        reads_state,
     })
 }

@@ -33,6 +33,11 @@ pub struct ProgramBundle {
     pub cost: BundleCost,
     /// Content hash of the source AST (hex).
     pub source_hash: String,
+    /// The program reads persistent state (nox: look pattern over BBG).
+    /// The runner must supply the state and cons its root onto the subject
+    /// (`[root_tree [params…]]`). Absent in JSON = false — old bundles and
+    /// old readers are unaffected.
+    pub reads_state: bool,
 }
 
 /// Function metadata within a bundle.
@@ -80,6 +85,10 @@ impl ProgramBundle {
             "  \"source_hash\": {},\n",
             json_string(&self.source_hash)
         ));
+        // Additive, backward-compatible: only emitted when true.
+        if self.reads_state {
+            out.push_str("  \"reads_state\": true,\n");
+        }
 
         // Cost
         out.push_str("  \"cost\": {\n");
@@ -133,6 +142,7 @@ impl ProgramBundle {
         let entry_point = extract_string(json, "entry_point")?;
         let source_hash = extract_string(json, "source_hash")?;
         let assembly = extract_string(json, "assembly")?;
+        let reads_state = extract_bool(json, "reads_state").unwrap_or(false);
         let padded_height = extract_u64(json, "padded_height").unwrap_or(0);
         let estimated_proving_ns = extract_u64(json, "estimated_proving_ns").unwrap_or(0);
 
@@ -151,6 +161,7 @@ impl ProgramBundle {
                 estimated_proving_ns,
             },
             source_hash,
+            reads_state,
         })
     }
 }
@@ -175,6 +186,20 @@ fn json_string(s: &str) -> String {
     }
     out.push('"');
     out
+}
+
+/// Extract a boolean value for a key from JSON (None if the key is absent).
+fn extract_bool(json: &str, key: &str) -> Option<bool> {
+    let pattern = format!("\"{}\"", key);
+    let start = json.find(&pattern)?;
+    let rest = json[start + pattern.len()..].trim_start_matches([':', ' ']);
+    if rest.starts_with("true") {
+        Some(true)
+    } else if rest.starts_with("false") {
+        Some(false)
+    } else {
+        None
+    }
 }
 
 /// Extract a string value for a key from JSON.
@@ -282,14 +307,30 @@ mod tests {
                 estimated_proving_ns: 1_000_000,
             },
             source_hash: "deadbeef".to_string(),
+            reads_state: false,
         }
+    }
+
+    #[test]
+    fn reads_state_roundtrips_when_true() {
+        let mut bundle = sample_bundle();
+        bundle.reads_state = true;
+        let json = bundle.to_json();
+        assert!(json.contains("\"reads_state\": true"));
+        let parsed = ProgramBundle::from_json(&json).expect("parse failed");
+        assert!(parsed.reads_state);
     }
 
     #[test]
     fn bundle_json_roundtrip() {
         let bundle = sample_bundle();
         let json = bundle.to_json();
+        assert!(
+            !json.contains("reads_state"),
+            "reads_state must be absent when false (backward-compatible JSON)"
+        );
         let parsed = ProgramBundle::from_json(&json).expect("parse failed");
+        assert!(!parsed.reads_state, "absent field must parse as false");
 
         assert_eq!(parsed.name, bundle.name);
         assert_eq!(parsed.version, bundle.version);

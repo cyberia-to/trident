@@ -236,13 +236,12 @@ fn walk(formula: &Noun, counts: &mut [u64; 18]) -> Bill {
         },
         // Unary ops: inv [8 a], not [13 a], hash [15 a] — body IS the operand.
         8 | 13 | 15 => base.add(walk(body, counts)),
-        // call [16 [tag_f check_f]] — both are formulas.
-        16 => match pair(body) {
+        // call [16 [tag_f check_f]], look [17 [ns_f key_f]] — both children
+        // are formulas.
+        16 | 17 => match pair(body) {
             Some((a, b)) => base.add(walk(a, counts)).add(walk(b, counts)),
             None => base,
         },
-        // look [17 body].
-        17 => base.add(walk(body, counts)),
         _ => base,
     }
 }
