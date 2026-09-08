@@ -224,6 +224,101 @@ pub fn f() -> Field {
     assert_eq!(run(src, &[]), 7);
 }
 
+// ── os.state.read → look (pattern 17) ────────────────────────────
+
+struct StateProvider {
+    l0: u64,
+}
+
+impl nox::LookProvider for StateProvider {
+    fn look(
+        &self,
+        c: Goldilocks,
+        ns: Goldilocks,
+        key: Goldilocks,
+    ) -> Option<Goldilocks> {
+        if c == Goldilocks::new(self.l0) && ns == Goldilocks::new(0) {
+            Some(Goldilocks::new(key.as_u64() * 10 + 7))
+        } else {
+            None
+        }
+    }
+}
+
+impl<const M: usize> nox::CallProvider<M> for StateProvider {
+    fn provide(
+        &self,
+        _r: &mut Reduction<M>,
+        _tag: Goldilocks,
+        _object: nox::Order,
+    ) -> Option<nox::Order> {
+        None
+    }
+}
+
+#[test]
+fn os_state_read_end_to_end() {
+    // Full pipeline: parse → typecheck (nox target) → lowering → printed
+    // noun → reduce with a LookProvider. Subject = [root_tree [k 0]] per the
+    // reads_state contract (reference/os.md, Graph row).
+    let src = "program test\npub fn f(k: Field) -> Field { os.state.read(k) + 1 }";
+    let formula_str = trident::compile_with_options(src, "surface.tri", &nox_options())
+        .expect("compile for nox failed");
+    assert!(formula_str.contains("[17 [[1 0]"), "look missing: {}", formula_str);
+    let formula = parse(&formula_str);
+
+    let root = [11u64, 22, 33, 44];
+    let root_tree = N::Cell(
+        Box::new(N::Atom(root[0])),
+        Box::new(N::Cell(
+            Box::new(N::Atom(root[1])),
+            Box::new(N::Cell(Box::new(N::Atom(root[2])), Box::new(N::Atom(root[3])))),
+        )),
+    );
+    let subj = N::Cell(Box::new(root_tree), Box::new(subject_noun(&[4])));
+
+    let mut ar = Reduction::<4096>::new();
+    let f = load(&mut ar, &formula);
+    let s = load(&mut ar, &subj);
+    let provider = StateProvider { l0: root[0] };
+    match reduce(&mut ar, s, f, 5_000_000, &provider, &mut NoTrace) {
+        // key 4 → 47, +1 = 48
+        Outcome::Ok(r, _) => assert_eq!(ar.atom_value(r).unwrap().as_u64(), 48),
+        o => panic!("reduction failed: {:?}", o),
+    }
+}
+
+#[test]
+fn os_state_read_sets_bundle_flag() {
+    // compile_to_bundle must declare the state dependency; a stateless
+    // program must not.
+    let dir = std::env::temp_dir().join("trident_os_state_bundle_test");
+    std::fs::create_dir_all(&dir).unwrap();
+    let stateful = dir.join("stateful.tri");
+    std::fs::write(
+        &stateful,
+        "program stateful\npub fn f(k: Field) -> Field { os.state.read(k) }",
+    )
+    .unwrap();
+    let stateless = dir.join("stateless.tri");
+    std::fs::write(
+        &stateless,
+        "program stateless\npub fn f(k: Field) -> Field { k + 1 }",
+    )
+    .unwrap();
+
+    let b1 = trident::compile_to_bundle(&stateful, &nox_options()).expect("bundle failed");
+    assert!(b1.reads_state, "state-reading program must declare reads_state");
+    assert!(b1.to_json().contains("\"reads_state\": true"));
+
+    let b2 = trident::compile_to_bundle(&stateless, &nox_options()).expect("bundle failed");
+    assert!(!b2.reads_state);
+    assert!(
+        !b2.to_json().contains("reads_state"),
+        "stateless bundle JSON must omit the field (backward compat)"
+    );
+}
+
 // ── builtins ─────────────────────────────────────────────────────
 
 #[test]
