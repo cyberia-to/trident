@@ -221,12 +221,16 @@ formula over 18 patterns; the cost report before you run equals the
 reduction count after; the execution trace *is* the proof witness — no
 arithmetization step, no trace-to-circuit translation.
 
-**On Triton the gap to byte-emulating zkVMs is not marginal:**
+**The gap to byte-emulating zkVMs is not marginal**, in either
+machine's own unit — a nox *reduction* is one trace row the prover
+folds (a hash is 24 Poseidon2 rounds + 1 squeeze row), a Triton *cycle*
+one instruction across six tables; both are exact and static, from
+`trident build --costs`:
 
-| Operation | Trident on Triton VM | Rust on SP1 | Rust on RISC Zero |
-|-----------|:---:|:---:|:---:|
-| One hash (Tip5 / SHA-256) | 1 cycle | ~3,000 cycles | ~1,000 cycles |
-| Merkle proof (depth 32) | ~100 cycles | ~96,000 cycles | ~32,000 cycles |
+| Operation | Trident on nox (default) | Trident on Triton VM | Rust on SP1 | Rust on RISC Zero |
+|-----------|:---:|:---:|:---:|:---:|
+| One hash (Poseidon2 / Tip5 / SHA-256) | 25 reductions | 1 cycle | ~3,000 cycles | ~1,000 cycles |
+| Merkle path (depth 32) | 1,906 reductions (825 in hashes) | ~100 cycles | ~96,000 cycles | ~32,000 cycles |
 
 For hash-heavy programs — Merkle trees, content addressing, token
 transfers — this is decisive. See
