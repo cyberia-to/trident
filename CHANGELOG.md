@@ -13,8 +13,8 @@ build → run → prove → verify with a zheng proof, out of the box:
 
 ```
 $ trident build hello.tri                  # hello.nox
-$ trident prove hello.tri --secret 7,13    # Proved in 15 ms: 17 reductions, 74 KB
-$ trident verify hello.zheng.json          # Verification: PASS (zheng proof)
+$ trident prove hello.tri --secret 7,13    # Proved in 14 ms: 17 reductions, 20 KB
+$ trident verify hello.zheng               # Verification: PASS (zheng proof)
 ```
 
 Kelvin: 512K → 500K. Still hot, but the change is fundamental — the
@@ -60,9 +60,13 @@ clears.
 - `joy run` / `joy prove` / `joy verify` on nox: zheng proofs
   (SuperSpartan + Brakedown + HyperNova folding), verified without
   re-execution; hash blocks and BBG `look` reads prove; artifacts are
-  self-contained `.zheng.json`. `trident run/prove/verify` delegate to
-  it. Measured (release): add proves in 4 ms / 20 KB, a hash in 71 ms /
-  189 KB, two `divine()` secrets in 15 ms / 74 KB. github.com/cyberia-to/joy
+  self-contained binary `.zheng` files (postcard) with the prover's
+  folded witness never on the wire. `trident run/prove/verify` delegate
+  to it. Measured (release): add proves in 4 ms / 5.4 KB, two `divine()`
+  secrets in 14 ms / 20 KB, a hash in 70 ms / 52 KB — ~1.7 KiB per
+  accumulator group, one group per CCS structure (zheng#8 tracks
+  collapsing groups toward the 2–5 KB program-level target).
+  github.com/cyberia-to/joy
 
 ### differential harness
 - `tests/differential.rs`: the stdlib modules inside the nox surface
