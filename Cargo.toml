@@ -5,7 +5,7 @@
 # ---
 [package]
 name = "trident-lang"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A minimal, security-first universal language for provable computation"
 license-file = "LICENSE.md"
@@ -35,11 +35,10 @@ petgraph = "0.7"
 serde = { version = "1", features = ["derive"] }
 rkyv = { version = "0.8", features = ["bytecheck"] }
 statrs = "0.18"
-mir-format = { path = "../rs/mir-format" }
 serde_json = "1"
-nox = { package = "cyber-nox", path = "../nox/rs" }
-nebu = { package = "strata-nebu", path = "../strata/nebu/rs" }
-hemera = { package = "cyber-hemera", path = "../hemera/rs" }
+nox = { package = "cyber-nox", version = "0.2", path = "../nox/rs" }
+nebu = { package = "strata-nebu", version = "0.1", path = "../strata/nebu/rs" }
+hemera = { package = "cyber-hemera", version = "0.3", path = "../hemera/rs" }
 
 [dev-dependencies]
 insta = "1"
