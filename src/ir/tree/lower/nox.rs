@@ -874,6 +874,7 @@ impl NoxCompiler {
             }
             Expr::Index { expr, .. } => match self.expr_type(&expr.node)? {
                 ast::Type::Array(inner, _) => Some(*inner),
+                ast::Type::Digest => Some(ast::Type::Field),
                 _ => None,
             },
             Expr::Call { path, .. } => {
@@ -1290,6 +1291,18 @@ impl NoxCompiler {
                         .to_string()
                 })?;
                 let base_f = self.compile_expr(&base.node)?;
+                if let Some(ast::Type::Digest) = self.expr_type(&base.node) {
+                    // nox's hash result is a balanced pair [[h0 h1] [h2 h3]]
+                    // (nox/rs/patterns/hash.rs), not an element cons-list:
+                    // limb k lives at axis 4 + k.
+                    if k >= 4 {
+                        return Err(format!(
+                            "nox: digest has 4 limbs, index {} is out of range",
+                            k
+                        ));
+                    }
+                    return Ok(nox_compose(base_f, nox_quote(nox_axis(4 + k as u64))));
+                }
                 Ok(elem_access(base_f, k as u32))
             }
             Expr::StructInit { path, fields } => {
