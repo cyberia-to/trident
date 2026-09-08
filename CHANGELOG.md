@@ -3,7 +3,7 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
-## 0.2.0 / 512K — Cast (2026-09-08)
+## 0.2.0 / 500K — Cast (2026-09-08)
 
 The soft3 release. trident compiles to **nox** by default and the whole
 soft3 stack stands behind it — strata algebra and hemera hashes inside
@@ -17,10 +17,12 @@ $ trident prove hello.tri --secret 7,13    # Proved in 15 ms: 17 reductions, 74 
 $ trident verify hello.zheng.json          # Verification: PASS (zheng proof)
 ```
 
-Kelvin: the project stays at 512K. The cyber stack and Noun layers
-cleared most of their 256K checklists (see `reference/roadmap.md`), but
-a layer cools only when its whole tier clears — Cast is a hot release
-that poured the language into the soft3 mold.
+Kelvin: 512K → 500K. Still hot, but the change is fundamental — the
+language now stands on its own stack (nox by default, a real prover,
+one algebra, one hash) instead of borrowing Triton's. The cyber stack
+and Noun layers cleared most of their 256K checklists (see
+`reference/roadmap.md`); the next big drop comes when a whole tier
+clears.
 
 ### nox is the default target
 - every command's `--target` defaults to `nox`; `--target triton` keeps
