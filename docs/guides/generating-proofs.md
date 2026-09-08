@@ -16,8 +16,8 @@
 >
 > ```
 > trident build hello.tri                 # hello.nox
-> trident prove hello.tri --secret 7,13   # hello.zheng.json (via joy, ~15 ms)
-> trident verify hello.zheng.json         # Verification: PASS (zheng proof)
+> trident prove hello.tri --secret 7,13   # hello.zheng (via joy, ~14 ms, 20 KB)
+> trident verify hello.zheng              # Verification: PASS (zheng proof)
 > ```
 >
 > `trident run/prove/verify` delegate to the warrior registered for the

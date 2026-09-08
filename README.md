@@ -45,9 +45,9 @@ fn main(a: Field, b: Field) -> Field {
 
 ```
 $ trident build hello.tri              # -> hello.nox (default target)
-$ joy prove hello.tri --input-values 7,13 --output hello.zheng.json
-  Proved in 4 ms: 5 reductions, 3 accumulator groups, 19608 bytes
-$ joy verify hello.tri --proof hello.zheng.json
+$ joy prove hello.tri --input-values 7,13
+  Proved in 4 ms: 5 reductions, 3 accumulator groups, 5351 bytes
+$ joy verify hello.zheng
   Verification: PASS (zheng proof)
 ```
 
@@ -283,8 +283,8 @@ model is training. When it beats the compiler, the number appears.
 cargo install trident-lang cyber-joy       # the compiler + the nox warrior
 trident build main.tri                     # compile to .nox (--target triton for TASM)
 trident run main.tri --input-values 3,5    # execute on nox (via joy)
-trident prove main.tri                     # zheng proof -> main.zheng.json
-trident verify main.zheng.json             # verify, no re-execution
+trident prove main.tri                     # zheng proof -> main.zheng
+trident verify main.zheng                  # verify, no re-execution
 trident check main.tri                     # type-check only
 trident test main.tri                      # run #[test] functions
 trident fmt main.tri                       # format source
