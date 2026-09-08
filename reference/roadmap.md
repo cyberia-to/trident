@@ -9,9 +9,10 @@ Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower layers freeze first.
 
 512K released 2026-02-26 (0.1.0 Smelt). Hot, not production ready.
-0.2.0 Cast released 2026-09-08 — still 512K: the language poured into
-the soft3 mold (nox default target, joy warrior, zheng proofs), the
-cyber stack and Noun layers cleared most of their 256K items.
+500K released 2026-09-08 (0.2.0 Cast): the language poured into the
+soft3 mold — nox default target, joy warrior, zheng proofs, strata +
+hemera inside the compiler. Fundamental, still hot. The cyber stack and
+Noun layers cleared most of their 256K items.
 `cargo install trident-lang cyber-joy` · [GitHub](https://github.com/cyberia-to/trident/releases/tag/v0.2.0)
 
 Three targets before 256k release:
