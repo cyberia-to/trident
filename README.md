@@ -29,7 +29,9 @@ post-quantum, no trusted setup, no elliptic curves. One algebra
 ([strata](https://github.com/cyberia-to/strata)), one hash
 ([hemera](https://github.com/cyberia-to/hemera)), one field, from source
 to proof. Twenty other engines and twenty-five unions are declared
-behind `--target`; Triton VM with its STARK is the second tested one.
+behind `--target`, Triton VM with its STARK is the second tested one,
+and the same formula compiles to native code for 28 backends — from
+Cortex-M and CUDA to OpenQASM and Verilog.
 
 ```
 cargo install trident-lang cyber-joy
@@ -154,6 +156,31 @@ android, browser, wasi on the native and wasm engines; ethereum,
 arbitrum, solana, polkadot, ton, near, cosmwasm, icp, sui, aptos,
 starknet, aztec, aleo, miden, nervos, nockchain, succinct, boundless,
 openvm-network — declared and documented, awaiting bindings.
+
+### The same formula, on silicon
+
+A nox formula is a tree over 18 patterns — small enough to hand-emit
+for any machine. `trident compile -t <backend>` turns the very formula
+joy proves into native code for **28 backends**, and every one of them
+emits real output for `hello.nox` today. These are emitters: execution
+and proving on this hardware are not wired yet; the point is that one
+program already speaks to all of it.
+
+| class | backends |
+|-------|----------|
+| CPU | `x86-64` · `arm64` (JIT) · `rv64` · `rv32` (ESP32) · `rvv` (RISC-V vector) · `thumb2` (Cortex-M · STM32 · RP2040) · `hexagon` (Qualcomm DSP) |
+| GPU | `ptx` (CUDA) · `tensor-cores` (wmma) · `wgsl` (WebGPU) · `spirv` (Vulkan) |
+| accelerators | `ane` (Apple Neural Engine) · `amx` (Apple matrix) · `intel-amx` · `xla` (TPU) · `onnx` · `cerebras` (wafer-scale CSL) · `upmem` (processing-in-memory) |
+| kernel · web | `ebpf` (Linux kernel) · `wasm` (browser · WASI · every wasm chain) |
+| quantum | `qasm` (OpenQASM 3.0 circuits) · `qir` (Quantum IR · Azure Quantum) |
+| hardware | `verilog` (FPGA) · `systemverilog` (ASIC) · `vhdl` |
+
+```
+$ trident build hello.tri                      # hello.nox
+$ trident compile hello.nox -t qasm -o hello.qasm
+$ trident compile hello.nox -t verilog -o hello.v
+$ trident compile hello.nox -t spirv -o hello.spv
+```
 
 ### Neptune (`--target triton`)
 
