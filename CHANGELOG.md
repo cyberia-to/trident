@@ -5,6 +5,10 @@ Lower is colder. Colder is more stable.
 
 ## Unreleased
 
+- proofs are constant-size (zheng 0.3.1 via joy 0.3.0): one universal
+  step CCS, ≤ 2 accumulator groups for any program, every wire byte
+  verifier-read — hello 1.3 KB, two secrets 1.4 KB, one hash 2.4 KB,
+  depth-32 Merkle path 2.6 KB (was 2.67 MB). `cargo install cyber-joy`.
 - `Digest` limbs index on nox: `d[k]` for k < 4 lowers to the hash
   pair's axes (reference/language.md already said `Digest` is
   `[Field; D]`; the typechecker rejected it). Enables Merkle paths

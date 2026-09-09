@@ -55,7 +55,7 @@ fn main() -> Field {
 $ trident build hello_proof.tri
 Compiled -> hello_proof.nox
 $ trident prove hello_proof.tri --secret 7,13
-Proved in 15 ms: 17 reductions, 12 accumulator groups, 19978 bytes
+Proved in 8 ms: 17 reductions, 1 accumulator groups, 1387 bytes
 Output: [20]
 hello_proof.zheng
 $ trident verify hello_proof.zheng
@@ -122,16 +122,18 @@ On the default target a Trident program never leaves the soft3 stack:
 |------|-----------|--------------|
 | compile | **trident** | `.tri` → `.nox` formula over 18 reduction patterns; cost in reductions |
 | execute | [nox](https://github.com/cyberia-to/nox) via [joy](https://github.com/cyberia-to/joy) | reduces the formula; the trace is the witness |
-| prove | [zheng](https://github.com/cyberia-to/zheng) via joy | SuperSpartan + Brakedown + HyperNova folding; ~1.7 KiB per accumulator group |
+| prove | [zheng](https://github.com/cyberia-to/zheng) via joy | SuperSpartan + Brakedown + HyperNova folding; one universal step CCS — constant-size proofs |
 | verify | joy | checks the proof against the statement — no re-execution |
 | state | [bbg](https://github.com/cyberia-to/bbg) | `os.state.read` lowers to the look pattern; reads carry proofs, the public root is in the statement |
 | algebra · hash | [strata](https://github.com/cyberia-to/strata) · [hemera](https://github.com/cyberia-to/hemera) | Goldilocks arithmetic and Poseidon2 inside the compiler — no parallel implementations |
 
-Measured on a laptop, release build: `(a+b)*a` proves in 4 ms into a
-5.4 KB artifact; two `divine()` secrets in 14 ms / 20 KB; one `hash`
-builtin in 70 ms / 52 KB. Proof size grows with the number of CCS
-structures a trace touches (3, 12, 23 above); collapsing them toward a
-2–5 KB program-level proof is [zheng#8](https://github.com/cyberia-to/zheng/issues/8).
+Measured on a laptop, release build, zheng 0.3.1: `(a+b)*a` proves in
+4 ms into a 1.3 KB artifact; two `divine()` secrets in 8 ms / 1.4 KB;
+one `hash` builtin in 55 ms / 2.4 KB; a depth-32 Merkle path (1,906
+reductions) in 1.9 s / 2.6 KB. The proof is constant-size: one universal
+step CCS folds every row into one accumulator, the opening bindings into
+a second — any program is ≤ 2 groups, and every byte on the wire is
+verifier-read.
 
 ---
 
