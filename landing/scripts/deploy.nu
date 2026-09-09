@@ -5,7 +5,7 @@
 def main [] {
   let root = (
     if ($"($env.PWD)/index.html" | path exists) { $env.PWD }
-    else { error make {msg: "run from trident-pink root"} }
+    else { error make {msg: "run from trident/landing"} }
   )
   print "→ rsync → cyberproxy:/var/www/html/trident.pink/"
   ^ssh cyberproxy "mkdir -p /var/www/html/trident.pink"
