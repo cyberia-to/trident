@@ -164,9 +164,14 @@ openvm-network — declared and documented, awaiting bindings.
 A nox formula is a tree over 18 patterns — small enough to hand-emit
 for any machine. `trident compile -t <backend>` turns the very formula
 joy proves into native code for **28 backends**, and every one of them
-emits real output for `hello.nox` today. These are emitters: execution
-and proving on this hardware are not wired yet; the point is that one
-program already speaks to all of it.
+emits real output for `hello.nox` today. Honest scope: the emitters
+cover the atom-level patterns (axis, quote, branch, field arithmetic,
+bitwise — nox patterns 0, 1, 4, 5–14); programs that use `hash`,
+`divine`, structs/cons or state reads are refused with
+`UnsupportedPattern`, and the emitters produce code, not traces —
+execution and proving on this hardware are not wired. The point is that
+one program already speaks to all of it; running and proving there is
+the next tier (see the roadmap).
 
 | class | backends |
 |-------|----------|
