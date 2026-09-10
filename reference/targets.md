@@ -395,6 +395,11 @@ Three CLI commands delegate to warriors:
 All other commands (`build`, `check`, `audit`, `fmt`, `bench`, etc.)
 run locally in Trident with zero warrior involvement.
 
+A warrior also links `trident-lang` as a library — for the bundle type,
+the terrain config and (when it owns its lowering) TIR. That surface,
+its feature contract and its stability promise are in
+[warrior-api.md](warrior-api.md).
+
 ### Warrior vs Trident Responsibilities
 
 | Trident provides | Warriors provide |

@@ -51,7 +51,11 @@ pub use verify::synthesize;
 // Re-export public API — preserves `trident::compile()` etc.
 pub use api::*;
 
-use diagnostic::{render_diagnostics, Diagnostic};
+// The error type every compilation entry point returns. `use` below is
+// private, so without this a warrior cannot name it (reference/warrior-api.md).
+pub use diagnostic::Diagnostic;
+
+use diagnostic::render_diagnostics;
 use lexer::Lexer;
 use parser::Parser;
 
