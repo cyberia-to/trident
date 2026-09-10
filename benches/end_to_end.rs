@@ -115,6 +115,7 @@ fn bench_beam_search(c: &mut Criterion) {
     let beam_config = BeamConfig {
         k: 8, // Reduced K for benchmark speed
         max_steps: 16,
+        ..Default::default()
     };
 
     c.bench_function("beam_search_k8_steps16", |b| {
@@ -189,6 +190,7 @@ fn bench_end_to_end(c: &mut Criterion) {
     let beam_config = BeamConfig {
         k: 8,
         max_steps: 16,
+        ..Default::default()
     };
 
     c.bench_function("end_to_end_20ops_k8", |b| {
