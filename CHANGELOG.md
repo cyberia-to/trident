@@ -5,6 +5,28 @@ Lower is colder. Colder is more stable.
 
 ## Unreleased
 
+- **BREAKING (CLI): `trident compile` moved to a separate `silicon`
+  binary.** S0 of `.claude/plans/warrior-owns-lowering.md` — the 25
+  native-silicon emitters (`src/compile/`, 14.4k LOC) are a nox-only
+  leaf with zero dependency on trident's compiler internals; they now
+  live in an in-repo, unpublished workspace member `silicon/`
+  (`cargo install --path silicon`, binary `silicon`). `trident mir`
+  stays in the core (it produces a nox formula, trident's own
+  representation, not a translation out to a machine) and moved to
+  `src/import/` alongside the merged-in `mir2nox`. Dead code removed:
+  `src/ir/kir` and `src/ir/lir` (never implemented — `create_kernel_lowering`
+  returned `None`, `tir_to_lir` was `todo!()`), `src/gpu` (325 LOC, zero
+  callers), and the orphaned `src/import/{mir,structurize,types}.rs`
+  (depended on `mir-format`, a `publish = false` crate that cannot be a
+  trident-lang manifest dependency — see `feedback_crates_publish_path_deps`
+  — and was never wired into the module tree). Unused dependencies
+  dropped: `bytemuck`, `petgraph`, `statrs`, `pollster`; `blake3` moved
+  to `[dev-dependencies]` (benches-only). No change to `.tri` → nox/TASM
+  compilation, no proof-size or reduction-count change.
+- Found, not fixed here (pre-existing on master, reproduced before this
+  change): `trident compile` / `silicon` hangs on every invocation —
+  `Order::<65536>::new()` in the CLI's formula parser never returns in a
+  debug build. Filed as trident#32.
 - proofs are constant-size (zheng 0.3.1 via joy 0.3.0): one universal
   step CCS, ≤ 2 accumulator groups for any program, every wire byte
   verifier-read — hello 1.3 KB, two secrets 1.4 KB, one hash 2.4 KB,

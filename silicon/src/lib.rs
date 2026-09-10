@@ -1,8 +1,13 @@
-//! nox native compilation — formula tree → native code
+//! trident-silicon — nox formula → native code, one emitter per machine.
 //!
-//! Phase 1: atom-only formulas (no cells in output).
-//! Subject = cons-list of atoms → function parameters.
-//! Patterns 0,1,4,5-14 supported. 2,3,15-17 → Phase 2.
+//! Sketches, not warriors: every emitter here walks a nox formula tree and
+//! writes bytes/text for its machine. None of them executes the result and
+//! none produces a trace, so none can be proved — see
+//! `trident/.claude/plans/warrior-owns-lowering.md`. Phase 1: atom-only
+//! formulas (no cells in output). Subject = cons-list of atoms → function
+//! parameters. Patterns 0,1,4,5-14 supported; 2 (compose), 3 (cons), 15
+//! (hash), 16 (call/divine), 17 (look) are refused with
+//! `CompileError::UnsupportedPattern`.
 
 use nox::{data::Data as Noun, Order as NounId, Reduction as Order};
 
@@ -26,7 +31,6 @@ pub mod systemverilog;
 pub mod vhdl;
 pub mod qasm;
 pub mod xla;
-pub mod mir2nox;
 pub mod qir;
 pub mod onnx;
 pub mod cerebras;

@@ -3,10 +3,12 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-//! Import module: reads serialized MIR from rsc and translates to TIR.
+//! Import module: a second front end into trident's representation.
 //!
-//! Pipeline: `.mir.json` → `mir_to_tir()` → `Vec<TIROp>`
+//! `mir2nox` reads Rust MIR JSON (from `rsc --emit=mir-rs`) and produces a
+//! nox formula directly — the counterpart to `.tri` source going through
+//! `ir::tree::lower::nox`. This is core infrastructure, not a silicon
+//! emitter: it produces trident's own representation rather than
+//! translating out to a machine.
 
-pub mod mir;
-pub mod structurize;
-pub mod types;
+pub mod mir2nox;

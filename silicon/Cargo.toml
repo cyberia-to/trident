@@ -1,0 +1,26 @@
+# ---
+# tags: trident, config
+# crystal-type: source
+# crystal-domain: comp
+# ---
+[package]
+name = "trident-silicon"
+version = "0.1.0"
+edition = "2021"
+description = "Native-silicon emitters for nox formulas — sketches, not warriors: no execution, no proving"
+license-file = "../LICENSE.md"
+repository = "https://github.com/cyberia-to/trident"
+publish = false
+
+[lib]
+name = "trident_silicon"
+path = "src/lib.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+nox = { package = "cyber-nox", version = "0.2", path = "../../nox/rs" }
+nebu = { package = "strata-nebu", version = "0.1", path = "../../strata/nebu/rs" }
+
+[[bin]]
+name = "silicon"
+path = "src/bin/main.rs"

@@ -6,7 +6,7 @@
 pub mod audit;
 pub mod bench;
 pub mod build;
-pub mod compile;
+pub mod mir;
 // no subcommand — shared trisha subprocess helpers for bench + audit
 pub mod check;
 pub mod deploy;

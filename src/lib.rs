@@ -5,13 +5,12 @@
 // ---
 pub mod api;
 pub mod ast;
-pub mod compile;
 pub mod config;
 pub mod cost;
 pub mod deploy;
 pub mod diagnostic;
 pub mod field;
-pub mod gpu;
+pub mod import;
 pub mod ir;
 pub mod lsp;
 pub mod neural;
