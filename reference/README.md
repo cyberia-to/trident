@@ -44,6 +44,7 @@ and code disagree, the reference wins.
 | [Grammar](grammar.md) | Complete formal grammar (EBNF) |
 | [Intermediate Representation](ir.md) | TIR operations (54 ops, 4 tiers), lowering paths |
 | [Target Reference](targets.md) | OS model, target profiles, cost models |
+| [Warrior API](warrior-api.md) | What a warrior may link: the library contract, features, stability |
 
 ## Token Standards
 
