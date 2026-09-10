@@ -54,9 +54,11 @@ pub struct BuildArgs {
     #[arg(long, default_value = "debug")]
     pub profile: String,
     /// Run neural optimizer analysis (shows per-block decisions)
+    #[cfg(feature = "neural")]
     #[arg(long)]
     pub neural: bool,
     /// Train the neural optimizer for N epochs (implies --neural)
+    #[cfg(feature = "neural")]
     #[arg(long, value_name = "EPOCHS")]
     pub train: Option<u64>,
 }
@@ -77,7 +79,9 @@ pub fn cmd_build(args: BuildArgs) {
         network,
         union_flag,
         profile,
+        #[cfg(feature = "neural")]
         neural,
+        #[cfg(feature = "neural")]
         train,
     } = args;
     let bf = super::resolve_battlefield_compile(&target, &engine, &terrain, &network, &union_flag);
@@ -118,8 +122,8 @@ pub fn cmd_build(args: BuildArgs) {
     eprintln!("Compiled -> {}", out_path.display());
 
     // Neural optimizer analysis
-    let use_neural = neural || train.is_some();
-    if use_neural {
+    #[cfg(feature = "neural")]
+    if neural || train.is_some() {
         run_neural_analysis(&ri.entry, &options, train);
     }
 
@@ -196,6 +200,7 @@ pub fn cmd_build(args: BuildArgs) {
     }
 }
 
+#[cfg(feature = "neural")]
 fn run_neural_analysis(
     entry: &std::path::Path,
     options: &trident::CompileOptions,
@@ -397,6 +402,7 @@ fn run_neural_analysis(
 
 /// Build TIR from a source entry point (for neural analysis).
 /// Uses full project resolution so imports (use vm.*, std.*) work.
+#[cfg(feature = "neural")]
 fn build_tir(
     entry: &std::path::Path,
     options: &trident::CompileOptions,

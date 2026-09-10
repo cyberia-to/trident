@@ -252,6 +252,8 @@ pub fn trisha_args_with_inputs(base_args: &[&str], harness: &Harness) -> Vec<Str
 /// - `halt`, `call`, `return` preserved as-is
 ///
 /// The linked program is self-contained — all cross-module calls are resolved.
+// Used by `trident bench` (neural feature); the warrior harness itself stays ungated.
+#[cfg(feature = "neural")]
 pub fn generate_program_harness(
     tasm: &str,
     input_values: &[u64],

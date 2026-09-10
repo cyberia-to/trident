@@ -10,6 +10,7 @@ mod cli;
 use clap::{Parser, Subcommand};
 
 use cli::audit::{AuditArgs, EquivArgs};
+#[cfg(feature = "neural")]
 use cli::bench::BenchArgs;
 use cli::build::BuildArgs;
 use cli::mir::MirArgs;
@@ -27,6 +28,7 @@ use cli::registry::RegistryAction;
 use cli::run::RunArgs;
 use cli::store::StoreAction;
 use cli::test::TestArgs;
+#[cfg(feature = "neural")]
 use cli::train::TrainArgs;
 use cli::tree_sitter::TreeSitterArgs;
 use cli::verify::VerifyProofArgs;
@@ -62,8 +64,10 @@ enum Command {
     /// Show content hashes of functions (BLAKE3)
     Hash(HashArgs),
     /// Run benchmarks: compare Trident output vs hand-written TASM
+    #[cfg(feature = "neural")]
     Bench(BenchArgs),
     /// Train the neural optimizer on .tri files
+    #[cfg(feature = "neural")]
     Train(TrainArgs),
     /// Generate code scaffold from spec annotations
     Generate(GenerateArgs),
@@ -116,7 +120,9 @@ fn main() {
         Command::Doc(args) => cli::doc::cmd_doc(args),
         Command::Audit(args) => cli::audit::cmd_audit(args),
         Command::Hash(args) => cli::hash::cmd_hash(args),
+        #[cfg(feature = "neural")]
         Command::Bench(args) => cli::bench::cmd_bench(args),
+        #[cfg(feature = "neural")]
         Command::Train(args) => cli::train::cmd_train(args),
         Command::Generate(args) => cli::generate::cmd_generate(args),
         Command::View(args) => cli::view::cmd_view(args),

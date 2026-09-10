@@ -4,6 +4,7 @@
 // crystal-domain: comp
 // ---
 pub mod audit;
+#[cfg(feature = "neural")]
 pub mod bench;
 pub mod build;
 pub mod mir;
@@ -22,6 +23,7 @@ pub mod registry;
 pub mod run;
 pub mod store;
 pub mod test;
+#[cfg(feature = "neural")]
 pub mod train;
 pub mod tree_sitter;
 pub mod trisha;

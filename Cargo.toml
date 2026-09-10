@@ -23,15 +23,24 @@ exclude = ["docs/", "examples/", "tests/snapshots/", "media/"]
 name = "trident"
 path = "src/lib.rs"
 
+[features]
+# The neural optimizer (burn + the wgpu backend under it) is the heaviest
+# thing trident links. Default-on for the compiler binary; warriors that
+# embed trident as a library take `default-features = false` and skip the
+# whole burn/cubecl graph — which also keeps serde's feature set unified
+# with the vendored triton crates (trisha#1).
+default = ["neural"]
+neural = ["dep:burn", "dep:rayon", "dep:rkyv"]
+
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 ariadne = "0.4"
 tower-lsp = "0.20"
 tokio = { version = "1", features = ["io-std", "rt-multi-thread", "macros"] }
-burn = { version = "0.20", features = ["wgpu", "autodiff", "ndarray"] }
-rayon = "1.10"
+burn = { version = "0.20", features = ["wgpu", "autodiff", "ndarray"], optional = true }
+rayon = { version = "1.10", optional = true }
 serde = { version = "1", features = ["derive"] }
-rkyv = { version = "0.8", features = ["bytecheck"] }
+rkyv = { version = "0.8", features = ["bytecheck"], optional = true }
 serde_json = "1"
 nox = { package = "cyber-nox", version = "0.2", path = "../nox/rs" }
 nebu = { package = "strata-nebu", version = "0.1", path = "../strata/nebu/rs" }
@@ -54,6 +63,7 @@ path = "src/bin/trident-lsp.rs"
 [[bench]]
 name = "end_to_end"
 harness = false
+required-features = ["neural"]
 
 [[example]]
 name = "ref_std_crypto_poseidon2"
