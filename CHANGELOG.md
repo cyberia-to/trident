@@ -5,6 +5,23 @@ Lower is colder. Colder is more stable.
 
 ## Unreleased
 
+- **`neural` is a default-on feature.** burn (and the cubecl/wgpu graph
+  under it) is the heaviest thing trident links. The compiler binary is
+  unchanged; `--no-default-features` gives a light library build for
+  warriors that embed trident and never train — trisha takes that path,
+  which cuts its dependency graph to a fraction. Gated: the `neural`
+  module, `trident bench`, `trident train`, `trident build --neural/--train`,
+  the bench harness in `cli/trisha.rs`, and the `end_to_end` bench target
+  (`required-features`). Also fixes a pre-existing break on master:
+  `benches/end_to_end.rs` constructed `BeamConfig` without four of its
+  fields; now `..Default::default()`, no invented numbers.
+- **Correction to that commit's message** (51aa904): it claimed dropping
+  burn from a warrior's graph removed the class of breakage behind
+  trisha#1. It did not. trisha#1's root cause was the vendored
+  twenty-first shipping `crate-type = ["cdylib", "rlib"]`, which makes
+  rustc see two versions of serde and rand; with that patched, trisha
+  builds fine with burn back in the graph. The `neural` feature stands on
+  build weight alone.
 - **BREAKING (CLI): `trident compile` moved to a separate `silicon`
   binary.** S0 of `.claude/plans/warrior-owns-lowering.md` — the 25
   native-silicon emitters (`src/compile/`, 14.4k LOC) are a nox-only
