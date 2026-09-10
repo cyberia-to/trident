@@ -44,13 +44,22 @@ already links (`path = "../trident"`). No wire schema, no dlopen.
    become the declared warrior-facing API in `reference/` (semver, no
    serialization). Serialization only if a non-Rust warrior ever appears.
 4. **Silicon leaves the crate into one folder.** `src/compile/` +
-   `cli/compile.rs` + `mir2nox` → `trident/silicon/` — a workspace crate
+   `cli/compile.rs` → `trident/silicon/` — a workspace crate
    `trident-silicon`, `publish = false`, depends on `cyber-nox` only, its own
    `silicon` binary carrying today's `compile`/`mir` CLI. Not 28 warriors:
    the emitters have no execution and no trace, so they are sketches, and
    the folder says so. Later home may be `nox/` (their original plan) — a
    `git mv` then, not now.
-5. **Target registry stays configuration in trident.** `vm/*/target.toml`
+5. **Shared infrastructure stays in the core — by one criterion:** it
+   produces the core's own representation or every warrior consumes it.
+   The MIR import is a second front end (Rust → trident), not a target:
+   `mir2nox` and the orphaned `src/import/` merge into one `src/import/`
+   in the core whose output is the trident AST (until then, nox as the
+   semantics) — so trisha gets Rust programs the same way it gets `.tri`
+   ones, instead of a private MIR→TIR copy. TIR (stack IR shared by
+   Triton and Miden) and neural are warrior-side until a second consumer
+   exists; then a middle crate (`trident-stack`), not the core.
+6. **Target registry stays configuration in trident.** `vm/*/target.toml`
    and `os/*/target.toml` keep declaring engines, unions and their warrior;
    a target whose warrior is absent is refused with the install hint.
 
@@ -64,15 +73,16 @@ already links (`path = "../trident"`). No wire schema, no dlopen.
 | `baselines/triton/**`, `benches/references` TASM comparisons, `cli/bench.rs` | `trisha/baselines/`, `trisha bench` | 10 755 + 1 019 |
 | `os/neptune/**` (.tri), `src/api/tests/neptune.rs`, `deploy/**` Neptune parts | `trisha/os/neptune/`, trisha tests | 2 098 + ~600 |
 | `src/cli/trisha.rs`, Triton arms of `cli/{audit,build,mod}.rs` | trisha cli | ~500 |
-| `src/compile/**`, `src/cli/compile.rs`, `Command::{Compile,Mir}` | `trident/silicon/` | 14 379 + 280 |
-| `src/ir/kir`, `src/ir/lir`, `src/gpu`, `src/import` | deleted (history keeps them) | ~1 300 |
-| `bytemuck petgraph statrs pollster` (+ `serde serde_json` with mir2nox, `blake3` → dev) | out of `[dependencies]` | — |
+| `src/compile/**` (minus mir2nox), `src/cli/compile.rs`, `Command::Compile` | `trident/silicon/` | 13 659 + 240 |
+| `src/compile/mir2nox.rs` + `src/import/**` | one `src/import/` in the core (`trident mir` stays; `serde`/`serde_json` stay for it) | 720 + 1 067 |
+| `src/ir/kir`, `src/ir/lir`, `src/gpu` | deleted (history keeps them) | ~1 200 |
+| `bytemuck petgraph statrs pollster` (`blake3` → dev) | out of `[dependencies]` | — |
 
 Stays, made generic: `typecheck/builtins.rs` and `lsp/builtins.rs` read
 digest/xfield widths from `TerrainConfig` instead of naming Triton;
 `cost/scorer.rs` scores in the target's unit; `config/target` unchanged.
 
-Core deps after: `clap ariadne tower-lsp tokio nox nebu hemera`. Miden
+Core deps after: `clap ariadne tower-lsp tokio serde serde_json nox nebu hemera`. Miden
 shares TIR with Triton → lives in trisha's tir until a Miden warrior
 exists (out of scope). `Arch::Register` (LIR) has no lowering today and
 loses its dead scaffold; the enum variant stays for the registry.
@@ -81,7 +91,7 @@ loses its dead scaffold; the enum variant stays for the registry.
 
 | step | scope | sessions | gate |
 |---|---|---|---|
-| S0 attic | `silicon/` crate; delete kir/lir/gpu/import + 4 deps; README "28 backends" section rewritten as sketch crate; `trident compile` removed from the main binary | 1 | nox path byte-identical: `tests/nox_surface`, `differential`, fresh `cargo install` smoke |
+| S0 attic | `silicon/` crate; mir2nox joins `src/import/`; delete kir/lir/gpu + 4 deps; README "28 backends" section rewritten as sketch crate; `trident compile` removed from the main binary | 1 | nox path byte-identical: `tests/nox_surface`, `differential`, fresh `cargo install` smoke |
 | S1 trisha builds | close trisha#1 (vendored twenty-first serde), installed binary = warrior CLI | ½–1 | `trisha run` on `benches/references` |
 | S2 contract | `trident::front` API + `reference/warrior-api.md`; `compile_with_options` loses the stack branch behind a `Lowering` seam | 1 | trisha builds against it without touching `ir/tir` yet |
 | S3 the move | tir, cost, stack_verifier, neural, baselines, os/neptune, tests → trisha; `trisha build`/`cost`/`bench`; `trident build --target triton` delegates | 3–4 | trisha `cargo test`; every `benches/references` program: `trisha run` == `joy run`; hand-baseline ratios unchanged |
@@ -105,11 +115,11 @@ docs/`, trisha side its own repo.
 
 - `silicon/` in trident (proposed) vs straight into `nox/` now.
 - neural into trisha (proposed — it learns TASM) vs its own crate.
-- Delete `src/import/` (dead, mir_format never wired) vs move with
-  mir2nox into `silicon/`.
 
 ## Settled
 
 - Warriors own lowering; one binary per machine. (owner, 2026-09-09)
 - Neptune + Triton go to trisha. (owner, 2026-09-09)
 - Emitters out of the crate into one folder, no 28 warriors. (owner, 2026-09-09)
+- Shared infrastructure (MIR import) stays in the core; criterion: produces
+  the core representation or consumed by every warrior. (owner, 2026-09-10)
