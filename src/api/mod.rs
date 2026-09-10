@@ -37,11 +37,15 @@ pub struct CompileOptions {
 }
 
 impl Default for CompileOptions {
+    /// Defaults to **nox** — the same terrain the CLI defaults to since
+    /// 0.2.0, and the one the stack proves on (joy + zheng). A caller who
+    /// wants a foreign engine names it: `options.target_config =
+    /// TerrainConfig::triton()`, or resolve one from `vm/<engine>/target.toml`.
     fn default() -> Self {
         Self {
             profile: "debug".to_string(),
             cfg_flags: BTreeSet::from(["debug".to_string()]),
-            target_config: TerrainConfig::triton(),
+            target_config: TerrainConfig::nox(),
             dep_dirs: Vec::new(),
         }
     }
@@ -49,11 +53,13 @@ impl Default for CompileOptions {
 
 impl CompileOptions {
     /// Create options for a named profile (debug/release/custom).
+    ///
+    /// Terrain is nox, as in [`Default`].
     pub fn for_profile(profile: &str) -> Self {
         Self {
             profile: profile.to_string(),
             cfg_flags: BTreeSet::from([profile.to_string()]),
-            target_config: TerrainConfig::triton(),
+            target_config: TerrainConfig::nox(),
             dep_dirs: Vec::new(),
         }
     }
@@ -64,7 +70,10 @@ impl CompileOptions {
     }
 }
 
-/// Compile a single Trident source string to TASM.
+/// Compile a single Trident source string for the default terrain (nox).
+///
+/// Returns a nox formula in bracket notation. For a stack engine, use
+/// [`compile_with_options`] with an explicit `target_config`.
 pub fn compile(source: &str, filename: &str) -> Result<String, Vec<Diagnostic>> {
     compile_with_options(source, filename, &CompileOptions::default())
 }

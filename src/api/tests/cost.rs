@@ -27,7 +27,7 @@ fn test_coin_cost_analysis() {
     if !path.exists() {
         return;
     }
-    let cost = analyze_costs_project(path, &CompileOptions::default())
+    let cost = analyze_costs_project(path, &super::triton_options("debug"))
         .expect("cost analysis should succeed");
 
     // Processor table should be nonzero

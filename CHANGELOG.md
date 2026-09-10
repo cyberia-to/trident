@@ -5,6 +5,19 @@ Lower is colder. Colder is more stable.
 
 ## Unreleased
 
+- **BREAKING (library): the default terrain is nox.** The CLI has
+  defaulted to nox since 0.2.0, but `CompileOptions::default()` and
+  `::for_profile()` still handed back Triton — so `trident::compile()`,
+  the crate's front door, emitted TASM while `trident build` emitted a
+  nox formula. The library now follows the CLI: default = nox, the
+  terrain the stack runs and proves on (joy + zheng). A caller who wants
+  a stack engine names it (`options.target_config =
+  TerrainConfig::triton()`), which is also what the ~110 TASM-asserting
+  tests now do — they say which engine they test instead of leaning on a
+  default, so they keep saying it when the Triton lowering moves to
+  trisha. The same fix landed in trisha, where it was a real bug: the
+  Triton warrior inherited whatever the compiler defaulted to instead of
+  naming its own terrain.
 - **`neural` is a default-on feature.** burn (and the cubecl/wgpu graph
   under it) is the heaviest thing trident links. The compiler binary is
   unchanged; `--no-default-features` gives a light library build for

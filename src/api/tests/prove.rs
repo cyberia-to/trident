@@ -8,7 +8,6 @@
 //! Programs that require runtime input (divine/pub_read) are expected to
 //! compile but won't execute without input — we only check compilation here.
 
-use crate::compile_project;
 use std::path::Path;
 
 /// Helper: compile a .tri file and assert it succeeds, returning the TASM.
@@ -17,7 +16,7 @@ fn assert_compiles(path: &str) -> String {
     if !p.exists() {
         panic!("{} does not exist", path);
     }
-    match compile_project(p) {
+    match super::compile_project_triton(p) {
         Ok(tasm) => {
             assert!(!tasm.is_empty(), "{} produced empty TASM", path);
             tasm

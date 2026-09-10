@@ -3,13 +3,12 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-use crate::*;
 
 #[test]
 fn test_compile_valid_program() {
     let source =
         "program test\nfn main() {\n    let x: Field = pub_read()\n    pub_write(x + 1)\n}";
-    let result = compile(source, "test.tri");
+    let result = super::compile_triton(source, "test.tri");
     assert!(result.is_ok());
     let tasm = result.unwrap();
     assert!(tasm.contains("read_io 1"));
@@ -19,7 +18,7 @@ fn test_compile_valid_program() {
 #[test]
 fn test_compile_type_error_returns_err() {
     let source = "program test\nfn main() {\n    let x: U32 = pub_read()\n}";
-    let result = compile(source, "test.tri");
+    let result = super::compile_triton(source, "test.tri");
     assert!(result.is_err());
 }
 
@@ -41,7 +40,7 @@ if x == 0 {
 }
 }
 "#;
-    assert!(compile(source, "test.tri").is_ok());
+    assert!(super::compile_triton(source, "test.tri").is_ok());
 }
 
 #[test]
@@ -59,7 +58,7 @@ for i in 0..3 bounded 3 {
 pub_write(s)
 }
 "#;
-    let result = compile(source, "test.tri");
+    let result = super::compile_triton(source, "test.tri");
     assert!(result.is_ok());
     let tasm = result.unwrap();
     assert!(tasm.contains("write_io 1"));
@@ -91,7 +90,7 @@ let r: Field = pub_read()
 pub_write(a + b + c + d + e + f + g + h + i + j + k + l + m + n + o + p + q + r)
 }
 "#;
-    let result = compile(source, "test.tri");
+    let result = super::compile_triton(source, "test.tri");
     assert!(
         result.is_ok(),
         "should handle 18 live variables with spilling"
@@ -124,7 +123,7 @@ let x: Field = pub_read()
 pub_write(add4(add4(x)))
 }
 "#;
-    let result = compile(source, "test.tri");
+    let result = super::compile_triton(source, "test.tri");
     assert!(result.is_ok());
 }
 
@@ -146,7 +145,7 @@ pub_write(sum)
 pub_write(prod)
 }
 "#;
-    assert!(compile(source, "test.tri").is_ok());
+    assert!(super::compile_triton(source, "test.tri").is_ok());
 }
 
 #[test]
@@ -163,7 +162,7 @@ let auth: AuthData = AuthData { owner: d, nonce: 42 }
 pub_write(auth.nonce)
 }
 "#;
-    assert!(compile(source, "test.tri").is_ok());
+    assert!(super::compile_triton(source, "test.tri").is_ok());
 }
 
 #[test]
@@ -178,7 +177,7 @@ let d: XField = xinvert(c)
 pub_write(0)
 }
 "#;
-    assert!(compile(source, "test.tri").is_ok());
+    assert!(super::compile_triton(source, "test.tri").is_ok());
 }
 
 #[test]
@@ -192,7 +191,7 @@ fn main() {
 pub_write(double(pub_read()))
 }
 "#;
-    assert!(compile(source, "test.tri").is_ok());
+    assert!(super::compile_triton(source, "test.tri").is_ok());
 }
 
 #[test]
@@ -209,7 +208,7 @@ fn main() {
 pub_write(abs_diff(pub_read(), pub_read()))
 }
 "#;
-    assert!(compile(source, "test.tri").is_ok());
+    assert!(super::compile_triton(source, "test.tri").is_ok());
 }
 
 #[test]
@@ -238,7 +237,7 @@ reveal Transfer { from: a, to: b, amount: c }
 seal Commitment { value: a }
 }
 "#;
-    let tasm = compile(source, "events.tri").expect("events program should compile");
+    let tasm = super::compile_triton(source, "events.tri").expect("events program should compile");
 
     // reveal Transfer: push 0, write_io 1, [field], write_io 1 × 3
     // Total write_io 1 from reveal: 4 (tag + 3 fields)
@@ -302,7 +301,7 @@ fn test_coin_compiles() {
     if !path.exists() {
         return;
     }
-    let tasm = compile_project(path).expect("coin program should compile");
+    let tasm = super::compile_project_triton(path).expect("coin program should compile");
 
     // Verify all 5 operations are in the TASM output
     assert!(tasm.contains("__pay:"), "missing pay function");
@@ -374,7 +373,7 @@ fn test_card_compiles() {
     if !path.exists() {
         return;
     }
-    let tasm = compile_project(path).expect("card program should compile");
+    let tasm = super::compile_project_triton(path).expect("card program should compile");
 
     // Verify all 5 PLUMB operations
     assert!(tasm.contains("__pay:"), "missing pay function");

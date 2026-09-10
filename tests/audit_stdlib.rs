@@ -3,14 +3,22 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-use trident::compile_project;
+use trident::target::TerrainConfig;
+use trident::CompileOptions;
 
 /// Helper: write a temp program file in the repo root (so module resolution
 /// finds `std/`, `vm/`, `os/`) and compile it.
+///
+/// Compiles for **Triton**: this suite asserts on TASM. `compile_project`
+/// follows the CLI and defaults to nox, where the stdlib's streaming I/O
+/// (`pub_read`/`pub_write`) has no meaning — a nox program takes its
+/// subject and returns a value.
 fn compile_test_program(name: &str, source: &str) -> String {
     let path = std::path::Path::new(name);
     std::fs::write(path, source).expect("write temp program");
-    let result = compile_project(path);
+    let mut options = CompileOptions::default();
+    options.target_config = TerrainConfig::triton();
+    let result = trident::compile_project_with_options(path, &options);
     std::fs::remove_file(path).ok();
     result.unwrap_or_else(|errs| {
         panic!(

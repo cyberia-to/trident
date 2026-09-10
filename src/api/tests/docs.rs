@@ -15,7 +15,7 @@ fn test_generate_docs_simple() {
     )
     .unwrap();
 
-    let options = CompileOptions::default();
+    let options = super::triton_options("debug");
     let doc = generate_docs(&main_path, &options).expect("doc generation should succeed");
 
     // Should contain the program name as title
@@ -45,7 +45,7 @@ fn test_generate_docs_with_structs() {
     )
     .unwrap();
 
-    let options = CompileOptions::default();
+    let options = super::triton_options("debug");
     let doc = generate_docs(&main_path, &options).expect("doc generation should succeed");
 
     // Should contain struct section
@@ -79,7 +79,7 @@ fn test_generate_docs_with_events() {
     )
     .unwrap();
 
-    let options = CompileOptions::default();
+    let options = super::triton_options("debug");
     let doc = generate_docs(&main_path, &options).expect("doc generation should succeed");
 
     // Should contain events section
@@ -107,7 +107,7 @@ fn test_generate_docs_cost_annotations() {
     )
     .unwrap();
 
-    let options = CompileOptions::default();
+    let options = super::triton_options("debug");
     let doc = generate_docs(&main_path, &options).expect("doc generation should succeed");
 
     // Should contain cost annotations on functions

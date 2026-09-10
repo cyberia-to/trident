@@ -3,7 +3,6 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-use crate::*;
 
 #[test]
 fn test_recursive_verifier_compiles() {
@@ -11,7 +10,7 @@ fn test_recursive_verifier_compiles() {
     if !path.exists() {
         return; // skip if running from different cwd
     }
-    let result = compile_project(path);
+    let result = super::compile_project_triton(path);
     assert!(
         result.is_ok(),
         "recursive verifier should compile: {:?}",
@@ -49,7 +48,7 @@ pub_write(r0)
     std::fs::create_dir_all(&ext_dir).unwrap();
     std::fs::copy("os/neptune/xfield.tri", ext_dir.join("xfield.tri")).unwrap_or_default();
 
-    let result = compile_project(&main_path);
+    let result = super::compile_project_triton(&main_path);
     assert!(
         result.is_ok(),
         "xx_dot_step intrinsic should compile: {:?}",
@@ -85,7 +84,7 @@ pub_write(r0)
     std::fs::create_dir_all(&ext_dir).unwrap();
     std::fs::copy("os/neptune/xfield.tri", ext_dir.join("xfield.tri")).unwrap_or_default();
 
-    let result = compile_project(&main_path);
+    let result = super::compile_project_triton(&main_path);
     assert!(
         result.is_ok(),
         "xb_dot_step intrinsic should compile: {:?}",
@@ -134,7 +133,7 @@ pub_write(r2)
     std::fs::copy("vm/io/io.tri", vm_io.join("io.tri")).unwrap_or_default();
     std::fs::copy("vm/core/assert.tri", vm_core.join("assert.tri")).unwrap_or_default();
 
-    let result = compile_project(&main_path);
+    let result = super::compile_project_triton(&main_path);
     assert!(
         result.is_ok(),
         "xfe_inner_product should compile: {:?}",
@@ -179,7 +178,7 @@ pub_write(r0)
     std::fs::copy("vm/io/io.tri", vm_io.join("io.tri")).unwrap_or_default();
     std::fs::copy("vm/core/assert.tri", vm_core.join("assert.tri")).unwrap_or_default();
 
-    let result = compile_project(&main_path);
+    let result = super::compile_project_triton(&main_path);
     assert!(
         result.is_ok(),
         "xb_inner_product should compile: {:?}",
@@ -221,7 +220,7 @@ proof.verify_inner_proof(4)
     std::fs::copy("vm/io/io.tri", vm_io.join("io.tri")).unwrap_or_default();
     std::fs::copy("vm/core/assert.tri", vm_core.join("assert.tri")).unwrap_or_default();
 
-    let result = compile_project(&main_path);
+    let result = super::compile_project_triton(&main_path);
     assert!(
         result.is_ok(),
         "proof composition should compile: {:?}",
@@ -263,7 +262,7 @@ proof.aggregate_proofs(n, 4)
     std::fs::copy("vm/io/io.tri", vm_io.join("io.tri")).unwrap_or_default();
     std::fs::copy("vm/core/assert.tri", vm_core.join("assert.tri")).unwrap_or_default();
 
-    let result = compile_project(&main_path);
+    let result = super::compile_project_triton(&main_path);
     assert!(
         result.is_ok(),
         "proof aggregation should compile: {:?}",
@@ -282,7 +281,7 @@ fn test_proof_relay_example_compiles() {
     if !path.exists() {
         return;
     }
-    let result = compile_project(path);
+    let result = super::compile_project_triton(path);
     assert!(
         result.is_ok(),
         "proof relay example should compile: {:?}",
@@ -296,7 +295,7 @@ fn test_proof_aggregator_example_compiles() {
     if !path.exists() {
         return;
     }
-    let result = compile_project(path);
+    let result = super::compile_project_triton(path);
     assert!(
         result.is_ok(),
         "proof aggregator example should compile: {:?}",
@@ -310,7 +309,7 @@ fn test_transaction_validation_compiles() {
     if !path.exists() {
         return;
     }
-    let result = compile_project(path);
+    let result = super::compile_project_triton(path);
     assert!(
         result.is_ok(),
         "transaction validation should compile: {:?}",
@@ -335,7 +334,7 @@ fn test_neptune_lock_scripts_compile() {
         if !path.exists() {
             continue;
         }
-        let result = compile_project(path);
+        let result = super::compile_project_triton(path);
         assert!(
             result.is_ok(),
             "{} should compile: {:?}",
@@ -353,7 +352,7 @@ fn test_neptune_type_scripts_compile() {
         if !path.exists() {
             continue;
         }
-        let result = compile_project(path);
+        let result = super::compile_project_triton(path);
         assert!(
             result.is_ok(),
             "{} should compile: {:?}",
