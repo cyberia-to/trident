@@ -447,6 +447,69 @@ pub fn build_tir(
     Ok(optimize_tir(ir))
 }
 
+/// One module's TIR, with the metadata a warrior needs to lower and link it.
+///
+/// `build_tir_project` concatenates modules, which is what the neural
+/// optimizer wants; a warrior that emits its own assembly needs the
+/// boundaries back — labels are mangled per module and exactly one module
+/// is the program (its entry point is the linked program's entry point).
+#[derive(Clone, Debug)]
+pub struct ModuleTir {
+    /// Module name as declared in `program <name>` / `module <name>`.
+    pub name: String,
+    /// True for the `program` module — the linked program's entry.
+    pub is_program: bool,
+    /// Typed, optimized TIR for this module alone.
+    pub ops: Vec<crate::tir::TIROp>,
+}
+
+/// Build per-module TIR for a project — the warrior lowering contract.
+///
+/// The core stops here for a warrior that owns its target's assembly:
+/// it hands over typed, optimized, monomorphized TIR with module
+/// boundaries intact, and the warrior turns each module into its ISA and
+/// links them. See `reference/warrior-api.md`.
+pub fn build_tir_modules(
+    entry_path: &Path,
+    options: &CompileOptions,
+) -> Result<Vec<ModuleTir>, Vec<Diagnostic>> {
+    use crate::pipeline::PreparedProject;
+
+    let project = PreparedProject::build(entry_path, options)?;
+
+    let intrinsic_map = project.intrinsic_map();
+    let module_aliases = project.module_aliases();
+    let external_constants = project.external_constants();
+
+    let mut modules = Vec::new();
+    for (i, pm) in project.modules.iter().enumerate() {
+        let mono = project
+            .exports
+            .get(i)
+            .map(|e| e.mono_instances.clone())
+            .unwrap_or_default();
+        let call_res = project
+            .exports
+            .get(i)
+            .map(|e| e.call_resolutions.clone())
+            .unwrap_or_default();
+        let ir = TIRBuilder::new(options.target_config.clone())
+            .with_cfg_flags(options.cfg_flags.clone())
+            .with_intrinsics(intrinsic_map.clone())
+            .with_module_aliases(module_aliases.clone())
+            .with_constants(external_constants.clone())
+            .with_mono_instances(mono)
+            .with_call_resolutions(call_res)
+            .build_file(&pm.file);
+        modules.push(ModuleTir {
+            name: pm.file.name.node.clone(),
+            is_program: pm.file.kind == FileKind::Program,
+            ops: optimize_tir(ir),
+        });
+    }
+    Ok(modules)
+}
+
 /// Build TIR from a project entry point with full module resolution.
 ///
 /// Uses the same multi-module pipeline as `compile_project_with_options`

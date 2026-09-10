@@ -5,19 +5,19 @@
 // ---
 /// Per-module TASM output ready for linking.
 #[derive(Clone, Debug)]
-pub(crate) struct ModuleTasm {
+pub struct ModuleTasm {
     /// Dotted module name (e.g. "merkle").
-    pub(crate) module_name: String,
+    pub module_name: String,
     /// Whether this is the program entry module.
-    pub(crate) is_program: bool,
+    pub is_program: bool,
     /// Raw TASM output from the emitter.
-    pub(crate) tasm: String,
+    pub tasm: String,
 }
 
 /// Link multiple module TASM outputs into a single program.
 /// Performs dead code elimination: only includes functions reachable
 /// from the program entry point.
-pub(crate) fn link(modules: Vec<ModuleTasm>) -> String {
+pub fn link(modules: Vec<ModuleTasm>) -> String {
     // First, mangle all modules and collect the full TASM.
     let mut all_lines = Vec::new();
 
