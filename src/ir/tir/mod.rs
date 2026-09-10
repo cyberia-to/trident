@@ -11,7 +11,10 @@
 
 pub mod builder;
 pub mod encode;
-pub(crate) mod linker;
+/// TASM label mangling and module linking. Public because a warrior that
+/// owns its lowering also owns linking (reference/warrior-api.md); this
+/// moves to trisha with the Triton lowering.
+pub mod linker;
 pub mod lower;
 pub mod neural;
 pub(crate) mod optimize;
