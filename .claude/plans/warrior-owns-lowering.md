@@ -107,6 +107,40 @@ hemera` + `burn wgpu rayon rkyv` under `neural`.
 temperature unchanged; trident-lang 0.3.0 because the CLI loses `compile`
 and `--target triton` now needs trisha installed.
 
+## Release sequencing (the split's hard constraint)
+
+**trisha cannot be published to crates.io today, and that gates the whole
+move.** Cargo's own verdicts, 2026-09-10:
+
+- `cargo publish --dry-run -p trisha-rs` → *"all dependencies must have a
+  version requirement specified when publishing"* — the `trident-lang`
+  path deps carry no `version =`.
+- A fresh `git clone` of trisha does not even load its manifest: `.vendor/`
+  is gitignored, so `[patch.crates-io]` points at nothing. After
+  `nu patches/apply.nu` the vendor exists and the remaining error is the
+  same missing `version =` on `trident-lang`.
+- `[patch.crates-io]` never travels with a published crate anyway: a
+  crates.io trisha would resolve triton-vm unpatched — no GPU overlay, no
+  `MerkleTree::from_nodes`, no `pub` visibility, no rlib-only fix — and
+  fail to compile.
+
+Meanwhile `trident run --target triton` already prints
+`cargo install trisha` (`src/cli/run.rs:100`) — a promise no user can
+keep. Today that only costs them a confusing message, because the core
+still emits TASM. The moment S3 removes the lowering, it costs them the
+target.
+
+Three release points, in order:
+
+| # | release | gate |
+|---|---|---|
+| R1 | **trident-lang 0.3.0**, joy 0.3.1 | Can go as soon as trident#40 is closed (we emit `dup 24` — assembly that cannot execute on a 16-register machine; shipping a compiler that does that is the thing this repo's doctrine forbids). Nothing about the split is user-visible yet: the core still lowers to TASM, trisha stays optional. Breaking, and only this: `trident compile` → the `silicon` binary. joy must bump its `trident-lang = "0.2"` requirement in the same pass or its build breaks on the version bump |
+| R2 | **trisha installable at all** | Not a crates.io release — a distribution decision. Minimum: `version =` on every `trident-lang` dep (so it resolves from crates.io outside the dev tree), `.vendor/` reachable in a clone (commit it, or a build step that runs `patches/apply.nu`), then verify `cargo install --git https://github.com/cyberia-to/trisha` on a machine that has never seen this workspace. Fix `src/cli/run.rs`'s hint to whatever that command actually is. If crates.io is wanted instead, the patched triton crates have to be published under our own names — which is the fork the "patches over forks" doctrine avoids, and a decision the owner should make deliberately |
+| R3 | **trident-lang 0.4.0 + trisha 0.2.0**, together | Only after R2. This is the release where the core stops emitting TASM: `trident build --target triton` delegates, ~110 TASM-asserting tests live in trisha, `trident::compile`'s default target is decided. Triton users need trisha from this version on, so it must be installable before this ships, not after |
+
+The rule the three points encode: **the split may not reach a user before
+the warrior does.**
+
 ## Verification (per repo rules)
 
 Every step: `cargo check` zero warnings · `cargo test` · `trident bench`
