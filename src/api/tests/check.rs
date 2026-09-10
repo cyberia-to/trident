@@ -90,7 +90,7 @@ fn test_discover_tests_empty_when_no_tests() {
 fn test_test_fn_compiles_normally() {
     // #[test] functions should be accepted but skipped during normal emit
     let source = "program test\n#[test]\nfn check() {\n    assert(true)\n}\nfn main() {\n    pub_write(pub_read())\n}";
-    let result = compile(source, "test.tri");
+    let result = super::compile_triton(source, "test.tri");
     assert!(
         result.is_ok(),
         "program with test fn should compile: {:?}",
