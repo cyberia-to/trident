@@ -441,21 +441,23 @@
             </section>
 
             <section>
-                <h2>the same formula, <i>on silicon</i></h2>
+                <h2>the same formula, <i>on silicon</i> — sketches, not warriors</h2>
                 <p class="neptune" style="margin-bottom: 0.2rem">
                     a nox formula is a tree over 18 patterns — small enough to
-                    hand-emit for any machine. <code>trident compile -t
-                    &lt;backend&gt;</code> turns the very formula joy proves into
-                    native code for <b>28 backends</b>: every one below emitted
-                    real output for <code>hello.nox</code> today. honest scope:
-                    the emitters cover the atom-level patterns (axis, quote,
-                    branch, field arithmetic, bitwise) — programs using
-                    <code>hash</code>, <code>divine</code>, structs or state
-                    reads are refused with <code>UnsupportedPattern</code> —
-                    and they emit code, not traces: execution and proving on
-                    this hardware are not wired. the point is that one program
-                    already speaks to all of it; making it run and prove there
-                    is the next tier.
+                    hand-emit for any machine. <code>silicon</code> — an
+                    in-repo, unpublished crate at
+                    <code>trident/silicon</code> — turns the very formula joy
+                    proves into native code for <b>25 backends</b>: every one
+                    below emitted real output for <code>hello.nox</code>
+                    today. honest scope: the emitters cover the atom-level
+                    patterns (axis, quote, branch, field arithmetic, bitwise)
+                    — programs using <code>hash</code>, <code>divine</code>,
+                    structs or state reads are refused with
+                    <code>UnsupportedPattern</code> — and they emit code, not
+                    traces: execution and proving on this hardware are not
+                    wired. the point is that one program already speaks to
+                    all of it; making it run and prove there is the next
+                    tier, one warrior per machine.
                 </p>
                 <div class="silicon">
                     <div class="chip"><b>CPU</b><p><code>x86-64</code> <code>arm64</code> <i>(JIT)</i> <code>rv64</code> <code>rv32</code> <i>(ESP32)</i> <code>rvv</code> <i>(RISC-V vector)</i> <code>thumb2</code> <i>(Cortex-M · STM32 · RP2040)</i> <code>hexagon</code> <i>(Qualcomm DSP)</i></p></div>

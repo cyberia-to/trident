@@ -30,8 +30,9 @@ post-quantum, no trusted setup, no elliptic curves. One algebra
 ([hemera](https://github.com/cyberia-to/hemera)), one field, from source
 to proof. Twenty other engines and twenty-five unions are declared
 behind `--target`, Triton VM with its STARK is the second tested one,
-and the same formula compiles to native code for 28 backends — from
-Cortex-M and CUDA to OpenQASM and Verilog.
+and the same formula compiles to native code for 25 backends via the
+in-repo `silicon` crate — from Cortex-M and CUDA to OpenQASM and
+Verilog.
 
 ```
 cargo install trident-lang cyber-joy
@@ -159,19 +160,22 @@ arbitrum, solana, polkadot, ton, near, cosmwasm, icp, sui, aptos,
 starknet, aztec, aleo, miden, nervos, nockchain, succinct, boundless,
 openvm-network — declared and documented, awaiting bindings.
 
-### The same formula, on silicon
+### The same formula, on silicon (sketches, not warriors)
 
 A nox formula is a tree over 18 patterns — small enough to hand-emit
-for any machine. `trident compile -t <backend>` turns the very formula
-joy proves into native code for **28 backends**, and every one of them
-emits real output for `hello.nox` today. Honest scope: the emitters
-cover the atom-level patterns (axis, quote, branch, field arithmetic,
-bitwise — nox patterns 0, 1, 4, 5–14); programs that use `hash`,
-`divine`, structs/cons or state reads are refused with
+for any machine. `silicon` (`trident/silicon/`, an in-repo, unpublished
+crate — build with `cargo install --path silicon`) turns the very
+formula joy proves into native code for **25 backends**, and every one
+of them emits real output for `hello.nox` today. Honest scope: the
+emitters cover the atom-level patterns (axis, quote, branch, field
+arithmetic, bitwise — nox patterns 0, 1, 4, 5–14); programs that use
+`hash`, `divine`, structs/cons or state reads are refused with
 `UnsupportedPattern`, and the emitters produce code, not traces —
 execution and proving on this hardware are not wired. The point is that
 one program already speaks to all of it; running and proving there is
-the next tier (see the roadmap).
+the next tier — see
+[`.claude/plans/warrior-owns-lowering.md`](.claude/plans/warrior-owns-lowering.md)
+for the shape that tier takes.
 
 | class | backends |
 |-------|----------|
@@ -183,10 +187,10 @@ the next tier (see the roadmap).
 | hardware | `verilog` (FPGA) · `systemverilog` (ASIC) · `vhdl` |
 
 ```
-$ trident build hello.tri                      # hello.nox
-$ trident compile hello.nox -t qasm -o hello.qasm
-$ trident compile hello.nox -t verilog -o hello.v
-$ trident compile hello.nox -t spirv -o hello.spv
+$ trident build hello.tri                # hello.nox
+$ silicon hello.nox -t qasm -o hello.qasm
+$ silicon hello.nox -t verilog -o hello.v
+$ silicon hello.nox -t spirv -o hello.spv
 ```
 
 ### Neptune (`--target triton`)

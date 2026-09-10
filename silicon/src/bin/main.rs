@@ -1,16 +1,18 @@
-//! trident compile — compile nox formula to native code
+//! silicon — compile a nox formula to native code
 //!
-//! Moved from nox CLI. Takes a nox formula (text) and compiles it
-//! to one of: wasm, arm64, x64, rv64, ebpf, ptx, wgsl, spirv, ane.
+//! Standalone binary: one program speaks nox, this walks its formula tree
+//! and writes bytes/text for one machine. No execution, no proving — see
+//! the crate-level docs.
 
-use clap::Args;
+use clap::Parser;
 use nebu::Goldilocks;
-use nox::{Reduction as Order, Order as NounId};
+use nox::{Order as NounId, Reduction as Order};
 
 const ORDER_SIZE: usize = 1 << 16; // 64K nouns
 
-#[derive(Args)]
-pub struct CompileNoxArgs {
+#[derive(Parser)]
+#[command(name = "silicon", about = "Compile a nox formula to native code — 25 backends")]
+struct Cli {
     /// Formula file (.nox) or inline with -e
     #[arg()]
     file: Option<String>,
@@ -32,7 +34,9 @@ pub struct CompileNoxArgs {
     output: Option<String>,
 }
 
-pub fn cmd_compile_nox(args: CompileNoxArgs) {
+fn main() {
+    let args = Cli::parse();
+
     let formula_text = match (&args.file, &args.expr) {
         (_, Some(e)) => e.clone(),
         (Some(f), None) => std::fs::read_to_string(f).unwrap_or_else(|e| {
@@ -40,8 +44,8 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
             std::process::exit(1);
         }),
         (None, None) => {
-            use std::io::Read;
             use std::io::IsTerminal;
+            use std::io::Read;
             if std::io::stdin().is_terminal() {
                 eprintln!("error: no formula provided. Use -e or pass a .nox file.");
                 std::process::exit(1);
@@ -72,32 +76,32 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
 
     match args.target.as_str() {
         "wasm" => {
-            let wasm = trident::compile::wasm::compile_to_wasm(&order, formula, num_params)
+            let wasm = trident_silicon::wasm::compile_to_wasm(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&wasm, &output_path, "wasm");
         }
         "arm64" => {
-            let code = trident::compile::arm64::compile_to_arm64(&order, formula, num_params)
+            let code = trident_silicon::arm64::compile_to_arm64(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&code, &output_path, "arm64");
         }
         "x64" | "x86-64" | "x86_64" => {
-            let code = trident::compile::x86_64::compile_to_x86_64(&order, formula, num_params)
+            let code = trident_silicon::x86_64::compile_to_x86_64(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&code, &output_path, "x86-64 (win64)");
         }
         "x64-sysv" => {
-            let code = trident::compile::x86_64::compile_to_x86_64_sysv(&order, formula, num_params)
+            let code = trident_silicon::x86_64::compile_to_x86_64_sysv(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&code, &output_path, "x86-64 (sysv)");
         }
         "rv64" => {
-            let code = trident::compile::rv64::compile_to_rv64(&order, formula, num_params)
+            let code = trident_silicon::rv64::compile_to_rv64(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&code, &output_path, "rv64");
         }
         "ebpf" => {
-            let code = trident::compile::ebpf::compile_to_ebpf(&order, formula, num_params)
+            let code = trident_silicon::ebpf::compile_to_ebpf(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             if output_path.is_empty() {
                 eprintln!("ebpf: {} bytes ({} insns)", code.len(), code.len() / 8);
@@ -110,22 +114,22 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
             }
         }
         "ptx" | "cuda" => {
-            let ptx = trident::compile::ptx::compile_to_ptx(&order, formula, num_params)
+            let ptx = trident_silicon::ptx::compile_to_ptx(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&ptx, &output_path);
         }
         "ptx-parallel" | "cuda-parallel" => {
-            let ptx = trident::compile::ptx::compile_to_ptx_parallel(&order, formula, num_params)
+            let ptx = trident_silicon::ptx::compile_to_ptx_parallel(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&ptx, &output_path);
         }
         "wgsl" | "wgpu" | "webgpu" => {
-            let wgsl = trident::compile::wgsl::compile_to_wgsl(&order, formula, num_params)
+            let wgsl = trident_silicon::wgsl::compile_to_wgsl(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&wgsl, &output_path);
         }
         "spirv" | "spir-v" | "vulkan" => {
-            let spv = trident::compile::spirv::compile_to_spirv(&order, formula, num_params)
+            let spv = trident_silicon::spirv::compile_to_spirv(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             if output_path.is_empty() {
                 eprintln!("spir-v: {} bytes", spv.len());
@@ -136,42 +140,42 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
             }
         }
         "ane" | "mil" | "neural-engine" => {
-            let mil = trident::compile::ane::compile_to_mil(&order, formula, num_params)
+            let mil = trident_silicon::ane::compile_to_mil(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&mil, &output_path);
         }
         "ane-batch" | "mil-batch" => {
-            let mil = trident::compile::ane::compile_to_mil_batch(&order, formula, num_params, 256)
+            let mil = trident_silicon::ane::compile_to_mil_batch(&order, formula, num_params, 256)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&mil, &output_path);
         }
         "rv32" | "riscv32" | "esp32" => {
-            let code = trident::compile::rv32::compile_to_rv32(&order, formula, num_params)
+            let code = trident_silicon::rv32::compile_to_rv32(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&code, &output_path, "rv32");
         }
         "thumb2" | "cortex-m" | "stm32" | "rp2040" => {
-            let code = trident::compile::thumb2::compile_to_thumb2(&order, formula, num_params)
+            let code = trident_silicon::thumb2::compile_to_thumb2(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_binary(&code, &output_path, "thumb2");
         }
         "verilog" | "fpga" | "hdl" => {
-            let v = trident::compile::verilog::compile_to_verilog(&order, formula, num_params)
+            let v = trident_silicon::verilog::compile_to_verilog(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "qasm" | "openqasm" | "quantum" => {
-            let q = trident::compile::qasm::compile_to_qasm(&order, formula, num_params)
+            let q = trident_silicon::qasm::compile_to_qasm(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&q, &output_path);
         }
         "qir" | "azure-quantum" => {
-            let q = trident::compile::qir::compile_to_qir(&order, formula, num_params)
+            let q = trident_silicon::qir::compile_to_qir(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&q, &output_path);
         }
         "onnx" => {
-            let o = trident::compile::onnx::compile_to_onnx(&order, formula, num_params)
+            let o = trident_silicon::onnx::compile_to_onnx(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             if output_path.is_empty() {
                 eprintln!("onnx: {} bytes", o.len());
@@ -182,52 +186,52 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
             }
         }
         "xla" | "hlo" | "tpu" => {
-            let x = trident::compile::xla::compile_to_xla(&order, formula, num_params)
+            let x = trident_silicon::xla::compile_to_xla(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&x, &output_path);
         }
         "systemverilog" | "sv" | "asic" => {
-            let v = trident::compile::systemverilog::compile_to_systemverilog(&order, formula, num_params)
+            let v = trident_silicon::systemverilog::compile_to_systemverilog(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "vhdl" => {
-            let v = trident::compile::vhdl::compile_to_vhdl(&order, formula, num_params)
+            let v = trident_silicon::vhdl::compile_to_vhdl(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "amx" | "apple-amx" => {
-            let v = trident::compile::amx::compile_to_amx(&order, formula, num_params)
+            let v = trident_silicon::amx::compile_to_amx(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "intel-amx" | "amx-intel" => {
-            let v = trident::compile::intel_amx::compile_to_amx(&order, formula, num_params)
+            let v = trident_silicon::intel_amx::compile_to_amx(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "tensor-cores" | "wmma" => {
-            let v = trident::compile::tensor_cores::compile_to_tensor_ptx(&order, formula, num_params)
+            let v = trident_silicon::tensor_cores::compile_to_tensor_ptx(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "hexagon" | "qdsp" | "dsp" => {
-            let v = trident::compile::hexagon::compile_to_hexagon(&order, formula, num_params)
+            let v = trident_silicon::hexagon::compile_to_hexagon(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "rvv" | "riscv-vector" => {
-            let v = trident::compile::rvv::compile_to_rvv(&order, formula, num_params)
+            let v = trident_silicon::rvv::compile_to_rvv(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "cerebras" | "csl" | "wafer" => {
-            let v = trident::compile::cerebras::compile_to_csl(&order, formula, num_params)
+            let v = trident_silicon::cerebras::compile_to_csl(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
         "upmem" | "pim" => {
-            let v = trident::compile::upmem::compile_to_upmem(&order, formula, num_params)
+            let v = trident_silicon::upmem::compile_to_upmem(&order, formula, num_params)
                 .unwrap_or_else(|e| { eprintln!("compile error: {:?}", e); std::process::exit(1); });
             write_text(&v, &output_path);
         }
@@ -237,39 +241,6 @@ pub fn cmd_compile_nox(args: CompileNoxArgs) {
             std::process::exit(1);
         }
     }
-}
-
-// ─── MIR subcommand ─────────────────────────────────────────────
-
-#[derive(Args)]
-pub struct MirArgs {
-    /// MIR JSON file (or - for stdin)
-    #[arg()]
-    file: Option<String>,
-
-    /// Compile only this function
-    #[arg(short = 'f', long = "function")]
-    function: Option<String>,
-
-    /// Output directory for .nox files
-    #[arg(short = 'o')]
-    output_dir: Option<String>,
-}
-
-pub fn cmd_mir(args: MirArgs) {
-    let mut raw_args: Vec<String> = Vec::new();
-    if let Some(f) = args.file {
-        raw_args.push(f);
-    }
-    if let Some(ref func) = args.function {
-        raw_args.push("-f".to_string());
-        raw_args.push(func.clone());
-    }
-    if let Some(ref dir) = args.output_dir {
-        raw_args.push("-o".to_string());
-        raw_args.push(dir.clone());
-    }
-    trident::compile::mir2nox::run_mir2nox(&raw_args);
 }
 
 // ─── noun parser (from nox CLI) ─────────────────────────────────

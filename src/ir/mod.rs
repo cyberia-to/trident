@@ -5,14 +5,12 @@
 // ---
 //! Intermediate representations for the Trident compiler.
 //!
-//! Four IRs form the lowering chain from typed AST to target assembly:
+//! Two real lowering paths from typed AST:
 //!
 //! ```text
-//! AST → KIR → TIR → LIR (register targets)
-//!                  → Tree (tree targets)
+//! AST → TIR (TIRBuilder) → stack target (Triton, in trisha)
+//! AST → Tree (NoxCompiler) → nox — the default, bypasses TIR
 //! ```
 
-pub mod kir;
-pub mod lir;
 pub mod tir;
 pub mod tree;
