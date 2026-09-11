@@ -3,6 +3,15 @@
 Status: **unreleased development candidates; the requested fully working proof release is not complete**.
 Trident 0.3.0, Trisha 0.2.0, Joy 0.4.0. All changes are on `fix/warrior-release` branches. No merge, tag or publication was performed.
 
+## Public execution follow-up
+
+A subsequent change adds actual bounded public execution verification to Zheng
+and makes it the default in Joy. See [the implementation and validation report](../../zheng/docs/explanation/public-execution.md).
+It authenticates the public program, input, output and reduction count, with full
+witness disclosure and linear verification. It does not provide private/state
+proofs or complete the full release gate. The measurements and archived
+candidates below describe the earlier legacy path and are unchanged.
+
 ## Implemented behavior
 
 - Core owns the frontend, typed IR, nox lowering, source metadata and an optional target-parametric neural harness. Trisha owns Triton instruction selection/emission, runtime/proofs, neural target adapters, Neptune source libraries and hand TASM baselines.
