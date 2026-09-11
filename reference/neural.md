@@ -1,166 +1,115 @@
-# Neural Optimizer
+# Neural optimizer
 
-GNN encoder + Transformer decoder (~13M parameters) that compiles
-TIR to TASM. Operates at the TIR→TASM boundary — the only
-non-deterministic stage in the pipeline.
+The optional `neural` feature exposes a shared TIR graph encoder,
+Transformer decoder, search and training library. A warrior implements
+`trident::neural::Target` to supply its vocabulary, abstract execution
+state, equivalence check, instruction costs and checkpoint directory.
 
-## Architecture
+Trident owns the model and training harness. Trisha owns the Triton
+vocabulary, stack grammar, TASM verifier, AET costs and instruction
+rewrites. The default compiler and warrior builds omit the model
+backend dependencies; enable them with `--features neural`.
 
-```
-TIR ops → TirGraph → GNN Encoder → node embeddings
-                                       ↓
-              TASM tokens ← Beam Search ← Transformer Decoder
-```
+## Contract
 
-**Encoder:** 4-layer GATv2 (Graph Attention Network v2), d=256,
-d_edge=32. Encodes a `TirGraph` (typed edges: DataDep, ControlFlow,
-MemOrder) into per-node embeddings + global context. ~3M params.
+`Target` provides:
 
-**Decoder:** 6-layer Transformer with self-attention + cross-attention
-to GNN node embeddings. Stack-aware: injects stack depth (max 65)
-and type window (8 slots) as additional features at each step.
-d=256, 8 heads, d_ff=1024, max_seq=256. ~10M params.
+- `vocabulary`: instruction encoding/decoding and the number of tokens;
+- `grammar`: an abstract state that advances on tokens and emits validity,
+  depth and type features;
+- `verify_block`: checks a proposed instruction sequence against a baseline;
+- `cost`: scores instructions in the target's own unit;
+- `checkpoint_dir`: selects storage for this target's model weights;
+- `augment`: proposes target-specific rewrites, rechecked by the core.
 
-**Vocabulary:** 140 tokens (EOS + 139 TASM instructions). Covers the
-full Triton VM ISA: push constants, stack ops (dup/swap/pick/place
-0-15), arithmetic, comparison, bitwise, control flow, I/O, memory,
-crypto, extension field. Token 0 = EOS.
+Token zero is the sequence boundary. Unrepresentable source instructions
+and unknown output tokens invalidate the entire sequence. A training
+pair cannot silently lose instructions during encoding.
 
-**Grammar mask:** At each decoder step, a stack state machine
-restricts the vocabulary to syntactically valid next tokens. Prevents
-the model from emitting invalid TASM.
+The current model embeds depth in 65 buckets and consumes a
+24-element target-defined type feature vector. A warrior must supply
+these dimensions consistently. Model configuration takes an explicit
+vocabulary size; there is no built-in ISA vocabulary in the core.
 
-## Inference
-
-Beam search with K=32, max 256 steps. Length normalization (alpha=0.7),
-repetition penalty (1.5x over 16-token window).
-
-```
-1. Build TirGraph from TIR ops
-2. Encode graph → node features [N, 59], typed edges [E]
-3. GNN forward → node embeddings [N, 256]
-4. Beam search (K=32): autoregressive decoding with grammar mask
-5. Validate candidates: stack verify + cost scoring
-6. Return cheapest valid candidate, or fallback to compiler output
+```rust,ignore
+let target = /* warrior adapter */;
+let result = trident::neural::compile(&target, &tir_ops, &baseline)?;
 ```
 
-Validation uses two layers:
-- **Stack verifier** (`src/cost/stack_verifier.rs`): executes
-  straight-line TASM on concrete Goldilocks values, checks stack
-  transformation matches compiler output. Fast (~25 instructions
-  modeled), used for training feedback.
-- **Table profiler** (`src/cost/scorer.rs`): counts actual table
-  row increments across 6 Triton VM AETs. Cost = padded height
-  (next power of 2 of max table height). The cliff function.
+The result contains `assembly`, target `cost`, `valid_count`,
+`total_count` and `neural`. Trisha retains its public compile wrappers,
+whose result calls the assembly field `tasm_lines`.
+
+## Model and inference
+
+The default encoder is a four-layer GATv2 with model dimension 256 and
+edge dimension 32. It consumes a graph with 59 node features and typed
+edges for data dependencies, control flow and memory ordering.
+
+The default decoder has six Transformer layers, eight attention heads,
+inner dimension 1024 and maximum sequence length 256. It attends to
+encoded graph nodes and receives abstract depth/type features from the
+target. Parameter count depends on vocabulary size and model settings.
+
+Beam search defaults to 32 candidates and 256 steps, with length
+normalization and a repetition penalty. Target grammar states supply
+conditioning features; the current search does not mask logits for
+invalid instructions. Every returned candidate is checked by the
+warrior's equivalence oracle and priced in its own unit.
+
+The compiler chooses a verified candidate only when its cost is lower
+than the baseline. Otherwise it returns the baseline and preserves the
+observed candidate counters. With no checkpoint it returns the baseline
+without initializing a numerical model. This fallback is reported as
+`neural = false`; it is not a model improvement.
+
+The Triton oracle executes supported straight-line blocks on concrete
+field values. It is a bounded equivalence check, not a proof of arbitrary
+program equivalence. No performance or correctness guarantee for a
+trained model follows from model initialization or successful tests.
 
 ## Training
 
-Three stages, run via `trident train`:
+Supervised training uses teacher forcing and cross-entropy on TIR graph
+and target-token pairs. Graph-to-tensor conversion and optimizer steps
+are shared. Target grammar states supply depth and type features.
 
-### Stage 1: Supervised pre-training
+GFlowNet training samples candidate sequences, obtains validity and cost
+from the target, computes a reward and returns trajectory-balance loss.
+Selected-token log probabilities stay on the autodiff graph so this
+loss reaches model parameters; reconstructing them from CPU scalars
+would sever that gradient path. The caller applies optimizer updates.
 
-Teacher forcing with cross-entropy loss on (TirGraph, TASM) pairs.
-Training corpus: all `.tri` files from `vm/`, `std/`, `os/`, compiled
-to TIR and split into per-function blocks.
+Online-learning support includes replay persistence, validity and cost
+metrics, finetuning triggers and a regression guard. Target-specific
+instruction rewrites are owned by the warrior; the core verifies their
+outputs before admitting augmented training pairs.
 
-- Optimizer: AdamW (lr=3e-4, weight_decay=0.01)
-- Cosine LR decay to 1e-5
-- Gradient clipping at norm 1.0
-- Early stopping: patience 3 epochs
-- Checkpoint: `model/general/v2/stage1_best.mpk`
+These are library APIs. There is no `trident train` command in the
+current CLI. Trisha's checkpoint wrappers use `model/triton/v2`; old
+`model/general/v2` weights are not automatically loaded into a different
+vocabulary. Generic checkpoint functions take an explicit directory.
 
-```
-trident train --epochs 10           # default: 10 epochs
-trident train --stage 1 --epochs 50 # explicit stage 1
-```
+## Source and verification
 
-### Stage 2: GFlowNet fine-tuning
+| Responsibility | Source |
+|---|---|
+| Shared contract and compilation | `src/neural/target.rs`, `src/neural/mod.rs` |
+| TIR graph, pairs, replay | `src/neural/data/` |
+| Encoder, decoder, abstract-state sequence features | `src/neural/model/` |
+| Beam search and verified ranking | `src/neural/inference/` |
+| Supervised, GFlowNet, online, augmentation | `src/neural/training/` |
+| Target adapter | Trisha `rs/neural/target.rs` |
+| Triton vocabulary and grammar | Trisha `rs/neural/model/{vocab,grammar,grammar_tables}.rs` |
+| Triton instruction rewrites | Trisha `rs/neural/augment_target.rs` |
+| Triton block oracle and costs | Trisha `rs/cost/` |
 
-Trajectory Balance loss. The model samples TASM sequences and
-receives reward from actual cost improvement over compiler baseline.
-
-- Temperature annealing: tau 2.0 → 0.5 over 10K steps
-- Partial credit shaping for first 1K steps (then pure reward)
-- Checkpoint: `model/general/v2/stage2_latest.mpk`
-
-```
-trident train --stage 2 --epochs 20
-```
-
-### Stage 3: Online learning
-
-Micro-finetunes on new build results via replay buffer. Regression
-guard prevents deploying checkpoints worse than production.
-
-- Triggers after 50 new results or 24h
-- 200 GFlowNet gradient steps per micro-finetune
-- 10% historical samples mixed in (prevents forgetting)
-- Max 2pp validity regression allowed
+Core tests exercise two different vocabularies without a Triton
+implementation, including supervised training, search, target cost and
+oracle selection, and a GFlowNet model-gradient regression. Trisha tests
+exercise the same harness through its real target adapter.
 
 ```
-trident train --stage 3
+cargo test --features neural --lib neural
+cargo test -p trisha-rs --features neural --lib neural
 ```
-
-### Reset
-
-```
-trident train reset    # deletes model weights + cached .neural.tasm
-```
-
-## Data Flow
-
-**TirGraph** (`src/neural/data/tir_graph.rs`): Converts `Vec<TIROp>`
-into a graph with 54 op kinds (4 tiers), 3 edge types, 59-dimensional
-node features (one-hot opcode + field type + structural flags).
-
-**Training pairs** (`src/neural/data/pairs.rs`): Extracted by
-compiling each `.tri` file, splitting TIR into per-function blocks,
-lowering each to TASM. Each pair = (TIR ops, TASM lines).
-
-**Replay buffer** (`src/neural/data/replay.rs`): Priority-based
-buffer at `model/general/v2/replay.rkyv`. Stores build results
-for online learning.
-
-## File Map
-
-```
-src/neural/
-  mod.rs                Public API: compile(), load_model(), compile_with_model()
-  checkpoint.rs         Save/load via burn NamedMpk format
-  model/
-    composite.rs        NeuralCompilerV2 = encoder + decoder (~13M params)
-    encoder.rs          GATv2 GNN encoder (4 layers, d=256)
-    decoder.rs          Stack-aware Transformer decoder (6 layers, 8 heads)
-    vocab.rs            140-token TASM vocabulary
-    grammar.rs          Stack state machine for grammar masking
-    grammar_tables.rs   Precomputed grammar transition tables
-    gnn_ops.rs          Scatter/gather ops for GNN message passing
-  inference/
-    beam.rs             Beam search (K=32, max_steps=256)
-    execute.rs          Candidate validation and ranking
-  training/
-    supervised.rs       Stage 1: cross-entropy with teacher forcing
-    gflownet.rs         Stage 2: Trajectory Balance fine-tuning
-    online.rs           Stage 3: replay buffer micro-finetune
-    augment.rs          Data augmentation
-  data/
-    pairs.rs            Training pair extraction from .tri corpus
-    replay.rs           Priority replay buffer (rkyv serialized)
-    tir_graph.rs        TIR → typed graph conversion (54 ops, 3 edge types)
-
-src/cost/
-  scorer.rs             Table profiler (6 AETs, cliff-aware cost)
-  stack_verifier.rs     Concrete-value TASM execution for fast verification
-```
-
-## Speculative Compilation
-
-The neural path is strictly speculative. Classical lowering always
-runs. Neural output is accepted only when:
-
-1. Stack verifier confirms equivalent stack transformation
-2. Table cost is strictly less than compiler output
-3. Neural output is not identical to compiler output (no memorization)
-
-This is enforced in `src/cli/bench.rs:compile_neural_tasm_inline()`
-and `src/neural/mod.rs:compile()`.
