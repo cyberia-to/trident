@@ -128,7 +128,7 @@ trident view <name> -i <file>           # From specific file
 trident equiv <file> <fn_a> <fn_b>      # Check two functions are equivalent
 
 # Benchmarks
-trident bench <dir>                     # Compare .tri vs baselines/triton/*.tasm
+trisha bench <dir>                      # Warrior-owned verified Triton benchmarks
 
 # Store (definitions store)
 trident store add <file>                # Add definitions to codebase

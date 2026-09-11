@@ -205,11 +205,11 @@ compiling to TASM today, under validation before deployment:
 
 | Program | What it proposes |
 |---------|-----------------|
-| [Coin](os/neptune/standards/coin.tri) | Fungible token (TSP-1) — pay, lock, mint, burn, composable hooks |
-| [Card](os/neptune/standards/card.tri) | Non-fungible token (TSP-2) — royalties, creator immutability |
-| [Lock scripts](os/neptune/locks/) | Multisig, timelock, symmetric spending authorization |
-| [Type scripts](os/neptune/types/) | Token conservation laws verified in every transaction |
-| [Programs](os/neptune/programs/) | Recursive verification, proof aggregation, relay |
+| [Coin](../trisha/os/neptune/standards/coin.tri) | Fungible token (TSP-1) — pay, lock, mint, burn, composable hooks |
+| [Card](../trisha/os/neptune/standards/card.tri) | Non-fungible token (TSP-2) — royalties, creator immutability |
+| [Lock scripts](../trisha/os/neptune/locks/) | Multisig, timelock, symmetric spending authorization |
+| [Type scripts](../trisha/os/neptune/types/) | Token conservation laws verified in every transaction |
+| [Programs](../trisha/os/neptune/programs/) | Recursive verification, proof aggregation, relay |
 
 See the [Gold Standard](docs/explanation/gold-standard.md) for the full
 PLUMB specification and the [Skill Library](docs/explanation/skill-library.md)
