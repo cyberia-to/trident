@@ -4,7 +4,7 @@ Status: approved migration implemented and committed; installed and archived
 distribution checks passed on Darwin arm64 CPU. Full proof-release gates remain open.
 The initial findings below are retained as the audit trail. The implementation
 checkpoint records their disposition. Current contracts are in
-[warrior-api](../../reference/warrior-api.md).
+[warrior-api](../reference/warrior-api.md).
 
 ## Finding
 
@@ -205,4 +205,4 @@ verification and transaction validation, live deployment, and executable
 reference fixtures for all claimed baselines. The historical benchmark is
 1/43 verified. These remain explicit open work; no release was published by
 this migration. Final installed/source/binary candidate checks and hashes are in
-[warrior-release-validation](../../reference/warrior-release-validation.md).
+[warrior-release-validation](warrior-release-validation.md).

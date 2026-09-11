@@ -46,7 +46,7 @@ Ownership checkpoint (2026-09-11): package/ABI propagation, typed TIR and
 warrior-owned SDK/distribution are implemented and tested. Current temperatures
 remain unchanged: the next complete milestones still require authenticated
 state/private proofs, deployment and independent reference coverage. See
-[the current release evidence](warrior-release-validation.md#final-ownership-candidates).
+[the current release evidence](../audit/warrior-release-validation.md#final-ownership-candidates).
 
 ## 256K — primitives land
 

@@ -3,7 +3,7 @@
 Trident owns the frontend, shared IR and reference nox lowering. Trisha owns
 Triton lowering and runtime integration. Joy owns the nox/Zheng warrior.
 See the [target reference](../reference/targets.md) and
-[ownership review](../docs/explanation/target-ownership.md).
+[ownership review](../audit/target-ownership.md).
 
 ```text
 syntax -> AST -> module resolution -> target-aware typecheck

@@ -79,4 +79,4 @@ For Trisha, consult its installed `describe` output and release evidence.
 A shared TIR operation, native instruction or SDK source file alone does not
 establish proof or network transaction support. See
 [Warrior API](warrior-api.md) and the
-[ownership review](../docs/explanation/target-ownership.md).
+[ownership review](../audit/target-ownership.md).

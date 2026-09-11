@@ -5,6 +5,9 @@
 Canonical reference for all Trident design decisions. If reference docs
 and code disagree, the reference wins.
 
+Implementation reviews and release validation are indexed in
+[audit](../audit/README.md).
+
 ---
 
 ## Language Reference

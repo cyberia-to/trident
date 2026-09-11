@@ -26,7 +26,7 @@ A thing belongs to a **warrior** if it knows one machine: the lowering
 from TIR to that ISA, its cost model and verifier, its runtime, its
 prover, its deployment path, and its hand-written baselines.
 
-The [2026-09-11 ownership review](../docs/explanation/target-ownership.md)
+The [2026-09-11 ownership review](../audit/target-ownership.md)
 records remaining violations of this boundary and a proposed resource layout.
 Its proposed interfaces are not implemented API guarantees.
 

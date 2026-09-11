@@ -77,5 +77,5 @@ storage across every catalog OS. A future portable contract needs explicit
 semantics, capability failures, implemented target mappings and conformance
 tests before it becomes a language guarantee.
 
-See the [ownership review](../docs/explanation/target-ownership.md) for the
+See the [ownership review](../audit/target-ownership.md) for the
 migration rationale and [Warrior API](warrior-api.md) for resource discovery.

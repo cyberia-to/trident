@@ -6,7 +6,7 @@ Trident 0.3.0, Trisha 0.2.0, Joy 0.4.0. All changes are on `fix/warrior-release`
 ## Public execution follow-up
 
 A subsequent change adds actual bounded public execution verification to Zheng
-and makes it the default in Joy. See [the implementation and validation report](../../zheng/docs/explanation/public-execution.md).
+and makes it the default in Joy. See [the implementation and validation report](../../zheng/audit/public-execution.md).
 It authenticates the public program, input, output and reduction count, with full
 witness disclosure and linear verification. It does not provide private/state
 proofs or complete the full release gate. The measurements and archived
@@ -15,7 +15,7 @@ candidates below describe the earlier legacy path and are unchanged.
 ## Initial repair snapshot (before ownership follow-up)
 
 - Core owns the frontend, typed IR, nox lowering, source metadata and an optional target-parametric neural harness. Trisha owns Triton instruction selection/emission, runtime/proofs, neural target adapters, Neptune source libraries and hand TASM baselines.
-- nox honors cfg, lexical shadowing and qualified imports. Compilation, costs and bundle state metadata share lowering. Unsupported tree targets and unsupported transitive state calls fail explicitly; see [the supported nox surface](nox.md).
+- nox honors cfg, lexical shadowing and qualified imports. Compilation, costs and bundle state metadata share lowering. Unsupported tree targets and unsupported transitive state calls fail explicitly; see [the supported nox surface](../reference/nox.md).
 - Source programs now reach warrior-owned TASM through the shared typed IR. Bundle JSON preserves signatures/hashes/costs and rejects malformed identity fields. Compiler and Neptune resources are embedded.
 - Explicit CLI targets override project targets; explicit source filenames remain selected inside projects. Missing warriors and malformed claims fail. `trident test` actually executes nox tests and propagates failures; Triton test execution is explicitly unsupported.
 - Wide-stack spilling, aggregate/return layouts, tuple destructuring and cleanup optimizations were repaired. SHA-256 produces the FIPS empty-message digest on Triton VM; arithmetic helpers and the first round match independent Rust operations.
@@ -84,7 +84,7 @@ The requested full proof release remains incomplete:
 
 The owner has authorized continued repairs. No unanswered scope question is
 being used to stop implementation, and no narrower full-release claim is made.
-See [the ownership implementation checkpoint](../docs/explanation/target-ownership.md)
+See [the ownership implementation checkpoint](target-ownership.md)
 for the current architecture and follow-up checks. The earlier binary archives
 and hashes above do not contain this ownership migration.
 

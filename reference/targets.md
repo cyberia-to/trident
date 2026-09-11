@@ -123,4 +123,4 @@ compiled bytes against `program_digest`. This content check is not execution
 proof verification. Older manifests without `program_file` require repackaging.
 
 For migration decisions and validation gates see the
-[target ownership review](../docs/explanation/target-ownership.md).
+[target ownership review](../audit/target-ownership.md).

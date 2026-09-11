@@ -113,4 +113,4 @@ supported public execution relation with a full disclosed witness and
 linear verification; it does not provide ZK or state proof support.
 
 See [Warrior API](warrior-api.md) for package boundaries and the
-[ownership review](../docs/explanation/target-ownership.md) for migration gates.
+[ownership review](../audit/target-ownership.md) for migration gates.

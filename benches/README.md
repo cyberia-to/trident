@@ -20,8 +20,8 @@ output. Both programs must execute and match that output before their cycle
 counts are compared. `--full` additionally proves and verifies both programs.
 Missing or failing fixtures make coverage incomplete and the command fails.
 The historical baseline gate remains incomplete; see
-[release validation](../reference/warrior-release-validation.md).
+[release validation](../audit/warrior-release-validation.md).
 
 Target-neutral references remain here. Triton ABI wrappers, instruction-level
 expectations and Neptune transaction fixtures belong in Trisha. The detailed
-ownership review is in [target ownership](../docs/explanation/target-ownership.md).
+ownership review is in [target ownership](../audit/target-ownership.md).
