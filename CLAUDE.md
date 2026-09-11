@@ -102,7 +102,7 @@ reference is wrong or incomplete, update the reference to match reality.
 
 Four namespaces: `vm.*` (intrinsics), `std.*` (libraries), `os.*`
 (portable runtime), `os.<os>.*` (OS-specific). Source: `src/` (Rust
-compiler), `vm/` `std/` `os/` (Trident code). Compiler self-hosts
+compiler), `lib/vm/` and `lib/std/` (Trident code), `catalog/vm/` and `catalog/os/` (discovery metadata). Compiler self-hosts
 toward provable compilation on nox (default target) and Triton VM.
 
 Use `tokei src/` or `find src/ -name '*.rs'` to explore module structure.
@@ -202,12 +202,12 @@ Builtins must stay in sync across 4 places:
 
 1. `reference/language.md` (canonical)
 2. `src/typecheck/` (type signatures)
-3. `src/tir/` (IR lowering)
-4. `src/cost/` (cost tables)
+3. `src/ir/` and the owning warrior lowering (operation semantics and machine legalization)
+4. The owning backend cost tables and target package metadata
 
 ## Trident Code Contracts
 
-When writing or modifying `.tri` code in `vm/`, `std/`, or `os/`, add
+When writing or modifying `.tri` code in `lib/vm/`, `lib/std/`, or implemented `lib/os/`, add
 `#[requires]`/`#[ensures]` contracts and `#[pure]` where applicable.
 `trident audit` checks these every commit.
 
@@ -217,7 +217,7 @@ Do not modify without explicit request:
 
 - `Cargo.toml` dependencies (minimal by design)
 - `reference/` structure (canonical, changes need discussion)
-- `vm/*/target.toml` and `os/*/target.toml` (configuration, not code)
+- `catalog/vm/*/target.toml` and `catalog/os/*/target.toml` (discovery/configuration, not implementations)
 - `LICENSE.md`
 
 Query files live in `editor/queries/` (single source of truth,
@@ -228,7 +228,7 @@ symlinked from `editor/zed/` and `editor/helix/`).
 Split parallel agents by non-overlapping file scopes. Never let two
 agents edit the same file. Partition by directory: `syntax/`,
 `ast/`+`typecheck/`, `ir/`, `cost/`+`verify/`, `cli/`+`deploy`,
-`package/`, `lsp/`, `docs/`, `vm/`+`std/`+`os/`.
+`package/`, `lsp/`, `docs/`, `lib/`+`catalog/`.
 
 Use subagents for codebase exploration. Keep main context clean for
 implementation.

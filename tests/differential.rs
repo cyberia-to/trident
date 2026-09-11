@@ -212,7 +212,7 @@ fn poseidon_hash2_ref(a: u64, b: u64) -> u64 {
 #[test]
 fn fibonacci_module_matches_rust_ground_truth() {
     let src = wrap_module(
-        "std/math/fibonacci.tri",
+        "lib/std/math/fibonacci.tri",
         "fn main(n: Field) -> Field { fib256(n) }",
     );
     for n in [0u64, 1, 2, 3, 10, 55, 100, 255] {
@@ -223,7 +223,7 @@ fn fibonacci_module_matches_rust_ground_truth() {
 #[test]
 fn poseidon_module_matches_rust_ground_truth() {
     let src = wrap_module(
-        "std/crypto/poseidon.tri",
+        "lib/std/crypto/poseidon.tri",
         "fn main(a: Field, b: Field) -> Field { hash2(a, b) }",
     );
     for (a, b) in [(42u64, 1337u64), (0, 0), (1, 0), (P as u64 - 2, 7)] {
@@ -336,7 +336,7 @@ fn census_every_in_surface_module_has_a_differential() {
     let root = env!("CARGO_MANIFEST_DIR");
     let options = nox_options();
     let mut in_surface: Vec<String> = Vec::new();
-    let mut stack = vec![format!("{root}/std")];
+    let mut stack = vec![format!("{root}/lib/std")];
     while let Some(dir) = stack.pop() {
         for entry in std::fs::read_dir(&dir).unwrap() {
             let path = entry.unwrap().path();
@@ -358,21 +358,21 @@ fn census_every_in_surface_module_has_a_differential() {
     assert_eq!(
         in_surface,
         vec![
-            "std/compiler/lexer.tri".to_string(),
-            "std/compiler/lower.tri".to_string(),
-            "std/compiler/parser.tri".to_string(),
-            "std/compiler/typecheck.tri".to_string(),
-            "std/crypto/auth.tri".to_string(),
-            "std/crypto/bigint.tri".to_string(),
-            "std/crypto/ed25519.tri".to_string(),
-            "std/crypto/keccak256.tri".to_string(),
-            "std/crypto/lut_sponge.tri".to_string(),
-            "std/crypto/poseidon.tri".to_string(),
-            "std/crypto/poseidon2.tri".to_string(),
-            "std/crypto/secp256k1.tri".to_string(),
-            "std/crypto/sha256.tri".to_string(),
-            "std/math/fibonacci.tri".to_string(),
-            "std/quantum/gates.tri".to_string(),
+            "lib/std/compiler/lexer.tri".to_string(),
+            "lib/std/compiler/lower.tri".to_string(),
+            "lib/std/compiler/parser.tri".to_string(),
+            "lib/std/compiler/typecheck.tri".to_string(),
+            "lib/std/crypto/bigint.tri".to_string(),
+            "lib/std/crypto/ed25519.tri".to_string(),
+            "lib/std/crypto/keccak256.tri".to_string(),
+            "lib/std/crypto/lut_sponge.tri".to_string(),
+            "lib/std/crypto/poseidon.tri".to_string(),
+            "lib/std/crypto/poseidon2.tri".to_string(),
+            "lib/std/crypto/preimage.tri".to_string(),
+            "lib/std/crypto/secp256k1.tri".to_string(),
+            "lib/std/crypto/sha256.tri".to_string(),
+            "lib/std/math/fibonacci.tri".to_string(),
+            "lib/std/quantum/gates.tri".to_string(),
         ],
         "the nox surface changed — update the differential harness to cover \
          every newly compiling module, then extend this pin"

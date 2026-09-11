@@ -1,0 +1,40 @@
+# ---
+# tags: trident, config
+# crystal-type: source
+# crystal-domain: comp
+# ---
+# SBPF — Solana Berkeley Packet Filter
+# https://github.com/anza-xyz/sbpf
+
+[target]
+name = "sbpf"
+display_name = "SBPF"
+architecture = "register"
+output_extension = ".so"
+
+[field]
+prime = "none"
+bits = 64
+limbs = 1
+
+[stack]
+depth = 10
+spill_ram_base = 0
+
+[hash]
+function = "SHA-256"
+digest_width = 1
+rate = 0
+
+[extension_field]
+degree = 0
+
+[cost]
+tables = ["compute_units"]
+
+[status]
+level = 0
+lowering = ""
+cost_model = false
+tests = false
+notes = "Declared architecture; no current Trident/warrior implementation."

@@ -18,8 +18,8 @@ pub struct PackageArgs {
     #[arg(short, long)]
     pub output: Option<PathBuf>,
     /// Target VM or OS (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -64,6 +64,8 @@ pub fn cmd_package(args: PackageArgs) {
         audit,
         dry_run,
     } = args;
+    let ri = super::resolve_input(&input);
+    let target = super::source_target(target.as_deref(), ri.project.as_ref());
     let bf = super::resolve_battlefield(
         &target,
         &engine,
@@ -73,6 +75,10 @@ pub fn cmd_package(args: PackageArgs) {
         &vimputer,
         &state,
     );
+    if bf.state.is_some() {
+        eprintln!("error: state-specific deployment packaging is not implemented; the package describes its terrain and union");
+        process::exit(1);
+    }
     let target = bf.target;
     let art = prepare_artifact(&input, &target, &profile, audit);
 
@@ -100,7 +106,11 @@ pub fn cmd_package(args: PackageArgs) {
         eprintln!("  Version:         {}", art.version);
         eprintln!("  Target:          {}", target_display);
         eprintln!("  Program digest:  {}", program_digest.to_hex());
-        eprintln!("  Padded height:   {}", art.cost.padded_height);
+        if art.cost.table_names.is_empty() {
+            eprintln!("  Costs:           unknown (no estimate supplied by the warrior)");
+        } else {
+            eprintln!("  Padded height:   {}", art.cost.padded_height);
+        }
         eprintln!(
             "  Artifact:        {}/{}.deploy/",
             output_base.display(),
@@ -110,7 +120,7 @@ pub fn cmd_package(args: PackageArgs) {
     }
 
     // Generate artifact
-    let result = match trident::deploy::generate_artifact(
+    let result = match trident::deploy::generate_artifact_with_identity(
         &art.name,
         &art.version,
         &art.tasm,
@@ -119,6 +129,7 @@ pub fn cmd_package(args: PackageArgs) {
         &art.resolved.vm,
         art.resolved.os.as_ref(),
         &output_base,
+        &art.source_hash,
     ) {
         Ok(r) => r,
         Err(e) => {
@@ -128,9 +139,17 @@ pub fn cmd_package(args: PackageArgs) {
     };
 
     eprintln!("Packaged -> {}", result.artifact_dir.display());
-    eprintln!("  program.tasm:   {}", result.tasm_path.display());
+    eprintln!(
+        "  {}: {}",
+        result.manifest.program_file,
+        result.tasm_path.display()
+    );
     eprintln!("  manifest.json:  {}", result.manifest_path.display());
     eprintln!("  digest:         {}", result.manifest.program_digest);
-    eprintln!("  padded height:  {}", result.manifest.cost.padded_height);
+    if result.manifest.cost.table_names.is_empty() {
+        eprintln!("  costs:          unknown (no estimate supplied by the warrior)");
+    } else {
+        eprintln!("  padded height:  {}", result.manifest.cost.padded_height);
+    }
     eprintln!("  target:         {}", target_display);
 }

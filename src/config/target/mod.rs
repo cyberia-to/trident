@@ -4,9 +4,9 @@ use crate::diagnostic::Diagnostic;
 use crate::span::Span;
 
 /// VM architecture family.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Arch {
-    /// Stack machine (Triton VM, Miden VM): direct emission, no IR.
+    /// Stack machine: shared typed TIR followed by warrior-owned lowering.
     Stack,
     /// Register machine (Cairo, RISC-V zkVMs): requires lightweight IR.
     Register,
@@ -15,7 +15,8 @@ pub enum Arch {
 }
 
 /// Describes a non-native field the target can emulate.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct EmulatedField {
     /// Short identifier (e.g. "bn254", "stark252").
     pub name: String,
@@ -30,7 +31,8 @@ pub struct EmulatedField {
 /// Warriors are external binaries that handle execution, proving, and
 /// deployment for a specific VM. The `[warrior]` section in target.toml
 /// tells Trident which warrior to look for on PATH.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct WarriorConfig {
     /// Warrior name (e.g. "trisha").
     pub name: String,
@@ -46,7 +48,8 @@ pub struct WarriorConfig {
 ///
 /// Every numeric constant that was previously hardcoded for Triton VM
 /// (stack depth 16, digest width 5, hash rate 10, etc.) now lives here.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TerrainConfig {
     /// Short identifier used in CLI and file paths (e.g. "triton").
     pub name: String,
@@ -81,69 +84,17 @@ pub struct TerrainConfig {
 }
 
 impl TerrainConfig {
-    /// Built-in Triton VM configuration (hardcoded fallback).
-    pub fn triton() -> Self {
-        Self {
-            name: "triton".to_string(),
-            display_name: "Triton VM".to_string(),
-            architecture: Arch::Stack,
-            field_prime: "2^64 - 2^32 + 1".to_string(),
-            field_bits: 64,
-            field_limbs: 2,
-            emulated_fields: Vec::new(),
-            stack_depth: 16,
-            spill_ram_base: 1 << 30,
-            digest_width: 5,
-            xfield_width: 3,
-            hash_rate: 10,
-            output_extension: ".tasm".to_string(),
-            cost_tables: vec![
-                "processor".to_string(),
-                "hash".to_string(),
-                "u32".to_string(),
-                "op_stack".to_string(),
-                "ram".to_string(),
-                "jump_stack".to_string(),
-            ],
-            warrior: Some(WarriorConfig {
-                name: "trisha".to_string(),
-                crate_name: "trident-trisha".to_string(),
-                runner: true,
-                prover: true,
-            }),
-        }
+    /// The compiler's reference nox ABI, parsed from its single packaged declaration.
+    pub fn nox() -> Self {
+        Self::parse_toml(include_str!("../../../catalog/vm/nox/target.toml"), Path::new("catalog/vm/nox/target.toml"))
+            .expect("packaged nox ABI is validated by compiler tests")
     }
 
-    /// Built-in nox target configuration (hardcoded fallback).
-    ///
-    /// Mirrors `vm/nox/target.toml`. Installed binaries invoked outside the
-    /// trident repo cannot find that file by path search — this fallback is
-    /// nox's counterpart to `triton()` so `--target nox` works everywhere,
-    /// the same way `--target triton` always has. If the two drift, the
-    /// repo file wins (`resolve()` tries the file first).
-    pub fn nox() -> Self {
-        Self {
-            name: "nox".to_string(),
-            display_name: "NOX".to_string(),
-            architecture: Arch::Tree,
-            field_prime: "2^64 - 2^32 + 1".to_string(),
-            field_bits: 64,
-            field_limbs: 2,
-            emulated_fields: Vec::new(),
-            stack_depth: 0,
-            spill_ram_base: 0,
-            digest_width: 4,
-            xfield_width: 3,
-            hash_rate: 8,
-            output_extension: ".nox".to_string(),
-            cost_tables: vec!["reductions".to_string()],
-            warrior: Some(WarriorConfig {
-                name: "joy".to_string(),
-                crate_name: "joy".to_string(),
-                runner: true,
-                prover: true,
-            }),
-        }
+    /// A frozen foreign-ABI fixture for shared compiler unit tests only.
+    #[cfg(test)]
+    pub(crate) fn triton() -> Self {
+        Self::parse_toml(include_str!("../../../tests/fixtures/stack-target.toml"), Path::new("tests/fixtures/stack-target.toml"))
+            .expect("test ABI fixture")
     }
 
     /// Load a target configuration from a TOML file.
@@ -157,78 +108,17 @@ impl TerrainConfig {
         Self::parse_toml(&content, path)
     }
 
-    /// Resolve a target by name: look for `vm/{name}.toml` relative to
-    /// the compiler binary or working directory, falling back to built-in configs.
+    /// Resolve the reference ABI or query the external implementation's package.
     pub fn resolve(name: &str) -> Result<Self, Diagnostic> {
-        // Reject path traversal
-        if name.contains('/') || name.contains('\\') || name.contains("..") || name.starts_with('.')
-        {
-            return Err(Diagnostic::error(
-                format!("invalid target name '{}'", name),
-                Span::dummy(),
-            ));
+        if !package::identifier(name) {
+            return Err(Diagnostic::error("invalid target name".into(), Span::dummy()));
         }
-
-        // Built-in target
-        if name == "triton" {
-            return Ok(Self::triton());
-        }
-
-        // Search for vm/{name}/target.toml first, then vm/{name}.toml (legacy)
-        let primary = format!("vm/{}/target.toml", name);
-        let fallback = format!("vm/{}.toml", name);
-
-        // 1. Relative to compiler binary
-        if let Ok(exe) = std::env::current_exe() {
-            if let Some(dir) = exe.parent() {
-                for ancestor in &[
-                    Some(dir.to_path_buf()),
-                    dir.parent().map(|p| p.to_path_buf()),
-                    dir.parent()
-                        .and_then(|p| p.parent())
-                        .map(|p| p.to_path_buf()),
-                ] {
-                    if let Some(base) = ancestor {
-                        let path = base.join(&primary);
-                        if path.exists() {
-                            return Self::load(&path);
-                        }
-                        let path = base.join(&fallback);
-                        if path.exists() {
-                            return Self::load(&path);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 2. Current working directory
-        let cwd_path = std::path::PathBuf::from(&primary);
-        if cwd_path.exists() {
-            return Self::load(&cwd_path);
-        }
-        let cwd_path = std::path::PathBuf::from(&fallback);
-        if cwd_path.exists() {
-            return Self::load(&cwd_path);
-        }
-
-        if let Some(source) = crate::resources::get(&primary) {
-            return Self::parse_toml(source, Path::new(&primary));
-        }
-
-        // Built-in fallback for installed binaries with no repo tree nearby.
-        if name == "nox" {
-            return Ok(Self::nox());
-        }
-
-        Err(Diagnostic::error(
-            format!("unknown target '{}' (looked for '{}')", name, primary),
-            Span::dummy(),
-        )
-        .with_help("available targets: triton, nox, miden, openvm, sp1, cairo, nock".to_string()))
+        if name == "nox" { return Ok(Self::nox()); }
+        if owner_for(name).is_some() { return TargetPackage::discover(name).map(|p| p.terrain); }
+        Err(Diagnostic::error(format!("target '{name}' is declared only or unknown; no implementation is registered"), Span::dummy()))
     }
 
-    fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {
+    pub fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {
         let err =
             |msg: String| Diagnostic::error(format!("{}: {}", path.display(), msg), Span::dummy());
 
@@ -264,7 +154,7 @@ impl TerrainConfig {
             }
             if let Some((key, value)) = trimmed.split_once('=') {
                 let key = key.trim();
-                let value = value.trim();
+                let value = value.split(" #").next().unwrap_or(value).trim();
                 let unquoted = value.trim_matches('"');
 
                 match (section.as_str(), key) {
@@ -431,3 +321,9 @@ pub use os::*;
 
 #[cfg(test)]
 mod tests;
+
+mod package;
+pub use package::{RuntimeCapabilities, TargetPackage};
+
+mod discover;
+pub use discover::{owner_for, warrior_path};

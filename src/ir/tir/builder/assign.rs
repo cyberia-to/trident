@@ -53,16 +53,7 @@ impl TIRBuilder {
     /// Store the single word on top of the stack into the slot at `depth`
     /// (measured from the current top, with the value already pushed).
     fn store_top_into(&mut self, depth: u32) {
-        if depth <= 15 {
-            self.ops.push(TIROp::Swap(depth));
-            self.ops.push(TIROp::Pop(1));
-        } else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: assignment target at depth {} exceeds stack window (16)",
-                depth
-            )));
-            self.ops.push(TIROp::Pop(1));
-        }
+        self.ops.extend([TIROp::Swap(depth), TIROp::Pop(1)]);
     }
 
     /// Recover a dotted variable name from a place whose base is a variable.
@@ -201,24 +192,55 @@ impl TIRBuilder {
     /// Append Pop ops to clean up locals created in an if/else branch.
     /// `post_depth` is stack_depth() after the branch body, `pre_depth` before.
     /// `keep` is the number of words to preserve on top (e.g. a tail expression value).
-    pub(super) fn append_branch_cleanup(body: &mut Vec<TIROp>, post_depth: u32, pre_depth: u32, keep: u32) {
+    pub(super) fn append_branch_cleanup(
+        body: &mut Vec<TIROp>,
+        post_depth: u32,
+        pre_depth: u32,
+        keep: u32,
+    ) {
         let leftover = post_depth.saturating_sub(pre_depth + keep);
         if leftover > 0 {
-            if keep > 0 {
-                // Swap the result value(s) past the dead locals, then pop.
-                if leftover <= 15 {
-                    body.push(TIROp::Swap(leftover));
-                } else {
-                    for _ in 0..leftover {
-                        body.push(TIROp::Swap(1));
-                    }
+            // Rotate each dead word past the preserved suffix, keeping both
+            // the outer stack and the order of multi-word results intact.
+            for _ in 0..leftover {
+                for depth in 1..=keep {
+                    body.push(TIROp::Swap(depth));
                 }
+                body.push(TIROp::Pop(1));
             }
-            let mut remaining = leftover;
-            while remaining > 0 {
-                let batch = remaining.min(5);
-                body.push(TIROp::Pop(batch));
-                remaining -= batch;
+        }
+    }
+}
+
+#[cfg(test)]
+mod cleanup_tests {
+    use super::*;
+
+    #[test]
+    fn branch_cleanup_preserves_outer_stack_and_result_order() {
+        for outer in 0..5 {
+            for dead in 0..40 {
+                for keep in 0..20 {
+                    let mut ops = Vec::new();
+                    TIRBuilder::append_branch_cleanup(&mut ops, outer + dead + keep, outer, keep);
+                    let mut stack: Vec<_> = (0..outer + dead + keep).collect();
+                    let expected: Vec<_> = stack[..outer as usize]
+                        .iter()
+                        .chain(&stack[(outer + dead) as usize..])
+                        .copied()
+                        .collect();
+                    for op in ops {
+                        match op {
+                            TIROp::Swap(d) => {
+                                let top = stack.len() - 1;
+                                stack.swap(top, top - d as usize);
+                            }
+                            TIROp::Pop(n) => stack.truncate(stack.len() - n as usize),
+                            _ => unreachable!(),
+                        }
+                    }
+                    assert_eq!(stack, expected, "outer={outer} dead={dead} keep={keep}");
+                }
             }
         }
     }

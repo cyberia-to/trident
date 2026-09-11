@@ -212,14 +212,16 @@ impl TIRBuilder {
             let struct_width = entry.width;
             let field_offset = self.resolve_field_offset(&inner.node, &field.node);
             if let Some((offset, field_width)) = field_offset {
-                for i in 0..field_width {
-                    self.ops.push(TIROp::Dup(offset + (field_width - 1 - i)));
+                for _ in 0..field_width {
+                    self.ops.push(TIROp::Dup(offset + field_width - 1));
                 }
                 self.stack.pop();
-                for _ in 0..field_width {
-                    self.ops.push(TIROp::Swap(field_width + struct_width - 1));
-                }
-                self.emit_pop(struct_width);
+                Self::append_branch_cleanup(
+                    &mut self.ops,
+                    struct_width + field_width,
+                    0,
+                    field_width,
+                );
                 self.stack.push_temp(field_width);
                 self.flush_stack_effects();
             } else {
@@ -248,14 +250,11 @@ impl TIRBuilder {
                     }
                 }
                 if let Some((from_top, fw)) = found {
-                    for i in 0..fw {
-                        self.ops.push(TIROp::Dup(from_top + (fw - 1 - i)));
+                    for _ in 0..fw {
+                        self.ops.push(TIROp::Dup(from_top + fw - 1));
                     }
                     self.stack.pop();
-                    for _ in 0..fw {
-                        self.ops.push(TIROp::Swap(fw + struct_width - 1));
-                    }
-                    self.emit_pop(struct_width);
+                    Self::append_branch_cleanup(&mut self.ops, struct_width + fw, 0, fw);
                     self.stack.push_temp(fw);
                     self.flush_stack_effects();
                 } else {
@@ -289,15 +288,12 @@ impl TIRBuilder {
                     if (idx_u + 1) * elem_width <= var_width {
                         let base_offset = var_width - (idx_u + 1) * elem_width;
                         let target_depth = var_depth + base_offset;
-                        if target_depth + elem_width - 1 <= 15 {
-                            for i in 0..elem_width {
-                                self.ops
-                                    .push(TIROp::Dup(target_depth + (elem_width - 1 - i)));
-                            }
-                            self.stack.push_temp(elem_width);
-                            self.flush_stack_effects();
-                            return;
+                        for _ in 0..elem_width {
+                            self.ops.push(TIROp::Dup(target_depth + elem_width - 1));
                         }
+                        self.stack.push_temp(elem_width);
+                        self.flush_stack_effects();
+                        return;
                     }
                 }
             }
@@ -313,15 +309,11 @@ impl TIRBuilder {
                 let array_width = entry.width;
                 let elem_width = entry.elem_width.unwrap_or(1);
                 let base_offset = array_width - (idx + 1) * elem_width;
-                for i in 0..elem_width {
-                    self.ops
-                        .push(TIROp::Dup(base_offset + (elem_width - 1 - i)));
+                for _ in 0..elem_width {
+                    self.ops.push(TIROp::Dup(base_offset + elem_width - 1));
                 }
                 self.stack.pop();
-                for _ in 0..elem_width {
-                    self.ops.push(TIROp::Swap(elem_width + array_width - 1));
-                }
-                self.emit_pop(array_width);
+                Self::append_branch_cleanup(&mut self.ops, array_width + elem_width, 0, elem_width);
                 self.stack.push_temp(elem_width);
                 self.flush_stack_effects();
             } else {

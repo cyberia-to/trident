@@ -1,12 +1,12 @@
 # Target ownership follow-up
 
-Status: proposed after the owner's 2026-09-11 request to recheck the migration
-and analyze `vm/` / `os/` architecture.
+Status: approved 2026-09-11; implementation complete, distribution gates active.
+Audit and disposition: `docs/explanation/target-ownership.md`.
 
-Detailed audit, layout, ownership map and ordered gates:
-`docs/explanation/target-ownership.md`.
-
-Baseline assets already live in Trisha; empty Trident directory and misleading
-entrypoint instructions were cleaned up. Runtime/ABI migration is pending.
-Implement semantics/provider contracts before moving directories. Preserve the
-four source namespaces and keep nox lowering in core for this scope.
+Done: versioned packages, capability inference, target/editor/API parity,
+generated ABI, typed TIR, Trisha legalization, SDK and lib/catalog migration,
+canonical owner metadata, runtime guards and target-aware packaging.
+Real XField order errors fixed; incomplete recursive SDK removed fail-closed.
+Pending: final installed/source-archive smoke, regression review and commits.
+Full release still needs private/state/recursive proofs, deployment and 43/43
+baseline fixtures. Keep acceptance failures visible; no narrower release claim.

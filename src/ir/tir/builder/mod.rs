@@ -13,8 +13,7 @@
 //! - No `StackBackend`: instructions are TIROp variants pushed directly.
 //! - No `DeferredBlock`: if/else and loops use nested `Vec<TIROp>` bodies
 //!   inside structural `TIROp::IfElse`, `TIROp::IfOnly`, and `TIROp::Loop`.
-//! - `StackManager` spill/reload effects are parsed from their string form
-//!   back into TIROps via `parse_spill_effect`.
+//! - `StackManager` emits typed spill/reload operations directly.
 
 mod assign;
 mod call;
@@ -37,7 +36,6 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::ast::*;
 use crate::target::TerrainConfig;
-use crate::tir::stack::SpillFormatter;
 use crate::tir::stack::StackManager;
 use crate::tir::TIROp;
 use crate::typecheck::MonoInstance;
@@ -92,12 +90,11 @@ pub struct TIRBuilder {
 
 impl TIRBuilder {
     pub fn new(target_config: TerrainConfig) -> Self {
-        let stack = StackManager::with_formatter(
+        let stack = StackManager::with_config(
             // Track the complete abstract operand stack. RAM legalization
             // happens after construction, when every live operand is known.
             u32::MAX,
             target_config.spill_ram_base,
-            SpillFormatter::default(),
         );
         Self {
             ops: Vec::new(),
@@ -231,6 +228,9 @@ impl TIRBuilder {
                     };
                     self.intrinsic_map
                         .insert(func.name.node.clone(), intr_value);
+                } else {
+                    // Local functions shadow unqualified names imported from SDKs.
+                    self.intrinsic_map.remove(&func.name.node);
                 }
             }
         }

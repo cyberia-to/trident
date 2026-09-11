@@ -28,14 +28,25 @@ pub fn nox_cost_project(
 /// Returns a `VerificationReport` with static analysis, random testing (Schwartz-Zippel),
 /// and bounded model checking results.
 pub fn verify_project(entry_path: &Path) -> Result<solve::VerificationReport, Vec<Diagnostic>> {
-    use crate::pipeline::PreparedProject;
+    let (_, options) = options_for_project(entry_path)?;
+    verify_project_with_options(entry_path, &options)
+}
 
-    let project = PreparedProject::build_default(entry_path)?;
+pub fn verify_project_with_options(
+    entry_path: &Path,
+    options: &CompileOptions,
+) -> Result<solve::VerificationReport, Vec<Diagnostic>> {
+    sym::validate_audit_target(&options.target_config)
+        .map_err(|e| vec![Diagnostic::error(e, crate::span::Span::dummy())])?;
+    let project = crate::pipeline::PreparedProject::build_quiet(entry_path, options)?;
 
     // Collect constraint systems from all functions in all modules
     let mut combined = sym::ConstraintSystem::new();
     for pm in &project.modules {
-        for (_, system) in sym::analyze_all(&pm.file) {
+        for (_, system) in
+            sym::analyze_all_with_target(&active_file(&pm.file, options), &options.target_config)
+                .map_err(|e| vec![Diagnostic::error(e, crate::span::Span::dummy())])?
+        {
             combined.constraints.extend(system.constraints);
             combined.num_variables += system.num_variables;
             for (k, v) in system.variables {
@@ -56,14 +67,25 @@ pub fn verify_project(entry_path: &Path) -> Result<solve::VerificationReport, Ve
 pub fn verify_project_per_function(
     entry_path: &Path,
 ) -> Result<Vec<(String, String, solve::VerificationReport)>, Vec<Diagnostic>> {
-    use crate::pipeline::PreparedProject;
+    let (_, options) = options_for_project(entry_path)?;
+    verify_project_per_function_with_options(entry_path, &options)
+}
 
-    let project = PreparedProject::build_default(entry_path)?;
+pub fn verify_project_per_function_with_options(
+    entry_path: &Path,
+    options: &CompileOptions,
+) -> Result<Vec<(String, String, solve::VerificationReport)>, Vec<Diagnostic>> {
+    sym::validate_audit_target(&options.target_config)
+        .map_err(|e| vec![Diagnostic::error(e, crate::span::Span::dummy())])?;
+    let project = crate::pipeline::PreparedProject::build_quiet(entry_path, options)?;
 
     let mut results = Vec::new();
     for pm in &project.modules {
         let module_name = pm.file.name.node.clone();
-        for (fn_name, system) in sym::analyze_all(&pm.file) {
+        for (fn_name, system) in
+            sym::analyze_all_with_target(&active_file(&pm.file, options), &options.target_config)
+                .map_err(|e| vec![Diagnostic::error(e, crate::span::Span::dummy())])?
+        {
             let report = solve::verify(&system);
             results.push((module_name.clone(), fn_name, report));
         }
@@ -86,7 +108,10 @@ pub fn format_source(source: &str, _filename: &str) -> Result<String, Vec<Diagno
 /// Used by the LSP server to get structured errors.
 pub fn check_silent(source: &str, filename: &str) -> Result<(), Vec<Diagnostic>> {
     let file = crate::parse_source_silent(source, filename)?;
-    TypeChecker::new().check_file(&file)?;
+    CompileOptions::resolve("nox", "debug")
+        .map_err(|e| vec![e])?
+        .checker()
+        .check_file(&file)?;
     Ok(())
 }
 
@@ -95,20 +120,32 @@ pub fn check_silent(source: &str, filename: &str) -> Result<(), Vec<Diagnostic>>
 /// the given file with full module context.
 /// Falls back to single-file check if no project is found.
 pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<Diagnostic>> {
-    let dir = file_path.parent().unwrap_or(Path::new("."));
-    let entry = match project::Project::find(dir) {
-        Some(toml_path) => match project::Project::load(&toml_path) {
-            Ok(p) => p.entry,
-            Err(_) => file_path.to_path_buf(),
-        },
-        None => file_path.to_path_buf(),
-    };
+    let (entry, options) = options_for_project(file_path)?;
+    let mut modules = crate::resolve::resolve_modules_with_overlay(
+        &entry,
+        options.dep_dirs.clone(),
+        options.library_sources(),
+        file_path,
+        source,
+    )?;
 
-    // Resolve all modules from the entry point (handles std.* even without project)
-    let modules = match resolve_modules(&entry) {
-        Ok(m) => m,
-        Err(_) => return check_silent(source, &file_path.to_string_lossy()),
-    };
+    // An open module need not be reachable from the project's current entry.
+    if !modules.iter().any(|m| {
+        m.file_path
+            .canonicalize()
+            .unwrap_or_else(|_| m.file_path.clone())
+            == file_path
+                .canonicalize()
+                .unwrap_or_else(|_| file_path.to_path_buf())
+    }) {
+        modules = crate::resolve::resolve_modules_with_overlay(
+            file_path,
+            options.dep_dirs.clone(),
+            options.library_sources(),
+            file_path,
+            source,
+        )?;
+    }
 
     // Parse and type-check all modules in dependency order
     let mut all_exports: Vec<ModuleExports> = Vec::new();
@@ -127,7 +164,7 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
         let src = if is_target { source } else { &module.source };
         let parsed = crate::parse_source_silent(src, &module.file_path.to_string_lossy())?;
 
-        let mut tc = TypeChecker::new();
+        let mut tc = options.checker();
         for exports in &all_exports {
             tc.import_module(exports);
         }
@@ -140,12 +177,174 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
                 if is_target {
                     return Err(errors);
                 }
-                // Dep has errors — stop, but don't report
-                // dep errors as if they're in this file
-                return Ok(());
+                return Err(errors
+                    .into_iter()
+                    .map(|error| {
+                        Diagnostic::error(
+                            format!("dependency {}: {}", module.name, error.message),
+                            span::Span::dummy(),
+                        )
+                    })
+                    .collect());
             }
         }
     }
 
     Ok(())
+}
+
+/// Shared project context for checking, editor tools and static verification.
+/// Invalid manifests, owner packages and lockfiles remain visible diagnostics.
+pub(crate) fn options_for_project(
+    file_path: &Path,
+) -> Result<(std::path::PathBuf, CompileOptions), Vec<Diagnostic>> {
+    let dir = if file_path.is_dir() {
+        file_path
+    } else {
+        file_path.parent().unwrap_or(Path::new("."))
+    };
+    let project = project::Project::find(dir)
+        .map(|path| project::Project::load(&path))
+        .transpose()
+        .map_err(|e| vec![e])?;
+    let target = project
+        .as_ref()
+        .and_then(|p| p.target.as_deref())
+        .unwrap_or("nox");
+    let options = CompileOptions::resolve(target, "debug").map_err(|e| vec![e])?;
+    let entry = project
+        .map(|p| p.entry)
+        .unwrap_or_else(|| file_path.to_path_buf());
+    let (_, options) = crate::source_options(file_path, &options)?;
+    Ok((entry, options))
+}
+
+#[cfg(test)]
+mod editor_tests {
+    use super::*;
+
+    fn project_dir(name: &str) -> std::path::PathBuf {
+        let path =
+            std::env::temp_dir().join(format!("trident-editor-{}-{name}", std::process::id()));
+        std::fs::create_dir_all(&path).unwrap();
+        path
+    }
+
+    #[test]
+    fn live_buffer_imports_and_default_nox_abi_are_checked() {
+        let root = project_dir("overlay");
+        let file = root.join("main.tri");
+        std::fs::write(&file, "program editor\nfn main() {}\n").unwrap();
+        std::fs::write(
+            root.join("dep.tri"),
+            "module dep\npub fn value() -> Field { 7 }\n",
+        )
+        .unwrap();
+        assert!(check_file_in_project(
+            "program editor\nuse dep\nfn main() -> Field { dep.value() }\n",
+            &file
+        )
+        .is_ok());
+        assert!(check_file_in_project(
+            "program editor\nfn main() -> Digest { pub_read5() }\n",
+            &file
+        )
+        .is_err());
+        assert!(
+            check_file_in_project("program editor\nuse missing_dep\nfn main() {}\n", &file)
+                .is_err()
+        );
+        assert_eq!(
+            std::fs::read_to_string(&file).unwrap(),
+            "program editor\nfn main() {}\n"
+        );
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn project_flags_dependencies_and_unreachable_live_module_share_context() {
+        let root = project_dir("context");
+        let dep = root.join("vendor");
+        std::fs::create_dir_all(&dep).unwrap();
+        std::fs::write(root.join("trident.toml"), "[project]\nname = \"editor\"\ntarget = \"nox\"\n[targets.debug]\nflags = [\"special\"]\n[dependencies]\nvendor = { path = \"vendor\" }\n").unwrap();
+        std::fs::write(root.join("main.tri"), "program editor\nfn main() {}\n").unwrap();
+        std::fs::write(
+            dep.join("helper.tri"),
+            "module helper\n#[cfg(special)]\npub fn value() -> Field { 7 }\n",
+        )
+        .unwrap();
+        let file = root.join("other.tri");
+        let source = "module other\nuse helper\npub fn value() -> Field { helper.value() }\n";
+        // This editor-only file does not exist on disk or in the entry graph.
+        assert!(check_file_in_project(source, &file).is_ok());
+        let (_, options) = options_for_project(&file).unwrap();
+        assert!(options.cfg_flags.contains("special"));
+        assert!(options.dep_dirs.contains(&dep));
+        std::fs::write(
+            dep.join("helper.tri"),
+            "module helper\npub fn value() -> Field { unknown() }\n",
+        )
+        .unwrap();
+        let errors = check_file_in_project(source, &file).unwrap_err();
+        assert!(errors[0].message.contains("dependency helper"));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn symbolic_verification_skips_inactive_functions() {
+        let root = project_dir("verification-cfg");
+        let file = root.join("main.tri");
+        std::fs::write(&file, "module editor\n#[cfg(release)]\npub fn inactive() { assert(false) }\npub fn active() {}\n").unwrap();
+        let reports =
+            verify_project_per_function_with_options(&file, &CompileOptions::default()).unwrap();
+        assert_eq!(reports.len(), 1);
+        assert_eq!(reports[0].1, "active");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn invalid_project_target_never_falls_back_to_default_checker() {
+        let root = project_dir("invalid-target");
+        let file = root.join("main.tri");
+        std::fs::write(&file, "program editor\nfn main() {}\n").unwrap();
+        std::fs::write(
+            root.join("trident.toml"),
+            "[project]\nname = \"editor\"\ntarget = \"missing_terrain\"\n",
+        )
+        .unwrap();
+        assert!(check_file_in_project("program editor\nfn main() {}\n", &file).is_err());
+        std::fs::remove_dir_all(root).unwrap();
+    }
+}
+
+/// Static verification must analyze the same cfg-selected declarations as checking.
+fn active_file(file: &ast::File, options: &CompileOptions) -> ast::File {
+    let mut file = file.clone();
+    file.items.retain(|item| {
+        let cfg = match &item.node {
+            ast::Item::Fn(value) => &value.cfg,
+            ast::Item::Const(value) => &value.cfg,
+            ast::Item::Struct(value) => &value.cfg,
+            ast::Item::Event(value) => &value.cfg,
+        };
+        cfg.as_ref()
+            .is_none_or(|flag| options.cfg_flags.contains(&flag.node))
+    });
+    file
+}
+
+#[cfg(test)]
+mod audit_target_tests {
+    use super::*;
+
+    #[test]
+    fn public_audit_apis_reject_non_goldilocks_before_analyzing_source() {
+        let mut options = CompileOptions::default();
+        options.target_config.field_prime = "17".into();
+        let input = Path::new("not-read-for-an-unsupported-field.tri");
+        let errors = verify_project_with_options(input, &options).unwrap_err();
+        assert!(errors[0].message.contains("Goldilocks"));
+        let errors = verify_project_per_function_with_options(input, &options).unwrap_err();
+        assert!(errors[0].message.contains("Goldilocks"));
+    }
 }

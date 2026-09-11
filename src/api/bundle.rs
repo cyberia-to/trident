@@ -54,7 +54,7 @@ pub fn bundle_with_assembly(
         .find(|m| m.file.kind == FileKind::Program)
         .or_else(|| project.modules.last());
 
-    let (functions, entry_point, source_hash) = if let Some(pm) = entry_file {
+    let (functions, entry_point, _entry_hash) = if let Some(pm) = entry_file {
         let fn_hashes = crate::hash::hash_file(&pm.file);
         let fns: Vec<BundleFunction> = pm
             .file
@@ -82,18 +82,57 @@ pub fn bundle_with_assembly(
                 None
             })
             .collect();
-        let ep = if fns.iter().any(|f| f.name == "main") {
-            "main".to_string()
-        } else {
-            fns.first()
-                .map(|f| f.name.clone())
-                .unwrap_or_else(|| "main".to_string())
+        let candidates = || {
+            pm.file.items.iter().filter_map(|item| match &item.node {
+                ast::Item::Fn(function)
+                    if function
+                        .cfg
+                        .as_ref()
+                        .is_none_or(|flag| options.cfg_flags.contains(&flag.node)) =>
+                {
+                    Some(function)
+                }
+                _ => None,
+            })
         };
+        let ep = candidates()
+            .find(|function| function.name.node == "main")
+            .or_else(|| candidates().find(|function| function.is_pub && function.body.is_some()))
+            .map(|function| function.name.node.clone())
+            .unwrap_or_else(|| "main".into());
         let sh = crate::hash::hash_file_content(&pm.file).to_hex();
         (fns, ep, sh)
     } else {
         (Vec::new(), "main".to_string(), String::new())
     };
+
+    let mut sources: Vec<_> = project
+        .modules
+        .iter()
+        .map(|m| {
+            (
+                m.file.name.node.clone(),
+                crate::hash::ContentHash(crate::hash::content_hash_bytes(m.source.as_bytes()))
+                    .to_hex(),
+            )
+        })
+        .collect();
+    sources.sort();
+    let package_identity = options
+        .target_package
+        .as_ref()
+        .map(|p| p.compilation_hash())
+        .transpose()
+        .map_err(|e| vec![Diagnostic::error(e, span::Span::dummy())])?;
+    let identity = serde_json::to_vec(&(
+        "trident-compilation-v1",
+        &options.target_config,
+        &options.cfg_flags,
+        package_identity,
+        sources,
+    ))
+    .map_err(|e| vec![Diagnostic::error(e.to_string(), span::Span::dummy())])?;
+    let source_hash = crate::hash::ContentHash(crate::hash::content_hash_bytes(&identity)).to_hex();
 
     let name = entry_path
         .file_stem()
@@ -114,7 +153,10 @@ pub fn bundle_with_assembly(
         name,
         version: "0.1.0".to_string(),
         target_vm: options.target_config.name.clone(),
-        target_os: None,
+        target_os: options
+            .target_package
+            .as_ref()
+            .and_then(|p| p.union.as_ref().map(|u| u.name.clone())),
         assembly,
         entry_point,
         functions,

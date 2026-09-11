@@ -1,6 +1,8 @@
 //! Public process contract: select one terrain, and never report an action not performed.
 #![cfg(unix)]
 
+mod support;
+
 use std::{
     fs,
     os::unix::fs::PermissionsExt,
@@ -13,6 +15,7 @@ fn invoke(dir: &Path, path: &Path, args: &[&str]) -> Output {
         .args(args)
         .current_dir(dir)
         .env("PATH", path)
+        .env("TRIDENT_TARGET_PACKAGES", dir)
         .output()
         .unwrap()
 }
@@ -21,7 +24,7 @@ fn stub(dir: &Path, name: &str) {
     let path = dir.join(name);
     fs::write(
         &path,
-        format!("#!/bin/sh\nprintf '%s\\n' '{name}' \"$@\"\n"),
+        format!("#!/bin/sh\nif [ \"$1\" = describe ]; then /bin/cat \"$3.json\"; else printf '%s\\n' '{name}' \"$@\"; fi\n"),
     )
     .unwrap();
     fs::set_permissions(path, fs::Permissions::from_mode(0o755)).unwrap();
@@ -57,9 +60,19 @@ fn project_target_and_explicit_target_select_the_same_warrior_for_all_actions() 
     )
     .unwrap();
     fs::write(root.join("trident.toml"), "[project]\nname = \"dispatch\"\nversion = \"0.1.0\"\nentry = \"main.tri\"\ntarget = \"triton\"\n").unwrap();
+    support::write_triton_package(root);
+    let mut nox = support::triton_package();
+    nox.owner = "joy".into();
+    nox.terrain = trident::target::TerrainConfig::nox();
+    nox.intrinsics = nox.terrain.supported_intrinsics();
+    fs::write(
+        root.join("nox.json"),
+        serde_json::to_vec(&nox.seal().unwrap()).unwrap(),
+    )
+    .unwrap();
     stub(root, "trident-triton");
     stub(root, "trident-nox");
-    for action in ["build", "run", "prove"] {
+    for action in ["build", "run", "prove", "verify"] {
         let output = invoke(root, root, &[action, "."]);
         assert!(
             output.status.success(),
@@ -70,7 +83,7 @@ fn project_target_and_explicit_target_select_the_same_warrior_for_all_actions() 
         assert!(text.starts_with("trident-triton\n"), "{text}");
         assert!(text.contains("--target\ntriton\n"), "{text}");
     }
-    for action in ["run", "prove"] {
+    for action in ["run", "prove", "verify"] {
         let output = invoke(root, root, &[action, ".", "--target", "nox"]);
         assert!(
             output.status.success(),
@@ -132,4 +145,65 @@ fn installed_compiler_resolves_its_own_libraries_outside_checkout() {
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
+}
+
+#[test]
+fn invalid_packages_and_unavailable_commands_never_reach_the_warrior() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(root.join("main.tri"), "program proof\nfn main() {}\n").unwrap();
+    stub(root, "trident-triton");
+    for incompatible_api in [false, true] {
+        let mut package = support::triton_package();
+        if incompatible_api {
+            package.compiler_api = 999;
+        } else {
+            package.runtime.prove = false;
+        }
+        fs::write(
+            root.join("triton.json"),
+            serde_json::to_vec(&package).unwrap(),
+        )
+        .unwrap();
+        let output = invoke(root, root, &["prove", "main.tri", "--target", "triton"]);
+        assert!(!output.status.success());
+        assert!(
+            output.stdout.is_empty(),
+            "unsupported request reached warrior"
+        );
+        let diagnostic = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            diagnostic.contains(if incompatible_api {
+                "unsupported target package"
+            } else {
+                "does not support"
+            }),
+            "{diagnostic}"
+        );
+    }
+}
+
+#[test]
+fn describe_and_execution_use_the_same_wrapper() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    support::write_triton_package(root);
+    fs::write(root.join("main.tri"), "program dispatch\nfn main() {}\n").unwrap();
+    let wrapper = root.join("trident-triton");
+    fs::write(&wrapper, "#!/bin/sh\nif [ \"$1\" = describe ]; then /bin/cat triton.json; else printf '%s\\n' wrapper \"$@\"; fi\n").unwrap();
+    fs::set_permissions(&wrapper, fs::Permissions::from_mode(0o755)).unwrap();
+    stub(root, "trisha");
+    let output = Command::new(env!("CARGO_BIN_EXE_trident"))
+        .args(["run", "main.tri", "--target", "triton"])
+        .current_dir(root)
+        .env("PATH", root)
+        .env_remove("TRIDENT_TARGET_PACKAGES")
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout).starts_with("wrapper\nrun\n"));
 }

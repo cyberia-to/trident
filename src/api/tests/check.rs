@@ -7,7 +7,7 @@ use crate::*;
 
 #[test]
 fn test_check_valid_program() {
-    let source = "program test\nfn main() {\n    pub_write(pub_read())\n}";
+    let source = "program test\nfn main(value: Field) -> Field { value }";
     assert!(check(source, "test.tri").is_ok());
 }
 
@@ -19,7 +19,7 @@ fn test_check_type_error() {
 
 #[test]
 fn test_check_silent_valid() {
-    let source = "program test\nfn main() {\n    pub_write(pub_read())\n}";
+    let source = "program test\nfn main(value: Field) -> Field { value }";
     assert!(check_silent(source, "test.tri").is_ok());
 }
 
@@ -47,7 +47,7 @@ y: Field,
 fn main() {
 let a: Pt = Pt { x: 1, y: 2 }
 let b: Pt = Pt { x: 3, y: 4 }
-pub_write(a.x + b.y)
+assert_eq(a.x + b.y, 5)
 }
 "#;
     assert!(check(source, "test.tri").is_ok());
@@ -56,7 +56,7 @@ pub_write(a.x + b.y)
 #[test]
 fn test_parse_source_silent_no_stderr() {
     // parse_source_silent should not render diagnostics
-    let source = "program test\nfn main() {\n    pub_write(pub_read())\n}";
+    let source = "program test\nfn main(value: Field) -> Field { value }";
     let result = parse_source_silent(source, "test.tri");
     assert!(result.is_ok());
 }
@@ -80,7 +80,7 @@ fn test_discover_tests_finds_test_fns() {
 
 #[test]
 fn test_discover_tests_empty_when_no_tests() {
-    let source = "program test\nfn main() {\n    pub_write(pub_read())\n}";
+    let source = "program test\nfn main(value: Field) -> Field { value }";
     let file = parse_source_silent(source, "test.tri").unwrap();
     let tests = discover_tests(&file);
     assert!(tests.is_empty());

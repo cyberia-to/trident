@@ -1,15 +1,19 @@
 //! Process-level regression: `trident test` must execute the selected tests.
 
+mod support;
+
 use std::process::{Command, Output};
 
 fn invoke(source: &str, extra: &[&str]) -> Output {
     let dir = tempfile::tempdir().unwrap();
+    support::write_triton_package(dir.path());
     let entry = dir.path().join("main.tri");
     std::fs::write(&entry, source).unwrap();
     Command::new(env!("CARGO_BIN_EXE_trident"))
         .arg("test")
         .arg(&entry)
         .args(extra)
+        .env("TRIDENT_TARGET_PACKAGES", dir.path())
         .output()
         .unwrap()
 }
@@ -96,8 +100,7 @@ fn imported_module_tests_and_private_helpers_execute_in_their_own_context() {
 
 #[test]
 fn non_nox_library_api_refuses_to_claim_test_success() {
-    let mut options = trident::CompileOptions::default();
-    options.target_config = trident::target::TerrainConfig::triton();
+    let options = trident::CompileOptions::default().with_package(support::triton_package()).unwrap();
     let errors = trident::run_tests(std::path::Path::new("unused.tri"), &options).unwrap_err();
     assert!(errors[0]
         .message

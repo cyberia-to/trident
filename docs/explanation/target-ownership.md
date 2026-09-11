@@ -1,8 +1,9 @@
 # Target ownership review — 2026-09-11
 
-Status: repository audit complete; the structural changes below are proposed.
-No compiler/SDK ABI migration is claimed by this document. Current contracts
-remain in [warrior-api](../../reference/warrior-api.md).
+Status: approved migration implemented; final installed-distribution checks in progress.
+The initial findings below are retained as the audit trail. The implementation
+checkpoint records their disposition. Current contracts are in
+[warrior-api](../../reference/warrior-api.md).
 
 ## Finding
 
@@ -17,7 +18,7 @@ The review inspected tracked assets, manifests, resource loading, target
 resolution, typechecking, shared TIR, packaging and documentation. It is a
 static ownership audit, not a new full runtime or cryptographic release audit.
 
-## Current inventory
+## Inventory before this migration
 
 | Location | Actual contents | Architectural role |
 |---|---|---|
@@ -29,7 +30,7 @@ static ownership audit, not a new full runtime or cryptographic release audit.
 Counts refer to files present at review time. Directory names and namespaces
 currently coincide, but they represent different responsibilities.
 
-## Remaining violations
+## Violations found before implementation
 
 | Area / evidence | Consequence | Destination or correction |
 |---|---|---|
@@ -55,7 +56,7 @@ pre-migration architecture claims. `reference/os.md` describes portable
 The implemented `os.state.read` compiler builtin has a much narrower surface;
 it does not establish working state proofs.
 
-## Recommended ownership
+## Adopted ownership
 
 Keep four source namespaces: `vm.*`, `std.*`, `os.*`, `os.<network>.*`.
 Choose their implementation by explicit package and target, independently of
@@ -81,7 +82,7 @@ physical directory layout.
   `soft3` remains an integration/client layer; compiler ISA details do not
   belong there. Protocol doctrine belongs in the cyber graph.
 
-## Proposed physical layout
+## Adopted physical layout
 
 ```text
 trident/
@@ -113,7 +114,7 @@ joy/
   lib/os/cyber/                implemented cyber bindings, when available
 ```
 
-The proposed empty/future library locations are explanatory, not directories
+The empty/future library locations are explanatory, not directories
 that should be scaffolded now. Keeping `baselines/triton/` in Trisha preserves
 its useful namespace and avoids cosmetic renaming.
 
@@ -130,9 +131,9 @@ and a future private proof are distinct capabilities.
 A minimal built-in discovery map can route `nox -> joy`, `triton -> trisha`
 and `neptune -> trisha` without carrying duplicate network/ISA definitions.
 An installed warrior exports its package description without executing the
-user program. The exact transport is to be specified in warrior-api before
-implementation; it need not introduce a dynamic plugin framework or another
-repository. TIR remains the in-process Rust contract.
+user program. The transport is schema-1 JSON from `describe --target`, or an explicit
+`TRIDENT_TARGET_PACKAGES/<target>.json` file. It introduces no dynamic plugin
+framework or additional repository. TIR remains the in-process Rust contract.
 
 Resolve the package once and use it for CLI, library APIs, LSP, typecheck,
 codegen and bundle metadata. Release builds use embedded or locked sources;
@@ -169,3 +170,38 @@ Moving all of `vm/` into Trisha would discard language intrinsic contracts.
 Moving `os/` as a whole would give Trisha ownership of unrelated platforms.
 A directory-only move would preserve the width, typecheck and ABI defects.
 The semantic split therefore precedes the physical reorganization.
+
+## Implementation checkpoint
+
+All source paths in this table describe the migrated layout.
+
+| Gate | Implementation and evidence |
+|---|---|
+| Target identity | Versioned `TargetPackage`, validated module bytes/declarations, ABI bounds, compiler compatibility and selected network. Descriptor and CLI dispatch share one provider lookup. Unsupported commands fail before dispatch. |
+| Semantic capabilities | Complete library declarations remain available; transitive requirements of reachable functions are checked against the selected package. Inactive cfg declarations and unused unsupported helpers do not create false requirements. Invalid intrinsic signatures always fail. |
+| Compiler/editor parity | nox default for checking; project/explicit targets reach check, build, audit and LSP. Live editor buffers are resolved without temporary source writes. Single-source APIs validate package identity and selected-entry requirements too. |
+| Portable ABI | `std.target`, native hash, Digest and I/O contracts derive from the selected target. Explicit Tip5/Merkle bindings live in Trisha. Neptune auth moved to its SDK; portable scalar preimage checks remain in `std.crypto.preimage`. |
+| Typed TIR | Stack manager emits typed operations; string reparse and shared Triton legalization limits removed. Trisha owns batching and deep stack access. Independent interpreter regressions cover stack operations; actual VM tests cover emitted code. |
+| XField correctness | Corrected five-word dot-step signature and tuple destructuring. Real Triton execution exposed reversed coefficient order in dot-step and inverse lowering; independent arithmetic expectations now pass. Checked U32 casts reject overflow, and local function shadowing is preserved. |
+| Metadata ownership | Trisha owns machine manifest, intrinsic/ISA lists, Neptune SDK and network/state data. CLI state presets are generated from the same manifests. Joy owns its runtime capability descriptor. Core retains the canonical reference nox machine contract. |
+| Resource layout | Trident `lib/` and `catalog/`; Trisha `lib/`, `targets/`, `networks/`. Embedded resources replace checkout-dependent resolution. Other catalog machines explicitly remain declared designs. |
+| Artifact packaging | Artifact extension follows the selected machine; manifests name and authenticate the actual program file. CLI packaging delegates foreign lowering, preserves network identity and hashes effective sources/ABI/cfg. Unknown foreign costs are absent. |
+| Runtime guards | Trisha CPU and GPU adapters reject wrong target/state bundles. Raw assembly and proof formats validate target too. Joy rejects unsupported state inputs. Runtime metadata distinguishes public Zheng certificates from private proofs. |
+| Recursive Neptune SDK | The former `verify_inner_proof` computed intermediate values without asserting validity. Removed from production packages together with dependent entry programs; preserved under `examples/experimental/neptune` with an explicit unimplemented status. Production imports fail. |
+
+Final source-suite checkpoint: Trident 755 default + 44 neural tests pass;
+Trisha 227 default + 50 neural tests pass. All-features checks pass; Trisha
+has three pre-existing warnings in its vendored dependency. These totals include static/library tests;
+they do not imply execution coverage for every standard-library function.
+
+Joy's complete suite has 46 passing tests and three retained state-proof
+acceptance failures (`UnsupportedRecursiveOpening`). Its new public execution
+and installed-package tests pass. The failures require authenticated recursive
+state constraints; changing ownership cannot make them pass.
+
+Full release gates still include private/state proofs, recursive Neptune
+verification and transaction validation, live deployment, and executable
+reference fixtures for all claimed baselines. The historical benchmark is
+1/43 verified. These remain explicit open work; no release was published by
+this migration. Local installed-candidate evidence belongs in
+[warrior-release-validation](../../reference/warrior-release-validation.md).

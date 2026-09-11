@@ -1,0 +1,11 @@
+module std.crypto.preimage
+
+use vm.crypto.hash
+use vm.io.io
+use vm.core.assert
+
+// Verify a scalar witness under the explicitly selected native hash ABI.
+pub fn verify_preimage(expected: Digest) {
+    let secret: Field = io.divine()
+    assert.digest(hash.single(secret), expected)
+}

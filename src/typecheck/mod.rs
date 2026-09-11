@@ -6,6 +6,7 @@
 mod analysis;
 mod block;
 mod builtins;
+mod capabilities;
 mod expr;
 mod resolve;
 mod stmt;
@@ -70,6 +71,8 @@ pub type FnExport = (String, Vec<(String, Ty)>, Ty);
 pub struct ModuleExports {
     pub module_name: String,
     pub functions: Vec<FnExport>,
+    /// Transitive intrinsic requirements, including private helpers for entry checks.
+    pub function_requirements: BTreeMap<String, BTreeSet<String>>,
     pub constants: Vec<(String, Ty, u64)>, // (name, ty, value)
     pub structs: Vec<StructTy>,            // exported struct types
     pub warnings: Vec<Diagnostic>,         // non-fatal diagnostics
@@ -83,6 +86,9 @@ pub struct ModuleExports {
 pub(crate) struct TypeChecker {
     /// Known function signatures (user-defined + builtins).
     pub(super) functions: BTreeMap<String, FnSig>,
+    pub(super) available_intrinsics: BTreeSet<String>,
+    pub(super) intrinsic_signatures: BTreeMap<String, FnSig>,
+    pub(super) imported_requirements: BTreeMap<String, BTreeSet<String>>,
     /// Variable scopes (stack of scope maps).
     pub(super) scopes: Vec<BTreeMap<String, VarInfo>>,
     /// Known constants (name -> value).
@@ -116,13 +122,21 @@ impl Default for TypeChecker {
 }
 
 impl TypeChecker {
+    pub(crate) fn with_intrinsics(mut self, names: &[String]) -> Self {
+        self.available_intrinsics = names.iter().cloned().collect();
+        self
+    }
+
     pub(crate) fn new() -> Self {
-        Self::with_target(crate::target::TerrainConfig::triton())
+        Self::with_target(crate::target::TerrainConfig::nox())
     }
 
     pub(crate) fn with_target(config: crate::target::TerrainConfig) -> Self {
         let mut tc = Self {
             functions: BTreeMap::new(),
+            available_intrinsics: config.supported_intrinsics().into_iter().collect(),
+            intrinsic_signatures: BTreeMap::new(),
+            imported_requirements: BTreeMap::new(),
             scopes: Vec::new(),
             constants: BTreeMap::new(),
             structs: BTreeMap::new(),
@@ -137,6 +151,7 @@ impl TypeChecker {
             in_pure_fn: false,
         };
         tc.register_builtins();
+        tc.intrinsic_signatures = tc.functions.clone();
         tc
     }
 
@@ -179,6 +194,17 @@ impl TypeChecker {
 
         for (fn_name, params, return_ty) in &exports.functions {
             let qualified = format!("{}.{}", exports.module_name, fn_name);
+            let requirements = exports
+                .function_requirements
+                .get(fn_name)
+                .cloned()
+                .unwrap_or_default();
+            self.imported_requirements
+                .insert(qualified.clone(), requirements.clone());
+            if has_short {
+                self.imported_requirements
+                    .insert(format!("{}.{}", short_prefix, fn_name), requirements);
+            }
             let sig = FnSig {
                 params: params.clone(),
                 return_ty: return_ty.clone(),
@@ -257,9 +283,16 @@ impl TypeChecker {
                             .as_ref()
                             .map(|t| self.resolve_type(&t.node))
                             .unwrap_or(Ty::Unit);
+                        self.validate_intrinsic(func, &params, &return_ty);
                         self.functions
                             .insert(func.name.node.clone(), FnSig { params, return_ty });
                     } else {
+                        if func.intrinsic.is_some() {
+                            self.error(
+                                "generic intrinsic declarations have no fixed target ABI".into(),
+                                func.name.span,
+                            );
+                        }
                         // Generic function: store unresolved for monomorphization.
                         let gdef = GenericFnDef {
                             type_params: func.type_params.iter().map(|p| p.node.clone()).collect(),
@@ -350,6 +383,19 @@ impl TypeChecker {
             }
         }
 
+        let function_requirements = self.infer_requirements(file);
+        if file.kind == FileKind::Program {
+            if let Some(errors) = capabilities::entry_errors(
+                file,
+                &function_requirements,
+                &self.available_intrinsics,
+                &self.cfg_flags,
+                &self.target_config.name,
+            ) {
+                self.diagnostics.extend(errors);
+            }
+        }
+
         // Collect exports (pub items only)
         let module_name = file.name.node.clone();
         let mut exported_fns = Vec::new();
@@ -399,6 +445,7 @@ impl TypeChecker {
             Ok(ModuleExports {
                 module_name,
                 functions: exported_fns,
+                function_requirements,
                 constants: exported_consts,
                 structs: exported_structs,
                 warnings: self.diagnostics,

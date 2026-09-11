@@ -6,37 +6,36 @@
 //! Project-level helpers: symbol index, exports, function costs.
 
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use tower_lsp::lsp_types::*;
 
 use crate::ast::Item;
-use crate::resolve::resolve_modules;
-use crate::typecheck::{ModuleExports, TypeChecker};
+use crate::resolve::resolve_modules_with_sources;
+use crate::typecheck::ModuleExports;
 
 use super::document::DocumentData;
 use super::util::{format_fn_signature, span_to_range};
 use super::TridentLsp;
 
-/// Find the project entry point for a given file.
-pub(super) fn find_project_entry(file_path: &Path) -> PathBuf {
-    let dir = file_path.parent().unwrap_or(Path::new("."));
-    match crate::project::Project::find(dir) {
-        Some(toml_path) => match crate::project::Project::load(&toml_path) {
-            Ok(p) => p.entry,
-            Err(_) => file_path.to_path_buf(),
-        },
-        None => file_path.to_path_buf(),
-    }
+/// Resolve editor modules through the same target package as compilation.
+pub(super) fn project_modules(
+    file_path: &Path,
+) -> Result<
+    (crate::CompileOptions, Vec<crate::resolve::ModuleInfo>),
+    Vec<crate::diagnostic::Diagnostic>,
+> {
+    let (entry, options) = crate::api::options_for_project(file_path)?;
+    let modules =
+        resolve_modules_with_sources(&entry, options.dep_dirs.clone(), options.library_sources())?;
+    Ok((options, modules))
 }
 
 impl TridentLsp {
     /// Build a symbol index mapping names to (uri, range) for go-to-definition.
     pub(super) fn build_symbol_index(&self, file_path: &Path) -> BTreeMap<String, (Url, Range)> {
         let mut index = BTreeMap::new();
-        let entry = find_project_entry(file_path);
-
-        let modules = match resolve_modules(&entry) {
+        let (_options, modules) = match project_modules(file_path) {
             Ok(m) => m,
             Err(_) => return index,
         };
@@ -84,9 +83,7 @@ impl TridentLsp {
 
     /// Collect type-checked exports from all project modules.
     pub(super) fn collect_project_exports(&self, file_path: &Path) -> Vec<ModuleExports> {
-        let entry = find_project_entry(file_path);
-
-        let modules = match resolve_modules(&entry) {
+        let (options, modules) = match project_modules(file_path) {
             Ok(m) => m,
             Err(_) => return Vec::new(),
         };
@@ -101,7 +98,7 @@ impl TridentLsp {
                 Err(_) => continue,
             };
 
-            let mut tc = TypeChecker::new();
+            let mut tc = options.checker();
             for exports in &all_exports {
                 tc.import_module(exports);
             }
@@ -200,4 +197,12 @@ impl TridentLsp {
         }
         symbols
     }
+}
+
+/// Unavailable targets yield no potentially misleading builtin information.
+pub(super) fn editor_options(uri: &Url) -> Option<crate::CompileOptions> {
+    let path = uri.to_file_path().ok()?;
+    crate::api::options_for_project(&path)
+        .ok()
+        .map(|(_, options)| options)
 }

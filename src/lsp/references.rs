@@ -15,7 +15,7 @@ use tower_lsp::lsp_types::*;
 use crate::syntax::lexeme::Lexeme;
 use crate::syntax::lexer::Lexer;
 
-use super::project::find_project_entry;
+use super::project::project_modules;
 use super::util::{position_to_byte_offset, span_to_range, word_at_position};
 use super::TridentLsp;
 
@@ -37,9 +37,8 @@ fn find_references_in_source(source: &str, target: &str) -> Vec<Range> {
 
 /// Find all references to `target` across all project modules.
 fn find_references_in_project(file_path: &std::path::Path, target: &str) -> Vec<Location> {
-    let entry = find_project_entry(file_path);
-    let modules = match crate::resolve::resolve_modules(&entry) {
-        Ok(m) => m,
+    let modules = match project_modules(file_path) {
+        Ok((_, m)) => m,
         Err(_) => return Vec::new(),
     };
 

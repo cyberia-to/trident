@@ -75,20 +75,36 @@ impl SymExecutor {
         let name = path.as_dotted();
         let func_name = path.0.last().map(|s| s.as_str()).unwrap_or("");
 
+        // Native digest aliases follow the ABI; explicit numeric suffixes count
+        // fixed field elements and must not be silently treated as scalar calls.
+        let pub_width = if func_name == "read_digest" {
+            Some(self.digest_width)
+        } else {
+            tuple_width(func_name, "pub_read").or_else(|| tuple_width(func_name, "read"))
+        };
+        if let Some(width) = pub_width {
+            for _ in 0..width {
+                self.fresh_pub_input();
+            }
+            let var = self.fresh_var("__read_tuple");
+            return SymValue::Var(var);
+        }
+        let divine_width = if func_name == "divine_digest" {
+            Some(self.digest_width)
+        } else {
+            tuple_width(func_name, "divine")
+        };
+        if let Some(width) = divine_width {
+            for _ in 0..width {
+                self.fresh_divine();
+            }
+            let var = self.fresh_var("__divine_tuple");
+            return SymValue::Var(var);
+        }
+
         // Handle builtins
         match func_name {
             "pub_read" | "read" => return self.fresh_pub_input(),
-            "pub_read2" | "read2" => {
-                self.fresh_pub_input();
-                return self.fresh_pub_input();
-            }
-            "pub_read5" | "read5" => {
-                for _ in 0..5 {
-                    self.fresh_pub_input();
-                }
-                let var = self.fresh_var("__digest");
-                return SymValue::Var(var);
-            }
             "pub_write" | "write" => {
                 if let Some(arg) = args.first() {
                     let val = self.eval_expr(&arg.node);
@@ -97,20 +113,6 @@ impl SymExecutor {
                 return SymValue::Const(0);
             }
             "divine" => return self.fresh_divine(),
-            "divine3" => {
-                for _ in 0..3 {
-                    self.fresh_divine();
-                }
-                let var = self.fresh_var("__divine3");
-                return SymValue::Var(var);
-            }
-            "divine5" => {
-                for _ in 0..5 {
-                    self.fresh_divine();
-                }
-                let var = self.fresh_var("__divine5");
-                return SymValue::Var(var);
-            }
             "hash" | "tip5" => {
                 let inputs: Vec<SymValue> = args.iter().map(|a| self.eval_expr(&a.node)).collect();
                 return SymValue::Hash(inputs, 0);
@@ -131,7 +133,7 @@ impl SymExecutor {
                 return SymValue::Const(0);
             }
             "assert_digest" | "digest" => {
-                // Digest equality: 5-element vector comparison
+                // Digest equality uses the selected target representation.
                 if args.len() >= 2 {
                     let a = self.eval_expr(&args[0].node);
                     let b = self.eval_expr(&args[1].node);
@@ -223,4 +225,10 @@ impl SymExecutor {
         let var = self.fresh_var(&format!("__proj_{}", i));
         SymValue::Var(var)
     }
+}
+
+fn tuple_width(name: &str, prefix: &str) -> Option<u32> {
+    let suffix = name.strip_prefix(prefix)?;
+    let width: u32 = suffix.parse().ok()?;
+    (width > 1 && width <= 64 && suffix == width.to_string()).then_some(width)
 }

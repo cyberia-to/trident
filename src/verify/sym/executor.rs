@@ -12,6 +12,8 @@ const MAX_CONST_LOOP_UNROLL: u64 = 10_000;
 
 /// Symbolic executor that walks the AST and builds a constraint system.
 pub struct SymExecutor {
+    /// Native digest width from the selected compilation ABI.
+    pub(crate) digest_width: u32,
     /// The constraint system being built.
     pub(crate) system: ConstraintSystem,
     /// Variable bindings: name → symbolic value.
@@ -35,6 +37,7 @@ pub struct SymExecutor {
 impl SymExecutor {
     pub fn new() -> Self {
         Self {
+            digest_width: crate::target::TerrainConfig::nox().digest_width,
             system: ConstraintSystem::new(),
             env: BTreeMap::new(),
             versions: BTreeMap::new(),
@@ -45,6 +48,14 @@ impl SymExecutor {
             call_depth: 0,
             max_call_depth: 64,
         }
+    }
+
+    /// Select the ABI without implying solver support for another finite field.
+    pub fn with_target(target: &crate::target::TerrainConfig) -> Result<Self, String> {
+        validate_audit_target(target)?;
+        let mut executor = Self::new();
+        executor.digest_width = target.digest_width;
+        Ok(executor)
     }
 
     /// Execute a file and produce its constraint system (main function only).
@@ -348,5 +359,75 @@ impl SymExecutor {
                 }
             }
         }
+    }
+}
+
+/// The current solver performs Goldilocks arithmetic only.
+pub fn validate_audit_target(target: &crate::target::TerrainConfig) -> Result<(), String> {
+    let prime: String = target
+        .field_prime
+        .chars()
+        .filter(|c| !c.is_whitespace())
+        .collect();
+    let goldilocks = prime == "2^64-2^32+1"
+        || prime == GOLDILOCKS_P.to_string()
+        || prime.eq_ignore_ascii_case("0xffffffff00000001");
+    if target.field_bits != 64 || !goldilocks {
+        return Err(format!(
+            "symbolic audit supports only the Goldilocks field; target '{}' declares '{}'",
+            target.name, target.field_prime
+        ));
+    }
+    if target.digest_width == 0 || target.digest_width > 64 {
+        return Err("symbolic audit requires a digest width between 1 and 64".into());
+    }
+    Ok(())
+}
+
+/// Analyze all non-test definitions using the selected ABI.
+pub fn analyze_all_with_target(
+    file: &File,
+    target: &crate::target::TerrainConfig,
+) -> Result<Vec<(String, ConstraintSystem)>, String> {
+    validate_audit_target(target)?;
+    let mut results = Vec::new();
+    for item in &file.items {
+        if let Item::Fn(func) = &item.node {
+            if func.body.is_some() && !func.is_test && func.intrinsic.is_none() {
+                let system =
+                    SymExecutor::with_target(target)?.execute_function(file, &func.name.node);
+                results.push((func.name.node.clone(), system));
+            }
+        }
+    }
+    Ok(results)
+}
+
+#[cfg(test)]
+mod target_tests {
+    use super::*;
+    #[test]
+    fn native_and_fixed_input_widths_follow_the_selected_abi() {
+        let source = "program widths\nfn main() { let a = read_digest() let b = divine_digest() let c = read4() let d = divine7() }";
+        let file = crate::parse_source_silent(source, "widths.tri").unwrap();
+        for width in [4, 5] {
+            let mut target = crate::target::TerrainConfig::nox();
+            target.digest_width = width;
+            let systems = analyze_all_with_target(&file, &target).unwrap();
+            assert_eq!(systems[0].1.pub_inputs.len(), width as usize + 4);
+            assert_eq!(systems[0].1.divine_inputs.len(), width as usize + 7);
+        }
+        assert_eq!(analyze_all(&file)[0].1.pub_inputs.len(), 8);
+    }
+    #[test]
+    fn another_field_is_rejected_before_symbolic_execution() {
+        let file =
+            crate::parse_source_silent("program p\nfn main() { assert(true) }", "p.tri").unwrap();
+        let mut target = crate::target::TerrainConfig::nox();
+        target.field_prime = "17".into();
+        assert!(analyze_all_with_target(&file, &target)
+            .err()
+            .unwrap()
+            .contains("Goldilocks"));
     }
 }

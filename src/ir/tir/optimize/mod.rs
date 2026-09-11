@@ -34,7 +34,7 @@ pub(crate) fn optimize(ops: Vec<TIROp>) -> Vec<TIROp> {
     ir
 }
 
-/// Merge consecutive Hint(a), Hint(b) -> Hint(a+b), capped at 5 per instruction.
+/// Merge consecutive Hint(a), Hint(b) -> Hint(a+b).
 fn merge_hints(ops: Vec<TIROp>) -> Vec<TIROp> {
     let mut out: Vec<TIROp> = Vec::with_capacity(ops.len());
     let mut i = 0;
@@ -50,11 +50,8 @@ fn merge_hints(ops: Vec<TIROp>) -> Vec<TIROp> {
                     break;
                 }
             }
-            // Emit in batches of 5 (Triton VM limit)
-            while total > 0 {
-                let batch = total.min(5);
-                out.push(TIROp::Hint(batch));
-                total -= batch;
+            if total > 0 {
+                out.push(TIROp::Hint(total));
             }
             i = j;
         } else {
@@ -65,7 +62,7 @@ fn merge_hints(ops: Vec<TIROp>) -> Vec<TIROp> {
     out
 }
 
-/// Merge consecutive Pop(a), Pop(b) -> Pop(a+b), capped at 5 per instruction.
+/// Merge consecutive Pop(a), Pop(b) -> Pop(a+b).
 fn merge_pops(ops: Vec<TIROp>) -> Vec<TIROp> {
     let mut out: Vec<TIROp> = Vec::with_capacity(ops.len());
     let mut i = 0;
@@ -81,11 +78,8 @@ fn merge_pops(ops: Vec<TIROp>) -> Vec<TIROp> {
                     break;
                 }
             }
-            // Emit in batches of 5 (Triton VM limit)
-            while total > 0 {
-                let batch = total.min(5);
-                out.push(TIROp::Pop(batch));
-                total -= batch;
+            if total > 0 {
+                out.push(TIROp::Pop(total));
             }
             i = j;
         } else {
@@ -226,88 +220,27 @@ fn collapse_swap_pop_chains(ops: Vec<TIROp>) -> Vec<TIROp> {
     out
 }
 
-/// Collapse sequential `Swap(N); Pop(1)` cleanup chains.
-///
-/// Two sub-patterns are handled:
-///
-/// **Constant-depth chains**: N consecutive `swap 1; pop 1` pairs each remove
-/// one element below the top. Net effect: keep top, discard N elements below.
-/// Collapsed to `swap min(N,15); pop min(N,15)` in chunks (swap max is 15).
-///
-/// **Decreasing-depth chains**: `swap D; pop 1; swap D-1; pop 1; ...` chains
-/// where each pair brings a deeper dead element to the top. Collapsed to
-/// `swap first_D; pop count`.
+/// Collapse repeated removal of the word immediately below the top.
+/// Wider or decreasing-depth chains permute surviving values and must remain.
 fn collapse_epilogue_cleanup(ops: Vec<TIROp>) -> Vec<TIROp> {
-    let mut out: Vec<TIROp> = Vec::with_capacity(ops.len());
+    let mut out = Vec::with_capacity(ops.len());
     let mut i = 0;
     while i < ops.len() {
-        if i + 3 < ops.len() {
-            if let (TIROp::Swap(d), TIROp::Pop(1)) = (&ops[i], &ops[i + 1]) {
-                let first_d = *d;
-
-                // Count consecutive swap(D); pop(1) pairs.
-                let mut count = 1u32;
-                let mut is_constant_depth = true;
-                let mut j = i + 2;
-                while j + 1 < ops.len() {
-                    if let (TIROp::Swap(dd), TIROp::Pop(1)) = (&ops[j], &ops[j + 1]) {
-                        if *dd == first_d {
-                            // Same depth -- constant-depth chain continues.
-                            count += 1;
-                            j += 2;
-                        } else if first_d == 1 {
-                            // Constant-depth with D=1 is strict.
-                            break;
-                        } else if *dd + count == first_d || *dd < first_d {
-                            // Decreasing-depth chain.
-                            is_constant_depth = false;
-                            count += 1;
-                            j += 2;
-                        } else {
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                }
-
-                if count >= 3 {
-                    if first_d == 1 {
-                        // Constant-depth: keep top, discard `count` elements
-                        // below. Emit in chunks of 15 (max swap depth).
-                        let mut remaining = count;
-                        while remaining > 0 {
-                            let chunk = remaining.min(15);
-                            out.push(TIROp::Swap(chunk));
-                            let mut pop_left = chunk;
-                            while pop_left > 0 {
-                                let batch = pop_left.min(5);
-                                out.push(TIROp::Pop(batch));
-                                pop_left -= batch;
-                            }
-                            remaining -= chunk;
-                        }
-                    } else if is_constant_depth {
-                        // Each pop changes where the next swap lands. Adjacent
-                        // swaps followed by a bulk pop are not equivalent.
-                        out.extend_from_slice(&ops[i..j]);
-                    } else {
-                        // Decreasing-depth chain.
-                        out.push(TIROp::Swap(first_d));
-                        let mut remaining = count;
-                        while remaining > 0 {
-                            let batch = remaining.min(5);
-                            out.push(TIROp::Pop(batch));
-                            remaining -= batch;
-                        }
-                    }
-                    i = j;
-                    continue;
-                }
-            }
+        let mut end = i;
+        while end + 1 < ops.len()
+            && matches!(ops[end], TIROp::Swap(1))
+            && matches!(ops[end + 1], TIROp::Pop(1))
+        {
+            end += 2;
         }
-        out.push(ops[i].clone());
-        i += 1;
+        if end > i {
+            let count = ((end - i) / 2) as u32;
+            out.extend([TIROp::Swap(count), TIROp::Pop(count)]);
+            i = end;
+        } else {
+            out.push(ops[i].clone());
+            i += 1;
+        }
     }
     out
 }

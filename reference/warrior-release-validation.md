@@ -12,7 +12,7 @@ witness disclosure and linear verification. It does not provide private/state
 proofs or complete the full release gate. The measurements and archived
 candidates below describe the earlier legacy path and are unchanged.
 
-## Implemented behavior
+## Initial repair snapshot (before ownership follow-up)
 
 - Core owns the frontend, typed IR, nox lowering, source metadata and an optional target-parametric neural harness. Trisha owns Triton instruction selection/emission, runtime/proofs, neural target adapters, Neptune source libraries and hand TASM baselines.
 - nox honors cfg, lexical shadowing and qualified imports. Compilation, costs and bundle state metadata share lowering. Unsupported tree targets and unsupported transitive state calls fail explicitly; see [the supported nox surface](nox.md).
@@ -22,7 +22,7 @@ candidates below describe the earlier legacy path and are unchanged.
 - Benchmark results require real execution against a declared expected output. Missing fixtures fail coverage; original assembly is never neutralized to obtain a measurement. Live deployment returns an unsupported error instead of reporting a transaction that never happened.
 - TensorMerkle serialization preserves authenticated opening witnesses. Zheng rejects recursive opening forms whose authentication is not implemented. Joy refuses external IO claims and labels reported output/cycle metadata unverified.
 
-## Validation performed
+## Initial repair validation
 
 | Gate | Result and scope |
 |---|---|
@@ -46,7 +46,7 @@ candidates below describe the earlier legacy path and are unchanged.
 
 The portable smoke script is `trisha/scripts/smoke-release.nu`. It checks project-directed build/run/prove/verify through Trident, direct Trisha execution, public and secret input, absent secret failure, batch proofs, tampered-output rejection, unsupported deployment/target errors, nox execution and failing-test exit. It was run again after unpacking the exact binary archive.
 
-## Candidate artifacts
+## Earlier candidate artifacts
 
 Local artifacts and retained command logs are in `trisha/target/release-candidate-20260911/`:
 
@@ -63,10 +63,48 @@ Local artifacts and retained command logs are in `trisha/target/release-candidat
 
 The source archive pins Trident `ef6c420`, Trisha `7ff3c92`; the Joy binary is built from `0966981`. Zheng safety repairs are `0cbfe1f` and `45770c4`; Joy's claim restriction is `1b637e3`. Subsequent documentation commits do not change these binary/source artifacts. Only Darwin arm64 CPU execution/proving was exercised; no cross-platform or GPU performance release claim is made.
 
-## Remaining release blockers
+## Current release gates
 
-1. **Zheng soundness and privacy.** Current verification does not establish the relation between original execution and public output; transcript binding alone is insufficient. The existing decider specification already documents the missing checked folding. Recursive state openings are disabled, and the current Spartan/TensorMerkle path lacks a reviewed witness-hiding design. A production proof release requires verifier-enforced execution/control/copy/public-input constraints, sound accumulation or an unfolded global CCS, and zero knowledge. See `zheng/.claude/plans/authenticated-execution-release.md` for the concrete design and acceptance gates. Positive state-proof tests were retained, not rewritten to make this limitation green.
-2. **Complete reference coverage.** Historical hand baselines need independent executable fixtures and agreement among the claimed implementations. Library parsing and successful arithmetic proofs do not cover this gap.
-3. **Promised unsupported surfaces.** Live Neptune deployment, Triton `#[test]` execution, transitive nox state calls and unvalidated platforms/backends cannot be advertised as working. The supported surface must either be implemented or explicitly accepted as narrower by the owner.
+The original public-output binding gap is repaired for the bounded public
+execution certificate described above. The verifier now checks execution,
+copy/control flow and public coordinates in an unfolded global CCS. This
+certificate discloses the witness and has linear verification.
 
-The owner was asked whether to extend this repair into the full Zheng protocol redesign or finish the compiler/warrior repair while leaving the proof release blocked. No scope decision has been received. The compiler/warrior fixes and reviewable candidate artifacts are complete to the validation scope above; a fully working coordinated release remains blocked on these gates.
+The requested full proof release remains incomplete:
+
+1. Authenticated recursive state openings and private proofs in Zheng. The
+   three positive Joy state-proof acceptance tests remain failing and visible.
+2. Recursive STARK verification and Neptune transaction validation. The old
+   SDK helper did not assert the values it computed; it is excluded from the
+   production package and retained only as an experimental source.
+3. Independent executable fixtures for all historical hand baselines: current
+   verified coverage is 1/43.
+4. Live deployment, Triton `#[test]` execution, transitive nox state calls and
+   platform/backend validation for any claimed release surface.
+
+The owner has authorized continued repairs. No unanswered scope question is
+being used to stop implementation, and no narrower full-release claim is made.
+See [the ownership implementation checkpoint](../docs/explanation/target-ownership.md)
+for the current architecture and follow-up checks. The earlier binary archives
+and hashes above do not contain this ownership migration.
+
+## Ownership migration validation
+
+The subsequent owner-approved migration has the following source validation:
+
+| Check | Result |
+|---|---|
+| Trident default tests | 755 passed, no ignored tests |
+| Core neural tests | 44 passed |
+| Trisha CPU/CLI tests | 227 passed, including actual VM XField, shadowing and checked-cast regressions |
+| Trisha neural adapter tests | 50 passed |
+| Workspace checks | Trident all features/all targets, Trisha workspace all features/all targets, Joy workspace all targets passed; three vendored Triton warnings remain |
+| Joy complete suite | 46 passed; three existing authenticated state-proof acceptance failures remain |
+| nox regression file split | 28 tests passed after splitting the existing large test file; no semantic changes |
+
+Raw logs for this checkpoint are `/tmp/trident-ownership-final.log`,
+`/tmp/trident-ownership-neural-final.log`, `/tmp/trisha-ownership-final.log`,
+`/tmp/trisha-ownership-neural-final.log`, and
+`/tmp/joy-ownership-complete-suite.log`. Installed and archived candidates must
+be rebuilt after the code commits; older archives above are not evidence for
+this migration.

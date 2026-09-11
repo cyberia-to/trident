@@ -65,8 +65,8 @@ and code disagree, the reference wins.
 | [Skill Reference](skills.md) | All 23 skills: spec tables, recipes, hook IDs, glossary |
 
 Per-target specs live alongside their config:
-- [OS Registry](../../os/README.md) — `os/{name}/README.md` for each of 25 OSes
-- [VM Registry](../../vm/README.md) — `vm/{name}/README.md` for each of 20 VMs
+- [OS Registry](../catalog/os/README.md) — `os/{name}/README.md` for each of 25 OSes
+- [VM Registry](../catalog/vm/README.md) — `vm/{name}/README.md` for each of 20 VMs
 
 ## Tools
 

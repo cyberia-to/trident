@@ -167,139 +167,21 @@ pub fn resolve_options(
         _ => (target, profile),
     };
 
-    let target_config = {
-        match trident::target::ResolvedTarget::resolve(vm_target) {
-            Ok(config) => config.vm,
-            Err(e) => {
-                eprintln!("error: {}", e.message);
-                process::exit(1);
-            }
-        }
-    };
-
-    let cfg_flags = project
-        .and_then(|proj| proj.targets.get(actual_profile))
-        .map(|flags| flags.iter().cloned().collect())
-        .unwrap_or_else(|| std::collections::BTreeSet::from([actual_profile.to_string()]));
-
-    trident::CompileOptions {
-        profile: actual_profile.to_string(),
-        cfg_flags,
-        target_config,
-        dep_dirs: Vec::new(),
-        module_sources: std::collections::BTreeMap::new(),
-    }
-}
-
-/// Result of the shared compile → analyze → parse → verify pipeline.
-pub struct PreparedArtifact {
-    pub project: Option<trident::project::Project>,
-    pub entry: PathBuf,
-    pub tasm: String,
-    pub cost: trident::runtime::artifact::BundleCost,
-    pub file: trident::ast::File,
-    pub name: String,
-    pub version: String,
-    pub resolved: trident::target::ResolvedTarget,
-}
-
-/// Shared pipeline for package and deploy.
-pub fn prepare_artifact(
-    input: &Path,
-    target: &str,
-    profile: &str,
-    verify: bool,
-) -> PreparedArtifact {
-    let ri = resolve_input(input);
-    let project = ri.project;
-    let entry = ri.entry;
-
-    let resolved = match trident::target::ResolvedTarget::resolve(target) {
-        Ok(r) => r,
+    let mut options = match trident::CompileOptions::resolve(vm_target, actual_profile) {
+        Ok(options) => options,
         Err(e) => {
             eprintln!("error: {}", e.message);
             process::exit(1);
         }
     };
-
-    let mut options = resolve_options(&resolved.vm.name, profile, project.as_ref());
-    options.target_config = resolved.vm.clone();
-    if let Some(ref proj) = project {
-        options.dep_dirs = load_dep_dirs(proj);
+    if let Some(flags) = project.and_then(|p| p.targets.get(actual_profile)) {
+        options.cfg_flags = flags.iter().cloned().collect();
     }
-
-    eprintln!("Compiling {}...", entry.display());
-    let tasm = match trident::compile_project_with_options(&entry, &options) {
-        Ok(t) => t,
-        Err(_) => {
-            eprintln!("error: compilation failed");
-            process::exit(1);
-        }
-    };
-
-    // nox prices in reductions; stack targets never reach here (the
-    // compile above already errored — the core stops at TIR).
-    let cost = match trident::nox_cost_project(&entry, &options) {
-        Ok(nc) => trident::runtime::artifact::BundleCost {
-            table_values: vec![nc.bill.max],
-            table_names: vec!["reductions".to_string()],
-            padded_height: nc.nodes,
-            estimated_proving_ns: 0,
-        },
-        Err(_) => {
-            eprintln!("warning: cost analysis failed, using zeros");
-            trident::runtime::artifact::BundleCost {
-                table_values: Vec::new(),
-                table_names: Vec::new(),
-                padded_height: 0,
-                estimated_proving_ns: 0,
-            }
-        }
-    };
-
-    let (_, file) = load_and_parse(&entry);
-
-    let (name, version) = match project {
-        Some(ref proj) => (proj.name.clone(), proj.version.clone()),
-        None => {
-            let stem = entry
-                .file_stem()
-                .and_then(|s| s.to_str())
-                .unwrap_or("program");
-            (stem.to_string(), "0.1.0".to_string())
-        }
-    };
-
-    if verify {
-        audit_or_exit(&entry);
-    }
-
-    PreparedArtifact {
-        project,
-        entry,
-        tasm,
-        cost,
-        file,
-        name,
-        version,
-        resolved,
-    }
+    options
 }
 
-fn audit_or_exit(entry: &Path) {
-    eprintln!("Auditing {}...", entry.display());
-    match trident::verify_project(entry) {
-        Ok(report) if report.is_safe() => eprintln!("Verification: OK"),
-        Ok(report) => {
-            eprintln!("error: verification failed\n{}", report.format_report());
-            process::exit(1);
-        }
-        Err(_) => {
-            eprintln!("error: verification failed");
-            process::exit(1);
-        }
-    }
-}
+mod artifact;
+pub use artifact::prepare_artifact;
 
 /// Try to load and parse a .tri file, returning None on error (prints diagnostics).
 pub fn try_load_and_parse(path: &Path) -> Option<(String, trident::ast::File)> {
@@ -362,118 +244,66 @@ pub fn registry_url(url: Option<String>) -> String {
     url.unwrap_or_else(trident::registry::RegistryClient::default_url)
 }
 
-/// Load dependency search directories from a project's lockfile (if present).
-pub fn load_dep_dirs(project: &trident::project::Project) -> Vec<PathBuf> {
-    let lock_path = project.root_dir.join("trident.lock");
-    if !lock_path.exists() {
-        return Vec::new();
-    }
-    match trident::manifest::load_lockfile(&lock_path) {
-        Ok(lockfile) => trident::manifest::dependency_search_paths(&project.root_dir, &lockfile),
-        Err(_) => Vec::new(),
-    }
-}
-
-/// Find a warrior binary on PATH for the given target.
-///
-/// Resolution order:
-/// 1. `trident-<target>` directly on PATH
-/// 2. If target has a `[warrior]` config, try `trident-<warrior.name>`
-/// 3. If target is an OS, try `trident-<vm>` and the VM's warrior config
+/// Use the same executable for package discovery and runtime dispatch.
 pub fn find_warrior(target: &str) -> Option<PathBuf> {
-    // Direct match: trident-triton, trident-neptune, trident-trisha
-    let direct = format!("trident-{}", target);
-    if let Ok(path) = which_on_path(&direct) {
-        return Some(path);
-    }
-
-    if let Ok(resolved) = trident::target::ResolvedTarget::resolve(target) {
-        // Check VM's warrior config
-        if let Some(ref warrior) = resolved.vm.warrior {
-            // Try prefixed name (trident-<warrior>)
-            let warrior_bin = format!("trident-{}", warrior.name);
-            if let Ok(path) = which_on_path(&warrior_bin) {
-                return Some(path);
-            }
-            // Try bare warrior name (standalone binary)
-            if let Ok(path) = which_on_path(&warrior.name) {
-                return Some(path);
-            }
-        }
-
-        // If target is an OS, also try the VM name directly
-        if resolved.os.is_some() {
-            let vm_warrior = format!("trident-{}", resolved.vm.name);
-            if let Ok(path) = which_on_path(&vm_warrior) {
-                return Some(path);
-            }
-        }
-    }
-
-    None
+    trident::target::warrior_path(target)
 }
 
 pub fn missing_warrior(target: &str, command: &str) -> ! {
     eprintln!("error: cannot {command}: no warrior found for target '{target}'");
-    if let Ok(resolved) = trident::target::ResolvedTarget::resolve(target) {
-        if let Some(warrior) = resolved.vm.warrior {
-            match warrior.name.as_str() {
-                "joy" => eprintln!("Install the nox warrior: cargo install cyber-joy"),
-                "trisha" => eprintln!(
-                    "Install the Triton warrior from https://github.com/cyberia-to/trisha/releases"
-                ),
-                name => eprintln!("Install '{name}' and place its executable on PATH."),
-            }
-        }
+    match trident::target::owner_for(target) {
+        Some("joy") => eprintln!("Install the nox warrior: cargo install cyber-joy"),
+        Some("trisha") => eprintln!(
+            "Install the Triton warrior from https://github.com/cyberia-to/trisha/releases"
+        ),
+        _ => {}
     }
     process::exit(1)
 }
 
-/// Look for an executable on PATH (simple, no `which` crate).
-fn which_on_path(name: &str) -> Result<PathBuf, ()> {
-    let path_var = std::env::var("PATH").unwrap_or_default();
-    for dir in std::env::split_paths(&path_var) {
-        let candidate = dir.join(format!("{name}{}", std::env::consts::EXE_SUFFIX));
-        #[cfg(unix)]
-        let executable = {
-            use std::os::unix::fs::PermissionsExt;
-            candidate
-                .metadata()
-                .is_ok_and(|m| m.permissions().mode() & 0o111 != 0)
-        };
-        #[cfg(not(unix))]
-        let executable = true;
-        if candidate.is_file() && executable {
-            return Ok(candidate);
-        }
+/// Delegate a CLI command; capability or child failures return a nonzero exit.
+pub fn delegate_to_warrior(warrior_bin: &Path, command: &str, extra_args: &[&str]) {
+    if let Err(error) = try_delegate_to_warrior(warrior_bin, command, extra_args) {
+        eprintln!("error: {error}");
+        process::exit(1);
     }
-    Err(())
 }
 
-/// Delegate a CLI command to a warrior binary.
-///
-/// Forwards `command` as the first argument, then all `extra_args`.
-/// Exits with the warrior's exit code on failure.
-pub fn delegate_to_warrior(warrior_bin: &Path, command: &str, extra_args: &[&str]) {
-    let mut cmd = std::process::Command::new(warrior_bin);
-    cmd.arg(command);
-    for arg in extra_args {
-        cmd.arg(arg);
+/// Fallible dispatch lets callers clean temporary artifacts before returning errors.
+pub fn try_delegate_to_warrior(
+    warrior_bin: &Path,
+    command: &str,
+    extra_args: &[&str],
+) -> Result<(), String> {
+    let target = extra_args
+        .windows(2)
+        .find(|pair| pair[0] == "--target")
+        .map(|pair| pair[1])
+        .unwrap_or("nox");
+    let package = trident::target::TargetPackage::discover(target).map_err(|e| e.message)?;
+    package.require_command(command)?;
+    if std::env::var_os("TRIDENT_TARGET_PACKAGES").is_some() {
+        let installed =
+            trident::target::TargetPackage::discover_installed(target).map_err(|e| e.message)?;
+        installed.require_command(command)?;
+        if installed.compilation_hash()? != package.compilation_hash()? {
+            return Err(format!(
+                "locked target package differs from installed provider for '{target}'"
+            ));
+        }
     }
-    match cmd.status() {
-        Ok(status) => {
-            if !status.success() {
-                process::exit(status.code().unwrap_or(1));
-            }
-        }
-        Err(e) => {
-            eprintln!(
-                "error: failed to run warrior '{}': {}",
-                warrior_bin.display(),
-                e
-            );
-            process::exit(1);
-        }
+    let status = std::process::Command::new(warrior_bin)
+        .arg(command)
+        .args(extra_args)
+        .status()
+        .map_err(|e| format!("cannot run warrior '{}': {e}", warrior_bin.display()))?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!(
+            "warrior '{}' {command} failed: {status}",
+            warrior_bin.display()
+        ))
     }
 }
 

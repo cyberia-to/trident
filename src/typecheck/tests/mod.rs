@@ -14,7 +14,9 @@ use crate::typecheck::{ModuleExports, TypeChecker};
 pub(super) fn check(source: &str) -> Result<ModuleExports, Vec<Diagnostic>> {
     let (tokens, _, _) = Lexer::new(source, 0).tokenize();
     let file = Parser::new(tokens).parse_file().unwrap();
-    TypeChecker::new().check_file(&file)
+    TypeChecker::with_target(crate::target::TerrainConfig::triton())
+        .with_intrinsics(&crate::target::TerrainConfig::test_intrinsics())
+        .check_file(&file)
 }
 
 pub(super) fn check_err(source: &str) -> Vec<Diagnostic> {
@@ -32,7 +34,8 @@ pub(super) fn check_with_flags(
     let file = Parser::new(tokens).parse_file().unwrap();
     let flag_set: std::collections::BTreeSet<String> =
         flags.iter().map(|s| s.to_string()).collect();
-    TypeChecker::new()
+    TypeChecker::with_target(crate::target::TerrainConfig::triton())
+        .with_intrinsics(&crate::target::TerrainConfig::test_intrinsics())
         .with_cfg_flags(flag_set)
         .check_file(&file)
 }

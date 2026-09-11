@@ -122,7 +122,10 @@ impl TypeChecker {
     fn collect_calls_stmt(stmt: &Stmt, calls: &mut Vec<String>) {
         match stmt {
             Stmt::Let { init, .. } => Self::collect_calls_expr(&init.node, calls),
-            Stmt::Assign { value, .. } => Self::collect_calls_expr(&value.node, calls),
+            Stmt::Assign { place, value } => {
+                Self::collect_calls_place(&place.node, calls);
+                Self::collect_calls_expr(&value.node, calls);
+            }
             Stmt::If {
                 cond,
                 then_block,
@@ -150,7 +153,9 @@ impl TypeChecker {
                     Self::collect_calls_expr(&val.node, calls);
                 }
             }
-            Stmt::Asm { .. } => {}
+            Stmt::Asm { target, .. } => {
+                calls.push(format!("@asm:{}", target.as_deref().unwrap_or("")))
+            }
             Stmt::Match { expr, arms } => {
                 Self::collect_calls_expr(&expr.node, calls);
                 for arm in arms {
@@ -171,7 +176,12 @@ impl TypeChecker {
                     Self::collect_calls_expr(&arg.node, calls);
                 }
             }
-            Expr::BinOp { lhs, rhs, .. } => {
+            Expr::BinOp { op, lhs, rhs } => {
+                match op {
+                    BinOp::DivMod => calls.push("@operator:divmod".into()),
+                    BinOp::XFieldMul => calls.push("@operator:xfield_mul".into()),
+                    _ => {}
+                }
                 Self::collect_calls_expr(&lhs.node, calls);
                 Self::collect_calls_expr(&rhs.node, calls);
             }
@@ -180,8 +190,10 @@ impl TypeChecker {
                     Self::collect_calls_expr(&e.node, calls);
                 }
             }
-            Expr::FieldAccess { expr: inner, .. } | Expr::Index { expr: inner, .. } => {
-                Self::collect_calls_expr(&inner.node, calls);
+            Expr::FieldAccess { expr: inner, .. } => Self::collect_calls_expr(&inner.node, calls),
+            Expr::Index { expr, index } => {
+                Self::collect_calls_expr(&expr.node, calls);
+                Self::collect_calls_expr(&index.node, calls);
             }
             Expr::StructInit { fields, .. } => {
                 for (_, val) in fields {
@@ -189,6 +201,17 @@ impl TypeChecker {
                 }
             }
             Expr::Literal(_) | Expr::Var(_) => {}
+        }
+    }
+
+    fn collect_calls_place(place: &Place, calls: &mut Vec<String>) {
+        match place {
+            Place::Var(_) => {}
+            Place::FieldAccess(inner, _) => Self::collect_calls_place(&inner.node, calls),
+            Place::Index(inner, index) => {
+                Self::collect_calls_place(&inner.node, calls);
+                Self::collect_calls_expr(&index.node, calls);
+            }
         }
     }
 

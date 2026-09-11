@@ -26,9 +26,8 @@ fn merge_consecutive_hints() {
 fn merge_consecutive_pops() {
     let ops = vec![TIROp::Pop(2), TIROp::Pop(3), TIROp::Pop(1)];
     let result = optimize(ops);
-    assert_eq!(result.len(), 2);
-    assert!(matches!(result[0], TIROp::Pop(5)));
-    assert!(matches!(result[1], TIROp::Pop(1)));
+    assert_eq!(result.len(), 1);
+    assert!(matches!(result[0], TIROp::Pop(6)));
 }
 
 #[test]
@@ -151,50 +150,60 @@ fn collapse_epilogue_swap_pop_chain() {
         TIROp::Pop(1),
         TIROp::Return,
     ];
-    let result = optimize(ops);
-    assert!(matches!(result[0], TIROp::Swap(5)));
-    assert!(matches!(result[1], TIROp::Pop(3)));
-    assert!(matches!(result[2], TIROp::Return));
+    let input = (0..20).collect::<Vec<_>>();
+    assert_eq!(
+        stack_effect(&optimize(ops.clone()), input.clone()),
+        stack_effect(&ops, input)
+    );
 }
 
 #[test]
 fn collapse_constant_depth_swap1_pop1_chain() {
-    // 10x swap 1; pop 1 -> swap 10; pop 5; pop 5
-    let mut ops = Vec::new();
-    for _ in 0..10 {
-        ops.push(TIROp::Swap(1));
-        ops.push(TIROp::Pop(1));
+    for count in 1..=128 {
+        let ops: Vec<_> = (0..count)
+            .flat_map(|_| [TIROp::Swap(1), TIROp::Pop(1)])
+            .collect();
+        let input: Vec<_> = (0..count + 8).map(u64::from).collect();
+        let result = optimize(ops.clone());
+        assert_eq!(
+            stack_effect(&result, input.clone()),
+            stack_effect(&ops, input)
+        );
+        assert_eq!(result.len(), 2);
+        assert!(matches!(result[0], TIROp::Swap(n) if n == count));
+        assert!(matches!(result[1], TIROp::Pop(n) if n == count));
     }
-    ops.push(TIROp::Return);
-    let result = optimize(ops);
-    assert!(matches!(result[0], TIROp::Swap(10)));
-    assert!(matches!(result[1], TIROp::Pop(5)));
-    assert!(matches!(result[2], TIROp::Pop(5)));
-    assert!(matches!(result[3], TIROp::Return));
-    assert_eq!(result.len(), 4);
 }
 
 #[test]
-fn collapse_large_constant_depth_chain() {
-    // 24x swap 1; pop 1 -> swap 15; pop 5; pop 5; pop 5; swap 9; pop 5; pop 4
-    let mut ops = Vec::new();
-    for _ in 0..24 {
-        ops.push(TIROp::Swap(1));
-        ops.push(TIROp::Pop(1));
+fn cleanup_rewrites_preserve_survivors_across_depth_patterns() {
+    for depth in 1..40 {
+        for count in 1..=depth {
+            for decreasing in [false, true] {
+                let ops: Vec<_> = (0..count)
+                    .flat_map(|i| {
+                        [
+                            TIROp::Swap(if decreasing { depth - i } else { depth }),
+                            TIROp::Pop(1),
+                        ]
+                    })
+                    .collect();
+                let input: Vec<_> = (0..100).collect();
+                assert_eq!(
+                    stack_effect(&optimize(ops.clone()), input.clone()),
+                    stack_effect(&ops, input)
+                );
+            }
+        }
     }
-    ops.push(TIROp::Return);
-    let result = optimize(ops);
-    // First chunk: swap 15; pop 5; pop 5; pop 5
-    assert!(matches!(result[0], TIROp::Swap(15)));
-    assert!(matches!(result[1], TIROp::Pop(5)));
-    assert!(matches!(result[2], TIROp::Pop(5)));
-    assert!(matches!(result[3], TIROp::Pop(5)));
-    // Second chunk: swap 9; pop 5; pop 4
-    assert!(matches!(result[4], TIROp::Swap(9)));
-    assert!(matches!(result[5], TIROp::Pop(5)));
-    assert!(matches!(result[6], TIROp::Pop(4)));
-    assert!(matches!(result[7], TIROp::Return));
-    assert_eq!(result.len(), 8);
+}
+
+#[test]
+fn hint_batches_remain_abstract() {
+    assert!(matches!(
+        optimize(vec![TIROp::Hint(17), TIROp::Hint(19)]).as_slice(),
+        [TIROp::Hint(36)]
+    ));
 }
 
 fn stack_effect(ops: &[TIROp], mut stack: Vec<u64>) -> Vec<u64> {

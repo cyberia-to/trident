@@ -1,7 +1,7 @@
 program differential_auth_preimage
-use std.crypto.auth
+use std.crypto.preimage
 use vm.crypto.hash
 fn main(expected_secret: Field) -> Field {
-    auth.verify_preimage(hash.tip5(expected_secret, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+    preimage.verify_preimage(hash.single(expected_secret))
     1
 }

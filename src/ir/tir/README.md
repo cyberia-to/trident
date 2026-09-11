@@ -1,27 +1,30 @@
-# tir — Trident Intermediate Representation
+# Trident Intermediate Representation
 
-Target-independent TIR between the AST and backend assembly.
-
-The compiler pipeline is: parse -> typecheck -> TIRBuilder -> StackLowering -> assembly text.
+Typed stack IR shared by the Trident frontend and the Trisha adapter.
+The reference nox compiler follows its own AST-to-noun path, not this stack
+pipeline. See the [IR reference](../../../reference/ir.md).
 
 ## Structure
 
-- [`mod.rs`](mod.rs) — [`TIROp`](mod.rs:18) enum (53 variants in 4 tiers): Tier 0 structure, Tier 1 universal (stack, arithmetic, I/O, memory, hash, events, storage), Tier 2 provable (sponge, merkle), Tier 3 recursion (extension field, FRI). [`Display`](mod.rs:186) impl for debug printing.
-- [`builder/`](builder/) — AST-to-IR translation (target-independent). See [builder/README.md](builder/README.md).
-- [`lower/`](lower/) — IR-to-assembly backends (target-specific). See [lower/README.md](lower/README.md).
+- [`mod.rs`](mod.rs): `TIROp` definitions and debug formatting.
+- [`builder/`](builder/): AST-to-IR translation using target ABI widths.
+- [`stack/`](stack/): typed stack effects, bindings and spill layout.
+- [`optimize/`](optimize/): semantic transformations over typed operations.
 
-## Key design
+Triton legalization, instruction rendering and linking live in
+`trisha/rs/lower/`, not a `lower/` module inside this directory. The builder
+emits typed operations directly rather than generating TASM strings for a
+second parser.
 
-Higher tier = narrower target set. Tier 0 (structure) runs anywhere. Tier 1 (universal) is designed to compile to every blockchain. Tier 2 (provable) requires proof-capable targets. Tier 3 (recursion) requires recursive verification.
+Structural `IfElse`, `IfOnly` and `Loop` operations retain nested bodies.
+Counts and depths in stack operations express semantic effects; the target
+adapter enforces instruction limits. Inline `Asm` is explicitly target
+assembly, even though the surrounding operation is typed.
 
-Structural ops (`IfElse`, `IfOnly`, `Loop`) carry nested `Vec<TIROp>` bodies so each backend can choose its own control-flow lowering strategy. Abstract ops (`Open`, `RamRead/RamWrite`, `HashDigest`) keep the TIR target-independent while backends map them to native instructions.
+The operation tier names organize the source; they do not promise support
+on every catalog machine. The resolved package's intrinsic list and actual
+backend implementation determine which operations are available.
 
-## Dependencies
-
-- [`TerrainConfig`](../tools/target.rs:20) — VM parameters (stack depth, digest width, hash rate)
-- [`MonoInstance`](../typecheck/mod.rs:32) — monomorphized generic function instances from the type checker
-- [`StackManager`](stack.rs:58) / [`SpillFormatter`](stack.rs:16) — stack model with automatic RAM spill/reload
-
-## Entry point
-
-Compilation uses IR via [`src/lib.rs`](../lib.rs) — builds IR with [`TIRBuilder`](builder/mod.rs:37) then lowers with [`create_stack_lowering`](lower/mod.rs:23).
+Target parameters come from `TerrainConfig` through compilation options.
+The full resource/capability contract is documented in
+[Warrior API](../../../reference/warrior-api.md).

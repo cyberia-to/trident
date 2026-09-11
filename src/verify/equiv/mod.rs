@@ -26,7 +26,7 @@ use std::fmt;
 
 use crate::ast::display;
 pub(crate) use crate::ast::display::format_ast_type as format_type;
-use crate::ast::{self, File, FnDef, Item, Type};
+use crate::ast::{self, File, FnDef, Item};
 
 use crate::hash;
 use crate::sym::SymValue;

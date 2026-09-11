@@ -1,0 +1,40 @@
+# ---
+# tags: trident, config
+# crystal-type: source
+# crystal-domain: comp
+# ---
+# Jolt target configuration (a16z)
+# https://github.com/a16z/jolt
+
+[target]
+name = "jolt"
+display_name = "JOLT"
+architecture = "register"
+output_extension = ".elf"
+
+[field]
+prime = "BN254 scalar"
+bits = 254
+limbs = 4
+
+[stack]
+depth = 32
+spill_ram_base = 268435456
+
+[hash]
+function = "Poseidon2"
+digest_width = 1
+rate = 8
+
+[extension_field]
+degree = 0
+
+[cost]
+tables = ["cycles"]
+
+[status]
+level = 0
+lowering = ""
+cost_model = false
+tests = false
+notes = "Declared architecture; no current Trident/warrior implementation."

@@ -172,14 +172,9 @@ impl TIRBuilder {
 
             if has_return && total_width > 0 {
                 let to_pop = total_width.saturating_sub(ret_width);
-                if to_pop > 0 && to_pop <= 15 {
+                if to_pop > 0 {
                     self.ops.push(TIROp::Swap(to_pop));
                     self.emit_pop(to_pop);
-                } else if to_pop > 0 {
-                    for _ in 0..to_pop {
-                        self.ops.push(TIROp::Swap(1));
-                        self.ops.push(TIROp::Pop(1));
-                    }
                 }
             } else if !has_return {
                 self.emit_pop(total_width);

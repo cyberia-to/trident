@@ -221,12 +221,7 @@ impl TIRBuilder {
                 let keep = pre_loop_depth + 2; // outer vars + index + counter
                 let leftover = total_depth.saturating_sub(keep);
                 if leftover > 0 {
-                    let mut remaining = leftover;
-                    while remaining > 0 {
-                        let batch = remaining.min(5);
-                        body_ir.push(TIROp::Pop(batch));
-                        remaining -= batch;
-                    }
+                    body_ir.push(TIROp::Pop(leftover));
                 }
 
                 // Increment the index.

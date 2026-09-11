@@ -327,15 +327,23 @@ impl TypeChecker {
             b.insert(
                 "xx_dot_step".into(),
                 FnSig {
-                    params: vec![("a".into(), xfield_ty.clone()), ("ptr".into(), Ty::Field)],
-                    return_ty: Ty::Tuple(vec![xfield_ty.clone(), Ty::Field]),
+                    params: vec![
+                        ("acc".into(), xfield_ty.clone()),
+                        ("ptr_a".into(), Ty::Field),
+                        ("ptr_b".into(), Ty::Field),
+                    ],
+                    return_ty: Ty::Tuple(vec![xfield_ty.clone(), Ty::Field, Ty::Field]),
                 },
             );
             b.insert(
                 "xb_dot_step".into(),
                 FnSig {
-                    params: vec![("a".into(), xfield_ty.clone()), ("ptr".into(), Ty::Field)],
-                    return_ty: Ty::Tuple(vec![xfield_ty, Ty::Field]),
+                    params: vec![
+                        ("acc".into(), xfield_ty.clone()),
+                        ("ptr_a".into(), Ty::Field),
+                        ("ptr_b".into(), Ty::Field),
+                    ],
+                    return_ty: Ty::Tuple(vec![xfield_ty, Ty::Field, Ty::Field]),
                 },
             );
         }

@@ -330,15 +330,19 @@ fn foo(x: Field) -> Field {
 
 ### I/O and Non-Deterministic Input
 
+Signatures are available only when the resolved target package declares the intrinsic. Triton supports streaming public/secret I/O. Nox programs receive a subject and return a result; they do not support Triton streaming I/O. Joy's current public execution certificates reject secret and state witnesses.
+
 | Signature | Description |
 |-----------|-------------|
 | `pub_read() -> Field` | Read 1 public input |
-| `pub_read2()` ... `pub_read5()` | Read N public inputs |
+| `pub_read2()` ... `pub_read5()` | Triton: read exactly N public inputs; width five returns Digest |
 | `pub_write(v: Field)` | Write 1 public output |
 | `pub_write2(...)` ... `pub_write5(...)` | Write N public outputs |
 | `divine() -> Field` | Read 1 secret input (prover only) |
 | `divine3() -> (Field, Field, Field)` | Read 3 secret inputs |
-| `divine5() -> Digest` | Read D secret inputs as Digest |
+| `divine5() -> Digest` | Triton: read exactly five secret inputs as Digest |
+
+The generated `vm.io.io` module exposes tuple reads for widths two through D−1 (`read2`, `read3`, and `read4` on Triton), plus `read_digest() -> Digest` and `divine_digest() -> Digest` using the selected digest width. Calls must be supported by the selected target capabilities. The old `io.read5` and `io.divine5` aliases are absent. `std.target` is generated from the same resolved ABI: nox has digest width 4, hash rate 8, stack depth 0; Triton has 5, 10, and 16.
 
 ### Field Arithmetic
 
@@ -373,7 +377,7 @@ fn foo(x: Field) -> Field {
 |-----------|-------------|
 | `ram_read(addr) -> Field` | Read 1 word |
 | `ram_write(addr, val)` | Write 1 word |
-| `ram_read_block(addr) -> [Field; D]` | Read D words (D = digest width) |
+| `ram_read_block(addr) -> Digest` | Read D words (D = digest width) |
 | `ram_write_block(addr, vals)` | Write D words |
 
 ### Hash
@@ -382,36 +386,16 @@ fn foo(x: Field) -> Field {
 |-----------|-------------|
 | `hash(fields: Field x R) -> Digest` | Hash R field elements into a Digest (R = target hash rate) |
 
-`hash()` is the Tier 1 hash operation — available on every target. The rate R
-and digest width D are target-dependent. The user-facing function name varies
-by target: `vm.crypto.hash.tip5()` on TRITON, with other targets providing
-their native hash function. All compile to the `Hash` TIR operation internally.
-See [targets.md](targets.md) for per-VM hash functions.
+`vm.crypto.hash.native(...)` is generated for the selected machine: eight Field arguments and a four-field Digest on nox, ten arguments and a five-field Digest on Triton. `vm.crypto.hash.single(value)` fills the remaining native inputs with zero. Algorithm and input layout belong to compilation identity; equal source arguments across targets do not imply equal digests. Explicit Tip5 is `vm.triton.hash.tip5(...)`, supplied by Trisha. A catalog entry alone does not implement hashing or any other intrinsic.
 
 For sponge, Merkle, and extension field builtins (Tier 2-3), see
 [Part II](#part-ii--provable-computation-tier-2--tier-3) below.
 
 ### Portable OS (`os.*`)
 
-The `os.*` modules provide portable OS interaction — neuron identity,
-signals, state, and time. They are not builtins (they're standard library
-functions), but they compile to target-specific lowerings just like
-builtins do.
+Portable `os.neuron`, `os.signal`, and `os.time` modules are design concepts, not implemented libraries. The compiler has a narrower `os.state.read` builtin for nox; it does not establish working state proofs, and Joy's current certificate path rejects state execution. `lib/os/` is reserved for implemented portable contracts rather than populated with placeholders.
 
-| Module | Key functions | Available when |
-|--------|---------------|----------------|
-| `os.neuron` | `id() -> Digest`, `verify(expected: Digest) -> Bool`, `auth(credential: Digest) -> ()` | Target has identity |
-| `os.signal` | `send(from: Digest, to: Digest, amount: Field)`, `balance(neuron: Digest) -> Field` | Target has native value |
-| `os.state` | `read(key: Field) -> Field`, `write(key, value)`, `exists(key)` | Target has persistent state |
-| `os.time` | `now() -> Field`, `step() -> Field` | All targets |
-
-These sit between `std.*` (pure computation, all targets) and `os.<os>.*`
-(OS-native, one target). A program using only `std.*` + `os.*` compiles
-to any OS that supports the required concepts. The compiler emits clear
-errors when targeting an OS that lacks a concept (e.g., `os.neuron.id()`
-on UTXO chains, `os.signal.send()` on journal targets).
-
-For full API specifications and per-OS lowering tables, see [os.md](os.md).
+Network-specific SDKs are supplied by their owning runtime package. For example, `os.neptune.*` requires the explicit `neptune` target and lives in Trisha. The bare `triton` package does not export Neptune modules. See [os.md](os.md) for the design boundary and [warrior-api.md](warrior-api.md) for implemented package capabilities.
 
 ---
 
@@ -422,7 +406,7 @@ For full API specifications and per-OS lowering tables, see [os.md](os.md).
 | `#[cfg(flag)]` | Conditional compilation |
 | `#[test]` | Test function — run with `trident test` |
 | `#[pure]` | No I/O side effects allowed |
-| `#[intrinsic(name)]` | Maps to target instruction (std modules only) |
+| `#[intrinsic(name)]` | Declares a target intrinsic; signature and reachable capability are checked |
 | `#[requires(predicate)]` | Precondition — checked by `trident audit` |
 | `#[ensures(predicate)]` | Postcondition — `result` refers to return value |
 
@@ -591,14 +575,9 @@ These are design decisions, not roadmap items.
 
 # Part II — Provable Computation (Tier 2 + Tier 3)
 
-Proof-capable targets only. No meaningful equivalent on non-provable targets.
+The implemented operations below require explicit intrinsic capabilities from the selected package. Triton provides them through Trisha; nox does not provide this sponge/Merkle/extension-field ABI. Catalog tiers are design classifications, not installed backend support.
 
-Two capabilities: incremental algebraic hashing (sponge + Merkle) and
-extension field arithmetic. Programs using any Tier 2 feature cannot compile
-for Tier 1-only targets (SP1, OPENVM, CAIRO).
-See [targets.md](targets.md) for tier compatibility.
-
-Note: `hash()` is Tier 1 (universal) and documented in
+Target-native `hash()` is documented in
 [Section 6](#6-builtin-functions). The builtins below are Tier 2+.
 
 ---
@@ -607,7 +586,7 @@ Note: `hash()` is Tier 1 (universal) and documented in
 
 The sponge API enables incremental hashing of data larger than R fields.
 Initialize, absorb in chunks, squeeze the result. The rate R is
-target-dependent: 10 on TRITON, 8 on MIDEN.
+10 for the implemented Triton package. `vm.triton.hash.sponge_squeeze()` returns `[Field; 10]`, not a five-field Digest.
 
 | Signature | IR op | Description |
 |-----------|-------|-------------|
@@ -622,29 +601,16 @@ target-dependent: 10 on TRITON, 8 on MIDEN.
 
 | Signature | IR op | Description |
 |-----------|-------|-------------|
-| `merkle_step(idx: U32, d: Digest) -> (U32, Digest)` | `MerkleStep` | One tree level up |
-| `merkle_step_mem(ptr, idx, d) -> (Field, U32, Digest)` | `MerkleLoad` | Tree level from RAM |
+| `merkle_step(idx: U32, d0, d1, d2, d3, d4: Field) -> (U32, Digest)` | `MerkleStep` | One tree level up |
+| `merkle_step_mem(idx: U32, d0, d1, d2, d3, d4, ptr: Field) -> (U32, Digest, Field)` | `MerkleLoad` | Tree level from RAM |
 
-`merkle_step` authenticates one level of a Merkle tree. Call it in a loop
-to verify a full Merkle path:
-
-```trident
-pub fn verify(root: Digest, leaf: Digest, index: U32, depth: U32) {
-    let mut idx = index
-    let mut current = leaf
-    for _ in 0..depth bounded 64 {
-        (idx, current) = merkle_step(idx, current)
-    }
-    assert_digest(current, root)
-}
-```
+`vm.triton.merkle.step` wraps the flattened Triton builtin. Its sibling digest comes from Triton's nondeterministic digest queue. `vm.triton.merkle_proof.verify` provides the repeated path operation. These modules belong to Trisha; the previous generic `vm.crypto.merkle` and `std.crypto.merkle` aliases are absent.
 
 ---
 
 ## 16. Extension Field
 
-The extension field extends `Field` to degree E (E = 3 on TRITON and NOCK).
-Only available on targets where `xfield_width > 0`.
+The implemented extension field has degree three on Triton. Availability also requires the corresponding package intrinsics; a descriptor width alone does not implement arithmetic.
 
 ### Type
 
@@ -662,13 +628,12 @@ Only available on targets where `xfield_width > 0`.
 
 | Signature | IR op | Description |
 |-----------|-------|-------------|
-| `xfield(x0, ..., xE) -> XField` | *(constructor)* | Construct from E base field elements |
+| `xfield(x0, ..., x(E-1)) -> XField` | *(constructor)* | Construct from E base field elements |
 | `xinvert(a: XField) -> XField` | `ExtInvert` | Multiplicative inverse |
-| `xx_dot_step(acc, ptr_a, ptr_b) -> (XField, Field, Field)` | `FoldExt` | XField dot product step |
-| `xb_dot_step(acc, ptr_a, ptr_b) -> (XField, Field, Field)` | `FoldBase` | Mixed dot product step |
+| `xx_dot_step(acc: XField, ptr_a: Field, ptr_b: Field) -> (XField, Field, Field)` | `FoldExt` | XField dot product step |
+| `xb_dot_step(acc: XField, ptr_a: Field, ptr_b: Field) -> (XField, Field, Field)` | `FoldBase` | Mixed dot product step |
 
-The dot-step builtins are building blocks for inner product arguments and FRI
-verification — the core of recursive proof composition.
+Dot steps return the updated accumulator and both RAM pointers. `xx_dot_step` advances both pointers by three; `xb_dot_step` advances the extension pointer by three and the base-field pointer by one. Coefficients use source tuple order; Trisha converts to Triton native ordering during lowering. These are arithmetic primitives, not a complete recursive proof verifier.
 
 Note: The `*.` operator (scalar multiply) maps to `ExtMul` in the IR.
 
@@ -676,30 +641,9 @@ Note: The `*.` operator (scalar multiply) maps to `ExtMul` in the IR.
 
 ## 17. Proof Composition (Tier 3)
 
-Proofs that verify other proofs. TRITON and NOCK only.
+Recursive proof composition is not implemented by the released Neptune SDK. The old `os.neptune.proof.verify_inner_proof` prototype failed to constrain computed FRI/OOD/constraint values and is excluded from the production target package. Its source and dependent examples remain in `trisha/examples/experimental/neptune`; importing `os.neptune.proof` fails compilation.
 
-Tier 3 enables a program to verify another program's proof inside its own
-execution. This is STARK-in-STARK recursion: the verifier circuit runs as
-part of the prover's trace.
-
-```trident
-// Verify a proof of program_hash and use its public output
-proof_block(program_hash) {
-    // verification circuit runs here
-    // public outputs of the inner proof become available
-}
-```
-
-Tier 3 uses the extension field builtins above plus dedicated IR operations:
-
-- ProofBlock — Wraps a recursive verification circuit
-- FoldExt / FoldBase — FRI folding over extension / base field
-- ExtMul / ExtInvert — Extension field arithmetic for the verifier
-
-See [ir.md Part I, Tier 3](ir.md) for the full list of 5 recursive operations.
-
-Only TRITON and NOCK support Tier 3. Programs using proof composition
-cannot compile for any other target.
+`ProofBlock` currently supplies an IR container, not an authenticated verifier circuit. `FoldExt`, `FoldBase`, `ExtMul`, and `ExtInvert` supply arithmetic only. Their presence must not be interpreted as verification of an inner proof or a Neptune transaction. Trisha's CPU Triton STARK prover/verifier is a separate, implemented capability.
 
 ---
 
@@ -718,4 +662,4 @@ cannot compile for any other target.
 
 ---
 
-*Trident v0.5 — Write once. Prove anywhere.*
+*Availability is defined by the resolved compiler and warrior package capabilities.*

@@ -1,4 +1,10 @@
-# The Trident Standard Library: Complete Architecture
+# Standard library: implemented ownership and design catalog
+
+The implemented portable sources live in [`lib/std/`](../lib/std/); generic intrinsic contracts live in [`lib/vm/`](../lib/vm/). `std.target`, `vm.crypto.hash`, and `vm.io.io` are generated from the resolved machine ABI. Their source namespaces do not imply fixed digest widths or identical hash algorithms across machines.
+
+Triton-specific Tip5 and Merkle helpers live in Trisha as `vm.triton.hash`, `vm.triton.merkle`, and `vm.triton.merkle_proof`. Neptune authorization is `os.neptune.auth`, available only with the Neptune package. These are not portable `std.crypto.auth` or `std.crypto.merkle` modules. No complete `os.neptune.proof` verifier is released.
+
+The remaining sections are a **design catalog**, not an inventory of implemented modules or proof/security guarantees. Resolve actual availability through the installed package and the source tree. In particular, headings for quantum, private execution, proof composition, or deployment do not establish implemented capabilities.
 
 ## std.* — A Unified Framework for Verifiable Intelligence, Privacy, and Quantum Computation
 

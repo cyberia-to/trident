@@ -14,6 +14,12 @@ use super::{load_and_parse, resolve_input};
 pub struct AuditArgs {
     /// Input .tri file to audit
     pub input: Option<PathBuf>,
+    /// Compilation target (otherwise the project target, then nox).
+    #[arg(long)]
+    pub target: Option<String>,
+    /// Compilation profile for conditional declarations.
+    #[arg(long, default_value = "debug")]
+    pub profile: String,
     /// Show detailed output
     #[arg(long)]
     pub verbose: bool,
@@ -57,13 +63,41 @@ fn cmd_audit_symbolic(args: AuditArgs) {
         ..
     } = args;
     let ri = resolve_input(&input);
-    let entry = ri.entry;
+    let target = super::source_target(args.target.as_deref(), ri.project.as_ref());
+    let options = super::resolve_options(&target, &args.profile, ri.project.as_ref());
+    let (entry, options) = trident::source_options(&ri.entry, &options).unwrap_or_else(|errors| {
+        for error in errors {
+            eprintln!("error: {}", error.message);
+        }
+        process::exit(1)
+    });
+    if let Err(error) = trident::sym::validate_audit_target(&options.target_config) {
+        eprintln!("error: {error}");
+        process::exit(1);
+    }
+    if trident::check_project_with_options(&entry, &options).is_err() {
+        process::exit(1);
+    }
 
     eprintln!("Auditing {}...", input.display());
 
     let (system, parsed_file) = {
-        let (_source, file) = load_and_parse(&entry);
-        let per_fn = trident::sym::analyze_all(&file);
+        let (_source, mut file) = load_and_parse(&entry);
+        file.items.retain(|item| {
+            let cfg = match &item.node {
+                trident::ast::Item::Fn(value) => &value.cfg,
+                trident::ast::Item::Const(value) => &value.cfg,
+                trident::ast::Item::Struct(value) => &value.cfg,
+                trident::ast::Item::Event(value) => &value.cfg,
+            };
+            cfg.as_ref()
+                .is_none_or(|flag| options.cfg_flags.contains(&flag.node))
+        });
+        let per_fn = trident::sym::analyze_all_with_target(&file, &options.target_config)
+            .unwrap_or_else(|error| {
+                eprintln!("error: {error}");
+                process::exit(1)
+            });
         if verbose {
             if per_fn.is_empty() {
                 eprintln!("\n  No analyzable functions found.");
@@ -256,4 +290,3 @@ pub fn cmd_equiv(args: EquivArgs) {
         }
     }
 }
-

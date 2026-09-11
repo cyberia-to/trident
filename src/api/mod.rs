@@ -10,7 +10,6 @@ pub(crate) use crate::ast::{self, FileKind};
 pub(crate) use crate::cost;
 pub(crate) use crate::diagnostic::{render_diagnostics, Diagnostic};
 use crate::ir::tree::lower::nox::NoxCompiler;
-pub(crate) use crate::resolve::resolve_modules;
 pub(crate) use crate::span;
 pub(crate) use crate::target::{Arch, TerrainConfig};
 pub(crate) use crate::tir::builder::TIRBuilder;
@@ -37,6 +36,8 @@ pub struct CompileOptions {
     pub dep_dirs: Vec<std::path::PathBuf>,
     /// Version-matched modules supplied by a warrior, keyed by dotted module name.
     pub module_sources: std::collections::BTreeMap<String, String>,
+    /// Validated owner package; carries capability and compilation identity.
+    pub target_package: Option<crate::target::TargetPackage>,
 }
 
 impl Default for CompileOptions {
@@ -51,11 +52,76 @@ impl Default for CompileOptions {
             target_config: TerrainConfig::nox(),
             dep_dirs: Vec::new(),
             module_sources: std::collections::BTreeMap::new(),
+            target_package: None,
         }
     }
 }
 
 impl CompileOptions {
+    pub(crate) fn validate(&self) -> Result<(), Vec<Diagnostic>> {
+        if self.target_config.name == "nox" && self.target_config != TerrainConfig::nox() {
+            return Err(vec![Diagnostic::error(
+                "the nox backend requires the canonical nox ABI".into(),
+                span::Span::dummy(),
+            )]);
+        }
+        if let Some(package) = &self.target_package {
+            package
+                .validate()
+                .map_err(|e| vec![Diagnostic::error(e, span::Span::dummy())])?;
+            if package.terrain != self.target_config {
+                return Err(vec![Diagnostic::error(
+                    "target ABI differs from selected package".into(),
+                    span::Span::dummy(),
+                )]);
+            }
+        }
+        Ok(())
+    }
+
+    pub fn resolve(target: &str, profile: &str) -> Result<Self, Diagnostic> {
+        let options = Self::for_profile(profile);
+        if target == "nox" {
+            return Ok(options);
+        }
+        let package = crate::target::TargetPackage::discover(target)?;
+        options
+            .with_package(package)
+            .map_err(|e| Diagnostic::error(e, span::Span::dummy()))
+    }
+
+    pub(crate) fn library_sources(&self) -> std::collections::BTreeMap<String, String> {
+        let mut sources = crate::resources::intrinsic_modules(&self.target_config);
+        sources.extend(self.module_sources.clone());
+        sources.insert(
+            "std.target".into(),
+            crate::resources::target_constants(&self.target_config),
+        );
+        sources.insert(
+            "vm.crypto.hash".into(),
+            crate::resources::native_hash(&self.target_config),
+        );
+        sources.insert("vm.io.io".into(), crate::resources::io(&self.target_config));
+        sources
+    }
+
+    pub fn with_package(mut self, package: crate::target::TargetPackage) -> Result<Self, String> {
+        package.validate()?;
+        self.target_config = package.terrain.clone();
+        self.module_sources = package.modules.clone();
+        self.target_package = Some(package);
+        Ok(self)
+    }
+
+    pub(crate) fn checker(&self) -> TypeChecker {
+        let checker = TypeChecker::with_target(self.target_config.clone())
+            .with_cfg_flags(self.cfg_flags.clone());
+        match &self.target_package {
+            Some(package) => checker.with_intrinsics(&package.intrinsics),
+            None => checker,
+        }
+    }
+
     /// Create options for a named profile (debug/release/custom).
     ///
     /// Terrain is nox, as in [`Default`].
@@ -66,6 +132,7 @@ impl CompileOptions {
             target_config: TerrainConfig::nox(),
             dep_dirs: Vec::new(),
             module_sources: std::collections::BTreeMap::new(),
+            target_package: None,
         }
     }
 
@@ -106,19 +173,18 @@ pub fn compile_with_options(
     filename: &str,
     options: &CompileOptions,
 ) -> Result<String, Vec<Diagnostic>> {
+    options.validate()?;
     let file = crate::parse_source(source, filename)?;
 
     // Type check
-    let exports = match TypeChecker::with_target(options.target_config.clone())
-        .with_cfg_flags(options.cfg_flags.clone())
-        .check_file(&file)
-    {
+    let exports = match options.checker().check_file(&file) {
         Ok(exports) => exports,
         Err(errors) => {
             render_diagnostics(&errors, filename, source);
             return Err(errors);
         }
     };
+    exports.check_entry_requirements(&file, options)?;
 
     // Tree targets: direct AST → Noun (bypass TIR)
     if options.target_config.architecture == Arch::Tree {
@@ -208,7 +274,16 @@ pub fn check(source: &str, filename: &str) -> Result<(), Vec<Diagnostic>> {
 pub fn check_project(entry_path: &Path) -> Result<(), Vec<Diagnostic>> {
     use crate::pipeline::PreparedProject;
 
-    PreparedProject::build_default(entry_path)?;
+    let (entry, options) = tools::options_for_project(entry_path)?;
+    PreparedProject::build(&entry, &options)?;
+    Ok(())
+}
+
+pub fn check_project_with_options(
+    entry_path: &Path,
+    options: &CompileOptions,
+) -> Result<(), Vec<Diagnostic>> {
+    pipeline::PreparedProject::build(entry_path, options)?;
     Ok(())
 }
 
@@ -248,18 +323,17 @@ pub fn build_tir(
     filename: &str,
     options: &CompileOptions,
 ) -> Result<Vec<crate::tir::TIROp>, Vec<Diagnostic>> {
+    options.validate()?;
     let file = crate::parse_source(source, filename)?;
 
-    let exports = match TypeChecker::with_target(options.target_config.clone())
-        .with_cfg_flags(options.cfg_flags.clone())
-        .check_file(&file)
-    {
+    let exports = match options.checker().check_file(&file) {
         Ok(exports) => exports,
         Err(errors) => {
             render_diagnostics(&errors, filename, source);
             return Err(errors);
         }
     };
+    exports.check_entry_requirements(&file, options)?;
 
     let ir = TIRBuilder::new(options.target_config.clone())
         .with_cfg_flags(options.cfg_flags.clone())

@@ -13,8 +13,7 @@ use std::path::{Path, PathBuf};
 
 use crate::ast;
 use crate::diagnostic::{render_diagnostics, Diagnostic};
-use crate::resolve::{resolve_modules, resolve_modules_with_deps};
-use crate::typecheck::{ModuleExports, TypeChecker};
+use crate::typecheck::ModuleExports;
 use crate::CompileOptions;
 
 /// A single parsed module: path, source text, and parsed AST.
@@ -83,17 +82,12 @@ impl PreparedProject {
         options: &CompileOptions,
         render: bool,
     ) -> Result<Self, Vec<Diagnostic>> {
-        let resolved = if !options.module_sources.is_empty() {
-            crate::resolve::resolve_modules_with_sources(
-                entry_path,
-                options.dep_dirs.clone(),
-                options.module_sources.clone(),
-            )?
-        } else if options.dep_dirs.is_empty() {
-            resolve_modules(entry_path)?
-        } else {
-            resolve_modules_with_deps(entry_path, options.dep_dirs.clone())?
-        };
+        options.validate()?;
+        let resolved = crate::resolve::resolve_modules_with_sources(
+            entry_path,
+            options.dep_dirs.clone(),
+            options.library_sources(),
+        )?;
 
         let mut modules = Vec::new();
         for m in &resolved {
@@ -107,8 +101,7 @@ impl PreparedProject {
 
         let mut exports: Vec<ModuleExports> = Vec::new();
         for pm in &modules {
-            let mut tc = TypeChecker::with_target(options.target_config.clone())
-                .with_cfg_flags(options.cfg_flags.clone());
+            let mut tc = options.checker();
             for e in &exports {
                 tc.import_module(e);
             }
@@ -132,14 +125,15 @@ impl PreparedProject {
             }
         }
 
+        if let Some((entry, exports)) = modules
+            .iter()
+            .zip(&exports)
+            .find(|(m, _)| m.file.kind == ast::FileKind::Program)
+            .or_else(|| modules.last().zip(exports.last()))
+        {
+            exports.check_entry_requirements(&entry.file, options)?;
+        }
         Ok(PreparedProject { modules, exports })
-    }
-
-    /// Build a project with default options (nox target, debug profile).
-    ///
-    /// Used by `check_project` and `verify_project` which don't need target options.
-    pub fn build_default(entry_path: &Path) -> Result<Self, Vec<Diagnostic>> {
-        Self::build(entry_path, &CompileOptions::default())
     }
 
     /// Build a global intrinsic map from all modules.

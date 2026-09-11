@@ -10,13 +10,13 @@ Walks a type-checked AST and produces `Vec<TIROp>`. Target-independent.
 | [`stmt.rs`](stmt.rs) | Statement emission | [`build_block`](stmt.rs:15), [`build_stmt`](stmt.rs:24), [`build_match`](stmt.rs:283) |
 | [`expr.rs`](expr.rs) | Expression emission | [`build_expr`](expr.rs:11), [`build_var_expr`](expr.rs:116), [`build_field_access`](expr.rs:200), [`build_index`](expr.rs:271) |
 | [`call.rs`](call.rs) | Function call dispatch | [`build_call`](call.rs:12) (~40 intrinsics), [`build_user_call`](call.rs:225) |
-| [`helpers.rs`](helpers.rs) | Stack and control helpers | [`parse_spill_effect`](helpers.rs:16), [`flush_stack_effects`](helpers.rs:87), [`emit_and_push`](helpers.rs:96), [`fresh_label`](helpers.rs:80) |
+| [`helpers.rs`](helpers.rs) | Stack and control helpers | [`flush_stack_effects`](helpers.rs:87), [`emit_and_push`](helpers.rs:96), [`fresh_label`](helpers.rs:80) |
 | [`layout.rs`](layout.rs) | Type width and struct layout | [`format_type_name`](layout.rs:13), [`resolve_type_width`](layout.rs:29), [`register_struct_layout_from_type`](layout.rs:68) |
 | [`tests.rs`](tests.rs) | Unit tests | builder output verification, spill parser tests |
 
 ## How it works
 
-[`TIRBuilder`](mod.rs:37) maintains a [`StackManager`](../stack.rs:58) that models the runtime stack with LRU spill/reload to RAM. As it walks the AST, it pushes [`TIROp`](../mod.rs:18) variants and keeps the stack model in sync. Structural control flow (`IfElse`, `Loop`) captures nested bodies as `Vec<TIROp>` rather than emitting flat labels.
+[`TIRBuilder`](mod.rs:37) maintains a [`StackManager`](../stack.rs:58) that models the runtime stack with LRU typed spill/reload to RAM. As it walks the AST, it pushes [`TIROp`](../mod.rs:18) variants and keeps the stack model in sync. Structural control flow (`IfElse`, `Loop`) captures nested bodies as `Vec<TIROp>` rather than emitting flat labels.
 
 ## Data flow
 

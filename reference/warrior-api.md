@@ -140,6 +140,52 @@ no neural backend. The compilation and runtime surface is available without it.
 | [joy](https://github.com/cyberia-to/joy) | nox · cyber | `runtime::*`, `target`, `field::proof` — takes the bundle, executes on cyber-nox, proves with zheng |
 | [trisha](https://github.com/cyberia-to/trisha) | Triton VM · Neptune | per-module TIR, owned lowering/linker and runtime, source metadata via `bundle_with_assembly` |
 
-Neptune runtime modules and Triton baselines live in Trisha. Target declarations
-stay in the core registry. The release audit records current proof-support
+Neptune runtime modules and Triton baselines live in Trisha. The core discovery catalog records owners; implemented target declarations
+come from their runtime packages. The release audit records current proof-support
 limits; this API contract does not certify the cryptography of a linked warrior.
+
+## Target packages (compiler API 1)
+
+The owner-approved target resource contract uses `target::TargetPackage`.
+Warriors implement `describe --target <terrain-or-union>` and emit one JSON
+object without executing user programs. `schema_version` and `compiler_api`
+are both 1. The package carries owner/version, terrain ABI, optional union,
+state presets, module sources and their Hemera content hashes, intrinsic and
+assembly-instruction names, and separate runtime capabilities. Missing or
+incompatible packages fail explicitly. The compiler retains the nox reference
+ABI; external target definitions come from their warrior.
+
+`TargetPackage::seal` computes module identities; `validate` checks the schema,
+bounds, matching module declarations/content hashes, reserved generated module
+keys and selected-network membership. `CompileOptions::with_package` validates the
+package and selects its terrain, module sources and capabilities together.
+Public IO, secret execution, public proofs and deployment are independently
+specified by runtime restrictions and proof format identifiers.
+
+Core resource names are dotted language namespaces, independent of physical
+`lib/` paths. Explicit locked/project module sources precede embedded sources;
+ambient working-directory library trees never replace packaged modules.
+`std.target` is generated from the selected ABI. Intrinsic declarations must
+match the selected ABI. Transitive requirements of reachable functions must be
+provided by the package; unused unsupported helpers may remain in libraries.
+Instruction batching and addressable stack depths belong to warrior lowering.
+
+`TargetPackage::discover` reads an explicit lock directory when
+`TRIDENT_TARGET_PACKAGES` is set, otherwise the installed owner's descriptor.
+Descriptor lookup and command dispatch choose the same executable: registered
+`trident-<target>`, `trident-<owner>`, then `<owner>` on PATH. Descriptor output
+is bounded to 32 MiB and 15 seconds. Before a locked package is used for runtime
+or foreign compilation, its compilation identity must equal the actual
+executable's `describe` output. Both packages must support the requested command.
+Unknown owners and incompatible versions fail before executing user programs.
+
+Compilation identity binds the selected ABI, package version, compile-time
+network, cfg and the actual resolved module bytes. Deployment state presets
+are excluded. Package manifests name `program<output_extension>` and bind its
+bytes; foreign cost estimates are absent when the owner supplies none.
+`package --state` and registry `deploy --state` are unsupported and fail
+explicitly. Reading declared state presets does not imply live state execution.
+
+Production resources contain modules only. Entry programs and unfinished
+recursive verifier experiments live in Trisha examples and are never exported
+through the Neptune SDK package.

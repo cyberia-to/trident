@@ -350,7 +350,7 @@ pub fn analyze_function(file: &File, fn_name: &str) -> ConstraintSystem {
 }
 
 /// Analyze all functions in a file, returning per-function constraint systems.
-/// For programs, analyzes `main`. For modules, analyzes every non-test function with a body.
+/// Uses the reference nox ABI and analyzes every non-test function with a body.
 pub fn analyze_all(file: &File) -> Vec<(String, ConstraintSystem)> {
     let mut results = Vec::new();
     for item in &file.items {

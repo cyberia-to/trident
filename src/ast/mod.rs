@@ -390,3 +390,8 @@ impl BinOp {
         }
     }
 }
+
+/// Canonical builtin name inside a parsed intrinsic attribute.
+pub fn intrinsic_name(attribute: &str) -> &str {
+    attribute.strip_prefix("intrinsic(").and_then(|s| s.strip_suffix(')')).unwrap_or(attribute)
+}

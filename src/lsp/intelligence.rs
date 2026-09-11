@@ -33,8 +33,9 @@ impl TridentLsp {
             return Ok(None);
         }
 
+        let options = super::project::editor_options(uri);
         // Check builtins first
-        if let Some(info) = builtin_hover(&word) {
+        if let Some(info) = options.as_ref().and_then(|o| builtin_hover(&word, o)) {
             return Ok(Some(Hover {
                 contents: HoverContents::Markup(MarkupContent {
                     kind: MarkupKind::Markdown,
@@ -141,6 +142,7 @@ impl TridentLsp {
             None => return Ok(None),
         };
 
+        let options = super::project::editor_options(uri);
         let mut items = Vec::new();
 
         // Check if we're after a dot (module member completion)
@@ -223,7 +225,11 @@ impl TridentLsp {
             });
         }
 
-        for (name, detail) in builtin_completions() {
+        for (name, detail) in options
+            .as_ref()
+            .map(builtin_completions)
+            .unwrap_or_default()
+        {
             items.push(CompletionItem {
                 label: name,
                 kind: Some(CompletionItemKind::FUNCTION),
@@ -274,8 +280,12 @@ impl TridentLsp {
 
         let bare_name = fn_name.rsplit('.').next().unwrap_or(&fn_name);
 
+        let options = super::project::editor_options(uri);
         // Try builtins first
-        if let Some((params, ret_ty)) = builtin_signature(bare_name) {
+        if let Some((params, ret_ty)) = options
+            .as_ref()
+            .and_then(|o| builtin_signature(bare_name, o))
+        {
             let params_str: Vec<String> = params
                 .iter()
                 .map(|(n, t)| format!("{}: {}", n, t))

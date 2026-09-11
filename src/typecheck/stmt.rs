@@ -74,13 +74,13 @@ impl TypeChecker {
                                     self.define_var(&name.node, ty, *mutable);
                                 }
                             }
-                        } else if matches!(resolved_ty, Ty::Digest(_)) {
+                        } else if matches!(resolved_ty, Ty::Digest(_) | Ty::XField(_)) {
                             // Digest decomposition: let (f0, f1, ...) = digest
                             let dw = resolved_ty.width() as usize;
                             if names.len() != dw {
                                 self.error(
                                     format!(
-                                        "digest destructuring requires exactly {} names, got {}",
+                                        "field aggregate destructuring requires exactly {} names, got {}",
                                         dw,
                                         names.len()
                                     ),
@@ -193,12 +193,12 @@ impl TypeChecker {
                         );
                     }
                     true
-                } else if matches!(val_ty, Ty::Digest(_)) {
+                } else if matches!(val_ty, Ty::Digest(_) | Ty::XField(_)) {
                     let dw = val_ty.width() as usize;
                     if names.len() != dw {
                         self.error(
                             format!(
-                                "Digest destructuring requires exactly {} names, got {}",
+                                "field aggregate destructuring requires exactly {} names, got {}",
                                 dw,
                                 names.len()
                             ),

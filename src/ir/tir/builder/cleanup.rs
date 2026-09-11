@@ -7,7 +7,7 @@ impl TIRBuilder {
         if dead == 0 {
             return;
         }
-        if ret_width <= 15 && dead % ret_width == 0 {
+        if dead % ret_width == 0 {
             for _ in 0..dead {
                 self.ops.extend([TIROp::Swap(ret_width), TIROp::Pop(1)]);
             }
