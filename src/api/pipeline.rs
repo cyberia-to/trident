@@ -12,7 +12,6 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use crate::ast;
-use crate::ast::FileKind;
 use crate::diagnostic::{render_diagnostics, Diagnostic};
 use crate::resolve::{resolve_modules, resolve_modules_with_deps};
 use crate::typecheck::{ModuleExports, TypeChecker};
@@ -35,8 +34,9 @@ impl PreparedProject {
     /// Build a project from an entry path using the given compile options.
     ///
     /// This performs the resolve → parse → typecheck pipeline that is shared
-    /// across `compile_project`, `run_tests`, `analyze_costs_project`,
-    /// and `generate_docs`.
+    /// across `compile_project`, `run_tests`, and the tree-target cost path
+    /// (`nox_cost_project`). Stack-target cost analysis moved to the
+    /// warrior with the lowering it priced.
     pub fn build(entry_path: &Path, options: &CompileOptions) -> Result<Self, Vec<Diagnostic>> {
         Self::build_inner(entry_path, options, true)
     }
@@ -101,24 +101,11 @@ impl PreparedProject {
     }
 
 
-    /// Build a project with default options (Triton target, debug profile).
+    /// Build a project with default options (nox target, debug profile).
     ///
     /// Used by `check_project` and `verify_project` which don't need target options.
     pub fn build_default(entry_path: &Path) -> Result<Self, Vec<Diagnostic>> {
         Self::build(entry_path, &CompileOptions::default())
-    }
-
-
-    /// Return the program module (last in topological order, has `FileKind::Program`).
-    pub fn program_module(&self) -> Option<&ParsedModule> {
-        self.modules
-            .iter()
-            .find(|m| m.file.kind == FileKind::Program)
-    }
-
-    /// Return the last parsed file (the entry / program module).
-    pub fn last_file(&self) -> Option<&ast::File> {
-        self.modules.last().map(|m| &m.file)
     }
 
     /// Build a global intrinsic map from all modules.

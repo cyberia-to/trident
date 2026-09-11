@@ -5,6 +5,61 @@ Lower is colder. Colder is more stable.
 
 ## Unreleased
 
+- **BREAKING: Triton/Neptune-only logic moved out of trident, wholesale
+  (S3 of `.claude/plans/warrior-owns-lowering.md`).** trident stops at
+  TIR; trisha owns the last mile. Moved to trisha (as its own
+  `trisha-rs` modules, ~9k LOC + the moved test suites):
+  - `ir/tir/lower/*` (`StackLowering`, `TritonLowering`, `create_stack_lowering`)
+    and `ir/tir/linker.rs` — instruction selection and TASM linking.
+  - The whole AET-table cost subsystem (`cost::{analyzer, model, scorer,
+    stack_verifier, report, json, visit}`) — a `CostModel` trait with
+    exactly one implementation (Triton), the same shape `StackLowering`
+    was before it moved. `cost::nox` (reductions) is trident's only cost
+    model now.
+  - The neural optimizer (`src/neural/`, all of it — vocabulary, GNN
+    encoder/decoder, GFlowNet training, beam search) — its vocabulary
+    *is* TASM tokens and its reward runs through the moved
+    `stack_verifier`; there is no other target that trains today. The
+    `neural` feature flag is gone with it — trident no longer depends on
+    burn/wgpu/rayon/rkyv at all.
+  - `cli::{bench, train, trisha}` (the bench harness, training CLI, and
+    trisha-subprocess helpers they shared).
+  - `baselines/triton/*.tasm` (10.7k lines) and the ~110 TASM-asserting
+    tests (`api/tests/{compile,features,neptune,prove}.rs`,
+    `tests/audit_stdlib.rs`) — they test the moved lowering, so they
+    test it from trisha now.
+  - `trident audit`'s execution-correctness mode (classic/hand/neural
+    vs baselines, no-args) — redundant with `trisha bench`; `trident
+    audit <file>` (symbolic/formal verification) is unchanged.
+  - `trident doc` and `--annotate` (`api/doc.rs`, `cli/doc.rs`) —
+    cost-annotated documentation built entirely on the moved analyzer;
+    removed rather than kept dishonest for nox (its `--target nox`
+    default silently ran the Triton cost model, since it was the only
+    one registered).
+  - LSP inlay hints and hover cost annotations (`lsp/hints.rs`,
+    `format_cost_inline`, the `**Cost:**` line in hover) — same reason.
+  Deleted as dead code surfaced along the way: `ir/tir/encode.rs` (416
+  LOC, zero callers), `package/cache.rs` (446 LOC, zero callers,
+  TASM-typed), `PreparedProject::{program_module, last_file}`.
+  **Fixed in the same pass**, found while tracing the last real callers
+  of the moved cost types: `deploy::generate_artifact` took the
+  Triton-only `ProgramCost` for a job (embedding cost numbers in a
+  package manifest) that only needed the already-generic `BundleCost` —
+  it does now, and packaging is target-agnostic again. `trident build
+  --target triton` (and `--target` for any other stack engine) now
+  delegates to the installed warrior, the same way `run`/`prove`/
+  `verify` already did — the honest error trident gives when no warrior
+  is installed points at a real, working delegation path, not an
+  aspirational one.
+  Verified: `trisha build` on real programs is byte-identical to what
+  `trident build --target triton` used to emit, then to what it now
+  gets via delegation; `trisha run/prove/verify` round-trip for real
+  (`triple(5)+1` → 16, proof in 33 ms, PASS); `trisha build --costs`
+  prints a real per-function AET-table report. 654 trident tests green
+  (was 955 — the delta is what moved to trisha, not lost coverage), 295
+  trisha tests green (179 of them moved from trident), zero warnings in
+  both repos.
+
 - **BREAKING (library): the default terrain is nox.** The CLI has
   defaulted to nox since 0.2.0, but `CompileOptions::default()` and
   `::for_profile()` still handed back Triton — so `trident::compile()`,
@@ -28,6 +83,10 @@ Lower is colder. Colder is more stable.
   (`required-features`). Also fixes a pre-existing break on master:
   `benches/end_to_end.rs` constructed `BeamConfig` without four of its
   fields; now `..Default::default()`, no invented numbers.
+- **Superseded by the entry above**: the `neural` feature flag this entry
+  introduced is gone entirely now — `src/neural/` itself moved to trisha,
+  so there is nothing left in trident-core to gate. `benches/end_to_end.rs`
+  (which needed the flag) moved with it.
 - **Correction to that commit's message** (51aa904): it claimed dropping
   burn from a warrior's graph removed the class of breakage behind
   trisha#1. It did not. trisha#1's root cause was the vendored

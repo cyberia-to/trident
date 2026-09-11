@@ -309,35 +309,3 @@ fn test_find_call_context_space_before_paren() {
     let ctx = find_call_context(src, Position::new(0, 8));
     assert_eq!(ctx, Some(("foo".to_string(), 1)));
 }
-
-// --- format_cost_inline ---
-
-#[test]
-fn test_format_cost_inline_zero() {
-    let cost = crate::cost::TableCost::from_slice(&[0, 0, 0, 0, 0, 0]);
-    let s = format_cost_inline(&cost);
-    assert!(s.contains("cc=0"), "should contain cc=0, got: {}", s);
-    assert!(
-        s.contains("dominant:"),
-        "should contain dominant label, got: {}",
-        s
-    );
-}
-
-#[test]
-fn test_format_cost_inline_hash_dominant() {
-    let cost = crate::cost::TableCost::from_slice(&[1, 6, 0, 1, 0, 0]);
-    let s = format_cost_inline(&cost);
-    assert!(s.contains("cc=1"), "should contain cc=1, got: {}", s);
-    assert!(s.contains("hash=6"), "should contain hash=6, got: {}", s);
-    assert!(
-        s.contains("dominant: hash"),
-        "dominant should be hash, got: {}",
-        s
-    );
-    assert!(
-        !s.contains("u32="),
-        "zero u32 should be omitted, got: {}",
-        s
-    );
-}

@@ -60,8 +60,18 @@ pub fn cmd_check(args: CheckArgs) {
     if costs {
         if let Some(source_path) = find_program_source(&input) {
             let options = resolve_options(&target, &profile, ri.project.as_ref());
-            if let Ok(program_cost) = trident::analyze_costs_project(&source_path, &options) {
-                eprintln!("\n{}", program_cost.format_report());
+            // nox prices in reductions; the AET-table cost model for stack
+            // targets moved to the warrior with the lowering it priced.
+            if options.target_config.architecture == trident::target::Arch::Tree {
+                if let Ok(nox_cost) = trident::nox_cost_project(&source_path, &options) {
+                    eprintln!("\n{}", nox_cost.format_report());
+                }
+            } else {
+                eprintln!(
+                    "note: --costs only reports the nox reduction model; \
+                     the warrior has its own cost model for '{}'",
+                    target
+                );
             }
         }
     }

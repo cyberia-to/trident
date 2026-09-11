@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 
 use crate::ast;
 use crate::ast::display::format_ast_type;
-use crate::cost::ProgramCost;
+use crate::runtime::artifact::BundleCost;
 use crate::hash::ContentHash;
 use crate::target::{Arch, TerrainConfig, UnionConfig};
 
@@ -83,7 +83,7 @@ pub fn generate_artifact(
     version: &str,
     tasm: &str,
     source_file: &ast::File,
-    cost: &ProgramCost,
+    cost: &BundleCost,
     target_vm: &TerrainConfig,
     target_os: Option<&UnionConfig>,
     output_base: &Path,
@@ -120,9 +120,7 @@ pub fn generate_artifact(
         target_os: target_os.map(|os| os.name.clone()),
         architecture,
         cost: ManifestCost {
-            table_values: (0..cost.total.count as usize)
-                .map(|i| cost.total.get(i))
-                .collect(),
+            table_values: cost.table_values.clone(),
             table_names: cost.table_names.clone(),
             padded_height: cost.padded_height,
         },

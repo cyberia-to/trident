@@ -131,8 +131,13 @@ fn test_generate_artifact_roundtrip() {
     // Parse the source
     let file = crate::parse_source_silent(source, filename).unwrap();
 
-    // Create a minimal cost
-    let cost = crate::cost::CostAnalyzer::default().analyze_file(&file);
+    let _ = &file;
+    let cost = crate::runtime::artifact::BundleCost {
+        table_values: vec![3, 0],
+        table_names: vec!["processor".into(), "hash".into()],
+        padded_height: 4,
+        estimated_proving_ns: 0,
+    };
 
     let target_vm = TerrainConfig::triton();
     let tasm = "push 1\nwrite_io 1\nhalt\n";

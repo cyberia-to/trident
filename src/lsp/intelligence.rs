@@ -13,7 +13,7 @@ use tower_lsp::lsp_types::*;
 use crate::types::Ty;
 
 use super::builtins::{builtin_completions, builtin_hover, builtin_signature};
-use super::util::{find_call_context, format_cost_inline, text_before_dot, word_at_position};
+use super::util::{find_call_context, text_before_dot, word_at_position};
 use super::TridentLsp;
 
 impl TridentLsp {
@@ -34,9 +34,7 @@ impl TridentLsp {
         }
 
         // Check builtins first
-        if let Some(mut info) = builtin_hover(&word) {
-            let cost = crate::cost::cost_builtin("triton", &word);
-            info = format!("{}\n\n**Cost:** {}", info, format_cost_inline(&cost));
+        if let Some(info) = builtin_hover(&word) {
             return Ok(Some(Hover {
                 contents: HoverContents::Markup(MarkupContent {
                     kind: MarkupKind::Markdown,
@@ -63,15 +61,12 @@ impl TridentLsp {
                     } else {
                         format!(" -> {}", ret_ty.display())
                     };
-                    let mut info = format!(
+                    let info = format!(
                         "```trident\nfn {}({}){}\n```",
                         fname,
                         params_str.join(", "),
                         ret
                     );
-                    if let Some(cost) = self.compute_function_cost(&file_path, bare) {
-                        info = format!("{}\n\n**Cost:** {}", info, format_cost_inline(&cost));
-                    }
                     return Ok(Some(Hover {
                         contents: HoverContents::Markup(MarkupContent {
                             kind: MarkupKind::Markdown,

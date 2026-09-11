@@ -3,7 +3,6 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-pub mod cache;
 #[allow(dead_code)]
 pub mod hash;
 pub mod manifest;
