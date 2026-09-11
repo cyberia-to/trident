@@ -30,7 +30,9 @@
 //! - expr `;` → cons the value on (evaluated for effect), never silently
 //!              dropped — a crashing expression must crash
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
+
+mod modules;
 
 use crate::ast::{self, BinOp, Block, Expr, FnDef, Item, Literal, Pattern, Stmt};
 use crate::span::Spanned;
@@ -312,6 +314,10 @@ type Cont<'a> = &'a mut dyn FnMut(&mut NoxCompiler) -> LowerResult;
 /// Compiles a typed AST directly into nox Noun formulas.
 pub struct NoxCompiler {
     scope: Scope,
+    /// The module whose body is currently being lowered. Symbols are stored
+    /// with their full module name; entering a callee changes this context.
+    current_module: String,
+    module_aliases: BTreeMap<String, BTreeMap<String, String>>,
     /// Resolved constants: name → value.
     constants: BTreeMap<String, u64>,
     /// All function definitions in the module, keyed by name (for inlining).
@@ -331,6 +337,8 @@ impl NoxCompiler {
     pub fn new() -> Self {
         Self {
             scope: Scope::new(),
+            current_module: String::new(),
+            module_aliases: BTreeMap::new(),
             constants: BTreeMap::new(),
             fns: BTreeMap::new(),
             structs: BTreeMap::new(),
@@ -349,46 +357,7 @@ impl NoxCompiler {
 
     /// Compile an AST file. Returns the Noun formula for the entry function.
     pub fn compile_file(&mut self, file: &ast::File) -> Result<Noun, String> {
-        // Collect constants, function definitions, and struct layouts.
-        for item in &file.items {
-            match &item.node {
-                Item::Const(c) => {
-                    if let Expr::Literal(Literal::Integer(v)) = &c.value.node {
-                        self.constants.insert(c.name.node.clone(), *v);
-                    }
-                }
-                Item::Fn(f) => {
-                    self.fns.insert(f.name.node.clone(), f.clone());
-                }
-                Item::Struct(sd) => {
-                    let fields = sd
-                        .fields
-                        .iter()
-                        .map(|f| (f.name.node.clone(), f.ty.node.clone()))
-                        .collect();
-                    self.structs.insert(sd.name.node.clone(), fields);
-                }
-                _ => {}
-            }
-        }
-
-        // Find entry function (main or first public fn)
-        let entry = file
-            .items
-            .iter()
-            .find_map(|item| match &item.node {
-                Item::Fn(f) if f.name.node == "main" => Some(f),
-                _ => None,
-            })
-            .or_else(|| {
-                file.items.iter().find_map(|item| match &item.node {
-                    Item::Fn(f) if f.is_pub && f.body.is_some() => Some(f),
-                    _ => None,
-                })
-            })
-            .ok_or_else(|| "no entry function found".to_string())?;
-
-        self.compile_fn(entry)
+        self.compile_modules(&[file], file, &BTreeSet::from(["debug".to_string()]))
     }
 
     /// Compile a function definition into a nox formula.
@@ -468,7 +437,7 @@ impl NoxCompiler {
                     let init_f = self.compile_expr(&init.node)?;
                     let inferred = ty
                         .as_ref()
-                        .map(|t| t.node.clone())
+                        .map(|t| self.qualified_type(&t.node))
                         .or_else(|| self.expr_type(&init.node));
                     self.scope.bind(&name.node);
                     if let Some(t) = inferred {
@@ -485,7 +454,7 @@ impl NoxCompiler {
                     let init_f = self.compile_expr(&init.node)?;
                     let init_ty = ty
                         .as_ref()
-                        .map(|t| t.node.clone())
+                        .map(|t| self.qualified_type(&t.node))
                         .or_else(|| self.expr_type(&init.node));
                     let elem_tys: Vec<Option<ast::Type>> = match &init_ty {
                         Some(ast::Type::Tuple(ts)) => ts.iter().cloned().map(Some).collect(),
@@ -793,6 +762,12 @@ impl NoxCompiler {
 
         // Compile the body against a fresh scope; generics enter as constants.
         let saved_scope = std::mem::replace(&mut self.scope, Scope::new());
+        let callee_module = func.name.node.rsplit_once('.')
+            .map(|(module, _)| module.to_string())
+            .unwrap_or_else(|| self.current_module.clone());
+        let saved_module = std::mem::replace(&mut self.current_module, callee_module);
+        let generic_consts: Vec<_> = generic_consts.into_iter()
+            .map(|(name, value)| (self.symbol(&name), value)).collect();
         let saved_consts: Vec<(String, Option<u64>)> = generic_consts
             .iter()
             .map(|(k, _)| (k.clone(), self.constants.get(k).copied()))
@@ -821,6 +796,7 @@ impl NoxCompiler {
             }
         }
         self.scope = saved_scope;
+        self.current_module = saved_module;
         let body_f = body_res?;
 
         self.inline_nodes += count_nodes(&body_f);
@@ -839,7 +815,9 @@ impl NoxCompiler {
     fn eval_const(&self, e: &Expr) -> Option<u64> {
         match e {
             Expr::Literal(Literal::Integer(v)) => Some(*v),
-            Expr::Var(name) => self.constants.get(name).copied(),
+            Expr::Var(name) if self.scope.lookup(name).is_none() => {
+                self.constants.get(&self.symbol(name)).copied()
+            }
             _ => None,
         }
     }
@@ -849,7 +827,9 @@ impl NoxCompiler {
     fn expr_type(&self, e: &Expr) -> Option<ast::Type> {
         match e {
             Expr::Var(name) => self.scope.lookup_type(name).cloned(),
-            Expr::StructInit { path, .. } => Some(ast::Type::Named(path.node.clone())),
+            Expr::StructInit { path, .. } => {
+                Some(self.qualified_type(&ast::Type::Named(path.node.clone())))
+            }
             Expr::ArrayInit(elems) => {
                 let inner = elems
                     .first()
@@ -880,7 +860,7 @@ impl NoxCompiler {
             Expr::Call { path, .. } => {
                 let name = path.node.as_dotted();
                 self.fns
-                    .get(&name)
+                    .get(&self.symbol(&name))
                     .and_then(|f| f.return_ty.as_ref())
                     .map(|t| t.node.clone())
             }
@@ -1034,14 +1014,14 @@ impl NoxCompiler {
             },
 
             Expr::Var(name) => {
-                // Check constants first
-                if let Some(&val) = self.constants.get(name) {
-                    return Ok(nox_quote(Noun::atom(val)));
-                }
-
                 // Simple variable → axis lookup.
                 if let Some(pos) = self.scope.lookup(name) {
                     return Ok(nox_axis(stack_axis(pos)));
+                }
+                // A local binding shadows a module constant. The same rule
+                // governs eval_const, otherwise bounds/indices can miscompile.
+                if let Some(&val) = self.constants.get(&self.symbol(name)) {
+                    return Ok(nox_quote(Noun::atom(val)));
                 }
 
                 // Dotted name = struct field access (`p.x`, `p.q.r`). trident's
@@ -1078,7 +1058,15 @@ impl NoxCompiler {
                 args,
                 generic_args,
             } => {
-                let name = path.node.as_dotted();
+                let source_name = path.node.as_dotted();
+                // Imported intrinsic declarations use the same nox builtin
+                // lowering as a direct call. Their source module path is an
+                // API name, not a machine instruction or an inlinable body.
+                let name = self.fns.get(&self.symbol(&source_name))
+                    .and_then(|f| f.intrinsic.as_ref())
+                    .map(|i| i.node.strip_prefix("intrinsic(")
+                        .and_then(|s| s.strip_suffix(')')).unwrap_or(&i.node).to_string())
+                    .unwrap_or(source_name);
 
                 // Built-in functions
                 match name.as_str() {
@@ -1261,7 +1249,7 @@ impl NoxCompiler {
                         name
                     )),
                     _ => {
-                        if let Some(func) = self.fns.get(&name).cloned() {
+                        if let Some(func) = self.fns.get(&self.symbol(&name)).cloned() {
                             self.inline_call(&func, args, generic_args)
                         } else {
                             Err(format!(
@@ -1306,7 +1294,7 @@ impl NoxCompiler {
                 Ok(elem_access(base_f, k as u32))
             }
             Expr::StructInit { path, fields } => {
-                let sname = path.node.as_dotted();
+                let sname = self.symbol(&path.node.as_dotted());
                 let layout = self.structs.get(&sname).cloned().ok_or_else(|| {
                     format!("nox: unknown struct '{}'", sname)
                 })?;
