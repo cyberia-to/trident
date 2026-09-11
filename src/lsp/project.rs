@@ -115,42 +115,6 @@ impl TridentLsp {
         all_exports
     }
 
-    /// Compute cost for a specific user-defined function by name.
-    pub(super) fn compute_function_cost(
-        &self,
-        file_path: &Path,
-        fn_name: &str,
-    ) -> Option<crate::cost::TableCost> {
-        let entry = find_project_entry(file_path);
-        let modules = resolve_modules(&entry).ok()?;
-
-        for module in &modules {
-            let parsed =
-                crate::parse_source_silent(&module.source, &module.file_path.to_string_lossy())
-                    .ok()?;
-
-            let has_fn = parsed.items.iter().any(|item| {
-                if let Item::Fn(f) = &item.node {
-                    f.name.node == fn_name
-                } else {
-                    false
-                }
-            });
-
-            if has_fn {
-                let mut analyzer = crate::cost::CostAnalyzer::default();
-                let program_cost = analyzer.analyze_file(&parsed);
-                for fc in &program_cost.functions {
-                    if fc.name == fn_name {
-                        return Some(fc.cost.clone());
-                    }
-                }
-            }
-        }
-
-        None
-    }
-
     /// Collect workspace symbols from all open documents, filtered by query.
     pub(super) fn workspace_symbols(
         &self,

@@ -4,15 +4,11 @@
 // crystal-domain: comp
 // ---
 pub mod audit;
-#[cfg(feature = "neural")]
-pub mod bench;
 pub mod build;
 pub mod mir;
-// no subcommand — shared trisha subprocess helpers for bench + audit
 pub mod check;
 pub mod deploy;
 pub mod deps;
-pub mod doc;
 pub mod fmt;
 pub mod generate;
 pub mod hash;
@@ -23,10 +19,7 @@ pub mod registry;
 pub mod run;
 pub mod store;
 pub mod test;
-#[cfg(feature = "neural")]
-pub mod train;
 pub mod tree_sitter;
-pub mod trisha;
 pub mod verify;
 pub mod view;
 
@@ -203,7 +196,7 @@ pub struct PreparedArtifact {
     pub project: Option<trident::project::Project>,
     pub entry: PathBuf,
     pub tasm: String,
-    pub cost: trident::cost::ProgramCost,
+    pub cost: trident::runtime::artifact::BundleCost,
     pub file: trident::ast::File,
     pub name: String,
     pub version: String,
@@ -244,20 +237,25 @@ pub fn prepare_artifact(
         }
     };
 
-    let cost = trident::analyze_costs_project(&entry, &options).unwrap_or_else(|_| {
-        eprintln!("warning: cost analysis failed, using zeros");
-        trident::cost::ProgramCost {
-            program_name: String::new(),
-            functions: Vec::new(),
-            total: trident::cost::TableCost::ZERO,
-            table_names: Vec::new(),
-            table_short_names: Vec::new(),
-            attestation_hash_rows: 0,
-            padded_height: 0,
+    // nox prices in reductions; stack targets never reach here (the
+    // compile above already errored — the core stops at TIR).
+    let cost = match trident::nox_cost_project(&entry, &options) {
+        Ok(nc) => trident::runtime::artifact::BundleCost {
+            table_values: vec![nc.bill.max],
+            table_names: vec!["reductions".to_string()],
+            padded_height: nc.nodes,
             estimated_proving_ns: 0,
-            loop_bound_waste: Vec::new(),
+        },
+        Err(_) => {
+            eprintln!("warning: cost analysis failed, using zeros");
+            trident::runtime::artifact::BundleCost {
+                table_values: Vec::new(),
+                table_names: Vec::new(),
+                padded_height: 0,
+                estimated_proving_ns: 0,
+            }
         }
-    });
+    };
 
     let (_, file) = load_and_parse(&entry);
 

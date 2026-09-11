@@ -289,34 +289,4 @@ mod tests {
         assert_eq!(ret, "U32");
     }
 
-    #[test]
-    fn test_builtin_hover_includes_cost() {
-        use super::super::util::format_cost_inline;
-        let mut info = builtin_hover("hash").unwrap();
-        let cost = crate::cost::cost_builtin("triton", "hash");
-        info = format!("{}\n\n**Cost:** {}", info, format_cost_inline(&cost));
-        assert!(
-            info.contains("hash=6"),
-            "hash hover should include hash=6 cost, got: {}",
-            info
-        );
-        assert!(
-            info.contains("**Cost:**"),
-            "hover should include Cost header, got: {}",
-            info
-        );
-    }
-
-    #[test]
-    fn test_builtin_hover_pub_read_cost() {
-        use super::super::util::format_cost_inline;
-        let mut info = builtin_hover("pub_read").unwrap();
-        let cost = crate::cost::cost_builtin("triton", "pub_read");
-        info = format!("{}\n\n**Cost:** {}", info, format_cost_inline(&cost));
-        assert!(
-            info.contains("cc=1"),
-            "pub_read hover should show cc=1, got: {}",
-            info
-        );
-    }
 }

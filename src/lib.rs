@@ -13,8 +13,6 @@ pub mod field;
 pub mod import;
 pub mod ir;
 pub mod lsp;
-#[cfg(feature = "neural")]
-pub mod neural;
 pub mod package;
 pub mod runtime;
 pub mod syntax;
@@ -32,7 +30,6 @@ pub use config::project;
 pub use config::resolve;
 pub use config::scaffold;
 pub use config::target;
-pub use package::cache;
 pub use package::hash;
 pub use package::manifest;
 pub use package::registry;

@@ -3,7 +3,7 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-pub(crate) use std::collections::{BTreeMap, BTreeSet};
+pub(crate) use std::collections::BTreeSet;
 pub(crate) use std::path::Path;
 
 pub(crate) use crate::ast::{self, FileKind};
@@ -13,8 +13,6 @@ pub(crate) use crate::resolve::resolve_modules;
 pub(crate) use crate::span;
 pub(crate) use crate::target::{Arch, TerrainConfig};
 pub(crate) use crate::tir::builder::TIRBuilder;
-pub(crate) use crate::tir::linker::{link, ModuleTasm};
-pub(crate) use crate::tir::lower::create_stack_lowering;
 pub(crate) use crate::tir::optimize::optimize as optimize_tir;
 pub(crate) use crate::typecheck::{ModuleExports, TypeChecker};
 use crate::ir::tree::lower::nox::NoxCompiler;
@@ -108,16 +106,30 @@ pub fn compile_with_options(
         return Ok(format!("{}", noun));
     }
 
-    // Stack targets: AST → TIR → TASM
-    let ir = TIRBuilder::new(options.target_config.clone())
-        .with_cfg_flags(options.cfg_flags.clone())
-        .with_mono_instances(exports.mono_instances)
-        .with_call_resolutions(exports.call_resolutions)
-        .build_file(&file);
-    let ir = optimize_tir(ir);
-    let lowering = create_stack_lowering(&options.target_config.name);
-    let tasm = lowering.lower(&ir).join("\n");
-    Ok(tasm)
+    // Stack targets: the core stops at TIR. Instruction selection and
+    // linking are the warrior's (reference/warrior-api.md,
+    // .claude/plans/warrior-owns-lowering.md S3) — `build_tir`/
+    // `build_tir_modules` still produce the TIR a warrior lowers.
+    let _ = (exports.mono_instances, exports.call_resolutions);
+    Err(vec![stack_lowering_moved_error(&options.target_config.name)])
+}
+
+/// The core no longer lowers TIR to any stack target's assembly — that
+/// moved to the warrior (trident/.claude/plans/warrior-owns-lowering.md
+/// S3). `trident build`/`run`/`prove`/`verify` delegate to the warrior
+/// process for stack targets; a caller of this library function directly
+/// gets an honest error instead of silently-missing output.
+pub(crate) fn stack_lowering_moved_error(target_name: &str) -> Diagnostic {
+    Diagnostic::error(
+        format!(
+            "trident no longer lowers to '{target_name}' assembly in-process — \
+             the warrior does (`trident::build_tir`/`build_tir_modules` still \
+             produce the TIR it lowers). Use `trident build --target {target_name}` \
+             (delegates to the installed warrior), or link the warrior crate and \
+             call its own build function directly."
+        ),
+        span::Span::dummy(),
+    )
 }
 
 /// Compile a multi-module project from an entry point path.
@@ -153,45 +165,10 @@ pub fn compile_project_with_options(
         return Ok(format!("{}", noun));
     }
 
-    // Stack targets: AST → TIR → TASM per module, then link
-    let intrinsic_map = project.intrinsic_map();
-    let module_aliases = project.module_aliases();
-    let external_constants = project.external_constants();
-
-    let mut tasm_modules = Vec::new();
-    for (i, pm) in project.modules.iter().enumerate() {
-        let is_program = pm.file.kind == FileKind::Program;
-        let mono = project
-            .exports
-            .get(i)
-            .map(|e| e.mono_instances.clone())
-            .unwrap_or_default();
-        let call_res = project
-            .exports
-            .get(i)
-            .map(|e| e.call_resolutions.clone())
-            .unwrap_or_default();
-        let ir = TIRBuilder::new(options.target_config.clone())
-            .with_cfg_flags(options.cfg_flags.clone())
-            .with_intrinsics(intrinsic_map.clone())
-            .with_module_aliases(module_aliases.clone())
-            .with_constants(external_constants.clone())
-            .with_mono_instances(mono)
-            .with_call_resolutions(call_res)
-            .build_file(&pm.file);
-        let ir = optimize_tir(ir);
-        let lowering = create_stack_lowering(&options.target_config.name);
-        let tasm = lowering.lower(&ir).join("\n");
-        tasm_modules.push(ModuleTasm {
-            module_name: pm.file.name.node.clone(),
-            is_program,
-            tasm,
-        });
-    }
-
-    // Link
-    let linked = link(tasm_modules);
-    Ok(linked)
+    // Stack targets: the core stops at TIR — see build_tir_modules and
+    // stack_lowering_moved_error above. The warrior lowers and links.
+    let _ = (project.intrinsic_map(), project.module_aliases(), project.external_constants());
+    Err(vec![stack_lowering_moved_error(&options.target_config.name)])
 }
 
 /// Type-check only (no TASM emission).
@@ -233,7 +210,6 @@ pub fn discover_tests(file: &ast::File) -> Vec<String> {
 pub struct TestResult {
     pub name: String,
     pub passed: bool,
-    pub cost: Option<cost::TableCost>,
     pub error: Option<String>,
 }
 
@@ -265,7 +241,6 @@ pub fn run_tests(
 
     // For each test function, compile a mini-program and report
     let mut results: Vec<TestResult> = Vec::new();
-    let mut short_names: Vec<String> = Vec::new();
     for (module_name, test_name) in &test_fns {
         // Find the source file for this module
         let source_entry = project
@@ -287,27 +262,12 @@ pub fn run_tests(
             // The test function itself is validated by the type checker.
             // For now, "passing" means it compiles without errors.
             match compile_with_options(&mini_source, &pm.file_path.to_string_lossy(), options) {
-                Ok(tasm) => {
-                    // Compute cost for the test function
-                    let test_cost =
-                        analyze_costs(&mini_source, &pm.file_path.to_string_lossy()).ok();
-                    if short_names.is_empty() {
-                        if let Some(ref pc) = test_cost {
-                            short_names = pc.table_short_names.clone();
-                        }
-                    }
-                    let fn_cost = test_cost.as_ref().and_then(|pc| {
-                        pc.functions
-                            .iter()
-                            .find(|f| f.name == *test_name)
-                            .map(|f| f.cost.clone())
-                    });
-                    // Check if the generated TASM contains an assert failure marker
-                    let has_error = tasm.contains("// ERROR");
+                Ok(compiled) => {
+                    // Check if the compiled output contains an assert failure marker
+                    let has_error = compiled.contains("// ERROR");
                     results.push(TestResult {
                         name: test_name.clone(),
                         passed: !has_error,
-                        cost: fn_cost,
                         error: if has_error {
                             Some("compilation produced errors".to_string())
                         } else {
@@ -324,7 +284,6 @@ pub fn run_tests(
                     results.push(TestResult {
                         name: test_name.clone(),
                         passed: false,
-                        cost: None,
                         error: Some(msg),
                     });
                 }
@@ -346,21 +305,7 @@ pub fn run_tests(
 
     for result in &results {
         let status = if result.passed { "ok" } else { "FAILED" };
-        let cost_str = if let Some(ref c) = result.cost {
-            let sn: Vec<&str> = short_names.iter().map(|s| s.as_str()).collect();
-            let ann = c.format_annotation(&sn);
-            if ann.is_empty() {
-                String::new()
-            } else {
-                format!(" ({})", ann)
-            }
-        } else {
-            String::new()
-        };
-        report.push_str(&format!(
-            "  test {} ... {}{}\n",
-            result.name, status, cost_str
-        ));
+        report.push_str(&format!("  test {} ... {}\n", result.name, status));
         if let Some(ref err) = result.error {
             report.push_str(&format!("    error: {}\n", err));
         }
@@ -390,40 +335,14 @@ pub fn compile_module(
 
     let project = PreparedProject::build(module_path, options)?;
 
-    let intrinsic_map = project.intrinsic_map();
-    let module_aliases = project.module_aliases();
-    let external_constants = project.external_constants();
-
-    // Emit TASM for only the target module (last in topological order)
-    if let Some((i, pm)) = project.modules.iter().enumerate().last() {
-        let mono = project
-            .exports
-            .get(i)
-            .map(|e| e.mono_instances.clone())
-            .unwrap_or_default();
-        let call_res = project
-            .exports
-            .get(i)
-            .map(|e| e.call_resolutions.clone())
-            .unwrap_or_default();
-        let ir = TIRBuilder::new(options.target_config.clone())
-            .with_cfg_flags(options.cfg_flags.clone())
-            .with_intrinsics(intrinsic_map)
-            .with_module_aliases(module_aliases)
-            .with_constants(external_constants)
-            .with_mono_instances(mono)
-            .with_call_resolutions(call_res)
-            .build_file(&pm.file);
-        let ir = optimize_tir(ir);
-        let lowering = create_stack_lowering(&options.target_config.name);
-        let tasm = lowering.lower(&ir).join("\n");
-        Ok(tasm)
-    } else {
-        Err(vec![Diagnostic::error(
+    let _ = (project.intrinsic_map(), project.module_aliases(), project.external_constants());
+    if project.modules.is_empty() {
+        return Err(vec![Diagnostic::error(
             "no module found".to_string(),
             span::Span::dummy(),
-        )])
+        )]);
     }
+    Err(vec![stack_lowering_moved_error(&options.target_config.name)])
 }
 
 /// Build TIR (optimized intermediate representation) from a single source file.
@@ -562,7 +481,6 @@ pub fn build_tir_project(
     Ok(all_ir)
 }
 
-pub(crate) mod doc;
 pub(crate) mod pipeline;
 mod tools;
 pub use tools::*;
@@ -581,19 +499,25 @@ pub fn compile_to_bundle(
 
     let tasm = compile_project_with_options(entry_path, options)?;
 
-    // Cost analysis (best-effort — use zeros on failure)
-    let program_cost =
-        analyze_costs_project(entry_path, options).unwrap_or_else(|_| cost::ProgramCost {
-            program_name: String::new(),
-            functions: Vec::new(),
-            total: cost::TableCost::ZERO,
+    // Cost: nox prices in reductions (bill.max, an upper bound — see
+    // cost::nox::NoxCost); stack targets never reach this line, since
+    // compile_project_with_options above already errored for them
+    // (the core stops at TIR — reference/warrior-api.md). A warrior
+    // that owns its own bundle assembly fills in its own cost model.
+    let bundle_cost = match nox_cost_project(entry_path, options) {
+        Ok(nc) => BundleCost {
+            table_values: vec![nc.bill.max],
+            table_names: vec!["reductions".to_string()],
+            padded_height: nc.nodes,
+            estimated_proving_ns: 0,
+        },
+        Err(_) => BundleCost {
+            table_values: Vec::new(),
             table_names: Vec::new(),
-            table_short_names: Vec::new(),
-            attestation_hash_rows: 0,
             padded_height: 0,
             estimated_proving_ns: 0,
-            loop_bound_waste: Vec::new(),
-        });
+        },
+    };
 
     // Parse entry file for function signatures + content hashes
     let project = PreparedProject::build(entry_path, options)?;
@@ -668,14 +592,7 @@ pub fn compile_to_bundle(
         assembly: tasm,
         entry_point,
         functions,
-        cost: BundleCost {
-            table_values: (0..program_cost.total.count as usize)
-                .map(|i| program_cost.total.get(i))
-                .collect(),
-            table_names: program_cost.table_names,
-            padded_height: program_cost.padded_height,
-            estimated_proving_ns: program_cost.estimated_proving_ns,
-        },
+        cost: bundle_cost,
         source_hash,
         reads_state,
     })

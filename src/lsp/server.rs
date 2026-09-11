@@ -11,7 +11,7 @@ use tower_lsp::LanguageServer;
 
 use super::document::{compute_line_starts, DocumentData};
 use super::util::{position_to_byte_offset, word_at_position};
-use super::{actions, folding, hints, incremental, indent, selection, semantic, TridentLsp};
+use super::{actions, folding, incremental, indent, selection, semantic, TridentLsp};
 
 #[tower_lsp::async_trait]
 impl LanguageServer for TridentLsp {
@@ -48,7 +48,9 @@ impl LanguageServer for TridentLsp {
                 rename_provider: Some(OneOf::Left(true)),
                 document_highlight_provider: Some(OneOf::Left(true)),
                 workspace_symbol_provider: Some(OneOf::Left(true)),
-                inlay_hint_provider: Some(OneOf::Left(true)),
+                // inlay hints were cost annotations; the analyzer moved to trisha
+                // with the Triton lowering it priced (reference/warrior-api.md).
+                inlay_hint_provider: None,
                 folding_range_provider: Some(FoldingRangeProviderCapability::Simple(true)),
                 selection_range_provider: Some(SelectionRangeProviderCapability::Simple(true)),
                 document_on_type_formatting_provider: Some(DocumentOnTypeFormattingOptions {
@@ -445,25 +447,6 @@ impl LanguageServer for TridentLsp {
             None
         } else {
             Some(symbols)
-        })
-    }
-
-    async fn inlay_hint(&self, params: InlayHintParams) -> Result<Option<Vec<InlayHint>>> {
-        let uri = &params.text_document.uri;
-        let source = match self
-            .documents
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .get(uri)
-        {
-            Some(doc) => doc.source.clone(),
-            None => return Ok(None),
-        };
-        let result = hints::inlay_hints(&source, params.range);
-        Ok(if result.is_empty() {
-            None
-        } else {
-            Some(result)
         })
     }
 

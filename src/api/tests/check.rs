@@ -87,25 +87,6 @@ fn test_discover_tests_empty_when_no_tests() {
 }
 
 #[test]
-fn test_test_fn_compiles_normally() {
-    // #[test] functions should be accepted but skipped during normal emit
-    let source = "program test\n#[test]\nfn check() {\n    assert(true)\n}\nfn main() {\n    pub_write(pub_read())\n}";
-    let result = super::compile_triton(source, "test.tri");
-    assert!(
-        result.is_ok(),
-        "program with test fn should compile: {:?}",
-        result.err()
-    );
-    let tasm = result.unwrap();
-    // The test function should NOT appear in the emitted TASM
-    assert!(
-        !tasm.contains("__check:"),
-        "test fn should not be emitted in normal build"
-    );
-    assert!(tasm.contains("__main:"), "main should be emitted");
-}
-
-#[test]
 fn test_test_fn_type_check_valid() {
     let source = "program test\n#[test]\nfn check() {\n    assert(1 == 1)\n}\nfn main() {}";
     assert!(check(source, "test.tri").is_ok());

@@ -150,24 +150,6 @@ pub fn is_ident_char(b: u8) -> bool {
     b.is_ascii_alphanumeric() || b == b'_'
 }
 
-/// Format a `TableCost` as a compact inline string for hover display.
-pub fn format_cost_inline(cost: &crate::cost::TableCost) -> String {
-    let model = crate::cost::create_cost_model("triton");
-    let short_names = model.table_short_names();
-    let n = cost.count as usize;
-    let mut parts = Vec::new();
-    for i in 0..n.min(short_names.len()) {
-        if i == 0 || cost.values[i] > 0 {
-            parts.push(format!("{}={}", short_names[i], cost.values[i]));
-        }
-    }
-    format!(
-        "{} | dominant: {}",
-        parts.join(", "),
-        cost.dominant_table(&short_names[..n.min(short_names.len())])
-    )
-}
-
 /// Find the function name and active parameter index at a given position.
 pub fn find_call_context(source: &str, pos: Position) -> Option<(String, u32)> {
     let offset = position_to_byte_offset(source, pos)?;
