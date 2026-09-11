@@ -67,6 +67,10 @@ impl UnionConfig {
             return Self::load(&cwd_path).map(Some);
         }
 
+        if let Some(source) = crate::resources::get(&target_path) {
+            return Self::parse_toml(source, Path::new(&target_path)).map(Some);
+        }
+
         Ok(None)
     }
 

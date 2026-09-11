@@ -45,6 +45,18 @@ pub(crate) fn resolve_modules_with_deps(
     resolver.topological_sort()
 }
 
+pub(crate) fn resolve_modules_with_sources(
+    entry_path: &Path,
+    dep_dirs: Vec<PathBuf>,
+    sources: std::collections::BTreeMap<String, String>,
+) -> Result<Vec<ModuleInfo>, Vec<Diagnostic>> {
+    let mut resolver = ModuleResolver::new(entry_path)?;
+    resolver.dep_dirs = dep_dirs;
+    resolver.sources = sources;
+    resolver.discover_all()?;
+    resolver.topological_sort()
+}
+
 /// Search for a library directory by environment variable name and directory name.
 ///
 /// Search order:

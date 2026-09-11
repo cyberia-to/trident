@@ -4,7 +4,6 @@
 // crystal-domain: comp
 // ---
 use std::path::PathBuf;
-use std::process;
 
 use clap::Args;
 
@@ -15,8 +14,8 @@ pub struct RunArgs {
     /// Input .tri file or directory with trident.toml
     pub input: PathBuf,
     /// Target VM or OS (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -48,8 +47,9 @@ pub struct RunArgs {
 
 pub fn cmd_run(args: RunArgs) {
     let ri = resolve_input(&args.input);
+    let target = super::source_target(args.target.as_deref(), ri.project.as_ref());
     let bf = super::resolve_battlefield(
-        &args.target,
+        &target,
         &args.engine,
         &args.terrain,
         &args.network,
@@ -62,7 +62,7 @@ pub fn cmd_run(args: RunArgs) {
 
     if let Some(warrior_bin) = super::find_warrior(&target) {
         let mut extra: Vec<String> = vec![
-            args.input.display().to_string(),
+            ri.entry.display().to_string(),
             "--target".to_string(),
             target.clone(),
             "--profile".to_string(),
@@ -87,23 +87,5 @@ pub fn cmd_run(args: RunArgs) {
         return;
     }
 
-    let options = super::resolve_options(&target, &args.profile, ri.project.as_ref());
-    match trident::compile_to_bundle(&ri.entry, &options) {
-        Ok(bundle) => {
-            let op_count = bundle.assembly.lines().count();
-            eprintln!("Compiled {} ({} ops)", bundle.name, op_count);
-            eprintln!();
-            eprintln!("No runtime warrior found for target '{}'.", target);
-            eprintln!("Warriors handle execution, proving, and deployment.");
-            eprintln!();
-            eprintln!("Install a warrior for this target:");
-            eprintln!("  cargo install trisha   # Triton VM + Neptune");
-            eprintln!();
-            eprintln!("Or use 'trident build' to produce TASM output directly.");
-        }
-        Err(_) => {
-            eprintln!("error: compilation failed");
-            process::exit(1);
-        }
-    }
+    super::missing_warrior(&target, "run");
 }

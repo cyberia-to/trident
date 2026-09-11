@@ -5,7 +5,6 @@
 // ---
 pub mod audit;
 pub mod build;
-pub mod mir;
 pub mod check;
 pub mod deploy;
 pub mod deps;
@@ -13,6 +12,7 @@ pub mod fmt;
 pub mod generate;
 pub mod hash;
 pub mod init;
+pub mod mir;
 pub mod package;
 pub mod prove;
 pub mod registry;
@@ -82,6 +82,14 @@ pub fn resolve_battlefield_compile(
     union_flag: &Option<String>,
 ) -> BattlefieldSelection {
     resolve_battlefield(target, engine, terrain, network, union_flag, &None, &None)
+}
+
+/// A supplied target wins over the project's selection, including explicit nox.
+pub fn source_target(target: Option<&str>, project: Option<&trident::project::Project>) -> String {
+    target
+        .or_else(|| project.and_then(|p| p.target.as_deref()))
+        .unwrap_or("nox")
+        .to_owned()
 }
 
 // ─── Input Resolution ──────────────────────────────────────────────
@@ -158,19 +166,9 @@ pub fn resolve_options(
         _ => (target, profile),
     };
 
-    // Project may override the default "nox" target
-    let effective_target = match (vm_target, project) {
-        ("nox", Some(proj)) if proj.target.is_some() => {
-            proj.target.as_deref().expect("guarded by is_some() check")
-        }
-        _ => vm_target,
-    };
-
-    let target_config = if effective_target == "triton" {
-        trident::target::TerrainConfig::triton()
-    } else {
-        match trident::target::TerrainConfig::resolve(effective_target) {
-            Ok(config) => config,
+    let target_config = {
+        match trident::target::ResolvedTarget::resolve(vm_target) {
+            Ok(config) => config.vm,
             Err(e) => {
                 eprintln!("error: {}", e.message);
                 process::exit(1);
@@ -188,6 +186,7 @@ pub fn resolve_options(
         cfg_flags,
         target_config,
         dep_dirs: Vec::new(),
+        module_sources: std::collections::BTreeMap::new(),
     }
 }
 
@@ -413,12 +412,37 @@ pub fn find_warrior(target: &str) -> Option<PathBuf> {
     None
 }
 
+pub fn missing_warrior(target: &str, command: &str) -> ! {
+    eprintln!("error: cannot {command}: no warrior found for target '{target}'");
+    if let Ok(resolved) = trident::target::ResolvedTarget::resolve(target) {
+        if let Some(warrior) = resolved.vm.warrior {
+            match warrior.name.as_str() {
+                "joy" => eprintln!("Install the nox warrior: cargo install cyber-joy"),
+                "trisha" => eprintln!(
+                    "Install the Triton warrior from https://github.com/cyberia-to/trisha/releases"
+                ),
+                name => eprintln!("Install '{name}' and place its executable on PATH."),
+            }
+        }
+    }
+    process::exit(1)
+}
+
 /// Look for an executable on PATH (simple, no `which` crate).
 fn which_on_path(name: &str) -> Result<PathBuf, ()> {
     let path_var = std::env::var("PATH").unwrap_or_default();
-    for dir in path_var.split(':') {
-        let candidate = PathBuf::from(dir).join(name);
-        if candidate.is_file() {
+    for dir in std::env::split_paths(&path_var) {
+        let candidate = dir.join(format!("{name}{}", std::env::consts::EXE_SUFFIX));
+        #[cfg(unix)]
+        let executable = {
+            use std::os::unix::fs::PermissionsExt;
+            candidate
+                .metadata()
+                .is_ok_and(|m| m.permissions().mode() & 0o111 != 0)
+        };
+        #[cfg(not(unix))]
+        let executable = true;
+        if candidate.is_file() && executable {
             return Ok(candidate);
         }
     }

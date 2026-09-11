@@ -62,9 +62,5 @@ pub fn cmd_verify_proof(args: VerifyProofArgs) {
         return;
     }
 
-    eprintln!("No verification warrior found for target '{}'.", target);
-    eprintln!("Warriors handle proof verification using target-specific verifiers.");
-    eprintln!();
-    eprintln!("Install a warrior for this target:");
-    eprintln!("  cargo install trisha   # Triton VM + Neptune");
+    super::missing_warrior(&target, "verify");
 }

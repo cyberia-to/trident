@@ -16,6 +16,7 @@ pub(crate) struct ModuleResolver {
     pub(crate) os_dir: Option<PathBuf>,
     /// Additional directories to search for modules (from locked dependencies).
     pub(crate) dep_dirs: Vec<PathBuf>,
+    pub(crate) sources: BTreeMap<String, String>,
     /// All discovered modules by name.
     pub(crate) modules: BTreeMap<String, ModuleInfo>,
     /// Queue of modules to process.
@@ -55,6 +56,7 @@ impl ModuleResolver {
             stdlib_dir: find_stdlib_dir(),
             os_dir: find_os_dir(),
             dep_dirs: Vec::new(),
+            sources: BTreeMap::new(),
             modules,
             queue: deps,
             diagnostics: Vec::new(),
@@ -89,7 +91,14 @@ impl ModuleResolver {
 
             // Resolve module name to file path
             let file_path = self.resolve_path(&module_name);
-            let source = match std::fs::read_to_string(&file_path) {
+            let source = match std::fs::read_to_string(&file_path).or_else(|error| {
+                let canonical = legacy_stdlib_fallback(&module_name).unwrap_or(&module_name);
+                self.sources
+                    .get(canonical)
+                    .cloned()
+                    .or_else(|| crate::resources::module(canonical).map(str::to_owned))
+                    .ok_or(error)
+            }) {
                 Ok(s) => s,
                 Err(e) => {
                     self.diagnostics.push(
@@ -162,6 +171,20 @@ impl ModuleResolver {
                 || part.contains('\\')
             {
                 return self.root_dir.join("<invalid-module-name>");
+            }
+        }
+
+        // Explicit project/warrior resources take precedence over installed libraries.
+        for dir in &self.dep_dirs {
+            let path = raw_parts
+                .iter()
+                .fold(dir.clone(), |path, part| path.join(part));
+            let candidate = path.with_extension("tri");
+            if candidate.is_file() {
+                return candidate;
+            }
+            if path.join("main.tri").is_file() {
+                return path.join("main.tri");
             }
         }
 

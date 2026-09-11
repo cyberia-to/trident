@@ -7,7 +7,7 @@ Two contracts hold between them:
 
 | contract | direction | where |
 |---|---|---|
-| process | `trident run/prove/verify` → `<warrior>` on PATH | [targets.md](targets.md) §Warriors |
+| process | `trident build/run/prove/verify` → `<warrior>` on PATH | [targets.md](targets.md) §Warriors |
 | library | warrior links `trident-lang` as a Rust crate | this document |
 
 This document is the library contract: what a warrior may depend on,
@@ -38,10 +38,17 @@ trident::compile_to_bundle(entry: &Path, options: &CompileOptions)
     -> Result<ProgramBundle, Vec<Diagnostic>>
 ```
 
-The primary entry point: a multi-module project in, a `ProgramBundle`
-out — assembly text, entry point, per-function hashes, cost, source
-hash, `reads_state`. A warrior that takes finished assembly needs
-nothing else.
+The nox entry point returns assembly, entry point, function hashes, costs,
+source hash and `reads_state`. Stack warriors obtain per-module TIR through
+`build_tir_modules`, lower/link it, then call:
+
+```rust
+trident::bundle_with_assembly(entry: &Path, options: &CompileOptions,
+    assembly: String, cost: BundleCost) -> Result<ProgramBundle, Vec<Diagnostic>>
+```
+
+The core derives source metadata once through this shared contract. The warrior
+supplies its own assembly and measured or explicitly unavailable costs.
 
 ```rust
 trident::build_tir(source: &str, filename: &str, options: &CompileOptions)
@@ -59,6 +66,16 @@ warrior turns it into its ISA. `build_tir_project` resolves imports;
 with `trident::CompileOptions::default()` and set `target_config`, or
 take it from `trident::target` (`TerrainConfig::nox()`,
 `TerrainConfig::triton()`, or a `vm/<engine>/target.toml` load).
+
+`source_options(input, options)` resolves a project directory or a source file,
+applies the project's named profile and dependency paths, and preserves the
+caller's chosen terrain. `module_sources` carries version-matched warrior
+modules by dotted name; module resolution uses these when no source file exists.
+Core libraries and target declarations are embedded in the compiler package.
+
+CLI target precedence is explicit register/target selection, then project
+target, then nox. Selecting nox explicitly overrides a Triton project. Missing
+warriors, unknown terrain, and failed child processes produce nonzero exit.
 
 ### Runtime
 
@@ -89,11 +106,10 @@ A warrior takes trident-lang **without default features**:
 trident-lang = { version = "0.3", default-features = false }
 ```
 
-`default = ["neural"]` pulls burn and the cubecl/wgpu graph under it —
-the neural optimizer, which is a compiler-side tool. A warrior never
-trains, so it never needs that graph, and dropping it cuts the
-dependency tree to a fraction. Everything in this document is available
-without default features.
+The default feature set is empty. Opt-in `neural` enables the shared model,
+training and inference framework; warriors provide an ISA vocabulary, grammar,
+equivalence oracle and costs. Ordinary build/run/prove installations require
+no neural backend. The compilation and runtime surface is available without it.
 
 ## Stability
 
@@ -106,11 +122,10 @@ without default features.
   schema would be a promise with no reader.
 - `ProgramBundle` **does** have a wire form (JSON) because it crosses
   the process boundary in `trident run/prove/verify`. Fields are
-  additive and `from_json` ignores keys it does not know. It is also
-  lossy today: the `functions` array and the cost table values/names do
-  not survive a round trip (they are re-derived, not read back). A
-  warrior that needs them must take the bundle in memory from
-  `compile_to_bundle`, not through JSON.
+  additive and `from_json` ignores unknown keys. Function metadata, named cost
+  values, assembly and state declarations survive transport. Malformed JSON,
+  duplicate identity keys and invalid field types are rejected. Named cost
+  tables are maps; their textual order carries no semantics.
 - Everything else in `trident-lang` is internal. Depending on it is
   allowed and unsupported: it moves without notice.
 
@@ -119,9 +134,8 @@ without default features.
 | warrior | battlefield | uses |
 |---|---|---|
 | [joy](https://github.com/cyberia-to/joy) | nox · cyber | `runtime::*`, `target`, `field::proof` — takes the bundle, executes on cyber-nox, proves with zheng |
-| [trisha](https://github.com/cyberia-to/trisha) | Triton VM · Neptune | `runtime::*`, `target`, `hash::content_hash_bytes`, `field::proof` — takes the bundle's TASM, executes and proves on Triton VM |
+| [trisha](https://github.com/cyberia-to/trisha) | Triton VM · Neptune | per-module TIR, owned lowering/linker and runtime, source metadata via `bundle_with_assembly` |
 
-Neither takes TIR yet: today the core lowers to TASM and hands over
-finished assembly. Moving the Triton lowering into trisha — so the core
-stops at TIR for stack targets — is the next step
-(`.claude/plans/warrior-owns-lowering.md`).
+Neptune runtime modules and Triton baselines live in Trisha. Target declarations
+stay in the core registry. The release audit records current proof-support
+limits; this API contract does not certify the cryptography of a linked warrior.

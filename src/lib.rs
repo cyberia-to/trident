@@ -13,7 +13,10 @@ pub mod field;
 pub mod import;
 pub mod ir;
 pub mod lsp;
+#[cfg(feature = "neural")]
+pub mod neural;
 pub mod package;
+mod resources;
 pub mod runtime;
 pub mod syntax;
 pub mod typecheck;

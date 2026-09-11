@@ -212,6 +212,10 @@ impl TerrainConfig {
             return Self::load(&cwd_path);
         }
 
+        if let Some(source) = crate::resources::get(&primary) {
+            return Self::parse_toml(source, Path::new(&primary));
+        }
+
         // Built-in fallback for installed binaries with no repo tree nearby.
         if name == "nox" {
             return Ok(Self::nox());

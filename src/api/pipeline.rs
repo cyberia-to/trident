@@ -31,6 +31,32 @@ pub(crate) struct PreparedProject {
 }
 
 impl PreparedProject {
+    /// The shared nox lowering for assembly, cost and bundle state metadata.
+    /// Every path consumes the same resolved modules and conditional flags.
+    pub(crate) fn lower_nox(
+        &self,
+        options: &CompileOptions,
+    ) -> Result<(crate::ir::tree::lower::Noun, bool), Vec<Diagnostic>> {
+        super::require_nox_target(options)?;
+        let entry = self
+            .modules
+            .iter()
+            .find(|m| m.file.kind == ast::FileKind::Program)
+            .or_else(|| self.modules.last())
+            .ok_or_else(|| {
+                vec![Diagnostic::error(
+                    "no entry module found".to_string(),
+                    crate::span::Span::dummy(),
+                )]
+            })?;
+        let files: Vec<_> = self.modules.iter().map(|m| &m.file).collect();
+        let mut compiler = crate::ir::tree::lower::nox::NoxCompiler::new();
+        let noun = compiler
+            .compile_modules(&files, &entry.file, &options.cfg_flags)
+            .map_err(|e| vec![Diagnostic::error(e, crate::span::Span::dummy())])?;
+        Ok((noun, compiler.reads_state()))
+    }
+
     /// Build a project from an entry path using the given compile options.
     ///
     /// This performs the resolve → parse → typecheck pipeline that is shared
@@ -45,7 +71,10 @@ impl PreparedProject {
     /// to do with the returned errors. Used by best-effort probes (e.g. the
     /// nox reduction column in `trident bench`) that expect many programs to
     /// fall outside the target surface and must not spam the terminal.
-    pub fn build_quiet(entry_path: &Path, options: &CompileOptions) -> Result<Self, Vec<Diagnostic>> {
+    pub fn build_quiet(
+        entry_path: &Path,
+        options: &CompileOptions,
+    ) -> Result<Self, Vec<Diagnostic>> {
         Self::build_inner(entry_path, options, false)
     }
 
@@ -54,7 +83,13 @@ impl PreparedProject {
         options: &CompileOptions,
         render: bool,
     ) -> Result<Self, Vec<Diagnostic>> {
-        let resolved = if options.dep_dirs.is_empty() {
+        let resolved = if !options.module_sources.is_empty() {
+            crate::resolve::resolve_modules_with_sources(
+                entry_path,
+                options.dep_dirs.clone(),
+                options.module_sources.clone(),
+            )?
+        } else if options.dep_dirs.is_empty() {
             resolve_modules(entry_path)?
         } else {
             resolve_modules_with_deps(entry_path, options.dep_dirs.clone())?
@@ -99,7 +134,6 @@ impl PreparedProject {
 
         Ok(PreparedProject { modules, exports })
     }
-
 
     /// Build a project with default options (nox target, debug profile).
     ///
