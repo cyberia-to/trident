@@ -18,6 +18,9 @@ pub(crate) use crate::typecheck::{ModuleExports, TypeChecker};
 use crate::ir::tree::lower::nox::NoxCompiler;
 pub(crate) use crate::{format, lexer, parser, project, solve, sym};
 
+mod test;
+pub use test::{discover_tests, run_tests, TestResult};
+
 #[cfg(test)]
 mod tests;
 
@@ -190,138 +193,6 @@ pub fn check_project(entry_path: &Path) -> Result<(), Vec<Diagnostic>> {
 
     PreparedProject::build_default(entry_path)?;
     Ok(())
-}
-
-/// Discover `#[test]` functions in a parsed file.
-pub fn discover_tests(file: &ast::File) -> Vec<String> {
-    let mut tests = Vec::new();
-    for item in &file.items {
-        if let ast::Item::Fn(func) = &item.node {
-            if func.is_test {
-                tests.push(func.name.node.clone());
-            }
-        }
-    }
-    tests
-}
-
-/// A single test result.
-#[derive(Clone, Debug)]
-pub struct TestResult {
-    pub name: String,
-    pub passed: bool,
-    pub error: Option<String>,
-}
-
-/// Run all `#[test]` functions in a project.
-///
-/// For each test function, we:
-/// 1. Parse and type-check the project
-/// 2. Compile a mini-program that just calls the test function
-/// 3. Report pass/fail with cost summary
-pub fn run_tests(
-    entry_path: &std::path::Path,
-    options: &CompileOptions,
-) -> Result<String, Vec<Diagnostic>> {
-    use crate::pipeline::PreparedProject;
-
-    let project = PreparedProject::build(entry_path, options)?;
-
-    // Discover all #[test] functions across all modules
-    let mut test_fns: Vec<(String, String)> = Vec::new(); // (module_name, fn_name)
-    for pm in &project.modules {
-        for test_name in discover_tests(&pm.file) {
-            test_fns.push((pm.file.name.node.clone(), test_name));
-        }
-    }
-
-    if test_fns.is_empty() {
-        return Ok("No #[test] functions found.\n".to_string());
-    }
-
-    // For each test function, compile a mini-program and report
-    let mut results: Vec<TestResult> = Vec::new();
-    for (module_name, test_name) in &test_fns {
-        // Find the source file for this module
-        let source_entry = project
-            .modules
-            .iter()
-            .find(|m| m.file.name.node == *module_name);
-
-        if let Some(pm) = source_entry {
-            // Build a mini-program source that just calls the test function
-            let mini_source = if module_name.starts_with("module") || module_name.contains('.') {
-                // For module test functions, we'd need cross-module calls
-                // For simplicity, compile in-context
-                pm.source.clone()
-            } else {
-                pm.source.clone()
-            };
-
-            // Try to compile (type-check + emit) the source.
-            // The test function itself is validated by the type checker.
-            // For now, "passing" means it compiles without errors.
-            match compile_with_options(&mini_source, &pm.file_path.to_string_lossy(), options) {
-                Ok(compiled) => {
-                    // Check if the compiled output contains an assert failure marker
-                    let has_error = compiled.contains("// ERROR");
-                    results.push(TestResult {
-                        name: test_name.clone(),
-                        passed: !has_error,
-                        error: if has_error {
-                            Some("compilation produced errors".to_string())
-                        } else {
-                            None
-                        },
-                    });
-                }
-                Err(errors) => {
-                    let msg = errors
-                        .iter()
-                        .map(|d| d.message.clone())
-                        .collect::<Vec<_>>()
-                        .join("; ");
-                    results.push(TestResult {
-                        name: test_name.clone(),
-                        passed: false,
-                        error: Some(msg),
-                    });
-                }
-            }
-        }
-    }
-
-    // Format the report
-    let mut report = String::new();
-    let total = results.len();
-    let passed = results.iter().filter(|r| r.passed).count();
-    let failed = total - passed;
-
-    report.push_str(&format!(
-        "running {} test{}\n",
-        total,
-        if total == 1 { "" } else { "s" }
-    ));
-
-    for result in &results {
-        let status = if result.passed { "ok" } else { "FAILED" };
-        report.push_str(&format!("  test {} ... {}\n", result.name, status));
-        if let Some(ref err) = result.error {
-            report.push_str(&format!("    error: {}\n", err));
-        }
-    }
-
-    report.push('\n');
-    if failed == 0 {
-        report.push_str(&format!("test result: ok. {} passed; 0 failed\n", passed));
-    } else {
-        report.push_str(&format!(
-            "test result: FAILED. {} passed; {} failed\n",
-            passed, failed
-        ));
-    }
-
-    Ok(report)
 }
 
 /// Compile a module and emit TASM for all its functions (no linking, no DCE).

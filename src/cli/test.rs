@@ -55,7 +55,10 @@ pub fn cmd_test(args: TestArgs) {
         Ok(report) => {
             eprintln!("{}", report);
         }
-        Err(_) => {
+        Err(errors) => {
+            for error in errors {
+                eprintln!("{}", error.message);
+            }
             process::exit(1);
         }
     }
