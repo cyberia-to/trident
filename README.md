@@ -342,61 +342,49 @@ See [Content-Addressed Code](docs/explanation/content-addressing.md).
 
 ---
 
-## Trusting, Not Trust
+## Verification status
 
-You download a compiler binary. Someone compiled it — you trust them.
-They used a compiler too — you trust that one as well. The trust chain
-stretches back to the first hand-assembled binary, and every link is
-opaque. Ken Thompson showed in 1984 that a compiler can inject
-backdoors invisible in the source.
+The Rust compiler is the current implementation. `std/compiler/` contains
+experimental components, not a complete self-hosted compiler or a proof
+that this compiler binary faithfully implements the language.
 
-Trident breaks the chain. The compiler self-hosts: Trident source
-compiles Trident source, and the execution produces a proof that
-compilation was faithful. Not "we audited the binary." Not "we
-reproduced the build." A cryptographic proof, from the mathematics
-itself, that the output corresponds to the input.
+Triton execution and STARK proving belong to [Trisha](../trisha).
+`trisha bench --full` requires explicit input/output fixtures and verifies
+proofs for the measured programs. Missing fixtures are reported as
+unverified and fail the command. Historical ratios from modified or
+non-executed assembly are not release evidence.
 
-Three producers compete on the same scoreboard:
-
-```
-$ trident bench baselines/triton/std/compiler
-
-Module                       Tri   Hand Neural   Ratio
--------------------------------------------------------
-std::compiler::lexer         288      8      -  36.00x
-std::compiler::parser        358      8      -  44.75x
-std::compiler::pipeline        0      1      -   0.00x
-```
-
-`Tri` — compiler output. `Hand` — expert-written assembly (the floor).
-`Neural` — a [13M-parameter GNN+Transformer](reference/neural.md)
-learning to emit better assembly than the compiler. The dashes mean the
-model is training. When it beats the compiler, the number appears.
-`trident bench` also reports a `Nox(r)` column — reductions, for the
-modules inside the nox surface.
-
-`src/` is the Rust bootstrap — it shrinks.
-`std/compiler/` is the Trident replacement — it grows.
+The nox compiler and Joy executor support the surface documented in
+[reference/nox.md](reference/nox.md). Zheng's current proof verifier does
+not authenticate the relationship between execution and public output;
+Joy rejects external IO claims and reports output metadata as unverified.
+Stateful recursive openings are disabled until authenticated openings and
+execution constraints are implemented. This blocks a production proof release.
 
 ---
 
 ## Quick Start
 
-```
-cargo install trident-lang cyber-joy       # the compiler + the nox warrior
-trident build main.tri                     # compile to .nox (--target triton for TASM)
-trident run main.tri --input-values 3,5    # execute on nox (via joy)
-trident prove main.tri                     # zheng proof -> main.zheng
-trident verify main.zheng                  # verify, no re-execution
-trident check main.tri                     # type-check only
-trident test main.tri                      # run #[test] functions
+Build the coordinated development checkouts with their locked dependencies:
+
+```sh
+cargo install --path . --locked
+cargo install --path ../joy/cli --locked
+cargo install --path ../trisha/cli --locked
+trident build main.tri                     # nox output by default
+trident run main.tri --input-values 3,5     # Joy execution
+trident build main.tri --target triton     # Trisha emits TASM
+trident run main.tri --target triton       # Trisha execution
+trident prove main.tri --target triton     # Triton STARK proof
+trident check main.tri                     # type-check
 trident fmt main.tri                       # format source
-trident audit main.tri                     # formal verification
-trident bench main.tri                     # cost: reductions (nox), instructions (triton)
 ```
 
-The Triton path needs [trisha](https://github.com/cyberia-to/trisha)
-on `PATH` the same way the nox path needs `joy`.
+Follow [Trisha's build instructions](../trisha/README.md) to prepare its
+patched dependencies before installing. Warriors must be on `PATH`.
+An unavailable warrior is an error. An explicit target overrides the
+project target; otherwise `trident.toml` selects the target, then nox is
+the fallback. Standard compiler resources are embedded in the binaries.
 
 ---
 
@@ -417,7 +405,7 @@ on `PATH` the same way the nox path needs `joy`.
 src/          Compiler in Rust            ~36K lines, soft3-native (strata · hemera · nox)
 vm/           Engines + intrinsics        21 target.toml profiles; intrinsics in Trident
 std/          Standard library in Trident Crypto, math, neural networks, compiler
-os/           Unions in Trident           25 per-OS configs, programs, and extensions
+os/           Union registry + portable runtime; Neptune code lives in ../trisha/os/
 tests/        nox_surface.rs, differential.rs — every lowering reduces on the real VM
 ```
 
@@ -425,7 +413,7 @@ tests/        nox_surface.rs, differential.rs — every lowering reduces on the 
 vm.*              Compiler intrinsics       hash, sponge, divine, assert
 std.*             Standard library          sha256, bigint, ecdsa, poseidon2
 os.*              Portable runtime          os.signal, os.neuron, os.state, os.time
-os.<target>.*     Target-specific APIs      os.neptune.xfield, os.solana.pda
+os.<target>.*     Target-specific APIs      Neptune modules supplied by Trisha
 ```
 
 The warriors live beside the compiler:
@@ -478,14 +466,15 @@ Full index: [docs/README.md](docs/README.md)
 
 ## Status
 
-0.2.0 / 500K — **Cast**. The language poured into the soft3 mold: nox
-by default, a real prover, one algebra, one hash. Hot, not production
-ready. Kelvin versioning counts down toward 0K; the
-[roadmap](reference/roadmap.md) says what cools next.
+0.3.0 is an unreleased migration candidate. The compiler owns shared
+front-end, nox lowering and optional generic neural infrastructure;
+Trisha owns Triton lowering, emission, execution, Neptune libraries and
+Triton benchmarks. See [the warrior API](reference/warrior-api.md).
 
-Treat it as experimental unless you already understand the constraints
-you are adopting. The architecture is built to expand targets over time,
-without changing what a Trident program is.
+Production readiness remains blocked by Zheng execution-proof soundness
+and the remaining acceptance gates in the
+[release repair plan](.claude/plans/warrior-release-repair.md).
+Passing compiler tests alone does not establish proof-system soundness.
 
 ---
 

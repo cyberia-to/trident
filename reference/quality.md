@@ -159,7 +159,7 @@ Every function that compiles to TASM is verified across four dimensions:
 |-----------|--------|------|
 | Reference | `benches/references/` (Rust) | Ground truth: generates inputs, computes expected outputs |
 | Classic | `trident build` | Default compiler pipeline |
-| Manual | `baselines/triton/*.tasm` | Hand-optimized expert TASM |
+| Manual | `../trisha/baselines/triton/*.tasm` | Hand-optimized expert TASM |
 | Neural | Neural optimizer | ML-optimized TASM |
 
 Four metrics compared across all dimensions:
@@ -170,4 +170,4 @@ Four metrics compared across all dimensions:
 4. **Verification time** — STARK proof verification wall-clock (via `trisha verify`)
 
 Slow code is a bug. Incorrect code is a soundness hole.
-`trident bench --full` is the scoreboard.
+`trisha bench --full` is the scoreboard.

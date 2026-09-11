@@ -1,6 +1,6 @@
 # Warrior owns lowering — Triton/Neptune into trisha, silicon into its own folder
 
-**STATUS: S0-S3 done (2026-09-11). Triton/Neptune logic fully out of trident.**
+**STATUS: S3 release repair in progress (2026-09-11). The audit found incomplete asset transfer and broken source CLI integration; `warrior-release-repair.md` supersedes the completion claim and release sequence below. Historical decisions remain recorded here.**
 
 **One sentence:** trident-lang is the language and its compilation
 harness — front end, TIR, optimizer, neural optimizer, cost framework,

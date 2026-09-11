@@ -1,6 +1,6 @@
 # Trident and warriors — repair and release plan
 
-Status: proposed after the 2026-09-11 audit; implementation approval pending.
+Status: approved by the owner on 2026-09-11; implementation in progress on `fix/warrior-release` branches.
 Evidence: `../audits/2026-09-11-warrior-release.md`.
 Objective: source compilation, execution, proof generation and verification work across Trident + Joy/nox/Zheng and Trident + Trisha/Triton; both distributions install outside the development tree.
 
@@ -37,3 +37,16 @@ Choose one breaking compiler version and update Joy/Trisha requirements together
 Only after these gates pass: prepare final release notes with verified platform/support matrix, checksums and installation commands; merge reviewed changes and publish coordinated releases. Download/install those exact artifacts and repeat the same end-to-end smoke and negative tests.
 
 Completion evidence belongs in the audit/release record: commits, artifact versions, commands, actual outputs, test totals and remaining explicit scope limits.
+
+## Current work checkpoint
+
+2026-09-11: fixes committed on `fix/warrior-release` branches. No release published.
+
+- Trident: 718 default tests pass, 44 opt-in neural tests pass; nox cfg/import/shadow corrections, unsupported-target guard, real nox #[test] runner, portable resources, strict metadata-preserving bundle JSON and CLI dispatch.
+- Trisha: 216 default tests pass, 50 opt-in neural adapter tests pass; all-feature workspace check passes. Triton lowering, Neptune library and baselines are warrior-owned. Generic neural harness is restored in core.
+- SHA-256 matches the FIPS empty-message digest on the real Triton VM; 42 stdlib tests parse real library assembly. Deep-stack and aggregate-layout faults fixed. Historical baselines without execution fixtures remain UNVERIFIED and block complete benchmark acceptance.
+- Candidate versions remain unpublished: Trident 0.3.0, Trisha 0.2.0, Joy 0.4.0. Core cargo package registry build passes. Clean source-archive/install validation is next.
+- Joy/Zheng safe fixes preserve authenticated TensorMerkle openings, reject unsupported public-output claims, and disable unauthenticated recursive axis/look openings. Current Joy integration gate: 24 pass, 3 state-proof acceptance failures; keep those failures visible.
+- Full proof release requires verifier-checked execution/copy/public IO constraints, sound accumulation and privacy. Design: `~/cyber/zheng/.claude/plans/authenticated-execution-release.md`. Owner scope question remains pending; do not substitute successful arithmetic proving for execution-proof soundness.
+- Preserve original Zheng CLAUDE.md/Cargo.lock and nox Cargo.lock modifications. Joy lock regenerated for coordinated dependency versions; initial copy remains /tmp/joy-release-initial-Cargo.lock.
+- Final evidence and distribution results will be recorded in reference/warrior-release-validation.md. Protocol redesign and live deployment are not complete.

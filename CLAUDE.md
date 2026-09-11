@@ -138,7 +138,7 @@ Use `tokei src/` or `find src/ -name '*.rs'` to explore module structure.
 ## Pipeline Contract
 
 ```
-Source → Lexer → Parser → AST → TypeCheck → KIR → TIR → LIR → Target → Bundle → Warrior
+Source → Lexer → Parser → AST → TypeCheck → nox tree lowering or shared TIR → Warrior emission → Bundle → Warrior execution
 ```
 
 Output of stage N must be valid input for stage N+1. When modifying a
@@ -283,7 +283,7 @@ Rules:
 
 Two independent optimization streams run in parallel:
 
-1. **Hand TASM** (`baselines/triton/`): Write from first
+1. **Hand TASM** (`../trisha/baselines/triton/`): Write from first
    principles — algorithm + stack machine, never from compiler output.
    Ask "what is the minimum instruction sequence for this operation on
    Triton VM?" not "how can I improve what the compiler emitted?"
@@ -297,7 +297,7 @@ The streams must stay independent. Hand baselines set the floor —
 the compiler races toward it. When the compiler catches up, push the
 baseline lower. Neither stream is a dogma; both improve continuously.
 
-`trident bench` is the scoreboard. Regressions in either direction
+`trisha bench` is the scoreboard. Regressions in either direction
 (compiler gets worse, or baselines get sloppy) are bugs.
 
 ## Self-Verification
@@ -305,7 +305,7 @@ baseline lower. Neither stream is a dogma; both improve continuously.
 Every commit:
 - `cargo check` — zero warnings
 - `cargo test` — all tests pass
-- `trident bench` — no regressions vs baselines
+- `trisha bench` — no regressions vs baselines
 - `trident audit` — formal properties still hold
 - If anything fails, fix before reporting done.
 
@@ -313,10 +313,10 @@ Every commit:
 
 Four ways to produce TASM: Rust reference, classic compiler, manual
 baseline, neural optimizer. All must agree on correctness.
-`trident bench --full` is the scoreboard.
+`trisha bench --full` is the scoreboard.
 
 - `benches/references/` — Rust ground truth (generates inputs, expected outputs)
-- `baselines/triton/` — hand-optimized TASM (expert floor)
+- `../trisha/baselines/triton/` — hand-optimized TASM (expert floor)
 - Classic TASM — `trident build` output
 - Neural TASM — neural optimizer output
 
