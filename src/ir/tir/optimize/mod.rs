@@ -288,26 +288,9 @@ fn collapse_epilogue_cleanup(ops: Vec<TIROp>) -> Vec<TIROp> {
                             remaining -= chunk;
                         }
                     } else if is_constant_depth {
-                        // Constant-depth with D > 1: removing `count`
-                        // dead elements from below a D-wide return value.
-                        // When D + count - 1 <= 15, bring all dead elements
-                        // to the top with decreasing swaps, then batch pop.
-                        let total_depth = first_d + count - 1;
-                        if total_depth <= 15 {
-                            for offset in 0..count {
-                                out.push(TIROp::Swap(total_depth - offset));
-                            }
-                        } else {
-                            for _ in 0..count {
-                                out.push(TIROp::Swap(first_d));
-                            }
-                        }
-                        let mut remaining = count;
-                        while remaining > 0 {
-                            let batch = remaining.min(5);
-                            out.push(TIROp::Pop(batch));
-                            remaining -= batch;
-                        }
+                        // Each pop changes where the next swap lands. Adjacent
+                        // swaps followed by a bulk pop are not equivalent.
+                        out.extend_from_slice(&ops[i..j]);
                     } else {
                         // Decreasing-depth chain.
                         out.push(TIROp::Swap(first_d));

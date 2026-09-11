@@ -218,12 +218,12 @@ fn not32(x: U32) -> U32 {
 
 // Ch(e, f, g) = (e AND f) XOR (NOT(e) AND g)
 fn ch(e: U32, f: U32, g: U32) -> U32 {
-    e & f ^ not32(e) & g
+    (e & f) ^ (not32(e) & g)
 }
 
 // Maj(a, b, c) = (a AND b) XOR (a AND c) XOR (b AND c)
 fn maj(a: U32, b: U32, c: U32) -> U32 {
-    a & b ^ a & c ^ b & c
+    (a & b) ^ (a & c) ^ (b & c)
 }
 
 // ---------------------------------------------------------------------------

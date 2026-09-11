@@ -197,43 +197,44 @@ fn collapse_large_constant_depth_chain() {
     assert_eq!(result.len(), 8);
 }
 
-#[test]
-fn collapse_constant_depth_swap_k_pop1_chain() {
-    // 5x swap 3; pop 1 (width-3 return, 5 dead locals) ->
-    // swap 7; swap 6; swap 5; swap 4; swap 3; pop 5 (batch pop)
-    let mut ops = Vec::new();
-    for _ in 0..5 {
-        ops.push(TIROp::Swap(3));
-        ops.push(TIROp::Pop(1));
+fn stack_effect(ops: &[TIROp], mut stack: Vec<u64>) -> Vec<u64> {
+    for op in ops {
+        match op {
+            TIROp::Swap(d) => {
+                let top = stack.len() - 1;
+                stack.swap(top, top - *d as usize);
+            }
+            TIROp::Dup(d) => stack.push(stack[stack.len() - 1 - *d as usize]),
+            TIROp::Pop(n) => {
+                stack.truncate(stack.len() - *n as usize);
+            }
+            TIROp::Return => break,
+            _ => panic!("unexpected operation"),
+        }
     }
-    ops.push(TIROp::Return);
-    let result = optimize(ops);
-    // D=3, count=5, total_depth = 3+5-1 = 7 (<=15)
-    assert!(matches!(result[0], TIROp::Swap(7)));
-    assert!(matches!(result[1], TIROp::Swap(6)));
-    assert!(matches!(result[2], TIROp::Swap(5)));
-    assert!(matches!(result[3], TIROp::Swap(4)));
-    assert!(matches!(result[4], TIROp::Swap(3)));
-    assert!(matches!(result[5], TIROp::Pop(5)));
-    assert!(matches!(result[6], TIROp::Return));
-    assert_eq!(result.len(), 7); // was 11
+    stack
 }
 
 #[test]
-fn collapse_constant_depth_swap_k_large_chain() {
-    // 4x swap 5; pop 1 -- total_depth = 5+4-1 = 8 (<=15)
-    let mut ops = Vec::new();
-    for _ in 0..4 {
-        ops.push(TIROp::Swap(5));
-        ops.push(TIROp::Pop(1));
+fn multiword_return_cleanup_preserves_values_after_optimization() {
+    for width in [3, 5, 8] {
+        for dead in [4, 5, 16] {
+            let ops: Vec<_> = (0..dead)
+                .flat_map(|_| [TIROp::Swap(width), TIROp::Pop(1)])
+                .collect();
+            let input: Vec<u64> = (1..=40).collect();
+            assert_eq!(
+                stack_effect(&optimize(ops.clone()), input.clone()),
+                stack_effect(&ops, input)
+            );
+        }
     }
-    let result = optimize(ops);
-    assert!(matches!(result[0], TIROp::Swap(8)));
-    assert!(matches!(result[1], TIROp::Swap(7)));
-    assert!(matches!(result[2], TIROp::Swap(6)));
-    assert!(matches!(result[3], TIROp::Swap(5)));
-    assert!(matches!(result[4], TIROp::Pop(4)));
-    assert_eq!(result.len(), 5); // was 8
+}
+
+#[test]
+fn block_copy_cleanup_preserves_operand_values() {
+    let ops = vec![TIROp::Dup(1), TIROp::Dup(1), TIROp::Swap(2), TIROp::Pop(2)];
+    assert_eq!(stack_effect(&optimize(ops), vec![1, 2]), vec![1, 2]);
 }
 
 #[test]

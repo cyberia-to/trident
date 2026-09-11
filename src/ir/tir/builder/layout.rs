@@ -57,17 +57,17 @@ impl TIRBuilder {
     /// Register struct field layout from a type annotation.
     pub(crate) fn register_struct_layout_from_type(&mut self, var_name: &str, ty: &Type) {
         if let Type::Named(path) = ty {
-            let struct_name = path.0.last().map(|s| s.as_str()).unwrap_or("");
-            if let Some(sdef) = self.struct_types.get(struct_name).cloned() {
+            let struct_name = self.qualified_name(&path.0.join("."));
+            if let Some(sdef) = self.struct_types.get(&struct_name).cloned() {
                 let mut field_map = BTreeMap::new();
                 let total: u32 = sdef
                     .fields
                     .iter()
-                    .map(|f| resolve_type_width(&f.ty.node, &self.target_config))
+                    .map(|f| self.type_width(&f.ty.node))
                     .sum();
                 let mut offset = 0u32;
                 for sf in &sdef.fields {
-                    let fw = resolve_type_width(&sf.ty.node, &self.target_config);
+                    let fw = self.type_width(&sf.ty.node);
                     let from_top = total - offset - fw;
                     field_map.insert(sf.name.node.clone(), (from_top, fw));
                     offset += fw;
@@ -127,11 +127,11 @@ impl TIRBuilder {
             let total: u32 = sdef
                 .fields
                 .iter()
-                .map(|f| resolve_type_width(&f.ty.node, &self.target_config))
+                .map(|f| self.type_width(&f.ty.node))
                 .sum();
             let mut found = false;
             for sf in &sdef.fields {
-                let fw = resolve_type_width(&sf.ty.node, &self.target_config);
+                let fw = self.type_width(&sf.ty.node);
                 if sf.name.node == field {
                     let from_top = total - sub_offset - fw;
                     // The sub-field is at `from_top` within the parent field.
@@ -170,7 +170,7 @@ impl TIRBuilder {
             let total: u32 = sdef
                 .fields
                 .iter()
-                .map(|f| resolve_type_width(&f.ty.node, &self.target_config))
+                .map(|f| self.type_width(&f.ty.node))
                 .sum();
             // Check if this struct matches the variable's layout.
             if let Some(layout) = self.struct_layouts.get(var_name) {
@@ -204,7 +204,7 @@ impl TIRBuilder {
                         return sdef
                             .fields
                             .iter()
-                            .map(|f| resolve_type_width(&f.ty.node, &self.target_config))
+                            .map(|f| self.type_width(&f.ty.node))
                             .collect();
                     }
                 }

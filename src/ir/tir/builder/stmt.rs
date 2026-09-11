@@ -8,240 +8,13 @@
 use std::collections::BTreeMap;
 
 use crate::ast::*;
-use crate::span::Spanned;
 use crate::tir::TIROp;
 
-use super::layout::resolve_type_width;
 use super::TIRBuilder;
 
 // ─── Block and statement emission ─────────────────────────────────
 
 impl TIRBuilder {
-    /// Lower an assignment `place = value` on the stack machine.
-    ///
-    /// Handles three place forms produced by the parser:
-    /// - simple variable `x`
-    /// - dotted struct field `p.x` / `p.q.r` (a dotted `Place::Var`)
-    /// - array/struct element `a[i]` (a `Place::Index`), constant index
-    ///
-    /// Each writes a single-word slot in place (evaluate the value, then
-    /// `swap`/`pop` it into the target slot). Multi-word field/element writes
-    /// and runtime array indices are not yet supported on the stack machine and
-    /// emit an explicit error rather than miscompiling.
-    pub(crate) fn build_assign(&mut self, place: &Place, value: &Expr) {
-        match place {
-            Place::Var(name) if !name.contains('.') => {
-                // Simple variable reassignment (width-1 slot).
-                self.build_expr(value);
-                let depth = self.stack.access_var(name);
-                self.flush_stack_effects();
-                self.store_top_into(depth);
-                self.stack.pop();
-            }
-            // Dotted field access `p.x` — the parser encodes this as a dotted
-            // Place::Var; a structured FieldAccess reduces to the same store.
-            Place::Var(name) => {
-                self.build_dotted_field_store(name, value);
-            }
-            Place::FieldAccess(inner, field) => {
-                // Flatten a structured field-access place into a dotted name
-                // when the base is a (possibly dotted) variable.
-                if let Some(base) = Self::place_dotted_name(inner) {
-                    let full = format!("{}.{}", base, field.node);
-                    self.build_dotted_field_store(&full, value);
-                } else {
-                    self.build_expr(value);
-                    self.ops.push(TIROp::Comment(
-                        "ERROR: unsupported field-assignment target".to_string(),
-                    ));
-                    self.ops.push(TIROp::Pop(1));
-                    self.stack.pop();
-                }
-            }
-            Place::Index(inner, index) => {
-                self.build_index_store(inner, index, value);
-            }
-        }
-    }
-
-    /// Store the single word on top of the stack into the slot at `depth`
-    /// (measured from the current top, with the value already pushed).
-    fn store_top_into(&mut self, depth: u32) {
-        if depth <= 15 {
-            self.ops.push(TIROp::Swap(depth));
-            self.ops.push(TIROp::Pop(1));
-        } else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: assignment target at depth {} exceeds stack window (16)",
-                depth
-            )));
-            self.ops.push(TIROp::Pop(1));
-        }
-    }
-
-    /// Recover a dotted variable name from a place whose base is a variable.
-    fn place_dotted_name(place: &Spanned<Place>) -> Option<String> {
-        match &place.node {
-            Place::Var(name) => Some(name.clone()),
-            Place::FieldAccess(inner, field) => {
-                Self::place_dotted_name(inner).map(|b| format!("{}.{}", b, field.node))
-            }
-            Place::Index(..) => None,
-        }
-    }
-
-    /// Store into a dotted struct field `base.f0.f1…` (width-1 field only).
-    fn build_dotted_field_store(&mut self, name: &str, value: &Expr) {
-        let parts: Vec<&str> = name.split('.').collect();
-        // Find the longest prefix that names a live variable, and bring it onto
-        // the stack BEFORE evaluating the value (so a reload can't land on top
-        // of the value word).
-        let mut base_split = None;
-        for split in 1..parts.len() {
-            let var_name = parts[..split].join(".");
-            if self.stack.has_var(&var_name) {
-                self.stack.access_var(&var_name);
-                self.flush_stack_effects();
-                base_split = Some(split);
-                break;
-            }
-        }
-        self.build_expr(value);
-        let Some(split) = base_split else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: unresolved assignment target '{}'",
-                name
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        let var_name = parts[..split].join(".");
-        let fields = &parts[split..];
-        let base_info = self.stack.find_var_depth_and_width(&var_name);
-        self.flush_stack_effects();
-        let Some((base_depth, _)) = base_info else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: unresolved assignment target '{}'",
-                name
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        match self.resolve_nested_field_offset(&var_name, fields) {
-            Some((combined_offset, 1)) => {
-                let real_depth = base_depth + combined_offset;
-                self.store_top_into(real_depth);
-            }
-            Some((_, field_width)) => {
-                self.ops.push(TIROp::Comment(format!(
-                    "ERROR: assignment to multi-word field '{}' (width {}) not yet supported on the stack machine",
-                    name, field_width
-                )));
-                self.ops.push(TIROp::Pop(1));
-            }
-            None => {
-                self.ops.push(TIROp::Comment(format!(
-                    "ERROR: unresolved field path '{}'",
-                    name
-                )));
-                self.ops.push(TIROp::Pop(1));
-            }
-        }
-        self.stack.pop();
-    }
-
-    /// Store into `a[idx]` with a constant index into a named variable
-    /// (width-1 element only).
-    fn build_index_store(
-        &mut self,
-        inner: &Spanned<Place>,
-        index: &Spanned<Expr>,
-        value: &Expr,
-    ) {
-        let base_name = match &inner.node {
-            Place::Var(name) if !name.contains('.') => Some(name.clone()),
-            _ => None,
-        };
-        let const_idx = match &index.node {
-            Expr::Literal(Literal::Integer(i)) => Some(*i as u32),
-            _ => None,
-        };
-        let (Some(name), Some(idx)) = (base_name, const_idx) else {
-            self.build_expr(value);
-            self.ops.push(TIROp::Comment(
-                "ERROR: only constant-index assignment into a named array is supported on the stack machine".to_string(),
-            ));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        if self.stack.has_var(&name) {
-            self.stack.access_var(&name);
-            self.flush_stack_effects();
-        }
-        self.build_expr(value);
-        let info = self.stack.find_var_with_elem_width(&name);
-        self.flush_stack_effects();
-        let Some((var_depth, var_width, elem_width)) = info else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: unresolved array '{}'",
-                name
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        if elem_width != 1 {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: assignment to multi-word array element '{}[{}]' (elem width {}) not yet supported",
-                name, idx, elem_width
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        }
-        if (idx + 1) * elem_width > var_width {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: index {} out of bounds for '{}' (width {})",
-                idx, name, var_width
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        }
-        let base_offset = var_width - (idx + 1) * elem_width;
-        let real_depth = var_depth + base_offset;
-        self.store_top_into(real_depth);
-        self.stack.pop();
-    }
-
-    /// Append Pop ops to clean up locals created in an if/else branch.
-    /// `post_depth` is stack_depth() after the branch body, `pre_depth` before.
-    /// `keep` is the number of words to preserve on top (e.g. a tail expression value).
-    fn append_branch_cleanup(body: &mut Vec<TIROp>, post_depth: u32, pre_depth: u32, keep: u32) {
-        let leftover = post_depth.saturating_sub(pre_depth + keep);
-        if leftover > 0 {
-            if keep > 0 {
-                // Swap the result value(s) past the dead locals, then pop.
-                if leftover <= 15 {
-                    body.push(TIROp::Swap(leftover));
-                } else {
-                    for _ in 0..leftover {
-                        body.push(TIROp::Swap(1));
-                    }
-                }
-            }
-            let mut remaining = leftover;
-            while remaining > 0 {
-                let batch = remaining.min(5);
-                body.push(TIROp::Pop(batch));
-                remaining -= batch;
-            }
-        }
-    }
-
     pub(crate) fn build_block(&mut self, block: &Block) {
         for stmt in &block.stmts {
             self.build_stmt(&stmt.node);
@@ -256,18 +29,26 @@ impl TIRBuilder {
             Stmt::Let {
                 pattern, init, ty, ..
             } => {
+                let inferred_ty = ty
+                    .as_ref()
+                    .map(|t| t.node.clone())
+                    .or_else(|| self.expr_type(&init.node));
                 self.build_expr(&init.node);
 
                 match pattern {
                     Pattern::Name(name) => {
                         if name.node != "_" {
+                            if let Some(ty) = &inferred_ty {
+                                self.var_types.insert(name.node.clone(), ty.clone());
+                                self.register_struct_layout_from_type(&name.node, ty);
+                            }
                             if let Some(top) = self.stack.last_mut() {
                                 top.name = Some(name.node.clone());
                             }
                             // If type is an array, record elem_width.
                             if let Some(sp_ty) = ty {
                                 if let Type::Array(inner_ty, _) = &sp_ty.node {
-                                    let ew = resolve_type_width(inner_ty, &self.target_config);
+                                    let ew = self.type_width(inner_ty);
                                     if let Some(top) = self.stack.last_mut() {
                                         top.elem_width = Some(ew);
                                     }
@@ -298,7 +79,19 @@ impl TIRBuilder {
                             let n = names.len() as u32;
                             let elem_width = if n > 0 { total_width / n } else { 1 };
 
-                            for name in names.iter() {
+                            let tuple_types = match &inferred_ty {
+                                Some(Type::Tuple(parts)) => Some(parts),
+                                _ => None,
+                            };
+                            for (index, name) in names.iter().enumerate() {
+                                let elem_width = tuple_types
+                                    .and_then(|ts| ts.get(index))
+                                    .map(|t| self.type_width(t))
+                                    .unwrap_or(elem_width);
+                                if let Some(ty) = tuple_types.and_then(|ts| ts.get(index)) {
+                                    self.var_types.insert(name.node.clone(), ty.clone());
+                                    self.register_struct_layout_from_type(&name.node, ty);
+                                }
                                 let var_name = if name.node == "_" {
                                     "__anon"
                                 } else {
@@ -377,7 +170,12 @@ impl TIRBuilder {
                     let saved = self.stack.save_state();
                     let pre_depth = self.stack.stack_depth();
                     let mut then_body = self.build_block_as_ir(&then_block.node);
-                    Self::append_branch_cleanup(&mut then_body, self.stack.stack_depth(), pre_depth, 0);
+                    Self::append_branch_cleanup(
+                        &mut then_body,
+                        self.stack.stack_depth(),
+                        pre_depth,
+                        0,
+                    );
                     self.stack.restore_state(saved);
 
                     self.ops.push(TIROp::IfOnly { then_body });
@@ -398,8 +196,8 @@ impl TIRBuilder {
                 self.build_expr(&start.node);
                 self.build_expr(&end.node);
                 // counter = end - start: dup start, then Sub (st1 - st0)
-                self.ops.push(TIROp::Dup(1));  // [..., start, end, start]
-                self.ops.push(TIROp::Sub);     // [..., start, end - start]
+                self.ops.push(TIROp::Dup(1)); // [..., start, end, start]
+                self.ops.push(TIROp::Sub); // [..., start, end - start]
 
                 self.ops.push(TIROp::Call(loop_label.clone()));
                 // After return: [..., index, 0] — pop both counter and index
@@ -413,7 +211,7 @@ impl TIRBuilder {
                 // plus [index, counter] on top. Keep outer vars in the model
                 // so the loop body can reference them at the correct depths.
                 self.stack.push_named(&var.node, 1); // index (depth 1)
-                self.stack.push_temp(1);              // counter (depth 0)
+                self.stack.push_temp(1); // counter (depth 0)
 
                 let mut body_ir = self.build_block_as_ir(&body.node);
 
@@ -434,11 +232,11 @@ impl TIRBuilder {
                 // Increment the index.
                 // After cleanup, stack is [..., index, counter] (counter at st0).
                 // Swap to bring index to top, add 1, swap back.
-                body_ir.push(TIROp::Swap(1));  // [..., counter, index]
+                body_ir.push(TIROp::Swap(1)); // [..., counter, index]
                 body_ir.push(TIROp::Push(1));
-                body_ir.push(TIROp::Add);      // [..., counter, index+1]
-                body_ir.push(TIROp::Swap(1));  // [..., index+1, counter]
-                // recurse is added by the lowering
+                body_ir.push(TIROp::Add); // [..., counter, index+1]
+                body_ir.push(TIROp::Swap(1)); // [..., index+1, counter]
+                                              // recurse is added by the lowering
 
                 self.stack.restore_state(saved);
 

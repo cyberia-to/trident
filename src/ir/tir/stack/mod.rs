@@ -243,7 +243,9 @@ impl StackManager {
     /// True if a variable of this name is currently live (on the operand
     /// stack or spilled). Does not mutate or reload.
     pub(crate) fn has_var(&self, name: &str) -> bool {
-        self.on_stack.iter().any(|e| e.name.as_deref() == Some(name))
+        self.on_stack
+            .iter()
+            .any(|e| e.name.as_deref() == Some(name))
             || self.spilled.iter().any(|v| v.name.as_deref() == Some(name))
     }
 
@@ -313,6 +315,13 @@ impl StackManager {
     /// Ensure there's room for `width` more elements on the stack.
     /// Spills the LRU named variable if necessary.
     pub(crate) fn ensure_space(&mut self, width: u32) {
+        // A wide aggregate cannot fit in the register window. Keep its
+        // stack layout intact; final legalization accesses it through RAM.
+        if width > self.max_stack_depth
+            || self.on_stack.iter().any(|v| v.width > self.max_stack_depth)
+        {
+            return;
+        }
         while self.stack_depth() + width > self.max_stack_depth {
             if !self.spill_lru() {
                 break; // no more named variables to spill
@@ -352,12 +361,12 @@ impl StackManager {
                 let elem_depth = depth_from_top + (var.width - 1 - i);
                 let ram_addr = addr + i as u64;
                 // Bring element to top, write to RAM
-                if elem_depth > 0 && elem_depth <= self.max_stack_depth - 1 {
-                    self.side_effects
-                        .push((self.formatter.fmt_swap)(elem_depth));
+                // Rotate the selected element to the top without permuting
+                // the intervening values tracked by on_stack.
+                for d in 1..=elem_depth {
+                    self.side_effects.push((self.formatter.fmt_swap)(d));
                 }
                 self.side_effects.push((self.formatter.fmt_push)(ram_addr));
-                self.side_effects.push((self.formatter.fmt_swap)(1));
                 self.side_effects
                     .push(self.formatter.fmt_write_mem1.clone());
                 self.side_effects.push(self.formatter.fmt_pop1.clone());

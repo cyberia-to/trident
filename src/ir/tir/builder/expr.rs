@@ -9,7 +9,6 @@ use crate::ast::*;
 use crate::span::Spanned;
 use crate::tir::TIROp;
 
-use super::layout::resolve_type_width;
 use super::TIRBuilder;
 
 impl TIRBuilder {
@@ -44,7 +43,10 @@ impl TIRBuilder {
                     BinOp::Lt => self.ops.push(TIROp::Lt),
                     BinOp::BitAnd => self.ops.push(TIROp::And),
                     BinOp::BitXor => self.ops.push(TIROp::Xor),
-                    BinOp::DivMod => self.ops.push(TIROp::DivMod),
+                    BinOp::DivMod => {
+                        self.ops.push(TIROp::Swap(1));
+                        self.ops.push(TIROp::DivMod);
+                    }
                     BinOp::XFieldMul => self.ops.push(TIROp::ExtMul),
                 }
                 self.stack.pop(); // rhs temp
@@ -114,6 +116,8 @@ impl TIRBuilder {
                 let mut total_width = 0u32;
                 for (_name, val) in fields {
                     self.build_expr(&val.node);
+                }
+                for _ in fields {
                     if let Some(e) = self.stack.pop() {
                         total_width += e.width;
                     }
@@ -186,30 +190,9 @@ impl TIRBuilder {
                 let depth = self.stack.access_var(name);
                 self.flush_stack_effects();
 
-                if depth + width - 1 <= 15 {
-                    for _ in 0..width {
-                        self.ops.push(TIROp::Dup(depth + width - 1));
-                    }
-                } else {
-                    // Too deep — force spill of other variables.
-                    self.stack.ensure_space(width);
-                    self.flush_stack_effects();
-                    self.stack.access_var(name);
-                    self.flush_stack_effects();
-                    let depth2 = self.stack.access_var(name);
-                    self.flush_stack_effects();
-                    if depth2 + width - 1 <= 15 {
-                        for _ in 0..width {
-                            self.ops.push(TIROp::Dup(depth2 + width - 1));
-                        }
-                    } else {
-                        self.ops.push(TIROp::Comment(format!(
-                            "BUG: variable '{}' unreachable (depth {}+{}), aborting",
-                            name, depth2, width
-                        )));
-                        self.ops.push(TIROp::Push(0));
-                        self.ops.push(TIROp::Assert(1));
-                    }
+                // Deep accesses are legalized after building all stack ops.
+                for _ in 0..width {
+                    self.ops.push(TIROp::Dup(depth + width - 1));
                 }
                 self.stack.push_temp(width);
             } else {
@@ -246,14 +229,14 @@ impl TIRBuilder {
                     let total: u32 = sdef
                         .fields
                         .iter()
-                        .map(|f| resolve_type_width(&f.ty.node, &self.target_config))
+                        .map(|f| self.type_width(&f.ty.node))
                         .sum();
                     if total != struct_width {
                         continue;
                     }
                     let mut off = 0u32;
                     for sf in &sdef.fields {
-                        let fw = resolve_type_width(&sf.ty.node, &self.target_config);
+                        let fw = self.type_width(&sf.ty.node);
                         if sf.name.node == field.node {
                             found = Some((total - off - fw, fw));
                             break;

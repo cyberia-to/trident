@@ -373,7 +373,12 @@ impl TIRBuilder {
             call_label.clone()
         };
 
-        let ret_width = self.fn_return_widths.get(&base_name).copied().unwrap_or(0);
+        let ret_width = self
+            .fn_return_types
+            .get(&self.qualified_name(name))
+            .map(|ty| self.type_width(ty))
+            .or_else(|| self.fn_return_widths.get(&base_name).copied())
+            .unwrap_or(0);
         if ret_width > 0 {
             self.emit_and_push(TIROp::Call(call_label), ret_width);
         } else {
