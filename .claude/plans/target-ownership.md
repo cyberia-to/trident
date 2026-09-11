@@ -1,12 +1,13 @@
 # Target ownership follow-up
 
-Status: approved 2026-09-11; implementation complete, distribution gates active.
-Audit and disposition: `docs/explanation/target-ownership.md`.
+Status: approved 2026-09-11; architecture and distribution migration verified.
+Audit/disposition: `docs/explanation/target-ownership.md`.
+Evidence/artifacts: `reference/warrior-release-validation.md` (final candidates).
+Code: Trident 060494c; Trisha e97b543; Joy d065814. No release published.
 
-Done: versioned packages, capability inference, target/editor/API parity,
-generated ABI, typed TIR, Trisha legalization, SDK and lib/catalog migration,
-canonical owner metadata, runtime guards and target-aware packaging.
-Real XField order errors fixed; incomplete recursive SDK removed fail-closed.
-Pending: final installed/source-archive smoke, regression review and commits.
-Full release still needs private/state/recursive proofs, deployment and 43/43
-baseline fixtures. Keep acceptance failures visible; no narrower release claim.
+Done: packages/capabilities, API/editor targets, generated ABI, typed TIR,
+SDK/lib/catalog migration, owner metadata, runtime guards and packaging.
+Real VM correctness fixes; source/archive installs and exact binary smoke pass.
+Next gates: authenticated state/private proofs; recursive Neptune verification
+and transaction validation; deployment; 43/43 independent baseline fixtures.
+Keep Joy's three state-proof failures and 42 unverified baselines visible.

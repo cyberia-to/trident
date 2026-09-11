@@ -105,6 +105,44 @@ The subsequent owner-approved migration has the following source validation:
 Raw logs for this checkpoint are `/tmp/trident-ownership-final.log`,
 `/tmp/trident-ownership-neural-final.log`, `/tmp/trisha-ownership-final.log`,
 `/tmp/trisha-ownership-neural-final.log`, and
-`/tmp/joy-ownership-complete-suite.log`. Installed and archived candidates must
-be rebuilt after the code commits; older archives above are not evidence for
-this migration.
+`/tmp/joy-ownership-complete-suite.log`. The final installed and archived candidates below were rebuilt after the code
+commits. Older archives above are not evidence for this migration.
+
+### Final ownership candidates
+
+Code commits: Trident `060494c`, Trisha `e97b543`, Joy `d065814`.
+No merge, tag, registry publication or GitHub release was performed.
+
+Local artifacts and retained logs:
+`trisha/target/ownership-candidate-20260911/`.
+
+| Artifact | SHA-256 |
+|---|---|
+| `warrior-source.tar.gz` | `c10c1e90ee09325a7b257eb575461c5f83ed8ddb713b79ac805c12dfdd0cd8e1` |
+| `warrior-darwin-arm64.tar.gz` | `b83bb2322d2e083a66acd9e6e3b709aef8434544db3c174341c8113be98d5509` |
+| `trident-lang-0.3.0.crate` | `acdc1af79374327b96156d5653ee073875eb92a31eec907d39188d63972d207b` |
+
+- `cargo package --locked --offline` built and verified the compiler registry
+  package: 483 files, 3.1 MiB uncompressed.
+- The source archive includes ten repositories and 1,838 source files with
+  SHA-256 inventory, plus the patched Triton vendor inventory. Working-tree
+  snapshot mode preserves unrelated dirty BBG sources and records provenance;
+  those dependency changes were neither committed nor reverted by this task.
+- Every inventoried source/vendor hash was verified after extraction. All
+  three CLI packages were rebuilt and installed from that extracted tree,
+  with locked/offline resolution. Cargo dependency caches were reused.
+- The unchanged full smoke passed on the development install, on the source-
+  archive install after renaming its build-source directory, and again after
+  unpacking the exact binary archive. Each run used an empty work directory,
+  PATH limited to the installed binaries, and no resource/package overrides.
+- Smoke covers project target selection, nox/Triton/Neptune check/build/package,
+  owner-supplied state metadata, public/secret execution, supported proof and
+  batch paths, altered result rejection, and unsupported state/recursive SDK
+  requests. It certifies Darwin arm64 CPU behavior only.
+- `trisha bench --full` returned nonzero as required: 1/1 reference fixture
+  passed, 1/43 baselines verified, 42 unverified. Arithmetic input 5 produced
+  38: classic 11 cycles, hand 7 cycles; both STARKs verified, padded height 256.
+
+These candidates close the ownership/distribution migration gates. The full
+production release gates listed above remain open. In particular, the three
+Joy state-proof failures were retained in the complete-suite log.

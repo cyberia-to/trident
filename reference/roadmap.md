@@ -42,6 +42,12 @@ Quantum         256K        128K
 
 ---
 
+Ownership checkpoint (2026-09-11): package/ABI propagation, typed TIR and
+warrior-owned SDK/distribution are implemented and tested. Current temperatures
+remain unchanged: the next complete milestones still require authenticated
+state/private proofs, deployment and independent reference coverage. See
+[the current release evidence](warrior-release-validation.md#final-ownership-candidates).
+
 ## 256K — primitives land
 
 ```
@@ -90,7 +96,7 @@ CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ✓ TIR builder, optimizer, lowerer self-hosted in .tri
 Noun        ✓ NounBuilder self-hosted in .tri
-cyber stack ✓ Full pipeline: .tri → nox → zheng → bbg (compile, execute, prove, verify) — 0.2.0
+cyber stack ◐ Public stateless .tri → nox → zheng execution certificates work; authenticated bbg state proofs remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ✓ All stages self-hosted — wire lower when core/warrior ready
 std.*       23 std.skill.* shipped

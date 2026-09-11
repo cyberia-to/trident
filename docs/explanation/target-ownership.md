@@ -1,6 +1,7 @@
 # Target ownership review — 2026-09-11
 
-Status: approved migration implemented; final installed-distribution checks in progress.
+Status: approved migration implemented and committed; installed and archived
+distribution checks passed on Darwin arm64 CPU. Full proof-release gates remain open.
 The initial findings below are retained as the audit trail. The implementation
 checkpoint records their disposition. Current contracts are in
 [warrior-api](../../reference/warrior-api.md).
@@ -203,5 +204,5 @@ Full release gates still include private/state proofs, recursive Neptune
 verification and transaction validation, live deployment, and executable
 reference fixtures for all claimed baselines. The historical benchmark is
 1/43 verified. These remain explicit open work; no release was published by
-this migration. Local installed-candidate evidence belongs in
+this migration. Final installed/source/binary candidate checks and hashes are in
 [warrior-release-validation](../../reference/warrior-release-validation.md).
