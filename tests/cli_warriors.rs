@@ -88,6 +88,25 @@ fn project_target_and_explicit_target_select_the_same_warrior_for_all_actions() 
         String::from_utf8_lossy(&output.stderr)
     );
     assert!(root.join("dispatch.nox").exists());
+
+    fs::write(
+        root.join("alternate.tri"),
+        "program alternate\nfn main() -> Field { 7 }\n",
+    )
+    .unwrap();
+    for action in ["build", "run", "prove"] {
+        let output = invoke(root, root, &[action, "alternate.tri"]);
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let text = String::from_utf8(output.stdout).unwrap();
+        assert!(
+            text.lines().any(|line| line == "alternate.tri"),
+            "explicit file replaced by project entry: {text}"
+        );
+    }
 }
 
 #[test]

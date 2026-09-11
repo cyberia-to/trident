@@ -135,7 +135,8 @@ pub fn resolve_input(input: &Path) -> ResolvedInput {
     match toml_path {
         Some(p) => {
             let project = load_project(&p);
-            let entry = project.entry.clone();
+            // A manifest supplies settings; only a directory input selects its entry.
+            let entry = input.to_path_buf();
             ResolvedInput {
                 entry,
                 project: Some(project),
