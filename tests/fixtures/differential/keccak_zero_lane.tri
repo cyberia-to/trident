@@ -1,0 +1,3 @@
+program differential_keccak_zero_lane
+use std.crypto.keccak256
+fn main() -> keccak256.Lane { keccak256.zero_lane() }

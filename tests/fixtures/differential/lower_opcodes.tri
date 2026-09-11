@@ -1,0 +1,3 @@
+program differential_lower_opcodes
+use std.compiler.lower
+fn main() -> Field { lower.OP_CALL() + 100 * lower.OP_HALT() }

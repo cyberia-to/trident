@@ -1,0 +1,7 @@
+program differential_quantum_complex_mul
+use std.quantum.gates
+fn main(a: Field, b: Field, c: Field, d: Field) -> gates.Complex {
+    let zero: gates.Complex = gates.complex_zero()
+    let lhs: gates.Complex = gates.complex_add(zero, gates.Complex { re: a, im: b })
+    gates.complex_mul(lhs, gates.Complex { re: c, im: d })
+}

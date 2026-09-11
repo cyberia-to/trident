@@ -1,0 +1,3 @@
+program differential_lexer_tokens
+use std.compiler.lexer
+fn main() -> Field { lexer.TK_PROGRAM() + 100 * lexer.TK_EOF() }

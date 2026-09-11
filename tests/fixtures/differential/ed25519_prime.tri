@@ -1,0 +1,6 @@
+program differential_ed25519_prime
+use std.crypto.ed25519
+fn main() -> (U32, U32, U32, U32, U32, U32, U32, U32) {
+    let p = ed25519.field_prime()
+    (p.l0, p.l1, p.l2, p.l3, p.l4, p.l5, p.l6, p.l7)
+}

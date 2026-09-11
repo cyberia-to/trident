@@ -1,0 +1,3 @@
+program differential_lut_sponge_zero
+use std.crypto.lut_sponge
+fn main() -> lut_sponge.State { lut_sponge.zero_state() }
