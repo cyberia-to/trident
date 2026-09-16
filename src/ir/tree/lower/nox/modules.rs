@@ -1,0 +1,213 @@
+//! Module identity and conditional compilation for the nox lowering.
+
+use super::*;
+
+impl NoxCompiler {
+    /// Lower type-checked modules in dependency order, preserving the lexical
+    /// module of every function, constant and struct. `entry` selects the
+    /// program (or public library entry) and `flags` select active items.
+    pub fn compile_modules(
+        &mut self,
+        files: &[&ast::File],
+        entry: &ast::File,
+        flags: &BTreeSet<String>,
+    ) -> Result<Noun, String> {
+        // A compiler may be reused; symbols and state from its last program
+        // must not affect this one.
+        *self = Self::new();
+        let mut aliases = BTreeMap::new();
+        for file in files {
+            self.current_module = file.name.node.clone();
+            self.module_aliases
+                .insert(self.current_module.clone(), aliases.clone());
+            // Resolve lexical size constants independently of declaration order.
+            for item in &file.items {
+                if active(&item.node, flags) {
+                    if let Item::Const(c) = &item.node {
+                        if let Expr::Literal(Literal::Integer(v)) = &c.value.node {
+                            self.constants.insert(self.symbol(&c.name.node), *v);
+                        }
+                    }
+                }
+            }
+            for item in &file.items {
+                if !active(&item.node, flags) {
+                    continue;
+                }
+                match &item.node {
+                    Item::Const(_) => {}
+                    Item::Fn(f) => {
+                        let mut f = f.clone();
+                        f.name.node = self.symbol(&f.name.node);
+                        let generics = f.type_params.iter().map(|p| p.node.clone()).collect();
+                        for p in &mut f.params {
+                            p.ty.node = self.qualified_type_preserving(&p.ty.node, &generics);
+                        }
+                        if let Some(t) = &mut f.return_ty {
+                            t.node = self.qualified_type_preserving(&t.node, &generics);
+                        }
+                        self.fns.insert(f.name.node.clone(), f);
+                    }
+                    Item::Struct(s) => {
+                        let fields = s
+                            .fields
+                            .iter()
+                            .map(|f| (f.name.node.clone(), self.qualified_type(&f.ty.node)))
+                            .collect();
+                        self.structs.insert(self.symbol(&s.name.node), fields);
+                    }
+                    Item::Event(_) => {}
+                }
+            }
+            // This mirrors TypeChecker::import_module: dependent modules see
+            // both the full name and the last-segment alias, in dependency
+            // order. The function body keeps the aliases of its own module.
+            aliases.insert(file.name.node.clone(), file.name.node.clone());
+            if let Some(short) = file.name.node.rsplit('.').next() {
+                aliases.insert(short.to_string(), file.name.node.clone());
+            }
+        }
+        self.scan_state_functions();
+        self.current_module = entry.name.node.clone();
+        let candidates = || {
+            entry.items.iter().filter_map(|item| {
+                if !active(&item.node, flags) {
+                    return None;
+                }
+                match &item.node {
+                    Item::Fn(f) => Some(f),
+                    _ => None,
+                }
+            })
+        };
+        let f = candidates()
+            .find(|f| f.name.node == "main")
+            .or_else(|| candidates().find(|f| f.is_pub && f.body.is_some()))
+            .ok_or_else(|| "no entry function found".to_string())?;
+        let f = self
+            .fns
+            .get(&self.symbol(&f.name.node))
+            .cloned()
+            .ok_or_else(|| "entry module was not provided to nox lowering".to_string())?;
+        self.compile_fn(&f)
+    }
+
+    /// Turn a name from the current body into its global identity. Dotted
+    /// names are module-qualified; bare names belong to the current module.
+    pub(super) fn symbol(&self, name: &str) -> String {
+        if let Some((prefix, member)) = name.rsplit_once('.') {
+            let module = self
+                .module_aliases
+                .get(&self.current_module)
+                .and_then(|a| a.get(prefix))
+                .map(String::as_str)
+                .unwrap_or(prefix);
+            format!("{module}.{member}")
+        } else if self.current_module.is_empty() {
+            name.to_string()
+        } else {
+            format!("{}.{name}", self.current_module)
+        }
+    }
+
+    pub(super) fn qualified_type(&self, ty: &ast::Type) -> ast::Type {
+        self.qualified_type_preserving(ty, &BTreeSet::new())
+    }
+
+    fn qualified_type_preserving(&self, ty: &ast::Type, generics: &BTreeSet<String>) -> ast::Type {
+        match ty {
+            ast::Type::Named(path) => ast::Type::Named(ast::ModulePath(
+                self.symbol(&path.as_dotted())
+                    .split('.')
+                    .map(str::to_string)
+                    .collect(),
+            )),
+            ast::Type::Array(inner, size) => ast::Type::Array(
+                Box::new(self.qualified_type_preserving(inner, generics)),
+                self.qualified_size(size, generics),
+            ),
+            ast::Type::Tuple(ts) => ast::Type::Tuple(
+                ts.iter()
+                    .map(|t| self.qualified_type_preserving(t, generics))
+                    .collect(),
+            ),
+            _ => ty.clone(),
+        }
+    }
+
+    fn qualified_size(&self, size: &ast::ArraySize, generics: &BTreeSet<String>) -> ast::ArraySize {
+        use ast::ArraySize;
+        match size {
+            ArraySize::Param(name) if !generics.contains(name) => self
+                .constants
+                .get(&self.symbol(name))
+                .map(|n| ArraySize::Literal(*n))
+                // Keep lexical ownership even if a constant is unresolved;
+                // never capture an equally named entry-module constant.
+                .unwrap_or_else(|| ArraySize::Param(self.symbol(name))),
+            ArraySize::Add(a, b) | ArraySize::Mul(a, b) => {
+                let a = self.qualified_size(a, generics);
+                let b = self.qualified_size(b, generics);
+                if let (ArraySize::Literal(x), ArraySize::Literal(y)) = (&a, &b) {
+                    let value = if matches!(size, ArraySize::Add(..)) {
+                        x.checked_add(*y)
+                    } else {
+                        x.checked_mul(*y)
+                    };
+                    if let Some(value) = value {
+                        return ArraySize::Literal(value);
+                    }
+                }
+                if matches!(size, ArraySize::Add(..)) {
+                    ArraySize::Add(Box::new(a), Box::new(b))
+                } else {
+                    ArraySize::Mul(Box::new(a), Box::new(b))
+                }
+            }
+            _ => size.clone(),
+        }
+    }
+}
+
+fn active(item: &Item, flags: &BTreeSet<String>) -> bool {
+    let cfg = match item {
+        Item::Fn(f) => &f.cfg,
+        Item::Const(c) => &c.cfg,
+        Item::Struct(s) => &s.cfg,
+        Item::Event(e) => &e.cfg,
+    };
+    cfg.as_ref().is_none_or(|flag| flags.contains(&flag.node))
+}
+
+#[cfg(test)]
+mod size_tests {
+    use super::*;
+
+    #[test]
+    fn lexical_sizes_preserve_generics_and_never_wrap_arithmetic() {
+        use ast::ArraySize as S;
+        let mut compiler = NoxCompiler::new();
+        compiler.current_module = "library".into();
+        compiler.constants.insert("library.N".into(), 2);
+        let n = S::Param("N".into());
+        assert!(matches!(
+            compiler.qualified_size(&n, &BTreeSet::new()),
+            S::Literal(2)
+        ));
+        assert!(
+            matches!(compiler.qualified_size(&n, &BTreeSet::from(["N".into()])), S::Param(x) if x == "N")
+        );
+        for size in [
+            S::Add(Box::new(S::Literal(u64::MAX)), Box::new(S::Literal(1))),
+            S::Mul(Box::new(S::Literal(u64::MAX)), Box::new(S::Literal(2))),
+        ] {
+            assert!(!matches!(
+                compiler.qualified_size(&size, &BTreeSet::new()),
+                S::Literal(_)
+            ));
+        }
+        assert!(
+            matches!(compiler.qualified_size(&S::Param("unknown".into()), &BTreeSet::new()), S::Param(x) if x == "library.unknown")
+        );
+    }
+}

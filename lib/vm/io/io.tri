@@ -1,0 +1,5 @@
+module vm.io.io
+
+// The compiler generates supported target I/O declarations from the ABI.
+// Native Digest reads use read_digest/divine_digest; fixed tuples use readN.
+// nox exposes scalar divine; public input/output are function arguments/results.

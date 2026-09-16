@@ -28,7 +28,9 @@ pub struct StructTy {
 
 impl StructTy {
     pub fn width(&self) -> u32 {
-        self.fields.iter().map(|(_, ty, _)| ty.width()).sum()
+        self.fields
+            .iter()
+            .fold(0u32, |n, (_, ty, _)| n.saturating_add(ty.width()))
     }
 
     /// Get a field's type and its offset from the "top" of the struct on the stack.
@@ -60,7 +62,7 @@ impl Ty {
                 let len = u32::try_from(*n).unwrap_or(u32::MAX);
                 inner.width().saturating_mul(len)
             }
-            Ty::Tuple(elems) => elems.iter().map(|t| t.width()).sum(),
+            Ty::Tuple(elems) => elems.iter().fold(0u32, |n, t| n.saturating_add(t.width())),
             Ty::Struct(s) => s.width(),
             Ty::Unit => 0,
         }

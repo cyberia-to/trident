@@ -12,8 +12,8 @@ pub struct VerifyProofArgs {
     /// Path to the proof file
     pub proof: PathBuf,
     /// Target VM or OS (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -35,8 +35,15 @@ pub struct VerifyProofArgs {
 }
 
 pub fn cmd_verify_proof(args: VerifyProofArgs) {
+    let directory = if args.proof.is_dir() {
+        args.proof.as_path()
+    } else {
+        args.proof.parent().unwrap_or(std::path::Path::new("."))
+    };
+    let project = trident::project::Project::find(directory).map(|path| super::load_project(&path));
+    let target = super::source_target(args.target.as_deref(), project.as_ref());
     let bf = super::resolve_battlefield(
-        &args.target,
+        &target,
         &args.engine,
         &args.terrain,
         &args.network,
@@ -62,9 +69,5 @@ pub fn cmd_verify_proof(args: VerifyProofArgs) {
         return;
     }
 
-    eprintln!("No verification warrior found for target '{}'.", target);
-    eprintln!("Warriors handle proof verification using target-specific verifiers.");
-    eprintln!();
-    eprintln!("Install a warrior for this target:");
-    eprintln!("  cargo install trisha   # Triton VM + Neptune");
+    super::missing_warrior(&target, "verify");
 }

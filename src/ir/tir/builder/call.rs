@@ -32,62 +32,31 @@ impl TIRBuilder {
         }
 
         // Resolve intrinsic name.
-        let resolved_name = self.intrinsic_map.get(name).cloned().or_else(|| {
-            name.rsplit('.')
-                .next()
-                .and_then(|short| self.intrinsic_map.get(short).cloned())
-        });
+        let resolved_name = self.intrinsic_map.get(name).cloned();
+        if resolved_name.is_none()
+            && (self.fn_return_widths.contains_key(name) || self.generic_fn_defs.contains_key(name))
+        {
+            self.build_user_call(name, generic_args);
+            return;
+        }
         let effective_name = resolved_name.as_deref().unwrap_or(name);
+        if let Some(&(inputs, outputs)) = self.target_intrinsics.get(effective_name) {
+            self.emit_and_push(
+                TIROp::TargetCall {
+                    name: effective_name.to_string(),
+                    inputs,
+                    outputs,
+                },
+                outputs,
+            );
+            return;
+        }
+        if let Some((operation, width)) = self.stream_operation(effective_name) {
+            self.emit_and_push(operation, width);
+            return;
+        }
 
         match effective_name {
-            // ── I/O ──
-            "pub_read" => {
-                self.emit_and_push(TIROp::ReadIo(1), 1);
-            }
-            "pub_read2" => {
-                self.emit_and_push(TIROp::ReadIo(2), 2);
-            }
-            "pub_read3" => {
-                self.emit_and_push(TIROp::ReadIo(3), 3);
-            }
-            "pub_read4" => {
-                self.emit_and_push(TIROp::ReadIo(4), 4);
-            }
-            "pub_read5" => {
-                self.emit_and_push(TIROp::ReadIo(5), 5);
-            }
-            "pub_write" => {
-                self.ops.push(TIROp::WriteIo(1));
-                self.push_temp(0);
-            }
-            "pub_write2" => {
-                self.ops.push(TIROp::WriteIo(2));
-                self.push_temp(0);
-            }
-            "pub_write3" => {
-                self.ops.push(TIROp::WriteIo(3));
-                self.push_temp(0);
-            }
-            "pub_write4" => {
-                self.ops.push(TIROp::WriteIo(4));
-                self.push_temp(0);
-            }
-            "pub_write5" => {
-                self.ops.push(TIROp::WriteIo(5));
-                self.push_temp(0);
-            }
-
-            // ── Non-deterministic input ──
-            "divine" => {
-                self.emit_and_push(TIROp::Hint(1), 1);
-            }
-            "divine3" => {
-                self.emit_and_push(TIROp::Hint(3), 3);
-            }
-            "divine5" => {
-                self.emit_and_push(TIROp::Hint(5), 5);
-            }
-
             // ── Assertions ──
             "assert" => {
                 self.ops.push(TIROp::Assert(1));
@@ -99,8 +68,7 @@ impl TIRBuilder {
                 self.push_temp(0);
             }
             "assert_digest" => {
-                self.ops.push(TIROp::Assert(5));
-                self.ops.push(TIROp::Pop(self.target_config.digest_width));
+                self.emit_digest_assert();
                 self.push_temp(0);
             }
 
@@ -169,10 +137,10 @@ impl TIRBuilder {
 
             // ── Merkle ──
             "merkle_step" => {
-                self.emit_and_push(TIROp::MerkleStep, 6);
+                self.emit_and_push(TIROp::MerkleStep, self.target_config.digest_width + 1);
             }
             "merkle_step_mem" => {
-                self.emit_and_push(TIROp::MerkleLoad, 7);
+                self.emit_and_push(TIROp::MerkleLoad, self.target_config.digest_width + 2);
             }
 
             // ── RAM ──
@@ -185,20 +153,21 @@ impl TIRBuilder {
                 self.push_temp(0);
             }
             "ram_read_block" => {
-                self.ops.push(TIROp::RamRead { width: 5 });
-                self.push_temp(5);
+                self.ops.push(TIROp::RamRead {
+                    width: self.target_config.digest_width,
+                });
+                self.push_temp(self.target_config.digest_width);
             }
             "ram_write_block" => {
-                self.ops.push(TIROp::RamWrite { width: 5 });
+                self.ops.push(TIROp::RamWrite {
+                    width: self.target_config.digest_width,
+                });
                 self.push_temp(0);
             }
 
             // ── Conversion ──
             "as_u32" => {
-                // split: st0=lo (u32), st1=hi. Keep lo, discard hi.
-                self.ops.push(TIROp::Split);
-                self.ops.push(TIROp::Swap(1));
-                self.ops.push(TIROp::Pop(1));
+                self.emit_checked_u32();
                 self.push_temp(1);
             }
             "as_field" => {
@@ -207,17 +176,17 @@ impl TIRBuilder {
 
             // ── XField ──
             "xfield" => {
-                self.push_temp(3);
+                self.push_temp(self.target_config.xfield_width);
             }
             "xinvert" => {
                 self.ops.push(TIROp::ExtInvert);
-                self.push_temp(3);
+                self.push_temp(self.target_config.xfield_width);
             }
             "xx_dot_step" => {
-                self.emit_and_push(TIROp::FoldExt, 5);
+                self.emit_and_push(TIROp::FoldExt, self.target_config.xfield_width + 2);
             }
             "xb_dot_step" => {
-                self.emit_and_push(TIROp::FoldBase, 5);
+                self.emit_and_push(TIROp::FoldBase, self.target_config.xfield_width + 2);
             }
 
             // ── User-defined function ──
@@ -236,12 +205,27 @@ impl TIRBuilder {
         generic_args: &[Spanned<ArraySize>],
         _arg_count: usize,
     ) {
-        let resolved_name = self.intrinsic_map.get(name).cloned().or_else(|| {
-            name.rsplit('.')
-                .next()
-                .and_then(|short| self.intrinsic_map.get(short).cloned())
-        });
+        let resolved_name = self.intrinsic_map.get(name).cloned();
+        if resolved_name.is_none()
+            && (self.fn_return_widths.contains_key(name) || self.generic_fn_defs.contains_key(name))
+        {
+            let label = self.resolve_call_label(name, generic_args);
+            self.ops.push(TIROp::Call(label));
+            return;
+        }
         let effective_name = resolved_name.as_deref().unwrap_or(name);
+        if let Some(&(inputs, outputs)) = self.target_intrinsics.get(effective_name) {
+            self.ops.push(TIROp::TargetCall {
+                name: effective_name.to_string(),
+                inputs,
+                outputs,
+            });
+            return;
+        }
+        if let Some((operation, _)) = self.stream_operation(effective_name) {
+            self.ops.push(operation);
+            return;
+        }
 
         match effective_name {
             "hash" => {
@@ -258,19 +242,8 @@ impl TIRBuilder {
                 self.ops.push(TIROp::Eq);
                 self.ops.push(TIROp::Assert(1));
             }
-            "pub_read" => self.ops.push(TIROp::ReadIo(1)),
-            "pub_read2" => self.ops.push(TIROp::ReadIo(2)),
-            "pub_read3" => self.ops.push(TIROp::ReadIo(3)),
-            "pub_read4" => self.ops.push(TIROp::ReadIo(4)),
-            "pub_read5" => self.ops.push(TIROp::ReadIo(5)),
-            "pub_write" => self.ops.push(TIROp::WriteIo(1)),
-            "pub_write2" => self.ops.push(TIROp::WriteIo(2)),
-            "pub_write3" => self.ops.push(TIROp::WriteIo(3)),
-            "pub_write4" => self.ops.push(TIROp::WriteIo(4)),
-            "pub_write5" => self.ops.push(TIROp::WriteIo(5)),
-            "divine" => self.ops.push(TIROp::Hint(1)),
-            "divine3" => self.ops.push(TIROp::Hint(3)),
-            "divine5" => self.ops.push(TIROp::Hint(5)),
+            "as_u32" => self.emit_checked_u32(),
+            "as_field" | "xfield" => {}
             "split" => self.ops.push(TIROp::Split),
             "log2" => self.ops.push(TIROp::Log2),
             "pow" => self.ops.push(TIROp::Pow),
@@ -282,16 +255,19 @@ impl TIRBuilder {
             "field_mul" => self.ops.push(TIROp::Mul),
             "ram_read" => self.ops.push(TIROp::RamRead { width: 1 }),
             "ram_write" => self.ops.push(TIROp::RamWrite { width: 1 }),
-            "ram_read_block" => self.ops.push(TIROp::RamRead { width: 5 }),
-            "ram_write_block" => self.ops.push(TIROp::RamWrite { width: 5 }),
+            "ram_read_block" => self.ops.push(TIROp::RamRead {
+                width: self.target_config.digest_width,
+            }),
+            "ram_write_block" => self.ops.push(TIROp::RamWrite {
+                width: self.target_config.digest_width,
+            }),
             "merkle_step" => self.ops.push(TIROp::MerkleStep),
             "merkle_step_mem" => self.ops.push(TIROp::MerkleLoad),
             "xinvert" => self.ops.push(TIROp::ExtInvert),
             "xx_dot_step" => self.ops.push(TIROp::FoldExt),
             "xb_dot_step" => self.ops.push(TIROp::FoldBase),
             "assert_digest" => {
-                self.ops.push(TIROp::Assert(5));
-                self.ops.push(TIROp::Pop(self.target_config.digest_width));
+                self.emit_digest_assert();
             }
             _ => {
                 // User-defined call — resolve label the same way as
@@ -299,6 +275,55 @@ impl TIRBuilder {
                 let call_label = self.resolve_call_label(name, generic_args);
                 self.ops.push(TIROp::Call(call_label));
             }
+        }
+    }
+
+    fn emit_checked_u32(&mut self) {
+        // Split leaves [high, low]; preserve low and require high == 0.
+        self.ops.extend([
+            TIROp::Split,
+            TIROp::Swap(1),
+            TIROp::Push(0),
+            TIROp::Eq,
+            TIROp::Assert(1),
+        ]);
+    }
+
+    fn stream_operation(&self, name: &str) -> Option<(TIROp, u32)> {
+        for prefix in ["pub_read", "pub_write", "divine"] {
+            let Some(suffix) = name.strip_prefix(prefix) else {
+                continue;
+            };
+            let width = if suffix.is_empty() {
+                1
+            } else {
+                suffix.parse::<u32>().ok()?
+            };
+            let valid = if prefix == "divine" {
+                width == 1
+                    || width == self.target_config.digest_width
+                    || width == self.target_config.xfield_width
+            } else {
+                width > 0 && width <= self.target_config.digest_width
+            };
+            if !valid || width == 0 {
+                return None;
+            }
+            return Some(match prefix {
+                "pub_read" => (TIROp::ReadIo(width), width),
+                "pub_write" => (TIROp::WriteIo(width), 0),
+                _ => (TIROp::Hint(width), width),
+            });
+        }
+        None
+    }
+
+    fn emit_digest_assert(&mut self) {
+        let width = self.target_config.digest_width;
+        if width == 1 {
+            self.ops.extend([TIROp::Eq, TIROp::Assert(1)]);
+        } else {
+            self.ops.extend([TIROp::Assert(width), TIROp::Pop(width)]);
         }
     }
 
@@ -373,12 +398,99 @@ impl TIRBuilder {
             call_label.clone()
         };
 
-        let ret_width = self.fn_return_widths.get(&base_name).copied().unwrap_or(0);
+        let ret_width = self
+            .fn_return_types
+            .get(&self.qualified_name(name))
+            .map(|ty| self.type_width(ty))
+            .or_else(|| self.fn_return_widths.get(&base_name).copied())
+            .unwrap_or(0);
         if ret_width > 0 {
             self.emit_and_push(TIROp::Call(call_label), ret_width);
         } else {
             self.ops.push(TIROp::Call(call_label));
             self.push_temp(0);
+        }
+    }
+}
+
+#[cfg(test)]
+mod abi_tests {
+    use super::*;
+
+    #[test]
+    fn intrinsic_results_follow_the_typechecker_selected_abi() {
+        for (digest, extension) in [(1, 2), (4, 2), (7, 4)] {
+            let mut target = crate::target::TerrainConfig::triton();
+            target.digest_width = digest;
+            target.xfield_width = extension;
+            let checker = crate::typecheck::TypeChecker::with_target(target.clone());
+            for name in [
+                "ram_read_block",
+                "merkle_step",
+                "merkle_step_mem",
+                "xfield",
+                "xinvert",
+                "xx_dot_step",
+                "xb_dot_step",
+            ] {
+                let signature = &checker.functions[name];
+                let mut builder = TIRBuilder::new(target.clone());
+                builder.build_call(name, &[], &[]);
+                assert_eq!(
+                    builder.stack.stack_depth(),
+                    signature.return_ty.width(),
+                    "{name}, digest={digest}, extension={extension}"
+                );
+                if name == "ram_read_block" {
+                    assert!(
+                        matches!(builder.ops.as_slice(), [TIROp::RamRead { width }] if *width == digest)
+                    );
+                }
+            }
+            let mut builder = TIRBuilder::new(target);
+            builder.emit_call_only("assert_digest", &[], 2);
+            if digest == 1 {
+                assert!(matches!(
+                    builder.ops.as_slice(),
+                    [TIROp::Eq, TIROp::Assert(1)]
+                ));
+            } else {
+                assert!(
+                    matches!(builder.ops.as_slice(), [TIROp::Assert(n), TIROp::Pop(m)] if *n == digest && *m == digest)
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn stream_intrinsics_cover_the_declared_target_widths_in_both_paths() {
+        let mut target = crate::target::TerrainConfig::triton();
+        target.digest_width = 9;
+        target.xfield_width = 2;
+        let checker = crate::typecheck::TypeChecker::with_target(target.clone());
+        for (name, signature) in checker.functions.iter().filter(|(name, _)| {
+            name.starts_with("pub_read")
+                || name.starts_with("pub_write")
+                || name.starts_with("divine")
+        }) {
+            let mut regular = TIRBuilder::new(target.clone());
+            regular.build_call(name, &[], &[]);
+            let mut pass_through = TIRBuilder::new(target.clone());
+            pass_through.emit_call_only(name, &[], signature.params.len());
+            assert_eq!(
+                regular.stack.stack_depth(),
+                signature.return_ty.width(),
+                "{name}"
+            );
+            assert_eq!(
+                format!("{:?}", regular.ops),
+                format!("{:?}", pass_through.ops),
+                "{name}"
+            );
+            assert!(
+                !regular.ops.iter().any(|op| matches!(op, TIROp::Call(_))),
+                "{name}"
+            );
         }
     }
 }

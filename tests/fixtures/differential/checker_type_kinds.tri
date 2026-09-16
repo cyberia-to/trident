@@ -1,0 +1,3 @@
+program differential_checker_type_kinds
+use std.compiler.typecheck
+fn main() -> Field { typecheck.TY_FIELD() + 100 * typecheck.TY_UNIT() }

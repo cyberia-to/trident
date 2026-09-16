@@ -6,22 +6,16 @@
 //! Differential harness: real stdlib modules executed on the real nox VM,
 //! compared against independently computed Rust ground truth.
 //!
-//! Anchors (the release plan's correctness anchor, soft3-release M3):
-//! - every stdlib module inside the nox surface is executed here end-to-end
-//!   (parse → typecheck → nox lowering → `nox::reduce`) and its outputs must
-//!   equal ground truth computed by a separate Rust implementation ported
-//!   from `benches/references/`;
-//! - the census pin fails when the nox surface grows, demanding differential
-//!   coverage for every newly compiling module — coverage cannot silently lag;
-//! - triton×nox output agreement is pending the trisha repair
-//!   (cyberia-to/trisha#1): the installed trisha predates the warrior CLI and
-//!   the workspace build is broken. When trisha revives, the same wrapped
-//!   sources run there.
-//!
-//! The noun parse/load/reduce helper mirrors tests/nox_surface.rs.
+//! The census measures the first active public function's reachable call tree
+//! in each library. It does not certify an entire module. Each newly compiling
+//! entry has an executed representative below, named by the actual functions
+//! checked. Compiler-module constants do not establish self-hosting; crypto
+//! initialization/prime fixtures do not establish full cryptographic algorithms.
+//! Fibonacci and standard Poseidon2-HL use independent integer references.
 
 use nebu::Goldilocks;
-use nox::{reduce, NoTrace, NullCalls, Outcome, Reduction};
+use nox::{reduce, CallProvider, LookProvider, NoTrace, Outcome, Reduction};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use trident::target::TerrainConfig;
 use trident::CompileOptions;
 
@@ -60,7 +54,10 @@ fn parse_at(b: &[u8], pos: &mut usize) -> N {
         while *pos < b.len() && b[*pos].is_ascii_digit() {
             *pos += 1;
         }
-        let v: u64 = std::str::from_utf8(&b[start..*pos]).unwrap().parse().unwrap();
+        let v: u64 = std::str::from_utf8(&b[start..*pos])
+            .unwrap()
+            .parse()
+            .unwrap();
         N::Atom(v)
     }
 }
@@ -84,27 +81,75 @@ fn subject_noun(params: &[u64]) -> N {
     n
 }
 
-fn run(src: &str, params: &[u64]) -> u64 {
-    let formula_str = trident::compile_with_options(src, "differential.tri", &nox_options())
-        .expect("compile for nox failed");
-    let formula = parse(&formula_str);
+struct SecretInputs {
+    values: Vec<u64>,
+    next: AtomicUsize,
+}
+
+impl LookProvider for SecretInputs {
+    fn look(&self, _: Goldilocks, _: Goldilocks, _: Goldilocks) -> Option<Goldilocks> {
+        None
+    }
+}
+
+impl<const M: usize> CallProvider<M> for SecretInputs {
+    fn provide(&self, ar: &mut Reduction<M>, _: Goldilocks, _: nox::Order) -> Option<nox::Order> {
+        let i = self.next.fetch_add(1, Ordering::SeqCst);
+        ar.atom(Goldilocks::new(*self.values.get(i)?))
+    }
+}
+
+fn leaves<const M: usize>(ar: &Reduction<M>, value: nox::Order, out: &mut Vec<u64>) {
+    if let Some(atom) = ar.atom_value(value) {
+        out.push(atom.as_u64());
+    } else {
+        leaves(ar, ar.head(value).expect("pair head"), out);
+        leaves(ar, ar.tail(value).expect("pair tail"), out);
+    }
+}
+
+fn execute(assembly: &str, params: &[u64], secrets: &[u64]) -> Result<Vec<u64>, String> {
+    let formula = parse(assembly);
     let subj = subject_noun(params);
-    // Unrolled stdlib formulas outgrow small arenas; mirror joy's warrior:
-    // a 2^18-slot arena on a dedicated 256 MiB stack (rs/warrior.rs).
+    let inputs = SecretInputs {
+        values: secrets.to_vec(),
+        next: AtomicUsize::new(0),
+    };
+    // Match Joy's arena and worker stack; large unrolled formulas need both.
     std::thread::Builder::new()
         .stack_size(256 * 1024 * 1024)
         .spawn(move || {
             let mut ar = Reduction::<{ 1 << 18 }>::new();
             let f = load(&mut ar, &formula);
             let s = load(&mut ar, &subj);
-            match reduce(&mut ar, s, f, 50_000_000, &NullCalls, &mut NoTrace) {
-                Outcome::Ok(r, _) => ar.atom_value(r).expect("result not an atom").as_u64(),
-                other => panic!("reduce failed: {other:?}"),
+            match reduce(&mut ar, s, f, 50_000_000, &inputs, &mut NoTrace) {
+                Outcome::Ok(r, _) => {
+                    let mut out = Vec::new();
+                    leaves(&ar, r, &mut out);
+                    Ok(out)
+                }
+                other => Err(format!("reduce failed: {other:?}")),
             }
         })
         .expect("spawn reduce thread")
         .join()
         .expect("reduce thread panicked")
+}
+
+fn run(src: &str, params: &[u64]) -> u64 {
+    let assembly = trident::compile_with_options(src, "differential.tri", &nox_options())
+        .expect("compile for nox failed");
+    let output = execute(&assembly, params, &[]).expect("execution failed");
+    assert_eq!(output.len(), 1, "expected scalar output");
+    output[0]
+}
+
+fn fixture(name: &str) -> String {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/differential")
+        .join(format!("{name}.tri"));
+    trident::compile_project_with_options(&path, &nox_options())
+        .unwrap_or_else(|errors| panic!("fixture {name} failed to compile: {errors:?}"))
 }
 
 // ── wrapping a stdlib module into an executable program ─────────────────────
@@ -143,23 +188,10 @@ fn fib_ref(n: u64) -> u64 {
     a
 }
 
-fn sbox(x: u64) -> u64 {
-    let x2 = fmul(x, x);
-    let x4 = fmul(x2, x2);
-    fmul(x4, x)
-}
-fn mix2(a: u64, b: u64) -> (u64, u64) {
-    (fadd(fadd(a, a), b), fadd(fadd(fadd(a, b), b), b))
-}
-fn round2(a: u64, b: u64, rc0: u64, rc1: u64) -> (u64, u64) {
-    mix2(sbox(fadd(a, rc0)), sbox(fadd(b, rc1)))
-}
+#[path = "../benches/references/common/poseidon_standard.rs"]
+mod standard_poseidon;
 fn poseidon_hash2_ref(a: u64, b: u64) -> u64 {
-    let mut s = (a, b);
-    for &(r0, r1) in &[(3, 7), (11, 13), (17, 19), (23, 29)] {
-        s = round2(s.0, s.1, r0, r1);
-    }
-    s.0
+    standard_poseidon::hash2(a, b)
 }
 
 // ── the differentials ───────────────────────────────────────────────────────
@@ -167,7 +199,7 @@ fn poseidon_hash2_ref(a: u64, b: u64) -> u64 {
 #[test]
 fn fibonacci_module_matches_rust_ground_truth() {
     let src = wrap_module(
-        "std/math/fibonacci.tri",
+        "lib/std/math/fibonacci.tri",
         "fn main(n: Field) -> Field { fib256(n) }",
     );
     for n in [0u64, 1, 2, 3, 10, 55, 100, 255] {
@@ -178,7 +210,7 @@ fn fibonacci_module_matches_rust_ground_truth() {
 #[test]
 fn poseidon_module_matches_rust_ground_truth() {
     let src = wrap_module(
-        "std/crypto/poseidon.tri",
+        "lib/std/crypto/poseidon.tri",
         "fn main(a: Field, b: Field) -> Field { hash2(a, b) }",
     );
     for (a, b) in [(42u64, 1337u64), (0, 0), (1, 0), (P as u64 - 2, 7)] {
@@ -190,17 +222,108 @@ fn poseidon_module_matches_rust_ground_truth() {
     }
 }
 
+// Selected first-entry call trees, not whole-module certification.
+#[test]
+fn compiler_token_node_opcode_and_type_constants_match_their_public_ids() {
+    for (name, expected) in [
+        ("lexer_tokens", 5601),
+        ("lower_opcodes", 301),
+        ("parser_node_kinds", 301),
+        ("checker_type_kinds", 901),
+    ] {
+        assert_eq!(
+            execute(&fixture(name), &[], &[]).unwrap(),
+            vec![expected],
+            "{name}"
+        );
+    }
+}
+
+#[test]
+fn bigint_zero_keccak_zero_lane_and_sponge_zero_states_are_all_zero() {
+    for (name, fields) in [
+        ("bigint_zero", 8),
+        ("keccak_zero_lane", 2),
+        ("lut_sponge_zero", 8),
+        ("poseidon2_zero", 8),
+    ] {
+        // Structs use a right cons-list ending in the unit atom 0.
+        assert_eq!(
+            execute(&fixture(name), &[], &[]).unwrap(),
+            vec![0; fields + 1],
+            "{name}"
+        );
+    }
+}
+
+#[test]
+fn ed25519_and_secp256k1_prime_getters_match_integer_definitions() {
+    // p25519 = 2^255 - 19; secp256k1 p = 2^256 - 2^32 - 977.
+    // Construct little-endian radix-2^32 limbs independently of .tri literals.
+    let mut ed = vec![u32::MAX as u64; 8];
+    ed[0] -= 18;
+    ed[7] >>= 1;
+    let mut secp = vec![u32::MAX as u64; 8];
+    secp[0] -= 976;
+    secp[1] -= 1;
+    for (name, mut expected) in [("ed25519_prime", ed), ("secp256k1_prime", secp)] {
+        expected.push(0); // aggregate terminator
+        assert_eq!(
+            execute(&fixture(name), &[], &[]).unwrap(),
+            expected,
+            "{name}"
+        );
+    }
+}
+
+#[test]
+fn sha256_init_returns_the_standard_eight_word_iv() {
+    // SHA-256 initial hash words; this fixture does not exercise compression.
+    let expected = vec![
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
+        0x5be0cd19, 0,
+    ];
+    assert_eq!(
+        execute(&fixture("sha256_init"), &[], &[]).unwrap(),
+        expected
+    );
+}
+
+#[test]
+fn quantum_complex_zero_add_and_mul_match_field_complex_arithmetic() {
+    let assembly = fixture("quantum_complex_mul");
+    for (a, b, c, d) in [(0, 0, 1, 2), (3, 4, 5, 6), (P as u64 - 1, 2, 7, 8)] {
+        let re = ((fmul(a, c) as u128 + P - fmul(b, d) as u128) % P) as u64;
+        let im = fadd(fmul(a, d), fmul(b, c));
+        assert_eq!(
+            execute(&assembly, &[a, b, c, d], &[]).unwrap(),
+            vec![re, im, 0]
+        );
+    }
+}
+
+#[test]
+fn auth_verify_preimage_accepts_matching_secret_and_rejects_wrong_secret() {
+    // Checks preimage equality via the target's hash intrinsic, not Tip5 vectors.
+    let assembly = fixture("auth_preimage");
+    for secret in [0, 42, P as u64 - 1] {
+        assert_eq!(execute(&assembly, &[secret], &[secret]).unwrap(), vec![1]);
+    }
+    assert!(execute(&assembly, &[42], &[43]).is_err());
+    assert!(execute(&assembly, &[42], &[]).is_err());
+}
+
 // ── the census pin ──────────────────────────────────────────────────────────
 
-/// Every stdlib module whose nox cost analysis succeeds is inside the nox
-/// surface and MUST have a differential above. When the surface grows this
-/// pin fails: add the module's differential, then extend the expected list.
+/// Cost analysis of a library selects its first active public function.
+/// Every successful entry needs the scoped executed fixture above. This pin
+/// does not claim all functions in those modules lower or execute correctly.
 #[test]
 fn census_every_in_surface_module_has_a_differential() {
     let root = env!("CARGO_MANIFEST_DIR");
     let options = nox_options();
     let mut in_surface: Vec<String> = Vec::new();
-    let mut stack = vec![format!("{root}/std")];
+    let mut stack = vec![format!("{root}/lib/std")];
     while let Some(dir) = stack.pop() {
         for entry in std::fs::read_dir(&dir).unwrap() {
             let path = entry.unwrap().path();
@@ -210,10 +333,12 @@ fn census_every_in_surface_module_has_a_differential() {
                 && trident::nox_cost_project(&path, &options).is_ok()
             {
                 in_surface.push(
-                    path.display()
-                        .to_string()
-                        .trim_start_matches(&format!("{root}/"))
-                        .to_string(),
+                    path.strip_prefix(root)
+                        .unwrap()
+                        .components()
+                        .map(|part| part.as_os_str().to_str().unwrap())
+                        .collect::<Vec<_>>()
+                        .join("/"),
                 );
             }
         }
@@ -222,8 +347,21 @@ fn census_every_in_surface_module_has_a_differential() {
     assert_eq!(
         in_surface,
         vec![
-            "std/crypto/poseidon.tri".to_string(),
-            "std/math/fibonacci.tri".to_string(),
+            "lib/std/compiler/lexer.tri".to_string(),
+            "lib/std/compiler/lower.tri".to_string(),
+            "lib/std/compiler/parser.tri".to_string(),
+            "lib/std/compiler/typecheck.tri".to_string(),
+            "lib/std/crypto/bigint.tri".to_string(),
+            "lib/std/crypto/ed25519.tri".to_string(),
+            "lib/std/crypto/keccak256.tri".to_string(),
+            "lib/std/crypto/lut_sponge.tri".to_string(),
+            "lib/std/crypto/poseidon.tri".to_string(),
+            "lib/std/crypto/poseidon2.tri".to_string(),
+            "lib/std/crypto/preimage.tri".to_string(),
+            "lib/std/crypto/secp256k1.tri".to_string(),
+            "lib/std/crypto/sha256.tri".to_string(),
+            "lib/std/math/fibonacci.tri".to_string(),
+            "lib/std/quantum/gates.tri".to_string(),
         ],
         "the nox surface changed — update the differential harness to cover \
          every newly compiling module, then extend this pin"

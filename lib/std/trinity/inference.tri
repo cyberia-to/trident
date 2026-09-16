@@ -1,0 +1,309 @@
+module std.trinity.inference
+
+// Composed arithmetic demonstration: weighted ciphertext-shaped vectors,
+// plaintext dense layer, shared-LUT sponge, custom hash, PBS witness transport,
+// and a two-qubit field-matrix simulation. This is NOT secure private inference
+// or TFHE. A VM proof authenticates the executed constraints, not omitted ones.
+//
+// Missing bindings: PBS rotation/source/sign/key-switch witnesses are not tied
+// to the input ciphertext; LUT field quotients are not canonical integer
+// quotients; supplied key/weight digests are not recomputed from their arrays.
+// The legacy custom hash has no reviewed security bound, and a single Field
+// output or the final Bool is not a cryptographic commitment to inference.
+// See reference/trinity-arithmetic.md and its independent full29arg fixtures.
+use vm.core.field
+
+use vm.core.convert
+
+use vm.core.assert
+
+use vm.io.mem
+
+use std.nn.tensor
+
+use std.fhe.lwe
+
+use std.fhe.pbs
+
+use std.math.lut
+
+use std.crypto.poseidon2
+
+use std.crypto.lut_sponge
+
+use std.quantum.gates
+
+// ---------------------------------------------------------------------------
+// Phase 1: LWE-shaped linear arithmetic
+// ---------------------------------------------------------------------------
+// Ciphertext-shaped arithmetic: input vector multiplied by
+// plaintext weight matrix. Each output is an LWE ciphertext encoding
+// the weighted sum. This alone does not establish encryption security.
+pub fn private_linear(
+    cts_addr: Field,
+    w_addr: Field,
+    ct_out_addr: Field,
+    tmp_addr: Field,
+    lwe_n: Field,
+    input_dim: Field,
+    neurons: Field
+) {
+    lwe.private_linear(cts_addr, w_addr, ct_out_addr, tmp_addr, lwe_n, input_dim, neurons)
+}
+
+// ---------------------------------------------------------------------------
+// Phase 1b: Decrypt outputs
+// ---------------------------------------------------------------------------
+// Bridge between encrypted Phase 1 and plaintext Phase 2.
+// Each output ciphertext is decrypted via io.divine() — the prover
+// supplies the plaintext, the circuit verifies the noise bound.
+pub fn decrypt_outputs(
+    ct_out_addr: Field,
+    s_addr: Field,
+    result_addr: Field,
+    delta: Field,
+    lwe_n: Field,
+    neurons: Field
+) {
+    // Store params in RAM scratch (1073741840..1073741845) for loop access.
+    mem.write(1073741840, ct_out_addr)
+    mem.write(1073741841, s_addr)
+    mem.write(1073741842, result_addr)
+    mem.write(1073741843, delta)
+    mem.write(1073741844, lwe_n)
+    mem.write(1073741845, lwe_n + 1)
+    for i in 0..neurons bounded 4096 {
+        let idx: Field = convert.as_field(i)
+        let r_ct_out: Field = mem.read(1073741840)
+        let r_stride: Field = mem.read(1073741845)
+        let ct_addr: Field = r_ct_out + idx * r_stride
+        let r_s: Field = mem.read(1073741841)
+        let r_delta: Field = mem.read(1073741843)
+        let r_lwe: Field = mem.read(1073741844)
+        let m: Field = lwe.decrypt(ct_addr, r_s, r_delta, r_lwe)
+        let r_result: Field = mem.read(1073741842)
+        mem.write(r_result + idx, m)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Phase 2: Neural dense layer with lookup-table activation
+// ---------------------------------------------------------------------------
+// Dense layer: out = lut_relu(W * x + b).
+// Matrix-vector multiply, bias addition, then ReLU via lookup table.
+//
+// The lookup table is the Rosetta Stone primitive:
+//   - Here it serves as the neural network activation function.
+//   - The same table IS the FHE programmable bootstrapping test polynomial.
+//   - The STARK proof authenticates all table reads through RAM consistency.
+//
+// lut_addr: precomputed ReLU table in RAM (built by lut.build_relu)
+pub fn dense_layer(
+    w_addr: Field,
+    x_addr: Field,
+    b_addr: Field,
+    out_addr: Field,
+    tmp_addr: Field,
+    lut_addr: Field,
+    neurons: Field
+) {
+    tensor.matvec(w_addr, x_addr, tmp_addr, neurons, neurons)
+    tensor.bias_add(tmp_addr, b_addr, out_addr, neurons)
+    lut.apply(lut_addr, out_addr, out_addr, neurons)
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: Custom hash and LUT-sponge arithmetic
+// ---------------------------------------------------------------------------
+// Two hashes of the same data:
+//   Legacy custom permutation: caller constants, no reviewed binding guarantee.
+//   LUT sponge: Rosetta Stone demo (S-box from shared lookup table).
+//
+// The LUT sponge reads from lut_addr — the SAME table as Phase 2 ReLU.
+// This is Reader #2 of the Rosetta Stone.
+//
+// output_digest = sum(activated). Both hashes take
+// (weights_digest, key_digest, output_digest, class) as input.
+fn compute_output_digest(activated_addr: Field, neurons: Field) -> Field {
+    let mut output_digest: Field = 0
+    for i in 0..neurons bounded 4096 {
+        let idx: Field = convert.as_field(i)
+        output_digest = output_digest + mem.read(activated_addr + idx)
+    }
+    output_digest
+}
+
+pub fn hash_commit(
+    activated_addr: Field,
+    neurons: Field,
+    weights_digest: Field,
+    key_digest: Field,
+    class: Field,
+    rc_addr: Field
+) -> Field {
+    let output_digest: Field = compute_output_digest(activated_addr, neurons)
+    poseidon2.hash4_to_digest(weights_digest, key_digest, output_digest, class, rc_addr)
+}
+
+// LUT sponge hash: Reader #2 of the Rosetta Stone.
+// S-box reads from lut_addr — the same table as NN activation.
+pub fn lut_hash_commit(
+    activated_addr: Field,
+    neurons: Field,
+    weights_digest: Field,
+    key_digest: Field,
+    class: Field,
+    lut_addr: Field,
+    domain: Field,
+    sponge_rc_addr: Field
+) -> Field {
+    let output_digest: Field = compute_output_digest(activated_addr, neurons)
+    lut_sponge.hash4_to_digest(weights_digest, key_digest, output_digest, class, lut_addr, domain, sponge_rc_addr)
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4: PBS demo — programmable bootstrapping via shared LUT
+// ---------------------------------------------------------------------------
+// Bootstraps one sample ciphertext from Phase 1 output through the
+// same lookup table as test polynomial. Reader #3 of the Rosetta Stone.
+//
+// The circuit asserts the bootstrapped plaintext matches the
+// divine()-decrypted value — proving PBS and direct decryption
+// produce the same supplied plaintext in this demo. This does not constrain
+// rotation or key switching against the original ciphertext.
+pub fn pbs_demo(
+    sample_ct_addr: Field,
+    s_addr: Field,
+    lut_addr: Field,
+    pbs_out_addr: Field,
+    delta: Field,
+    lwe_n: Field,
+    ring_n: Field,
+    domain: Field,
+    pbs_acc_addr: Field,
+    pbs_test_addr: Field,
+    pbs_tmp_addr: Field,
+    expected_m: Field
+) {
+    let m: Field = pbs.bootstrap(
+        sample_ct_addr, s_addr, lut_addr, pbs_out_addr,
+        delta, lwe_n, ring_n, domain,
+        pbs_acc_addr, pbs_test_addr, pbs_tmp_addr
+    )
+    // Assert PBS produces the same result as direct decryption
+    assert.eq(m, expected_m)
+}
+
+// ---------------------------------------------------------------------------
+// Phase 5: Two-qubit field-matrix simulation
+// ---------------------------------------------------------------------------
+// Unnormalized arithmetic circuit inspired by superdense coding:
+//   |00> -> H(q0) -> CNOT -> conditional CZ -> CNOT -> H(q0) -> measure q0
+//
+// class=0: |00> -> Bell -> skip CZ -> decode -> |00> -> p0>p1 -> true
+// class>0: |00> -> Bell -> CZ -> decode -> |10> -> p0<p1 -> false
+//
+// Measurement traces out q1 from the 2-qubit state (sum of two norm-squareds
+// per outcome), so we can't use gates.measure_deterministic directly
+// (which handles single-qubit |alpha|^2 vs |beta|^2). The comparison
+// logic is identical — split + threshold over Goldilocks.
+pub fn quantum_commit(class: Field) -> Bool {
+    let q0: gates.Qubit = gates.init_zero()
+    let q1: gates.Qubit = gates.init_zero()
+    let q0h: gates.Qubit = gates.hadamard(q0)
+    let bell: gates.TwoQubit = gates.two_qubit_product(q0h, q1)
+    let entangled: gates.TwoQubit = gates.cnot(bell)
+    let mut committed: gates.TwoQubit = entangled
+    if class {
+        committed = gates.cz(entangled)
+    }
+    let decoded: gates.TwoQubit = gates.cnot(committed)
+    // H on q0: apply to 2-qubit state
+    let q00: gates.Complex = gates.complex_add(decoded.q00, decoded.q10)
+    let q01: gates.Complex = gates.complex_add(decoded.q01, decoded.q11)
+    let q10: gates.Complex = gates.complex_sub(decoded.q00, decoded.q10)
+    let q11: gates.Complex = gates.complex_sub(decoded.q01, decoded.q11)
+    // Trace out q1: p0 = |q00|^2 + |q01|^2, p1 = |q10|^2 + |q11|^2
+    let p0: Field = gates.complex_norm_sq(q00) + gates.complex_norm_sq(q01)
+    let p1: Field = gates.complex_norm_sq(q10) + gates.complex_norm_sq(q11)
+    let diff: Field = p0 + field.neg(p1)
+    let (hi, lo) = convert.split(diff)
+    let threshold: U32 = convert.as_u32(2147483647)
+    hi < threshold
+}
+
+// ---------------------------------------------------------------------------
+// Full Trinity pipeline — Rosetta Stone unification
+// ---------------------------------------------------------------------------
+// 1. Ciphertext-shaped linear arithmetic
+// 2. Decrypt encrypted outputs (bridge to plaintext)
+// 3. Dense neural layer with LUT ReLU           [Reader 1: lut.apply]
+// 4. LUT sponge arithmetic (S-box = LUT)   [Reader 2: lut.read]
+//    + legacy custom scalar hash
+// 5. PBS demo (test polynomial = LUT)            [Reader 3: lut.read]
+// 6. Two-qubit field-matrix simulation
+//
+// One table (lut_addr), four readers: the Rosetta Stone.
+// Readers 1-3 demonstrated here. Reader 4 (STARK LogUp) is upstream.
+// All reads from the same RAM address, authenticated by STARK consistency.
+//
+// Returns the field-matrix simulation Bool; this does not bind any message.
+pub fn trinity(
+    cts_addr: Field,
+    s_addr: Field,
+    w_priv_addr: Field,
+    ct_out_addr: Field,
+    tmp_addr: Field,
+    result_addr: Field,
+    delta: Field,
+    lwe_n: Field,
+    input_dim: Field,
+    neurons: Field,
+    dense_w_addr: Field,
+    dense_b_addr: Field,
+    activated_addr: Field,
+    lut_addr: Field,
+    expected_class: Field,
+    rc_addr: Field,
+    weights_digest: Field,
+    key_digest: Field,
+    expected_digest: Field,
+    domain: Field,
+    sponge_rc_addr: Field,
+    expected_lut_digest: Field,
+    pbs_sample_ct: Field,
+    pbs_out_addr: Field,
+    ring_n: Field,
+    pbs_acc_addr: Field,
+    pbs_test_addr: Field,
+    pbs_tmp_addr: Field,
+    pbs_expected_m: Field
+) -> Bool {
+    // Phase 1: Encrypted linear layer
+    private_linear(cts_addr, w_priv_addr, ct_out_addr, tmp_addr, lwe_n, input_dim, neurons)
+    // Phase 1b: Decrypt
+    decrypt_outputs(ct_out_addr, s_addr, result_addr, delta, lwe_n, neurons)
+    // Phase 2: Dense neural layer — Reader 1 (lut.apply on lut_addr)
+    dense_layer(dense_w_addr, result_addr, dense_b_addr, activated_addr, tmp_addr, lut_addr, neurons)
+    // Compute class from neural output
+    let class: Field = tensor.argmax(activated_addr, neurons)
+    assert.eq(class, expected_class)
+    // Phase 3a: LUT sponge hash — Reader 2 (lut.read on lut_addr)
+    let lut_digest: Field = lut_hash_commit(
+        activated_addr, neurons, weights_digest, key_digest,
+        class, lut_addr, domain, sponge_rc_addr
+    )
+    assert.eq(lut_digest, expected_lut_digest)
+    // Phase 3b: legacy custom hash arithmetic; no production binding claim
+    let digest: Field = hash_commit(activated_addr, neurons, weights_digest, key_digest, class, rc_addr)
+    assert.eq(digest, expected_digest)
+    // Phase 4: PBS demo — Reader 3 (lut.read on lut_addr via build_test_poly)
+    pbs_demo(
+        pbs_sample_ct, s_addr, lut_addr, pbs_out_addr,
+        delta, lwe_n, ring_n, domain,
+        pbs_acc_addr, pbs_test_addr, pbs_tmp_addr,
+        pbs_expected_m
+    )
+    // Phase 5: Field-matrix simulation on computed class
+    quantum_commit(class)
+}

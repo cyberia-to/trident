@@ -8,7 +8,9 @@
 use super::{check, check_err};
 #[test]
 fn test_match_integer_pattern_on_bool_error() {
-    let result = check("program test\nfn main() {\n    let b: Bool = pub_read() == pub_read()\n    match b {\n        0 => { pub_write(0) }\n        _ => { pub_write(1) }\n    }\n}");
+    let result = check(
+        "program test\nfn main() {\n    let b: Bool = pub_read() == pub_read()\n    match b {\n        0 => { pub_write(0) }\n        _ => { pub_write(1) }\n    }\n}",
+    );
     assert!(
         result.is_err(),
         "integer pattern on Bool scrutinee should fail"
@@ -17,7 +19,9 @@ fn test_match_integer_pattern_on_bool_error() {
 
 #[test]
 fn test_match_unreachable_after_wildcard() {
-    let result = check("program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        _ => { pub_write(0) }\n        0 => { pub_write(1) }\n    }\n}");
+    let result = check(
+        "program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        _ => { pub_write(0) }\n        0 => { pub_write(1) }\n    }\n}",
+    );
     assert!(
         result.is_err(),
         "pattern after wildcard should be unreachable"
@@ -111,7 +115,9 @@ fn test_test_fn_with_return_rejected() {
 #[test]
 fn test_test_fn_not_emitted_in_normal_build() {
     // Test functions should type-check but not interfere with normal compilation
-    let result = check("program test\n#[test]\nfn check() {\n    assert(true)\n}\nfn main() {\n    pub_write(pub_read())\n}");
+    let result = check(
+        "program test\n#[test]\nfn check() {\n    assert(true)\n}\nfn main() {\n    pub_write(pub_read())\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -407,7 +413,9 @@ fn test_pure_fn_allows_assert() {
 #[test]
 fn test_pure_fn_allows_hash() {
     // hash is a deterministic pure computation (same inputs → same outputs)
-    let result = check("program test\n#[pure]\nfn f(a: Field, b: Field, c: Field, d: Field, e: Field, f2: Field, g: Field, h: Field, i: Field, j: Field) -> Digest {\n    hash(a, b, c, d, e, f2, g, h, i, j)\n}\nfn main() {}");
+    let result = check(
+        "program test\n#[pure]\nfn f(a: Field, b: Field, c: Field, d: Field, e: Field, f2: Field, g: Field, h: Field, i: Field, j: Field) -> Digest {\n    hash(a, b, c, d, e, f2, g, h, i, j)\n}\nfn main() {}",
+    );
     assert!(
         result.is_ok(),
         "hash should be allowed in pure fn: {:?}",

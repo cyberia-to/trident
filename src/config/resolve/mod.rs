@@ -27,98 +27,55 @@ pub(crate) struct ModuleInfo {
 mod resolver;
 use resolver::*;
 
+#[cfg(test)]
 pub(crate) fn resolve_modules(entry_path: &Path) -> Result<Vec<ModuleInfo>, Vec<Diagnostic>> {
     let mut resolver = ModuleResolver::new(entry_path)?;
     resolver.discover_all()?;
     resolver.topological_sort()
 }
 
-/// Resolve modules with additional dependency search directories.
-/// Used when a project has locked dependencies cached on disk.
-pub(crate) fn resolve_modules_with_deps(
+pub(crate) fn resolve_modules_with_sources(
     entry_path: &Path,
     dep_dirs: Vec<PathBuf>,
+    sources: std::collections::BTreeMap<String, String>,
 ) -> Result<Vec<ModuleInfo>, Vec<Diagnostic>> {
     let mut resolver = ModuleResolver::new(entry_path)?;
     resolver.dep_dirs = dep_dirs;
+    resolver.sources = sources;
     resolver.discover_all()?;
     resolver.topological_sort()
 }
 
-/// Search for a library directory by environment variable name and directory name.
-///
-/// Search order:
-///   1. `env_var` environment variable
-///   2. `dir_name/` relative to the compiler binary (and ancestors)
-///   3. `dir_name/` in the current working directory (development)
-fn find_lib_dir(env_var: &str, dir_name: &str) -> Option<PathBuf> {
-    // 1. Environment variable
-    if let Ok(p) = std::env::var(env_var) {
-        let path = PathBuf::from(p);
-        if path.is_dir() {
-            return Some(path);
-        }
-    }
-
-    // 2. Relative to the compiler binary
-    if let Ok(exe) = std::env::current_exe() {
-        if let Some(dir) = exe.parent() {
-            let path = dir.join(dir_name);
-            if path.is_dir() {
-                return Some(path);
-            }
-            if let Some(parent) = dir.parent() {
-                let path = parent.join(dir_name);
-                if path.is_dir() {
-                    return Some(path);
-                }
-                if let Some(grandparent) = parent.parent() {
-                    let path = grandparent.join(dir_name);
-                    if path.is_dir() {
-                        return Some(path);
-                    }
-                }
-            }
-        }
-    }
-
-    // 3. Current working directory and ancestors
-    if let Ok(cwd) = std::env::current_dir() {
-        let mut dir = cwd.as_path();
-        loop {
-            let candidate = dir.join(dir_name);
-            if candidate.is_dir() {
-                return Some(candidate);
-            }
-            match dir.parent() {
-                Some(parent) => dir = parent,
-                None => break,
-            }
-        }
-    }
-
-    None
+/// Source locations for navigation only. Compiler-owned bytes are embedded;
+/// custom libraries must be explicit dependencies, never ambient environment.
+fn find_lib_dir(namespace: &str) -> Option<PathBuf> {
+    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("lib")
+        .join(namespace);
+    path.is_dir().then_some(path)
 }
 
-/// Find the standard library directory.
 pub(crate) fn find_stdlib_dir() -> Option<PathBuf> {
-    find_lib_dir("TRIDENT_STDLIB", "std")
+    find_lib_dir("std")
+}
+pub(crate) fn find_os_dir() -> Option<PathBuf> {
+    find_lib_dir("os")
 }
 
-/// Find the OS library directory.
-/// Also checks the legacy `TRIDENT_EXTLIB` environment variable.
-pub(crate) fn find_os_dir() -> Option<PathBuf> {
-    if let Some(dir) = find_lib_dir("TRIDENT_OSLIB", "os") {
-        return Some(dir);
-    }
-    // Legacy env var fallback
-    if let Ok(p) = std::env::var("TRIDENT_EXTLIB") {
-        let path = PathBuf::from(p);
-        if path.is_dir() {
-            return Some(path);
-        }
-    }
-    None
+/// Resolve live editor bytes before scanning imports, without writing to disk.
+pub(crate) fn resolve_modules_with_overlay(
+    entry_path: &Path,
+    dep_dirs: Vec<PathBuf>,
+    sources: std::collections::BTreeMap<String, String>,
+    overlay_path: &Path,
+    overlay_source: &str,
+) -> Result<Vec<ModuleInfo>, Vec<Diagnostic>> {
+    let mut resolver =
+        ModuleResolver::with_overlay(entry_path, Some((overlay_path, overlay_source)))?;
+    resolver.dep_dirs = dep_dirs;
+    resolver.sources = sources;
+    resolver.discover_all()?;
+    resolver.topological_sort()
 }
 
 /// Legacy flat-path fallback map for backward compatibility.

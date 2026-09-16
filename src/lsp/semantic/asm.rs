@@ -16,69 +16,17 @@ const TT_NAMESPACE: u32 = 9;
 /// from language keywords visually.
 const MOD_DEFAULT_LIBRARY: u32 = 1 << 3;
 
-/// Known Triton VM assembly instructions.
-const TRITON_INSTRUCTIONS: &[&str] = &[
-    // Stack manipulation
-    "push",
-    "pop",
-    "dup",
-    "swap",
-    // Arithmetic
-    "add",
-    "mul",
-    "eq",
-    "lt",
-    // Bitwise
-    "and",
-    "or",
-    "xor",
-    // Math
-    "div_mod",
-    "invert",
-    "split",
-    "pow",
-    "log_2_floor",
-    "pop_count",
-    // I/O
-    "read_io",
-    "write_io",
-    "divine",
-    // Memory
-    "read_mem",
-    "write_mem",
-    // Hash / sponge
-    "hash",
-    "sponge_init",
-    "sponge_absorb",
-    "sponge_squeeze",
-    "sponge_absorb_mem",
-    // Merkle
-    "merkle_step",
-    "merkle_step_mem",
-    // Assertions
-    "assert",
-    "assert_vector",
-    // Control flow
-    "call",
-    "return",
-    "recurse",
-    "halt",
-    "skiz",
-    "nop",
-    // Extension field
-    "xb_mul",
-    "x_invert",
-    // Folding
-    "xx_dot_step",
-    "xb_dot_step",
-];
-
 /// Expand an AsmBlock token into sub-tokens for instruction-level highlighting.
 ///
 /// Returns `(span, token_type, modifiers)` tuples that replace the single
 /// AsmBlock token in the semantic token stream.
-pub(super) fn expand_asm_tokens(source: &str, block_span: Span) -> Vec<(Span, u32, u32)> {
+pub(super) fn expand_asm_tokens(
+    source: &str,
+    block_span: Span,
+    options: Option<&crate::CompileOptions>,
+) -> Vec<(Span, u32, u32)> {
     let mut tokens = Vec::new();
+    let mut explicit_target = None;
     let src = source.as_bytes();
     let start = block_span.start as usize;
     let end = block_span.end as usize;
@@ -115,6 +63,7 @@ pub(super) fn expand_asm_tokens(source: &str, block_span: Span) -> Vec<(Span, u3
             while pos < region.len() && is_ident_char(region[pos]) {
                 pos += 1;
             }
+            explicit_target = std::str::from_utf8(&region[word_start..pos]).ok();
             tokens.push((
                 span_at(block_span.file_id, start + word_start, start + pos),
                 TT_NAMESPACE,
@@ -154,6 +103,22 @@ pub(super) fn expand_asm_tokens(source: &str, block_span: Span) -> Vec<(Span, u3
             region.len()
         };
 
+        let explicit_options = explicit_target
+            .filter(|target| options.map(|o| o.target_config.name.as_str()) != Some(*target))
+            .and_then(|target| crate::CompileOptions::resolve(target, "debug").ok());
+        let selected = if explicit_target.is_some()
+            && explicit_options.is_none()
+            && explicit_target != options.map(|o| o.target_config.name.as_str())
+        {
+            None
+        } else {
+            explicit_options.as_ref().or(options)
+        };
+        let instructions = selected
+            .and_then(|o| o.target_package.as_ref())
+            .map(|p| p.instructions.as_slice())
+            .unwrap_or(&[]);
+
         // Tokenize the body
         tokenize_asm_body(
             region,
@@ -162,6 +127,7 @@ pub(super) fn expand_asm_tokens(source: &str, block_span: Span) -> Vec<(Span, u3
             block_span.file_id,
             start,
             &mut tokens,
+            instructions,
         );
     }
 
@@ -176,6 +142,7 @@ fn tokenize_asm_body(
     file_id: u16,
     abs_start: usize,
     tokens: &mut Vec<(Span, u32, u32)>,
+    instructions: &[String],
 ) {
     while pos < end {
         // Skip whitespace
@@ -224,7 +191,7 @@ fn tokenize_asm_body(
                 pos += 1;
             }
             let word = std::str::from_utf8(&region[word_start..pos]).unwrap_or("");
-            let (tt, mods) = if TRITON_INSTRUCTIONS.contains(&word) {
+            let (tt, mods) = if instructions.iter().any(|instruction| instruction == word) {
                 (TT_KEYWORD, MOD_DEFAULT_LIBRARY)
             } else {
                 (TT_VARIABLE, 0)
@@ -284,4 +251,28 @@ fn is_ident_char(b: u8) -> bool {
 
 fn span_at(file_id: u16, abs_start: usize, abs_end: usize) -> Span {
     Span::new(file_id, abs_start as u32, abs_end as u32)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn supplied_instruction_set_controls_highlighting() {
+        let mut tokens = Vec::new();
+        let source = b"owned_op push";
+        tokenize_asm_body(
+            source,
+            0,
+            source.len(),
+            0,
+            0,
+            &mut tokens,
+            &["owned_op".into()],
+        );
+        assert_eq!(tokens[0].1, TT_KEYWORD);
+        assert_eq!(tokens[0].2, MOD_DEFAULT_LIBRARY);
+        assert_eq!(tokens[1].1, TT_VARIABLE);
+        assert_eq!(tokens[1].2, 0);
+    }
 }

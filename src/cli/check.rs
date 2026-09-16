@@ -18,8 +18,8 @@ pub struct CheckArgs {
     #[arg(long)]
     pub costs: bool,
     /// Target VM (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -48,11 +48,19 @@ pub fn cmd_check(args: CheckArgs) {
         union_flag,
         profile,
     } = args;
+    let ri = resolve_input(&input);
+    let target = super::source_target(target.as_deref(), ri.project.as_ref());
     let bf = super::resolve_battlefield_compile(&target, &engine, &terrain, &network, &union_flag);
     let target = bf.target;
-    let ri = resolve_input(&input);
 
-    match trident::check_project(&ri.entry) {
+    let options = resolve_options(&target, &profile, ri.project.as_ref());
+    let (entry, options) = trident::source_options(&ri.entry, &options).unwrap_or_else(|errors| {
+        for error in errors {
+            eprintln!("error: {}", error.message);
+        }
+        process::exit(1)
+    });
+    match trident::check_project_with_options(&entry, &options) {
         Ok(()) => eprintln!("OK: {}", input.display()),
         Err(_) => process::exit(1),
     }

@@ -16,6 +16,8 @@ pub(crate) struct ModuleResolver {
     pub(crate) os_dir: Option<PathBuf>,
     /// Additional directories to search for modules (from locked dependencies).
     pub(crate) dep_dirs: Vec<PathBuf>,
+    pub(crate) sources: BTreeMap<String, String>,
+    overlay: Option<(PathBuf, String)>,
     /// All discovered modules by name.
     pub(crate) modules: BTreeMap<String, ModuleInfo>,
     /// Queue of modules to process.
@@ -26,9 +28,25 @@ pub(crate) struct ModuleResolver {
 
 impl ModuleResolver {
     pub(crate) fn new(entry_path: &Path) -> Result<Self, Vec<Diagnostic>> {
+        Self::with_overlay(entry_path, None)
+    }
+
+    pub(crate) fn with_overlay(
+        entry_path: &Path,
+        overlay: Option<(&Path, &str)>,
+    ) -> Result<Self, Vec<Diagnostic>> {
         let root_dir = entry_path.parent().unwrap_or(Path::new(".")).to_path_buf();
 
-        let source = std::fs::read_to_string(entry_path).map_err(|e| {
+        let overlay = overlay.map(|(path, source)| (normalized(path), source.to_owned()));
+        let source = if let Some((_, source)) = overlay
+            .as_ref()
+            .filter(|(path, _)| *path == normalized(entry_path))
+        {
+            Ok(source.clone())
+        } else {
+            std::fs::read_to_string(entry_path)
+        }
+        .map_err(|e| {
             vec![Diagnostic::error(
                 format!("cannot read '{}': {}", entry_path.display(), e),
                 Span::dummy(),
@@ -55,30 +73,17 @@ impl ModuleResolver {
             stdlib_dir: find_stdlib_dir(),
             os_dir: find_os_dir(),
             dep_dirs: Vec::new(),
+            sources: BTreeMap::new(),
+            overlay,
             modules,
             queue: deps,
             diagnostics: Vec::new(),
         })
     }
 
-    /// Find the VM intrinsic library directory.
-    /// Mirrors stdlib_dir search but looks for `vm/` sibling to `std/`.
+    /// Navigation location; packaged source bytes determine compilation.
     pub(crate) fn find_vm_dir(&self) -> Option<PathBuf> {
-        // If we have a stdlib_dir, look for vm/ as a sibling
-        if let Some(ref stdlib_dir) = self.stdlib_dir {
-            if let Some(parent) = stdlib_dir.parent() {
-                let vm_dir = parent.join("vm");
-                if vm_dir.is_dir() {
-                    return Some(vm_dir);
-                }
-            }
-        }
-        // Fallback: vm/ in current working directory
-        let cwd_vm = PathBuf::from("vm");
-        if cwd_vm.is_dir() {
-            return Some(cwd_vm);
-        }
-        None
+        find_lib_dir("vm")
     }
 
     pub(crate) fn discover_all(&mut self) -> Result<(), Vec<Diagnostic>> {
@@ -89,7 +94,32 @@ impl ModuleResolver {
 
             // Resolve module name to file path
             let file_path = self.resolve_path(&module_name);
-            let source = match std::fs::read_to_string(&file_path) {
+            let canonical = legacy_stdlib_fallback(&module_name).unwrap_or(&module_name);
+            let explicit_dependency = self.dep_dirs.iter().any(|dir| file_path.starts_with(dir));
+            let packaged = canonical.starts_with("std.")
+                || canonical.starts_with("vm.")
+                || canonical.starts_with("os.");
+            let result = if let Some((_, source)) = self
+                .overlay
+                .as_ref()
+                .filter(|(path, _)| *path == normalized(&file_path))
+            {
+                Ok(source.clone())
+            } else if let Some(source) = self.sources.get(canonical) {
+                Ok(source.clone())
+            } else if explicit_dependency {
+                std::fs::read_to_string(&file_path)
+            } else if let Some(source) = crate::resources::module(canonical) {
+                Ok(source.to_string())
+            } else if packaged {
+                Err(std::io::Error::new(
+                    std::io::ErrorKind::NotFound,
+                    format!("module {canonical} is not supplied by this target package"),
+                ))
+            } else {
+                std::fs::read_to_string(&file_path)
+            };
+            let source = match result {
                 Ok(s) => s,
                 Err(e) => {
                     self.diagnostics.push(
@@ -162,6 +192,20 @@ impl ModuleResolver {
                 || part.contains('\\')
             {
                 return self.root_dir.join("<invalid-module-name>");
+            }
+        }
+
+        // Explicit project/warrior resources take precedence over installed libraries.
+        for dir in &self.dep_dirs {
+            let path = raw_parts
+                .iter()
+                .fold(dir.clone(), |path, part| path.join(part));
+            let candidate = path.with_extension("tri");
+            if candidate.is_file() {
+                return candidate;
+            }
+            if path.join("main.tri").is_file() {
+                return path.join("main.tri");
             }
         }
 
@@ -381,4 +425,14 @@ pub(crate) fn scan_module_header(source: &str) -> (Option<String>, Vec<String>) 
     }
 
     (name, deps)
+}
+
+fn normalized(path: &Path) -> PathBuf {
+    path.canonicalize().unwrap_or_else(|_| {
+        if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            std::env::current_dir().unwrap_or_default().join(path)
+        }
+    })
 }

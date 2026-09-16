@@ -1,0 +1,3 @@
+program differential_poseidon2_zero
+use std.crypto.poseidon2
+fn main() -> poseidon2.State { poseidon2.zero_state() }

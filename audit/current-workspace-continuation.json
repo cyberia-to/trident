@@ -1,0 +1,784 @@
+{
+  "trident_first": {
+    "log": "/tmp/current-trident-workspace-continuation.log",
+    "sha256": "a0f55f55ac14cf025c78b0d0f4f5fc5eeaefb164d9c6cf47e84fe44a1fae878d",
+    "groups": [
+      {
+        "harness": "Running unittests src/lib.rs (trident/target/release/deps/trident-91489cb0ab523692)",
+        "status": "FAILED",
+        "passed": 723,
+        "failed": 1,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      }
+    ],
+    "totals": {
+      "passed": 723,
+      "failed": 1,
+      "ignored": 0,
+      "filtered": 0
+    },
+    "exit_code": 101
+  },
+  "trident_final": {
+    "log": "/tmp/current-trident-workspace-continuation-final.log",
+    "sha256": "a4d318c9ccb98ed3d13eee2f888c94c330934422752f4678525093ac8b26a1f7",
+    "groups": [
+      {
+        "harness": "Running unittests src/lib.rs (trident/target/release/deps/trident-91489cb0ab523692)",
+        "status": "ok",
+        "passed": 724,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests src/main.rs (trident/target/release/deps/trident-9f366862f5e3442c)",
+        "status": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests src/bin/trident-lsp.rs (trident/target/release/deps/trident_lsp-26243236673ebec8)",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/build_context.rs (trident/target/release/deps/build_context-9297638d8b9ae106)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/cli_package.rs (trident/target/release/deps/cli_package-546b5591a105407a)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/cli_test_execution.rs (trident/target/release/deps/cli_test_execution-945a8378c0232bc5)",
+        "status": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/cli_warriors.rs (trident/target/release/deps/cli_warriors-3b76db75187e7922)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/differential.rs (trident/target/release/deps/differential-06cae32e57f2820a)",
+        "status": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/formal_audit.rs (trident/target/release/deps/formal_audit-8da219382caed24c)",
+        "status": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/imported_generics.rs (trident/target/release/deps/imported_generics-8b5643df63800f95)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/nox_surface.rs (trident/target/release/deps/nox_surface-39ba6e13a74487e3)",
+        "status": "ok",
+        "passed": 53,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/source_api_parity.rs (trident/target/release/deps/source_api_parity-1691585725adafac)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/target_intrinsics.rs (trident/target/release/deps/target_intrinsics-e4a4d1670577f602)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/target_packages.rs (trident/target/release/deps/target_packages-f009c6bb72ba252c)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/warrior_api.rs (trident/target/release/deps/warrior_api-2c3d3adfdb45026c)",
+        "status": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests src/lib.rs (trident/target/release/deps/trident_silicon-d173258b54aba4b6)",
+        "status": "ok",
+        "passed": 34,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests src/bin/main.rs (trident/target/release/deps/silicon-7a5066e3091f1f06)",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Doc-tests trident",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Doc-tests trident_silicon",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      }
+    ],
+    "totals": {
+      "passed": 894,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    "exit_code": 0
+  },
+  "trisha_ordinary": {
+    "log": "/tmp/current-trisha-workspace-continuation.log",
+    "sha256": "92b62e0e098bbc9f23f13f6c6d250404154d9dd3ef85af01de1207a7473e01de",
+    "groups": [
+      {
+        "harness": "Running unittests main.rs (trisha/target/release/deps/trisha-36af3e858a25b645)",
+        "status": "ok",
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/deploy_transaction.rs (trisha/target/release/deps/deploy_transaction-5246c1a43120aa94)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/deployment.rs (trisha/target/release/deps/deployment-4d766b769c0842ae)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/input_file_kind.rs (trisha/target/release/deps/input_file_kind-c4c3d545f1774ca4)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/neptune_wallet.rs (trisha/target/release/deps/neptune_wallet-ad9054feec5a0101)",
+        "status": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/node_status.rs (trisha/target/release/deps/node_status-4d7029aed1cf60db)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/recursive_input.rs (trisha/target/release/deps/recursive_input-4d12d6210ec00e5d)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/source_pipeline.rs (trisha/target/release/deps/source_pipeline-0cf19d55b69f5d6e)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests lib.rs (trisha/target/release/deps/trisha_honeycrisp-7fa694abcb6e1691)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests bench_mine.rs (trisha/target/release/deps/bench_mine-3083b5a63a367391)",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/neptune_gpu.rs (trisha/target/release/deps/neptune_gpu-77a6daf5c62f8971)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/neptune_pow_compatibility.rs (trisha/target/release/deps/neptune_pow_compatibility-b29cdbdb2127e9ff)",
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests lib.rs (trisha/target/release/deps/trisha_neptune-8f30424f760afa33)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/deployment.rs (trisha/target/release/deps/deployment-3d3fb2dd92bf4f4d)",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests lib.rs (trisha/target/release/deps/trisha_rs-f3730ae67fd8b2c5)",
+        "status": "ok",
+        "passed": 139,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/bigint_boundaries.rs (trisha/target/release/deps/bigint_boundaries-48440fe3e9eeacd9)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/bigint_mod.rs (trisha/target/release/deps/bigint_mod-4528bb08b6f0fb0f)",
+        "status": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/build_output.rs (trisha/target/release/deps/build_output-8b924971bafda065)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/ccs.rs (trisha/target/release/deps/ccs-28d656d793972553)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/compiler_pipeline.rs (trisha/target/release/deps/compiler_pipeline-b50b5667a21b4dc7)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/control_flow.rs (trisha/target/release/deps/control_flow-ef5f878c991ae0e9)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/crypto_abi.rs (trisha/target/release/deps/crypto_abi-b254e33fbcfd7bdd)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/crypto_policy.rs (trisha/target/release/deps/crypto_policy-bda513d73488fd28)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/custom_token_v2.rs (trisha/target/release/deps/custom_token_v2-5c83a7bec59d707b)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/deployment.rs (trisha/target/release/deps/deployment-bf96e10be268a68d)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/early_return.rs (trisha/target/release/deps/early_return-a573546b93398763)",
+        "status": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/entry_abi.rs (trisha/target/release/deps/entry_abi-223f2ad10012c8d6)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/events.rs (trisha/target/release/deps/events-00b0ab65c7997b6e)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/field_literals.rs (trisha/target/release/deps/field_literals-fd45968e660b5585)",
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/fixed_claim.rs (trisha/target/release/deps/fixed_claim-632d6a5b06dff85d)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/imported_generics.rs (trisha/target/release/deps/imported_generics-51a56fcc90ed3542)",
+        "status": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/integration.rs (trisha/target/release/deps/integration-3add4a52fec3bdf1)",
+        "status": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/native_input.rs (trisha/target/release/deps/native_input-e30833f2cec25e98)",
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/plumb_v2.rs (trisha/target/release/deps/plumb_v2-2e6b7fe4a5e1b318)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/poseidon_standard.rs (trisha/target/release/deps/poseidon_standard-40f96c9bc28d50fd)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/program_context.rs (trisha/target/release/deps/program_context-9d46c1b48e45c540)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/proof_consumption.rs (trisha/target/release/deps/proof_consumption-e7c3a8543c8c5c96)",
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/proof_wire.rs (trisha/target/release/deps/proof_wire-2a538354e7b220db)",
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/quantum_gates.rs (trisha/target/release/deps/quantum_gates-68b7964d85e6bb5e)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/quantum_ram.rs (trisha/target/release/deps/quantum_ram-3d2a25eed4f181f3)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/recursive_verifier.rs (trisha/target/release/deps/recursive_verifier-7c4c14f63748178b)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/recursive_witness.rs (trisha/target/release/deps/recursive_witness-de1c10a7b3b64088)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/runtime_arrays.rs (trisha/target/release/deps/runtime_arrays-8b7bdd8fccc73015)",
+        "status": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/sha256_ram.rs (trisha/target/release/deps/sha256_ram-5740800d48a0b66b)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/stack_frames.rs (trisha/target/release/deps/stack_frames-ee5061c3704f7f35)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/struct_literal_layout.rs (trisha/target/release/deps/struct_literal_layout-e043a00d86ffabf6)",
+        "status": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/target_ownership.rs (trisha/target/release/deps/target_ownership-97f2b65f3da52d3c)",
+        "status": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/tensor_boundaries.rs (trisha/target/release/deps/tensor_boundaries-285161221cf4f98e)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/terminal_returns.rs (trisha/target/release/deps/terminal_returns-70dcfcabb2389f61)",
+        "status": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/test_execution.rs (trisha/target/release/deps/test_execution-305c7f84822430fb)",
+        "status": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/triton_audit_stdlib.rs (trisha/target/release/deps/triton_audit_stdlib-0b9882db567daa13)",
+        "status": "ok",
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/triton_compile.rs (trisha/target/release/deps/triton_compile-96c2b9bd64c6d9c2)",
+        "status": "ok",
+        "passed": 15,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/triton_features.rs (trisha/target/release/deps/triton_features-fe3fa066c7cc5f7d)",
+        "status": "ok",
+        "passed": 22,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/triton_neptune.rs (trisha/target/release/deps/triton_neptune-c3bab5d88293a16e)",
+        "status": "ok",
+        "passed": 13,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/triton_stdlib.rs (trisha/target/release/deps/triton_stdlib-fbfaadb33d6a9e2a)",
+        "status": "ok",
+        "passed": 42,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running tests/word_shifts.rs (trisha/target/release/deps/word_shifts-c1cdd6f7c27f0ba2)",
+        "status": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      {
+        "harness": "Running unittests lib.rs (trisha/target/release/deps/trisha_wgpu-76b06cabf64b9f36)",
+        "status": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      }
+    ],
+    "totals": {
+      "passed": 450,
+      "failed": 0,
+      "ignored": 5,
+      "filtered": 0
+    },
+    "exit_code": 101,
+    "exit_reason": "doctest compilation E0463 after all ordinary test groups passed"
+  },
+  "trisha_doc_retry": {
+    "log": "/tmp/current-trisha-workspace-doc-retry.log",
+    "sha256": "a59df95648dca37d4f824bd33a92c9dfbfe46da1470ebfb3cde61cdffa2277d9",
+    "exit_code": 0,
+    "groups": [
+      {
+        "harness": "Doc-tests trisha_honeycrisp",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "harness": "Doc-tests trisha_neptune",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "harness": "Doc-tests trisha_rs",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      },
+      {
+        "harness": "Doc-tests trisha_wgpu",
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0
+      }
+    ]
+  },
+  "trident_all_target_check": {
+    "command": "CARGO_BUILD_JOBS=2 cargo check --manifest-path trident/Cargo.toml --workspace --all-targets --all-features --release --locked",
+    "exit_code": 0,
+    "rust_warnings": 0,
+    "log": "/tmp/current-trident-all-target-check.log",
+    "sha256": "7d6cc5001bafe209a6d3d15cae59fa0d1dfd1725352b0726f66bf7bc9a0f3fcf"
+  },
+  "trisha_all_target_check": {
+    "command": "CARGO_BUILD_JOBS=2 cargo check --manifest-path trisha/Cargo.toml --workspace --all-targets --all-features --release --locked",
+    "exit_code": 0,
+    "rust_warnings": 0,
+    "log": "/tmp/current-trisha-all-target-check.log",
+    "sha256": "d2476846f8a4e57e36b075816d5540ddba89f9e11ccc0d5465dda641aac2388f"
+  }
+}

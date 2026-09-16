@@ -1,0 +1,48 @@
+# ---
+# tags: trident, config
+# crystal-type: source
+# crystal-domain: comp
+# ---
+# Nox target configuration — proof-native VM
+# https://github.com/cyberia-to/nox
+
+[target]
+name = "nox"
+display_name = "NOX"
+architecture = "tree"
+output_extension = ".nox"
+
+[field]
+prime = "2^64 - 2^32 + 1"
+bits = 64
+limbs = 2
+
+[stack]
+depth = 0
+spill_ram_base = 0
+
+[hash]
+function = "Hemera"
+# nox hash emits a 4-element truncated digest (patterns/hash.rs); rate stays 8
+digest_width = 4
+rate = 8
+
+[extension_field]
+degree = 3
+
+[cost]
+tables = ["reductions"]
+
+[warrior]
+name = "joy"
+crate = "cyber-joy"
+runner = true
+prover = true    # Public bounded execution certificate; runtime capabilities belong to Joy.
+
+[status]
+level = 5
+lowering = "NoxCompiler"
+lowering_path = "tree"
+cost_model = true
+tests = true
+notes = "Direct AST-to-Noun compilation. M1 surface: literals, let, arithmetic, comparison, if/else, early return, mutable assignment (subject edit), bounded for (static unroll + dynamic-bound guard), function inlining, structs/arrays/tuples (cons-trees, const index), hash builtin, assert family, sub/neg/inv/field ops. Every mapping reduces on the real nox VM (tests/nox_surface.rs + unit tests)."

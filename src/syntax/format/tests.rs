@@ -350,16 +350,6 @@ fn test_sec_ram_formatting() {
     assert!(out.contains("5: Digest"));
 }
 
-// --- Fungible token round-trip ---
-
-#[test]
-fn test_coin_idempotent() {
-    let src = include_str!("../../../os/neptune/standards/coin.tri");
-    let first = fmt(src);
-    let second = fmt(&first);
-    assert_eq!(first, second, "token.tri formatting should be idempotent");
-}
-
 #[test]
 fn test_asm_basic_formatting() {
     let src = "program test\n\nfn main() {\n    asm {\n        push 1\n        add\n    }\n}\n";

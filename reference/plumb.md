@@ -1,5 +1,9 @@
 # PLUMB — Token Framework
 
+The production example contract is [PLUMB v2](plumb-v2.md). The ten-field
+authority layout below describes legacy v1 and is retained as historical
+context; it is not the default executable authorization schema.
+
 Pay, Lock, Update, Mint, Burn. The shared framework for all Trident
 token standards.
 
@@ -277,3 +281,10 @@ listed in [TSP-1](tsp1-coin.md) and [TSP-2](tsp2-card.md).
 - [Gold Standard](../docs/explanation/gold-standard.md) — design rationale and philosophy
 - [Skill Reference](skills.md) — 23 composable token skills (hook programs)
 - [Standard Library: Token Infrastructure](stdlib.md#layer-05-token-infrastructure) — `std.token`, `std.coin`, `std.card`, `std.skill`
+
+## Executable version
+
+The maintained examples implement [PLUMB v2](plumb-v2.md), including full
+Digest authorities, domain-separated leaves/configuration, and same-sibling
+atomic tree updates. The preceding v1 schema is historical and is incompatible
+with v2 witnesses. Archived prototypes are explicitly experimental.

@@ -94,23 +94,14 @@ fn build_differential_program(file: &File, fn_a: &str, fn_b: &str) -> Option<Str
     let src_a = display::format_function(func_a);
     let src_b = display::format_function(func_b);
 
-    // Build input reads and argument lists based on func_a's parameters.
-    let mut reads = String::new();
+    // Function parameters model shared inputs without a target-specific stream ABI.
+    let reads = String::new();
     let mut args = Vec::new();
+    let mut params = Vec::new();
     for (i, param) in func_a.params.iter().enumerate() {
-        let var_name = format!("__input_{}", i);
-        let ty_str = format_type(&param.ty.node);
-        // For most types, use pub_read().
-        // For Digest, use pub_read5(). For XField, three reads.
-        let read_call = match &param.ty.node {
-            Type::Digest => "pub_read5()",
-            _ => "pub_read()",
-        };
-        reads.push_str(&format!(
-            "    let {}: {} = {}\n",
-            var_name, ty_str, read_call
-        ));
-        args.push(var_name);
+        let name = format!("__input_{i}");
+        params.push(format!("{name}: {}", format_type(&param.ty.node)));
+        args.push(name);
     }
 
     let args_str = args.join(", ");
@@ -142,7 +133,7 @@ fn build_differential_program(file: &File, fn_a: &str, fn_b: &str) -> Option<Str
     program.push('\n');
     program.push_str(&src_b);
     program.push('\n');
-    program.push_str("fn main() {\n");
+    program.push_str(&format!("fn main({}) {{\n", params.join(", ")));
     program.push_str(&main_body);
     program.push_str("}\n");
 

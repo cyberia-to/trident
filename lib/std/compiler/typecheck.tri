@@ -1,0 +1,1519 @@
+module std.compiler.typecheck
+
+// Self-hosted Trident type checker.
+//
+// Takes a flat linearized AST (from std.compiler.parser) and performs
+// type checking. Two passes: (1) register top-level items (structs,
+// functions, constants, events), (2) check function bodies.
+//
+// Pass 1 is iterative over flat AST (no recursion needed).
+// Pass 2 uses a work stack + result stack to walk AST nodes
+// without recursion. Each "call" pushes continuation + work item;
+// results flow through a result stack.
+//
+// Memory layout (all addresses in state block):
+//   ast_base  + node_count*8   AST input (stride 8, from parser)
+//   tp_base   + tp_count*4     Type pool (stride 4)
+//   fn_base   + fn_count*6     Function table (stride 6)
+//   var_base  + var_cap*4      Variable scope stack (stride 4)
+//   st_base   + st_count*6     Struct table (stride 6)
+//   sf_base   + sf_count*3     Struct fields (stride 3)
+//   ct_base   + ct_count*3     Constant table (stride 3)
+//   ev_base   + ev_count*4     Event table (stride 4)
+//   ef_base   + ef_count*2     Event fields (stride 2)
+//   err_base  + err_count*3    Diagnostics output (stride 3)
+//   ws_base   + ws_depth*3     Work stack (stride 3: code, arg0, arg1)
+//   rs_base   + rs_depth       Result stack (type indices)
+
+use vm.core.field
+
+use vm.core.convert
+
+use vm.io.mem
+
+use std.compiler.parser
+
+// =========================================================================
+// Type tag constants
+// =========================================================================
+
+pub fn TY_FIELD() -> Field { 1 }
+pub fn TY_XFIELD() -> Field { 2 }
+pub fn TY_BOOL() -> Field { 3 }
+pub fn TY_U32() -> Field { 4 }
+pub fn TY_DIGEST() -> Field { 5 }
+pub fn TY_ARRAY() -> Field { 6 }
+pub fn TY_TUPLE() -> Field { 7 }
+pub fn TY_STRUCT() -> Field { 8 }
+pub fn TY_UNIT() -> Field { 9 }
+
+// =========================================================================
+// Error codes (300+)
+// =========================================================================
+
+fn SEV_ERROR() -> Field { 1 }
+fn SEV_WARNING() -> Field { 2 }
+
+fn ERR_TYPE_MISMATCH() -> Field { 300 }
+fn ERR_UNDEFINED_VAR() -> Field { 301 }
+fn ERR_UNDEFINED_FN() -> Field { 302 }
+fn ERR_UNDEFINED_STRUCT() -> Field { 303 }
+fn ERR_ARG_COUNT() -> Field { 304 }
+fn ERR_NOT_MUTABLE() -> Field { 305 }
+fn ERR_FIELD_NOT_FOUND() -> Field { 306 }
+fn ERR_INDEX_NON_ARRAY() -> Field { 307 }
+fn ERR_NON_EXHAUSTIVE() -> Field { 308 }
+fn ERR_MISSING_FIELD() -> Field { 311 }
+fn ERR_EXTRA_FIELD() -> Field { 312 }
+fn ERR_DESTRUCT_NON_TUPLE() -> Field { 313 }
+fn ERR_COND_TYPE() -> Field { 314 }
+fn ERR_UNDEFINED_EVENT() -> Field { 316 }
+
+// =========================================================================
+// Strides
+// =========================================================================
+
+fn AST_STRIDE() -> Field { 8 }
+fn TYPE_STRIDE() -> Field { 4 }
+fn FN_STRIDE() -> Field { 6 }
+fn VAR_STRIDE() -> Field { 4 }
+fn STRUCT_STRIDE() -> Field { 6 }
+fn SFIELD_STRIDE() -> Field { 3 }
+fn CONST_STRIDE() -> Field { 3 }
+fn EVENT_STRIDE() -> Field { 4 }
+fn EFIELD_STRIDE() -> Field { 2 }
+fn ERR_STRIDE() -> Field { 3 }
+fn WORK_STRIDE() -> Field { 3 }
+
+fn MAX_STEPS() -> Field { 131072 }
+
+// =========================================================================
+// Work codes (WC_*) — state machine for iterative tree walking
+// =========================================================================
+
+fn WC_EXPR() -> Field { 1 }
+fn WC_BINOP_RHS() -> Field { 2 }
+fn WC_BINOP_DONE() -> Field { 3 }
+fn WC_CALL_ARGS() -> Field { 4 }
+fn WC_CALL_DONE() -> Field { 5 }
+fn WC_FIELD_ACCESS() -> Field { 6 }
+fn WC_INDEX_EXPR() -> Field { 7 }
+fn WC_INDEX_DONE() -> Field { 8 }
+fn WC_STRUCT_INIT_DONE() -> Field { 9 }
+fn WC_ARRAY_DONE() -> Field { 10 }
+fn WC_TUPLE_DONE() -> Field { 11 }
+fn WC_STMT() -> Field { 20 }
+fn WC_LET_INIT() -> Field { 21 }
+fn WC_ASSIGN_VAL() -> Field { 22 }
+fn WC_IF_COND() -> Field { 23 }
+fn WC_IF_THEN() -> Field { 24 }
+fn WC_FOR_BODY() -> Field { 26 }
+fn WC_MATCH_DONE() -> Field { 27 }
+fn WC_DISCARD() -> Field { 28 }
+fn WC_EVENT_DONE() -> Field { 29 }
+fn WC_POP_SCOPE() -> Field { 30 }
+
+// =========================================================================
+// State layout (32 words at state_base)
+// =========================================================================
+
+fn get_ast_base(sb: Field) -> Field { mem.read(sb) }
+fn get_node_count(sb: Field) -> Field { mem.read(sb + 1) }
+fn get_tp_base(sb: Field) -> Field { mem.read(sb + 2) }
+fn get_tp_count(sb: Field) -> Field { mem.read(sb + 3) }
+fn set_tp_count(sb: Field, v: Field) { mem.write(sb + 3, v) }
+fn get_fn_base(sb: Field) -> Field { mem.read(sb + 4) }
+fn get_fn_count(sb: Field) -> Field { mem.read(sb + 5) }
+fn set_fn_count(sb: Field, v: Field) { mem.write(sb + 5, v) }
+fn get_var_base(sb: Field) -> Field { mem.read(sb + 6) }
+fn get_var_count(sb: Field) -> Field { mem.read(sb + 7) }
+fn set_var_count(sb: Field, v: Field) { mem.write(sb + 7, v) }
+fn get_st_base(sb: Field) -> Field { mem.read(sb + 8) }
+fn get_st_count(sb: Field) -> Field { mem.read(sb + 9) }
+fn set_st_count(sb: Field, v: Field) { mem.write(sb + 9, v) }
+fn get_sf_base(sb: Field) -> Field { mem.read(sb + 10) }
+fn get_sf_count(sb: Field) -> Field { mem.read(sb + 11) }
+fn set_sf_count(sb: Field, v: Field) { mem.write(sb + 11, v) }
+fn get_ct_base(sb: Field) -> Field { mem.read(sb + 12) }
+fn get_ct_count(sb: Field) -> Field { mem.read(sb + 13) }
+fn set_ct_count(sb: Field, v: Field) { mem.write(sb + 13, v) }
+fn get_ev_base(sb: Field) -> Field { mem.read(sb + 14) }
+fn get_ev_count(sb: Field) -> Field { mem.read(sb + 15) }
+fn set_ev_count(sb: Field, v: Field) { mem.write(sb + 15, v) }
+fn get_ef_base(sb: Field) -> Field { mem.read(sb + 16) }
+fn get_ef_count(sb: Field) -> Field { mem.read(sb + 17) }
+fn set_ef_count(sb: Field, v: Field) { mem.write(sb + 17, v) }
+fn get_err_base(sb: Field) -> Field { mem.read(sb + 18) }
+fn get_err_count(sb: Field) -> Field { mem.read(sb + 19) }
+fn set_err_count(sb: Field, v: Field) { mem.write(sb + 19, v) }
+fn get_ws_base(sb: Field) -> Field { mem.read(sb + 20) }
+fn get_ws_depth(sb: Field) -> Field { mem.read(sb + 21) }
+fn set_ws_depth(sb: Field, v: Field) { mem.write(sb + 21, v) }
+fn get_scope_depth(sb: Field) -> Field { mem.read(sb + 22) }
+fn set_scope_depth(sb: Field, v: Field) { mem.write(sb + 22, v) }
+fn get_digest_width(sb: Field) -> Field { mem.read(sb + 23) }
+fn get_hash_rate(sb: Field) -> Field { mem.read(sb + 24) }
+fn get_field_limbs(sb: Field) -> Field { mem.read(sb + 25) }
+fn get_xfield_width(sb: Field) -> Field { mem.read(sb + 26) }
+fn get_in_pure_fn(sb: Field) -> Field { mem.read(sb + 27) }
+fn set_in_pure_fn(sb: Field, v: Field) { mem.write(sb + 27, v) }
+fn get_rs_base(sb: Field) -> Field { mem.read(sb + 28) }
+fn get_rs_depth(sb: Field) -> Field { mem.read(sb + 29) }
+fn set_rs_depth(sb: Field, v: Field) { mem.write(sb + 29, v) }
+
+// =========================================================================
+// AST node accessors
+// =========================================================================
+
+fn ast_kind(sb: Field, idx: Field) -> Field {
+    mem.read(get_ast_base(sb) + idx * AST_STRIDE())
+}
+
+fn ast_f(sb: Field, idx: Field, f: Field) -> Field {
+    mem.read(get_ast_base(sb) + idx * AST_STRIDE() + 1 + f)
+}
+
+// Dereference a NK_BLOCK node — returns (stmts_start, stmts_count)
+fn block_stmts_start(sb: Field, blk: Field) -> Field { ast_f(sb, blk, 0) }
+fn block_stmts_count(sb: Field, blk: Field) -> Field { ast_f(sb, blk, 1) }
+
+// =========================================================================
+// Type pool
+// =========================================================================
+
+fn alloc_type(sb: Field, tag: Field, p0: Field, p1: Field, p2: Field) -> Field {
+    let idx: Field = get_tp_count(sb)
+    let addr: Field = get_tp_base(sb) + idx * TYPE_STRIDE()
+    mem.write(addr, tag)
+    mem.write(addr + 1, p0)
+    mem.write(addr + 2, p1)
+    mem.write(addr + 3, p2)
+    set_tp_count(sb, idx + 1)
+    idx
+}
+
+fn type_tag(sb: Field, idx: Field) -> Field {
+    mem.read(get_tp_base(sb) + idx * TYPE_STRIDE())
+}
+
+fn type_p0(sb: Field, idx: Field) -> Field {
+    mem.read(get_tp_base(sb) + idx * TYPE_STRIDE() + 1)
+}
+
+fn type_p1(sb: Field, idx: Field) -> Field {
+    mem.read(get_tp_base(sb) + idx * TYPE_STRIDE() + 2)
+}
+
+fn TI_FIELD() -> Field { 0 }
+fn TI_XFIELD() -> Field { 1 }
+fn TI_BOOL() -> Field { 2 }
+fn TI_U32() -> Field { 3 }
+fn TI_DIGEST() -> Field { 4 }
+fn TI_UNIT() -> Field { 5 }
+
+fn init_scalar_types(sb: Field) {
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_XFIELD(), get_xfield_width(sb), 0, 0)
+    alloc_type(sb, TY_BOOL(), 0, 0, 0)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    alloc_type(sb, TY_DIGEST(), get_digest_width(sb), 0, 0)
+    let _ = alloc_type(sb, TY_UNIT(), 0, 0, 0)
+}
+
+fn type_eq_inner(sb: Field, a: Field, b: Field) -> Bool {
+    if a == b { true }
+    else {
+        let ta: Field = type_tag(sb, a)
+        let tb: Field = type_tag(sb, b)
+        if ta == tb {
+            if ta == TY_FIELD() { true }
+            else { if ta == TY_BOOL() { true }
+            else { if ta == TY_U32() { true }
+            else { if ta == TY_UNIT() { true }
+            else { if ta == TY_XFIELD() { type_p0(sb, a) == type_p0(sb, b) }
+            else { if ta == TY_DIGEST() { type_p0(sb, a) == type_p0(sb, b) }
+            else { if ta == TY_STRUCT() { type_p0(sb, a) == type_p0(sb, b) }
+            else { false } } } } } } }
+        } else { false }
+    }
+}
+
+// Iterative type equality — handles arrays and tuples by unwrapping one level
+fn type_eq(sb: Field, a: Field, b: Field) -> Bool {
+    if a == b { true }
+    else {
+        let ta: Field = type_tag(sb, a)
+        let tb: Field = type_tag(sb, b)
+        if ta == tb {
+            if ta == TY_ARRAY() {
+                if type_p1(sb, a) == type_p1(sb, b) {
+                    type_eq_inner(sb, type_p0(sb, a), type_p0(sb, b))
+                } else { false }
+            } else { if ta == TY_TUPLE() {
+                if type_p0(sb, a) == type_p0(sb, b) {
+                    let cnt: Field = type_p0(sb, a)
+                    let sa: Field = type_p1(sb, a)
+                    let sbb: Field = type_p1(sb, b)
+                    let mut ok: Bool = true
+                    for _i in 0..cnt bounded 32 {
+                        let i: Field = convert.as_field(_i)
+                        if type_eq_inner(sb, sa + i, sbb + i) == false { ok = false }
+                    }
+                    ok
+                } else { false }
+            } else { type_eq_inner(sb, a, b) } }
+        } else { false }
+    }
+}
+
+// =========================================================================
+// Diagnostics
+// =========================================================================
+
+fn emit_error(sb: Field, node_idx: Field, code: Field) {
+    let idx: Field = get_err_count(sb)
+    let addr: Field = get_err_base(sb) + idx * ERR_STRIDE()
+    mem.write(addr, SEV_ERROR())
+    mem.write(addr + 1, node_idx)
+    mem.write(addr + 2, code)
+    set_err_count(sb, idx + 1)
+}
+
+// =========================================================================
+// Work stack
+// =========================================================================
+
+fn ws_push(sb: Field, code: Field, a0: Field, a1: Field) {
+    let d: Field = get_ws_depth(sb)
+    let addr: Field = get_ws_base(sb) + d * WORK_STRIDE()
+    mem.write(addr, code)
+    mem.write(addr + 1, a0)
+    mem.write(addr + 2, a1)
+    set_ws_depth(sb, d + 1)
+}
+
+fn ws_pop(sb: Field) {
+    set_ws_depth(sb, get_ws_depth(sb) + field.neg(1))
+}
+
+fn ws_top_code(sb: Field) -> Field {
+    let d: Field = get_ws_depth(sb)
+    mem.read(get_ws_base(sb) + (d + field.neg(1)) * WORK_STRIDE())
+}
+
+fn ws_top_a0(sb: Field) -> Field {
+    let d: Field = get_ws_depth(sb)
+    mem.read(get_ws_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 1)
+}
+
+fn ws_top_a1(sb: Field) -> Field {
+    let d: Field = get_ws_depth(sb)
+    mem.read(get_ws_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 2)
+}
+
+// =========================================================================
+// Result stack
+// =========================================================================
+
+fn rs_push(sb: Field, val: Field) {
+    let d: Field = get_rs_depth(sb)
+    mem.write(get_rs_base(sb) + d, val)
+    set_rs_depth(sb, d + 1)
+}
+
+fn rs_pop(sb: Field) -> Field {
+    let d: Field = get_rs_depth(sb)
+    let nd: Field = d + field.neg(1)
+    let val: Field = mem.read(get_rs_base(sb) + nd)
+    set_rs_depth(sb, nd)
+    val
+}
+
+// =========================================================================
+// Function table
+// =========================================================================
+
+fn register_fn(sb: Field, name_id: Field, pc: Field, ps: Field, rt: Field, flags: Field) -> Field {
+    let idx: Field = get_fn_count(sb)
+    let addr: Field = get_fn_base(sb) + idx * FN_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, pc)
+    mem.write(addr + 2, ps)
+    mem.write(addr + 3, rt)
+    mem.write(addr + 4, flags)
+    mem.write(addr + 5, 0)
+    set_fn_count(sb, idx + 1)
+    idx
+}
+
+fn lookup_fn(sb: Field, name_id: Field) -> Field {
+    let count: Field = get_fn_count(sb)
+    let base: Field = get_fn_base(sb)
+    let mut result: Field = field.neg(1)
+    for _i in 0..count bounded 1024 {
+        let i: Field = convert.as_field(_i)
+        if mem.read(base + i * FN_STRIDE()) == name_id { result = i }
+    }
+    result
+}
+
+fn fn_pc(sb: Field, fi: Field) -> Field { mem.read(get_fn_base(sb) + fi * FN_STRIDE() + 1) }
+fn fn_ps(sb: Field, fi: Field) -> Field { mem.read(get_fn_base(sb) + fi * FN_STRIDE() + 2) }
+fn fn_rt(sb: Field, fi: Field) -> Field { mem.read(get_fn_base(sb) + fi * FN_STRIDE() + 3) }
+fn fn_fl(sb: Field, fi: Field) -> Field { mem.read(get_fn_base(sb) + fi * FN_STRIDE() + 4) }
+
+// =========================================================================
+// Variable scope
+// =========================================================================
+
+fn push_scope(sb: Field) { set_scope_depth(sb, get_scope_depth(sb) + 1) }
+
+fn pop_scope(sb: Field) {
+    let d: Field = get_scope_depth(sb)
+    set_scope_depth(sb, d + field.neg(1))
+    let count: Field = get_var_count(sb)
+    let base: Field = get_var_base(sb)
+    let mut nc: Field = 0
+    for _i in 0..count bounded 1024 {
+        let i: Field = convert.as_field(_i)
+        let addr: Field = base + i * VAR_STRIDE()
+        if mem.read(addr + 3) == d {
+            // popped
+        } else {
+            if nc == i {
+                // in place
+            } else {
+                let dst: Field = base + nc * VAR_STRIDE()
+                mem.write(dst, mem.read(addr))
+                mem.write(dst + 1, mem.read(addr + 1))
+                mem.write(dst + 2, mem.read(addr + 2))
+                mem.write(dst + 3, mem.read(addr + 3))
+            }
+            nc = nc + 1
+        }
+    }
+    set_var_count(sb, nc)
+}
+
+fn define_var(sb: Field, name_id: Field, ti: Field, is_mut: Field) {
+    let idx: Field = get_var_count(sb)
+    let addr: Field = get_var_base(sb) + idx * VAR_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, ti)
+    mem.write(addr + 2, is_mut)
+    mem.write(addr + 3, get_scope_depth(sb))
+    set_var_count(sb, idx + 1)
+}
+
+fn lookup_var(sb: Field, name_id: Field) -> Field {
+    let count: Field = get_var_count(sb)
+    let base: Field = get_var_base(sb)
+    let mut result: Field = field.neg(1)
+    for _i in 0..count bounded 1024 {
+        let i: Field = convert.as_field(_i)
+        let ri: Field = count + field.neg(1) + field.neg(i)
+        if mem.read(base + ri * VAR_STRIDE()) == name_id {
+            if result == field.neg(1) { result = ri }
+        }
+    }
+    result
+}
+
+fn var_ty(sb: Field, vi: Field) -> Field { mem.read(get_var_base(sb) + vi * VAR_STRIDE() + 1) }
+fn var_mut(sb: Field, vi: Field) -> Field { mem.read(get_var_base(sb) + vi * VAR_STRIDE() + 2) }
+
+// =========================================================================
+// Struct table
+// =========================================================================
+
+fn register_struct(sb: Field, name_id: Field, fc: Field, fs: Field) -> Field {
+    let idx: Field = get_st_count(sb)
+    let addr: Field = get_st_base(sb) + idx * STRUCT_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, fc)
+    mem.write(addr + 2, fs)
+    mem.write(addr + 3, 0)
+    mem.write(addr + 4, 0)
+    mem.write(addr + 5, 0)
+    set_st_count(sb, idx + 1)
+    idx
+}
+
+fn lookup_struct(sb: Field, name_id: Field) -> Field {
+    let count: Field = get_st_count(sb)
+    let base: Field = get_st_base(sb)
+    let mut result: Field = field.neg(1)
+    for _i in 0..count bounded 256 {
+        let i: Field = convert.as_field(_i)
+        if mem.read(base + i * STRUCT_STRIDE()) == name_id { result = i }
+    }
+    result
+}
+
+fn st_fc(sb: Field, si: Field) -> Field { mem.read(get_st_base(sb) + si * STRUCT_STRIDE() + 1) }
+fn st_fs(sb: Field, si: Field) -> Field { mem.read(get_st_base(sb) + si * STRUCT_STRIDE() + 2) }
+
+fn add_sf(sb: Field, name_id: Field, ti: Field, is_pub: Field) -> Field {
+    let idx: Field = get_sf_count(sb)
+    let addr: Field = get_sf_base(sb) + idx * SFIELD_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, ti)
+    mem.write(addr + 2, is_pub)
+    set_sf_count(sb, idx + 1)
+    idx
+}
+
+fn sf_name(sb: Field, sfi: Field) -> Field { mem.read(get_sf_base(sb) + sfi * SFIELD_STRIDE()) }
+fn sf_ty(sb: Field, sfi: Field) -> Field { mem.read(get_sf_base(sb) + sfi * SFIELD_STRIDE() + 1) }
+
+fn lookup_sf(sb: Field, si: Field, name_id: Field) -> Field {
+    let fc: Field = st_fc(sb, si)
+    let fs: Field = st_fs(sb, si)
+    let mut result: Field = field.neg(1)
+    for _i in 0..fc bounded 64 {
+        let i: Field = convert.as_field(_i)
+        if sf_name(sb, fs + i) == name_id { result = fs + i }
+    }
+    result
+}
+
+// =========================================================================
+// Constant table
+// =========================================================================
+
+fn register_const(sb: Field, name_id: Field, ti: Field, val: Field) -> Field {
+    let idx: Field = get_ct_count(sb)
+    let addr: Field = get_ct_base(sb) + idx * CONST_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, ti)
+    mem.write(addr + 2, val)
+    set_ct_count(sb, idx + 1)
+    idx
+}
+
+fn lookup_const(sb: Field, name_id: Field) -> Field {
+    let count: Field = get_ct_count(sb)
+    let base: Field = get_ct_base(sb)
+    let mut result: Field = field.neg(1)
+    for _i in 0..count bounded 256 {
+        let i: Field = convert.as_field(_i)
+        if mem.read(base + i * CONST_STRIDE()) == name_id { result = i }
+    }
+    result
+}
+
+fn ct_ty(sb: Field, ci: Field) -> Field { mem.read(get_ct_base(sb) + ci * CONST_STRIDE() + 1) }
+
+// =========================================================================
+// Event table
+// =========================================================================
+
+fn register_event(sb: Field, name_id: Field, fc: Field, fs: Field) -> Field {
+    let idx: Field = get_ev_count(sb)
+    let addr: Field = get_ev_base(sb) + idx * EVENT_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, fc)
+    mem.write(addr + 2, fs)
+    mem.write(addr + 3, 0)
+    set_ev_count(sb, idx + 1)
+    idx
+}
+
+fn lookup_event(sb: Field, name_id: Field) -> Field {
+    let count: Field = get_ev_count(sb)
+    let base: Field = get_ev_base(sb)
+    let mut result: Field = field.neg(1)
+    for _i in 0..count bounded 64 {
+        let i: Field = convert.as_field(_i)
+        if mem.read(base + i * EVENT_STRIDE()) == name_id { result = i }
+    }
+    result
+}
+
+fn add_ef(sb: Field, name_id: Field, ti: Field) -> Field {
+    let idx: Field = get_ef_count(sb)
+    let addr: Field = get_ef_base(sb) + idx * EFIELD_STRIDE()
+    mem.write(addr, name_id)
+    mem.write(addr + 1, ti)
+    set_ef_count(sb, idx + 1)
+    idx
+}
+
+// =========================================================================
+// Builtins registration
+// =========================================================================
+
+fn register_builtins(sb: Field) {
+    let dw: Field = get_digest_width(sb)
+    let hr: Field = get_hash_rate(sb)
+    let fl: Field = get_field_limbs(sb)
+
+    // pub_read() -> Field
+    register_fn(sb, field.neg(1), 0, 0, TI_FIELD(), 1)
+    // pub_write(Field) -> Unit
+    let pw_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(2), 1, pw_p, TI_UNIT(), 1)
+    // divine() -> Field
+    register_fn(sb, field.neg(3), 0, 0, TI_FIELD(), 1)
+    // assert(Bool) -> Unit
+    let as_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_BOOL(), 0, 0, 0)
+    register_fn(sb, field.neg(4), 1, as_p, TI_UNIT(), 0)
+    // assert_eq(Field, Field) -> Unit
+    let aeq_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(5), 2, aeq_p, TI_UNIT(), 0)
+    // assert_digest(Digest, Digest) -> Unit
+    let ad_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_DIGEST(), dw, 0, 0)
+    alloc_type(sb, TY_DIGEST(), dw, 0, 0)
+    register_fn(sb, field.neg(6), 2, ad_p, TI_UNIT(), 0)
+    // field_add(Field, Field) -> Field
+    let fa_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(7), 2, fa_p, TI_FIELD(), 0)
+    // field_mul(Field, Field) -> Field
+    let fm_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(8), 2, fm_p, TI_FIELD(), 0)
+    // inv(Field) -> Field
+    let inv_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(9), 1, inv_p, TI_FIELD(), 0)
+    // neg(Field) -> Field
+    let neg_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(10), 1, neg_p, TI_FIELD(), 0)
+    // sub(Field, Field) -> Field
+    let sub_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(11), 2, sub_p, TI_FIELD(), 0)
+    // split(Field) -> (U32*fl)
+    let sp_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    let sp_rs: Field = get_tp_count(sb)
+    for _li in 0..fl bounded 8 {
+        alloc_type(sb, TY_U32(), 0, 0, 0)
+    }
+    let sp_rt: Field = alloc_type(sb, TY_TUPLE(), fl, sp_rs, 0)
+    register_fn(sb, field.neg(12), 1, sp_p, sp_rt, 0)
+    // as_u32(Field) -> U32
+    let au_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(13), 1, au_p, TI_U32(), 0)
+    // as_field(U32) -> Field
+    let af_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    register_fn(sb, field.neg(14), 1, af_p, TI_FIELD(), 0)
+    // log2(U32) -> U32
+    let l2_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    register_fn(sb, field.neg(15), 1, l2_p, TI_U32(), 0)
+    // pow(U32, U32) -> U32
+    let pw2_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    register_fn(sb, field.neg(16), 2, pw2_p, TI_U32(), 0)
+    // popcount(U32) -> U32
+    let pc_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    register_fn(sb, field.neg(17), 1, pc_p, TI_U32(), 0)
+    // hash(Field*hr) -> Digest
+    let h_p: Field = get_tp_count(sb)
+    for _hi in 0..hr bounded 16 {
+        alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    }
+    register_fn(sb, field.neg(18), hr, h_p, TI_DIGEST(), 0)
+    // sponge_init() -> Unit
+    register_fn(sb, field.neg(19), 0, 0, TI_UNIT(), 1)
+    // sponge_absorb(Field*hr) -> Unit
+    let sa_p: Field = get_tp_count(sb)
+    for _ai in 0..hr bounded 16 {
+        alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    }
+    register_fn(sb, field.neg(20), hr, sa_p, TI_UNIT(), 1)
+    // sponge_squeeze() -> [Field; hr]
+    let sq_rt: Field = alloc_type(sb, TY_ARRAY(), TI_FIELD(), hr, 0)
+    register_fn(sb, field.neg(21), 0, 0, sq_rt, 1)
+    // sponge_absorb_mem(Field) -> Unit
+    let sam_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(22), 1, sam_p, TI_UNIT(), 1)
+    // ram_read(Field) -> Field
+    let rr_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(23), 1, rr_p, TI_FIELD(), 1)
+    // ram_write(Field, Field) -> Unit
+    let rw_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(24), 2, rw_p, TI_UNIT(), 1)
+    // ram_read_block(Field) -> Digest
+    let rrb_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    register_fn(sb, field.neg(25), 1, rrb_p, TI_DIGEST(), 1)
+    // ram_write_block(Field, Digest) -> Unit
+    let rwb_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    alloc_type(sb, TY_DIGEST(), dw, 0, 0)
+    register_fn(sb, field.neg(26), 2, rwb_p, TI_UNIT(), 1)
+    // merkle_step(U32, Field*dw) -> (U32, Digest)
+    let ms_p: Field = get_tp_count(sb)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    for _di in 0..dw bounded 8 {
+        alloc_type(sb, TY_FIELD(), 0, 0, 0)
+    }
+    let ms_rs: Field = get_tp_count(sb)
+    alloc_type(sb, TY_U32(), 0, 0, 0)
+    alloc_type(sb, TY_DIGEST(), dw, 0, 0)
+    let ms_rt: Field = alloc_type(sb, TY_TUPLE(), 2, ms_rs, 0)
+    let _ = register_fn(sb, field.neg(27), 1 + dw, ms_p, ms_rt, 1)
+}
+
+// =========================================================================
+// Type resolution (iterative, bounded nesting)
+// =========================================================================
+
+// Resolve a single type node (non-recursive — only handles leaf + struct)
+fn resolve_type_leaf(sb: Field, node_idx: Field) -> Field {
+    let kind: Field = ast_kind(sb, node_idx)
+    if kind == parser.NK_TYPE_FIELD() { TI_FIELD() }
+    else { if kind == parser.NK_TYPE_BOOL() { TI_BOOL() }
+    else { if kind == parser.NK_TYPE_U32() { TI_U32() }
+    else { if kind == parser.NK_TYPE_XFIELD() { TI_XFIELD() }
+    else { if kind == parser.NK_TYPE_DIGEST() { TI_DIGEST() }
+    else { if kind == parser.NK_TYPE_NAMED() {
+        let nid: Field = ast_f(sb, node_idx, 0)
+        let si: Field = lookup_struct(sb, nid)
+        if si == field.neg(1) {
+            emit_error(sb, node_idx, ERR_UNDEFINED_STRUCT())
+            TI_FIELD()
+        } else { alloc_type(sb, TY_STRUCT(), si, 0, 0) }
+    }
+    else { TI_UNIT() } } } } } }
+}
+
+// Iterative type resolution. Handles arrays and tuples without recursion.
+// For [T; N], resolve T first (must be leaf or nested array), then build array.
+// For (T1, T2, ..), resolve each Ti, then build tuple.
+fn resolve_type_node(sb: Field, node_idx: Field) -> Field {
+    let kind: Field = ast_kind(sb, node_idx)
+    if kind == parser.NK_TYPE_ARRAY() {
+        let inner: Field = ast_f(sb, node_idx, 0)
+        let sz: Field = ast_f(sb, node_idx, 1)
+        let inner_k: Field = ast_kind(sb, inner)
+        let mut iti: Field = 0
+        if inner_k == parser.NK_TYPE_ARRAY() {
+            // Nested array: [[ T; M ]; N]
+            let inner2: Field = ast_f(sb, inner, 0)
+            let sz2: Field = ast_f(sb, inner, 1)
+            let iti2: Field = resolve_type_leaf(sb, inner2)
+            iti = alloc_type(sb, TY_ARRAY(), iti2, sz2, 0)
+        } else {
+            iti = resolve_type_leaf(sb, inner)
+        }
+        alloc_type(sb, TY_ARRAY(), iti, sz, 0)
+    }
+    else { if kind == parser.NK_TYPE_TUPLE() {
+        // NK_TYPE_TUPLE: f0=types_start, f1=types_count
+        let fst: Field = ast_f(sb, node_idx, 0)
+        let cnt: Field = ast_f(sb, node_idx, 1)
+        let sti: Field = get_tp_count(sb)
+        for _ti in 0..cnt bounded 32 {
+            let ti: Field = convert.as_field(_ti)
+            let elem: Field = fst + ti
+            let elem_k: Field = ast_kind(sb, elem)
+            if elem_k == parser.NK_TYPE_ARRAY() {
+                let ai: Field = ast_f(sb, elem, 0)
+                let asz: Field = ast_f(sb, elem, 1)
+                let aiti: Field = resolve_type_leaf(sb, ai)
+                alloc_type(sb, TY_ARRAY(), aiti, asz, 0)
+            } else {
+                let lti: Field = resolve_type_leaf(sb, elem)
+                alloc_type(sb, type_tag(sb, lti), type_p0(sb, lti), type_p1(sb, lti), 0)
+            }
+        }
+        alloc_type(sb, TY_TUPLE(), cnt, sti, 0)
+    }
+    else { resolve_type_leaf(sb, node_idx) } }
+}
+
+// =========================================================================
+// Pass 1: Register top-level items
+// =========================================================================
+
+fn register_items(sb: Field) {
+    let first: Field = ast_f(sb, 0, 4)
+    let cnt: Field = ast_f(sb, 0, 5)
+    for _ii in 0..cnt bounded 1024 {
+        let ii: Field = convert.as_field(_ii)
+        let node: Field = first + ii
+        let kind: Field = ast_kind(sb, node)
+        if kind == parser.NK_STRUCT() { reg_struct(sb, node) }
+        else { if kind == parser.NK_FN() { reg_fn(sb, node) }
+        else { if kind == parser.NK_CONST() { reg_const(sb, node) }
+        else { if kind == parser.NK_EVENT() { reg_event(sb, node) }
+        else {
+            // skip
+        } } } }
+    }
+}
+
+fn reg_struct(sb: Field, node: Field) {
+    // NK_STRUCT: f0=name_tok, f1=fields_start, f2=fields_count
+    let nid: Field = ast_f(sb, node, 0)
+    let fc: Field = ast_f(sb, node, 2)
+    let ff: Field = ast_f(sb, node, 1)
+    let fss: Field = get_sf_count(sb)
+    for _fi in 0..fc bounded 64 {
+        let fi: Field = convert.as_field(_fi)
+        let fn2: Field = ff + fi
+        let fname: Field = ast_f(sb, fn2, 0)
+        let ftn: Field = ast_f(sb, fn2, 1)
+        let fpub: Field = ast_f(sb, fn2, 2)
+        let fti: Field = resolve_type_node(sb, ftn)
+        add_sf(sb, fname, fti, fpub)
+    }
+    let _ = register_struct(sb, nid, fc, fss)
+}
+
+fn reg_fn(sb: Field, node: Field) {
+    // NK_FN: f0=name_tok, f1=params_start, f2=params_count, f3=ret_type_node, f4=body_block, f5=flags
+    let nid: Field = ast_f(sb, node, 0)
+    let fp: Field = ast_f(sb, node, 1)
+    let pc: Field = ast_f(sb, node, 2)
+    let rtn: Field = ast_f(sb, node, 3)
+    let pss: Field = get_tp_count(sb)
+    for _pi in 0..pc bounded 32 {
+        let pi: Field = convert.as_field(_pi)
+        let pn: Field = fp + pi
+        let ptn: Field = ast_f(sb, pn, 1)
+        resolve_type_node(sb, ptn)
+    }
+    let mut rt: Field = TI_UNIT()
+    if rtn == 0 {
+        // no return type
+    } else {
+        rt = resolve_type_node(sb, rtn)
+    }
+    let _ = register_fn(sb, nid, pc, pss, rt, 0)
+}
+
+fn reg_const(sb: Field, node: Field) {
+    let nid: Field = ast_f(sb, node, 0)
+    let tn: Field = ast_f(sb, node, 1)
+    let vn: Field = ast_f(sb, node, 2)
+    let ti: Field = resolve_type_node(sb, tn)
+    let val: Field = ast_f(sb, vn, 0)
+    let _ = register_const(sb, nid, ti, val)
+}
+
+fn reg_event(sb: Field, node: Field) {
+    // NK_EVENT: f0=name_tok, f1=fields_start, f2=fields_count
+    let nid: Field = ast_f(sb, node, 0)
+    let fc: Field = ast_f(sb, node, 2)
+    let ff: Field = ast_f(sb, node, 1)
+    let fss: Field = get_ef_count(sb)
+    for _fi in 0..fc bounded 16 {
+        let fi: Field = convert.as_field(_fi)
+        let fn2: Field = ff + fi
+        let fname: Field = ast_f(sb, fn2, 0)
+        let ftn: Field = ast_f(sb, fn2, 1)
+        let fti: Field = resolve_type_node(sb, ftn)
+        if type_eq(sb, fti, TI_FIELD()) == false {
+            emit_error(sb, fn2, ERR_TYPE_MISMATCH())
+        }
+        add_ef(sb, fname, fti)
+    }
+    let _ = register_event(sb, nid, fc, fss)
+}
+
+// =========================================================================
+// Pass 2: Check function bodies (work-stack based)
+// =========================================================================
+
+fn check_all_fns(sb: Field) {
+    let first: Field = ast_f(sb, 0, 4)
+    let cnt: Field = ast_f(sb, 0, 5)
+    for _ii in 0..cnt bounded 1024 {
+        let ii: Field = convert.as_field(_ii)
+        let node: Field = first + ii
+        if ast_kind(sb, node) == parser.NK_FN() {
+            check_fn(sb, node)
+        }
+    }
+}
+
+fn check_fn(sb: Field, node: Field) {
+    // NK_FN: f0=name_tok, f1=params_start, f2=params_count, f3=ret_type_node, f4=body_block, f5=flags
+    let fp: Field = ast_f(sb, node, 1)
+    let pc: Field = ast_f(sb, node, 2)
+    let body_blk: Field = ast_f(sb, node, 4)
+
+    if body_blk == 0 {
+        // intrinsic
+    } else {
+        set_in_pure_fn(sb, 0)
+        push_scope(sb)
+
+        // Bind params
+        for _pi in 0..pc bounded 32 {
+            let pi: Field = convert.as_field(_pi)
+            let pn: Field = fp + pi
+            let pname: Field = ast_f(sb, pn, 0)
+            let ptn: Field = ast_f(sb, pn, 1)
+            let pti: Field = resolve_type_node(sb, ptn)
+            define_var(sb, pname, pti, 0)
+        }
+
+        // Initialize work and result stacks
+        set_ws_depth(sb, 0)
+        set_rs_depth(sb, 0)
+
+        // Dereference body block and push stmts in reverse
+        let body_s: Field = block_stmts_start(sb, body_blk)
+        let body_c: Field = block_stmts_count(sb, body_blk)
+        for _si in 0..body_c bounded 4096 {
+            let si: Field = convert.as_field(_si)
+            let ri: Field = body_c + field.neg(1) + field.neg(si)
+            ws_push(sb, WC_STMT(), body_s + ri, 0)
+        }
+
+        // Dispatch loop
+run_pending_work(sb)
+        let tail: Field = ast_f(sb, body_blk, 2)
+        if tail == 0 {
+            // No block tail to check here.
+        } else {
+            ws_push(sb, WC_EXPR(), tail, 0)
+            run_pending_work(sb)
+            let actual: Field = rs_pop(sb)
+            let ret_node: Field = ast_f(sb, node, 3)
+            if ret_node == 0 { emit_error(sb, tail, ERR_TYPE_MISMATCH()) }
+            else {
+                let expected: Field = resolve_type_node(sb, ret_node)
+                if type_eq(sb, actual, expected) == false {
+                    emit_error(sb, tail, ERR_TYPE_MISMATCH())
+                }
+            }
+        }
+
+        pop_scope(sb)
+    }
+}
+
+// =========================================================================
+// Main dispatch
+// =========================================================================
+
+fn dispatch(sb: Field, code: Field, a0: Field, a1: Field) {
+    if code == WC_EXPR() { do_expr(sb, a0) }
+    else { if code == WC_BINOP_RHS() {
+        let lt: Field = rs_pop(sb)
+        ws_push(sb, WC_BINOP_DONE(), a0, lt)
+        ws_push(sb, WC_EXPR(), ast_f(sb, a0, 2), 0)
+    }
+    else { if code == WC_BINOP_DONE() {
+        let rt: Field = rs_pop(sb)
+        do_binop(sb, a0, a1, rt)
+    }
+    else { if code == WC_CALL_ARGS() { do_call_arg(sb, a0, a1) }
+    else { if code == WC_CALL_DONE() { rs_push(sb, fn_rt(sb, a1)) }
+    else { if code == WC_FIELD_ACCESS() { do_faccess(sb, a0) }
+    else { if code == WC_INDEX_EXPR() {
+        ws_push(sb, WC_INDEX_DONE(), a0, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, a0, 1), 0)
+    }
+    else { if code == WC_INDEX_DONE() { do_index(sb, a0) }
+    else { if code == WC_STRUCT_INIT_DONE() { do_sinit(sb, a0) }
+    else { if code == WC_ARRAY_DONE() { do_arr(sb, a0) }
+    else { if code == WC_TUPLE_DONE() { do_tup(sb, a0) }
+    else { if code == WC_STMT() { do_stmt(sb, a0) }
+    else { if code == WC_LET_INIT() { do_let(sb, a0) }
+    else { if code == WC_ASSIGN_VAL() { do_assign(sb, a0) }
+    else { if code == WC_IF_COND() { do_if(sb, a0) }
+    else { if code == WC_IF_THEN() { pop_scope(sb) }
+    else { if code == WC_FOR_BODY() { pop_scope(sb) }
+    else { if code == WC_MATCH_DONE() { do_match(sb, a0) }
+    else { if code == WC_DISCARD() { let _ = rs_pop(sb) }
+    else { if code == WC_EVENT_DONE() { do_evfld(sb, a0) }
+    else { if code == WC_POP_SCOPE() { pop_scope(sb) }
+    else {
+        // skip
+    } } } } } } } } } } } } } } } } } } } } }
+}
+
+// =========================================================================
+// Expression handlers
+// =========================================================================
+
+fn do_expr(sb: Field, ni: Field) {
+    let k: Field = ast_kind(sb, ni)
+    if k == parser.NK_LIT_INT() { rs_push(sb, TI_FIELD()) }
+    else { if k == parser.NK_LIT_BOOL() { rs_push(sb, TI_BOOL()) }
+    else { if k == parser.NK_VAR() {
+        let nid: Field = ast_f(sb, ni, 0)
+        let vi: Field = lookup_var(sb, nid)
+        if vi == field.neg(1) {
+            let ci: Field = lookup_const(sb, nid)
+            if ci == field.neg(1) {
+                emit_error(sb, ni, ERR_UNDEFINED_VAR())
+                rs_push(sb, TI_FIELD())
+            } else { rs_push(sb, ct_ty(sb, ci)) }
+        } else { rs_push(sb, var_ty(sb, vi)) }
+    }
+    else { if k == parser.NK_BINOP() {
+        ws_push(sb, WC_BINOP_RHS(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 1), 0)
+    }
+    else { if k == parser.NK_CALL() { do_call_start(sb, ni) }
+    else { if k == parser.NK_FIELD_ACCESS() {
+        ws_push(sb, WC_FIELD_ACCESS(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 0), 0)
+    }
+    else { if k == parser.NK_INDEX() {
+        ws_push(sb, WC_INDEX_EXPR(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 0), 0)
+    }
+    else { if k == parser.NK_STRUCT_INIT() { do_sinit_start(sb, ni) }
+    else { if k == parser.NK_ARRAY_INIT() { do_arr_start(sb, ni) }
+    else { if k == parser.NK_TUPLE() { do_tup_start(sb, ni) }
+    else { rs_push(sb, TI_FIELD()) } } } } } } } } } }
+}
+
+// =========================================================================
+// Binop
+// =========================================================================
+
+fn do_binop(sb: Field, ni: Field, lt: Field, rt: Field) {
+    let op: Field = ast_f(sb, ni, 0)
+    if op == 3 { // ADD
+        if type_eq(sb, lt, TI_FIELD()) {
+            if type_eq(sb, rt, TI_FIELD()) { rs_push(sb, TI_FIELD()) }
+            else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                   rs_push(sb, TI_FIELD()) }
+        } else {
+            if type_tag(sb, lt) == TY_XFIELD() {
+                if type_eq(sb, lt, rt) { rs_push(sb, lt) }
+                else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                       rs_push(sb, TI_FIELD()) }
+            } else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                     rs_push(sb, TI_FIELD()) }
+        }
+    } else { if op == 4 { // MUL
+        if type_eq(sb, lt, TI_FIELD()) {
+            if type_eq(sb, rt, TI_FIELD()) { rs_push(sb, TI_FIELD()) }
+            else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                   rs_push(sb, TI_FIELD()) }
+        } else {
+            if type_tag(sb, lt) == TY_XFIELD() {
+                if type_eq(sb, lt, rt) { rs_push(sb, lt) }
+                else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                       rs_push(sb, TI_FIELD()) }
+            } else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                     rs_push(sb, TI_FIELD()) }
+        }
+    } else { if op == 1 { // EQ
+        if type_eq(sb, lt, rt) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        rs_push(sb, TI_BOOL())
+    } else { if op == 2 { // LT
+        if type_eq(sb, lt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        if type_eq(sb, rt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        rs_push(sb, TI_BOOL())
+    } else { if op == 6 { // BAND
+        if type_eq(sb, lt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        if type_eq(sb, rt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        rs_push(sb, TI_U32())
+    } else { if op == 7 { // BXOR
+        if type_eq(sb, lt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        if type_eq(sb, rt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        rs_push(sb, TI_U32())
+    } else { if op == 8 { // DIVMOD
+        if type_eq(sb, lt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        if type_eq(sb, rt, TI_U32()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        let ds: Field = get_tp_count(sb)
+        alloc_type(sb, TY_U32(), 0, 0, 0)
+        alloc_type(sb, TY_U32(), 0, 0, 0)
+        rs_push(sb, alloc_type(sb, TY_TUPLE(), 2, ds, 0))
+    } else { if op == 5 { // XFMUL
+        if type_tag(sb, lt) == TY_XFIELD() {
+            if type_eq(sb, rt, TI_FIELD()) { rs_push(sb, lt) }
+            else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                   rs_push(sb, TI_FIELD()) }
+        } else { emit_error(sb, ni, ERR_TYPE_MISMATCH())
+                 rs_push(sb, TI_FIELD()) }
+    } else { rs_push(sb, TI_FIELD()) } } } } } } } }
+}
+
+// =========================================================================
+// Call
+// =========================================================================
+
+fn do_call_start(sb: Field, ni: Field) {
+    // NK_CALL: f0=path_start_tok, f1=path_end_tok, f2=args_start, f3=args_count
+    let fnid: Field = ast_f(sb, ni, 0)
+    let ac: Field = ast_f(sb, ni, 3)
+    let fa: Field = ast_f(sb, ni, 2)
+    let fi: Field = lookup_fn(sb, fnid)
+    if fi == field.neg(1) {
+        emit_error(sb, ni, ERR_UNDEFINED_FN())
+        rs_push(sb, TI_FIELD())
+    } else {
+        let epc: Field = fn_pc(sb, fi)
+        if ac == epc {
+            if ac == 0 {
+                rs_push(sb, fn_rt(sb, fi))
+            } else {
+                // Push done, then args in reverse
+                ws_push(sb, WC_CALL_DONE(), ni, fi)
+                for _ai in 0..ac bounded 32 {
+                    let ai: Field = convert.as_field(_ai)
+                    let ri: Field = ac + field.neg(1) + field.neg(ai)
+                    ws_push(sb, WC_CALL_ARGS(), ni, ri)
+                    ws_push(sb, WC_EXPR(), fa + ri, 0)
+                }
+            }
+        } else {
+            emit_error(sb, ni, ERR_ARG_COUNT())
+            rs_push(sb, fn_rt(sb, fi))
+        }
+    }
+}
+
+fn do_call_arg(sb: Field, ni: Field, idx: Field) {
+    let fnid: Field = ast_f(sb, ni, 0)
+    let fi: Field = lookup_fn(sb, fnid)
+    let at: Field = rs_pop(sb)
+    if fi == field.neg(1) {
+        // skip
+    } else {
+        let pti: Field = fn_ps(sb, fi) + idx
+        if type_eq(sb, at, pti) == false {
+            emit_error(sb, ni, ERR_TYPE_MISMATCH())
+        }
+    }
+}
+
+// =========================================================================
+// Field access / Index
+// =========================================================================
+
+fn do_faccess(sb: Field, ni: Field) {
+    let it: Field = rs_pop(sb)
+    let fid: Field = ast_f(sb, ni, 1)
+    if type_tag(sb, it) == TY_STRUCT() {
+        let si: Field = type_p0(sb, it)
+        let sfi: Field = lookup_sf(sb, si, fid)
+        if sfi == field.neg(1) {
+            emit_error(sb, ni, ERR_FIELD_NOT_FOUND())
+            rs_push(sb, TI_FIELD())
+        } else { rs_push(sb, sf_ty(sb, sfi)) }
+    } else {
+        emit_error(sb, ni, ERR_FIELD_NOT_FOUND())
+        rs_push(sb, TI_FIELD())
+    }
+}
+
+fn do_index(sb: Field, ni: Field) {
+    let _ity: Field = rs_pop(sb)
+    let it: Field = rs_pop(sb)
+    if type_tag(sb, it) == TY_ARRAY() {
+        rs_push(sb, type_p0(sb, it))
+    } else {
+        emit_error(sb, ni, ERR_INDEX_NON_ARRAY())
+        rs_push(sb, TI_FIELD())
+    }
+}
+
+// =========================================================================
+// Struct init
+// =========================================================================
+
+fn do_sinit_start(sb: Field, ni: Field) {
+    // NK_STRUCT_INIT: f0=path_start_tok, f1=fields_start, f2=fields_count
+    let nid: Field = ast_f(sb, ni, 0)
+    let ic: Field = ast_f(sb, ni, 2)
+    let ff: Field = ast_f(sb, ni, 1)
+    let si: Field = lookup_struct(sb, nid)
+    if si == field.neg(1) {
+        emit_error(sb, ni, ERR_UNDEFINED_STRUCT())
+        rs_push(sb, TI_FIELD())
+    } else {
+        if ic == 0 {
+            rs_push(sb, alloc_type(sb, TY_STRUCT(), si, 0, 0))
+        } else {
+            ws_push(sb, WC_STRUCT_INIT_DONE(), ni, 0)
+            for _fi in 0..ic bounded 64 {
+                let fi: Field = convert.as_field(_fi)
+                let ri: Field = ic + field.neg(1) + field.neg(fi)
+                let fn2: Field = ff + ri
+                ws_push(sb, WC_EXPR(), ast_f(sb, fn2, 1), 0)
+            }
+        }
+    }
+}
+
+fn do_sinit(sb: Field, ni: Field) {
+    // NK_STRUCT_INIT: f0=path_start_tok, f1=fields_start, f2=fields_count
+    let nid: Field = ast_f(sb, ni, 0)
+    let ic: Field = ast_f(sb, ni, 2)
+    let ff: Field = ast_f(sb, ni, 1)
+    let si: Field = lookup_struct(sb, nid)
+    for _fi in 0..ic bounded 64 {
+        let fi: Field = convert.as_field(_fi)
+        let vt: Field = rs_pop(sb)
+        let fn2: Field = ff + fi
+        let fname: Field = ast_f(sb, fn2, 0)
+        if si == field.neg(1) {
+            // skip
+        } else {
+            let sfi: Field = lookup_sf(sb, si, fname)
+            if sfi == field.neg(1) { emit_error(sb, fn2, ERR_EXTRA_FIELD()) }
+            else {
+                if type_eq(sb, vt, sf_ty(sb, sfi)) == false {
+                    emit_error(sb, fn2, ERR_TYPE_MISMATCH())
+                }
+            }
+        }
+    }
+    if si == field.neg(1) { rs_push(sb, TI_FIELD()) }
+    else { rs_push(sb, alloc_type(sb, TY_STRUCT(), si, 0, 0)) }
+}
+
+// =========================================================================
+// Array init
+// =========================================================================
+
+fn do_arr_start(sb: Field, ni: Field) {
+    // NK_ARRAY_INIT: f0=elems_start, f1=elems_count
+    let ec: Field = ast_f(sb, ni, 1)
+    let fe: Field = ast_f(sb, ni, 0)
+    if ec == 0 { rs_push(sb, alloc_type(sb, TY_ARRAY(), TI_FIELD(), 0, 0)) }
+    else {
+        ws_push(sb, WC_ARRAY_DONE(), ni, 0)
+        for _ei in 0..ec bounded 256 {
+            let ei: Field = convert.as_field(_ei)
+            let ri: Field = ec + field.neg(1) + field.neg(ei)
+            ws_push(sb, WC_EXPR(), fe + ri, 0)
+        }
+    }
+}
+
+fn do_arr(sb: Field, ni: Field) {
+    // NK_ARRAY_INIT: f0=elems_start, f1=elems_count
+    let ec: Field = ast_f(sb, ni, 1)
+    let ft: Field = rs_pop(sb)
+    let remaining: Field = ec + field.neg(1)
+    for _ei in 0..remaining bounded 256 {
+        let et: Field = rs_pop(sb)
+        if type_eq(sb, et, ft) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+    }
+    rs_push(sb, alloc_type(sb, TY_ARRAY(), ft, ec, 0))
+}
+
+// =========================================================================
+// Tuple
+// =========================================================================
+
+fn do_tup_start(sb: Field, ni: Field) {
+    // NK_TUPLE: f0=elems_start, f1=elems_count
+    let ec: Field = ast_f(sb, ni, 1)
+    let fe: Field = ast_f(sb, ni, 0)
+    ws_push(sb, WC_TUPLE_DONE(), ni, 0)
+    for _ei in 0..ec bounded 64 {
+        let ei: Field = convert.as_field(_ei)
+        let ri: Field = ec + field.neg(1) + field.neg(ei)
+        ws_push(sb, WC_EXPR(), fe + ri, 0)
+    }
+}
+
+fn do_tup(sb: Field, ni: Field) {
+    // NK_TUPLE: f0=elems_start, f1=elems_count
+    let ec: Field = ast_f(sb, ni, 1)
+    let sti: Field = get_tp_count(sb)
+    for _ei in 0..ec bounded 64 {
+        let et: Field = rs_pop(sb)
+        alloc_type(sb, type_tag(sb, et), type_p0(sb, et), type_p1(sb, et), 0)
+    }
+    rs_push(sb, alloc_type(sb, TY_TUPLE(), ec, sti, 0))
+}
+
+// =========================================================================
+// Statement handlers
+// =========================================================================
+
+fn do_stmt(sb: Field, ni: Field) {
+    let k: Field = ast_kind(sb, ni)
+    if k == parser.NK_LET() {
+        ws_push(sb, WC_LET_INIT(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 2), 0)
+    } else { if k == parser.NK_ASSIGN() {
+        ws_push(sb, WC_ASSIGN_VAL(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 1), 0)
+    } else { if k == parser.NK_IF() {
+        ws_push(sb, WC_IF_COND(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 0), 0)
+    } else { if k == parser.NK_FOR() {
+        do_for_start(sb, ni)
+    } else { if k == parser.NK_RETURN() {
+        let vn: Field = ast_f(sb, ni, 0)
+        if vn == 0 {
+            // void return
+        } else {
+            ws_push(sb, WC_DISCARD(), 0, 0)
+            ws_push(sb, WC_EXPR(), vn, 0)
+        }
+    } else { if k == parser.NK_EXPR_STMT() {
+        ws_push(sb, WC_DISCARD(), 0, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 0), 0)
+    } else { if k == parser.NK_MATCH() {
+        ws_push(sb, WC_MATCH_DONE(), ni, 0)
+        ws_push(sb, WC_EXPR(), ast_f(sb, ni, 0), 0)
+    } else { if k == parser.NK_REVEAL() { do_event_start(sb, ni) }
+    else { if k == parser.NK_SEAL() { do_event_start(sb, ni) }
+    else {
+        // asm or unknown
+    } } } } } } } } }
+}
+
+fn do_let(sb: Field, ni: Field) {
+    let it: Field = rs_pop(sb)
+    // NK_LET: f0=name_tok, f1=type_node, f2=init_node, f3=flags
+    let nid: Field = ast_f(sb, ni, 0)
+    let tn: Field = ast_f(sb, ni, 1)
+    let im: Field = ast_f(sb, ni, 3)
+    let mut res: Field = it
+    if tn == 0 {
+        // inferred
+    } else {
+        let exp: Field = resolve_type_node(sb, tn)
+        if type_eq(sb, exp, it) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+        res = exp
+    }
+    // Check if this is a tuple destructure: look at node before NK_LET
+    // If it's NK_PAT_TUPLE, destructure; otherwise simple binding
+    let prev: Field = ni + field.neg(1)
+    let prev_kind: Field = ast_kind(sb, prev)
+    if prev_kind == parser.NK_PAT_TUPLE() {
+        // Tuple destructure: NK_PAT_TUPLE at prev has f0=names_start, f1=count
+        let nc: Field = ast_f(sb, prev, 1)
+        let names_start: Field = ast_f(sb, prev, 0)
+        if type_tag(sb, res) == TY_TUPLE() {
+            let tc: Field = type_p0(sb, res)
+            let ts: Field = type_p1(sb, res)
+            if nc == tc {
+                for _i in 0..nc bounded 32 {
+                    let i: Field = convert.as_field(_i)
+                    let pat: Field = names_start + i
+                    let pat_name: Field = ast_f(sb, pat, 0)
+                    if ast_kind(sb, pat) == parser.NK_PAT_WILDCARD() {
+                        // skip wildcard
+                    } else {
+                        define_var(sb, pat_name, ts + i, im)
+                    }
+                }
+            } else { emit_error(sb, ni, ERR_DESTRUCT_NON_TUPLE()) }
+        } else {
+            if type_tag(sb, res) == TY_DIGEST() {
+                let dw: Field = type_p0(sb, res)
+                if nc == dw {
+                    for _i in 0..nc bounded 16 {
+                        let i: Field = convert.as_field(_i)
+                        let pat: Field = names_start + i
+                        let pat_name: Field = ast_f(sb, pat, 0)
+                        if ast_kind(sb, pat) == parser.NK_PAT_WILDCARD() {
+                            // skip wildcard
+                        } else {
+                            define_var(sb, pat_name, TI_FIELD(), im)
+                        }
+                    }
+                } else { emit_error(sb, ni, ERR_DESTRUCT_NON_TUPLE()) }
+            } else { emit_error(sb, ni, ERR_DESTRUCT_NON_TUPLE()) }
+        }
+    } else {
+        // Simple binding
+        define_var(sb, nid, res, im)
+    }
+}
+
+fn do_assign(sb: Field, ni: Field) {
+    let vt: Field = rs_pop(sb)
+    // NK_ASSIGN: f0=place_node (typically NK_VAR), f1=value_node
+    let place: Field = ast_f(sb, ni, 0)
+    let pn: Field = ast_f(sb, place, 0)
+    let vi: Field = lookup_var(sb, pn)
+    if vi == field.neg(1) { emit_error(sb, ni, ERR_UNDEFINED_VAR()) }
+    else {
+        if var_mut(sb, vi) == 0 { emit_error(sb, ni, ERR_NOT_MUTABLE()) }
+        if type_eq(sb, vt, var_ty(sb, vi)) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+    }
+}
+
+fn do_if(sb: Field, ni: Field) {
+    let ct: Field = rs_pop(sb)
+    if type_eq(sb, ct, TI_BOOL()) == false {
+        if type_eq(sb, ct, TI_FIELD()) == false { emit_error(sb, ni, ERR_COND_TYPE()) }
+    }
+    // NK_IF: f0=cond_node, f1=then_block, f2=else_block
+    let then_blk: Field = ast_f(sb, ni, 1)
+    let else_blk: Field = ast_f(sb, ni, 2)
+
+    // Push else, then then, then scope markers
+    if else_blk == 0 {
+        // no else
+    } else {
+        // else block: dereference NK_BLOCK and push stmts
+        let es: Field = block_stmts_start(sb, else_blk)
+        let ec: Field = block_stmts_count(sb, else_blk)
+        ws_push(sb, WC_POP_SCOPE(), 0, 0)
+        for _si in 0..ec bounded 4096 {
+            let si: Field = convert.as_field(_si)
+            let ri: Field = ec + field.neg(1) + field.neg(si)
+            ws_push(sb, WC_STMT(), es + ri, 0)
+        }
+    }
+
+    // then block: dereference NK_BLOCK
+    let ts: Field = block_stmts_start(sb, then_blk)
+    let tc: Field = block_stmts_count(sb, then_blk)
+    ws_push(sb, WC_IF_THEN(), ni, 0)
+    push_scope(sb)
+    for _si in 0..tc bounded 4096 {
+        let si: Field = convert.as_field(_si)
+        let ri: Field = tc + field.neg(1) + field.neg(si)
+        ws_push(sb, WC_STMT(), ts + ri, 0)
+    }
+}
+
+fn do_for_start(sb: Field, ni: Field) {
+    // NK_FOR: f0=var_tok, f1=start_node, f2=end_node, f3=bound_val, f4=body_block
+    let vn: Field = ast_f(sb, ni, 0)
+    let body_blk: Field = ast_f(sb, ni, 4)
+    let bs: Field = block_stmts_start(sb, body_blk)
+    let bc: Field = block_stmts_count(sb, body_blk)
+    push_scope(sb)
+    define_var(sb, vn, TI_U32(), 0)
+    ws_push(sb, WC_FOR_BODY(), ni, 0)
+    for _si in 0..bc bounded 4096 {
+        let si: Field = convert.as_field(_si)
+        let ri: Field = bc + field.neg(1) + field.neg(si)
+        ws_push(sb, WC_STMT(), bs + ri, 0)
+    }
+}
+
+fn do_match(sb: Field, ni: Field) {
+    let st: Field = rs_pop(sb)
+    let ac: Field = ast_f(sb, ni, 1)
+    let fa: Field = ast_f(sb, ni, 2)
+    let mut hw: Field = 0
+    let mut ht: Field = 0
+    let mut hf: Field = 0
+    for _ai in 0..ac bounded 64 {
+        let ai: Field = convert.as_field(_ai)
+        let an: Field = fa + ai
+        // NK_MATCH_ARM: f0=pattern_node, f1=body_block
+        let pn: Field = ast_f(sb, an, 0)
+        let body_blk: Field = ast_f(sb, an, 1)
+        let bs: Field = block_stmts_start(sb, body_blk)
+        let bc: Field = block_stmts_count(sb, body_blk)
+        let pk: Field = ast_kind(sb, pn)
+        if pk == parser.NK_PAT_WILDCARD() { hw = 1 }
+        else { if pk == parser.NK_PAT_LIT() {
+            // NK_PAT_LIT: f0=value. For bool patterns: value is 0 or 1.
+            // Determine if it's a bool pattern by checking the scrutinee type.
+            let v: Field = ast_f(sb, pn, 0)
+            if type_eq(sb, st, TI_BOOL()) {
+                if v == 1 { ht = 1 } else { hf = 1 }
+            }
+        } else { hw = 1 } }
+        // Check arm body
+        push_scope(sb)
+        for _si in 0..bc bounded 256 {
+            let si: Field = convert.as_field(_si)
+            ws_push(sb, WC_STMT(), bs + si, 0)
+        }
+        ws_push(sb, WC_POP_SCOPE(), 0, 0)
+    }
+    if hw == 0 {
+        if type_eq(sb, st, TI_BOOL()) {
+            if ht == 1 {
+                if hf == 0 { emit_error(sb, ni, ERR_NON_EXHAUSTIVE()) }
+            } else { emit_error(sb, ni, ERR_NON_EXHAUSTIVE()) }
+        } else { emit_error(sb, ni, ERR_NON_EXHAUSTIVE()) }
+    }
+}
+
+fn do_event_start(sb: Field, ni: Field) {
+    // NK_REVEAL/NK_SEAL: f0=name_tok, f1=fields_start, f2=fields_count
+    let nid: Field = ast_f(sb, ni, 0)
+    let fc: Field = ast_f(sb, ni, 2)
+    let ff: Field = ast_f(sb, ni, 1)
+    if get_in_pure_fn(sb) == 1 { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+    let ei: Field = lookup_event(sb, nid)
+    if ei == field.neg(1) { emit_error(sb, ni, ERR_UNDEFINED_EVENT()) }
+    else {
+        if fc == 0 {
+            // no fields
+        } else {
+            ws_push(sb, WC_EVENT_DONE(), ni, 0)
+            for _fi in 0..fc bounded 16 {
+                let fi: Field = convert.as_field(_fi)
+                let ri: Field = fc + field.neg(1) + field.neg(fi)
+                let fn2: Field = ff + ri
+                ws_push(sb, WC_EXPR(), ast_f(sb, fn2, 1), 0)
+            }
+        }
+    }
+}
+
+fn do_evfld(sb: Field, ni: Field) {
+    // NK_REVEAL/NK_SEAL: f0=name_tok, f1=fields_start, f2=fields_count
+    let fc: Field = ast_f(sb, ni, 2)
+    for _fi in 0..fc bounded 16 {
+        let vt: Field = rs_pop(sb)
+        if type_eq(sb, vt, TI_FIELD()) == false { emit_error(sb, ni, ERR_TYPE_MISMATCH()) }
+    }
+}
+
+// =========================================================================
+// Main entry point
+// =========================================================================
+
+pub fn check(state_base: Field) {
+    let sb: Field = state_base
+    init_scalar_types(sb)
+    register_builtins(sb)
+    register_items(sb)
+    check_all_fns(sb)
+}
+
+pub fn error_count(state_base: Field) -> Field { get_err_count(state_base) }
+
+pub fn diag_severity(state_base: Field, idx: Field) -> Field {
+    mem.read(get_err_base(state_base) + idx * ERR_STRIDE())
+}
+
+pub fn diag_node(state_base: Field, idx: Field) -> Field {
+    mem.read(get_err_base(state_base) + idx * ERR_STRIDE() + 1)
+}
+
+pub fn diag_code(state_base: Field, idx: Field) -> Field {
+    mem.read(get_err_base(state_base) + idx * ERR_STRIDE() + 2)
+}
+
+fn run_pending_work(sb: Field) {
+    let max: U32 = convert.as_u32(MAX_STEPS())
+    for _step in 0..max bounded 131072 {
+        if get_ws_depth(sb) == 0 { return }
+        let code: Field = ws_top_code(sb)
+        let a0: Field = ws_top_a0(sb)
+        let a1: Field = ws_top_a1(sb)
+        ws_pop(sb)
+        dispatch(sb, code, a0, a1)
+    }
+}

@@ -32,15 +32,18 @@ be more complex at zero additional proving cost.
 
 ---
 
-### H0003: Redundant range check
+### H0003: Reuse a checked U32 binding
 
 ```text
-hint[H0003]: as_u32(x) is redundant — value is already proven U32
+hint[H0003]: as_u32(x) can reuse prior U32 binding `checked`
 ```
 
-A value that was already range-checked is being checked again.
-
-Action: Remove the redundant `as_u32()` call.
+The same unchanged Field has already been converted to an available immutable
+U32 binding in this straight-line lexical scope. Reuse that binding if useful.
+The Field itself remains a Field: deleting the conversion changes the result type.
+`split(x)` does not prove that x fits in U32. Facts do not propagate across
+functions, branches, loops or scope boundaries; mutation and shadowing invalidate
+relevant facts. The editor offers no automatic removal of the conversion.
 
 ---
 

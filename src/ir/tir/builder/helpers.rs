@@ -3,61 +3,13 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-//! Stack wrappers, label generation, cfg helpers, and spill parser.
+//! Stack wrappers, label generation, cfg helpers, and typed spill effects.
 
 use crate::ast::*;
 use crate::span::Spanned;
 use crate::tir::TIROp;
 
 use super::TIRBuilder;
-
-// ─── Spill effect parser ──────────────────────────────────────────
-
-/// Convert a SpillFormatter-produced instruction string into an TIROp.
-///
-/// The default SpillFormatter (Triton-style) emits lines like:
-///   `"    push 42"`, `"    swap 5"`, `"    pop 1"`,
-///   `"    write_mem 1"`, `"    read_mem 1"`.
-pub(crate) fn parse_spill_effect(line: &str) -> TIROp {
-    let trimmed = line.trim();
-
-    if let Some(rest) = trimmed.strip_prefix("push ") {
-        if let Ok(val) = rest.trim().parse::<u64>() {
-            return TIROp::Push(val);
-        }
-    }
-    if let Some(rest) = trimmed.strip_prefix("swap ") {
-        if let Ok(val) = rest.trim().parse::<u32>() {
-            return TIROp::Swap(val);
-        }
-    }
-    if let Some(rest) = trimmed.strip_prefix("pop ") {
-        if let Ok(val) = rest.trim().parse::<u32>() {
-            return TIROp::Pop(val);
-        }
-    }
-    if let Some(rest) = trimmed.strip_prefix("write_mem ") {
-        if let Ok(val) = rest.trim().parse::<u32>() {
-            return TIROp::WriteMem(val);
-        }
-    }
-    if let Some(rest) = trimmed.strip_prefix("read_mem ") {
-        if let Ok(val) = rest.trim().parse::<u32>() {
-            return TIROp::ReadMem(val);
-        }
-    }
-    if let Some(rest) = trimmed.strip_prefix("dup ") {
-        if let Ok(val) = rest.trim().parse::<u32>() {
-            return TIROp::Dup(val);
-        }
-    }
-
-    // Fallback: emit as inline ASM so nothing is silently lost.
-    TIROp::Asm {
-        lines: vec![trimmed.to_string()],
-        effect: 0,
-    }
-}
 
 // ─── TIRBuilder helpers ────────────────────────────────────────────
 
@@ -90,9 +42,7 @@ impl TIRBuilder {
     // ── Stack effect flushing ─────────────────────────────────────
 
     pub(crate) fn flush_stack_effects(&mut self) {
-        for inst in self.stack.drain_side_effects() {
-            self.ops.push(parse_spill_effect(&inst));
-        }
+        self.ops.extend(self.stack.drain_side_effects());
     }
 
     // ── Emit helpers ──────────────────────────────────────────────
@@ -120,22 +70,23 @@ impl TIRBuilder {
         r
     }
 
-    /// Emit pop instructions in batches of up to 5.
+    /// Discard abstract stack words; warriors legalize instruction widths.
     pub(crate) fn emit_pop(&mut self, n: u32) {
-        let mut remaining = n;
-        while remaining > 0 {
-            let batch = remaining.min(5);
-            self.ops.push(TIROp::Pop(batch));
-            remaining -= batch;
+        if n > 0 {
+            self.ops.push(TIROp::Pop(n));
         }
     }
 
     /// Build a block into a separate Vec<TIROp> by temporarily swapping out self.ops.
     pub(crate) fn build_block_as_ir(&mut self, block: &Block) -> Vec<TIROp> {
+        self.build_value_block_as_ir(block).0
+    }
+
+    pub(crate) fn build_value_block_as_ir(&mut self, block: &Block) -> (Vec<TIROp>, u32) {
         let saved_ops = std::mem::take(&mut self.ops);
-        self.build_block(block);
+        let width = self.build_block(block);
         let nested = std::mem::take(&mut self.ops);
         self.ops = saved_ops;
-        nested
+        (nested, width)
     }
 }

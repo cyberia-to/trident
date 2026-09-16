@@ -26,6 +26,13 @@ use std::collections::BTreeSet;
 ///
 /// Returns the complete SMT-LIB2 script as a string.
 pub fn encode_system(system: &ConstraintSystem, mode: QueryMode) -> String {
+    if !system.unsupported.is_empty() || system.constraints.is_empty() {
+        return r#"; unsupported or absent obligations: no safety query
+(echo "unknown")
+(exit)
+"#
+        .into();
+    }
     let mut encoder = SmtEncoder::new(mode);
     encoder.encode(system);
     encoder.output
@@ -169,7 +176,7 @@ impl SmtEncoder {
 
         self.emit("");
         self.emit("(check-sat)");
-        self.emit("(get-model)");
+        // Query-only transport keeps UNSAT free from get-model errors.
         self.emit("(exit)");
     }
 
@@ -179,12 +186,7 @@ impl SmtEncoder {
 
         for (name, max_version) in &system.variables {
             for v in 0..=*max_version {
-                let var_name = if v == 0 {
-                    name.clone()
-                } else {
-                    format!("{}_{}", name, v)
-                };
-                let smt_name = sanitize_smt_name(&var_name);
+                let smt_name = encode_var_name(name, v);
                 if !self.declared_vars.contains(&smt_name) {
                     var_names.push(smt_name.clone());
                     self.declared_vars.insert(smt_name);
@@ -194,14 +196,14 @@ impl SmtEncoder {
 
         // Also declare pub_input and divine variables
         for pi in &system.pub_inputs {
-            let smt_name = sanitize_smt_name(&pi.to_string());
+            let smt_name = encode_var_name(&pi.name, pi.version);
             if !self.declared_vars.contains(&smt_name) {
                 var_names.push(smt_name.clone());
                 self.declared_vars.insert(smt_name);
             }
         }
         for di in &system.divine_inputs {
-            let smt_name = sanitize_smt_name(&di.to_string());
+            let smt_name = encode_var_name(&di.name, di.version);
             if !self.declared_vars.contains(&smt_name) {
                 var_names.push(smt_name.clone());
                 self.declared_vars.insert(smt_name);
@@ -222,8 +224,8 @@ impl SmtEncoder {
             }
             Constraint::AssertTrue(v) => {
                 let sv = self.encode_value(v);
-                // In Trident, true = 1, false = 0. Assert v != 0.
-                format!("(not (= {} (_ bv0 128)))", sv)
+                // VM assertions accept exactly one.
+                format!("(= {} (_ bv1 128))", sv)
             }
             Constraint::Conditional(cond, inner) => {
                 let sc = self.encode_value(cond);
@@ -257,7 +259,7 @@ impl SmtEncoder {
                 format!("(_ bv{} 128)", c % GOLDILOCKS_P)
             }
             SymValue::Var(var) => {
-                let name = sanitize_smt_name(&var.to_string());
+                let name = encode_var_name(&var.name, var.version);
                 // Ensure variable is declared
                 if !self.declared_vars.contains(&name) {
                     self.declared_vars.insert(name.clone());
@@ -353,6 +355,15 @@ impl SmtEncoder {
 }
 
 /// Sanitize a variable name for SMT-LIB2 (replace dots with underscores, etc.).
+fn encode_var_name(name: &str, version: u32) -> String {
+    let bytes: String = name
+        .as_bytes()
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
+    format!("v_{bytes}_{version}")
+}
+
 fn sanitize_smt_name(name: &str) -> String {
     let sanitized: String = name
         .chars()

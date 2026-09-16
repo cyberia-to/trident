@@ -1,0 +1,1991 @@
+module std.compiler.codegen
+
+// Self-hosted TIR builder (codegen): AST → TIR.
+//
+// Reads a typed AST (from parser + typecheck), produces flat TIR (stride 4)
+// for the optimizer and lowerer.
+//
+// Uses an iterative work-stack architecture (no recursion) to walk AST nodes.
+// The codegen maintains a virtual stack model that tracks variable positions,
+// and emits TIR ops. When the stack gets too deep, it spills least-recently-
+// used variables to RAM and reloads on access.
+//
+// Memory layout (state block, 40 words):
+//   +0   ast_base          Input AST (stride 8)
+//   +1   ast_node_count    Number of AST nodes
+//   +2   tir_base          Output TIR ops (stride 4)
+//   +3   tir_count         Number of TIR ops emitted
+//   +4   stack_base        Virtual stack model (stride 5)
+//   +5   stack_count       Number of stack entries
+//   +6   access_ctr        Monotonic counter for LRU
+//   +7   spill_base        Spilled variable storage (stride 4)
+//   +8   spill_count       Number of spilled entries
+//   +9   next_spill_addr   RAM address allocator
+//   +10  label_counter     Monotonic label counter
+//   +11  fn_table_base     From typecheck: function table (stride 6)
+//   +12  fn_table_count    Number of functions
+//   +13  struct_table_base From typecheck: struct table (stride 6)
+//   +14  struct_table_count
+//   +15  sfield_base       From typecheck: struct fields (stride 3)
+//   +16  sfield_count
+//   +17  event_table_base  From typecheck: events (stride 4)
+//   +18  event_table_count
+//   +19  efield_base       From typecheck: event fields (stride 2)
+//   +20  efield_count
+//   +21  const_table_base  From typecheck: constants (stride 3)
+//   +22  const_table_count
+//   +23  type_pool_base    From typecheck: type pool (stride 4)
+//   +24  type_pool_count
+//   +25  max_stack_depth   VM param (16)
+//   +26  spill_ram_base    VM param (2^30)
+//   +27  digest_width      VM param (5)
+//   +28  hash_rate         VM param (10)
+//   +29  xfield_width      VM param (3)
+//   +30  work_base         Work stack base (explicit walk)
+//   +31  work_depth        Work stack depth
+//   +32  rs_base           Result stack base (for expr widths)
+//   +33  rs_depth          Result stack depth
+//   +34  side_base         Side-effects buffer (spill/reload TIR ops)
+//   +35  side_count
+//   +36  saved_base        Saved stack states for branches
+//   +37  saved_count
+//   +38  tok_base          Token array base (for name comparison)
+//   +39  file_kind         0=library, 1=program
+//   +40  src_base          Source bytes for exact entry-name comparison
+
+use vm.core.field
+
+use vm.core.convert
+
+use vm.io.mem
+
+use std.compiler.lower
+
+use std.compiler.parser
+
+// =========================================================================
+// Constants
+// =========================================================================
+
+fn SENTRY_STRIDE() -> Field { 5 }
+fn SPILL_STRIDE() -> Field { 4 }
+fn WORK_STRIDE() -> Field { 6 }
+fn SAVED_STRIDE() -> Field { 512 }
+fn MAX_STEPS() -> Field { 131072 }
+
+// Binary op codes (from parser)
+fn OP_EQ() -> Field { 1 }
+fn OP_LT() -> Field { 2 }
+fn OP_ADD() -> Field { 3 }
+fn OP_MUL() -> Field { 4 }
+fn OP_XFMUL() -> Field { 5 }
+fn OP_BAND() -> Field { 6 }
+fn OP_BXOR() -> Field { 7 }
+fn OP_DIVMOD() -> Field { 8 }
+
+// Type tags (from typecheck)
+fn TY_FIELD() -> Field { 1 }
+fn TY_XFIELD() -> Field { 2 }
+fn TY_BOOL() -> Field { 3 }
+fn TY_U32() -> Field { 4 }
+fn TY_DIGEST() -> Field { 5 }
+fn TY_ARRAY() -> Field { 6 }
+fn TY_TUPLE() -> Field { 7 }
+fn TY_STRUCT() -> Field { 8 }
+fn TY_UNIT() -> Field { 9 }
+
+fn TI_FIELD() -> Field { 0 }
+fn TI_XFIELD() -> Field { 1 }
+fn TI_BOOL() -> Field { 2 }
+fn TI_U32() -> Field { 3 }
+fn TI_DIGEST() -> Field { 4 }
+fn TI_UNIT() -> Field { 5 }
+
+fn FLAG_TEST() -> Field { 2 }
+
+// Work codes for the iterative state machine
+fn WC_EXPR() -> Field { 1 }
+fn WC_BINOP_DONE() -> Field { 2 }
+fn WC_CALL_ARGS() -> Field { 3 }
+fn WC_CALL_DONE() -> Field { 4 }
+fn WC_STMT() -> Field { 10 }
+fn WC_LET_DONE() -> Field { 11 }
+fn WC_ASSIGN_DONE() -> Field { 12 }
+fn WC_IF_COND_DONE() -> Field { 13 }
+fn WC_IF_THEN() -> Field { 14 }
+fn WC_IF_ELSE() -> Field { 15 }
+fn WC_IF_FINISH() -> Field { 16 }
+fn WC_FOR_BODY() -> Field { 17 }
+fn WC_FOR_FINISH() -> Field { 18 }
+fn WC_EXPR_STMT_DONE() -> Field { 19 }
+fn WC_STRUCT_INIT_DONE() -> Field { 20 }
+fn WC_ARRAY_DONE() -> Field { 21 }
+fn WC_TUPLE_DONE() -> Field { 22 }
+fn WC_FIELD_ACCESS_DONE() -> Field { 23 }
+fn WC_INDEX_CONST_DONE() -> Field { 24 }
+fn WC_INDEX_RT_DONE() -> Field { 25 }
+fn WC_REVEAL_DONE() -> Field { 26 }
+fn WC_SEAL_DONE() -> Field { 27 }
+fn WC_MATCH_ARM() -> Field { 28 }
+fn WC_MATCH_FINISH() -> Field { 29 }
+fn WC_BLOCK() -> Field { 30 }
+fn WC_FN_BODY_DONE() -> Field { 31 }
+fn WC_RETURN_DONE() -> Field { 32 }
+fn WC_LT_RHS_DONE() -> Field { 33 }
+fn WC_IF_THEN_END() -> Field { 34 }
+fn WC_IF_ELSE_END() -> Field { 35 }
+fn WC_FOR_BODY_END() -> Field { 36 }
+
+// =========================================================================
+// State accessors
+// =========================================================================
+
+fn s_ast_base(sb: Field) -> Field { mem.read(sb) }
+fn s_ast_count(sb: Field) -> Field { mem.read(sb + 1) }
+fn s_tir_base(sb: Field) -> Field { mem.read(sb + 2) }
+fn s_tir_count(sb: Field) -> Field { mem.read(sb + 3) }
+fn s_set_tir_count(sb: Field, v: Field) { mem.write(sb + 3, v) }
+fn s_stack_base(sb: Field) -> Field { mem.read(sb + 4) }
+fn s_stack_count(sb: Field) -> Field { mem.read(sb + 5) }
+fn s_set_stack_count(sb: Field, v: Field) { mem.write(sb + 5, v) }
+fn s_access_ctr(sb: Field) -> Field { mem.read(sb + 6) }
+fn s_set_access_ctr(sb: Field, v: Field) { mem.write(sb + 6, v) }
+fn s_spill_base(sb: Field) -> Field { mem.read(sb + 7) }
+fn s_spill_count(sb: Field) -> Field { mem.read(sb + 8) }
+fn s_set_spill_count(sb: Field, v: Field) { mem.write(sb + 8, v) }
+fn s_next_spill(sb: Field) -> Field { mem.read(sb + 9) }
+fn s_set_next_spill(sb: Field, v: Field) { mem.write(sb + 9, v) }
+fn s_label_ctr(sb: Field) -> Field { mem.read(sb + 10) }
+fn s_set_label_ctr(sb: Field, v: Field) { mem.write(sb + 10, v) }
+fn s_fn_base(sb: Field) -> Field { mem.read(sb + 11) }
+fn s_fn_count(sb: Field) -> Field { mem.read(sb + 12) }
+fn s_st_base(sb: Field) -> Field { mem.read(sb + 13) }
+fn s_st_count(sb: Field) -> Field { mem.read(sb + 14) }
+fn s_sf_base(sb: Field) -> Field { mem.read(sb + 15) }
+fn s_sf_count(sb: Field) -> Field { mem.read(sb + 16) }
+fn s_ev_base(sb: Field) -> Field { mem.read(sb + 17) }
+fn s_ev_count(sb: Field) -> Field { mem.read(sb + 18) }
+fn s_ef_base(sb: Field) -> Field { mem.read(sb + 19) }
+fn s_ef_count(sb: Field) -> Field { mem.read(sb + 20) }
+fn s_ct_base(sb: Field) -> Field { mem.read(sb + 21) }
+fn s_ct_count(sb: Field) -> Field { mem.read(sb + 22) }
+fn s_tp_base(sb: Field) -> Field { mem.read(sb + 23) }
+fn s_tp_count(sb: Field) -> Field { mem.read(sb + 24) }
+fn s_max_depth(sb: Field) -> Field { mem.read(sb + 25) }
+fn s_spill_ram(sb: Field) -> Field { mem.read(sb + 26) }
+fn s_digest_w(sb: Field) -> Field { mem.read(sb + 27) }
+fn s_hash_rate(sb: Field) -> Field { mem.read(sb + 28) }
+fn s_xfield_w(sb: Field) -> Field { mem.read(sb + 29) }
+fn s_work_base(sb: Field) -> Field { mem.read(sb + 30) }
+fn s_work_depth(sb: Field) -> Field { mem.read(sb + 31) }
+fn s_set_work_depth(sb: Field, v: Field) { mem.write(sb + 31, v) }
+fn s_rs_base(sb: Field) -> Field { mem.read(sb + 32) }
+fn s_rs_depth(sb: Field) -> Field { mem.read(sb + 33) }
+fn s_set_rs_depth(sb: Field, v: Field) { mem.write(sb + 33, v) }
+fn s_side_base(sb: Field) -> Field { mem.read(sb + 34) }
+fn s_side_count(sb: Field) -> Field { mem.read(sb + 35) }
+fn s_set_side_count(sb: Field, v: Field) { mem.write(sb + 35, v) }
+fn s_saved_base(sb: Field) -> Field { mem.read(sb + 36) }
+fn s_saved_count(sb: Field) -> Field { mem.read(sb + 37) }
+fn s_set_saved_count(sb: Field, v: Field) { mem.write(sb + 37, v) }
+fn s_tok_base(sb: Field) -> Field { mem.read(sb + 38) }
+fn s_file_kind(sb: Field) -> Field { mem.read(sb + 39) }
+
+// =========================================================================
+// AST accessors
+// =========================================================================
+
+fn ast_kind(sb: Field, idx: Field) -> Field {
+    mem.read(s_ast_base(sb) + idx * 8)
+}
+
+fn ast_f(sb: Field, idx: Field, f: Field) -> Field {
+    mem.read(s_ast_base(sb) + idx * 8 + 1 + f)
+}
+
+// =========================================================================
+// Type pool accessors
+// =========================================================================
+
+fn tp_tag(sb: Field, ti: Field) -> Field {
+    mem.read(s_tp_base(sb) + ti * 4)
+}
+
+fn tp_p0(sb: Field, ti: Field) -> Field {
+    mem.read(s_tp_base(sb) + ti * 4 + 1)
+}
+
+fn tp_p1(sb: Field, ti: Field) -> Field {
+    mem.read(s_tp_base(sb) + ti * 4 + 2)
+}
+
+// =========================================================================
+// Function table accessors (stride 6)
+// =========================================================================
+
+fn ft_name(sb: Field, fi: Field) -> Field {
+    mem.read(s_fn_base(sb) + fi * 6)
+}
+
+fn ft_rt(sb: Field, fi: Field) -> Field {
+    mem.read(s_fn_base(sb) + fi * 6 + 3)
+}
+
+// Struct table (stride 6)
+fn st_name(sb: Field, si: Field) -> Field {
+    mem.read(s_st_base(sb) + si * 6)
+}
+
+fn st_fc(sb: Field, si: Field) -> Field {
+    mem.read(s_st_base(sb) + si * 6 + 1)
+}
+
+fn st_fs(sb: Field, si: Field) -> Field {
+    mem.read(s_st_base(sb) + si * 6 + 2)
+}
+
+// Struct field (stride 3)
+fn sf_name(sb: Field, sfi: Field) -> Field {
+    mem.read(s_sf_base(sb) + sfi * 3)
+}
+
+fn sf_ty(sb: Field, sfi: Field) -> Field {
+    mem.read(s_sf_base(sb) + sfi * 3 + 1)
+}
+
+// Constant table (stride 3)
+fn ct_name(sb: Field, ci: Field) -> Field {
+    mem.read(s_ct_base(sb) + ci * 3)
+}
+
+fn ct_val(sb: Field, ci: Field) -> Field {
+    mem.read(s_ct_base(sb) + ci * 3 + 2)
+}
+
+// Event table (stride 4)
+fn ev_name(sb: Field, ei: Field) -> Field {
+    mem.read(s_ev_base(sb) + ei * 4)
+}
+
+fn ev_fc(sb: Field, ei: Field) -> Field {
+    mem.read(s_ev_base(sb) + ei * 4 + 1)
+}
+
+fn ev_fs(sb: Field, ei: Field) -> Field {
+    mem.read(s_ev_base(sb) + ei * 4 + 2)
+}
+
+fn ef_name(sb: Field, efi: Field) -> Field {
+    mem.read(s_ef_base(sb) + efi * 2)
+}
+
+// =========================================================================
+// Type width resolution (iterative, bounded depth for arrays)
+// =========================================================================
+
+// Scalar type width (no struct/tuple/array — just the base scalar)
+fn scalar_type_width(sb: Field, ti: Field) -> Field {
+    let tag: Field = tp_tag(sb, ti)
+    if tag == TY_FIELD() { 1 }
+    else if tag == TY_BOOL() { 1 }
+    else if tag == TY_U32() { 1 }
+    else if tag == TY_UNIT() { 0 }
+    else if tag == TY_XFIELD() { s_xfield_w(sb) }
+    else if tag == TY_DIGEST() { s_digest_w(sb) }
+    else { 1 }
+}
+
+// General-purpose iterative type width using work queue.
+// Handles all types: scalar, array, tuple, struct — no recursion.
+fn type_width_wq(sb: Field, root_ti: Field) -> Field {
+    let wq_base: Field = s_side_base(sb) + 4096
+    let mut wq_head: Field = 0
+    let mut wq_tail: Field = 0
+    let mut total: Field = 0
+    // Seed with root type
+    mem.write(wq_base, root_ti)
+    mem.write(wq_base + 1, 1)
+    wq_tail = 1
+    // Drain
+    let bnd: U32 = convert.as_u32(512)
+    for step in 0..bnd bounded 512 {
+        if wq_head == wq_tail {
+            // done
+        } else {
+            let ti: Field = mem.read(wq_base + wq_head * 2)
+            let mul: Field = mem.read(wq_base + wq_head * 2 + 1)
+            wq_head = wq_head + 1
+            // Unwrap arrays
+            let mut cur: Field = ti
+            let mut cmul: Field = mul
+            let abnd: U32 = convert.as_u32(4)
+            for alvl in 0..abnd bounded 4 {
+                if tp_tag(sb, cur) == TY_ARRAY() {
+                    cmul = cmul * tp_p1(sb, cur)
+                    cur = tp_p0(sb, cur)
+                }
+            }
+            let tag: Field = tp_tag(sb, cur)
+            if tag == TY_STRUCT() {
+                let si: Field = tp_p0(sb, cur)
+                let fc: Field = st_fc(sb, si)
+                let fs: Field = st_fs(sb, si)
+                let fcu: U32 = convert.as_u32(fc)
+                for j in 0..fcu bounded 64 {
+                    let sfj: Field = fs + convert.as_field(j)
+                    mem.write(wq_base + wq_tail * 2, sf_ty(sb, sfj))
+                    mem.write(wq_base + wq_tail * 2 + 1, cmul)
+                    wq_tail = wq_tail + 1
+                }
+            } else if tag == TY_TUPLE() {
+                let ec: Field = tp_p0(sb, cur)
+                let start: Field = tp_p1(sb, cur)
+                let ecu: U32 = convert.as_u32(ec)
+                for k in 0..ecu bounded 64 {
+                    mem.write(wq_base + wq_tail * 2, start + convert.as_field(k))
+                    mem.write(wq_base + wq_tail * 2 + 1, cmul)
+                    wq_tail = wq_tail + 1
+                }
+            } else {
+                total = total + cmul * scalar_type_width(sb, cur)
+            }
+        }
+    }
+    total
+}
+
+// Type width from type pool index — delegates to work-queue
+fn type_width(sb: Field, ti: Field) -> Field {
+    type_width_wq(sb, ti)
+}
+
+// Alias (same function, kept for readability at call sites)
+fn type_width_leaf(sb: Field, ti: Field) -> Field {
+    type_width_wq(sb, ti)
+}
+
+// Struct total width — delegates to work-queue seeded with struct fields
+fn struct_total_width(sb: Field, si: Field) -> Field {
+    let wq_base: Field = s_side_base(sb) + 4096
+    let mut wq_head: Field = 0
+    let mut wq_tail: Field = 0
+    let mut total: Field = 0
+    // Seed with struct fields
+    let fc: Field = st_fc(sb, si)
+    let fs: Field = st_fs(sb, si)
+    let fcu: U32 = convert.as_u32(fc)
+    for i in 0..fcu bounded 64 {
+        let sfi: Field = fs + convert.as_field(i)
+        mem.write(wq_base + wq_tail * 2, sf_ty(sb, sfi))
+        mem.write(wq_base + wq_tail * 2 + 1, 1)
+        wq_tail = wq_tail + 1
+    }
+    // Drain
+    let bnd: U32 = convert.as_u32(512)
+    for step in 0..bnd bounded 512 {
+        if wq_head == wq_tail {
+            // done
+        } else {
+            let ti: Field = mem.read(wq_base + wq_head * 2)
+            let mul: Field = mem.read(wq_base + wq_head * 2 + 1)
+            wq_head = wq_head + 1
+            // Unwrap arrays
+            let mut cur: Field = ti
+            let mut cmul: Field = mul
+            let abnd: U32 = convert.as_u32(4)
+            for alvl in 0..abnd bounded 4 {
+                if tp_tag(sb, cur) == TY_ARRAY() {
+                    cmul = cmul * tp_p1(sb, cur)
+                    cur = tp_p0(sb, cur)
+                }
+            }
+            let tag: Field = tp_tag(sb, cur)
+            if tag == TY_STRUCT() {
+                let s2: Field = tp_p0(sb, cur)
+                let fc2: Field = st_fc(sb, s2)
+                let fs2: Field = st_fs(sb, s2)
+                let fcu2: U32 = convert.as_u32(fc2)
+                for j in 0..fcu2 bounded 64 {
+                    let sfj: Field = fs2 + convert.as_field(j)
+                    mem.write(wq_base + wq_tail * 2, sf_ty(sb, sfj))
+                    mem.write(wq_base + wq_tail * 2 + 1, cmul)
+                    wq_tail = wq_tail + 1
+                }
+            } else if tag == TY_TUPLE() {
+                let ec: Field = tp_p0(sb, cur)
+                let start: Field = tp_p1(sb, cur)
+                let ecu: U32 = convert.as_u32(ec)
+                for k in 0..ecu bounded 64 {
+                    mem.write(wq_base + wq_tail * 2, start + convert.as_field(k))
+                    mem.write(wq_base + wq_tail * 2 + 1, cmul)
+                    wq_tail = wq_tail + 1
+                }
+            } else {
+                total = total + cmul * scalar_type_width(sb, cur)
+            }
+        }
+    }
+    total
+}
+
+// Resolve width from AST type node (non-recursive, unwraps arrays)
+fn type_node_width(sb: Field, node_idx: Field) -> Field {
+    let mut cur: Field = node_idx
+    let mut multiplier: Field = 1
+    let bnd: U32 = convert.as_u32(4)
+    for lvl in 0..bnd bounded 4 {
+        let kind: Field = ast_kind(sb, cur)
+        if kind == parser.NK_TYPE_ARRAY() {
+            multiplier = multiplier * ast_f(sb, cur, 1)
+            cur = ast_f(sb, cur, 0)
+        }
+    }
+    let kind: Field = ast_kind(sb, cur)
+    let mut base_w: Field = 0
+    if kind == parser.NK_TYPE_FIELD() { base_w = 1 }
+    else if kind == parser.NK_TYPE_BOOL() { base_w = 1 }
+    else if kind == parser.NK_TYPE_U32() { base_w = 1 }
+    else if kind == parser.NK_TYPE_XFIELD() { base_w = s_xfield_w(sb) }
+    else if kind == parser.NK_TYPE_DIGEST() { base_w = s_digest_w(sb) }
+    else if kind == parser.NK_TYPE_TUPLE() {
+        let ts: Field = ast_f(sb, cur, 0)
+        let tc: Field = ast_f(sb, cur, 1)
+        let mut total: Field = 0
+        let tcu: U32 = convert.as_u32(tc)
+        for i in 0..tcu bounded 64 {
+            total = total + type_node_width_leaf(sb, ts + convert.as_field(i))
+        }
+        base_w = total
+    }
+    else if kind == parser.NK_TYPE_NAMED() {
+        let nid: Field = ast_f(sb, cur, 0)
+        let si: Field = lookup_struct_by_tok(sb, nid)
+        if si == field.neg(1) { base_w = 1 }
+        else { base_w = struct_total_width(sb, si) }
+    }
+    multiplier * base_w
+}
+
+// Leaf AST type width (iterative, unwraps arrays up to 4 levels)
+fn type_node_width_leaf(sb: Field, node_idx: Field) -> Field {
+    let mut cur: Field = node_idx
+    let mut mul: Field = 1
+    let bnd: U32 = convert.as_u32(4)
+    for lvl in 0..bnd bounded 4 {
+        let k: Field = ast_kind(sb, cur)
+        if k == parser.NK_TYPE_ARRAY() {
+            mul = mul * ast_f(sb, cur, 1)
+            cur = ast_f(sb, cur, 0)
+        }
+    }
+    let kind: Field = ast_kind(sb, cur)
+    let mut base_w: Field = 1
+    if kind == parser.NK_TYPE_FIELD() { base_w = 1 }
+    else if kind == parser.NK_TYPE_BOOL() { base_w = 1 }
+    else if kind == parser.NK_TYPE_U32() { base_w = 1 }
+    else if kind == parser.NK_TYPE_XFIELD() { base_w = s_xfield_w(sb) }
+    else if kind == parser.NK_TYPE_DIGEST() { base_w = s_digest_w(sb) }
+    else if kind == parser.NK_TYPE_NAMED() {
+        let nid: Field = ast_f(sb, cur, 0)
+        let si: Field = lookup_struct_by_tok(sb, nid)
+        if si == field.neg(1) { base_w = 1 }
+        else { base_w = struct_total_width(sb, si) }
+    }
+    mul * base_w
+}
+
+fn lookup_struct_by_tok(sb: Field, tok: Field) -> Field {
+    let cnt: Field = s_st_count(sb)
+    let mut result: Field = field.neg(1)
+    let cu: U32 = convert.as_u32(cnt)
+    for i in 0..cu bounded 256 {
+        if st_name(sb, convert.as_field(i)) == tok {
+            result = convert.as_field(i)
+        }
+    }
+    result
+}
+
+// =========================================================================
+// Work stack
+// =========================================================================
+
+fn ws_push(sb: Field, code: Field, a0: Field, a1: Field) {
+    let d: Field = s_work_depth(sb)
+    let addr: Field = s_work_base(sb) + d * WORK_STRIDE()
+    mem.write(addr, code)
+    mem.write(addr + 1, a0)
+    mem.write(addr + 2, a1)
+    mem.write(addr + 3, 0)
+    mem.write(addr + 4, 0)
+    mem.write(addr + 5, 0)
+    s_set_work_depth(sb, d + 1)
+}
+
+fn ws_push6(sb: Field, code: Field, a0: Field, a1: Field, a2: Field, a3: Field, a4: Field) {
+    let d: Field = s_work_depth(sb)
+    let addr: Field = s_work_base(sb) + d * WORK_STRIDE()
+    mem.write(addr, code)
+    mem.write(addr + 1, a0)
+    mem.write(addr + 2, a1)
+    mem.write(addr + 3, a2)
+    mem.write(addr + 4, a3)
+    mem.write(addr + 5, a4)
+    s_set_work_depth(sb, d + 1)
+}
+
+fn ws_pop(sb: Field) {
+    s_set_work_depth(sb, s_work_depth(sb) + field.neg(1))
+}
+
+fn ws_top_code(sb: Field) -> Field {
+    let d: Field = s_work_depth(sb)
+    mem.read(s_work_base(sb) + (d + field.neg(1)) * WORK_STRIDE())
+}
+
+fn ws_top_a0(sb: Field) -> Field {
+    let d: Field = s_work_depth(sb)
+    mem.read(s_work_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 1)
+}
+
+fn ws_top_a1(sb: Field) -> Field {
+    let d: Field = s_work_depth(sb)
+    mem.read(s_work_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 2)
+}
+
+fn ws_top_a2(sb: Field) -> Field {
+    let d: Field = s_work_depth(sb)
+    mem.read(s_work_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 3)
+}
+
+fn ws_top_a3(sb: Field) -> Field {
+    let d: Field = s_work_depth(sb)
+    mem.read(s_work_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 4)
+}
+
+fn ws_top_a4(sb: Field) -> Field {
+    let d: Field = s_work_depth(sb)
+    mem.read(s_work_base(sb) + (d + field.neg(1)) * WORK_STRIDE() + 5)
+}
+
+// Result stack (for passing expression widths)
+fn rs_push(sb: Field, val: Field) {
+    let d: Field = s_rs_depth(sb)
+    mem.write(s_rs_base(sb) + d, val)
+    s_set_rs_depth(sb, d + 1)
+}
+
+fn rs_pop(sb: Field) -> Field {
+    let d: Field = s_rs_depth(sb) + field.neg(1)
+    s_set_rs_depth(sb, d)
+    mem.read(s_rs_base(sb) + d)
+}
+
+// =========================================================================
+// TIR emission
+// =========================================================================
+
+fn emit_tir(sb: Field, opcode: Field, a0: Field, a1: Field, a2: Field) {
+    let base: Field = s_tir_base(sb)
+    let cnt: Field = s_tir_count(sb)
+    mem.write(base + cnt * 4, opcode)
+    mem.write(base + cnt * 4 + 1, a0)
+    mem.write(base + cnt * 4 + 2, a1)
+    mem.write(base + cnt * 4 + 3, a2)
+    s_set_tir_count(sb, cnt + 1)
+}
+
+fn fresh_label(sb: Field) -> Field {
+    let lc: Field = s_label_ctr(sb)
+    s_set_label_ctr(sb, lc + 1)
+    lc
+}
+
+fn flush_effects(sb: Field) {
+    let base: Field = s_side_base(sb)
+    let cnt: Field = s_side_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    for i in 0..cu bounded 1024 {
+        let idx: Field = convert.as_field(i)
+        emit_tir(sb, mem.read(base + idx * 4), mem.read(base + idx * 4 + 1), mem.read(base + idx * 4 + 2), mem.read(base + idx * 4 + 3))
+    }
+    s_set_side_count(sb, 0)
+}
+
+fn emit_side(sb: Field, opcode: Field, a0: Field, a1: Field, a2: Field) {
+    let base: Field = s_side_base(sb)
+    let cnt: Field = s_side_count(sb)
+    mem.write(base + cnt * 4, opcode)
+    mem.write(base + cnt * 4 + 1, a0)
+    mem.write(base + cnt * 4 + 2, a1)
+    mem.write(base + cnt * 4 + 3, a2)
+    s_set_side_count(sb, cnt + 1)
+}
+
+fn emit_pop(sb: Field, n: Field) {
+    let mut rem: Field = n
+    let bnd: U32 = convert.as_u32(20)
+    for step in 0..bnd bounded 20 {
+        if rem == 0 {
+            // done
+        } else {
+            let mut batch: Field = rem
+            if convert.as_u32(batch) < convert.as_u32(6) {
+                // ok
+            } else {
+                batch = 5
+            }
+            emit_tir(sb, lower.OP_POP(), batch, 0, 0)
+            rem = rem + field.neg(batch)
+        }
+    }
+}
+
+// =========================================================================
+// Virtual stack model
+// =========================================================================
+
+fn se_name(sb: Field, idx: Field) -> Field {
+    mem.read(s_stack_base(sb) + idx * SENTRY_STRIDE())
+}
+
+fn se_width(sb: Field, idx: Field) -> Field {
+    mem.read(s_stack_base(sb) + idx * SENTRY_STRIDE() + 1)
+}
+
+fn se_elem_w(sb: Field, idx: Field) -> Field {
+    mem.read(s_stack_base(sb) + idx * SENTRY_STRIDE() + 2)
+}
+
+fn se_access(sb: Field, idx: Field) -> Field {
+    mem.read(s_stack_base(sb) + idx * SENTRY_STRIDE() + 4)
+}
+
+fn se_set(sb: Field, idx: Field, name: Field, width: Field, elem_w: Field, loc: Field, acc: Field) {
+    let base: Field = s_stack_base(sb) + idx * SENTRY_STRIDE()
+    mem.write(base, name)
+    mem.write(base + 1, width)
+    mem.write(base + 2, elem_w)
+    mem.write(base + 3, loc)
+    mem.write(base + 4, acc)
+}
+
+fn stack_depth(sb: Field) -> Field {
+    let cnt: Field = s_stack_count(sb)
+    let mut total: Field = 0
+    let cu: U32 = convert.as_u32(cnt)
+    for i in 0..cu bounded 256 {
+        total = total + se_width(sb, convert.as_field(i))
+    }
+    total
+}
+
+fn stack_push_entry(sb: Field, name_tok: Field, width: Field, elem_w: Field) {
+    let cnt: Field = s_stack_count(sb)
+    let ac: Field = s_access_ctr(sb) + 1
+    s_set_access_ctr(sb, ac)
+    se_set(sb, cnt, name_tok, width, elem_w, 0, ac)
+    s_set_stack_count(sb, cnt + 1)
+}
+
+fn stack_push_named(sb: Field, name_tok: Field, width: Field) {
+    stack_push_entry(sb, name_tok, width, 1)
+}
+
+fn stack_push_temp(sb: Field, width: Field) {
+    if width == 0 { return }
+    stack_push_entry(sb, 0, width, 1)
+}
+
+fn stack_pop(sb: Field) -> Field {
+    let cnt: Field = s_stack_count(sb)
+    if cnt == 0 { return 0 }
+    let new_cnt: Field = cnt + field.neg(1)
+    let w: Field = se_width(sb, new_cnt)
+    s_set_stack_count(sb, new_cnt)
+    w
+}
+
+// Find depth from top (in field elements) to a named var.
+// If spilled, reloads it. Returns field.neg(1) if not found.
+fn stack_find_var(sb: Field, name_tok: Field) -> Field {
+    if name_tok == 0 { return field.neg(1) }
+    let cnt: Field = s_stack_count(sb)
+    let mut depth: Field = 0
+    let mut found: Field = field.neg(1)
+    let cu: U32 = convert.as_u32(cnt)
+    for i in 0..cu bounded 256 {
+        let idx: Field = cnt + field.neg(1) + field.neg(convert.as_field(i))
+        if found == field.neg(1) {
+            if se_name(sb, idx) == name_tok {
+                found = depth
+                let ac: Field = s_access_ctr(sb) + 1
+                s_set_access_ctr(sb, ac)
+                let base: Field = s_stack_base(sb) + idx * SENTRY_STRIDE()
+                mem.write(base + 4, ac)
+            } else {
+                depth = depth + se_width(sb, idx)
+            }
+        }
+    }
+    if found == field.neg(1) {
+        // Check spill table
+        let sc: Field = s_spill_count(sb)
+        let scu: U32 = convert.as_u32(sc)
+        for j in 0..scu bounded 256 {
+            let ji: Field = convert.as_field(j)
+            let sp: Field = s_spill_base(sb)
+            if mem.read(sp + ji * SPILL_STRIDE()) == name_tok {
+                if found == field.neg(1) {
+                    reload_var(sb, ji)
+                    found = 0
+                }
+            }
+        }
+    }
+    found
+}
+
+fn stack_var_width(sb: Field, name_tok: Field) -> Field {
+    let cnt: Field = s_stack_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    let mut result: Field = 0
+    for i in 0..cu bounded 256 {
+        if se_name(sb, convert.as_field(i)) == name_tok {
+            if name_tok == 0 {
+                // skip
+            } else {
+                result = se_width(sb, convert.as_field(i))
+            }
+        }
+    }
+    result
+}
+
+fn stack_ensure_space(sb: Field, needed: Field) {
+    let max_d: Field = s_max_depth(sb)
+    let bnd: U32 = convert.as_u32(16)
+    for attempt in 0..bnd bounded 16 {
+        let cur: Field = stack_depth(sb)
+        if convert.as_u32(cur + needed) < convert.as_u32(max_d + 1) {
+            // ok
+        } else {
+            spill_lru(sb)
+        }
+    }
+}
+
+fn spill_lru(sb: Field) {
+    let cnt: Field = s_stack_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    let mut min_access: Field = field.neg(1)
+    let mut min_idx: Field = field.neg(1)
+    for i in 0..cu bounded 256 {
+        let idx: Field = convert.as_field(i)
+        if se_name(sb, idx) == 0 {
+            // skip temps
+        } else {
+            let ac: Field = se_access(sb, idx)
+            if min_idx == field.neg(1) {
+                min_access = ac
+                min_idx = idx
+            } else if convert.as_u32(ac) < convert.as_u32(min_access) {
+                min_access = ac
+                min_idx = idx
+            }
+        }
+    }
+    if min_idx == field.neg(1) { return }
+    let name_tok: Field = se_name(sb, min_idx)
+    let width: Field = se_width(sb, min_idx)
+    let elem_w: Field = se_elem_w(sb, min_idx)
+    let ram_addr: Field = s_next_spill(sb)
+    s_set_next_spill(sb, ram_addr + width)
+    // Compute depth above this entry
+    let mut depth_above: Field = 0
+    for i2 in 0..cu bounded 256 {
+        let idx2: Field = convert.as_field(i2)
+        if convert.as_u32(min_idx) < convert.as_u32(idx2) {
+            depth_above = depth_above + se_width(sb, idx2)
+        }
+    }
+    // Emit spill instructions
+    let wu: U32 = convert.as_u32(width)
+    for e in 0..wu bounded 16 {
+        let ei: Field = convert.as_field(e)
+        let d: Field = depth_above + width + field.neg(1) + field.neg(ei)
+        if d == 0 {
+            // already on top
+        } else {
+            emit_side(sb, lower.OP_SWAP(), d, 0, 0)
+        }
+        emit_side(sb, lower.OP_PUSH(), ram_addr + ei, 0, 0)
+        emit_side(sb, lower.OP_SWAP(), 1, 0, 0)
+        emit_side(sb, lower.OP_WRITE_MEM(), 1, 0, 0)
+        emit_side(sb, lower.OP_POP(), 1, 0, 0)
+    }
+    // Remove from stack, shift entries down
+    let new_cnt: Field = cnt + field.neg(1)
+    let shift_bnd: U32 = convert.as_u32(new_cnt)
+    for s in 0..shift_bnd bounded 256 {
+        let si: Field = convert.as_field(s)
+        if convert.as_u32(si) < convert.as_u32(min_idx) {
+            // keep
+        } else {
+            let src: Field = s_stack_base(sb) + (si + 1) * SENTRY_STRIDE()
+            se_set(sb, si, mem.read(src), mem.read(src + 1), mem.read(src + 2), mem.read(src + 3), mem.read(src + 4))
+        }
+    }
+    s_set_stack_count(sb, new_cnt)
+    // Add to spill table
+    let sc: Field = s_spill_count(sb)
+    let sp: Field = s_spill_base(sb)
+    mem.write(sp + sc * SPILL_STRIDE(), name_tok)
+    mem.write(sp + sc * SPILL_STRIDE() + 1, width)
+    mem.write(sp + sc * SPILL_STRIDE() + 2, elem_w)
+    mem.write(sp + sc * SPILL_STRIDE() + 3, ram_addr)
+    s_set_spill_count(sb, sc + 1)
+}
+
+fn reload_var(sb: Field, spill_idx: Field) {
+    let sp: Field = s_spill_base(sb)
+    let name_tok: Field = mem.read(sp + spill_idx * SPILL_STRIDE())
+    let width: Field = mem.read(sp + spill_idx * SPILL_STRIDE() + 1)
+    let elem_w: Field = mem.read(sp + spill_idx * SPILL_STRIDE() + 2)
+    let ram_addr: Field = mem.read(sp + spill_idx * SPILL_STRIDE() + 3)
+    stack_ensure_space(sb, width)
+    let wu: U32 = convert.as_u32(width)
+    for e in 0..wu bounded 16 {
+        let ei: Field = convert.as_field(e)
+        emit_side(sb, lower.OP_PUSH(), ram_addr + ei, 0, 0)
+        emit_side(sb, lower.OP_READ_MEM(), 1, 0, 0)
+        emit_side(sb, lower.OP_POP(), 1, 0, 0)
+    }
+    stack_push_entry(sb, name_tok, width, elem_w)
+    // Remove from spill table
+    let sc: Field = s_spill_count(sb)
+    let new_sc: Field = sc + field.neg(1)
+    let scu: U32 = convert.as_u32(new_sc)
+    for j in 0..scu bounded 256 {
+        let ji: Field = convert.as_field(j)
+        if convert.as_u32(ji) < convert.as_u32(spill_idx) {
+            // keep
+        } else {
+            let src: Field = sp + (ji + 1) * SPILL_STRIDE()
+            mem.write(sp + ji * SPILL_STRIDE(), mem.read(src))
+            mem.write(sp + ji * SPILL_STRIDE() + 1, mem.read(src + 1))
+            mem.write(sp + ji * SPILL_STRIDE() + 2, mem.read(src + 2))
+            mem.write(sp + ji * SPILL_STRIDE() + 3, mem.read(src + 3))
+        }
+    }
+    s_set_spill_count(sb, new_sc)
+}
+
+fn save_stack_state(sb: Field) -> Field {
+    let save_idx: Field = s_saved_count(sb)
+    let base: Field = s_saved_base(sb) + save_idx * SAVED_STRIDE()
+    let cnt: Field = s_stack_count(sb)
+    let sc: Field = s_spill_count(sb)
+    mem.write(base, cnt)
+    mem.write(base + 1, sc)
+    let cu: U32 = convert.as_u32(cnt)
+    for i in 0..cu bounded 256 {
+        let idx: Field = convert.as_field(i)
+        let src: Field = s_stack_base(sb) + idx * SENTRY_STRIDE()
+        let dst: Field = base + 2 + idx * SENTRY_STRIDE()
+        mem.write(dst, mem.read(src))
+        mem.write(dst + 1, mem.read(src + 1))
+        mem.write(dst + 2, mem.read(src + 2))
+        mem.write(dst + 3, mem.read(src + 3))
+        mem.write(dst + 4, mem.read(src + 4))
+    }
+    let scu: U32 = convert.as_u32(sc)
+    let off: Field = 2 + cnt * SENTRY_STRIDE()
+    for j in 0..scu bounded 256 {
+        let ji: Field = convert.as_field(j)
+        let src2: Field = s_spill_base(sb) + ji * SPILL_STRIDE()
+        let dst2: Field = base + off + ji * SPILL_STRIDE()
+        mem.write(dst2, mem.read(src2))
+        mem.write(dst2 + 1, mem.read(src2 + 1))
+        mem.write(dst2 + 2, mem.read(src2 + 2))
+        mem.write(dst2 + 3, mem.read(src2 + 3))
+    }
+    s_set_saved_count(sb, save_idx + 1)
+    save_idx
+}
+
+fn restore_stack_state(sb: Field, save_idx: Field) {
+    let base: Field = s_saved_base(sb) + save_idx * SAVED_STRIDE()
+    let cnt: Field = mem.read(base)
+    let sc: Field = mem.read(base + 1)
+    s_set_stack_count(sb, cnt)
+    s_set_spill_count(sb, sc)
+    let cu: U32 = convert.as_u32(cnt)
+    for i in 0..cu bounded 256 {
+        let idx: Field = convert.as_field(i)
+        let src: Field = base + 2 + idx * SENTRY_STRIDE()
+        se_set(sb, idx, mem.read(src), mem.read(src + 1), mem.read(src + 2), mem.read(src + 3), mem.read(src + 4))
+    }
+    let scu: U32 = convert.as_u32(sc)
+    let off: Field = 2 + cnt * SENTRY_STRIDE()
+    for j in 0..scu bounded 256 {
+        let ji: Field = convert.as_field(j)
+        let src2: Field = base + off + ji * SPILL_STRIDE()
+        let dst2: Field = s_spill_base(sb) + ji * SPILL_STRIDE()
+        mem.write(dst2, mem.read(src2))
+        mem.write(dst2 + 1, mem.read(src2 + 1))
+        mem.write(dst2 + 2, mem.read(src2 + 2))
+        mem.write(dst2 + 3, mem.read(src2 + 3))
+    }
+}
+
+fn clear_stack(sb: Field) {
+    s_set_stack_count(sb, 0)
+    s_set_spill_count(sb, 0)
+}
+
+// =========================================================================
+// Lookups
+// =========================================================================
+
+fn find_fn(sb: Field, name_tok: Field) -> Field {
+    let cnt: Field = s_fn_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    let mut result: Field = field.neg(1)
+    for i in 0..cu bounded 512 {
+        if ft_name(sb, convert.as_field(i)) == name_tok {
+            result = convert.as_field(i)
+        }
+    }
+    result
+}
+
+fn fn_ret_width(sb: Field, fi: Field) -> Field {
+    type_width(sb, ft_rt(sb, fi))
+}
+
+fn lookup_const(sb: Field, name_tok: Field) -> Field {
+    let cnt: Field = s_ct_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    let mut result: Field = field.neg(1)
+    for i in 0..cu bounded 256 {
+        if ct_name(sb, convert.as_field(i)) == name_tok {
+            result = ct_val(sb, convert.as_field(i))
+        }
+    }
+    result
+}
+
+fn find_event(sb: Field, name_tok: Field) -> Field {
+    let cnt: Field = s_ev_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    let mut result: Field = field.neg(1)
+    for i in 0..cu bounded 64 {
+        if ev_name(sb, convert.as_field(i)) == name_tok {
+            result = convert.as_field(i)
+        }
+    }
+    result
+}
+
+fn find_struct_for_width(sb: Field, w: Field) -> Field {
+    let cnt: Field = s_st_count(sb)
+    let cu: U32 = convert.as_u32(cnt)
+    let mut result: Field = field.neg(1)
+    for i in 0..cu bounded 256 {
+        if struct_total_width(sb, convert.as_field(i)) == w {
+            result = convert.as_field(i)
+        }
+    }
+    result
+}
+
+fn struct_field_offset(sb: Field, si: Field, field_tok: Field) -> Field {
+    let fc: Field = st_fc(sb, si)
+    let fs: Field = st_fs(sb, si)
+    let total_w: Field = struct_total_width(sb, si)
+    let mut offset: Field = 0
+    let mut found: Field = field.neg(1)
+    let fcu: U32 = convert.as_u32(fc)
+    for i in 0..fcu bounded 64 {
+        let sfi: Field = fs + convert.as_field(i)
+        let fw: Field = type_width_leaf(sb, sf_ty(sb, sfi))
+        if sf_name(sb, sfi) == field_tok {
+            let from_top: Field = total_w + field.neg(offset) + field.neg(fw)
+            found = from_top * 1000 + fw
+        }
+        offset = offset + fw
+    }
+    found
+}
+
+fn sfo_from_top(packed: Field) -> Field {
+    let (q, r): (U32, U32) = convert.as_u32(packed) /% convert.as_u32(1000)
+    convert.as_field(q)
+}
+
+fn sfo_width(packed: Field) -> Field {
+    let (q, r): (U32, U32) = convert.as_u32(packed) /% convert.as_u32(1000)
+    convert.as_field(r)
+}
+
+// =========================================================================
+// Main dispatch loop
+// =========================================================================
+
+fn dispatch_work(sb: Field) {
+    let code: Field = ws_top_code(sb)
+    let a0: Field = ws_top_a0(sb)
+    let a1: Field = ws_top_a1(sb)
+    let a2: Field = ws_top_a2(sb)
+    let a3: Field = ws_top_a3(sb)
+    let a4: Field = ws_top_a4(sb)
+    ws_pop(sb)
+    if code == WC_EXPR() { do_expr(sb, a0) }
+    else if code == WC_STMT() { do_stmt(sb, a0) }
+    else if code == WC_BLOCK() { do_block(sb, a0) }
+    else if code == WC_BINOP_DONE() { do_binop_done(sb, a0, a1) }
+    else if code == WC_LT_RHS_DONE() { do_lt_rhs_done(sb, a0) }
+    else if code == WC_CALL_DONE() { do_call_done(sb, a0, a1) }
+    else if code == WC_LET_DONE() { do_let_done(sb, a0) }
+    else if code == WC_ASSIGN_DONE() { do_assign_done(sb, a0) }
+    else if code == WC_IF_COND_DONE() { do_if_cond_done(sb, a0) }
+    else if code == WC_IF_THEN_END() { do_if_then_end(sb, a0, a1, a2, a3) }
+    else if code == WC_IF_ELSE_END() { do_if_else_end(sb, a0, a1, a2, a3, a4) }
+    else if code == WC_FOR_BODY() { do_for_body(sb, a0) }
+    else if code == WC_FOR_BODY_END() { do_for_body_end(sb, a0, a1, a2, a3) }
+    else if code == WC_EXPR_STMT_DONE() { do_expr_stmt_done(sb, a0) }
+    else if code == WC_STRUCT_INIT_DONE() { do_struct_init_done(sb, a0) }
+    else if code == WC_ARRAY_DONE() { do_array_done(sb, a0) }
+    else if code == WC_TUPLE_DONE() { do_tuple_done(sb, a0) }
+    else if code == WC_FIELD_ACCESS_DONE() { do_field_access_done(sb, a0) }
+    else if code == WC_INDEX_CONST_DONE() { do_index_const_done(sb, a0) }
+    else if code == WC_REVEAL_DONE() { do_reveal_done(sb, a0, a1) }
+    else if code == WC_SEAL_DONE() { do_seal_done(sb, a0, a1) }
+    else if code == WC_RETURN_DONE() { do_return_done(sb) }
+    else if code == WC_FN_BODY_DONE() { do_fn_body_done(sb, a0, a1) }
+}
+
+// =========================================================================
+// Expression dispatch (push onto work stack)
+// =========================================================================
+
+fn do_expr(sb: Field, node: Field) {
+    let kind: Field = ast_kind(sb, node)
+    if kind == parser.NK_LIT_INT() {
+        let val: Field = ast_f(sb, node, 0)
+        stack_ensure_space(sb, 1)
+        flush_effects(sb)
+        emit_tir(sb, lower.OP_PUSH(), val, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if kind == parser.NK_LIT_BOOL() {
+        let val: Field = ast_f(sb, node, 0)
+        stack_ensure_space(sb, 1)
+        flush_effects(sb)
+        emit_tir(sb, lower.OP_PUSH(), val, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if kind == parser.NK_VAR() {
+        do_var(sb, node)
+    }
+    else if kind == parser.NK_BINOP() {
+        let op_code: Field = ast_f(sb, node, 0)
+        let lhs_node: Field = ast_f(sb, node, 1)
+        let rhs_node: Field = ast_f(sb, node, 2)
+        if op_code == OP_LT() {
+            // Lt: push rhs first, then lhs, then combine
+            ws_push(sb, WC_LT_RHS_DONE(), node, 0)
+            ws_push(sb, WC_EXPR(), lhs_node, 0)
+            ws_push(sb, WC_EXPR(), rhs_node, 0)
+        } else {
+            ws_push(sb, WC_BINOP_DONE(), node, op_code)
+            ws_push(sb, WC_EXPR(), rhs_node, 0)
+            ws_push(sb, WC_EXPR(), lhs_node, 0)
+        }
+    }
+    else if kind == parser.NK_CALL() {
+        let args_start: Field = ast_f(sb, node, 2)
+        let args_count: Field = ast_f(sb, node, 3)
+        // Push call completion, then evaluate args in order
+        ws_push(sb, WC_CALL_DONE(), node, args_count)
+        // Push args in reverse order (so first arg evaluates first)
+        let acu: U32 = convert.as_u32(args_count)
+        for i in 0..acu bounded 32 {
+            let ri: Field = args_count + field.neg(1) + field.neg(convert.as_field(i))
+            ws_push(sb, WC_EXPR(), args_start + ri, 0)
+        }
+    }
+    else if kind == parser.NK_FIELD_ACCESS() {
+        let inner_node: Field = ast_f(sb, node, 0)
+        ws_push(sb, WC_FIELD_ACCESS_DONE(), node, 0)
+        ws_push(sb, WC_EXPR(), inner_node, 0)
+    }
+    else if kind == parser.NK_INDEX() {
+        let inner_node: Field = ast_f(sb, node, 0)
+        let index_node: Field = ast_f(sb, node, 1)
+        let idx_kind: Field = ast_kind(sb, index_node)
+        if idx_kind == parser.NK_LIT_INT() {
+            ws_push(sb, WC_INDEX_CONST_DONE(), node, 0)
+            ws_push(sb, WC_EXPR(), inner_node, 0)
+        } else {
+            // Runtime index — build inner first, then index
+            // For simplicity, treat as constant index 0
+            ws_push(sb, WC_INDEX_CONST_DONE(), node, 0)
+            ws_push(sb, WC_EXPR(), inner_node, 0)
+        }
+    }
+    else if kind == parser.NK_STRUCT_INIT() {
+        let fields_start: Field = ast_f(sb, node, 1)
+        let fields_count: Field = ast_f(sb, node, 2)
+        ws_push(sb, WC_STRUCT_INIT_DONE(), node, fields_count)
+        // Push field value exprs in reverse
+        let fcu: U32 = convert.as_u32(fields_count)
+        for i in 0..fcu bounded 64 {
+            let ri: Field = fields_count + field.neg(1) + field.neg(convert.as_field(i))
+            let fi: Field = fields_start + ri
+            let val_node: Field = ast_f(sb, fi, 1)
+            ws_push(sb, WC_EXPR(), val_node, 0)
+        }
+    }
+    else if kind == parser.NK_ARRAY_INIT() {
+        let elems_start: Field = ast_f(sb, node, 0)
+        let elems_count: Field = ast_f(sb, node, 1)
+        ws_push(sb, WC_ARRAY_DONE(), node, elems_count)
+        let ecu: U32 = convert.as_u32(elems_count)
+        for i in 0..ecu bounded 256 {
+            let ri: Field = elems_count + field.neg(1) + field.neg(convert.as_field(i))
+            ws_push(sb, WC_EXPR(), elems_start + ri, 0)
+        }
+    }
+    else if kind == parser.NK_TUPLE() {
+        let elems_start: Field = ast_f(sb, node, 0)
+        let elems_count: Field = ast_f(sb, node, 1)
+        ws_push(sb, WC_TUPLE_DONE(), node, elems_count)
+        let ecu: U32 = convert.as_u32(elems_count)
+        for i in 0..ecu bounded 64 {
+            let ri: Field = elems_count + field.neg(1) + field.neg(convert.as_field(i))
+            ws_push(sb, WC_EXPR(), elems_start + ri, 0)
+        }
+    }
+    else {
+        rs_push(sb, 0)
+    }
+}
+
+fn do_var(sb: Field, node: Field) {
+    let name_tok: Field = ast_f(sb, node, 0)
+    let depth: Field = stack_find_var(sb, name_tok)
+    if depth == field.neg(1) {
+        let cv: Field = lookup_const(sb, name_tok)
+        if cv == field.neg(1) {
+            stack_ensure_space(sb, 1)
+            flush_effects(sb)
+            emit_tir(sb, lower.OP_PUSH(), 0, 0, 0)
+            stack_push_temp(sb, 1)
+            rs_push(sb, 1)
+        } else {
+            stack_ensure_space(sb, 1)
+            flush_effects(sb)
+            emit_tir(sb, lower.OP_PUSH(), cv, 0, 0)
+            stack_push_temp(sb, 1)
+            rs_push(sb, 1)
+        }
+    } else {
+        let width: Field = stack_var_width(sb, name_tok)
+        stack_ensure_space(sb, width)
+        flush_effects(sb)
+        let wu: U32 = convert.as_u32(width)
+        for e in 0..wu bounded 16 {
+            let d: Field = depth + width + field.neg(1)
+            emit_tir(sb, lower.OP_DUP(), d, 0, 0)
+        }
+        stack_push_temp(sb, width)
+        rs_push(sb, width)
+    }
+}
+
+fn do_binop_done(sb: Field, node: Field, op_code: Field) {
+    let rhs_w: Field = rs_pop(sb)
+    let lhs_w: Field = rs_pop(sb)
+    stack_pop(sb)
+    stack_pop(sb)
+    flush_effects(sb)
+    if op_code == OP_ADD() {
+        emit_tir(sb, lower.OP_ADD(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if op_code == OP_MUL() {
+        emit_tir(sb, lower.OP_MUL(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if op_code == OP_EQ() {
+        emit_tir(sb, lower.OP_EQ(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if op_code == OP_BAND() {
+        emit_tir(sb, lower.OP_AND(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if op_code == OP_BXOR() {
+        emit_tir(sb, lower.OP_XOR(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if op_code == OP_DIVMOD() {
+        emit_tir(sb, lower.OP_DIVMOD(), 0, 0, 0)
+        stack_push_temp(sb, 2)
+        rs_push(sb, 2)
+    }
+    else if op_code == OP_XFMUL() {
+        emit_tir(sb, lower.OP_EXT_MUL(), 0, 0, 0)
+        stack_push_temp(sb, 3)
+        rs_push(sb, 3)
+    }
+    else {
+        emit_tir(sb, lower.OP_ADD(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+}
+
+fn do_lt_rhs_done(sb: Field, node: Field) {
+    // For Lt: rhs was built first (now at bottom), lhs on top
+    // Triton: st0 < st1, so we need lhs(st0) < rhs(st1) — order is correct
+    let lhs_w: Field = rs_pop(sb)
+    let rhs_w: Field = rs_pop(sb)
+    stack_pop(sb)
+    stack_pop(sb)
+    flush_effects(sb)
+    emit_tir(sb, lower.OP_LT(), 0, 0, 0)
+    stack_push_temp(sb, 1)
+    rs_push(sb, 1)
+}
+
+fn do_call_done(sb: Field, node: Field, args_count: Field) {
+    // Pop arg result widths from result stack
+    let acu: U32 = convert.as_u32(args_count)
+    for i in 0..acu bounded 32 {
+        rs_pop(sb)
+    }
+    // Pop arg entries from virtual stack
+    for i2 in 0..acu bounded 32 {
+        stack_pop(sb)
+    }
+    let path_start: Field = ast_f(sb, node, 0)
+    let fi: Field = find_fn(sb, path_start)
+    if fi == field.neg(1) {
+        // Unknown function
+        flush_effects(sb)
+        emit_tir(sb, lower.OP_CALL(), path_start, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    } else {
+        let name_id: Field = ft_name(sb, fi)
+        let ret_w: Field = fn_ret_width(sb, fi)
+        emit_builtin_or_call(sb, name_id, ret_w)
+    }
+}
+
+fn emit_builtin_or_call(sb: Field, name_id: Field, ret_w: Field) {
+    flush_effects(sb)
+    if name_id == field.neg(1) {
+        // pub_read
+        emit_tir(sb, lower.OP_READ_IO(), 1, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(2) {
+        // pub_write
+        emit_tir(sb, lower.OP_WRITE_IO(), 1, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(3) {
+        // divine
+        emit_tir(sb, lower.OP_HINT(), 1, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(4) {
+        // assert
+        emit_tir(sb, lower.OP_ASSERT(), 1, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(5) {
+        // assert_eq
+        emit_tir(sb, lower.OP_EQ(), 0, 0, 0)
+        emit_tir(sb, lower.OP_ASSERT(), 1, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(6) {
+        // assert_digest
+        let dw: Field = s_digest_w(sb)
+        emit_tir(sb, lower.OP_ASSERT(), dw, 0, 0)
+        emit_pop(sb, dw)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(7) {
+        // field_add
+        emit_tir(sb, lower.OP_ADD(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(8) {
+        // field_mul
+        emit_tir(sb, lower.OP_MUL(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(9) {
+        // inv
+        emit_tir(sb, lower.OP_INVERT(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(10) {
+        // neg
+        emit_tir(sb, lower.OP_NEG(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(11) {
+        // sub
+        emit_tir(sb, lower.OP_SUB(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(12) {
+        // split
+        emit_tir(sb, lower.OP_SPLIT(), 0, 0, 0)
+        stack_push_temp(sb, 2)
+        rs_push(sb, 2)
+    }
+    else if name_id == field.neg(13) {
+        // as_u32
+        emit_tir(sb, lower.OP_SPLIT(), 0, 0, 0)
+        emit_tir(sb, lower.OP_SWAP(), 1, 0, 0)
+        emit_tir(sb, lower.OP_POP(), 1, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(14) {
+        // as_field — no-op
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(15) {
+        // log2
+        emit_tir(sb, lower.OP_LOG2(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(16) {
+        // pow
+        emit_tir(sb, lower.OP_POW(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(17) {
+        // popcount
+        emit_tir(sb, lower.OP_POPCOUNT(), 0, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(18) {
+        // hash
+        let dw: Field = s_digest_w(sb)
+        emit_tir(sb, lower.OP_HASH(), dw, 0, 0)
+        stack_push_temp(sb, dw)
+        rs_push(sb, dw)
+    }
+    else if name_id == field.neg(19) {
+        // sponge_init
+        emit_tir(sb, lower.OP_SPONGE_INIT(), 0, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(20) {
+        // sponge_absorb
+        emit_tir(sb, lower.OP_SPONGE_ABSORB(), 0, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(21) {
+        // sponge_squeeze
+        let hr: Field = s_hash_rate(sb)
+        emit_tir(sb, lower.OP_SPONGE_SQUEEZE(), 0, 0, 0)
+        stack_push_temp(sb, hr)
+        rs_push(sb, hr)
+    }
+    else if name_id == field.neg(22) {
+        // sponge_absorb_mem
+        emit_tir(sb, lower.OP_SPONGE_LOAD(), 0, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(23) {
+        // ram_read
+        emit_tir(sb, lower.OP_RAM_READ(), 1, 0, 0)
+        stack_push_temp(sb, 1)
+        rs_push(sb, 1)
+    }
+    else if name_id == field.neg(24) {
+        // ram_write
+        emit_tir(sb, lower.OP_RAM_WRITE(), 1, 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(25) {
+        // ram_read_block
+        let dw: Field = s_digest_w(sb)
+        emit_tir(sb, lower.OP_RAM_READ(), dw, 0, 0)
+        stack_push_temp(sb, dw)
+        rs_push(sb, dw)
+    }
+    else if name_id == field.neg(26) {
+        // ram_write_block
+        emit_tir(sb, lower.OP_RAM_WRITE(), s_digest_w(sb), 0, 0)
+        rs_push(sb, 0)
+    }
+    else if name_id == field.neg(27) {
+        // merkle_step
+        emit_tir(sb, lower.OP_MERKLE_STEP(), 0, 0, 0)
+        stack_push_temp(sb, 6)
+        rs_push(sb, 6)
+    }
+    else {
+        // User-defined function
+        emit_tir(sb, lower.OP_CALL(), name_id, 0, 0)
+        if ret_w == 0 {
+            rs_push(sb, 0)
+        } else {
+            stack_push_temp(sb, ret_w)
+            rs_push(sb, ret_w)
+        }
+    }
+}
+
+fn do_struct_init_done(sb: Field, node: Field) {
+    let fields_count: Field = ast_f(sb, node, 2)
+    let mut total_w: Field = 0
+    let fcu: U32 = convert.as_u32(fields_count)
+    for i in 0..fcu bounded 64 {
+        total_w = total_w + rs_pop(sb)
+    }
+    for i2 in 0..fcu bounded 64 {
+        stack_pop(sb)
+    }
+    stack_push_temp(sb, total_w)
+    rs_push(sb, total_w)
+}
+
+fn do_array_done(sb: Field, node: Field) {
+    let elems_count: Field = ast_f(sb, node, 1)
+    let mut total_w: Field = 0
+    let ecu: U32 = convert.as_u32(elems_count)
+    for i in 0..ecu bounded 256 {
+        total_w = total_w + rs_pop(sb)
+    }
+    for i2 in 0..ecu bounded 256 {
+        stack_pop(sb)
+    }
+    stack_push_temp(sb, total_w)
+    rs_push(sb, total_w)
+}
+
+fn do_tuple_done(sb: Field, node: Field) {
+    let elems_count: Field = ast_f(sb, node, 1)
+    let mut total_w: Field = 0
+    let ecu: U32 = convert.as_u32(elems_count)
+    for i in 0..ecu bounded 64 {
+        total_w = total_w + rs_pop(sb)
+    }
+    for i2 in 0..ecu bounded 64 {
+        stack_pop(sb)
+    }
+    stack_push_temp(sb, total_w)
+    rs_push(sb, total_w)
+}
+
+fn do_field_access_done(sb: Field, node: Field) {
+    let field_tok: Field = ast_f(sb, node, 1)
+    let inner_w: Field = rs_pop(sb)
+    let si: Field = find_struct_for_width(sb, inner_w)
+    if si == field.neg(1) {
+        rs_push(sb, inner_w)
+    } else {
+        let packed: Field = struct_field_offset(sb, si, field_tok)
+        if packed == field.neg(1) {
+            rs_push(sb, inner_w)
+        } else {
+            let from_top: Field = sfo_from_top(packed)
+            let fw: Field = sfo_width(packed)
+            stack_pop(sb)
+            flush_effects(sb)
+            let fwu: U32 = convert.as_u32(fw)
+            for e in 0..fwu bounded 16 {
+                let d: Field = from_top + fw + field.neg(1)
+                emit_tir(sb, lower.OP_DUP(), d, 0, 0)
+            }
+            if convert.as_u32(inner_w) < convert.as_u32(16) {
+                emit_tir(sb, lower.OP_SWAP(), inner_w, 0, 0)
+            }
+            emit_pop(sb, inner_w)
+            stack_push_temp(sb, fw)
+            rs_push(sb, fw)
+        }
+    }
+}
+
+fn do_index_const_done(sb: Field, node: Field) {
+    let index_node: Field = ast_f(sb, node, 1)
+    let idx_val: Field = ast_f(sb, index_node, 0)
+    let inner_w: Field = rs_pop(sb)
+    let elem_w: Field = 1
+    let offset: Field = idx_val * elem_w
+    stack_pop(sb)
+    flush_effects(sb)
+    let from_top: Field = inner_w + field.neg(offset) + field.neg(elem_w)
+    let ewu: U32 = convert.as_u32(elem_w)
+    for e in 0..ewu bounded 16 {
+        let d: Field = from_top + elem_w + field.neg(1)
+        emit_tir(sb, lower.OP_DUP(), d, 0, 0)
+    }
+    if convert.as_u32(inner_w) < convert.as_u32(16) {
+        emit_tir(sb, lower.OP_SWAP(), inner_w, 0, 0)
+    }
+    emit_pop(sb, inner_w)
+    stack_push_temp(sb, elem_w)
+    rs_push(sb, elem_w)
+}
+
+// =========================================================================
+// Statement dispatch
+// =========================================================================
+
+fn do_stmt(sb: Field, node: Field) {
+    let kind: Field = ast_kind(sb, node)
+    if kind == parser.NK_LET() {
+        let init_node: Field = ast_f(sb, node, 2)
+        ws_push(sb, WC_LET_DONE(), node, 0)
+        ws_push(sb, WC_EXPR(), init_node, 0)
+    }
+    else if kind == parser.NK_ASSIGN() {
+        let value_node: Field = ast_f(sb, node, 1)
+        ws_push(sb, WC_ASSIGN_DONE(), node, 0)
+        ws_push(sb, WC_EXPR(), value_node, 0)
+    }
+    else if kind == parser.NK_IF() {
+        let cond_node: Field = ast_f(sb, node, 0)
+        ws_push(sb, WC_IF_COND_DONE(), node, 0)
+        ws_push(sb, WC_EXPR(), cond_node, 0)
+    }
+    else if kind == parser.NK_FOR() {
+        let start_node: Field = ast_f(sb, node, 1)
+        let end_node: Field = ast_f(sb, node, 2)
+        ws_push(sb, WC_FOR_BODY(), node, 0)
+        ws_push(sb, WC_EXPR(), end_node, 0)
+        ws_push(sb, WC_EXPR(), start_node, 0)
+    }
+    else if kind == parser.NK_RETURN() {
+        let val_node: Field = ast_f(sb, node, 0)
+        if val_node == 0 {
+            // void return
+        } else {
+            ws_push(sb, WC_RETURN_DONE(), 0, 0)
+            ws_push(sb, WC_EXPR(), val_node, 0)
+        }
+    }
+    else if kind == parser.NK_EXPR_STMT() {
+        let expr_node: Field = ast_f(sb, node, 0)
+        let pre_len: Field = s_stack_count(sb)
+        ws_push(sb, WC_EXPR_STMT_DONE(), pre_len, 0)
+        ws_push(sb, WC_EXPR(), expr_node, 0)
+    }
+    else if kind == parser.NK_REVEAL() {
+        let fields_start: Field = ast_f(sb, node, 1)
+        let fields_count: Field = ast_f(sb, node, 2)
+        ws_push(sb, WC_REVEAL_DONE(), node, fields_count)
+        let fcu: U32 = convert.as_u32(fields_count)
+        for i in 0..fcu bounded 32 {
+            let ri: Field = fields_count + field.neg(1) + field.neg(convert.as_field(i))
+            let fi: Field = fields_start + ri
+            let val_node: Field = ast_f(sb, fi, 1)
+            ws_push(sb, WC_EXPR(), val_node, 0)
+        }
+    }
+    else if kind == parser.NK_SEAL() {
+        let fields_start: Field = ast_f(sb, node, 1)
+        let fields_count: Field = ast_f(sb, node, 2)
+        ws_push(sb, WC_SEAL_DONE(), node, fields_count)
+        // Seal: reverse order
+        let fcu: U32 = convert.as_u32(fields_count)
+        for i in 0..fcu bounded 32 {
+            let fi: Field = fields_start + convert.as_field(i)
+            let val_node: Field = ast_f(sb, fi, 1)
+            ws_push(sb, WC_EXPR(), val_node, 0)
+        }
+    }
+    else if kind == parser.NK_MATCH() {
+        // Simplified: build scrutinee, then process arms inline
+        let expr_node: Field = ast_f(sb, node, 0)
+        ws_push(sb, WC_MATCH_FINISH(), node, 0)
+        ws_push(sb, WC_EXPR(), expr_node, 0)
+    }
+}
+
+fn do_block(sb: Field, blk_node: Field) {
+    let stmts_start: Field = ast_f(sb, blk_node, 0)
+    let stmts_count: Field = ast_f(sb, blk_node, 1)
+    let tail_node: Field = ast_f(sb, blk_node, 2)
+    // Push tail first (last to execute), then stmts in reverse
+    if tail_node == 0 {
+        // no tail
+    } else {
+        ws_push(sb, WC_EXPR(), tail_node, 0)
+    }
+    let scu: U32 = convert.as_u32(stmts_count)
+    for i in 0..scu bounded 4096 {
+        let ri: Field = stmts_count + field.neg(1) + field.neg(convert.as_field(i))
+        ws_push(sb, WC_STMT(), stmts_start + ri, 0)
+    }
+}
+
+fn do_let_done(sb: Field, node: Field) {
+    let name_tok: Field = ast_f(sb, node, 0)
+    let type_node: Field = ast_f(sb, node, 1)
+    let w: Field = rs_pop(sb)
+    // Name the top stack entry
+    let cnt: Field = s_stack_count(sb)
+    if cnt == 0 { return }
+    let top_idx: Field = cnt + field.neg(1)
+    let base: Field = s_stack_base(sb) + top_idx * SENTRY_STRIDE()
+    mem.write(base, name_tok)
+    // Set elem_width for arrays
+    if type_node == 0 {
+        // no type
+    } else {
+        let tk: Field = ast_kind(sb, type_node)
+        if tk == parser.NK_TYPE_ARRAY() {
+            let elem_node: Field = ast_f(sb, type_node, 0)
+            let ew: Field = type_node_width_leaf(sb, elem_node)
+            mem.write(base + 2, ew)
+        }
+    }
+}
+
+fn do_assign_done(sb: Field, node: Field) {
+    let place_node: Field = ast_f(sb, node, 0)
+    let w: Field = rs_pop(sb)
+    let place_kind: Field = ast_kind(sb, place_node)
+    if place_kind == parser.NK_VAR() {
+        let name_tok: Field = ast_f(sb, place_node, 0)
+        let depth: Field = stack_find_var(sb, name_tok)
+        flush_effects(sb)
+        if depth == field.neg(1) {
+            let _ = stack_pop(sb)
+            emit_pop(sb, w)
+        } else {
+            if convert.as_u32(depth + w) < convert.as_u32(16) {
+                emit_tir(sb, lower.OP_SWAP(), depth + w, 0, 0)
+                emit_tir(sb, lower.OP_POP(), 1, 0, 0)
+            } else {
+                emit_tir(sb, lower.OP_POP(), 1, 0, 0)
+            }
+            let _ = stack_pop(sb)
+        }
+    }
+}
+
+fn do_if_cond_done(sb: Field, node: Field) {
+    let then_node: Field = ast_f(sb, node, 1)
+    let else_node: Field = ast_f(sb, node, 2)
+    let cond_w: Field = rs_pop(sb)
+    stack_pop(sb)
+    flush_effects(sb)
+    let pre_depth: Field = stack_depth(sb)
+    let save_idx: Field = save_stack_state(sb)
+    let tir_start: Field = s_tir_count(sb)
+    // Push then-end marker, then the then-block work
+    // WC_IF_THEN_END carries: a0=node, a1=save_idx, a2=pre_depth, a3=tir_start, a4=0
+    ws_push6(sb, WC_IF_THEN_END(), node, save_idx, pre_depth, tir_start, 0)
+    do_block(sb, then_node)
+}
+
+// Handle end of then-branch: clean up stack, start else or emit IfOnly
+fn do_if_then_end(sb: Field, node: Field, save_idx: Field, pre_depth: Field, then_start: Field) {
+    let else_node: Field = ast_f(sb, node, 2)
+    let then_depth: Field = stack_depth(sb)
+    let then_growth: Field = then_depth + field.neg(pre_depth)
+    if else_node == 0 {
+        // If-only: clean up growth, emit IfOnly
+        if then_growth == 0 {
+            // clean
+        } else {
+            emit_pop(sb, then_growth)
+        }
+        let then_end: Field = s_tir_count(sb)
+        restore_stack_state(sb, save_idx)
+        emit_tir(sb, lower.OP_IF_ONLY(), then_start, then_end + field.neg(then_start), 0)
+    } else {
+        // If-else: clean up then-branch growth, capture then range
+        if then_growth == 0 {
+            // clean
+        } else {
+            emit_pop(sb, then_growth)
+        }
+        let then_end: Field = s_tir_count(sb)
+        let then_count: Field = then_end + field.neg(then_start)
+        restore_stack_state(sb, save_idx)
+        // Push else-end marker (a0=then_growth, a1=save_idx, a2=pre_depth, a3=then_start, a4=then_count)
+        // then the else-block work
+        ws_push6(sb, WC_IF_ELSE_END(), then_growth, save_idx, pre_depth, then_start, then_count)
+        do_block(sb, else_node)
+    }
+}
+
+// Handle end of else-branch: clean up stack, emit IfElse
+fn do_if_else_end(sb: Field, then_growth: Field, save_idx: Field, pre_depth: Field, then_start: Field, then_count: Field) {
+    let else_depth: Field = stack_depth(sb)
+    let else_growth: Field = else_depth + field.neg(pre_depth)
+    if else_growth == 0 {
+        // clean
+    } else {
+        emit_pop(sb, else_growth)
+    }
+    let else_start: Field = then_start + then_count
+    restore_stack_state(sb, save_idx)
+    emit_tir(sb, lower.OP_IF_ELSE(), then_start, then_count, else_start)
+    if then_growth == 0 {
+        // void
+    } else {
+        stack_push_temp(sb, then_growth)
+    }
+}
+
+fn do_for_body(sb: Field, node: Field) {
+    let var_tok: Field = ast_f(sb, node, 0)
+    let body_node: Field = ast_f(sb, node, 4)
+    // Pop end and start widths from result stack
+    let end_w: Field = rs_pop(sb)
+    let start_w: Field = rs_pop(sb)
+    flush_effects(sb)
+    // Compute counter = end - start
+    emit_tir(sb, lower.OP_DUP(), 1, 0, 0)
+    emit_tir(sb, lower.OP_SUB(), 0, 0, 0)
+    // Pop the two exprs from model, push 3: index, end, counter
+    stack_pop(sb)
+    stack_pop(sb)
+    stack_push_named(sb, var_tok, 1)
+    stack_push_temp(sb, 1)
+    stack_push_temp(sb, 1)
+    let lbl: Field = fresh_label(sb)
+    let pre_depth: Field = stack_depth(sb)
+    let save_idx: Field = save_stack_state(sb)
+    let body_start: Field = s_tir_count(sb)
+    // Push for-body-end marker, then the body block work
+    ws_push6(sb, WC_FOR_BODY_END(), lbl, save_idx, pre_depth, body_start, 0)
+    do_block(sb, body_node)
+}
+
+fn do_for_body_end(sb: Field, lbl: Field, save_idx: Field, pre_depth: Field, body_start: Field) {
+    let post_depth: Field = stack_depth(sb)
+    let leftover: Field = post_depth + field.neg(pre_depth)
+    if leftover == 0 {
+        // clean
+    } else {
+        emit_pop(sb, leftover)
+    }
+    // Increment: swap counter out, add 1 to index, swap back
+    emit_tir(sb, lower.OP_SWAP(), 1, 0, 0)
+    emit_tir(sb, lower.OP_PUSH(), 1, 0, 0)
+    emit_tir(sb, lower.OP_ADD(), 0, 0, 0)
+    emit_tir(sb, lower.OP_SWAP(), 1, 0, 0)
+    let body_end: Field = s_tir_count(sb)
+    restore_stack_state(sb, save_idx)
+    emit_tir(sb, lower.OP_LOOP(), lbl, body_start, body_end + field.neg(body_start))
+    // Pop counter + end + index
+    let _ = stack_pop(sb)
+    let _ = stack_pop(sb)
+    flush_effects(sb)
+    emit_tir(sb, lower.OP_POP(), 2, 0, 0)
+    let _ = stack_pop(sb)
+}
+
+fn do_expr_stmt_done(sb: Field, pre_len: Field) {
+    let w: Field = rs_pop(sb)
+    let post_len: Field = s_stack_count(sb)
+    if post_len == pre_len {
+        // nothing
+    } else {
+        let diff_u: U32 = convert.as_u32(post_len + field.neg(pre_len))
+        for i in 0..diff_u bounded 16 {
+            let pw: Field = stack_pop(sb)
+            flush_effects(sb)
+            emit_pop(sb, pw)
+        }
+    }
+}
+
+fn do_reveal_done(sb: Field, node: Field, fields_count: Field) {
+    let name_tok: Field = ast_f(sb, node, 0)
+    let fcu: U32 = convert.as_u32(fields_count)
+    for i in 0..fcu bounded 32 {
+        rs_pop(sb)
+    }
+    for i2 in 0..fcu bounded 32 {
+        stack_pop(sb)
+    }
+    let ei: Field = find_event(sb, name_tok)
+    flush_effects(sb)
+    emit_tir(sb, lower.OP_REVEAL(), ei, fields_count, 0)
+}
+
+fn do_seal_done(sb: Field, node: Field, fields_count: Field) {
+    let name_tok: Field = ast_f(sb, node, 0)
+    let fcu: U32 = convert.as_u32(fields_count)
+    for i in 0..fcu bounded 32 {
+        rs_pop(sb)
+    }
+    for i2 in 0..fcu bounded 32 {
+        stack_pop(sb)
+    }
+    let ei: Field = find_event(sb, name_tok)
+    flush_effects(sb)
+    emit_tir(sb, lower.OP_SEAL(), ei, fields_count, 0)
+}
+
+fn do_return_done(sb: Field) {
+    // Return value has been built, just consume the width from result stack
+    let _ = rs_pop(sb)
+}
+
+fn do_fn_body_done(sb: Field, name_tok: Field, ret_w: Field) {
+    let final_depth: Field = stack_depth(sb)
+    if ret_w == 0 {
+        if final_depth == 0 {
+            // clean
+        } else {
+            flush_effects(sb)
+            emit_pop(sb, final_depth)
+        }
+    } else {
+        let dead: Field = final_depth + field.neg(ret_w)
+        if dead == 0 {
+            // clean
+        } else {
+            flush_effects(sb)
+            if convert.as_u32(ret_w) < convert.as_u32(16) {
+                let du: U32 = convert.as_u32(dead)
+                for d in 0..du bounded 64 {
+                    emit_tir(sb, lower.OP_SWAP(), ret_w, 0, 0)
+                    emit_tir(sb, lower.OP_POP(), 1, 0, 0)
+                }
+            } else {
+                emit_pop(sb, dead)
+            }
+        }
+    }
+    flush_effects(sb)
+    emit_tir(sb, lower.OP_RETURN(), 0, 0, 0)
+    emit_tir(sb, lower.OP_FN_END(), 0, 0, 0)
+    clear_stack(sb)
+}
+
+// =========================================================================
+// Top-level driver (build_fn_top inlined to avoid codegen → build_fn_top cycle)
+// =========================================================================
+
+pub fn codegen(state_base: Field) {
+    let sb: Field = state_base
+    let file_kind: Field = s_file_kind(sb)
+    let items_start: Field = ast_f(sb, 0, 4)
+    let items_count: Field = ast_f(sb, 0, 5)
+    // If program, emit Entry("main")
+    if file_kind == 1 {
+        let icu: U32 = convert.as_u32(items_count)
+        let mut main_tok: Field = 0
+        for i in 0..icu bounded 256 {
+            let item: Field = items_start + convert.as_field(i)
+            if ast_kind(sb, item) == parser.NK_FN() {
+                let name_tok: Field = ast_f(sb, item, 0)
+                let token: Field = s_tok_base(sb) + name_tok * 4
+                let start: Field = mem.read(token + 1)
+                let end: Field = mem.read(token + 2)
+                if end == start + 4 {
+                    let name: Field = mem.read(sb + 40) + start
+                    if mem.read(name) == 109 {
+                        if mem.read(name + 1) == 97 {
+                            if mem.read(name + 2) == 105 {
+                                if mem.read(name + 3) == 110 { main_tok = name_tok }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        emit_tir(sb, lower.OP_ENTRY(), main_tok, 0, 0)
+    }
+    // Emit all functions (build_fn_top inlined here)
+    let icu2: U32 = convert.as_u32(items_count)
+    for i2 in 0..icu2 bounded 256 {
+        let fn_node: Field = items_start + convert.as_field(i2)
+        if ast_kind(sb, fn_node) == parser.NK_FN() {
+            let name_tok: Field = ast_f(sb, fn_node, 0)
+            let params_start: Field = ast_f(sb, fn_node, 1)
+            let params_count: Field = ast_f(sb, fn_node, 2)
+            let ret_type_node: Field = ast_f(sb, fn_node, 3)
+            let body_node: Field = ast_f(sb, fn_node, 4)
+            let flags: Field = ast_f(sb, fn_node, 5)
+            // Skip test functions
+            let (fq, fr): (U32, U32) = convert.as_u32(flags) /% convert.as_u32(2)
+            let mut skip: Field = 0
+            if convert.as_field(fr) == FLAG_TEST() { skip = 1 }
+            if body_node == 0 { skip = 1 }
+            if skip == 0 {
+                let mut ret_w: Field = 0
+                if ret_type_node == 0 {
+                    ret_w = 0
+                } else {
+                    ret_w = type_node_width(sb, ret_type_node)
+                }
+                emit_tir(sb, lower.OP_FN_START(), name_tok, 0, 0)
+                clear_stack(sb)
+                // Register parameters
+                let pcu: U32 = convert.as_u32(params_count)
+                for pi in 0..pcu bounded 32 {
+                    let param_node: Field = params_start + convert.as_field(pi)
+                    let param_name: Field = ast_f(sb, param_node, 0)
+                    let param_type: Field = ast_f(sb, param_node, 1)
+                    let pw: Field = type_node_width(sb, param_type)
+                    stack_push_named(sb, param_name, pw)
+                }
+                // Build body using work-stack dispatch
+                s_set_work_depth(sb, 0)
+                s_set_rs_depth(sb, 0)
+                ws_push(sb, WC_FN_BODY_DONE(), name_tok, ret_w)
+                do_block(sb, body_node)
+                // Run dispatch loop
+run_pending_work(sb)
+            }
+        }
+    }
+}
+
+pub fn result_count(state_base: Field) -> Field {
+    s_tir_count(state_base)
+}
+
+pub fn result_base(state_base: Field) -> Field {
+    s_tir_base(state_base)
+}
+
+fn run_pending_work(sb: Field) {
+    let max: U32 = convert.as_u32(MAX_STEPS())
+    for _step in 0..max bounded 131072 {
+        if s_work_depth(sb) == 0 { return }
+        dispatch_work(sb)
+    }
+}

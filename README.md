@@ -24,19 +24,21 @@ formula; running it and proving it ran correctly are the same act.
 
 Trident is the language of the [soft3](https://soft3.org) stack. It
 compiles to **nox**, the proof-native VM, and the **joy** warrior runs,
-proves and verifies what it emits — a **zheng** proof, hash-based,
-post-quantum, no trusted setup, no elliptic curves. One algebra
+proves and verifies what it emits through **zheng**. Public execution
+certificates disclose their witness; private execution uses Trisha's Triton 7
+STARK to check Zheng's execution constraints. One algebra
 ([strata](https://github.com/cyberia-to/strata)), one hash
 ([hemera](https://github.com/cyberia-to/hemera)), one field, from source
 to proof. Twenty other engines and twenty-five unions are declared
 behind `--target`, Triton VM with its STARK is the second tested one,
-and the same formula compiles to native code for 25 backends via the
-in-repo `silicon` crate — from Cortex-M and CUDA to OpenQASM and
-Verilog.
+and the in-repo `silicon` crate contains experimental emitters for 25 native
+backends — from Cortex-M and CUDA to OpenQASM and Verilog. Catalog entries and
+experimental emitters do not establish runtime or proof support.
 
-```
-cargo install trident-lang cyber-joy
-```
+The coordinated release candidate is Trident 0.3, Trisha 0.3 and Joy 0.5.
+Build from the complete [source distribution](../trisha/scripts/README.md)
+or use its tested binary archive. Individual registry installation of this
+candidate is not yet available.
 
 ---
 
@@ -52,18 +54,10 @@ fn main() -> Field {
 }
 ```
 
-```
-$ trident build hello_proof.tri
-Compiled -> hello_proof.nox
-$ trident prove hello_proof.tri --secret 7,13
-Proved in 8 ms: 17 reductions, 1 accumulator groups, 1387 bytes
-Output: [20]
-hello_proof.zheng
-$ trident verify hello_proof.zheng
-Verification: PASS (zheng proof)
-  program: hello_proof
-  output:  [20]
-  cycles:  17
+```sh
+trident build hello_proof.tri --target nox
+trident prove hello_proof.tri --target nox --secret 7,13
+trident verify hello_proof.zheng
 ```
 
 A proof that `a + b = 20` without revealing `a` or `b`, checked
@@ -123,42 +117,27 @@ On the default target a Trident program never leaves the soft3 stack:
 |------|-----------|--------------|
 | compile | **trident** | `.tri` → `.nox` formula over 18 reduction patterns; cost in reductions |
 | execute | [nox](https://github.com/cyberia-to/nox) via [joy](https://github.com/cyberia-to/joy) | reduces the formula; the trace is the witness |
-| prove | [zheng](https://github.com/cyberia-to/zheng) via joy | SuperSpartan + Brakedown + HyperNova folding; one universal step CCS — constant-size proofs |
+| prove | [zheng](https://github.com/cyberia-to/zheng) via joy | Public execution certificate: full authenticated witness and exact CCS constraints |
 | verify | joy | checks the proof against the statement — no re-execution |
-| state | [bbg](https://github.com/cyberia-to/bbg) | `os.state.read` lowers to the look pattern; reads carry proofs, the public root is in the statement |
+| state | Compiler/nox state primitive | State execution certificates are unsupported by the current Joy path |
 | algebra · hash | [strata](https://github.com/cyberia-to/strata) · [hemera](https://github.com/cyberia-to/hemera) | Goldilocks arithmetic and Poseidon2 inside the compiler — no parallel implementations |
 
-Measured on a laptop, release build, zheng 0.3.1: `(a+b)*a` proves in
-4 ms into a 1.3 KB artifact; two `divine()` secrets in 8 ms / 1.4 KB;
-one `hash` builtin in 55 ms / 2.4 KB; a depth-32 Merkle path (1,906
-reductions) in 1.9 s / 2.6 KB. The proof is constant-size: one universal
-step CCS folds every row into one accumulator, the opening bindings into
-a second — any program is ≤ 2 groups, and every byte on the wire is
-verifier-read.
+The default Zheng path verifies the computation/public-result relation for its supported bounded programs without native re-execution. It reveals the witness and has linear certificate size and verification work; it is neither ZK nor succinct. Secret inputs, state proofs, and unsupported execution shapes fail explicitly. Older folded trace-statement artifacts do not establish this relation and require explicit legacy inspection.
 
 ---
 
-## One Source, 21 Targets
+## Target ownership and installed support
 
-A Trident program is written once against field elements; the target is
-a config in `vm/`, not a rewrite. `trident build --target <engine>`
-picks one. Levels are what exists, not what is planned — see
-[reference/targets.md](reference/targets.md).
+Trident implements the nox compilation path and shared frontend/TIR. Trisha owns Triton lowering, machine metadata, SDK, execution, and STARK proving. Joy owns the nox runtime/proof integration. `catalog/vm/` and `catalog/os/` contain discovery/design records; a catalog entry does not provide a compiler backend or working deployment.
 
-| level | engines |
-|-------|---------|
-| **tested** — end to end, proofs land | **nox** (default · zheng via joy) · **triton** (Triton VM · STARK via trisha) · **miden** |
-| **costed** — scaffold backend + cost model, not yet tested | sp1 · openvm · cairo |
-| **lowering** — pipeline wired, emission still stubbed | arm64 · x86-64 · riscv · nock |
-| **declared + documented** — config and reference, no lowering | risczero · jolt · aztec · avm · evm · wasm · sbpf · movevm · polkavm · ckb · tvm |
+| Target | Implemented path | Runtime/proof scope |
+|---|---|---|
+| `nox` (default) | Trident → nox formula → Joy | Execution; bounded public Zheng execution certificates |
+| `triton` | Trident typed TIR → Trisha TASM | CPU execution and Triton STARK proof/verification |
+| `neptune` | Triton machine plus Trisha-owned Neptune SDK | Helpers and proposed standards; no live deployment or complete recursive verifier |
+| Other catalog names | Declared metadata and design documentation | Not installed implementations |
 
-Above the engines sit **25 unions** — the operating systems and chains
-a program deploys into, each binding one engine (`os/`): neptune
-(bound — runtime bindings in Trident, on triton); linux, macos,
-android, browser, wasi on the native and wasm engines; ethereum,
-arbitrum, solana, polkadot, ton, near, cosmwasm, icp, sui, aptos,
-starknet, aztec, aleo, miden, nervos, nockchain, succinct, boundless,
-openvm-network — declared and documented, awaiting bindings.
+Targets resolve a versioned package once: machine ABI, intrinsic capabilities, module contents and hashes, and runtime capabilities. Library imports retain `vm.*`, `std.*`, and `os.*` namespaces independently of repository paths. See [targets](reference/targets.md) and [warrior API](reference/warrior-api.md).
 
 ### The same formula, on silicon (sketches, not warriors)
 
@@ -193,23 +172,19 @@ $ silicon hello.nox -t verilog -o hello.v
 $ silicon hello.nox -t spirv -o hello.spv
 ```
 
-### Neptune (`--target triton`)
+### Neptune (`--target neptune`)
 
-[Neptune Cash](https://neptune.cash/) is the only blockchain with
-recursive STARK proofs in production — a proof verifies another proof
-inside itself, so any chain of transactions collapses into a single
-cryptographic check. Trident targets its [Triton VM](https://triton-vm.org/)
-through the [trisha](https://github.com/cyberia-to/trisha) warrior, and
-these programs are proposed Neptune standards — written in Trident,
-compiling to TASM today, under validation before deployment:
+Trisha owns Neptune bindings and proposed token standards. Selecting `neptune` supplies its SDK; the bare `triton` target supplies only machine bindings. Compilation of these sources does not establish correctness of a live transaction protocol.
 
-| Program | What it proposes |
-|---------|-----------------|
-| [Coin](os/neptune/standards/coin.tri) | Fungible token (TSP-1) — pay, lock, mint, burn, composable hooks |
-| [Card](os/neptune/standards/card.tri) | Non-fungible token (TSP-2) — royalties, creator immutability |
-| [Lock scripts](os/neptune/locks/) | Multisig, timelock, symmetric spending authorization |
-| [Type scripts](os/neptune/types/) | Token conservation laws verified in every transaction |
-| [Programs](os/neptune/programs/) | Recursive verification, proof aggregation, relay |
+| Source | Scope |
+|---|---|
+| [Coin](../trisha/examples/neptune/standards/coin.tri) | Proposed fungible-token standard |
+| [Card](../trisha/examples/neptune/standards/card.tri) | Proposed non-fungible-token standard |
+| [Lock scripts](../trisha/examples/neptune/locks/) | Authorization helpers |
+| [Type scripts](../trisha/examples/neptune/types/) | Proposed token checks |
+| [Experimental proof programs](../trisha/examples/experimental/neptune/) | Unimplemented recursive verification and transaction prototypes, excluded from the SDK |
+
+The old `os.neptune.proof` prototype did not constrain computed verification values. Production imports now fail; it must not authorize transactions. Trisha's CPU Triton STARK prover/verifier remains a separate working path.
 
 See the [Gold Standard](docs/explanation/gold-standard.md) for the full
 PLUMB specification and the [Skill Library](docs/explanation/skill-library.md)
@@ -342,61 +317,54 @@ See [Content-Addressed Code](docs/explanation/content-addressing.md).
 
 ---
 
-## Trusting, Not Trust
+## Verification status
 
-You download a compiler binary. Someone compiled it — you trust them.
-They used a compiler too — you trust that one as well. The trust chain
-stretches back to the first hand-assembled binary, and every link is
-opaque. Ken Thompson showed in 1984 that a compiler can inject
-backdoors invisible in the source.
+The Rust compiler is the current implementation. `lib/std/compiler/` contains
+experimental components, not a complete self-hosted compiler or a proof
+that this compiler binary faithfully implements the language.
 
-Trident breaks the chain. The compiler self-hosts: Trident source
-compiles Trident source, and the execution produces a proof that
-compilation was faithful. Not "we audited the binary." Not "we
-reproduced the build." A cryptographic proof, from the mathematics
-itself, that the output corresponds to the input.
+Triton execution and STARK proving belong to [Trisha](../trisha).
+`trisha bench --full` requires explicit input/output fixtures and verifies
+proofs for the measured programs. Missing fixtures are reported as
+unverified and fail the command. Historical ratios from modified or
+non-executed assembly are not release evidence.
 
-Three producers compete on the same scoreboard:
-
-```
-$ trident bench baselines/triton/std/compiler
-
-Module                       Tri   Hand Neural   Ratio
--------------------------------------------------------
-std::compiler::lexer         288      8      -  36.00x
-std::compiler::parser        358      8      -  44.75x
-std::compiler::pipeline        0      1      -   0.00x
-```
-
-`Tri` — compiler output. `Hand` — expert-written assembly (the floor).
-`Neural` — a [13M-parameter GNN+Transformer](reference/neural.md)
-learning to emit better assembly than the compiler. The dashes mean the
-model is training. When it beats the compiler, the number appears.
-`trident bench` also reports a `Nox(r)` column — reductions, for the
-modules inside the nox surface.
-
-`src/` is the Rust bootstrap — it shrinks.
-`std/compiler/` is the Trident replacement — it grows.
+The nox compiler and Joy executor support the surface documented in
+[reference/nox.md](reference/nox.md). Zheng derives the execution constraints
+from the canonical program; verification binds public input, output, cost and
+authenticated state roots. Public JOYEXEC2 and JOYST001 certificates disclose
+the witness. Private JOYZK003 artifacts prove the same bounded relation using
+a real Triton STARK and omit private columns. Private queries select from
+bounded fully public state tables. Dynamic continuations, variable noun shapes
+and a private database remain unimplemented. Legacy unauthenticated recursive
+opening APIs remain disabled. See [Joy's proof contracts](../joy/README.md)
+and the [coordinated validation ledger](audit/full-release-preparation.md).
 
 ---
 
 ## Quick Start
 
-```
-cargo install trident-lang cyber-joy       # the compiler + the nox warrior
-trident build main.tri                     # compile to .nox (--target triton for TASM)
-trident run main.tri --input-values 3,5    # execute on nox (via joy)
-trident prove main.tri                     # zheng proof -> main.zheng
-trident verify main.zheng                  # verify, no re-execution
-trident check main.tri                     # type-check only
-trident test main.tri                      # run #[test] functions
+Build the coordinated development checkouts with their locked dependencies:
+
+```sh
+nu ../trisha/patches/apply.nu
+cargo install --path . --locked
+cargo install --path ../joy/cli --locked
+cargo install --path ../trisha/cli --locked
+trident build main.tri                     # nox output by default
+trident run main.tri --input-values 3,5     # Joy execution
+trident build main.tri --target triton     # Trisha emits TASM
+trident run main.tri --target triton       # Trisha execution
+trident prove main.tri --target triton     # Triton STARK proof
+trident check main.tri                     # type-check
 trident fmt main.tri                       # format source
-trident audit main.tri                     # formal verification
-trident bench main.tri                     # cost: reductions (nox), instructions (triton)
 ```
 
-The Triton path needs [trisha](https://github.com/cyberia-to/trisha)
-on `PATH` the same way the nox path needs `joy`.
+Follow [Trisha's build instructions](../trisha/README.md) to prepare its
+patched dependencies before installing. Warriors must be on `PATH`.
+An unavailable warrior is an error. An explicit target overrides the
+project target; otherwise `trident.toml` selects the target, then nox is
+the fallback. Standard compiler resources are embedded in the binaries.
 
 ---
 
@@ -415,17 +383,19 @@ on `PATH` the same way the nox path needs `joy`.
 
 ```
 src/          Compiler in Rust            ~36K lines, soft3-native (strata · hemera · nox)
-vm/           Engines + intrinsics        21 target.toml profiles; intrinsics in Trident
-std/          Standard library in Trident Crypto, math, neural networks, compiler
-os/           Unions in Trident           25 per-OS configs, programs, and extensions
+lib/vm/       Generic intrinsic contracts; target-shaped modules are generated
+lib/std/      Portable source libraries; std.target is generated from the ABI
+catalog/vm/   Machine discovery records, not backend implementations
+catalog/os/   Network discovery and design records
+../trisha/    Triton SDK, machine/network manifests, baselines and warrior
 tests/        nox_surface.rs, differential.rs — every lowering reduces on the real VM
 ```
 
 ```
 vm.*              Compiler intrinsics       hash, sponge, divine, assert
 std.*             Standard library          sha256, bigint, ecdsa, poseidon2
-os.*              Portable runtime          os.signal, os.neuron, os.state, os.time
-os.<target>.*     Target-specific APIs      os.neptune.xfield, os.solana.pda
+os.*              Runtime namespace         os.state.read builtin; portable modules are future work
+os.<target>.*     Target-specific APIs      Neptune modules supplied by Trisha
 ```
 
 The warriors live beside the compiler:
@@ -478,14 +448,17 @@ Full index: [docs/README.md](docs/README.md)
 
 ## Status
 
-0.2.0 / 500K — **Cast**. The language poured into the soft3 mold: nox
-by default, a real prover, one algebra, one hash. Hot, not production
-ready. Kelvin versioning counts down toward 0K; the
-[roadmap](reference/roadmap.md) says what cools next.
+0.4.0 is an unreleased coordinated candidate. The compiler owns shared
+front-end, nox lowering and optional generic neural infrastructure;
+Trisha owns Triton lowering, emission, execution, Neptune libraries and
+Triton benchmarks. See [the warrior API](reference/warrior-api.md).
 
-Treat it as experimental unless you already understand the constraints
-you are adopting. The architecture is built to expand targets over time,
-without changing what a Trident program is.
+Current tests include 198 freshly verified proofs across all 43 Triton
+baselines, actual isolated Neptune transaction admission, and installed
+Trident/Trisha/Joy proof workflows on macOS and Linux arm64. The remaining
+language, protocol, cryptographic review and final distribution gates are
+tracked in the [release ledger](audit/full-release-preparation.md).
+These measurements do not establish universal formal or cryptographic assurance.
 
 ---
 

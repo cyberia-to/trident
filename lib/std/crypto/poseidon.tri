@@ -1,0 +1,122 @@
+module std.crypto.poseidon
+
+// Protocol version 2: exact Goldilocks Poseidon2-HL width8 permutation.
+// Parameters: Plonky3 p3-goldilocks 0.4.2 (MIT/Apache-2.0),
+// commit 0835481398d2b481bef0c6d0e8188b484ab9a636, goldilocks/src/poseidon2.rs.
+// Full8, partial22, x^7 throughout, official HL external M4 and internal diagonal.
+// Old four-round dummy outputs are intentionally incompatible.
+// hash1/2/3/4 truncate to one Field: generic collision ceiling ~32 bits.
+// hashN_digest returns FOUR Fields, independent of target-dependent Digest ABI.
+// Input length occupies capacity lane4. This does not change Hemera/state roots.
+
+pub struct State {
+    s0: Field,
+    s1: Field,
+    s2: Field,
+    s3: Field,
+    s4: Field,
+    s5: Field,
+    s6: Field,
+    s7: Field,
+}
+fn sbox(x: Field) -> Field {
+    let x2: Field = x * x
+    let x3: Field = x2 * x
+    let x6: Field = x3 * x3
+    x6 * x
+}
+fn mix4(a: Field, b: Field, c: Field, d: Field) -> (Field, Field, Field, Field) {
+    (a * 5 + b * 7 + c + d * 3,
+     a * 4 + b * 6 + c + d,
+     a + b * 3 + c * 5 + d * 7,
+     a + b + c * 4 + d * 6)
+}
+fn external(st: State) -> State {
+    let (a0,a1,a2,a3) = mix4(st.s0,st.s1,st.s2,st.s3)
+    let (a4,a5,a6,a7) = mix4(st.s4,st.s5,st.s6,st.s7)
+    State { s0: a0 + a0 + a4, s1: a1 + a1 + a5, s2: a2 + a2 + a6, s3: a3 + a3 + a7, s4: a4 + a0 + a4, s5: a5 + a1 + a5, s6: a6 + a2 + a6, s7: a7 + a3 + a7 }
+}
+fn full(st: State, rc: State) -> State {
+    let after: State = State { s0: sbox(st.s0 + rc.s0), s1: sbox(st.s1 + rc.s1), s2: sbox(st.s2 + rc.s2), s3: sbox(st.s3 + rc.s3), s4: sbox(st.s4 + rc.s4), s5: sbox(st.s5 + rc.s5), s6: sbox(st.s6 + rc.s6), s7: sbox(st.s7 + rc.s7) }
+    external(after)
+}
+fn partial(st: State, rc: Field) -> State {
+    let first: Field = sbox(st.s0 + rc)
+    let sum: Field = first + st.s1 + st.s2 + st.s3 + st.s4 + st.s5 + st.s6 + st.s7
+    State { s0: first * 12216033376705242021 + sum, s1: st.s1 * 2072934925475504800 + sum, s2: st.s2 * 16432743296706583078 + sum, s3: st.s3 * 1287600597097751715 + sum, s4: st.s4 * 10482065724875379356 + sum, s5: st.s5 * 3057917794534811537 + sum, s6: st.s6 * 4460508886913832365 + sum, s7: st.s7 * 4574242228824269566 + sum }
+}
+
+pub fn permute(input: State) -> State {
+    let r0: State = external(input)
+    let r1: State = full(r0, State { s0: 15949291268843349465, s1: 14644164809401934923, s2: 18420360874837380316, s3: 4756469047455716334, s4: 8685499049481102115, s5: 3799221349720045367, s6: 13676397835037157930, s7: 6566439050423619635 })
+    let r2: State = full(r1, State { s0: 17428268347612331188, s1: 2833135872454503769, s2: 4767009016213040191, s3: 2797635963551733652, s4: 5312339450141126694, s5: 5356668452102813289, s6: 1234059326449530173, s7: 7724302552453704877 })
+    let r3: State = full(r2, State { s0: 14868588146468890290, s1: 12825281145595371185, s2: 13097885453579304196, s3: 7905326782341128063, s4: 14167525334039893569, s5: 2082169701994688927, s6: 12190787523818595537, s7: 12602917751946636 })
+    let r4: State = full(r3, State { s0: 14890907856876319003, s1: 16552240149997473409, s2: 5634093690795187558, s3: 4883714163685656967, s4: 12440776365164557866, s5: 3923800234666204307, s6: 9858064884105950259, s7: 16040043470428402038 })
+    let r5: State = partial(r4, 5226594323142090582)
+    let r6: State = partial(r5, 1243120476974621208)
+    let r7: State = partial(r6, 12100812801659301173)
+    let r8: State = partial(r7, 11228203327983058121)
+    let r9: State = partial(r8, 13891617888374767564)
+    let r10: State = partial(r9, 5742893160230537107)
+    let r11: State = partial(r10, 3763472116988983643)
+    let r12: State = partial(r11, 2466655769425769160)
+    let r13: State = partial(r12, 6254574254498162968)
+    let r14: State = partial(r13, 14183251225809189357)
+    let r15: State = partial(r14, 11565357354521717084)
+    let r16: State = partial(r15, 17300657704266685688)
+    let r17: State = partial(r16, 310485250821938281)
+    let r18: State = partial(r17, 16853586468012618118)
+    let r19: State = partial(r18, 1978800426240373849)
+    let r20: State = partial(r19, 6948188224235462572)
+    let r21: State = partial(r20, 1486402152218690509)
+    let r22: State = partial(r21, 5669161690283398991)
+    let r23: State = partial(r22, 17943970877073781734)
+    let r24: State = partial(r23, 17926851897715769433)
+    let r25: State = partial(r24, 13052837496695000666)
+    let r26: State = partial(r25, 18138113741095562305)
+    let r27: State = full(r26, State { s0: 94277733998400326, s1: 10891359798487446420, s2: 18280773820738154043, s3: 13714589910668449566, s4: 10639034072771185213, s5: 14148790895768484219, s6: 18341268649720100165, s7: 3096672942770686236 })
+    let r28: State = full(r27, State { s0: 12277596046563557393, s1: 400461754528604020, s2: 12955488253560265444, s3: 11773677676764285572, s4: 4833837465239476573, s5: 17645852643693996619, s6: 6605134696140007471, s7: 588040525114200273 })
+    let r29: State = full(r28, State { s0: 11001741536026769411, s1: 17917086578469406776, s2: 14893530806420712543, s3: 727997185253761138, s4: 3443873847340254325, s5: 13095911531247069692, s6: 8330737046680948619, s7: 6014364575875986011 })
+    let r30: State = full(r29, State { s0: 16851679856681761121, s1: 17817965496543149594, s2: 12823640325246269760, s3: 13685256787930775147, s4: 4682652317564502291, s5: 4233879762155685988, s6: 11097258179564187322, s7: 10804761421745472094 })
+    r30
+}
+
+pub fn hash1_digest(a: Field) -> (Field, Field, Field, Field) {
+    let initial: State = State { s0: a, s1: 0, s2: 0, s3: 0, s4: 1, s5: 0, s6: 0, s7: 0 }
+    let result: State = permute(initial)
+    (result.s0,result.s1,result.s2,result.s3)
+}
+pub fn hash1(a: Field) -> Field {
+    let (first,unused1,unused2,unused3) = hash1_digest(a)
+    first
+}
+
+pub fn hash2_digest(a: Field, b: Field) -> (Field, Field, Field, Field) {
+    let initial: State = State { s0: a, s1: b, s2: 0, s3: 0, s4: 2, s5: 0, s6: 0, s7: 0 }
+    let result: State = permute(initial)
+    (result.s0,result.s1,result.s2,result.s3)
+}
+pub fn hash2(a: Field, b: Field) -> Field {
+    let (first,unused1,unused2,unused3) = hash2_digest(a, b)
+    first
+}
+
+pub fn hash3_digest(a: Field, b: Field, c: Field) -> (Field, Field, Field, Field) {
+    let initial: State = State { s0: a, s1: b, s2: c, s3: 0, s4: 3, s5: 0, s6: 0, s7: 0 }
+    let result: State = permute(initial)
+    (result.s0,result.s1,result.s2,result.s3)
+}
+pub fn hash3(a: Field, b: Field, c: Field) -> Field {
+    let (first,unused1,unused2,unused3) = hash3_digest(a, b, c)
+    first
+}
+
+pub fn hash4_digest(a: Field, b: Field, c: Field, d: Field) -> (Field, Field, Field, Field) {
+    let initial: State = State { s0: a, s1: b, s2: c, s3: d, s4: 4, s5: 0, s6: 0, s7: 0 }
+    let result: State = permute(initial)
+    (result.s0,result.s1,result.s2,result.s3)
+}
+pub fn hash4(a: Field, b: Field, c: Field, d: Field) -> Field {
+    let (first,unused1,unused2,unused3) = hash4_digest(a, b, c, d)
+    first
+}

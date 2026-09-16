@@ -1,0 +1,6 @@
+program differential_secp256k1_prime
+use std.crypto.secp256k1
+fn main() -> (U32, U32, U32, U32, U32, U32, U32, U32) {
+    let p = secp256k1.field_prime()
+    (p.l0, p.l1, p.l2, p.l3, p.l4, p.l5, p.l6, p.l7)
+}

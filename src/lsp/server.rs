@@ -297,7 +297,8 @@ impl LanguageServer for TridentLsp {
             None => return Ok(None),
         };
 
-        let tokens = semantic::semantic_tokens_from_cache(doc);
+        let tokens =
+            semantic::semantic_tokens_from_cache(doc, super::project::editor_options(uri).as_ref());
         doc.last_semantic_tokens = tokens.clone();
         doc.result_version += 1;
 
@@ -320,7 +321,10 @@ impl LanguageServer for TridentLsp {
 
         // If client's previous_result_id doesn't match, send full tokens
         if params.previous_result_id != doc.result_id() {
-            let tokens = semantic::semantic_tokens_from_cache(doc);
+            let tokens = semantic::semantic_tokens_from_cache(
+                doc,
+                super::project::editor_options(uri).as_ref(),
+            );
             doc.last_semantic_tokens = tokens.clone();
             doc.result_version += 1;
             return Ok(Some(SemanticTokensFullDeltaResult::Tokens(
@@ -331,7 +335,8 @@ impl LanguageServer for TridentLsp {
             )));
         }
 
-        let new_tokens = semantic::semantic_tokens_from_cache(doc);
+        let new_tokens =
+            semantic::semantic_tokens_from_cache(doc, super::project::editor_options(uri).as_ref());
         let edits = semantic::compute_semantic_delta(&doc.last_semantic_tokens, &new_tokens);
         doc.last_semantic_tokens = new_tokens;
         doc.result_version += 1;

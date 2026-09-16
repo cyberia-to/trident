@@ -6,8 +6,27 @@
 use super::*;
 
 #[test]
+fn assembly_effect_counts_words_and_preserves_named_prefix() {
+    let mut sm = StackManager::with_config(u32::MAX, 1000);
+    sm.push_named("sentinel", 5);
+    sm.push_temp(3);
+    sm.push_temp(2);
+    assert!(sm.can_pop_anonymous(5));
+    assert!(!sm.can_pop_anonymous(6));
+    sm.pop_anonymous(4);
+    assert_eq!(sm.stack_depth(), 6);
+    assert_eq!(sm.last().unwrap().width, 1);
+    assert_eq!(sm.access_var("sentinel"), 1);
+    sm.pop_anonymous(1);
+    assert_eq!(sm.last().unwrap().name.as_deref(), Some("sentinel"));
+    assert_eq!(sm.last().unwrap().width, 5);
+    assert!(!sm.can_pop_anonymous(1));
+    assert!(sm.drain_side_effects().is_empty());
+}
+
+#[test]
 fn test_basic_push_pop() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     sm.push_named("a", 1);
     sm.push_named("b", 1);
     assert_eq!(sm.stack_depth(), 2);
@@ -20,7 +39,7 @@ fn test_basic_push_pop() {
 
 #[test]
 fn test_no_spill_under_16() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     for i in 0..16 {
         sm.push_named(&format!("v{}", i), 1);
     }
@@ -30,7 +49,7 @@ fn test_no_spill_under_16() {
 
 #[test]
 fn test_spill_at_17() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     // Push 16 variables
     for i in 0..16 {
         sm.push_named(&format!("v{}", i), 1);
@@ -49,7 +68,7 @@ fn test_spill_at_17() {
 
 #[test]
 fn test_reload_spilled_var() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     for i in 0..16 {
         sm.push_named(&format!("v{}", i), 1);
     }
@@ -66,7 +85,7 @@ fn test_reload_spilled_var() {
 
 #[test]
 fn test_temp_push() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     sm.push_temp(1);
     assert_eq!(sm.stack_depth(), 1);
     assert!(sm.last().unwrap().name.is_none());
@@ -74,7 +93,7 @@ fn test_temp_push() {
 
 #[test]
 fn test_multi_width_spill() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     // Push a Digest (width 5) and fill up stack
     sm.push_named("digest", 5);
     for i in 0..11 {
@@ -87,13 +106,16 @@ fn test_multi_width_spill() {
     let effects = sm.drain_side_effects();
     assert!(!effects.is_empty());
     // Digest with width 5 should have 5 write_mem instructions
-    let write_count = effects.iter().filter(|l| l.contains("write_mem")).count();
+    let write_count = effects
+        .iter()
+        .filter(|l| matches!(l, TIROp::WriteMem(1)))
+        .count();
     assert_eq!(write_count, 5, "expected 5 write_mem for Digest spill");
 }
 
 #[test]
 fn test_spill_all_named() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     sm.push_named("a", 1);
     sm.push_named("b", 1);
     sm.push_named("c", 1);
@@ -103,7 +125,10 @@ fn test_spill_all_named() {
     sm.spill_all_named();
     let effects = sm.drain_side_effects();
     // 3 named variables spilled → 3 write_mem instructions
-    let write_count = effects.iter().filter(|l| l.contains("write_mem")).count();
+    let write_count = effects
+        .iter()
+        .filter(|l| matches!(l, TIROp::WriteMem(1)))
+        .count();
     assert_eq!(write_count, 3, "expected 3 write_mem for 3 named vars");
 
     // Only the anonymous temp should remain on stack
@@ -116,11 +141,53 @@ fn test_spill_all_named() {
 
 #[test]
 fn test_spill_all_named_empty() {
-    let mut sm = StackManager::new();
+    let mut sm = StackManager::with_config(16, 1000);
     sm.push_temp(1);
     sm.push_temp(1);
     sm.spill_all_named();
     let effects = sm.drain_side_effects();
     assert!(effects.is_empty(), "no named vars → no spill");
     assert_eq!(sm.stack_len(), 2);
+}
+
+#[test]
+fn typed_spill_reload_preserves_multiword_order_and_temporaries() {
+    use std::collections::BTreeMap;
+    for width in 1..24 {
+        for above in 0..24 {
+            let mut manager = StackManager::with_config(u32::MAX, 1000);
+            manager.push_named("saved", width);
+            manager.push_temp(above);
+            let mut stack: Vec<u64> = (0..width + above).map(u64::from).collect();
+            let mut ram = BTreeMap::new();
+            manager.spill_all_named();
+            manager.access_var("saved");
+            for op in manager.drain_side_effects() {
+                match op {
+                    TIROp::Push(v) => stack.push(v),
+                    TIROp::Swap(d) => {
+                        let top = stack.len() - 1;
+                        stack.swap(top, top - d as usize);
+                    }
+                    TIROp::Pop(n) => stack.truncate(stack.len() - n as usize),
+                    TIROp::WriteMem(1) => {
+                        let addr = stack.pop().unwrap();
+                        ram.insert(addr, stack.pop().unwrap());
+                        stack.push(addr + 1);
+                    }
+                    TIROp::ReadMem(1) => {
+                        let addr = stack.pop().unwrap();
+                        stack.push(ram[&addr]);
+                        stack.push(addr - 1);
+                    }
+                    _ => panic!("unexpected spill op: {op:?}"),
+                }
+            }
+            let expected: Vec<_> = (width..width + above)
+                .chain(0..width)
+                .map(u64::from)
+                .collect();
+            assert_eq!(stack, expected, "width={width} above={above}");
+        }
+    }
 }

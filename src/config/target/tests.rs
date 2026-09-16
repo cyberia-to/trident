@@ -19,7 +19,8 @@ fn test_triton_defaults() {
 
 #[test]
 fn test_resolve_triton() {
-    let config = TerrainConfig::resolve("triton").unwrap();
+    let config = TerrainConfig::triton();
+    assert_eq!(owner_for("triton"), Some("trisha"));
     assert_eq!(config.name, "triton");
     assert_eq!(config.digest_width, 5);
 }
@@ -216,8 +217,8 @@ fn test_os_config_resolve_rejects_traversal() {
 
 #[test]
 fn test_resolved_target_vm_only() {
-    let resolved = ResolvedTarget::resolve("triton").unwrap();
-    assert_eq!(resolved.vm.name, "triton");
+    let resolved = ResolvedTarget::resolve("nox").unwrap();
+    assert_eq!(resolved.vm.name, "nox");
     assert!(resolved.os.is_none());
     assert!(resolved.state.is_none());
 }

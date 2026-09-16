@@ -19,6 +19,7 @@ use crate::sym::{Constraint, ConstraintSystem};
 /// Machine-readable verification report in JSON format.
 /// Designed for LLM consumption and CI/CD integration.
 pub struct JsonReport {
+    pub unsupported: Vec<String>,
     pub version: u32,
     pub file: String,
     pub verdict: String,
@@ -158,6 +159,7 @@ pub fn generate_json_report(
 ) -> String {
     let verdict_str = match report.verdict {
         Verdict::Safe => "safe",
+        Verdict::Unknown => "unknown",
         Verdict::StaticViolation | Verdict::RandomViolation | Verdict::BmcViolation => "unsafe",
     };
 
@@ -179,6 +181,7 @@ pub fn generate_json_report(
     let suggestions = generate_suggestions(system, report);
 
     let json_report = JsonReport {
+        unsupported: report.unsupported.clone(),
         version: 1,
         file: file_name.to_string(),
         verdict: verdict_str.to_string(),
@@ -213,6 +216,10 @@ fn serialize_report(r: &JsonReport) -> String {
     out.push_str(",\n");
     out.push_str(&json_str(2, "verdict", &r.verdict));
     out.push_str(",\n");
+    out.push_str(&format!(
+        "  \"unsupported\": {},\n",
+        serde_json::to_string(&r.unsupported).unwrap()
+    ));
 
     // summary
     out.push_str("  \"summary\": {\n");

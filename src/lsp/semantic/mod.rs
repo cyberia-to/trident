@@ -66,9 +66,16 @@ pub fn token_legend() -> SemanticTokensLegend {
 }
 
 /// Generate semantic tokens from cached document state (no re-lex).
-pub(super) fn semantic_tokens_from_cache(doc: &DocumentData) -> Vec<SemanticToken> {
-    let builtin_names: std::collections::BTreeSet<String> =
-        builtin_completions().into_iter().map(|(n, _)| n).collect();
+pub(super) fn semantic_tokens_from_cache(
+    doc: &DocumentData,
+    options: Option<&crate::CompileOptions>,
+) -> Vec<SemanticToken> {
+    let builtin_names: std::collections::BTreeSet<String> = options
+        .map(builtin_completions)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(n, _)| n)
+        .collect();
 
     let raw = classify_all(
         &doc.source,
@@ -76,13 +83,16 @@ pub(super) fn semantic_tokens_from_cache(doc: &DocumentData) -> Vec<SemanticToke
         &doc.comments,
         &doc.name_kinds,
         &builtin_names,
+        options,
     );
     encode_deltas(&doc.source, &doc.line_starts, &raw)
 }
 
 /// Standalone entry point: lex + parse + classify (used by tests).
 #[cfg(test)]
-fn semantic_tokens(source: &str, _file_path: &std::path::Path) -> Vec<SemanticToken> {
+fn semantic_tokens(source: &str, file_path: &std::path::Path) -> Vec<SemanticToken> {
+    let resolved = crate::api::options_for_project(file_path).ok();
+    let options = resolved.as_ref().map(|(_, options)| options);
     let (tokens, comments, _) = crate::syntax::lexer::Lexer::new(source, 0).tokenize();
 
     let name_kinds = match crate::parse_source_silent(source, "") {
@@ -90,10 +100,21 @@ fn semantic_tokens(source: &str, _file_path: &std::path::Path) -> Vec<SemanticTo
         Err(_) => BTreeMap::new(),
     };
 
-    let builtin_names: std::collections::BTreeSet<String> =
-        builtin_completions().into_iter().map(|(n, _)| n).collect();
+    let builtin_names: std::collections::BTreeSet<String> = options
+        .map(builtin_completions)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(n, _)| n)
+        .collect();
 
-    let raw = classify_all(source, &tokens, &comments, &name_kinds, &builtin_names);
+    let raw = classify_all(
+        source,
+        &tokens,
+        &comments,
+        &name_kinds,
+        &builtin_names,
+        options,
+    );
     let line_starts = super::document::compute_line_starts(source);
     encode_deltas(source, &line_starts, &raw)
 }
@@ -105,12 +126,13 @@ fn classify_all(
     comments: &[Comment],
     name_kinds: &BTreeMap<String, (NameKind, u32)>,
     builtins: &std::collections::BTreeSet<String>,
+    options: Option<&crate::CompileOptions>,
 ) -> Vec<(crate::syntax::span::Span, u32, u32)> {
     let mut raw = Vec::new();
 
     for tok in tokens {
         if let Lexeme::AsmBlock { .. } = &tok.node {
-            raw.extend(asm::expand_asm_tokens(source, tok.span));
+            raw.extend(asm::expand_asm_tokens(source, tok.span, options));
             continue;
         }
         if let Some((tt, mods)) = classify_lexeme(&tok.node, name_kinds, builtins) {

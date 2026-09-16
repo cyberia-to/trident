@@ -102,7 +102,7 @@ reference is wrong or incomplete, update the reference to match reality.
 
 Four namespaces: `vm.*` (intrinsics), `std.*` (libraries), `os.*`
 (portable runtime), `os.<os>.*` (OS-specific). Source: `src/` (Rust
-compiler), `vm/` `std/` `os/` (Trident code). Compiler self-hosts
+compiler), `lib/vm/` and `lib/std/` (Trident code), `catalog/vm/` and `catalog/os/` (discovery metadata). Compiler self-hosts
 toward provable compilation on nox (default target) and Triton VM.
 
 Use `tokei src/` or `find src/ -name '*.rs'` to explore module structure.
@@ -138,7 +138,7 @@ Use `tokei src/` or `find src/ -name '*.rs'` to explore module structure.
 ## Pipeline Contract
 
 ```
-Source → Lexer → Parser → AST → TypeCheck → KIR → TIR → LIR → Target → Bundle → Warrior
+Source → Lexer → Parser → AST → TypeCheck → nox tree lowering or shared TIR → Warrior emission → Bundle → Warrior execution
 ```
 
 Output of stage N must be valid input for stage N+1. When modifying a
@@ -202,12 +202,12 @@ Builtins must stay in sync across 4 places:
 
 1. `reference/language.md` (canonical)
 2. `src/typecheck/` (type signatures)
-3. `src/tir/` (IR lowering)
-4. `src/cost/` (cost tables)
+3. `src/ir/` and the owning warrior lowering (operation semantics and machine legalization)
+4. The owning backend cost tables and target package metadata
 
 ## Trident Code Contracts
 
-When writing or modifying `.tri` code in `vm/`, `std/`, or `os/`, add
+When writing or modifying `.tri` code in `lib/vm/`, `lib/std/`, or implemented `lib/os/`, add
 `#[requires]`/`#[ensures]` contracts and `#[pure]` where applicable.
 `trident audit` checks these every commit.
 
@@ -217,7 +217,7 @@ Do not modify without explicit request:
 
 - `Cargo.toml` dependencies (minimal by design)
 - `reference/` structure (canonical, changes need discussion)
-- `vm/*/target.toml` and `os/*/target.toml` (configuration, not code)
+- `catalog/vm/*/target.toml` and `catalog/os/*/target.toml` (discovery/configuration, not implementations)
 - `LICENSE.md`
 
 Query files live in `editor/queries/` (single source of truth,
@@ -228,7 +228,7 @@ symlinked from `editor/zed/` and `editor/helix/`).
 Split parallel agents by non-overlapping file scopes. Never let two
 agents edit the same file. Partition by directory: `syntax/`,
 `ast/`+`typecheck/`, `ir/`, `cost/`+`verify/`, `cli/`+`deploy`,
-`package/`, `lsp/`, `docs/`, `vm/`+`std/`+`os/`.
+`package/`, `lsp/`, `docs/`, `lib/`+`catalog/`.
 
 Use subagents for codebase exploration. Keep main context clean for
 implementation.
@@ -283,7 +283,7 @@ Rules:
 
 Two independent optimization streams run in parallel:
 
-1. **Hand TASM** (`baselines/triton/`): Write from first
+1. **Hand TASM** (`../trisha/baselines/triton/`): Write from first
    principles — algorithm + stack machine, never from compiler output.
    Ask "what is the minimum instruction sequence for this operation on
    Triton VM?" not "how can I improve what the compiler emitted?"
@@ -297,7 +297,7 @@ The streams must stay independent. Hand baselines set the floor —
 the compiler races toward it. When the compiler catches up, push the
 baseline lower. Neither stream is a dogma; both improve continuously.
 
-`trident bench` is the scoreboard. Regressions in either direction
+`trisha bench` is the scoreboard. Regressions in either direction
 (compiler gets worse, or baselines get sloppy) are bugs.
 
 ## Self-Verification
@@ -305,7 +305,7 @@ baseline lower. Neither stream is a dogma; both improve continuously.
 Every commit:
 - `cargo check` — zero warnings
 - `cargo test` — all tests pass
-- `trident bench` — no regressions vs baselines
+- `trisha bench` — no regressions vs baselines
 - `trident audit` — formal properties still hold
 - If anything fails, fix before reporting done.
 
@@ -313,10 +313,10 @@ Every commit:
 
 Four ways to produce TASM: Rust reference, classic compiler, manual
 baseline, neural optimizer. All must agree on correctness.
-`trident bench --full` is the scoreboard.
+`trisha bench --full` is the scoreboard.
 
 - `benches/references/` — Rust ground truth (generates inputs, expected outputs)
-- `baselines/triton/` — hand-optimized TASM (expert floor)
+- `../trisha/baselines/triton/` — hand-optimized TASM (expert floor)
 - Classic TASM — `trident build` output
 - Neural TASM — neural optimizer output
 

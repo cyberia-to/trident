@@ -2,12 +2,13 @@ use super::*;
 
 // ─── OS Target Configuration ───────────────────────────────────────
 
-/// OS target configuration parsed from `os/<name>/target.toml`.
+/// OS configuration supplied by its runtime or a declared catalog entry.
 ///
 /// An OS target describes a blockchain or runtime environment that
 /// runs on top of a VM. The `vm` field maps the OS to its underlying
 /// VM (e.g. "neptune" → "triton", "starknet" → "cairo").
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct UnionConfig {
     /// OS name (e.g. "neptune").
     pub name: String,
@@ -28,46 +29,13 @@ pub struct UnionConfig {
 impl UnionConfig {
     /// Try to resolve an OS config by name.
     ///
-    /// Searches for `os/<name>/target.toml` relative to the compiler
-    /// binary and the current working directory.
-    /// Returns `Ok(None)` if no OS config file exists for this name.
-    /// Returns `Err` if the file exists but is malformed.
+    /// Neptune is supplied by Trisha. Other entries describe catalog designs;
+    /// their presence does not establish an installed runtime capability.
     pub fn resolve(name: &str) -> Result<Option<Self>, Diagnostic> {
-        // Reject path traversal
-        if name.contains('/') || name.contains('\\') || name.contains("..") || name.starts_with('.')
-        {
-            return Ok(None);
-        }
-
-        let target_path = format!("os/{}/target.toml", name);
-
-        // 1. Relative to compiler binary
-        if let Ok(exe) = std::env::current_exe() {
-            if let Some(dir) = exe.parent() {
-                for ancestor in &[
-                    Some(dir.to_path_buf()),
-                    dir.parent().map(|p| p.to_path_buf()),
-                    dir.parent()
-                        .and_then(|p| p.parent())
-                        .map(|p| p.to_path_buf()),
-                ] {
-                    if let Some(base) = ancestor {
-                        let path = base.join(&target_path);
-                        if path.exists() {
-                            return Self::load(&path).map(Some);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 2. Current working directory
-        let cwd_path = std::path::PathBuf::from(&target_path);
-        if cwd_path.exists() {
-            return Self::load(&cwd_path).map(Some);
-        }
-
-        Ok(None)
+        if !super::package::identifier(name) { return Ok(None); }
+        if name == "neptune" { return TargetPackage::discover(name).map(|p| p.union); }
+        let path = format!("catalog/os/{name}/target.toml");
+        crate::resources::get(&path).map(|s| Self::parse_toml(s, Path::new(&path))).transpose()
     }
 
     /// Load an OS config from a TOML file.
@@ -81,7 +49,7 @@ impl UnionConfig {
         Self::parse_toml(&content, path)
     }
 
-    fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {
+    pub fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {
         let err =
             |msg: String| Diagnostic::error(format!("{}: {}", path.display(), msg), Span::dummy());
 
@@ -147,7 +115,8 @@ impl UnionConfig {
 /// When the user passes `--target neptune`, we load the OS config first
 /// (which tells us the VM is "triton"), then load the VM config. When
 /// they pass `--target triton`, we load the VM config directly.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ResolvedTarget {
     /// VM configuration (always present).
     pub vm: TerrainConfig,
@@ -165,6 +134,10 @@ impl ResolvedTarget {
     /// 2. Is `<name>` a VM? Load `vm/<name>/target.toml`.
     /// 3. Neither? Error.
     pub fn resolve(name: &str) -> Result<Self, Diagnostic> {
+        if name == "triton" || name == "neptune" || name == "cyber" {
+            let package = TargetPackage::discover(name)?;
+            return Ok(Self { vm: package.terrain, os: package.union, state: None });
+        }
         // 1. Try OS
         if let Some(os_config) = UnionConfig::resolve(name)? {
             let vm = TerrainConfig::resolve(&os_config.vm)?;

@@ -16,6 +16,8 @@
 //! cargo test --test warrior_api --no-default-features
 //! ```
 
+mod support;
+
 use std::path::Path;
 
 use trident::runtime::{
@@ -49,9 +51,13 @@ fn compile_options_default_carries_a_terrain() {
 }
 
 #[test]
-fn both_built_in_terrains_resolve_without_a_target_toml() {
+fn reference_terrain_and_explicit_foreign_fixture_parse() {
     let nox = TerrainConfig::nox();
-    let triton = TerrainConfig::triton();
+    let triton = TerrainConfig::parse_toml(
+        include_str!("fixtures/stack-target.toml"),
+        std::path::Path::new("fixture"),
+    )
+    .unwrap();
     assert_eq!(nox.name, "nox");
     assert_eq!(triton.name, "triton");
     assert_eq!(nox.architecture, Arch::Tree);
@@ -61,10 +67,14 @@ fn both_built_in_terrains_resolve_without_a_target_toml() {
 #[test]
 fn a_warrior_can_build_tir_for_a_stack_terrain() {
     let source = "program w\n\nfn main() -> Field {\n    let a: Field = 6\n    a * 7\n}\n";
-    let mut options = CompileOptions::default();
-    options.target_config = TerrainConfig::triton();
+    let options = CompileOptions::default()
+        .with_package(support::triton_package())
+        .unwrap();
     let ir = trident::build_tir(source, "w.tri", &options).expect("TIR for a stack terrain");
-    assert!(!ir.is_empty(), "a non-empty program lowers to non-empty TIR");
+    assert!(
+        !ir.is_empty(),
+        "a non-empty program lowers to non-empty TIR"
+    );
 }
 
 #[test]
@@ -196,7 +206,10 @@ fn the_warrior_traits_are_implementable_from_outside() {
         source_hash: String::new(),
         reads_state: false,
     };
-    assert!(w.run(&bundle, &input).is_err(), "the stub refuses, by design");
+    assert!(
+        w.run(&bundle, &input).is_err(),
+        "the stub refuses, by design"
+    );
     let _: &dyn Guesser = &w as &dyn Guesser;
     let _: &dyn Deployer = &w as &dyn Deployer;
 }

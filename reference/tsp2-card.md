@@ -1,5 +1,8 @@
 # TSP-2 — Card Standard
 
+The maintained executable protocol is [PLUMB v2](plumb-v2.md). The v1 layouts
+below are historical design references and are incompatible with v2 witnesses.
+
 PLUMB implementation for unique assets. See [PLUMB](plumb.md) for the
 shared token framework.
 

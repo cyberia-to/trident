@@ -8,8 +8,12 @@ use super::*;
 impl SymExecutor {
     pub(crate) fn eval_expr(&mut self, expr: &Expr) -> SymValue {
         match expr {
-            Expr::Literal(Literal::Integer(n)) => SymValue::Const(*n),
-            Expr::Literal(Literal::Bool(b)) => SymValue::Const(if *b { 1 } else { 0 }),
+            Expr::Literal(Literal::Integer(n)) => SymValue::Const(*n % GOLDILOCKS_P),
+            Expr::Literal(Literal::Bool(b)) => SymValue::Const(if *b {
+                self.truth_word()
+            } else {
+                1 - self.truth_word()
+            }),
             Expr::Var(name) => {
                 self.env.get(name).cloned().unwrap_or_else(|| {
                     // Unknown variable — treat as fresh symbolic
@@ -23,8 +27,12 @@ impl SymExecutor {
                 match op {
                     BinOp::Add => SymValue::Add(Box::new(l), Box::new(r)).simplify(),
                     BinOp::Mul => SymValue::Mul(Box::new(l), Box::new(r)).simplify(),
-                    BinOp::Eq => SymValue::Eq(Box::new(l), Box::new(r)).simplify(),
-                    BinOp::Lt => SymValue::Lt(Box::new(l), Box::new(r)),
+                    BinOp::Eq => {
+                        self.source_bool(SymValue::Eq(Box::new(l), Box::new(r)).simplify())
+                    }
+                    BinOp::Lt => {
+                        self.source_bool(SymValue::Lt(Box::new(l), Box::new(r)).simplify())
+                    }
                     _ => {
                         // BitAnd, BitXor, DivMod, XFieldMul — leave as opaque
                         SymValue::Var(self.fresh_var("__binop"))
@@ -74,21 +82,40 @@ impl SymExecutor {
     pub(crate) fn eval_call(&mut self, path: &ModulePath, args: &[Spanned<Expr>]) -> SymValue {
         let name = path.as_dotted();
         let func_name = path.0.last().map(|s| s.as_str()).unwrap_or("");
+        if let Some(function) = self.functions.get(&name).cloned() {
+            return self.eval_scalar_call(&function, args);
+        }
+
+        // Native digest aliases follow the ABI; explicit numeric suffixes count
+        // fixed field elements and must not be silently treated as scalar calls.
+        let pub_width = if func_name == "read_digest" {
+            Some(self.digest_width)
+        } else {
+            tuple_width(func_name, "pub_read").or_else(|| tuple_width(func_name, "read"))
+        };
+        if let Some(width) = pub_width {
+            for _ in 0..width {
+                self.fresh_pub_input();
+            }
+            let var = self.fresh_var("__read_tuple");
+            return SymValue::Var(var);
+        }
+        let divine_width = if func_name == "divine_digest" {
+            Some(self.digest_width)
+        } else {
+            tuple_width(func_name, "divine")
+        };
+        if let Some(width) = divine_width {
+            for _ in 0..width {
+                self.fresh_divine();
+            }
+            let var = self.fresh_var("__divine_tuple");
+            return SymValue::Var(var);
+        }
 
         // Handle builtins
         match func_name {
             "pub_read" | "read" => return self.fresh_pub_input(),
-            "pub_read2" | "read2" => {
-                self.fresh_pub_input();
-                return self.fresh_pub_input();
-            }
-            "pub_read5" | "read5" => {
-                for _ in 0..5 {
-                    self.fresh_pub_input();
-                }
-                let var = self.fresh_var("__digest");
-                return SymValue::Var(var);
-            }
             "pub_write" | "write" => {
                 if let Some(arg) = args.first() {
                     let val = self.eval_expr(&arg.node);
@@ -97,20 +124,6 @@ impl SymExecutor {
                 return SymValue::Const(0);
             }
             "divine" => return self.fresh_divine(),
-            "divine3" => {
-                for _ in 0..3 {
-                    self.fresh_divine();
-                }
-                let var = self.fresh_var("__divine3");
-                return SymValue::Var(var);
-            }
-            "divine5" => {
-                for _ in 0..5 {
-                    self.fresh_divine();
-                }
-                let var = self.fresh_var("__divine5");
-                return SymValue::Var(var);
-            }
             "hash" | "tip5" => {
                 let inputs: Vec<SymValue> = args.iter().map(|a| self.eval_expr(&a.node)).collect();
                 return SymValue::Hash(inputs, 0);
@@ -118,7 +131,7 @@ impl SymExecutor {
             "assert" => {
                 if let Some(arg) = args.first() {
                     let val = self.eval_expr(&arg.node);
-                    self.add_constraint(Constraint::AssertTrue(val));
+                    self.add_constraint(Constraint::AssertTrue(self.assertion_truth(val)));
                 }
                 return SymValue::Const(0);
             }
@@ -131,7 +144,7 @@ impl SymExecutor {
                 return SymValue::Const(0);
             }
             "assert_digest" | "digest" => {
-                // Digest equality: 5-element vector comparison
+                // Digest equality uses the selected target representation.
                 if args.len() >= 2 {
                     let a = self.eval_expr(&args[0].node);
                     let b = self.eval_expr(&args[1].node);
@@ -179,35 +192,9 @@ impl SymExecutor {
             _ => {}
         }
 
-        // Try user-defined function inlining
-        if self.call_depth < self.max_call_depth {
-            // Look up the function: try full path first, then last component
-            let func = self
-                .functions
-                .get(&name)
-                .cloned()
-                .or_else(|| self.functions.get(func_name).cloned());
-
-            if let Some(func) = func {
-                if let Some(ref body) = func.body {
-                    self.call_depth += 1;
-                    let saved_env = self.env.clone();
-
-                    // Bind parameters
-                    for (param, arg) in func.params.iter().zip(args.iter()) {
-                        let val = self.eval_expr(&arg.node);
-                        self.env.insert(param.name.node.clone(), val);
-                    }
-
-                    // Execute function body
-                    self.execute_block(&body.node);
-
-                    // Restore environment (except new constraints are kept)
-                    self.env = saved_env;
-                    self.call_depth -= 1;
-                }
-            }
-        }
+        self.system
+            .unsupported
+            .push(format!("unmodeled call {name}"));
 
         // Default: return a fresh symbolic variable
         let var = self.fresh_var(&format!("__call_{}", func_name));
@@ -215,6 +202,7 @@ impl SymExecutor {
     }
 
     /// Project element `i` from a tuple-like symbolic value.
+    #[cfg(test)]
     pub(crate) fn project_tuple(&mut self, val: &SymValue, i: usize) -> SymValue {
         // If projecting from a hash, preserve the Hash origin with the index
         if let SymValue::Hash(inputs, _) = val {
@@ -223,4 +211,10 @@ impl SymExecutor {
         let var = self.fresh_var(&format!("__proj_{}", i));
         SymValue::Var(var)
     }
+}
+
+fn tuple_width(name: &str, prefix: &str) -> Option<u32> {
+    let suffix = name.strip_prefix(prefix)?;
+    let width: u32 = suffix.parse().ok()?;
+    (width > 1 && width <= 64 && suffix == width.to_string()).then_some(width)
 }

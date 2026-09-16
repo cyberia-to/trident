@@ -44,6 +44,7 @@ fn test_manifest_to_json_structure() {
     let manifest = PackageManifest {
         name: "test".to_string(),
         version: "0.1.0".to_string(),
+        program_file: "program.tasm".into(),
         program_digest: "aabb".to_string(),
         source_hash: "ccdd".to_string(),
         target_vm: "triton".to_string(),
@@ -87,6 +88,7 @@ fn test_manifest_null_os() {
     let manifest = PackageManifest {
         name: "bare".to_string(),
         version: "0.1.0".to_string(),
+        program_file: "program.tasm".into(),
         program_digest: "aa".to_string(),
         source_hash: "bb".to_string(),
         target_vm: "triton".to_string(),
@@ -177,4 +179,95 @@ fn test_generate_artifact_roundtrip() {
     // Verify digest is non-empty
     assert!(!result.manifest.program_digest.is_empty());
     assert!(!result.manifest.source_hash.is_empty());
+}
+
+#[test]
+fn nox_package_roundtrip_reads_declared_filename_and_checks_digest() {
+    let dir = tempfile::tempdir().unwrap();
+    let file =
+        crate::parse_source_silent("program demo\nfn main() -> Field { 42 }", "demo.tri").unwrap();
+    let cost = BundleCost {
+        table_values: vec![1],
+        table_names: vec!["reductions".into()],
+        padded_height: 1,
+        estimated_proving_ns: 0,
+    };
+    let result = generate_artifact(
+        "demo",
+        "1",
+        "[1 42]",
+        &file,
+        &cost,
+        &TerrainConfig::nox(),
+        None,
+        dir.path(),
+    )
+    .unwrap();
+    assert_eq!(result.manifest.program_file, "program.nox");
+    assert!(!result.artifact_dir.join("program.tasm").exists());
+    let loaded = load_artifact(&result.artifact_dir).unwrap();
+    assert_eq!(
+        std::fs::read_to_string(loaded.program_path).unwrap(),
+        "[1 42]"
+    );
+    // The manifest owns the filename: loading does not guess program.nox.
+    std::fs::rename(&result.tasm_path, result.artifact_dir.join("renamed.nox")).unwrap();
+    let mut manifest: serde_json::Value = serde_json::from_str(&loaded.manifest_json).unwrap();
+    manifest["program_file"] = "renamed.nox".into();
+    std::fs::write(
+        &result.manifest_path,
+        serde_json::to_vec(&manifest).unwrap(),
+    )
+    .unwrap();
+    assert!(load_artifact(&result.artifact_dir).is_ok());
+    std::fs::write(result.artifact_dir.join("renamed.nox"), "[1 43]").unwrap();
+    assert!(load_artifact(&result.artifact_dir)
+        .err()
+        .unwrap()
+        .contains("digest"));
+}
+
+#[test]
+fn package_reader_rejects_traversal_absolute_and_missing_filenames() {
+    let dir = tempfile::tempdir().unwrap();
+    for filename in [
+        "../outside.nox",
+        "/tmp/outside.nox",
+        "sub/file.nox",
+        "sub\\file.nox",
+        "..",
+        "",
+        "manifest.json",
+    ] {
+        let manifest =
+            serde_json::json!({"program_file": filename, "program_digest": "irrelevant"});
+        std::fs::write(
+            dir.path().join("manifest.json"),
+            serde_json::to_vec(&manifest).unwrap(),
+        )
+        .unwrap();
+        assert!(load_artifact(dir.path()).is_err(), "{filename}");
+    }
+    std::fs::write(dir.path().join("manifest.json"), "{}").unwrap();
+    assert!(load_artifact(dir.path())
+        .err()
+        .unwrap()
+        .contains("repackage"));
+}
+
+#[cfg(unix)]
+#[test]
+fn package_reader_rejects_symlink_outside_package() {
+    let outer = tempfile::tempdir().unwrap();
+    let inner = outer.path().join("package");
+    std::fs::create_dir(&inner).unwrap();
+    std::fs::write(outer.path().join("outside.nox"), "[1 42]").unwrap();
+    std::os::unix::fs::symlink(outer.path().join("outside.nox"), inner.join("program.nox"))
+        .unwrap();
+    std::fs::write(
+        inner.join("manifest.json"),
+        r#"{"program_file":"program.nox","program_digest":"irrelevant"}"#,
+    )
+    .unwrap();
+    assert!(load_artifact(&inner).err().unwrap().contains("inside"));
 }

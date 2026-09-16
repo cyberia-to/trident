@@ -10,7 +10,8 @@ use super::*;
 ///
 /// State config is purely deployment metadata — no impact on
 /// compilation. Only relevant for deploy, run, prove, verify.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct StateConfig {
     /// State name (e.g. "mainnet").
     pub name: String,
@@ -33,184 +34,31 @@ pub struct StateConfig {
 impl StateConfig {
     /// Try to resolve a state config by union and state name.
     ///
-    /// Searches for `os/<union>/states/<name>.toml` relative to the
-    /// compiler binary and the current working directory.
-    /// Returns `Ok(None)` if no state config file exists.
-    /// Returns `Err` if the file exists but is malformed.
+    /// Reads the selected runtime package. Unregistered unions and missing
+    /// states return `Ok(None)`; invalid installed packages return an error.
     pub fn resolve(union: &str, state_name: &str) -> Result<Option<Self>, Diagnostic> {
-        // Reject path traversal
-        if union.contains('/')
-            || union.contains('\\')
-            || union.contains("..")
-            || union.starts_with('.')
-        {
-            return Ok(None);
+        if !super::package::identifier(union) || !super::package::identifier(state_name) { return Ok(None); }
+        if super::owner_for(union).is_some() {
+            return Ok(TargetPackage::discover(union)?.states.into_iter().find(|s| s.name == state_name));
         }
-        if state_name.contains('/')
-            || state_name.contains('\\')
-            || state_name.contains("..")
-            || state_name.starts_with('.')
-        {
-            return Ok(None);
-        }
-
-        let target_path = format!("os/{}/states/{}.toml", union, state_name);
-
-        // 1. Relative to compiler binary
-        if let Ok(exe) = std::env::current_exe() {
-            if let Some(dir) = exe.parent() {
-                for ancestor in &[
-                    Some(dir.to_path_buf()),
-                    dir.parent().map(|p| p.to_path_buf()),
-                    dir.parent()
-                        .and_then(|p| p.parent())
-                        .map(|p| p.to_path_buf()),
-                ] {
-                    if let Some(base) = ancestor {
-                        let path = base.join(&target_path);
-                        if path.exists() {
-                            return Self::load(&path).map(Some);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 2. Current working directory
-        let cwd_path = std::path::PathBuf::from(&target_path);
-        if cwd_path.exists() {
-            return Self::load(&cwd_path).map(Some);
-        }
-
         Ok(None)
     }
 
     /// Find the default state for a union.
     ///
-    /// Scans `os/<union>/states/` for any TOML with `is_default = true`.
+    /// Reads the unique default state from the installed union package.
     /// Returns the first default found, or `Ok(None)` if none.
     pub fn default_for_union(union: &str) -> Result<Option<Self>, Diagnostic> {
-        // Reject path traversal
-        if union.contains('/')
-            || union.contains('\\')
-            || union.contains("..")
-            || union.starts_with('.')
-        {
-            return Ok(None);
-        }
-
-        let states_dir = format!("os/{}/states", union);
-
-        // Collect candidate directories from search paths
-        let mut dirs_to_scan: Vec<std::path::PathBuf> = Vec::new();
-
-        // 1. Relative to compiler binary
-        if let Ok(exe) = std::env::current_exe() {
-            if let Some(dir) = exe.parent() {
-                for ancestor in &[
-                    Some(dir.to_path_buf()),
-                    dir.parent().map(|p| p.to_path_buf()),
-                    dir.parent()
-                        .and_then(|p| p.parent())
-                        .map(|p| p.to_path_buf()),
-                ] {
-                    if let Some(base) = ancestor {
-                        let path = base.join(&states_dir);
-                        if path.is_dir() {
-                            dirs_to_scan.push(path);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 2. Current working directory
-        let cwd_path = std::path::PathBuf::from(&states_dir);
-        if cwd_path.is_dir() {
-            dirs_to_scan.push(cwd_path);
-        }
-
-        for dir in dirs_to_scan {
-            if let Ok(entries) = std::fs::read_dir(&dir) {
-                for entry in entries.flatten() {
-                    let path = entry.path();
-                    if path.extension().and_then(|e| e.to_str()) == Some("toml") {
-                        if let Ok(config) = Self::load(&path) {
-                            if config.is_default {
-                                return Ok(Some(config));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Ok(None)
+        if !super::package::identifier(union) { return Ok(None); }
+        if super::owner_for(union).is_none() { return Ok(None); }
+        Ok(TargetPackage::discover(union)?.states.into_iter().find(|s| s.is_default))
     }
 
-    /// List available state names for a union.
-    ///
-    /// Scans `os/<union>/states/*.toml` and returns filenames (stem only).
     pub fn list_states(union: &str) -> Vec<String> {
-        // Reject path traversal
-        if union.contains('/')
-            || union.contains('\\')
-            || union.contains("..")
-            || union.starts_with('.')
-        {
-            return Vec::new();
+        match TargetPackage::discover(union) {
+            Ok(package) => package.states.into_iter().map(|s| s.name).collect(),
+            Err(_) => Vec::new(),
         }
-
-        let states_dir = format!("os/{}/states", union);
-        let mut names = Vec::new();
-        let mut seen = std::collections::BTreeSet::new();
-
-        let mut dirs_to_scan: Vec<std::path::PathBuf> = Vec::new();
-
-        // 1. Relative to compiler binary
-        if let Ok(exe) = std::env::current_exe() {
-            if let Some(dir) = exe.parent() {
-                for ancestor in &[
-                    Some(dir.to_path_buf()),
-                    dir.parent().map(|p| p.to_path_buf()),
-                    dir.parent()
-                        .and_then(|p| p.parent())
-                        .map(|p| p.to_path_buf()),
-                ] {
-                    if let Some(base) = ancestor {
-                        let path = base.join(&states_dir);
-                        if path.is_dir() {
-                            dirs_to_scan.push(path);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 2. Current working directory
-        let cwd_path = std::path::PathBuf::from(&states_dir);
-        if cwd_path.is_dir() {
-            dirs_to_scan.push(cwd_path);
-        }
-
-        for dir in dirs_to_scan {
-            if let Ok(entries) = std::fs::read_dir(&dir) {
-                for entry in entries.flatten() {
-                    let path = entry.path();
-                    if path.extension().and_then(|e| e.to_str()) == Some("toml") {
-                        if let Some(stem) = path.file_stem().and_then(|s| s.to_str()) {
-                            let name = stem.to_string();
-                            if seen.insert(name.clone()) {
-                                names.push(name);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        names.sort();
-        names
     }
 
     /// Load a state config from a TOML file.
@@ -224,7 +72,7 @@ impl StateConfig {
         Self::parse_toml(&content, path)
     }
 
-    fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {
+    pub fn parse_toml(content: &str, path: &Path) -> Result<Self, Diagnostic> {
         let err =
             |msg: String| Diagnostic::error(format!("{}: {}", path.display(), msg), Span::dummy());
 

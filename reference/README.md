@@ -5,6 +5,9 @@
 Canonical reference for all Trident design decisions. If reference docs
 and code disagree, the reference wins.
 
+Implementation reviews and release validation are indexed in
+[audit](../audit/README.md).
+
 ---
 
 ## Language Reference
@@ -50,6 +53,7 @@ and code disagree, the reference wins.
 
 | Document | Description |
 |----------|-------------|
+| [PLUMB v2](plumb-v2.md) | Versioned full-Digest authority and atomic state-transition contract |
 | [PLUMB Framework](plumb.md) | Shared token framework: config, auth, hooks, proof envelope, security |
 | [TSP-1 — Coin](tsp1-coin.md) | Divisible asset standard. Conservation: `sum(balances) = supply` |
 | [TSP-2 — Card](tsp2-card.md) | Unique asset standard. Conservation: `owner_count(id) = 1` |
@@ -65,8 +69,8 @@ and code disagree, the reference wins.
 | [Skill Reference](skills.md) | All 23 skills: spec tables, recipes, hook IDs, glossary |
 
 Per-target specs live alongside their config:
-- [OS Registry](../../os/README.md) — `os/{name}/README.md` for each of 25 OSes
-- [VM Registry](../../vm/README.md) — `vm/{name}/README.md` for each of 20 VMs
+- [OS Registry](../catalog/os/README.md) — `os/{name}/README.md` for each of 25 OSes
+- [VM Registry](../catalog/vm/README.md) — `vm/{name}/README.md` for each of 20 VMs
 
 ## Tools
 
@@ -94,3 +98,5 @@ Per-target specs live alongside their config:
 | [Targets](errors/targets.md) | Target compatibility errors |
 | [Warnings](errors/warnings.md) | Non-fatal diagnostics |
 | [Hints](errors/hints.md) | Optimization suggestions |
+
+- [Neptune custom token v2](neptune-custom-token-v2.md): canonical UTXO and issuer policy.

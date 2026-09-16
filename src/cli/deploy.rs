@@ -15,8 +15,8 @@ pub struct DeployArgs {
     /// Input .tri file, project directory, or .deploy/ artifact
     pub input: PathBuf,
     /// Target VM or OS (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -64,6 +64,18 @@ pub fn cmd_deploy(args: DeployArgs) {
         audit,
         dry_run,
     } = args;
+    let explicit_target = target.is_some()
+        || engine.is_some()
+        || terrain.is_some()
+        || network.is_some()
+        || union_flag.is_some();
+    let packaged = input.is_dir() && input.join("manifest.json").exists();
+    let target = if packaged {
+        target.unwrap_or_else(|| "nox".into())
+    } else {
+        let ri = super::resolve_input(&input);
+        super::source_target(target.as_deref(), ri.project.as_ref())
+    };
     let bf = super::resolve_battlefield(
         &target,
         &engine,
@@ -74,18 +86,40 @@ pub fn cmd_deploy(args: DeployArgs) {
         &state,
     );
     let target = bf.target;
-    let state_selection = bf.state;
+    if bf.state.is_some() {
+        eprintln!("error: registry artifact publication does not apply a chain state selection; use the warrior's deployment interface");
+        process::exit(1);
+    }
 
     // Handle pre-packaged .deploy/ artifact directory
-    if input.is_dir() && input.join("manifest.json").exists() && input.join("program.tasm").exists()
-    {
-        let manifest_json = match std::fs::read_to_string(input.join("manifest.json")) {
-            Ok(s) => s,
+    if input.is_dir() && input.join("manifest.json").exists() {
+        let manifest_json = match trident::deploy::load_artifact(&input) {
+            Ok(artifact) => artifact.manifest_json,
             Err(e) => {
-                eprintln!("error: cannot read manifest.json: {}", e);
+                eprintln!("error: invalid deployment artifact: {}", e);
                 process::exit(1);
             }
         };
+
+        let manifest: serde_json::Value =
+            serde_json::from_str(&manifest_json).unwrap_or_else(|e| {
+                eprintln!("error: invalid manifest: {e}");
+                process::exit(1)
+            });
+        let vm = manifest
+            .get("target")
+            .and_then(|v| v.get("vm"))
+            .and_then(|v| v.as_str());
+        let os = manifest
+            .get("target")
+            .and_then(|v| v.get("os"))
+            .and_then(|v| v.as_str());
+        if vm.is_none()
+            || (explicit_target && vm != Some(target.as_str()) && os != Some(target.as_str()))
+        {
+            eprintln!("error: deployment artifact target differs from the requested target");
+            process::exit(1);
+        }
 
         if dry_run {
             eprintln!("Dry run — would deploy artifact:");
@@ -108,44 +142,8 @@ pub fn cmd_deploy(args: DeployArgs) {
     let art = prepare_artifact(&input, &target, &profile, audit);
     let output_base = art.entry.parent().unwrap_or(Path::new(".")).to_path_buf();
 
-    // Resolve state config if specified
-    let state_config = if let Some(ref state_name) = state_selection {
-        if let Some(ref os) = art.resolved.os {
-            match trident::target::StateConfig::resolve(&os.name, state_name) {
-                Ok(Some(sc)) => Some(sc),
-                Ok(None) => {
-                    eprintln!(
-                        "error: unknown state '{}' for union '{}'",
-                        state_name, os.name
-                    );
-                    let available = trident::target::StateConfig::list_states(&os.name);
-                    if !available.is_empty() {
-                        eprintln!("  available: {}", available.join(", "));
-                    }
-                    process::exit(1);
-                }
-                Err(e) => {
-                    eprintln!("error: {}", e.message);
-                    process::exit(1);
-                }
-            }
-        } else {
-            eprintln!(
-                "error: --state requires a union target, not bare terrain '{}'",
-                target
-            );
-            process::exit(1);
-        }
-    } else {
-        None
-    };
-
     let target_display = if let Some(ref os) = art.resolved.os {
-        if let Some(ref sc) = state_config {
-            format!("{} {} ({})", os.name, sc.display_name, art.resolved.vm.name)
-        } else {
-            format!("{} ({})", os.name, art.resolved.vm.name)
-        }
+        format!("{} ({})", os.name, art.resolved.vm.name)
     } else {
         art.resolved.vm.name.clone()
     };
@@ -157,18 +155,16 @@ pub fn cmd_deploy(args: DeployArgs) {
         eprintln!("  Name:            {}", art.name);
         eprintln!("  Version:         {}", art.version);
         eprintln!("  Target:          {}", target_display);
-        if let Some(ref sc) = state_config {
-            eprintln!("  State:           {} (chain_id: {})", sc.name, sc.chain_id);
-            if !sc.rpc_url.is_empty() {
-                eprintln!("  RPC:             {}", sc.rpc_url);
-            }
-        }
         eprintln!("  Program digest:  {}", program_digest.to_hex());
-        eprintln!("  Padded height:   {}", art.cost.padded_height);
+        if art.cost.table_names.is_empty() {
+            eprintln!("  Costs:           unknown (no estimate supplied by the warrior)");
+        } else {
+            eprintln!("  Padded height:   {}", art.cost.padded_height);
+        }
         return;
     }
 
-    let result = match trident::deploy::generate_artifact(
+    let result = match trident::deploy::generate_artifact_with_identity(
         &art.name,
         &art.version,
         &art.tasm,
@@ -177,6 +173,7 @@ pub fn cmd_deploy(args: DeployArgs) {
         &art.resolved.vm,
         art.resolved.os.as_ref(),
         &output_base,
+        &art.source_hash,
     ) {
         Ok(r) => r,
         Err(e) => {
@@ -192,7 +189,7 @@ pub fn cmd_deploy(args: DeployArgs) {
     deploy_to_registry(&result.artifact_dir, &client);
 }
 
-/// Deploy a validated artifact directory (must contain manifest.json + program.tasm).
+/// Deploy an artifact directory whose manifest and declared program were validated.
 fn deploy_to_registry(artifact_dir: &Path, client: &trident::registry::RegistryClient) {
     eprintln!("Deploying...");
 

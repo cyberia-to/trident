@@ -1,0 +1,3 @@
+program differential_sha256_init
+use std.crypto.sha256
+fn main() -> sha256.Sha256State { sha256.init() }

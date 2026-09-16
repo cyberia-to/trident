@@ -1,0 +1,37 @@
+# ---
+# tags: trident, config
+# crystal-type: source
+# crystal-domain: comp
+# ---
+[target]
+name = "miden"
+display_name = "MIDEN"
+architecture = "stack"
+output_extension = ".masm"
+
+[field]
+prime = "2^64 - 2^32 + 1"
+bits = 64
+limbs = 2
+
+[stack]
+depth = 16
+spill_ram_base = 1073741824
+
+[hash]
+function = "Rescue-Prime"
+digest_width = 4
+rate = 8
+
+[extension_field]
+degree = 0
+
+[cost]
+tables = ["processor", "hash", "chiplets", "stack"]
+
+[status]
+level = 0
+lowering = ""
+cost_model = false
+tests = false
+notes = "Declared architecture; no current Trident/warrior implementation."

@@ -6,12 +6,18 @@
 use super::*;
 
 /// Maximum iterations for constant-range for-loop unrolling in symbolic execution.
+#[cfg(test)]
 const MAX_CONST_LOOP_UNROLL: u64 = 10_000;
 
 // ─── Symbolic Executor ─────────────────────────────────────────────
 
 /// Symbolic executor that walks the AST and builds a constraint system.
 pub struct SymExecutor {
+    pub(crate) zero_is_true: bool,
+    #[cfg(test)]
+    pub(crate) returned: Option<SymValue>,
+    /// Native digest width from the selected compilation ABI.
+    pub(crate) digest_width: u32,
     /// The constraint system being built.
     pub(crate) system: ConstraintSystem,
     /// Variable bindings: name → symbolic value.
@@ -28,6 +34,9 @@ pub struct SymExecutor {
     pub(crate) functions: BTreeMap<String, FnDef>,
     /// Recursion guard (prevent infinite inlining — shouldn't happen in Trident).
     pub(crate) call_depth: u32,
+    pub(crate) scalar_steps: usize,
+    pub(crate) scalar_calls: usize,
+    pub(crate) scalar_nodes: usize,
     /// Maximum call depth before giving up.
     pub(crate) max_call_depth: u32,
 }
@@ -35,6 +44,10 @@ pub struct SymExecutor {
 impl SymExecutor {
     pub fn new() -> Self {
         Self {
+            zero_is_true: true,
+            #[cfg(test)]
+            returned: None,
+            digest_width: crate::target::TerrainConfig::nox().digest_width,
             system: ConstraintSystem::new(),
             env: BTreeMap::new(),
             versions: BTreeMap::new(),
@@ -43,36 +56,67 @@ impl SymExecutor {
             path_condition: Vec::new(),
             functions: BTreeMap::new(),
             call_depth: 0,
+            scalar_steps: 0,
+            scalar_calls: 0,
+            scalar_nodes: 0,
             max_call_depth: 64,
         }
     }
 
+    /// Select the ABI without implying solver support for another finite field.
+    pub fn with_target(target: &crate::target::TerrainConfig) -> Result<Self, String> {
+        validate_audit_target(target)?;
+        let mut executor = Self::new();
+        executor.digest_width = target.digest_width;
+        executor.zero_is_true = target.name == "nox";
+        Ok(executor)
+    }
+
     /// Execute a file and produce its constraint system (main function only).
-    pub fn execute_file(mut self, file: &File) -> ConstraintSystem {
-        self.register_functions(file);
-
-        if let Some(main_fn) = self.functions.get("main").cloned() {
-            if let Some(ref body) = main_fn.body {
-                self.execute_block(&body.node);
-            }
-        }
-
-        self.system
+    pub fn execute_file(self, file: &File) -> ConstraintSystem {
+        self.execute_function(file, "main")
     }
 
     /// Execute a single function by name, treating its parameters as symbolic inputs.
     pub fn execute_function(mut self, file: &File, fn_name: &str) -> ConstraintSystem {
         self.register_functions(file);
 
-        if let Some(func) = self.functions.get(fn_name).cloned() {
+        if let Some(mut func) = self.functions.get(fn_name).cloned() {
+            if let Some(body) = &mut func.body {
+                crate::ast::normalize_terminal_returns(&mut body.node);
+            }
+            if let Err(reason) = super::coverage::coverage(&func, file, self.zero_is_true) {
+                self.system.unsupported.push(format!("{fn_name}: {reason}"));
+                return self.system;
+            }
             // Create symbolic inputs for each parameter
             for param in &func.params {
                 let var = self.fresh_var(&param.name.node);
-                self.env.insert(param.name.node.clone(), SymValue::Var(var));
+                let value = SymValue::Var(var);
+                if matches!(param.ty.node, Type::U32 | Type::Bool) {
+                    self.path_condition.push(SymValue::Lt(
+                        Box::new(value.clone()),
+                        Box::new(SymValue::Const(if matches!(param.ty.node, Type::Bool) {
+                            2
+                        } else {
+                            1u64 << 32
+                        })),
+                    ));
+                }
+                self.env.insert(param.name.node.clone(), value);
             }
-            if let Some(ref body) = func.body {
-                self.execute_block(&body.node);
+            for predicate in &func.requires {
+                let expr = super::coverage::contract_expr(&predicate.node).unwrap();
+                let value = self.eval_expr(&expr);
+                self.path_condition.push(
+                    SymValue::Eq(
+                        Box::new(value),
+                        Box::new(SymValue::Const(self.truth_word())),
+                    )
+                    .simplify(),
+                );
             }
+            self.execute_scalar_function(&func);
         }
 
         self.system
@@ -83,7 +127,11 @@ impl SymExecutor {
         for item in &file.items {
             if let Item::Fn(func) = &item.node {
                 if func.body.is_some() && !func.is_test {
-                    self.functions.insert(func.name.node.clone(), func.clone());
+                    let mut function = func.clone();
+                    if let Some(body) = &mut function.body {
+                        crate::ast::normalize_terminal_returns(&mut body.node);
+                    }
+                    self.functions.insert(func.name.node.clone(), function);
                 }
             }
         }
@@ -122,6 +170,15 @@ impl SymExecutor {
 
     /// Add a constraint, wrapping with current path condition.
     pub(crate) fn add_constraint(&mut self, c: Constraint) {
+        let size = super::scalar_call::constraint_nodes(&c);
+        let guards: usize = self
+            .path_condition
+            .iter()
+            .map(super::scalar_call::value_nodes)
+            .sum();
+        if !self.charge_scalar_nodes(size.saturating_add(guards)) {
+            return;
+        }
         if self.path_condition.is_empty() {
             self.system.constraints.push(c);
         } else {
@@ -137,17 +194,22 @@ impl SymExecutor {
     }
 
     /// Execute a block of statements.
+    #[cfg(test)]
     pub(crate) fn execute_block(&mut self, block: &Block) {
         for stmt in &block.stmts {
             self.execute_stmt(&stmt.node);
+            if self.returned.is_some() {
+                return;
+            }
         }
         // Evaluate tail expression for side effects (e.g., assert calls)
         if let Some(ref tail) = block.tail_expr {
-            let _ = self.eval_expr(&tail.node);
+            self.returned = Some(self.eval_expr(&tail.node));
         }
     }
 
     /// Execute a single statement.
+    #[cfg(test)]
     pub(crate) fn execute_stmt(&mut self, stmt: &Stmt) {
         match stmt {
             Stmt::Let {
@@ -271,8 +333,13 @@ impl SymExecutor {
                 // Expression statement: evaluate for side effects (e.g., assert)
                 let _ = self.eval_expr(&expr.node);
             }
-            Stmt::Return(_) => {
-                // Return from function — handled by caller
+            Stmt::Return(value) => {
+                self.returned = Some(
+                    value
+                        .as_ref()
+                        .map(|v| self.eval_expr(&v.node))
+                        .unwrap_or(SymValue::Const(0)),
+                );
             }
             Stmt::Reveal { .. } | Stmt::Seal { .. } => {
                 // Events don't produce constraints (they're output-only)
@@ -348,5 +415,92 @@ impl SymExecutor {
                 }
             }
         }
+    }
+}
+
+/// The current solver performs Goldilocks arithmetic only.
+pub fn validate_audit_target(target: &crate::target::TerrainConfig) -> Result<(), String> {
+    let prime: String = target
+        .field_prime
+        .chars()
+        .filter(|c| !c.is_whitespace())
+        .collect();
+    let goldilocks = prime == "2^64-2^32+1"
+        || prime == GOLDILOCKS_P.to_string()
+        || prime.eq_ignore_ascii_case("0xffffffff00000001");
+    if target.field_bits != 64 || !goldilocks {
+        return Err(format!(
+            "symbolic audit supports only the Goldilocks field; target '{}' declares '{}'",
+            target.name, target.field_prime
+        ));
+    }
+    if !matches!(target.name.as_str(), "nox" | "triton") {
+        return Err(format!(
+            "symbolic audit has no Boolean ABI model for target '{}'",
+            target.name
+        ));
+    }
+    if target.digest_width == 0 || target.digest_width > 64 {
+        return Err("symbolic audit requires a digest width between 1 and 64".into());
+    }
+    Ok(())
+}
+
+/// Analyze all non-test definitions using the selected ABI.
+pub fn analyze_all_with_target(
+    file: &File,
+    target: &crate::target::TerrainConfig,
+) -> Result<Vec<(String, ConstraintSystem)>, String> {
+    validate_audit_target(target)?;
+    let mut results = Vec::new();
+    for item in &file.items {
+        if let Item::Fn(func) = &item.node {
+            if func.body.is_some() && !func.is_test && func.intrinsic.is_none() {
+                let system =
+                    SymExecutor::with_target(target)?.execute_function(file, &func.name.node);
+                results.push((func.name.node.clone(), system));
+            }
+        }
+    }
+    Ok(results)
+}
+
+#[cfg(test)]
+mod target_tests {
+    use super::*;
+    #[test]
+    fn native_and_fixed_input_widths_follow_the_selected_abi() {
+        let source = "program widths\nfn main() { let a = read_digest() let b = divine_digest() let c = read4() let d = divine7() }";
+        let file = crate::parse_source_silent(source, "widths.tri").unwrap();
+        for width in [4, 5] {
+            let mut target = crate::target::TerrainConfig::nox();
+            target.digest_width = width;
+            let mut executor = SymExecutor::with_target(&target).unwrap();
+            let Item::Fn(func) = &file.items[0].node else {
+                panic!()
+            };
+            executor.execute_block(&func.body.as_ref().unwrap().node);
+            assert_eq!(executor.system.pub_inputs.len(), width as usize + 4);
+            assert_eq!(executor.system.divine_inputs.len(), width as usize + 7);
+            assert!(
+                !analyze_all_with_target(&file, &target).unwrap()[0]
+                    .1
+                    .unsupported
+                    .is_empty()
+            );
+        }
+    }
+    #[test]
+    fn another_field_is_rejected_before_symbolic_execution() {
+        let file =
+            crate::parse_source_silent("program p\nfn main() { assert(true) }", "p.tri").unwrap();
+        let mut target = crate::target::TerrainConfig::nox();
+        target.field_prime = "17".into();
+        assert!(
+            analyze_all_with_target(&file, &target)
+                .err()
+                .unwrap()
+                .contains("Goldilocks")
+        );
     }
 }

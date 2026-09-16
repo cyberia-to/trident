@@ -1,5 +1,11 @@
 # Roadmap
 
+Current coordinated source candidate versions are Trident 0.3, Trisha 0.3 and
+Joy 0.5 with compiler API 3. Historical milestones below retain their original
+versions. Registry installation is not validated for this candidate; use the
+coordinated source archive while the [registry packaging blockers](../audit/release-version-closure.md) remain open.
+
+
 Trident exists to write [CORE](https://cyber.page/core-spec/) — Conserved Observable Reduction
 Equilibrium, a self-verifying substrate for planetary collective
 intelligence. 16 reduction patterns, field-first arithmetic, BBG
@@ -42,6 +48,13 @@ Quantum         256K        128K
 
 ---
 
+Ownership checkpoint (2026-09-11): package/ABI propagation, typed TIR and
+warrior-owned SDK/distribution are implemented and tested. Current temperatures
+remain unchanged. Subsequent work completed bounded authenticated public/private
+state proofs, independent baseline proof coverage and explicit Neptune adapter
+admission. These do not establish self-hosting, secure FHE or all roadmap
+milestones. See [current release evidence](../audit/full-release-preparation.md).
+
 ## 256K — primitives land
 
 ```
@@ -72,7 +85,7 @@ Noun        AST→Noun optimized: subject sharing, dead axis elimination, parall
 cyber stack ✓ nox executor integration (trident build → .nox → nox execute → trace) — joy, 0.2.0
 cyber stack ✓ zheng prover integration (trace → zheng prove → proof) — joy, 0.2.0
 cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
-compiler    ✓ All 6 stages + pipeline rewritten in .tri (9,195 LOC)
+compiler    ◐ Prototype stages in .tri; lowering integration/self-compilation open
               lexer (824) → parser (2,723) → typecheck (1,502) →
               codegen (1,979) → optimize (733) → lower (1,121) →
               pipeline (313)
@@ -88,11 +101,11 @@ Quantum     Quantum circuit simulation backend
 ```
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
-TIR         ✓ TIR builder, optimizer, lowerer self-hosted in .tri
+TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
 Noun        ✓ NounBuilder self-hosted in .tri
-cyber stack ✓ Full pipeline: .tri → nox → zheng → bbg (compile, execute, prove, verify) — 0.2.0
+cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
-compiler    ✓ All stages self-hosted — wire lower when core/warrior ready
+compiler    ◐ Prototype pipeline emits TIR; lower wiring and self-compilation open
 std.*       23 std.skill.* shipped
 os.*        3+ OS namespaces operational (incl. os.cyber.*)
 tooling     Web playground: compile .tri in browser
@@ -112,7 +125,7 @@ language    Protocols: compile-time structural typing, grammar frozen
 TIR         TIROp set stable (5+ OS, 1 VM per type prove op set complete)
 Noun        Noun type proposal (reference/props/noun-types.md) resolved
 cyber stack nox VM spec frozen, zheng prover stable
-compiler    ✓ Pipeline in Trident — needs lower wiring + self-compilation
+compiler    ◐ Prototype pipeline in Trident — lower wiring + self-compilation open
 std.*       #[requires]/#[ensures] contracts on all public functions
 os.*        Per-OS namespace governance established
 AI          Proven training: gradient computation inside proof

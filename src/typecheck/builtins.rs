@@ -327,15 +327,23 @@ impl TypeChecker {
             b.insert(
                 "xx_dot_step".into(),
                 FnSig {
-                    params: vec![("a".into(), xfield_ty.clone()), ("ptr".into(), Ty::Field)],
-                    return_ty: Ty::Tuple(vec![xfield_ty.clone(), Ty::Field]),
+                    params: vec![
+                        ("acc".into(), xfield_ty.clone()),
+                        ("ptr_a".into(), Ty::Field),
+                        ("ptr_b".into(), Ty::Field),
+                    ],
+                    return_ty: Ty::Tuple(vec![xfield_ty.clone(), Ty::Field, Ty::Field]),
                 },
             );
             b.insert(
                 "xb_dot_step".into(),
                 FnSig {
-                    params: vec![("a".into(), xfield_ty.clone()), ("ptr".into(), Ty::Field)],
-                    return_ty: Ty::Tuple(vec![xfield_ty, Ty::Field]),
+                    params: vec![
+                        ("acc".into(), xfield_ty.clone()),
+                        ("ptr_a".into(), Ty::Field),
+                        ("ptr_b".into(), Ty::Field),
+                    ],
+                    return_ty: Ty::Tuple(vec![xfield_ty, Ty::Field, Ty::Field]),
                 },
             );
         }
@@ -364,4 +372,38 @@ pub(super) fn is_io_builtin(name: &str) -> bool {
     ) || name.starts_with("pub_read")
         || name.starts_with("pub_write")
         || name.starts_with("divine")
+}
+
+impl TypeChecker {
+    /// Structural return layouts for IR inference, from the same ABI-aware
+    /// signatures as type checking. This does not authorize any intrinsic.
+    pub(crate) fn builtin_return_types(
+        config: &crate::target::TerrainConfig,
+    ) -> std::collections::BTreeMap<String, crate::ast::Type> {
+        fn syntax(ty: &Ty) -> Option<crate::ast::Type> {
+            use crate::ast::{ArraySize, ModulePath, Type};
+            Some(match ty {
+                Ty::Field => Type::Field,
+                Ty::XField(_) => Type::XField,
+                Ty::Bool => Type::Bool,
+                Ty::U32 => Type::U32,
+                Ty::Digest(_) => Type::Digest,
+                Ty::Array(inner, n) => {
+                    Type::Array(Box::new(syntax(inner)?), ArraySize::Literal(*n))
+                }
+                Ty::Tuple(parts) => {
+                    Type::Tuple(parts.iter().map(syntax).collect::<Option<Vec<_>>>()?)
+                }
+                Ty::Struct(def) => Type::Named(ModulePath(
+                    def.name.split('.').map(str::to_string).collect(),
+                )),
+                Ty::Unit => return None,
+            })
+        }
+        Self::with_target(config.clone())
+            .intrinsic_signatures
+            .into_iter()
+            .filter_map(|(name, sig)| syntax(&sig.return_ty).map(|ty| (name, ty)))
+            .collect()
+    }
 }

@@ -3,6 +3,11 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
+/// Version of the compiler that produced a build, independent of bundle schema.
+pub const COMPILER_VERSION: &str = env!("CARGO_PKG_VERSION");
+/// Incompatible shared compilation and installed target-package contract.
+pub const COMPILER_API: u32 = 3;
+
 pub mod api;
 pub mod ast;
 pub mod config;
@@ -13,7 +18,10 @@ pub mod field;
 pub mod import;
 pub mod ir;
 pub mod lsp;
+#[cfg(feature = "neural")]
+pub mod neural;
 pub mod package;
+mod resources;
 pub mod runtime;
 pub mod syntax;
 pub mod typecheck;

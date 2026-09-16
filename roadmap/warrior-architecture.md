@@ -5,6 +5,11 @@ author: mastercyb
 
 # Warrior Architecture: Core vs Tooling vs Warriors
 
+Historical proposal. Its “nox has no warrior” and in-core Triton lowering
+sections are superseded by the implemented Joy/Trisha boundary in
+[warrior-api](../reference/warrior-api.md). For the remaining ownership work,
+see [target ownership](../audit/target-ownership.md).
+
 ## Problem
 
 Trident currently compiles for 20+ targets in one monolithic crate.

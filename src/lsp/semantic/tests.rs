@@ -26,9 +26,9 @@ fn simple_program_tokens() {
 
 #[test]
 fn builtin_classified_as_function() {
-    let source = "program test\nfn main() {\n  let x: Field = pub_read()\n}\n";
+    let source = "program test\nfn main() {\n  let x: Field = field_add(1, 2)\n}\n";
     let tokens = semantic_tokens(source, &PathBuf::from("test.tri"));
-    let pub_read = tokens.iter().find(|t| t.length == 8);
+    let pub_read = tokens.iter().find(|t| t.length == 9);
     assert!(pub_read.is_some());
     let pr = pub_read.unwrap();
     assert_eq!(pr.token_type, TT_FUNCTION);
@@ -142,17 +142,11 @@ fn delta_token_insertion() {
 fn asm_block_produces_multiple_tokens() {
     let source = "program test\nfn main() {\n    asm { push 1\nadd }\n}\n";
     let tokens = semantic_tokens(source, &PathBuf::from("test.tri"));
-    // Should have more than one token for the asm region:
-    // `asm` keyword + `push` instruction + `1` number + `add` instruction
-    let asm_region_tokens: Vec<_> = tokens
+    // Untagged assembly on default nox must not claim Triton instructions.
+    assert!(!tokens
         .iter()
-        .filter(|t| t.token_type == TT_KEYWORD && t.token_modifiers_bitset & (1 << 3) != 0)
-        .collect();
-    assert!(
-        asm_region_tokens.len() >= 2,
-        "asm block should produce multiple instruction tokens, got {}",
-        asm_region_tokens.len()
-    );
+        .any(|t| t.token_type == TT_KEYWORD && t.token_modifiers_bitset & (1 << 3) != 0));
+    assert!(tokens.iter().any(|t| t.token_type == TT_VARIABLE));
 }
 
 #[test]

@@ -9,7 +9,9 @@ use super::{check, check_with_flags};
 
 #[test]
 fn test_valid_field_arithmetic() {
-    let result = check("program test\nfn main() {\n    let a: Field = pub_read()\n    let b: Field = pub_read()\n    let c: Field = a + b\n    pub_write(c)\n}");
+    let result = check(
+        "program test\nfn main() {\n    let a: Field = pub_read()\n    let b: Field = pub_read()\n    let c: Field = a + b\n    pub_write(c)\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -27,55 +29,73 @@ fn test_undefined_variable() {
 
 #[test]
 fn test_assert_with_eq() {
-    let result = check("program test\nfn main() {\n    let a: Field = pub_read()\n    let b: Field = divine()\n    assert(a == b)\n}");
+    let result = check(
+        "program test\nfn main() {\n    let a: Field = pub_read()\n    let b: Field = divine()\n    assert(a == b)\n}",
+    );
     assert!(result.is_ok());
 }
 
 #[test]
 fn test_function_call() {
-    let result = check("program test\nfn add(a: Field, b: Field) -> Field {\n    a + b\n}\nfn main() {\n    let x: Field = pub_read()\n    let y: Field = pub_read()\n    let z: Field = add(x, y)\n}");
+    let result = check(
+        "program test\nfn add(a: Field, b: Field) -> Field {\n    a + b\n}\nfn main() {\n    let x: Field = pub_read()\n    let y: Field = pub_read()\n    let z: Field = add(x, y)\n}",
+    );
     assert!(result.is_ok());
 }
 
 #[test]
 fn test_struct_init_and_field_access() {
-    let result = check("program test\nstruct Point {\n    x: Field,\n    y: Field,\n}\nfn main() {\n    let a: Field = pub_read()\n    let b: Field = pub_read()\n    let p: Point = Point { x: a, y: b }\n    pub_write(p.x)\n}");
+    let result = check(
+        "program test\nstruct Point {\n    x: Field,\n    y: Field,\n}\nfn main() {\n    let a: Field = pub_read()\n    let b: Field = pub_read()\n    let p: Point = Point { x: a, y: b }\n    pub_write(p.x)\n}",
+    );
     assert!(result.is_ok());
 }
 
 #[test]
 fn test_struct_missing_field() {
-    let result = check("program test\nstruct Point {\n    x: Field,\n    y: Field,\n}\nfn main() {\n    let p: Point = Point { x: pub_read() }\n}");
+    let result = check(
+        "program test\nstruct Point {\n    x: Field,\n    y: Field,\n}\nfn main() {\n    let p: Point = Point { x: pub_read() }\n}",
+    );
     assert!(result.is_err());
 }
 
 #[test]
 fn test_array_init_and_index() {
-    let result = check("program test\nfn main() {\n    let arr: [Field; 3] = [pub_read(), pub_read(), pub_read()]\n    pub_write(arr[0])\n}");
+    let result = check(
+        "program test\nfn main() {\n    let arr: [Field; 3] = [pub_read(), pub_read(), pub_read()]\n    pub_write(arr[0])\n}",
+    );
     assert!(result.is_ok());
 }
 
 #[test]
 fn test_tuple_destructuring() {
-    let result = check("program test\nfn pair() -> (Field, Field) {\n    (pub_read(), pub_read())\n}\nfn main() {\n    let (a, b): (Field, Field) = pair()\n    pub_write(a)\n    pub_write(b)\n}");
+    let result = check(
+        "program test\nfn pair() -> (Field, Field) {\n    (pub_read(), pub_read())\n}\nfn main() {\n    let (a, b): (Field, Field) = pair()\n    pub_write(a)\n    pub_write(b)\n}",
+    );
     assert!(result.is_ok());
 }
 
 #[test]
 fn test_tuple_destructure_arity_mismatch() {
-    let result = check("program test\nfn main() {\n    let (a, b, c): (Field, Field) = (pub_read(), pub_read())\n}");
+    let result = check(
+        "program test\nfn main() {\n    let (a, b, c): (Field, Field) = (pub_read(), pub_read())\n}",
+    );
     assert!(result.is_err());
 }
 
 #[test]
 fn test_reveal_valid() {
-    let result = check("program test\nevent Transfer { from: Field, to: Field, amount: Field }\nfn main() {\n    reveal Transfer { from: pub_read(), to: pub_read(), amount: pub_read() }\n}");
+    let result = check(
+        "program test\nevent Transfer { from: Field, to: Field, amount: Field }\nfn main() {\n    reveal Transfer { from: pub_read(), to: pub_read(), amount: pub_read() }\n}",
+    );
     assert!(result.is_ok());
 }
 
 #[test]
 fn test_seal_valid() {
-    let result = check("program test\nevent Nullifier { id: Field, nonce: Field }\nfn main() {\n    seal Nullifier { id: pub_read(), nonce: pub_read() }\n}");
+    let result = check(
+        "program test\nevent Nullifier { id: Field, nonce: Field }\nfn main() {\n    seal Nullifier { id: pub_read(), nonce: pub_read() }\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -87,25 +107,33 @@ fn test_reveal_undefined_event() {
 
 #[test]
 fn test_reveal_missing_field() {
-    let result = check("program test\nevent Ev { x: Field, y: Field }\nfn main() {\n    reveal Ev { x: pub_read() }\n}");
+    let result = check(
+        "program test\nevent Ev { x: Field, y: Field }\nfn main() {\n    reveal Ev { x: pub_read() }\n}",
+    );
     assert!(result.is_err());
 }
 
 #[test]
 fn test_reveal_extra_field() {
-    let result = check("program test\nevent Ev { x: Field }\nfn main() {\n    reveal Ev { x: pub_read(), y: pub_read() }\n}");
+    let result = check(
+        "program test\nevent Ev { x: Field }\nfn main() {\n    reveal Ev { x: pub_read(), y: pub_read() }\n}",
+    );
     assert!(result.is_err());
 }
 
 #[test]
 fn test_event_max_9_fields() {
-    let result = check("program test\nevent Big { f0: Field, f1: Field, f2: Field, f3: Field, f4: Field, f5: Field, f6: Field, f7: Field, f8: Field, f9: Field }\nfn main() {\n}");
+    let result = check(
+        "program test\nevent Big { f0: Field, f1: Field, f2: Field, f3: Field, f4: Field, f5: Field, f6: Field, f7: Field, f8: Field, f9: Field }\nfn main() {\n}",
+    );
     assert!(result.is_err()); // 10 fields > max 9
 }
 
 #[test]
 fn test_digest_destructuring() {
-    let result = check("program test\nfn main() {\n    let d: Digest = divine5()\n    let (f0, f1, f2, f3, f4) = d\n    pub_write(f0)\n    pub_write(f4)\n}");
+    let result = check(
+        "program test\nfn main() {\n    let d: Digest = divine5()\n    let (f0, f1, f2, f3, f4) = d\n    pub_write(f0)\n    pub_write(f4)\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -119,7 +147,9 @@ fn test_digest_destructuring_wrong_arity() {
 #[test]
 fn test_digest_destructuring_inline() {
     // Destructure directly from hash() call
-    let result = check("program test\nfn main() {\n    let (f0, f1, f2, f3, f4) = hash(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\n    pub_write(f0)\n}");
+    let result = check(
+        "program test\nfn main() {\n    let (f0, f1, f2, f3, f4) = hash(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)\n    pub_write(f0)\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -131,7 +161,9 @@ fn test_intrinsic_rejected_outside_std() {
 
 #[test]
 fn test_intrinsic_allowed_in_std_module() {
-    let result = check("module std.test\n#[intrinsic(hash)] pub fn foo(x0: Field, x1: Field, x2: Field, x3: Field, x4: Field, x5: Field, x6: Field, x7: Field, x8: Field, x9: Field) -> Digest\n");
+    let result = check(
+        "module std.test\n#[intrinsic(hash)] pub fn foo(x0: Field, x1: Field, x2: Field, x3: Field, x4: Field, x5: Field, x6: Field, x7: Field, x8: Field, x9: Field) -> Digest\n",
+    );
     assert!(result.is_ok());
 }
 
@@ -150,7 +182,9 @@ fn test_mutual_recursion_rejected() {
 #[test]
 fn test_no_false_positive_recursion() {
     // a calls b, b calls c — no cycle
-    let result = check("program test\nfn c() {\n    pub_write(1)\n}\nfn b() {\n    c()\n}\nfn a() {\n    b()\n}\nfn main() {\n    a()\n}");
+    let result = check(
+        "program test\nfn c() {\n    pub_write(1)\n}\nfn b() {\n    c()\n}\nfn a() {\n    b()\n}\nfn main() {\n    a()\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -171,7 +205,9 @@ fn test_dead_code_after_assert_false() {
 
 #[test]
 fn test_no_false_positive_dead_code() {
-    let result = check("program test\nfn foo() -> Field {\n    let x: Field = pub_read()\n    pub_write(x)\n    x\n}\nfn main() {\n}");
+    let result = check(
+        "program test\nfn foo() -> Field {\n    let x: Field = pub_read()\n    pub_write(x)\n    x\n}\nfn main() {\n}",
+    );
     assert!(result.is_ok());
 }
 
@@ -401,13 +437,17 @@ fn test_cfg_export_filtered() {
 
 #[test]
 fn test_match_field_with_integers() {
-    let result = check("program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        0 => { pub_write(0) }\n        1 => { pub_write(1) }\n        _ => { pub_write(2) }\n    }\n}");
+    let result = check(
+        "program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        0 => { pub_write(0) }\n        1 => { pub_write(1) }\n        _ => { pub_write(2) }\n    }\n}",
+    );
     assert!(result.is_ok(), "match on Field with integers should pass");
 }
 
 #[test]
 fn test_match_bool_exhaustive() {
-    let result = check("program test\nfn main() {\n    let b: Bool = pub_read() == pub_read()\n    match b {\n        true => { pub_write(1) }\n        false => { pub_write(0) }\n    }\n}");
+    let result = check(
+        "program test\nfn main() {\n    let b: Bool = pub_read() == pub_read()\n    match b {\n        true => { pub_write(1) }\n        false => { pub_write(0) }\n    }\n}",
+    );
     assert!(
         result.is_ok(),
         "match on Bool with true+false is exhaustive"
@@ -416,7 +456,9 @@ fn test_match_bool_exhaustive() {
 
 #[test]
 fn test_match_non_exhaustive_error() {
-    let result = check("program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        0 => { pub_write(0) }\n        1 => { pub_write(1) }\n    }\n}");
+    let result = check(
+        "program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        0 => { pub_write(0) }\n        1 => { pub_write(1) }\n    }\n}",
+    );
     assert!(
         result.is_err(),
         "match without wildcard on Field should fail"
@@ -425,9 +467,73 @@ fn test_match_non_exhaustive_error() {
 
 #[test]
 fn test_match_bool_pattern_on_field_error() {
-    let result = check("program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        true => { pub_write(1) }\n        _ => { pub_write(0) }\n    }\n}");
+    let result = check(
+        "program test\nfn main() {\n    let x: Field = pub_read()\n    match x {\n        true => { pub_write(1) }\n        _ => { pub_write(0) }\n    }\n}",
+    );
     assert!(
         result.is_err(),
         "boolean pattern on Field scrutinee should fail"
     );
+}
+
+#[test]
+fn h0003_facts_do_not_escape_scope_or_survive_value_changes() {
+    let cases = [
+        "fn main() { let mut a = pub_read() let mut z = pub_read() let b = as_u32(a)\n (a, z) = (pub_read(), pub_read()) let c = as_u32(a) }",
+        "fn other(a: Field) { let b = as_u32(a) } fn main() { let a = pub_read() let c = as_u32(a) }",
+        "fn main() { let a = pub_read() if true { let b = as_u32(a) } let c = as_u32(a) }",
+        "fn main() { let a = pub_read() if true { let b = as_u32(a) } else { let c = as_u32(a) } }",
+        "fn main() { let a = pub_read() for i in 0..2 { let b = as_u32(a) } let c = as_u32(a) }",
+        "fn main() { let mut a = pub_read() let b = as_u32(a) a = pub_read() let c = as_u32(a) }",
+        "fn main() { let a = pub_read() let mut b = as_u32(a) let c = as_u32(a) }",
+        "fn main() { let a = pub_read() let b = as_u32(a) let a = pub_read() let c = as_u32(a) }",
+        "fn main() { let a = pub_read() let b = as_u32(a) let b = pub_read() let c = as_u32(a) }",
+        "fn main() { let a = pub_read() let pair = split(a) let c = as_u32(a) }",
+        "fn as_u32(a: Field) -> U32 { let (hi, lo) = split(a) lo } fn main() { let a = pub_read() let b = as_u32(a) let c = as_u32(a) }",
+    ];
+    for body in cases {
+        let result = check(&format!("program test\n{body}"));
+        let exports = result.unwrap_or_else(|err| panic!("{body}: {err:?}"));
+        assert!(
+            !exports.warnings.iter().any(|w| w.message.contains("H0003")),
+            "{body}: {:?}",
+            exports.warnings
+        );
+    }
+}
+
+#[test]
+fn h0003_suggested_binding_preserves_required_u32_type() {
+    let body =
+        "program test\nfn main() { let a = pub_read() let b = as_u32(a) let c: U32 = as_u32(a) }";
+    let exports = check(body).unwrap();
+    assert!(
+        exports
+            .warnings
+            .iter()
+            .any(|w| w.message.contains("prior U32 binding `b`"))
+    );
+    assert!(check(&body.replace("let c: U32 = as_u32(a)", "let c: U32 = b")).is_ok());
+    assert!(check(&body.replace("let c: U32 = as_u32(a)", "let c: U32 = a")).is_err());
+}
+
+#[test]
+fn exported_generics_preserve_unresolved_size_parameters() {
+    let exports = check("module sizes\npub fn first<M>(x:[Field;M])->Field{x[0]}").unwrap();
+    assert!(
+        exports.functions.is_empty(),
+        "generic export must not masquerade as an ordinary zero-sized signature"
+    );
+    let generic = &exports.generic_functions["first"];
+    assert_eq!(generic.type_params, ["M"]);
+    assert!(
+        matches!(&generic.params[0].1, crate::ast::Type::Array(_,crate::ast::ArraySize::Param(name)) if name == "M")
+    );
+}
+
+#[test]
+fn return_path_uses_canonical_field_condition() {
+    // This helper uses Triton: p is pushed as zero, so the missing else falls through.
+    assert!(check("program test\nfn main()->Field{if 18446744069414584321{return 7}}").is_err());
+    assert!(check("program test\nfn main()->Field{if 18446744069414584322{return 7}}").is_ok());
 }

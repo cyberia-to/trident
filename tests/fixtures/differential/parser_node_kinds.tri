@@ -1,0 +1,3 @@
+program differential_parser_node_kinds
+use std.compiler.parser
+fn main() -> Field { parser.NK_FILE() + 100 * parser.NK_FN() }

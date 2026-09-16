@@ -3,7 +3,42 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
-## Unreleased
+## 0.3.0 — 2026-09-16
+
+Coordinated release: **Trident 0.3.0**, compiler API **3**, with Trisha
+0.3.0 and Joy 0.5.0. Validation receipts accompany the release archives.
+
+- Keep the frontend, typed TIR, nox lowering and generic neural harness in
+  Trident. Triton emission/costs/neural target, Neptune SDK/network data and
+  all 43 hand baselines belong to Trisha. Machine contracts and discovery
+  metadata have separate ownership; installed packages embed their resources.
+- Resolve explicit target, project target and nox default consistently across
+  build/run/prove/test. Reject unsupported targets and stale API 1/2 warriors.
+  Preserve bundle identity and pass bounded file witnesses to the owner CLI.
+- Correct aggregate layouts, early returns, lexical shadowing, simultaneous
+  assignment, dynamic array bounds, event payload order and U32 range hints.
+  The Triton test runner executes actual compiled test functions and imports.
+- Validate typed entry arity and narrow values; reconstruct aggregate nox inputs
+  and pass typed entry metadata to Trisha. Check ordinary returns and concrete
+  generic bodies in their defining modules. Preserve terminal branch values,
+  discard intermediate values and retain declaration-order struct evaluation.
+- Authenticate selected nox computation and public results through Joy/Zheng;
+  propagate public-state roots through imported and local state helpers.
+- Repair standard crypto/RAM/quantum/compiler baselines against independent
+  reference vectors. Full proving and formal validation have separate receipts.
+- Isolate formal obligations by function and SSA identity; honor supported
+  scalar contracts, fail on counterexamples/solver errors and report incomplete
+  analysis as UNKNOWN. Reject `deploy --state` before registry artifacts are
+  created; Neptune transaction submission belongs to the warrior interface.
+- Package the coordinated locked source closure and installed CPU binaries.
+  See [active release gates](audit/full-release-preparation.md) and
+  [version migration](audit/release-version-closure.md).
+
+## Earlier development checkpoints
+
+The following pre-release migration notes describe intermediate states. The
+current ownership and behavior above supersede them, including the restoration
+of the generic neural harness to Trident.
 
 - **BREAKING: Triton/Neptune-only logic moved out of trident, wholesale
   (S3 of `.claude/plans/warrior-owns-lowering.md`).** trident stops at

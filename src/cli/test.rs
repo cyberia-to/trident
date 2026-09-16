@@ -15,8 +15,8 @@ pub struct TestArgs {
     /// Input .tri file or directory with trident.toml
     pub input: PathBuf,
     /// Target VM (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -44,18 +44,40 @@ pub fn cmd_test(args: TestArgs) {
         union_flag,
         profile,
     } = args;
+    let ri = resolve_input(&input);
+    let target = super::source_target(target.as_deref(), ri.project.as_ref());
     let bf = super::resolve_battlefield_compile(&target, &engine, &terrain, &network, &union_flag);
     let target = bf.target;
-    let ri = resolve_input(&input);
 
     let options = resolve_options(&target, &profile, ri.project.as_ref());
-    let result = trident::run_tests(&ri.entry, &options);
+    let (entry, options) = trident::source_options(&input, &options).unwrap_or_else(|errors| {
+        for error in errors {
+            eprintln!("error: {}", error.message);
+        }
+        process::exit(1)
+    });
+    if target != "nox" {
+        if let Some(warrior) = super::find_warrior(&target) {
+            let entry = entry.display().to_string();
+            super::delegate_to_warrior(
+                &warrior,
+                "test",
+                &[&entry, "--target", &target, "--profile", &profile],
+            );
+            return;
+        }
+        super::missing_warrior(&target, "test");
+    }
+    let result = trident::run_tests(&entry, &options);
 
     match result {
         Ok(report) => {
             eprintln!("{}", report);
         }
-        Err(_) => {
+        Err(errors) => {
+            for error in errors {
+                eprintln!("{}", error.message);
+            }
             process::exit(1);
         }
     }

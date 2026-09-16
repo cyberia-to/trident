@@ -13,7 +13,7 @@
 
 /// Self-contained compilation artifact that a warrior needs to execute,
 /// prove, or deploy a Trident program.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ProgramBundle {
     /// Program name (from project or filename).
     pub name: String,
@@ -41,7 +41,7 @@ pub struct ProgramBundle {
 }
 
 /// Function metadata within a bundle.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct BundleFunction {
     pub name: String,
     pub hash: String,
@@ -49,7 +49,7 @@ pub struct BundleFunction {
 }
 
 /// Cost analysis summary.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BundleCost {
     /// Cost values per table.
     pub table_values: Vec<u64>,
@@ -61,221 +61,8 @@ pub struct BundleCost {
     pub estimated_proving_ns: u64,
 }
 
-// ─── JSON Serialization ────────────────────────────────────────────
-
-impl ProgramBundle {
-    /// Serialize to JSON (hand-rolled, matching existing patterns).
-    pub fn to_json(&self) -> String {
-        let mut out = String::from("{\n");
-        out.push_str(&format!("  \"name\": {},\n", json_string(&self.name)));
-        out.push_str(&format!("  \"version\": {},\n", json_string(&self.version)));
-        out.push_str(&format!(
-            "  \"target_vm\": {},\n",
-            json_string(&self.target_vm)
-        ));
-        match &self.target_os {
-            Some(os) => out.push_str(&format!("  \"target_os\": {},\n", json_string(os))),
-            None => out.push_str("  \"target_os\": null,\n"),
-        }
-        out.push_str(&format!(
-            "  \"entry_point\": {},\n",
-            json_string(&self.entry_point)
-        ));
-        out.push_str(&format!(
-            "  \"source_hash\": {},\n",
-            json_string(&self.source_hash)
-        ));
-        // Additive, backward-compatible: only emitted when true.
-        if self.reads_state {
-            out.push_str("  \"reads_state\": true,\n");
-        }
-
-        // Cost
-        out.push_str("  \"cost\": {\n");
-        for (i, name) in self.cost.table_names.iter().enumerate() {
-            let val = self.cost.table_values.get(i).copied().unwrap_or(0);
-            out.push_str(&format!("    {}: {},\n", json_string(name), val));
-        }
-        out.push_str(&format!(
-            "    \"padded_height\": {},\n",
-            self.cost.padded_height
-        ));
-        out.push_str(&format!(
-            "    \"estimated_proving_ns\": {}\n",
-            self.cost.estimated_proving_ns
-        ));
-        out.push_str("  },\n");
-
-        // Functions
-        out.push_str("  \"functions\": [\n");
-        for (i, func) in self.functions.iter().enumerate() {
-            let comma = if i + 1 < self.functions.len() {
-                ","
-            } else {
-                ""
-            };
-            out.push_str(&format!(
-                "    {{ \"name\": {}, \"hash\": {}, \"signature\": {} }}{}\n",
-                json_string(&func.name),
-                json_string(&func.hash),
-                json_string(&func.signature),
-                comma,
-            ));
-        }
-        out.push_str("  ],\n");
-
-        // Assembly (last field, no trailing comma)
-        out.push_str(&format!(
-            "  \"assembly\": {}\n",
-            json_string(&self.assembly)
-        ));
-        out.push_str("}\n");
-        out
-    }
-
-    /// Deserialize from JSON (minimal parser for the bundle format).
-    pub fn from_json(json: &str) -> Result<Self, String> {
-        let name = extract_string(json, "name")?;
-        let version = extract_string(json, "version")?;
-        let target_vm = extract_string(json, "target_vm")?;
-        let target_os = extract_string_opt(json, "target_os");
-        let entry_point = extract_string(json, "entry_point")?;
-        let source_hash = extract_string(json, "source_hash")?;
-        let assembly = extract_string(json, "assembly")?;
-        let reads_state = extract_bool(json, "reads_state").unwrap_or(false);
-        let padded_height = extract_u64(json, "padded_height").unwrap_or(0);
-        let estimated_proving_ns = extract_u64(json, "estimated_proving_ns").unwrap_or(0);
-
-        Ok(ProgramBundle {
-            name,
-            version,
-            target_vm,
-            target_os,
-            assembly,
-            entry_point,
-            functions: Vec::new(), // TODO: parse functions array
-            cost: BundleCost {
-                table_values: Vec::new(),
-                table_names: Vec::new(),
-                padded_height,
-                estimated_proving_ns,
-            },
-            source_hash,
-            reads_state,
-        })
-    }
-}
-
-// ─── JSON Helpers ──────────────────────────────────────────────────
-
-/// JSON-escape a string and wrap in quotes.
-fn json_string(s: &str) -> String {
-    let mut out = String::from('"');
-    for ch in s.chars() {
-        match ch {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            '\n' => out.push_str("\\n"),
-            '\r' => out.push_str("\\r"),
-            '\t' => out.push_str("\\t"),
-            c if (c as u32) < 0x20 => {
-                out.push_str(&format!("\\u{:04x}", c as u32));
-            }
-            c => out.push(c),
-        }
-    }
-    out.push('"');
-    out
-}
-
-/// Extract a boolean value for a key from JSON (None if the key is absent).
-fn extract_bool(json: &str, key: &str) -> Option<bool> {
-    let pattern = format!("\"{}\"", key);
-    let start = json.find(&pattern)?;
-    let rest = json[start + pattern.len()..].trim_start_matches([':', ' ']);
-    if rest.starts_with("true") {
-        Some(true)
-    } else if rest.starts_with("false") {
-        Some(false)
-    } else {
-        None
-    }
-}
-
-/// Extract a string value for a key from JSON.
-fn extract_string(json: &str, key: &str) -> Result<String, String> {
-    let pattern = format!("\"{}\"", key);
-    let start = json
-        .find(&pattern)
-        .ok_or_else(|| format!("missing key '{}'", key))?;
-    let rest = &json[start + pattern.len()..];
-    // Skip `: "`
-    let quote_start = rest
-        .find('"')
-        .ok_or_else(|| format!("missing value for '{}'", key))?;
-    let value_start = quote_start + 1;
-    let value_rest = &rest[value_start..];
-    // Find closing quote (handling escapes)
-    let mut end = 0;
-    let mut escaped = false;
-    let mut value = String::new();
-    for ch in value_rest.chars() {
-        if escaped {
-            match ch {
-                '"' => value.push('"'),
-                '\\' => value.push('\\'),
-                'n' => value.push('\n'),
-                'r' => value.push('\r'),
-                't' => value.push('\t'),
-                _ => {
-                    value.push('\\');
-                    value.push(ch);
-                }
-            }
-            escaped = false;
-        } else if ch == '\\' {
-            escaped = true;
-        } else if ch == '"' {
-            break;
-        } else {
-            value.push(ch);
-        }
-        end += ch.len_utf8();
-    }
-    let _ = end; // suppress unused warning
-    Ok(value)
-}
-
-/// Extract an optional string value (returns None if key is "null").
-fn extract_string_opt(json: &str, key: &str) -> Option<String> {
-    let pattern = format!("\"{}\"", key);
-    let start = json.find(&pattern)?;
-    let rest = &json[start + pattern.len()..];
-    let trimmed = rest.trim_start().trim_start_matches(':').trim_start();
-    if trimmed.starts_with("null") {
-        return None;
-    }
-    extract_string(json, key).ok()
-}
-
-/// Extract a u64 value for a key from JSON.
-fn extract_u64(json: &str, key: &str) -> Result<u64, String> {
-    let pattern = format!("\"{}\"", key);
-    let start = json
-        .find(&pattern)
-        .ok_or_else(|| format!("missing key '{}'", key))?;
-    let rest = &json[start + pattern.len()..];
-    let colon = rest
-        .find(':')
-        .ok_or_else(|| format!("missing colon for '{}'", key))?;
-    let after_colon = rest[colon + 1..].trim_start();
-    let num_end = after_colon
-        .find(|c: char| !c.is_ascii_digit())
-        .unwrap_or(after_colon.len());
-    after_colon[..num_end]
-        .parse()
-        .map_err(|e| format!("invalid u64 for '{}': {}", key, e))
-}
+#[path = "artifact_json.rs"]
+mod json;
 
 // ─── Tests ─────────────────────────────────────────────────────────
 
@@ -283,7 +70,7 @@ fn extract_u64(json: &str, key: &str) -> Result<u64, String> {
 mod tests {
     use super::*;
 
-    fn sample_bundle() -> ProgramBundle {
+    pub(super) fn sample_bundle() -> ProgramBundle {
         ProgramBundle {
             name: "test_program".to_string(),
             version: "0.1.0".to_string(),
@@ -316,7 +103,10 @@ mod tests {
         let mut bundle = sample_bundle();
         bundle.reads_state = true;
         let json = bundle.to_json();
-        assert!(json.contains("\"reads_state\": true"));
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&json).unwrap()["reads_state"],
+            true
+        );
         let parsed = ProgramBundle::from_json(&json).expect("parse failed");
         assert!(parsed.reads_state);
     }

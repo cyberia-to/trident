@@ -161,7 +161,7 @@ The compiler provides optimization hints with `--hints`:
 |------|---------|--------|
 | H0001 | Hash-dominated cost | Batch hash inputs, reduce Merkle depth |
 | H0002 | Large array access pattern | Consider RAM-based access or smaller arrays |
-| H0003 | Deep function call chain | Inline hot functions |
+| H0003 | Repeated U32 conversion | Reuse the named prior U32 binding |
 | H0004 | Stack boundary warning | Reduce live variables or struct sizes |
 
 ## 📝 Per-Line Cost Annotations

@@ -76,8 +76,9 @@ return_stmt   = "return" expr? ;
 expr_stmt     = expr ;
 
 (* Expressions *)
-expr          = literal | place | bin_op | call | struct_init
-              | array_init | tuple_expr | block ;
+expr          = primary ("." IDENT | "[" expr "]")* | bin_op ;
+primary       = literal | module_path | call | struct_init
+              | array_init | tuple_expr | "(" expr ")" ;
 bin_op        = expr ("+" | "*" | "==" | "<" | "&" | "^" | "/%"
               | "*." ) expr ;
 call          = module_path generic_args? "(" (expr ("," expr)*)? ")" ;

@@ -8,7 +8,7 @@ use std::process;
 
 use clap::Args;
 
-use super::{find_program_source, load_dep_dirs, resolve_input, resolve_options};
+use super::{resolve_input, resolve_options};
 
 #[derive(Args)]
 pub struct BuildArgs {
@@ -22,8 +22,8 @@ pub struct BuildArgs {
     #[arg(long)]
     pub costs: bool,
     /// Target VM (default: nox)
-    #[arg(long, default_value = "nox")]
-    pub target: String,
+    #[arg(long)]
+    pub target: Option<String>,
     /// Engine (geeky for terrain/VM)
     #[arg(long, conflicts_with_all = ["terrain", "network", "union_flag"])]
     pub engine: Option<String>,
@@ -53,14 +53,18 @@ pub fn cmd_build(args: BuildArgs) {
         union_flag,
         profile,
     } = args;
+    let ri = resolve_input(&input);
+    let target = super::source_target(target.as_deref(), ri.project.as_ref());
     let bf = super::resolve_battlefield_compile(&target, &engine, &terrain, &network, &union_flag);
     let target = bf.target;
-    let ri = resolve_input(&input);
 
-    let mut options = resolve_options(&target, &profile, ri.project.as_ref());
-    if let Some(ref proj) = ri.project {
-        options.dep_dirs = load_dep_dirs(proj);
-    }
+    let options = resolve_options(&target, &profile, ri.project.as_ref());
+    let (entry, options) = trident::source_options(&input, &options).unwrap_or_else(|errors| {
+        for error in errors {
+            eprintln!("error: {}", error.message);
+        }
+        process::exit(1)
+    });
 
     // Stack targets: the core stops at TIR (build_tir/build_tir_modules are
     // still here; instruction selection and linking are the warrior's —
@@ -69,7 +73,7 @@ pub fn cmd_build(args: BuildArgs) {
     if options.target_config.architecture != trident::target::Arch::Tree {
         if let Some(warrior_bin) = super::find_warrior(&target) {
             let mut extra: Vec<String> = vec![
-                input.display().to_string(),
+                entry.display().to_string(),
                 "--target".to_string(),
                 target.clone(),
                 "--profile".to_string(),
@@ -86,15 +90,10 @@ pub fn cmd_build(args: BuildArgs) {
             super::delegate_to_warrior(&warrior_bin, "build", &refs);
             return;
         }
-        eprintln!("No warrior found for target '{}'.", target);
-        eprintln!("Warriors handle lowering, execution, proving, and deployment for stack targets.");
-        eprintln!();
-        eprintln!("Install a warrior for this target:");
-        eprintln!("  cargo install trisha   # Triton VM + Neptune");
-        process::exit(1);
+        super::missing_warrior(&target, "build");
     }
 
-    let compiled = match trident::compile_project_with_options(&ri.entry, &options) {
+    let compiled = match trident::compile_project_with_options(&entry, &options) {
         Ok(t) => t,
         Err(errors) => {
             for e in &errors {
@@ -125,12 +124,7 @@ pub fn cmd_build(args: BuildArgs) {
     if !costs {
         return;
     }
-    let source_path = match find_program_source(&input) {
-        Some(p) => p,
-        None => return,
-    };
-    let cost_options = resolve_options(&target, &profile, None);
-    match trident::nox_cost_project(&source_path, &cost_options) {
+    match trident::nox_cost_project(&entry, &options) {
         Ok(nox_cost) => eprintln!("\n{}", nox_cost.format_report()),
         Err(_) => eprintln!("error: could not analyze nox reduction cost"),
     }

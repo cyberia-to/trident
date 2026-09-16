@@ -6,9 +6,9 @@
 //! Packaging: produce a self-contained artifact for Trident programs.
 //!
 //! `trident package` creates a `.deploy/` directory containing the compiled
-//! TASM and a `manifest.json` with metadata:
-//! - `program_digest` — Poseidon2 hash of compiled TASM (what verifiers check)
-//! - `source_hash` — content hash of the source AST
+//! target assembly and a `manifest.json` with metadata:
+//! - `program_digest` — compiler content hash of the compiled artifact bytes
+//! - `source_hash` — complete compilation identity (or direct artifact identity)
 //! - target info (VM + optional OS)
 //! - cost analysis
 //! - function signatures with per-function content hashes
@@ -20,9 +20,13 @@ use std::path::{Path, PathBuf};
 
 use crate::ast;
 use crate::ast::display::format_ast_type;
-use crate::runtime::artifact::BundleCost;
 use crate::hash::ContentHash;
+use crate::runtime::artifact::BundleCost;
 use crate::target::{Arch, TerrainConfig, UnionConfig};
+
+mod load;
+use load::validate_filename;
+pub use load::{load_artifact, ValidatedArtifact};
 
 // ─── Data Types ────────────────────────────────────────────────────
 
@@ -31,9 +35,11 @@ use crate::target::{Arch, TerrainConfig, UnionConfig};
 pub struct PackageManifest {
     pub name: String,
     pub version: String,
-    /// Poseidon2 hash of the compiled TASM bytes (hex).
+    /// Declared compiled artifact filename, relative to this package.
+    pub program_file: String,
+    /// Compiler content hash of the compiled artifact bytes (hex).
     pub program_digest: String,
-    /// Content hash of the source AST (hex).
+    /// Compilation identity (ABI, source dependencies and selected package), hex.
     pub source_hash: String,
     pub target_vm: String,
     pub target_os: Option<String>,
@@ -68,6 +74,8 @@ pub struct ManifestFunction {
 pub struct PackageResult {
     pub manifest: PackageManifest,
     pub artifact_dir: PathBuf,
+    /// Legacy field name, deprecated in terminology only: actual target artifact
+    /// path, including `.nox`. Retained for source compatibility.
     pub tasm_path: PathBuf,
     pub manifest_path: PathBuf,
 }
@@ -77,23 +85,70 @@ pub struct PackageResult {
 /// Generate a package artifact from a compiled project.
 ///
 /// Creates a `<name>.deploy/` directory under `output_base` containing
-/// `program.tasm` and `manifest.json`.
+/// `program<target extension>` and `manifest.json`.
 pub fn generate_artifact(
     name: &str,
     version: &str,
-    tasm: &str,
+    assembly: &str,
     source_file: &ast::File,
     cost: &BundleCost,
     target_vm: &TerrainConfig,
     target_os: Option<&UnionConfig>,
     output_base: &Path,
 ) -> Result<PackageResult, String> {
-    // 1. Compute program_digest = Poseidon2(tasm bytes)
-    let digest_bytes = crate::hash::content_hash_bytes(tasm.as_bytes());
+    let identity = serde_json::to_vec(&(
+        "trident-direct-artifact-v1",
+        target_vm,
+        target_os,
+        crate::hash::hash_file_content(source_file).to_hex(),
+        assembly,
+    ))
+    .map_err(|e| e.to_string())?;
+    let source_identity = ContentHash(crate::hash::content_hash_bytes(&identity)).to_hex();
+    generate_artifact_with_identity(
+        name,
+        version,
+        assembly,
+        source_file,
+        cost,
+        target_vm,
+        target_os,
+        output_base,
+        &source_identity,
+    )
+}
+
+/// Package compiler output with its complete resolved compilation identity.
+/// CLI callers use `bundle_with_assembly` or `compile_to_bundle` to obtain it.
+pub fn generate_artifact_with_identity(
+    name: &str,
+    version: &str,
+    assembly: &str,
+    source_file: &ast::File,
+    cost: &BundleCost,
+    target_vm: &TerrainConfig,
+    target_os: Option<&UnionConfig>,
+    output_base: &Path,
+    source_identity: &str,
+) -> Result<PackageResult, String> {
+    if ContentHash::from_hex(source_identity).is_none() {
+        return Err("invalid compilation identity".into());
+    }
+    validate_filename(name)?;
+    let extension = &target_vm.output_extension;
+    if !extension.starts_with('.')
+        || extension.len() < 2
+        || !extension[1..].bytes().all(|b| b.is_ascii_alphanumeric())
+    {
+        return Err("invalid target artifact extension".into());
+    }
+    let program_file = format!("program{extension}");
+    // Compiler content identity of the exact emitted bytes.
+    let digest_bytes = crate::hash::content_hash_bytes(assembly.as_bytes());
     let program_digest = ContentHash(digest_bytes);
 
-    // 2. Compute source_hash from AST
-    let source_hash = crate::hash::hash_file_content(source_file);
+    // 2. Preserve the compiler's complete source/package identity.
+    let source_hash = source_identity.to_owned();
 
     // 3. Extract function signatures + per-function hashes
     let fn_hashes = crate::hash::hash_file(source_file);
@@ -114,8 +169,9 @@ pub fn generate_artifact(
     let manifest = PackageManifest {
         name: name.to_string(),
         version: version.to_string(),
+        program_file,
         program_digest: program_digest.to_hex(),
-        source_hash: source_hash.to_hex(),
+        source_hash,
         target_vm: target_vm.name.clone(),
         target_os: target_os.map(|os| os.name.clone()),
         architecture,
@@ -135,9 +191,9 @@ pub fn generate_artifact(
     std::fs::create_dir_all(&artifact_dir)
         .map_err(|e| format!("cannot create '{}': {}", artifact_dir.display(), e))?;
 
-    // 8. Write program.tasm
-    let tasm_path = artifact_dir.join("program.tasm");
-    std::fs::write(&tasm_path, tasm)
+    // 8. Write the declared target artifact.
+    let tasm_path = artifact_dir.join(&manifest.program_file);
+    std::fs::write(&tasm_path, assembly)
         .map_err(|e| format!("cannot write '{}': {}", tasm_path.display(), e))?;
 
     // 9. Write manifest.json
@@ -162,6 +218,10 @@ impl PackageManifest {
 
         out.push_str(&format!("  \"name\": {},\n", json_string(&self.name)));
         out.push_str(&format!("  \"version\": {},\n", json_string(&self.version)));
+        out.push_str(&format!(
+            "  \"program_file\": {},\n",
+            json_string(&self.program_file)
+        ));
         out.push_str(&format!(
             "  \"program_digest\": {},\n",
             json_string(&self.program_digest)
@@ -191,10 +251,14 @@ impl PackageManifest {
             let val = self.cost.table_values.get(i).copied().unwrap_or(0);
             out.push_str(&format!("    {}: {},\n", json_string(name), val));
         }
-        out.push_str(&format!(
-            "    \"padded_height\": {}\n",
-            self.cost.padded_height
-        ));
+        if self.cost.table_names.is_empty() {
+            out.push_str("    \"padded_height\": null\n");
+        } else {
+            out.push_str(&format!(
+                "    \"padded_height\": {}\n",
+                self.cost.padded_height
+            ));
+        }
         out.push_str("  },\n");
 
         // functions array
@@ -317,10 +381,10 @@ fn find_entry_point(file: &ast::File) -> String {
             }
         }
     }
-    // Fallback: first non-test function
+    // Module entry: first public function with an executable body.
     for item in &file.items {
         if let ast::Item::Fn(func) = &item.node {
-            if !func.is_test {
+            if !func.is_test && func.is_pub && func.body.is_some() {
                 return func.name.node.clone();
             }
         }

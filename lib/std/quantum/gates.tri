@@ -1,0 +1,262 @@
+module std.quantum.gates
+
+// Quantum gate simulation over the Goldilocks field.
+//
+// Quantum state amplitudes are complex numbers. Since Goldilocks has
+// no native complex type, we represent them as (re, im) field pairs.
+// A qubit is a 2-element state vector: |psi> = alpha|0> + beta|1>.
+//
+// These routines evaluate gate-shaped matrices over a finite field.
+// Hadamard and T omit their normalization factors; the caller must track
+// those factors. Finite-field arithmetic is not complex Hilbert-space
+// arithmetic, and this module does not implement a physical measurement.
+//
+// This is sufficient for circuit simulation and correctness checking:
+// prove that a quantum circuit transforms input state to output state
+// correctly, without needing probabilistic measurement.
+use vm.core.field
+
+use vm.core.convert
+
+use vm.io.mem
+
+// ---------------------------------------------------------------------------
+// Complex number over the Goldilocks field.
+// Represents a + bi where a, b are field elements.
+// ---------------------------------------------------------------------------
+pub struct Complex {
+    re: Field,
+    im: Field,
+}
+
+// ---------------------------------------------------------------------------
+// Qubit state: alpha|0> + beta|1>
+// zero = alpha (amplitude of |0>), one = beta (amplitude of |1>)
+// ---------------------------------------------------------------------------
+pub struct Qubit {
+    zero: Complex,
+    one: Complex,
+}
+
+// ---------------------------------------------------------------------------
+// Complex arithmetic
+// ---------------------------------------------------------------------------
+pub fn complex_zero() -> Complex {
+    Complex { re: 0, im: 0 }
+}
+
+pub fn complex_one() -> Complex {
+    Complex { re: 1, im: 0 }
+}
+
+// (a + bi) + (c + di) = (a+c) + (b+d)i
+pub fn complex_add(a: Complex, b: Complex) -> Complex {
+    Complex { re: a.re + b.re, im: a.im + b.im }
+}
+
+// (a + bi) - (c + di) = (a-c) + (b-d)i
+pub fn complex_sub(a: Complex, b: Complex) -> Complex {
+    Complex { re: a.re + field.neg(b.re), im: a.im + field.neg(b.im) }
+}
+
+// (a + bi)(c + di) = (ac - bd) + (ad + bc)i
+pub fn complex_mul(a: Complex, b: Complex) -> Complex {
+    Complex { re: a.re * b.re + field.neg(a.im * b.im), im: a.re * b.im + a.im * b.re }
+}
+
+// Scalar multiply: s * (a + bi) = (sa) + (sb)i
+pub fn complex_scale(s: Field, c: Complex) -> Complex {
+    Complex { re: s * c.re, im: s * c.im }
+}
+
+// Conjugate: (a + bi)* = a - bi
+pub fn complex_conj(c: Complex) -> Complex {
+    Complex { re: c.re, im: field.neg(c.im) }
+}
+
+// |c|^2 = a^2 + b^2 (norm squared, stays in Field)
+pub fn complex_norm_sq(c: Complex) -> Field {
+    c.re * c.re + c.im * c.im
+}
+
+// ---------------------------------------------------------------------------
+// Qubit initialization
+// ---------------------------------------------------------------------------
+// |0> state: amplitude 1 for |0>, amplitude 0 for |1>
+pub fn init_zero() -> Qubit {
+    Qubit { zero: complex_one(), one: complex_zero() }
+}
+
+// |1> state: amplitude 0 for |0>, amplitude 1 for |1>
+pub fn init_one() -> Qubit {
+    Qubit { zero: complex_zero(), one: complex_one() }
+}
+
+// ---------------------------------------------------------------------------
+// Single-qubit gates
+// ---------------------------------------------------------------------------
+// Pauli-X (NOT gate): |0> <-> |1>
+// Matrix: [[0, 1], [1, 0]]
+pub fn paulix(q: Qubit) -> Qubit {
+    Qubit { zero: q.one, one: q.zero }
+}
+
+// Pauli-Z (phase flip): |0> -> |0>, |1> -> -|1>
+// Matrix: [[1, 0], [0, -1]]
+pub fn pauliz(q: Qubit) -> Qubit {
+    Qubit { zero: q.zero, one: Complex { re: field.neg(q.one.re), im: field.neg(q.one.im) } }
+}
+
+// Pauli-Y: |0> -> i|1>, |1> -> -i|0>
+// Matrix: [[0, -i], [i, 0]]
+pub fn pauliy(q: Qubit) -> Qubit {
+    Qubit { zero: Complex { re: q.one.im, im: field.neg(q.one.re) }, one: Complex { re: field.neg(q.zero.im), im: q.zero.re } }
+}
+
+// Hadamard gate: |0> -> (|0> + |1>)/sqrt(2), |1> -> (|0> - |1>)/sqrt(2)
+// Matrix: (1/sqrt(2)) * [[1, 1], [1, -1]]
+//
+// We omit the 1/sqrt(2) normalization factor. The caller tracks
+// normalization separately; no square-root operation is required here.
+// Unnormalized: |0> -> |0> + |1>, |1> -> |0> - |1>
+pub fn hadamard(q: Qubit) -> Qubit {
+    Qubit { zero: complex_add(q.zero, q.one), one: complex_sub(q.zero, q.one) }
+}
+
+// S gate (phase gate): |0> -> |0>, |1> -> i|1>
+// Matrix: [[1, 0], [0, i]]
+pub fn sgate(q: Qubit) -> Qubit {
+    Qubit { zero: q.zero, one: Complex { re: field.neg(q.one.im), im: q.one.re } }
+}
+
+// T gate (pi/8 gate): |0> -> |0>, |1> -> e^(i*pi/4)|1>
+// e^(i*pi/4) = (1 + i)/sqrt(2)
+// Unnormalized: |1> -> (1 + i)|1> = (re - im) + (re + im)i
+pub fn tgate(q: Qubit) -> Qubit {
+    Qubit { zero: q.zero, one: Complex { re: q.one.re + field.neg(q.one.im), im: q.one.re + q.one.im } }
+}
+
+// ---------------------------------------------------------------------------
+// Two-qubit gates
+// ---------------------------------------------------------------------------
+// CNOT (controlled-NOT): flips target if control is |1>
+// State space: |00>, |01>, |10>, |11>
+// Matrix: [[1,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,1,0]]
+//
+// Two-qubit state is 4 amplitudes: a|00> + b|01> + c|10> + d|11>
+// CNOT: a|00> + b|01> + d|10> + c|11> (swap c,d)
+pub struct TwoQubit {
+    q00: Complex,
+    q01: Complex,
+    q10: Complex,
+    q11: Complex,
+}
+
+pub fn two_qubit_product(a: Qubit, b: Qubit) -> TwoQubit {
+    TwoQubit { q00: complex_mul(a.zero, b.zero), q01: complex_mul(a.zero, b.one), q10: complex_mul(a.one, b.zero), q11: complex_mul(a.one, b.one) }
+}
+
+pub fn cnot(state: TwoQubit) -> TwoQubit {
+    TwoQubit { q00: state.q00, q01: state.q01, q10: state.q11, q11: state.q10 }
+}
+
+// CZ (controlled-Z): applies Z to target if control is |1>
+// Matrix: [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,-1]]
+pub fn cz(state: TwoQubit) -> TwoQubit {
+    TwoQubit { q00: state.q00, q01: state.q01, q10: state.q10, q11: Complex { re: field.neg(state.q11.re), im: field.neg(state.q11.im) } }
+}
+
+// SWAP: swap two qubits
+// Matrix: [[1,0,0,0],[0,0,1,0],[0,1,0,0],[0,0,0,1]]
+pub fn swap(state: TwoQubit) -> TwoQubit {
+    TwoQubit { q00: state.q00, q01: state.q10, q10: state.q01, q11: state.q11 }
+}
+
+// ---------------------------------------------------------------------------
+// Measurement (deterministic, provable)
+// ---------------------------------------------------------------------------
+// Deterministic surrogate: compute d = norm(zero) - norm(one) modulo p,
+// then return high32(d) < 2147483647. This exact limb threshold is preserved
+// for compatibility; it is not a general probability comparison or sampling.
+pub fn measure_deterministic(q: Qubit) -> Bool {
+    let prob_zero: Field = complex_norm_sq(q.zero)
+    let prob_one: Field = complex_norm_sq(q.one)
+    let diff: Field = prob_zero + field.neg(prob_one)
+    let (hi, lo) = convert.split(diff)
+    let threshold: U32 = convert.as_u32(2147483647)
+    hi < threshold
+}
+
+// ---------------------------------------------------------------------------
+// Multi-qubit state in RAM
+// For N qubits, state is 2^N complex amplitudes (2 * 2^N field elements).
+// Stored as pairs: RAM[addr + 2*i] = re, RAM[addr + 2*i + 1] = im
+// ---------------------------------------------------------------------------
+// Apply single-qubit gate to qubit `target` in an N-qubit state.
+// g00, g01, g10, g11: arbitrary complex 2x2 matrix entries.
+// Requires 1 <= n <= 12, target < n, and the entire buffer in U32 RAM.
+// All bounds are checked before any state write; no unitary check is implied.
+// state_addr: 2^n complex amplitudes (2 * 2^n field elements)
+// n: number of qubits
+// target: which qubit to apply the gate to (0-indexed)
+pub fn apply_single_gate(
+    state_addr: Field,
+    n: Field,
+    target: Field,
+    g00: Complex,
+    g01: Complex,
+    g10: Complex,
+    g11: Complex
+) {
+    let n_u32: U32 = convert.as_u32(n)
+    let target_index: U32 = convert.as_u32(target)
+    let base_u32: U32 = convert.as_u32(state_addr)
+    assert(n_u32 < convert.as_u32(13))
+    assert(target_index < n_u32)
+    // For each pair of indices that differ only in the target bit:
+    // |...0_target...> and |...1_target...>
+    let mut num_states: Field = 1
+    for s in 0..n bounded 12 {
+        num_states = num_states + num_states
+    }
+    let last_addr: U32 = convert.as_u32(state_addr + num_states + num_states + field.neg(1))
+    // Step through pairs
+    let mut target_bit: Field = 1
+    for t in 0..target bounded 12 {
+        target_bit = target_bit + target_bit
+    }
+    for i in 0..num_states bounded 4096 {
+        let idx: Field = convert.as_field(i)
+        // Check if target bit is 0 in this index
+        // We process only indices where target bit is 0
+        // and pair them with the index where target bit is 1
+        let i_u32: U32 = convert.as_u32(idx)
+        let target_u32: U32 = convert.as_u32(target_bit)
+        let masked: U32 = i_u32 & target_u32
+        if masked == convert.as_u32(0) {
+            let idx0: Field = idx
+            let idx1: Field = idx + target_bit
+            // Read amplitudes
+            let re0: Field = mem.read(state_addr + idx0 + idx0)
+            let im0: Field = mem.read(state_addr + idx0 + idx0 + 1)
+            let re1: Field = mem.read(state_addr + idx1 + idx1)
+            let im1: Field = mem.read(state_addr + idx1 + idx1 + 1)
+            let a0: Complex = Complex { re: re0, im: im0 }
+            let a1: Complex = Complex { re: re1, im: im1 }
+            // Apply gate: new_a0 = g00*a0 + g01*a1, new_a1 = g10*a0 + g11*a1
+            let new_a0: Complex = complex_add(
+                complex_mul(g00, a0),
+                complex_mul(g01, a1)
+            )
+            let new_a1: Complex = complex_add(
+                complex_mul(g10, a0),
+                complex_mul(g11, a1)
+            )
+            // Write back
+            mem.write(state_addr + idx0 + idx0, new_a0.re)
+            mem.write(state_addr + idx0 + idx0 + 1, new_a0.im)
+            mem.write(state_addr + idx1 + idx1, new_a1.re)
+            mem.write(state_addr + idx1 + idx1 + 1, new_a1.im)
+        }
+    }
+}

@@ -9,8 +9,6 @@ use crate::ast::*;
 use crate::ir::tir::builder::*;
 use crate::span::{Span, Spanned};
 
-use crate::ir::tir::builder::helpers::parse_spill_effect;
-
 fn dummy_span() -> Span {
     Span::dummy()
 }
@@ -222,24 +220,6 @@ fn test_arithmetic_sequence() {
     assert!(push4_pos < mul_pos, "push 4 should precede mul");
     assert!(push2_pos < add_pos, "push 2 should precede add");
     assert!(mul_pos < add_pos, "mul should precede add");
-}
-
-// ── Test: parse_spill_effect ──
-
-#[test]
-fn test_parse_spill_effect() {
-    assert!(matches!(parse_spill_effect("    push 42"), TIROp::Push(42)));
-    assert!(matches!(parse_spill_effect("    swap 5"), TIROp::Swap(5)));
-    assert!(matches!(parse_spill_effect("    pop 1"), TIROp::Pop(1)));
-    assert!(matches!(
-        parse_spill_effect("    write_mem 1"),
-        TIROp::WriteMem(1)
-    ));
-    assert!(matches!(
-        parse_spill_effect("    read_mem 1"),
-        TIROp::ReadMem(1)
-    ));
-    assert!(matches!(parse_spill_effect("  dup 3"), TIROp::Dup(3)));
 }
 
 // ── Test: module (not program) omits preamble ──
@@ -457,4 +437,69 @@ fn test_if_else_nested_bodies_have_content() {
         }
     }
     panic!("no IfElse op found");
+}
+
+#[test]
+fn deep_aggregate_index_preserves_word_order() {
+    for elem_width in 1..9 {
+        for index in 0..3 {
+            let mut builder = TIRBuilder::new(TerrainConfig::triton());
+            let width = elem_width * 3;
+            builder.stack.push_named("array", width);
+            builder.stack.last_mut().unwrap().elem_width = Some(elem_width);
+            builder.stack.push_temp(24);
+            builder.build_index(
+                &sp(Expr::Var("array".into())),
+                &sp(Expr::Literal(Literal::Integer(index))),
+            );
+            let mut stack: Vec<u64> = (0..width + 24).map(u64::from).collect();
+            let mut expected = stack.clone();
+            expected.extend((index * u64::from(elem_width))..((index + 1) * u64::from(elem_width)));
+            for op in builder.ops {
+                match op {
+                    TIROp::Dup(depth) => stack.push(stack[stack.len() - 1 - depth as usize]),
+                    _ => panic!("unexpected index operation {op:?}"),
+                }
+            }
+            assert_eq!(stack, expected);
+        }
+    }
+}
+
+#[test]
+fn typed_entry_metadata_resolves_source_order_without_machine_io() {
+    use crate::tir::EntryLeaf;
+    let source = "program entry\nstruct Pair { flag: Bool, count: U32 }\nfn main(first: Field, pair: Pair, array: [Bool; 2], last: XField) {}";
+    let file = crate::parse_source_silent(source, "entry.tri").unwrap();
+    let ops = make_builder().build_file(&file);
+    let position = ops
+        .iter()
+        .position(|op| matches!(op, TIROp::EntryParameters(_)))
+        .unwrap();
+    let TIROp::EntryParameters(leaves) = &ops[position] else {
+        unreachable!()
+    };
+    assert_eq!(
+        leaves,
+        &vec![
+            EntryLeaf::Field,
+            EntryLeaf::Bool,
+            EntryLeaf::U32,
+            EntryLeaf::Bool,
+            EntryLeaf::Bool,
+            EntryLeaf::Field,
+            EntryLeaf::Field,
+            EntryLeaf::Field
+        ]
+    );
+    assert!(matches!(&ops[position+1], TIROp::Entry(name) if name == "main"));
+    assert!(!ops[..position]
+        .iter()
+        .any(|op| matches!(op, TIROp::ReadIo(_))));
+    let mut library = file;
+    library.kind = FileKind::Module;
+    assert!(!make_builder()
+        .build_file(&library)
+        .iter()
+        .any(|op| matches!(op, TIROp::EntryParameters(_) | TIROp::Entry(_))));
 }
