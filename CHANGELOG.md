@@ -3,9 +3,9 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
-## 0.4.0 — 2026-09-16
+## 0.3.0 — 2026-09-16
 
-Coordinated release: **Trident 0.4.0**, compiler API **3**, with Trisha
+Coordinated release: **Trident 0.3.0**, compiler API **3**, with Trisha
 0.3.0 and Joy 0.5.0. Validation receipts accompany the release archives.
 
 - Keep the frontend, typed TIR, nox lowering and generic neural harness in

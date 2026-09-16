@@ -2,6 +2,18 @@
 
 Date: 2026-09-11. Initial read-only review, followed by parent-authorized application of the proposed versions and compiler API 2. The tables retain the pre-change versions as the migration record. Registry availability/name ownership was not checked or claimed. Versions must additionally be free in the intended registry before publication.
 
+## Release numbering correction — 2026-09-16
+
+The published Trident versions on GitHub and crates.io are 0.1.0 and 0.2.0.
+The 0.3.0 value in the development branch was never published. Advancing it
+again to 0.4.0 was unnecessary: the next coordinated release is **Trident
+0.3.0**, with Trisha 0.3.0 and Joy 0.5.0. Compiler API **3** remains unchanged.
+The historical tables below record the earlier proposed/applied candidate
+numbers, not the final release numbering. New manifests and dependency
+requirements use Trident 0.3.0; old audit receipts retain their actual versions.
+Final archives are rebuilt from the corrected committed source, and their
+hashes must pass the release gates before publication.
+
 ## Applied version set (previous → new)
 
 Use new pre-1.0 minor versions for changed execution/proof acceptance and public interfaces. Cargo treats the leftmost nonzero version component as the compatibility boundary; behavior changes also require maintainer judgment ([Cargo SemVer guidance](https://doc.rust-lang.org/cargo/reference/semver.html)). Do not reuse an earlier candidate version for these changed binaries and artifacts.

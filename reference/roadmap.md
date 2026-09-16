@@ -1,6 +1,6 @@
 # Roadmap
 
-Current coordinated source candidate versions are Trident 0.4, Trisha 0.3 and
+Current coordinated source candidate versions are Trident 0.3, Trisha 0.3 and
 Joy 0.5 with compiler API 3. Historical milestones below retain their original
 versions. Registry installation is not validated for this candidate; use the
 coordinated source archive while the [registry packaging blockers](../audit/release-version-closure.md) remain open.

@@ -114,7 +114,7 @@ trident::target::{TerrainConfig, UnionConfig, Arch}
 A warrior takes trident-lang **without default features**:
 
 ```toml
-trident-lang = { version = "0.4.0", default-features = false }
+trident-lang = { version = "0.3.0", default-features = false }
 ```
 
 The default feature set is empty. Opt-in `neural` enables the shared model,
@@ -157,7 +157,7 @@ The owner-approved target resource contract uses `target::TargetPackage`.
 Warriors implement `describe --target <terrain-or-union>` and emit one JSON
 object without executing user programs. `schema_version` and `compiler_api`
 are 1 and 3 respectively. API 3 is the incompatible coordinated compiler/warrior
-contract for Trident 0.4, Trisha 0.3 and Joy 0.5; API 1 and 2 packages are rejected.
+contract for Trident 0.3, Trisha 0.3 and Joy 0.5; API 1 and 2 packages are rejected.
 API 3 adds resolved primitive `EntryParameters` metadata to shared TIR. The owner
 must marshal executable entry parameters using its documented calling convention;
 Trisha consumes a typed public-input prefix and preserves explicit public output

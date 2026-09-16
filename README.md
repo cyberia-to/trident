@@ -35,7 +35,7 @@ and the in-repo `silicon` crate contains experimental emitters for 25 native
 backends — from Cortex-M and CUDA to OpenQASM and Verilog. Catalog entries and
 experimental emitters do not establish runtime or proof support.
 
-The coordinated release candidate is Trident 0.4, Trisha 0.3 and Joy 0.5.
+The coordinated release candidate is Trident 0.3, Trisha 0.3 and Joy 0.5.
 Build from the complete [source distribution](../trisha/scripts/README.md)
 or use its tested binary archive. Individual registry installation of this
 candidate is not yet available.
