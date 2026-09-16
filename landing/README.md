@@ -3,10 +3,16 @@
 Lives inside the [trident](https://github.com/cyberia-to/trident) repo
 as `landing/` — folded in from the standalone `trident-pink` repo
 (full history preserved via `git subtree`). One page: **the provable
-language** — hero with the trident girl (`../media/tri.gif` re-encoded
-to mp4), `cargo install trident-lang` CTA, the cycle-count table, six
-cards, Neptune, family links (cyberia · soft3 · cyb · cyber). Static
-HTML, no build. Source of truth for copy: `../README.md`.
+language** — native release downloads, proof modes, the Trinity demo,
+language features, targets and family links (cyberia · soft3 · cyb · cyber).
+Static HTML, no build; the hero video is re-encoded from `../media/tri.gif`.
+
+Trinity's homepage pitch is **AI. Privacy. Quantum. One field.** It links to
+the [arithmetic contract](../reference/trinity-arithmetic.md) and
+[Trident source](../lib/std/trinity/inference.tri). Keep its research-demo
+status visible: the current implementation demonstrates arithmetic on Triton;
+secure FHE/private inference remain research goals and the quantum stage is
+simulated. The contract defines current guarantees.
 
 ## Deploy
 
