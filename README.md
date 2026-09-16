@@ -35,10 +35,11 @@ and the in-repo `silicon` crate contains experimental emitters for 25 native
 backends — from Cortex-M and CUDA to OpenQASM and Verilog. Catalog entries and
 experimental emitters do not establish runtime or proof support.
 
-The coordinated release candidate is Trident 0.3, Trisha 0.3 and Joy 0.5.
-Build from the complete [source distribution](../trisha/scripts/README.md)
-or use its tested binary archive. Individual registry installation of this
-candidate is not yet available.
+The coordinated CPU release is **Trident 0.3.0, Trisha 0.3.0 and Joy 0.5.0**.
+[Download native macOS, Linux and Windows archives](https://github.com/cyberia-to/trident/releases/tag/v0.3.0)
+or build the complete coordinated source archive. Individual registry installation
+of this release is not available. See the [release notes](audit/release-notes-v0.3.0.md)
+and [source-bound validation](audit/release-2026-09-16.md).
 
 ---
 
@@ -448,17 +449,18 @@ Full index: [docs/README.md](docs/README.md)
 
 ## Status
 
-0.4.0 is an unreleased coordinated candidate. The compiler owns shared
-front-end, nox lowering and optional generic neural infrastructure;
+Trident **0.3.0** is published with Trisha **0.3.0** and Joy **0.5.0**.
+The compiler owns the shared frontend, nox lowering and extension interfaces.
 Trisha owns Triton lowering, emission, execution, Neptune libraries and
-Triton benchmarks. See [the warrior API](reference/warrior-api.md).
+Triton baselines. Joy owns nox execution and Zheng proof integration.
+See [the warrior API](reference/warrior-api.md).
 
-Current tests include 198 freshly verified proofs across all 43 Triton
-baselines, actual isolated Neptune transaction admission, and installed
-Trident/Trisha/Joy proof workflows on macOS and Linux arm64. The remaining
-language, protocol, cryptographic review and final distribution gates are
-tracked in the [release ledger](audit/full-release-preparation.md).
-These measurements do not establish universal formal or cryptographic assurance.
+All scoped release gates passed: six native CPU targets, 133 execution fixtures
+on each target, 198 freshly generated and verified baseline proofs on the
+dedicated ARM Mac, all 36 cross-platform proof exchanges, and actual isolated
+Neptune transaction admission. The [published validation report](audit/release-2026-09-16.md)
+identifies the exact released sources and binaries. Broader nox execution and
+live node/database integration remain roadmap work.
 
 ---
 
