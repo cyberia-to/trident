@@ -117,8 +117,42 @@ impl TIRBuilder {
             self.flush_stack_effects();
         }
 
-        let body = func.body.as_ref().expect("caller checked body.is_some()");
+        let mut value_body = func
+            .body
+            .as_ref()
+            .expect("caller checked body.is_some()")
+            .clone();
         let has_return = func.return_ty.is_some();
+        super::early_return::discard_statement_tails(&mut value_body.node, has_return);
+        let body = &value_body;
+
+        let normalized;
+        let body = if super::early_return::contains(&body.node) {
+            // Slots are part of this function's frame and survive nested calls.
+            if ret_width > 0 {
+                for _ in 0..ret_width {
+                    self.ops.push(TIROp::Push(0));
+                }
+                self.stack
+                    .push_named(super::early_return::RESULT, ret_width);
+                if let Some(ty) = &func.return_ty {
+                    self.var_types
+                        .insert(super::early_return::RESULT.into(), ty.node.clone());
+                    self.register_struct_layout_from_type(super::early_return::RESULT, &ty.node);
+                }
+            }
+            self.ops.push(TIROp::Push(0));
+            self.stack.push_named(super::early_return::FLAG, 1);
+            self.var_types
+                .insert(super::early_return::FLAG.into(), Type::Bool);
+            normalized = crate::span::Spanned::new(
+                super::early_return::body(&body.node, has_return),
+                body.span,
+            );
+            &normalized
+        } else {
+            body
+        };
 
         if has_return && ret_width > 1 {
             // Multi-element return: build statements first, then handle
@@ -164,6 +198,11 @@ impl TIRBuilder {
                         self.emit_multi_ret_cleanup(ret_width, to_pop);
                     }
                 }
+            } else {
+                // A final conditional or explicit return is a statement in
+                // the AST. Its result still requires the same frame cleanup.
+                let dead = self.stack.stack_depth().saturating_sub(ret_width);
+                self.emit_multi_ret_cleanup(ret_width, dead);
             }
         } else {
             // Single-element or void return: use the standard path.

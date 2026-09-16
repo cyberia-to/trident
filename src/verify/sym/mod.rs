@@ -8,20 +8,11 @@
 //! Transforms the AST into a symbolic constraint system suitable for
 //! algebraic verification, bounded model checking, and SMT solving.
 //!
-//! Since Trident programs have no heap, no recursion, bounded loops,
-//! and operate over a finite field (Goldilocks: p = 2^64 - 2^32 + 1),
-//! every program produces a finite, decidable constraint system.
-//!
-//! The symbolic engine:
-//! 1. Assigns a symbolic variable to each `let` binding
-//! 2. Tracks constraints from `assert`, `assert_eq`, `assert_digest`
-//! 3. Encodes `if/else` as path conditions
-//! 4. Unrolls bounded `for` loops up to their bound
-//! 5. Inlines function calls (no recursion → always terminates)
-//! 6. Produces a `ConstraintSystem` that can be checked by:
-//!    - The algebraic solver (polynomial identity testing)
-//!    - A bounded model checker (enumerate concrete values)
-//!    - An SMT solver (Z3/CVC5 via SMT-LIB encoding)
+//! Formal coverage is deliberately explicit: bounded scalar path obligations
+//! with entry contracts and per-path returns are supported. Other AST shapes
+//! carry an unsupported reason and cannot produce a safety verdict. The legacy
+//! control-flow evaluator is retained only in tests; it is not a fallback for
+//! production helper calls or evidence of formal feature coverage.
 
 use std::collections::BTreeMap;
 
@@ -31,8 +22,11 @@ use crate::span::Spanned;
 /// The prime modulus for the Goldilocks field.
 pub const GOLDILOCKS_P: u64 = nebu::field::P;
 
+mod coverage;
 mod executor;
 mod expr;
+mod scalar;
+mod scalar_call;
 #[cfg(test)]
 mod tests;
 
@@ -169,7 +163,9 @@ impl SymValue {
                 let a = a.simplify();
                 match &a {
                     SymValue::Const(0) => SymValue::Const(0),
-                    SymValue::Const(v) => SymValue::Const(GOLDILOCKS_P - v),
+                    SymValue::Const(v) => {
+                        SymValue::Const((GOLDILOCKS_P - (v % GOLDILOCKS_P)) % GOLDILOCKS_P)
+                    }
                     _ => SymValue::Neg(Box::new(a)),
                 }
             }
@@ -205,7 +201,7 @@ impl std::fmt::Display for SymVar {
         if self.version == 0 {
             write!(f, "{}", self.name)
         } else {
-            write!(f, "{}_{}", self.name, self.version)
+            write!(f, "{}#{}", self.name, self.version)
         }
     }
 }
@@ -217,13 +213,13 @@ impl std::fmt::Display for SymVar {
 pub enum Constraint {
     /// a == b (from `assert_eq` or `assert(a == b)`)
     Equal(SymValue, SymValue),
-    /// a == 0 (from `assert(cond)` where cond is truthy)
+    /// a == 1 (the VM assertion success value).
     AssertTrue(SymValue),
     /// Conditional: if path_condition then constraint holds
     Conditional(SymValue, Box<Constraint>),
     /// Range check: value fits in U32 (from `as_u32`)
     RangeU32(SymValue),
-    /// Digest equality: 5-element vector comparison
+    /// Digest equality: coordinate-wise comparison for the selected ABI.
     DigestEqual(Vec<SymValue>, Vec<SymValue>),
 }
 
@@ -251,7 +247,7 @@ impl Constraint {
     pub fn is_violated(&self) -> bool {
         match self {
             Constraint::Equal(SymValue::Const(a), SymValue::Const(b)) => a != b,
-            Constraint::AssertTrue(SymValue::Const(0)) => true,
+            Constraint::AssertTrue(SymValue::Const(v)) => *v != 1,
             Constraint::RangeU32(SymValue::Const(c)) => *c > u32::MAX as u64,
             _ => false,
         }
@@ -284,6 +280,8 @@ impl Constraint {
 /// The complete constraint system for a program or function.
 #[derive(Clone, Debug)]
 pub struct ConstraintSystem {
+    /// Missing semantic coverage prevents a formal safety verdict.
+    pub unsupported: Vec<String>,
     /// All constraints that must hold.
     pub constraints: Vec<Constraint>,
     /// Symbolic variables introduced (name → latest version).
@@ -301,6 +299,7 @@ pub struct ConstraintSystem {
 impl ConstraintSystem {
     pub fn new() -> Self {
         Self {
+            unsupported: Vec::new(),
             constraints: Vec::new(),
             variables: BTreeMap::new(),
             pub_inputs: Vec::new(),
@@ -367,6 +366,7 @@ pub fn analyze_all(file: &File) -> Vec<(String, ConstraintSystem)> {
 /// Verification result for a function or program.
 #[derive(Clone, Debug)]
 pub struct VerificationResult {
+    pub unsupported: Vec<String>,
     /// The function or program name.
     pub name: String,
     /// Total constraints.
@@ -383,7 +383,10 @@ pub struct VerificationResult {
 
 impl VerificationResult {
     pub fn is_safe(&self) -> bool {
-        self.violated.is_empty()
+        self.unsupported.is_empty()
+            && self.total_constraints > 0
+            && self.active_constraints == 0
+            && self.violated.is_empty()
     }
 
     pub fn format_report(&self) -> String {
@@ -394,8 +397,10 @@ impl VerificationResult {
             "  Constraints: {} total, {} active, {} redundant\n",
             self.total_constraints, self.active_constraints, self.redundant_count,
         ));
-        if self.violated.is_empty() {
-            report.push_str("  Status: SAFE (no trivially violated assertions)\n");
+        if self.is_safe() {
+            report.push_str("  Status: SAFE (static tautologies)\n");
+        } else if self.violated.is_empty() {
+            report.push_str("  Status: UNKNOWN (unproved or absent obligations)\n");
         } else {
             report.push_str(&format!(
                 "  Status: VIOLATED ({} assertion(s) always fail)\n",
@@ -412,7 +417,10 @@ impl VerificationResult {
 /// Verify a file: analyze constraints and check for violations.
 /// For programs, checks `main`. For modules, checks all functions.
 pub fn verify_file(file: &File) -> VerificationResult {
-    let system = analyze(file);
+    let mut system = ConstraintSystem::new();
+    for (index, (_, function)) in analyze_all(file).into_iter().enumerate() {
+        system.append_independent(function, &format!("function_{index}"));
+    }
     let violated: Vec<String> = system
         .violated_constraints()
         .iter()
@@ -421,6 +429,7 @@ pub fn verify_file(file: &File) -> VerificationResult {
     let redundant_count = system.constraints.iter().filter(|c| c.is_trivial()).count();
 
     VerificationResult {
+        unsupported: system.unsupported.clone(),
         name: file.name.node.clone(),
         total_constraints: system.constraints.len(),
         active_constraints: system.active_constraints(),

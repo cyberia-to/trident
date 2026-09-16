@@ -26,6 +26,9 @@ pub struct TargetPackage {
     pub modules: BTreeMap<String, String>,
     pub module_hashes: BTreeMap<String, String>,
     pub intrinsics: Vec<String>,
+    /// Owner-defined operations beyond the language's intrinsic vocabulary.
+    #[serde(default)]
+    pub intrinsic_abis: BTreeMap<String, super::IntrinsicAbi>,
     pub instructions: Vec<String>,
     pub runtime: RuntimeCapabilities,
 }
@@ -36,7 +39,7 @@ impl TargetPackage {
         self.validate()?;
         let supported = match command {
             "build" => true,
-            "run" => self.runtime.run,
+            "run" | "test" => self.runtime.run,
             "prove" => self.runtime.prove,
             "verify" => self.runtime.verify,
             "deploy" => self.runtime.deploy,
@@ -73,7 +76,7 @@ impl TargetPackage {
     }
 
     pub fn validate(&self) -> Result<(), String> {
-        if self.schema_version != 1 || self.compiler_api != 1 {
+        if self.schema_version != 1 || self.compiler_api != crate::COMPILER_API {
             return Err("unsupported target package schema/compiler API".into());
         }
         if !identifier(&self.owner) || !identifier(&self.terrain.name) || self.version.is_empty() {
@@ -151,6 +154,28 @@ impl TargetPackage {
                 return Err("invalid or duplicate target capability names".into());
             }
         }
+        if self.intrinsic_abis.len() > 256 {
+            return Err("too many target intrinsic ABI declarations".into());
+        }
+        let language = crate::typecheck::TypeChecker::with_target(self.terrain.clone());
+        for (name, abi) in &self.intrinsic_abis {
+            if !identifier(name) || name.len() > 128 || !self.intrinsics.contains(name)
+                || abi.params.len() > 64 || abi.results.len() > 64
+                || abi.params.iter().chain(&abi.results).any(|t| t.width(&self.terrain) == 0)
+            {
+                return Err(format!("invalid or unavailable target intrinsic ABI '{name}'"));
+            }
+            if language.has_intrinsic_signature(name) {
+                return Err(format!("target intrinsic ABI cannot redefine language intrinsic '{name}'"));
+            }
+            if self.terrain.name == "nox" {
+                return Err("reference nox lowering does not support owner-defined target intrinsics".into());
+            }
+            let (inputs, outputs) = abi.widths(&self.terrain);
+            if inputs > 4096 || outputs > 4096 {
+                return Err(format!("target intrinsic ABI '{name}' exceeds the word limit"));
+            }
+        }
         if self.runtime.prove && (!self.runtime.verify || self.runtime.proof_formats.is_empty()) {
             return Err("proving capability requires verification and proof formats".into());
         }
@@ -169,6 +194,7 @@ impl TargetPackage {
             &self.union,
             &self.module_hashes,
             &self.intrinsics,
+            &self.intrinsic_abis,
         ))
         .map_err(|e| e.to_string())?;
         Ok(crate::hash::ContentHash(crate::hash::content_hash_bytes(&bytes)).to_hex())

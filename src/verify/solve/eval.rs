@@ -91,10 +91,7 @@ impl<'a> Evaluator<'a> {
             SymValue::Const(c) => Some(*c % GOLDILOCKS_P),
             SymValue::Var(var) => {
                 let key = var.to_string();
-                self.assignments.get(&key).copied().or_else(|| {
-                    // Try just the name without version
-                    self.assignments.get(&var.name).copied()
-                })
+                self.assignments.get(&key).copied()
             }
             SymValue::Add(a, b) => {
                 let a = self.eval(a)?;
@@ -176,7 +173,7 @@ impl<'a> Evaluator<'a> {
             }
             Constraint::AssertTrue(v) => {
                 let val = self.eval(v)?;
-                Some(val != 0)
+                Some(val == 1)
             }
             Constraint::Conditional(cond, inner) => {
                 let cv = self.eval(cond)?;

@@ -32,11 +32,16 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+mod entry;
+mod loops;
 mod modules;
+mod path;
+use path::{element_access as elem_access, AxisPath};
+mod state;
 
+use super::Noun;
 use crate::ast::{self, BinOp, Block, Expr, FnDef, Item, Literal, Pattern, Stmt};
 use crate::span::Spanned;
-use super::Noun;
 
 // ─── nox formula constructors (tags 0-17) ────────────────────────
 
@@ -165,22 +170,6 @@ fn cons_list(elems: Vec<Noun>) -> Noun {
     acc
 }
 
-/// Read element `i` of an aggregate produced by `base`. When `base` is a bare
-/// axis `[0 A]`, fuse the paths into a single axis; otherwise evaluate `base`
-/// then navigate into it via compose.
-fn elem_access(base: Noun, i: u32) -> Noun {
-    let rel = stack_axis(i);
-    match &base {
-        Noun::Cell(tag, addr) => {
-            if let (Noun::Atom(0), Noun::Atom(a)) = (tag.as_ref(), addr.as_ref()) {
-                return nox_axis(axis_compose(*a, rel));
-            }
-            nox_compose(base.clone(), nox_quote(nox_axis(rel)))
-        }
-        _ => nox_compose(base, nox_quote(nox_axis(rel))),
-    }
-}
-
 /// Compose two axis bit-paths: navigate `a`, then `b` from there.
 /// `axis_compose(1, b) = b`; `axis_compose(a, 1) = a`.
 fn axis_compose(a: u64, b: u64) -> u64 {
@@ -220,10 +209,16 @@ fn tail_axis(n: u32) -> u64 {
 /// Variable scope: maps names to their depth in the subject cons list.
 /// Depth 0 = head of subject (most recently bound).
 #[derive(Clone, Debug)]
+struct Binding {
+    depth: u32,
+    constant: Option<u64>,
+}
+
+#[derive(Clone, Debug)]
 struct Scope {
-    /// Stack of (name → bind_depth) frames. Inner vec = one scope level.
-    frames: Vec<BTreeMap<String, u32>>,
-    /// Per-frame aggregate-type annotations (only non-scalar types stored).
+    /// Stack of named binding frames, with depth and known immutable values.
+    frames: Vec<BTreeMap<String, Binding>>,
+    /// Per-frame type annotations for source bindings.
     tys: Vec<BTreeMap<String, ast::Type>>,
     /// Total number of cons operations (bindings) on the subject.
     depth: u32,
@@ -264,9 +259,9 @@ impl Scope {
 
     /// Look up a binding's recorded type.
     fn lookup_type(&self, name: &str) -> Option<&ast::Type> {
-        for frame in self.tys.iter().rev() {
-            if let Some(t) = frame.get(name) {
-                return Some(t);
+        for (bindings, types) in self.frames.iter().zip(&self.tys).rev() {
+            if bindings.contains_key(name) {
+                return types.get(name);
             }
         }
         None
@@ -275,8 +270,18 @@ impl Scope {
     /// Bind a variable (cons onto subject). Returns its bind_depth.
     fn bind(&mut self, name: &str) -> u32 {
         let d = self.depth;
+        // A same-frame shadow starts without the old binding's layout.
+        if let Some(types) = self.tys.last_mut() {
+            types.remove(name);
+        }
         if let Some(frame) = self.frames.last_mut() {
-            frame.insert(name.to_string(), d);
+            frame.insert(
+                name.to_string(),
+                Binding {
+                    depth: d,
+                    constant: None,
+                },
+            );
         }
         if let Some(count) = self.frame_bind_counts.last_mut() {
             *count += 1;
@@ -288,8 +293,29 @@ impl Scope {
     /// Look up a variable. Returns its position in the subject (0 = head).
     fn lookup(&self, name: &str) -> Option<u32> {
         for frame in self.frames.iter().rev() {
-            if let Some(&d) = frame.get(name) {
-                return Some(self.depth - 1 - d);
+            if let Some(binding) = frame.get(name) {
+                return Some(self.depth - 1 - binding.depth);
+            }
+        }
+        None
+    }
+
+    fn bind_loop_index(&mut self, name: &str, index: u64) -> Result<(), String> {
+        if index > u32::MAX as u64 {
+            return Err("nox: loop index exceeds U32 range".into());
+        }
+        self.bind(name);
+        self.note_type(name, ast::Type::U32);
+        if let Some(binding) = self.frames.last_mut().and_then(|frame| frame.get_mut(name)) {
+            binding.constant = Some(index);
+        }
+        Ok(())
+    }
+
+    fn lookup_constant(&self, name: &str) -> Option<u64> {
+        for frame in self.frames.iter().rev() {
+            if let Some(binding) = frame.get(name) {
+                return binding.constant;
             }
         }
         None
@@ -302,6 +328,9 @@ impl Scope {
     fn seal_frames_above(&mut self, from: usize) {
         for frame in self.frames.iter_mut().skip(from) {
             frame.clear();
+        }
+        for types in self.tys.iter_mut().skip(from) {
+            types.clear();
         }
     }
 }
@@ -329,6 +358,7 @@ pub struct NoxCompiler {
     /// Set when the program lowers an `os.state.read` — the bundle declares
     /// this so the runner supplies the subject as `[bbg_root [params…]]`.
     reads_state: bool,
+    state_functions: BTreeSet<String>,
     /// Running count of nodes emitted by inlining (exponential-blowup guard).
     inline_nodes: usize,
 }
@@ -345,6 +375,7 @@ impl NoxCompiler {
             call_stack: Vec::new(),
             inline_nodes: 0,
             reads_state: false,
+            state_functions: BTreeSet::new(),
         }
     }
 
@@ -371,20 +402,16 @@ impl NoxCompiler {
         // Bind parameters (first param = deepest, last param = head of subject)
         for param in &func.params {
             self.scope.bind(&param.name.node);
-            self.scope.note_type(&param.name.node, param.ty.node.clone());
+            self.scope
+                .note_type(&param.name.node, param.ty.node.clone());
         }
         // A program that reads state receives the BBG root as the subject
         // head, above the parameters: `[root_tree [param_last … [param0 0]]]`.
         // Each `os.state.read` site re-conses this root to the head so the
         // look pattern finds its limbs at the fixed axes 4/10/22/23.
-        if func
-            .body
-            .as_ref()
-            .map(|b| block_uses_state(&b.node))
-            .unwrap_or(false)
-        {
+        self.reads_state = self.function_uses_state(func);
+        if self.reads_state {
             self.scope.bind("$bbg_root");
-            self.reads_state = true;
         }
         self.check_depth()?;
 
@@ -393,7 +420,10 @@ impl NoxCompiler {
             .as_ref()
             .ok_or_else(|| format!("function {} has no body", func.name.node))?;
 
-        self.compile_block(&body.node)
+        let mut body = body.node.clone();
+        ast::normalize_terminal_returns(&mut body);
+        let body = self.compile_block(&body)?;
+        self.adapt_entry(func, body)
     }
 
     fn check_depth(&self) -> Result<(), String> {
@@ -465,8 +495,7 @@ impl NoxCompiler {
                     let mut elem_forms = Vec::with_capacity(names.len());
                     for (i, name) in names.iter().enumerate() {
                         let temp_pos = self.scope.lookup("$tuple").unwrap();
-                        let elem_f =
-                            elem_access(nox_axis(stack_axis(temp_pos)), i as u32);
+                        let elem_f = elem_access(nox_axis(stack_axis(temp_pos)), i as u64)?;
                         self.scope.bind(&name.node);
                         if let Some(t) = &elem_tys[i] {
                             self.scope.note_type(&name.node, t.clone());
@@ -485,8 +514,8 @@ impl NoxCompiler {
 
             Stmt::Assign { place, value } => {
                 let value_f = self.compile_expr(&value.node)?;
-                let (axis, _ty) = self.place_axis(&place.node)?;
-                let edit = subject_edit(axis, value_f)?;
+                let (path, _ty) = self.place_path(&place.node)?;
+                let edit = path.edit(value_f)?;
                 let rest_f = self.compile_stmts_k(rest, k)?;
                 Ok(seq(edit, rest_f))
             }
@@ -547,23 +576,24 @@ impl NoxCompiler {
                 bound,
                 body,
             } => {
-                if block_has_return(&body.node) {
-                    return Err(
-                        "nox: `return` inside a for loop is not supported \
-                         (needs recursive-core continuation lowering — TODO)"
-                            .to_string(),
-                    );
-                }
                 let start_val = self.eval_const(&start.node).ok_or_else(|| {
                     "nox: for-loop start must be a compile-time constant".to_string()
                 })?;
                 let end_const = self.eval_const(&end.node);
+                if block_has_return(&body.node) {
+                    return self.returning_loop(
+                        &var.node, start_val, end_const, *bound, end, &body.node, rest, k,
+                    );
+                }
 
                 // Fold iterations into the continuation. Because the loop body
                 // is a subject transformer that preserves the outer shape, the
                 // scope after the loop equals the scope before it — so `rest`
                 // compiles against the current scope.
-                let mut acc = self.compile_stmts_k(rest, k)?;
+                let saved_scope = self.scope.clone();
+                let continuation = self.compile_stmts_k(rest, k);
+                self.scope = saved_scope;
+                let mut acc = continuation?;
 
                 match (end_const, bound) {
                     // Static bound: exact unconditional unroll.
@@ -588,8 +618,7 @@ impl NoxCompiler {
                         check_unroll(b)?;
                         for j in (0..b).rev() {
                             let idx = start_val + j;
-                            let body_t =
-                                self.loop_body_transform(&var.node, idx, &body.node)?;
+                            let body_t = self.loop_body_transform(&var.node, idx, &body.node)?;
                             // Guard: run body while index < end, else identity.
                             let end_f = self.compile_expr(&end.node)?;
                             let guard = nox_branch(
@@ -621,10 +650,11 @@ impl NoxCompiler {
                 let temp_pos = self.scope.lookup("$tas").unwrap();
                 let mut edits = Vec::with_capacity(names.len());
                 for (i, name) in names.iter().enumerate() {
-                    let pos = self.scope.lookup(&name.node).ok_or_else(|| {
-                        format!("nox: undefined variable '{}'", name.node)
-                    })?;
-                    let src = elem_access(nox_axis(stack_axis(temp_pos)), i as u32);
+                    let pos = self
+                        .scope
+                        .lookup(&name.node)
+                        .ok_or_else(|| format!("nox: undefined variable '{}'", name.node))?;
+                    let src = elem_access(nox_axis(stack_axis(temp_pos)), i as u64)?;
                     edits.push(subject_edit(stack_axis(pos), src)?);
                 }
                 let drop_temp = reify_drop(1, self.scope.depth);
@@ -675,7 +705,7 @@ impl NoxCompiler {
     fn loop_body_transform(&mut self, var: &str, index: u64, block: &Block) -> LowerResult {
         let baseline_depth = self.scope.depth;
         self.scope.push_frame();
-        self.scope.bind(var);
+        self.scope.bind_loop_index(var, index)?;
         self.check_depth()?;
         let tail = block.tail_expr.as_deref();
         let inner = self.compile_stmts_k(&block.stmts, &mut |c: &mut Self| {
@@ -691,7 +721,10 @@ impl NoxCompiler {
         self.scope.pop_frame();
         let inner = inner?;
         // Cons the loop index onto the subject, then run the body.
-        Ok(seq(nox_cons(nox_quote(Noun::atom(index)), nox_axis(1)), inner))
+        Ok(seq(
+            nox_cons(nox_quote(Noun::atom(index)), nox_axis(1)),
+            inner,
+        ))
     }
 
     /// Inline a user function at a call site. Arguments are evaluated against
@@ -738,6 +771,15 @@ impl NoxCompiler {
             cons_f = nox_cons(f, cons_f);
         }
 
+        let needs_root = self.state_functions.contains(&func.name.node);
+        if needs_root {
+            let position = self
+                .scope
+                .lookup("$bbg_root")
+                .ok_or("stateful callee has no caller state root")?;
+            cons_f = nox_cons(nox_axis(stack_axis(position)), cons_f);
+        }
+
         // Resolve size-generic parameters from explicit `<..>` const args.
         let mut generic_consts: Vec<(String, u64)> = Vec::new();
         if !func.type_params.is_empty() {
@@ -762,12 +804,17 @@ impl NoxCompiler {
 
         // Compile the body against a fresh scope; generics enter as constants.
         let saved_scope = std::mem::replace(&mut self.scope, Scope::new());
-        let callee_module = func.name.node.rsplit_once('.')
+        let callee_module = func
+            .name
+            .node
+            .rsplit_once('.')
             .map(|(module, _)| module.to_string())
             .unwrap_or_else(|| self.current_module.clone());
         let saved_module = std::mem::replace(&mut self.current_module, callee_module);
-        let generic_consts: Vec<_> = generic_consts.into_iter()
-            .map(|(name, value)| (self.symbol(&name), value)).collect();
+        let generic_consts: Vec<_> = generic_consts
+            .into_iter()
+            .map(|(name, value)| (self.symbol(&name), value))
+            .collect();
         let saved_consts: Vec<(String, Option<u64>)> = generic_consts
             .iter()
             .map(|(k, _)| (k.clone(), self.constants.get(k).copied()))
@@ -778,11 +825,15 @@ impl NoxCompiler {
         self.call_stack.push(func.name.node.clone());
         for param in &func.params {
             self.scope.bind(&param.name.node);
-            self.scope.note_type(&param.name.node, param.ty.node.clone());
+            self.scope
+                .note_type(&param.name.node, param.ty.node.clone());
         }
-        let body_res = self.check_depth().and_then(|_| {
-            self.compile_block(&func.body.as_ref().unwrap().node)
-        });
+        if needs_root {
+            self.scope.bind("$bbg_root");
+        }
+        let mut body = func.body.as_ref().unwrap().node.clone();
+        ast::normalize_terminal_returns(&mut body);
+        let body_res = self.check_depth().and_then(|_| self.compile_block(&body));
         self.call_stack.pop();
         // Restore constants.
         for (k, prev) in saved_consts {
@@ -815,9 +866,10 @@ impl NoxCompiler {
     fn eval_const(&self, e: &Expr) -> Option<u64> {
         match e {
             Expr::Literal(Literal::Integer(v)) => Some(*v),
-            Expr::Var(name) if self.scope.lookup(name).is_none() => {
-                self.constants.get(&self.symbol(name)).copied()
-            }
+            Expr::Var(name) => match self.scope.lookup(name) {
+                Some(_) => self.scope.lookup_constant(name),
+                None => self.constants.get(&self.symbol(name)).copied(),
+            },
             _ => None,
         }
     }
@@ -826,7 +878,9 @@ impl NoxCompiler {
     /// field/index access. Returns None for scalars and unresolvable cases.
     fn expr_type(&self, e: &Expr) -> Option<ast::Type> {
         match e {
-            Expr::Var(name) => self.scope.lookup_type(name).cloned(),
+            Expr::Var(name) => self.scope.lookup_type(name).cloned().or_else(|| {
+                self.dotted_path(name).ok().and_then(|(_, ty)| ty)
+            }),
             Expr::StructInit { path, .. } => {
                 Some(self.qualified_type(&ast::Type::Named(path.node.clone())))
             }
@@ -869,11 +923,7 @@ impl NoxCompiler {
     }
 
     /// Resolve a struct field name to its (position, type) within the layout.
-    fn field_index(
-        &self,
-        base_ty: &ast::Type,
-        field: &str,
-    ) -> Result<(usize, ast::Type), String> {
+    fn field_index(&self, base_ty: &ast::Type, field: &str) -> Result<(usize, ast::Type), String> {
         let sname = match base_ty {
             ast::Type::Named(p) => p.as_dotted(),
             _ => {
@@ -895,50 +945,54 @@ impl NoxCompiler {
     }
 
     /// Resolve a dotted variable path (`p`, `p.x`, `p.q.r`) to an absolute
-    /// subject axis and the type of the addressed slot. The head segment is a
+    /// subject path and the type of the addressed slot. The head segment is a
     /// bound variable; each subsequent segment indexes a struct field.
-    fn dotted_axis(&self, name: &str) -> Result<(u64, Option<ast::Type>), String> {
+    fn dotted_path(&self, name: &str) -> Result<(AxisPath, Option<ast::Type>), String> {
         let mut parts = name.split('.');
         let base = parts.next().unwrap();
         let pos = self
             .scope
             .lookup(base)
             .ok_or_else(|| format!("nox: undefined variable '{}'", base))?;
-        let mut axis = stack_axis(pos);
+        let mut path = AxisPath::from_axis(stack_axis(pos))?;
         let mut cur_ty = self.scope.lookup_type(base).cloned();
         for seg in parts {
             let ty = cur_ty.ok_or_else(|| {
                 format!("nox: field access '.{}' on a value of unknown type", seg)
             })?;
             let (idx, fty) = self.field_index(&ty, seg)?;
-            axis = axis_compose(axis, stack_axis(idx as u32));
+            path.append_element(idx as u64)?;
             cur_ty = Some(fty);
         }
-        Ok((axis, cur_ty))
+        Ok((path, cur_ty))
     }
 
-    /// Resolve an l-value place to its absolute subject axis and type.
-    fn place_axis(&self, place: &ast::Place) -> Result<(u64, Option<ast::Type>), String> {
+    /// Resolve an l-value place to its subject path and type.
+    fn place_path(&self, place: &ast::Place) -> Result<(AxisPath, Option<ast::Type>), String> {
         match place {
             ast::Place::Var(name) => {
                 if let Some(pos) = self.scope.lookup(name) {
-                    return Ok((stack_axis(pos), self.scope.lookup_type(name).cloned()));
+                    return Ok((AxisPath::from_axis(stack_axis(pos))?, self.scope.lookup_type(name).cloned()));
                 }
                 if name.contains('.') {
-                    return self.dotted_axis(name);
+                    return self.dotted_path(name);
                 }
                 Err(format!("nox: unsupported assignment target '{}'", name))
             }
             ast::Place::FieldAccess(base, field) => {
-                let (base_axis, base_ty) = self.place_axis(&base.node)?;
+                let (mut path, base_ty) = self.place_path(&base.node)?;
                 let base_ty = base_ty.ok_or_else(|| {
-                    format!("nox: cannot resolve type for field assignment '.{}'", field.node)
+                    format!(
+                        "nox: cannot resolve type for field assignment '.{}'",
+                        field.node
+                    )
                 })?;
                 let (idx, fty) = self.field_index(&base_ty, &field.node)?;
-                Ok((axis_compose(base_axis, stack_axis(idx as u32)), Some(fty)))
+                path.append_element(idx as u64)?;
+                Ok((path, Some(fty)))
             }
             ast::Place::Index(base, index) => {
-                let (base_axis, base_ty) = self.place_axis(&base.node)?;
+                let (mut path, base_ty) = self.place_path(&base.node)?;
                 let k = self.eval_const(&index.node).ok_or_else(|| {
                     "nox: array-index assignment needs a compile-time constant index".to_string()
                 })?;
@@ -946,7 +1000,8 @@ impl NoxCompiler {
                     Some(ast::Type::Array(inner, _)) => Some(*inner),
                     _ => None,
                 };
-                Ok((axis_compose(base_axis, stack_axis(k as u32)), elem_ty))
+                path.append_element(k)?;
+                Ok((path, elem_ty))
             }
         }
     }
@@ -1027,8 +1082,8 @@ impl NoxCompiler {
                 // Dotted name = struct field access (`p.x`, `p.q.r`). trident's
                 // parser encodes field access as a dotted variable name.
                 if name.contains('.') {
-                    let (axis, _ty) = self.dotted_axis(name)?;
-                    return Ok(nox_axis(axis));
+                    let (path, _ty) = self.dotted_path(name)?;
+                    return Ok(path.access());
                 }
 
                 Err(format!("nox: undefined variable '{}'", name))
@@ -1044,9 +1099,9 @@ impl NoxCompiler {
                     BinOp::Lt => Ok(nox_lt(a, b)),
                     BinOp::BitAnd => Ok(nox_and(a, b)),
                     BinOp::BitXor => Ok(nox_xor(a, b)),
-                    BinOp::DivMod => {
-                        Err("nox: divmod has no honest lowering yet (no division pattern)".to_string())
-                    }
+                    BinOp::DivMod => Err(
+                        "nox: divmod has no honest lowering yet (no division pattern)".to_string(),
+                    ),
                     BinOp::XFieldMul => {
                         Err("nox: extension field mul not yet supported".to_string())
                     }
@@ -1059,13 +1114,27 @@ impl NoxCompiler {
                 generic_args,
             } => {
                 let source_name = path.node.as_dotted();
+                // Lexically resolved user functions shadow unqualified builtin
+                // names, just as they do during type checking.
+                if let Some(function) = self.fns.get(&self.symbol(&source_name)).cloned() {
+                    if function.intrinsic.is_none() && function.body.is_some() {
+                        return self.inline_call(&function, args, generic_args);
+                    }
+                }
                 // Imported intrinsic declarations use the same nox builtin
                 // lowering as a direct call. Their source module path is an
                 // API name, not a machine instruction or an inlinable body.
-                let name = self.fns.get(&self.symbol(&source_name))
+                let name = self
+                    .fns
+                    .get(&self.symbol(&source_name))
                     .and_then(|f| f.intrinsic.as_ref())
-                    .map(|i| i.node.strip_prefix("intrinsic(")
-                        .and_then(|s| s.strip_suffix(')')).unwrap_or(&i.node).to_string())
+                    .map(|i| {
+                        i.node
+                            .strip_prefix("intrinsic(")
+                            .and_then(|s| s.strip_suffix(')'))
+                            .unwrap_or(&i.node)
+                            .to_string()
+                    })
                     .unwrap_or(source_name);
 
                 // Built-in functions
@@ -1162,14 +1231,12 @@ impl NoxCompiler {
                         }
                         Ok(nox_hash(cons_list(parts)))
                     }
-                    "sponge_init" | "sponge_absorb" | "sponge_squeeze"
-                    | "sponge_absorb_mem" | "merkle_step" | "merkle_step_mem" => {
-                        Err(format!(
-                            "nox: builtin '{}' has no honest lowering yet — nox exposes a \
+                    "sponge_init" | "sponge_absorb" | "sponge_squeeze" | "sponge_absorb_mem"
+                    | "merkle_step" | "merkle_step_mem" => Err(format!(
+                        "nox: builtin '{}' has no honest lowering yet — nox exposes a \
                              one-shot hash (pattern 15), not an incremental sponge/Merkle API",
-                            name
-                        ))
-                    }
+                        name
+                    )),
                     "ram_read" | "ram_write" | "ram_read_block" | "ram_write_block" => {
                         Err(format!(
                             "nox: builtin '{}' unsupported — nox has no mutable RAM; state \
@@ -1199,13 +1266,6 @@ impl NoxCompiler {
                         if args.len() != 1 {
                             return Err("os.state.read takes 1 argument (key)".to_string());
                         }
-                        if !self.call_stack.is_empty() {
-                            return Err(
-                                "nox: os.state.read inside a called function is not yet \
-                                 supported — read state in the entry function"
-                                    .to_string(),
-                            );
-                        }
                         let root_pos = self.scope.lookup("$bbg_root").ok_or_else(|| {
                             "nox: os.state.read site without a bound state root \
                              (compiler bug — entry pre-scan missed it)"
@@ -1222,10 +1282,8 @@ impl NoxCompiler {
                         let key_f = key_f?;
                         // [17 [[1 0] key]] — BBG dimension 0 at `key`
                         // (reference/os.md, Per-OS Lowering, Graph row).
-                        let look_f = Noun::cell(
-                            Noun::atom(17),
-                            Noun::cell(nox_quote(Noun::atom(0)), key_f),
-                        );
+                        let look_f =
+                            Noun::cell(Noun::atom(17), Noun::cell(nox_quote(Noun::atom(0)), key_f));
                         Ok(nox_compose(
                             nox_cons(nox_axis(root_axis), nox_axis(1)),
                             nox_quote(look_f),
@@ -1270,7 +1328,7 @@ impl NoxCompiler {
                 })?;
                 let (idx, _fty) = self.field_index(&base_ty, &field.node)?;
                 let base_f = self.compile_expr(&base.node)?;
-                Ok(elem_access(base_f, idx as u32))
+                elem_access(base_f, idx as u64)
             }
             Expr::Index { expr: base, index } => {
                 let k = self.eval_const(&index.node).ok_or_else(|| {
@@ -1291,22 +1349,25 @@ impl NoxCompiler {
                     }
                     return Ok(nox_compose(base_f, nox_quote(nox_axis(4 + k as u64))));
                 }
-                Ok(elem_access(base_f, k as u32))
+                elem_access(base_f, k)
             }
             Expr::StructInit { path, fields } => {
                 let sname = self.symbol(&path.node.as_dotted());
-                let layout = self.structs.get(&sname).cloned().ok_or_else(|| {
-                    format!("nox: unknown struct '{}'", sname)
-                })?;
+                let layout = self
+                    .structs
+                    .get(&sname)
+                    .cloned()
+                    .ok_or_else(|| format!("nox: unknown struct '{}'", sname))?;
                 // Emit fields in declared order (source order may differ).
                 let mut ordered = Vec::with_capacity(layout.len());
                 for (fname, _fty) in &layout {
-                    let (_, expr) = fields
-                        .iter()
-                        .find(|(n, _)| &n.node == fname)
-                        .ok_or_else(|| {
-                            format!("nox: struct '{}' missing field '{}'", sname, fname)
-                        })?;
+                    let (_, expr) =
+                        fields
+                            .iter()
+                            .find(|(n, _)| &n.node == fname)
+                            .ok_or_else(|| {
+                                format!("nox: struct '{}' missing field '{}'", sname, fname)
+                            })?;
                     ordered.push(self.compile_expr(&expr.node)?);
                 }
                 Ok(cons_list(ordered))
@@ -1330,76 +1391,6 @@ impl NoxCompiler {
 }
 
 // ─── structural helpers ──────────────────────────────────────────
-
-/// Does this block (transitively) contain an `os.state.read` call?
-fn block_uses_state(block: &Block) -> bool {
-    block.stmts.iter().any(|s| stmt_uses_state(&s.node))
-        || block
-            .tail_expr
-            .as_ref()
-            .map(|e| expr_uses_state(&e.node))
-            .unwrap_or(false)
-}
-
-fn stmt_uses_state(stmt: &Stmt) -> bool {
-    match stmt {
-        Stmt::Let { init, .. } => expr_uses_state(&init.node),
-        Stmt::Assign { value, .. } => expr_uses_state(&value.node),
-        Stmt::TupleAssign { value, .. } => expr_uses_state(&value.node),
-        Stmt::If {
-            cond,
-            then_block,
-            else_block,
-        } => {
-            expr_uses_state(&cond.node)
-                || block_uses_state(&then_block.node)
-                || else_block
-                    .as_ref()
-                    .map(|b| block_uses_state(&b.node))
-                    .unwrap_or(false)
-        }
-        Stmt::For {
-            start, end, body, ..
-        } => {
-            expr_uses_state(&start.node)
-                || expr_uses_state(&end.node)
-                || block_uses_state(&body.node)
-        }
-        Stmt::Expr(e) => expr_uses_state(&e.node),
-        Stmt::Return(e) => e.as_ref().map(|e| expr_uses_state(&e.node)).unwrap_or(false),
-        Stmt::Match { expr, arms } => {
-            expr_uses_state(&expr.node)
-                || arms.iter().any(|a| block_uses_state(&a.body.node))
-        }
-        Stmt::Reveal { fields, .. } | Stmt::Seal { fields, .. } => {
-            fields.iter().any(|(_, e)| expr_uses_state(&e.node))
-        }
-        Stmt::Asm { .. } => false,
-    }
-}
-
-fn expr_uses_state(expr: &Expr) -> bool {
-    match expr {
-        Expr::Call { path, args, .. } => {
-            path.node.as_dotted() == "os.state.read"
-                || args.iter().any(|a| expr_uses_state(&a.node))
-        }
-        Expr::BinOp { lhs, rhs, .. } => {
-            expr_uses_state(&lhs.node) || expr_uses_state(&rhs.node)
-        }
-        Expr::FieldAccess { expr, .. } => expr_uses_state(&expr.node),
-        Expr::Index { expr, index } => {
-            expr_uses_state(&expr.node) || expr_uses_state(&index.node)
-        }
-        Expr::StructInit { fields, .. } => {
-            fields.iter().any(|(_, e)| expr_uses_state(&e.node))
-        }
-        Expr::ArrayInit(es) | Expr::Tuple(es) => {
-            es.iter().any(|e| expr_uses_state(&e.node))
-        }
-        Expr::Literal(_) | Expr::Var(_) => false,
-    }
-}
 
 /// Does this block (transitively) contain a `return` statement?
 fn block_has_return(block: &Block) -> bool {
@@ -1430,31 +1421,7 @@ fn stmt_has_return(stmt: &Stmt) -> bool {
 /// `axis`. Every other part is read from the original subject, so the
 /// value expression and all axis reads see the pre-edit subject.
 fn subject_edit(axis: u64, val: Noun) -> Result<Noun, String> {
-    if axis == 0 {
-        return Err("nox: cannot edit axis 0".to_string());
-    }
-    if axis == 1 {
-        return Ok(val);
-    }
-    let bits = 63 - axis.leading_zeros();
-    let mut steps = Vec::with_capacity(bits as usize);
-    for i in (0..bits).rev() {
-        steps.push((axis >> i) & 1 == 1);
-    }
-    Ok(build_edit(1, &steps, val))
-}
-
-fn build_edit(prefix: u64, steps: &[bool], val: Noun) -> Noun {
-    if steps.is_empty() {
-        return val;
-    }
-    let left = prefix * 2;
-    let right = prefix * 2 + 1;
-    if steps[0] {
-        nox_cons(nox_axis(left), build_edit(right, &steps[1..], val))
-    } else {
-        nox_cons(build_edit(left, &steps[1..], val), nox_axis(right))
-    }
+    AxisPath::from_axis(axis)?.edit(val)
 }
 
 /// Build a formula producing the subject with its first `locals` bindings
@@ -1515,8 +1482,8 @@ impl super::TreeLowering for NoxLowering {
 mod tests {
     use super::*;
     use crate::span::Span;
-    use nox::{reduce, Outcome, NullCalls, NoTrace, Reduction};
     use nebu::Goldilocks;
+    use nox::{reduce, NoTrace, NullCalls, Outcome, Reduction};
 
     // ── reduce-backed harness ────────────────────────────────────
 
@@ -1690,7 +1657,9 @@ mod tests {
     fn constant_lookup() {
         let mut compiler = NoxCompiler::new();
         compiler.constants.insert("MAX".to_string(), 100);
-        let noun = compiler.compile_expr(&Expr::Var("MAX".to_string())).unwrap();
+        let noun = compiler
+            .compile_expr(&Expr::Var("MAX".to_string()))
+            .unwrap();
         assert_eq!(format!("{}", noun), "[1 100]");
     }
 
@@ -1705,7 +1674,10 @@ mod tests {
             init: spanned(Expr::Literal(Literal::Integer(42))),
         })];
         let tail = Some(Box::new(spanned(Expr::Var("x".to_string()))));
-        let block = Block { stmts, tail_expr: tail };
+        let block = Block {
+            stmts,
+            tail_expr: tail,
+        };
         let noun = compiler.compile_block(&block).unwrap();
         // compose(cons(quote(42), identity), quote(axis 2))
         assert_eq!(format!("{}", noun), "[2 [[3 [[1 42] [0 1]]] [1 [0 2]]]]");
@@ -2021,7 +1993,7 @@ pub fn f(n: Field) -> Field {
     }
 
     #[test]
-    fn loop_return_is_honest_error() {
+    fn loop_return_exits_function() {
         let src = "program test
 pub fn f() -> Field {
     let mut s: Field = 0
@@ -2033,9 +2005,7 @@ pub fn f() -> Field {
     }
     s
 }";
-        let file = crate::parse_source_silent(src, "t.tri").unwrap();
-        let err = NoxCompiler::new().compile_file(&file).unwrap_err();
-        assert!(err.contains("return") && err.contains("for loop"), "{}", err);
+        assert_eq!(run_src(src, &[]), 2);
     }
 
     #[test]
@@ -2415,13 +2385,15 @@ pub fn f(k: Field) -> Field {
     }
 
     #[test]
-    fn os_state_read_in_helper_is_honest_error() {
+    fn os_state_read_in_helper_receives_root() {
         let src = "program test
 fn helper(k: Field) -> Field { os.state.read(k) }
 pub fn f(k: Field) -> Field { helper(k) }";
         let file = crate::parse_source_silent(src, "t.tri").unwrap();
-        let err = NoxCompiler::new().compile_file(&file).unwrap_err();
-        assert!(err.contains("entry function"), "{}", err);
+        let mut compiler = NoxCompiler::new();
+        compiler.compile_file(&file).unwrap();
+        assert!(compiler.reads_state());
+        assert_eq!(run_state(src, [11, 22, 33, 44], &[4]), 47);
     }
 
     #[test]

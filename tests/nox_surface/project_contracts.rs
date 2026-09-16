@@ -205,7 +205,7 @@ fn nox_imported_struct_layouts_have_module_identity() {
 }
 
 #[test]
-fn nox_transitive_imported_state_read_fails_closed_in_all_artifacts() {
+fn nox_transitive_imported_state_read_preserves_root_in_all_artifacts() {
     let dir = tempfile::tempdir().unwrap();
     std::fs::write(
         dir.path().join("storage.tri"),
@@ -231,15 +231,14 @@ pub fn read(k: Field) -> Field { read_key(k) }
     assert_project(&entry, &debug, &[7], 8);
 
     let release = CompileOptions::for_profile("release");
-    for errors in [
-        trident::compile_project_with_options(&entry, &release).unwrap_err(),
-        trident::nox_cost_project(&entry, &release).unwrap_err(),
-        trident::compile_to_bundle(&entry, &release).unwrap_err(),
-    ] {
-        assert!(errors
-            .iter()
-            .any(|e| e.message.contains("os.state.read inside a called function")));
-    }
+    let assembly = trident::compile_project_with_options(&entry, &release).unwrap();
+    let bundle = trident::compile_to_bundle(&entry, &release).unwrap();
+    assert!(bundle.reads_state);
+    assert_eq!(assembly, bundle.assembly);
+    let (value, bill, reads) = run_state_formula(&assembly, &[7]);
+    assert_eq!((value, reads), (77, 1));
+    let cost = trident::nox_cost_project(&entry, &release).unwrap();
+    assert!((cost.bill.min..=cost.bill.max).contains(&bill));
 }
 
 #[test]
@@ -314,5 +313,134 @@ fn bundle_entry_metadata_matches_executed_public_function() {
     match reduce(&mut arena, subject, formula, 1000, &NullCalls, &mut NoTrace) {
         Outcome::Ok(result, _) => assert_eq!(arena.atom_value(result).unwrap().as_u64(), 9),
         result => panic!("{result:?}"),
+    }
+}
+
+fn run_state_formula(formula: &str, params: &[u64]) -> (u64, u64, usize) {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    struct Provider(AtomicUsize);
+    impl nox::LookProvider for Provider {
+        fn look(&self, root: Goldilocks, ns: Goldilocks, key: Goldilocks) -> Option<Goldilocks> {
+            assert_eq!(root.as_u64(), 11);
+            assert_eq!(ns.as_u64(), 0);
+            self.0.fetch_add(1, Ordering::SeqCst);
+            Some(Goldilocks::new(key.as_u64() * 10 + 7))
+        }
+    }
+    impl<const M: usize> nox::CallProvider<M> for Provider {
+        fn provide(
+            &self,
+            _: &mut Reduction<M>,
+            _: Goldilocks,
+            _: nox::Order,
+        ) -> Option<nox::Order> {
+            None
+        }
+    }
+    let mut arena = Reduction::<4096>::new();
+    let formula = load(&mut arena, &parse(formula));
+    let root = N::Cell(
+        Box::new(N::Atom(11)),
+        Box::new(N::Cell(
+            Box::new(N::Atom(22)),
+            Box::new(N::Cell(Box::new(N::Atom(33)), Box::new(N::Atom(44)))),
+        )),
+    );
+    let subject = load(
+        &mut arena,
+        &N::Cell(Box::new(root), Box::new(subject_noun(params))),
+    );
+    let provider = Provider(AtomicUsize::new(0));
+    let budget = 5_000_000;
+    match reduce(
+        &mut arena,
+        subject,
+        formula,
+        budget,
+        &provider,
+        &mut NoTrace,
+    ) {
+        Outcome::Ok(result, remaining) => (
+            arena.atom_value(result).unwrap().as_u64(),
+            budget - remaining,
+            provider.0.load(Ordering::SeqCst),
+        ),
+        outcome => panic!("state helper reduction failed: {outcome:?}"),
+    }
+}
+
+#[test]
+fn nox_state_root_survives_shadowing_helpers_and_inactive_branches() {
+    let source = r#"program shadow_state
+fn hash(k: Field) -> Field { os.state.read(k) }
+fn plus(k: Field) -> Field { k + 1 }
+fn helper(k: Field) -> Field { let offset: Field = 2
+    hash(plus(k)) + offset }
+fn main(k: Field) -> Field {
+    let offset: Field = 100
+    if k == 0 { return offset } else { return helper(k) + offset }
+}
+"#;
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    std::fs::write(&entry, source).unwrap();
+    let bundle = trident::compile_to_bundle(&entry, &nox_options()).unwrap();
+    assert!(bundle.reads_state);
+    let (value, _, reads) = run_state_formula(&bundle.assembly, &[4]);
+    assert_eq!((value, reads), (159, 1));
+    let (value, _, reads) = run_state_formula(&bundle.assembly, &[0]);
+    assert_eq!((value, reads), (100, 0));
+}
+
+#[test]
+fn nox_cfg_entry_and_unreachable_state_helpers_preserve_stateless_abi() {
+    let source = r#"program cfg_state
+fn helper(k: Field) -> Field { os.state.read(k) }
+#[cfg(debug)]
+fn main(k: Field) -> Field { k + 1 }
+#[cfg(release)]
+fn main(k: Field) -> Field { helper(k) }
+"#;
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    std::fs::write(&entry, source).unwrap();
+    let debug = trident::compile_to_bundle(&entry, &CompileOptions::for_profile("debug")).unwrap();
+    assert!(!debug.reads_state);
+    assert_eq!(run_formula(&debug.assembly, &[4]).0, 5);
+    let release =
+        trident::compile_to_bundle(&entry, &CompileOptions::for_profile("release")).unwrap();
+    assert!(release.reads_state);
+    assert_eq!(run_state_formula(&release.assembly, &[4]).0, 47);
+}
+
+#[test]
+fn portable_standard_poseidon_matches_upstream_on_nox() {
+    std::thread::Builder::new().stack_size(64 * 1024 * 1024).spawn(|| {
+        let directory = tempfile::tempdir().unwrap();
+        let entry = directory.path().join("standard.tri");
+        std::fs::write(&entry,"program standard\nuse std.crypto.poseidon\nfn main(a: Field) -> Field { poseidon.hash2(a,0) }\n").unwrap();
+        let bundle = trident::compile_to_bundle(&entry,&nox_options()).unwrap();
+        assert!(!bundle.reads_state);
+        let mut arena = Reduction::<65536>::new();
+        let formula = load(&mut arena,&parse(&bundle.assembly));
+        let subject = load(&mut arena,&subject_noun(&[7]));
+        match reduce(&mut arena,subject,formula,50_000_000,&NullCalls,&mut NoTrace) {
+            // Frozen from p3-goldilocks0.4.2 Poseidon2GoldilocksHL<8>.
+            Outcome::Ok(result,_) => assert_eq!(arena.atom_value(result).unwrap().as_u64(),13487548838448116774),
+            outcome => panic!("Poseidon2 nox execution failed: {outcome:?}"),
+        }
+    }).unwrap().join().unwrap();
+}
+
+#[test]
+fn imported_loop_return_keeps_caller_frame_and_cost_bounds() {
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    std::fs::write(dir.path().join("search.tri"), "module search\npub fn find(n: Field) -> (Field, Field) { for i in 0..3 { if as_field(i) == n { return (n, 7) } }\n (9, 11) }").unwrap();
+    std::fs::write(&entry, "program caller\nuse search\nfn main(n: Field) -> Field { let keep: Field = 100\n let (a, b) = search.find(n)\n keep + a + b }").unwrap();
+    for profile in ["debug", "release"] {
+        let options = CompileOptions::for_profile(profile);
+        assert_project(&entry, &options, &[1], 108);
+        assert_project(&entry, &options, &[4], 120);
     }
 }

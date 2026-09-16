@@ -6,10 +6,10 @@ module std.quantum.gates
 // no native complex type, we represent them as (re, im) field pairs.
 // A qubit is a 2-element state vector: |psi> = alpha|0> + beta|1>.
 //
-// All gates are unitary matrices applied to these state vectors.
-// Normalization is tracked separately — field arithmetic has no
-// square roots, so we keep amplitudes unnormalized and track a
-// scaling factor when needed.
+// These routines evaluate gate-shaped matrices over a finite field.
+// Hadamard and T omit their normalization factors; the caller must track
+// those factors. Finite-field arithmetic is not complex Hilbert-space
+// arithmetic, and this module does not implement a physical measurement.
 //
 // This is sufficient for circuit simulation and correctness checking:
 // prove that a quantum circuit transforms input state to output state
@@ -116,8 +116,8 @@ pub fn pauliy(q: Qubit) -> Qubit {
 // Hadamard gate: |0> -> (|0> + |1>)/sqrt(2), |1> -> (|0> - |1>)/sqrt(2)
 // Matrix: (1/sqrt(2)) * [[1, 1], [1, -1]]
 //
-// We omit the 1/sqrt(2) normalization factor since field arithmetic
-// has no square roots. The caller tracks normalization separately.
+// We omit the 1/sqrt(2) normalization factor. The caller tracks
+// normalization separately; no square-root operation is required here.
 // Unnormalized: |0> -> |0> + |1>, |1> -> |0> - |1>
 pub fn hadamard(q: Qubit) -> Qubit {
     Qubit { zero: complex_add(q.zero, q.one), one: complex_sub(q.zero, q.one) }
@@ -175,19 +175,14 @@ pub fn swap(state: TwoQubit) -> TwoQubit {
 // ---------------------------------------------------------------------------
 // Measurement (deterministic, provable)
 // ---------------------------------------------------------------------------
-// Deterministic measurement: compares |alpha|^2 vs |beta|^2.
-// Returns true if |0> has greater or equal probability.
-// This is NOT probabilistic — it's a provable comparison.
+// Deterministic surrogate: compute d = norm(zero) - norm(one) modulo p,
+// then return high32(d) < 2147483647. This exact limb threshold is preserved
+// for compatibility; it is not a general probability comparison or sampling.
 pub fn measure_deterministic(q: Qubit) -> Bool {
     let prob_zero: Field = complex_norm_sq(q.zero)
     let prob_one: Field = complex_norm_sq(q.one)
-    // In field arithmetic, "greater" means smaller field element
-    // when both are in the lower half (positive).
-    // For now: return true if prob_zero >= prob_one
-    // This works when both probabilities are small relative to p.
     let diff: Field = prob_zero + field.neg(prob_one)
     let (hi, lo) = convert.split(diff)
-    // If diff is in lower half of field, prob_zero >= prob_one
     let threshold: U32 = convert.as_u32(2147483647)
     hi < threshold
 }
@@ -198,7 +193,9 @@ pub fn measure_deterministic(q: Qubit) -> Bool {
 // Stored as pairs: RAM[addr + 2*i] = re, RAM[addr + 2*i + 1] = im
 // ---------------------------------------------------------------------------
 // Apply single-qubit gate to qubit `target` in an N-qubit state.
-// gate_00, gate_01, gate_10, gate_11: the 2x2 unitary matrix entries.
+// g00, g01, g10, g11: arbitrary complex 2x2 matrix entries.
+// Requires 1 <= n <= 12, target < n, and the entire buffer in U32 RAM.
+// All bounds are checked before any state write; no unitary check is implied.
 // state_addr: 2^n complex amplitudes (2 * 2^n field elements)
 // n: number of qubits
 // target: which qubit to apply the gate to (0-indexed)
@@ -211,15 +208,21 @@ pub fn apply_single_gate(
     g10: Complex,
     g11: Complex
 ) {
+    let n_u32: U32 = convert.as_u32(n)
+    let target_index: U32 = convert.as_u32(target)
+    let base_u32: U32 = convert.as_u32(state_addr)
+    assert(n_u32 < convert.as_u32(13))
+    assert(target_index < n_u32)
     // For each pair of indices that differ only in the target bit:
     // |...0_target...> and |...1_target...>
     let mut num_states: Field = 1
-    for s in 0..n bounded 32 {
+    for s in 0..n bounded 12 {
         num_states = num_states + num_states
     }
+    let last_addr: U32 = convert.as_u32(state_addr + num_states + num_states + field.neg(1))
     // Step through pairs
     let mut target_bit: Field = 1
-    for t in 0..target bounded 32 {
+    for t in 0..target bounded 12 {
         target_bit = target_bit + target_bit
     }
     for i in 0..num_states bounded 4096 {

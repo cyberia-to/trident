@@ -26,9 +26,10 @@ A thing belongs to a **warrior** if it knows one machine: the lowering
 from TIR to that ISA, its cost model and verifier, its runtime, its
 prover, its deployment path, and its hand-written baselines.
 
-The [2026-09-11 ownership review](../audit/target-ownership.md)
-records remaining violations of this boundary and a proposed resource layout.
-Its proposed interfaces are not implemented API guarantees.
+The [2026-09-11 ownership review](../audit/target-ownership.md) records the
+migration rationale and its historical checkpoints. The implemented resource
+contract is compiler API3 below. [Current ownership evidence](../audit/final5-architecture-review.md)
+records the final removal of machine-window legalization from the core.
 
 ## Surface
 
@@ -66,16 +67,22 @@ op list, already monomorphized, with control flow structured. The
 warrior turns it into its ISA. `build_tir_project` resolves imports;
 `build_tir` is the single-file form.
 
-`CompileOptions` carries the `TerrainConfig` and the cfg flags. Build it
-with `trident::CompileOptions::default()` and set `target_config`, or
-take it from `trident::target` (`TerrainConfig::nox()`,
-`TerrainConfig::triton()`, or a `vm/<engine>/target.toml` load).
+`CompileOptions::default()` selects the canonical nox ABI. For an external
+target, resolve `trident::target::TargetPackage::discover(target)` and pass the
+validated owner package to `CompileOptions::with_package(package)`. An owning
+warrior may supply its own validated package directly. This selects the ABI,
+module sources and intrinsic capabilities together. `TerrainConfig::triton()`
+is a compiler test helper; external target implementations come from their
+owners, not a compiler-local machine manifest.
 
 `source_options(input, options)` resolves a project directory or a source file,
 applies the project's named profile and dependency paths, and preserves the
 caller's chosen terrain. `module_sources` carries version-matched warrior
-modules by dotted name; module resolution uses these when no source file exists.
-Core libraries and target declarations are embedded in the compiler package.
+modules by dotted name. Resolution prefers an explicit editor overlay, supplied
+package sources, explicit dependency sources, then the compiler's embedded
+portable libraries. Reserved `std`/`vm`/`os` names missing from those sources
+fail rather than loading an ambient checkout. The compiler embeds portable
+libraries and owner discovery metadata; warriors embed their target resources.
 
 CLI target precedence is explicit register/target selection, then project
 target, then nox. Selecting nox explicitly overrides a Triton project. Missing
@@ -107,7 +114,7 @@ trident::target::{TerrainConfig, UnionConfig, Arch}
 A warrior takes trident-lang **without default features**:
 
 ```toml
-trident-lang = { version = "0.3", default-features = false }
+trident-lang = { version = "0.4.0", default-features = false }
 ```
 
 The default feature set is empty. Opt-in `neural` enables the shared model,
@@ -144,12 +151,21 @@ Neptune runtime modules and Triton baselines live in Trisha. The core discovery 
 come from their runtime packages. The release audit records current proof-support
 limits; this API contract does not certify the cryptography of a linked warrior.
 
-## Target packages (compiler API 1)
+## Target packages (compiler API 3)
 
 The owner-approved target resource contract uses `target::TargetPackage`.
 Warriors implement `describe --target <terrain-or-union>` and emit one JSON
 object without executing user programs. `schema_version` and `compiler_api`
-are both 1. The package carries owner/version, terrain ABI, optional union,
+are 1 and 3 respectively. API 3 is the incompatible coordinated compiler/warrior
+contract for Trident 0.4, Trisha 0.3 and Joy 0.5; API 1 and 2 packages are rejected.
+API 3 adds resolved primitive `EntryParameters` metadata to shared TIR. The owner
+must marshal executable entry parameters using its documented calling convention;
+Trisha consumes a typed public-input prefix and preserves explicit public output
+([entry ABI](../../trisha/docs/reference/triton-entry-abi.md)). Ordinary function
+calls retain their calling conventions. The nox source-entry adapter validates
+exact arity and typed leaves and reconstructs internal noun aggregates
+([nox entry contract](nox.md)); raw nox programs retain their own ABI. The JSON
+schema remains 1. The package carries owner/version, terrain ABI, optional union,
 state presets, module sources and their Hemera content hashes, intrinsic and
 assembly-instruction names, and separate runtime capabilities. Missing or
 incompatible packages fail explicitly. The compiler retains the nox reference
@@ -184,8 +200,53 @@ network, cfg and the actual resolved module bytes. Deployment state presets
 are excluded. Package manifests name `program<output_extension>` and bind its
 bytes; foreign cost estimates are absent when the owner supplies none.
 `package --state` and registry `deploy --state` are unsupported and fail
-explicitly. Reading declared state presets does not imply live state execution.
+explicitly before compiling or writing an artifact, for both source and packaged
+inputs. Network transaction preparation/submission belongs to the installed
+warrior's separate deploy interface. Reading declared state presets does not
+imply live state execution.
 
 Production resources contain modules only. Entry programs and unfinished
 recursive verifier experiments live in Trisha examples and are never exported
 through the Neptune SDK package.
+
+The production Triton package exports `vm.triton.proof.verify(Digest) -> ()`
+through its registered `triton_stark_verify_v1` operation. Its input commits to
+the expected native claim: program digest, version, complete public input/output
+and lengths. The owner links the pinned, corrected official Triton verifier and
+loads its bounded private witness. A caller must bind the expected commitment to
+its own policy or public inputs. This VM operation is independent of Neptune's
+transaction policy; `os.neptune.proof` remains an excluded prototype. The complete
+transport and memory contract is owned by
+[Trisha](../../trisha/docs/reference/recursive-proof.md).
+
+## Owner-defined typed operations
+
+A target package may provide `intrinsic_abis`, a map from an opaque operation
+name to `IntrinsicAbi { params, results }`. The default is an empty map for
+existing packages. Each type is `Field`, `Bool`, `U32`, `Digest` or `XField`;
+digest/extension widths come from the selected machine contract. No results
+means unit; multiple results form a tuple. The operation must also appear in
+the package's available `intrinsics` list. ABI declarations are included in
+the package compilation hash, so signature changes invalidate its identity.
+
+The compiler checks every imported `#[intrinsic(name)]` declaration against
+this owner-supplied signature and still checks reachable capability requirements.
+Packages cannot redefine a language intrinsic, invent an ABI for the reference
+nox lowering, or exceed 64 parameters/results and 4096 input/output words.
+Zero-width primitive ABI values are refused. Custom operations are available
+through typed SDK declarations; a name alone is not a signature.
+
+Both ordinary calls and pass-through functions emit
+`TIROp::TargetCall { name, inputs, outputs }`. The core performs no ISA rendering
+or target-specific implementation for this operation. The warrior must validate
+its registered name and exact word effect before lowering, and reject unsupported
+calls without producing an artifact. This extends the typed compiler/warrior
+boundary; it does not authorize arbitrary inline assembly or let a source file
+change the selected package ABI.
+
+`trident run` and `trident prove` forward `--input-file PATH` to the selected
+warrior, which owns the file schema and bounds. The compiler does not load or
+log witness contents. This option conflicts with `--input-values`, `--secret`
+and `--digests`; explicit digest queues are forwarded unchanged. Trisha accepts
+its version1 public/secret/digest JSON format for recursive witnesses that exceed
+OS command-line limits. Other warriors reject unsupported input transports.

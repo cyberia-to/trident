@@ -5,8 +5,6 @@
 // ---
 //! Block and statement compilation.
 
-use std::collections::BTreeMap;
-
 use crate::ast::*;
 use crate::tir::TIROp;
 
@@ -15,13 +13,27 @@ use super::TIRBuilder;
 // ─── Block and statement emission ─────────────────────────────────
 
 impl TIRBuilder {
-    pub(crate) fn build_block(&mut self, block: &Block) {
+    pub(crate) fn build_block(&mut self, block: &Block) -> u32 {
+        let mut result_width = 0;
         for stmt in &block.stmts {
+            let before = self.stack.stack_depth();
             self.build_stmt(&stmt.node);
+            result_width = match &stmt.node {
+                Stmt::If {
+                    else_block: Some(_),
+                    ..
+                }
+                | Stmt::Match { .. }
+                | Stmt::Return(Some(_)) => self.stack.stack_depth().saturating_sub(before),
+                _ => 0,
+            };
         }
         if let Some(tail) = &block.tail_expr {
+            let before = self.stack.stack_depth();
             self.build_expr(&tail.node);
+            result_width = self.stack.stack_depth().saturating_sub(before);
         }
+        result_width
     }
 
     pub(crate) fn build_stmt(&mut self, stmt: &Stmt) {
@@ -54,22 +66,6 @@ impl TIRBuilder {
                                     }
                                 }
                             }
-                            // Record struct field layout from struct init.
-                            if let Expr::StructInit { fields, .. } = &init.node {
-                                let mut field_map = BTreeMap::new();
-                                let widths = self.compute_struct_field_widths(ty, fields);
-                                let total: u32 = widths.iter().sum();
-                                let mut offset = 0u32;
-                                for (i, (fname, _)) in fields.iter().enumerate() {
-                                    let fw = widths.get(i).copied().unwrap_or(1);
-                                    let from_top = total - offset - fw;
-                                    field_map.insert(fname.node.clone(), (from_top, fw));
-                                    offset += fw;
-                                }
-                                self.struct_layouts.insert(name.node.clone(), field_map);
-                            } else if let Some(sp_ty) = ty {
-                                self.register_struct_layout_from_type(&name.node, &sp_ty.node);
-                            }
                         }
                     }
                     Pattern::Tuple(names) => {
@@ -77,17 +73,22 @@ impl TIRBuilder {
                         if let Some(entry) = top {
                             let total_width = entry.width;
                             let n = names.len() as u32;
-                            let elem_width = if n > 0 { total_width / n } else { 1 };
+                            let fallback_width = if n > 0 { total_width / n } else { 1 };
 
                             let tuple_types = match &inferred_ty {
                                 Some(Type::Tuple(parts)) => Some(parts),
                                 _ => None,
                             };
+                            let widths: Vec<_> = (0..names.len())
+                                .map(|index| {
+                                    tuple_types
+                                        .and_then(|ts| ts.get(index))
+                                        .map(|t| self.type_width(t))
+                                        .unwrap_or(fallback_width)
+                                })
+                                .collect();
                             for (index, name) in names.iter().enumerate() {
-                                let elem_width = tuple_types
-                                    .and_then(|ts| ts.get(index))
-                                    .map(|t| self.type_width(t))
-                                    .unwrap_or(elem_width);
+                                let elem_width = widths[index];
                                 if let Some(ty) = tuple_types.and_then(|ts| ts.get(index)) {
                                     self.var_types.insert(name.node.clone(), ty.clone());
                                     self.register_struct_layout_from_type(&name.node, ty);
@@ -105,17 +106,15 @@ impl TIRBuilder {
                             // For `let (h1, _, _, _, _) = digest`, wildcards on top
                             // of the stack are immediately discarded.
                             let mut trailing_wildcards = 0u32;
-                            for name in names.iter().rev() {
+                            for (name, width) in names.iter().zip(&widths).rev() {
                                 if name.node == "_" {
-                                    trailing_wildcards += elem_width;
+                                    trailing_wildcards += width;
+                                    self.stack.pop();
                                 } else {
                                     break;
                                 }
                             }
                             if trailing_wildcards > 0 {
-                                for _ in 0..(trailing_wildcards / elem_width) {
-                                    self.stack.pop();
-                                }
                                 self.emit_pop(trailing_wildcards);
                             }
                         }
@@ -134,26 +133,35 @@ impl TIRBuilder {
             } => {
                 self.build_expr(&cond.node);
                 self.stack.pop(); // cond consumed
+                let types = self.var_types.clone();
+                let layouts = self.struct_layouts.clone();
 
                 if let Some(else_blk) = else_block {
                     let saved = self.stack.save_state();
                     let pre_depth = self.stack.stack_depth();
-                    let mut then_body = self.build_block_as_ir(&then_block.node);
+                    let (mut then_body, then_width) =
+                        self.build_value_block_as_ir(&then_block.node);
                     let then_depth = self.stack.stack_depth();
                     self.stack.restore_state(saved.clone());
-                    let mut else_body = self.build_block_as_ir(&else_blk.node);
+                    self.var_types = types.clone();
+                    self.struct_layouts = layouts.clone();
+                    let (mut else_body, else_width) = self.build_value_block_as_ir(&else_blk.node);
                     let else_depth = self.stack.stack_depth();
                     self.stack.restore_state(saved);
 
-                    // If both branches grow the stack by the same amount,
-                    // they produce a value. Preserve it, clean up only locals.
-                    let then_grow = then_depth.saturating_sub(pre_depth);
-                    let else_grow = else_depth.saturating_sub(pre_depth);
-                    let keep = if then_grow > 0 && then_grow == else_grow {
-                        then_grow
+                    // Local bindings do not form part of a branch result.
+                    // Branches may have different local counts but must agree
+                    // on the width of the value they return.
+                    let keep = if then_width == else_width {
+                        then_width
                     } else {
                         0
                     };
+                    if then_width != else_width {
+                        self.ops.push(TIROp::Comment(
+                            "ERROR: conditional branches have different result widths".into(),
+                        ));
+                    }
 
                     Self::append_branch_cleanup(&mut then_body, then_depth, pre_depth, keep);
                     Self::append_branch_cleanup(&mut else_body, else_depth, pre_depth, keep);
@@ -180,6 +188,8 @@ impl TIRBuilder {
 
                     self.ops.push(TIROp::IfOnly { then_body });
                 }
+                self.var_types = types;
+                self.struct_layouts = layouts;
             }
 
             Stmt::For {
@@ -206,12 +216,18 @@ impl TIRBuilder {
                 self.stack.pop(); // pop index model
 
                 let saved = self.stack.save_state();
+                let types = self.var_types.clone();
+                let layouts = self.struct_layouts.clone();
                 let pre_loop_depth = self.stack.stack_depth();
                 // The loop subroutine's real stack has all outer variables
                 // plus [index, counter] on top. Keep outer vars in the model
                 // so the loop body can reference them at the correct depths.
                 self.stack.push_named(&var.node, 1); // index (depth 1)
                 self.stack.push_temp(1); // counter (depth 0)
+                let return_flag_depth = self
+                    .stack
+                    .find_var_depth_and_width(super::early_return::FLAG)
+                    .map(|(depth, _)| depth);
 
                 let mut body_ir = self.build_block_as_ir(&body.node);
 
@@ -224,6 +240,16 @@ impl TIRBuilder {
                     body_ir.push(TIROp::Pop(leftover));
                 }
 
+                // A source return terminates every enclosing counted loop.
+                // Its flag is a function-local slot; clearing this loop's
+                // counter makes the existing loop epilogue exit immediately.
+                if let Some(depth) = return_flag_depth {
+                    body_ir.push(TIROp::Dup(depth));
+                    body_ir.push(TIROp::IfOnly {
+                        then_body: vec![TIROp::Pop(1), TIROp::Push(0)],
+                    });
+                }
+
                 // Increment the index.
                 // After cleanup, stack is [..., index, counter] (counter at st0).
                 // Swap to bring index to top, add 1, swap back.
@@ -234,6 +260,8 @@ impl TIRBuilder {
                                               // recurse is added by the lowering
 
                 self.stack.restore_state(saved);
+                self.var_types = types;
+                self.struct_layouts = layouts;
 
                 self.ops.push(TIROp::Loop {
                     label: loop_label,
@@ -242,23 +270,7 @@ impl TIRBuilder {
             }
 
             Stmt::TupleAssign { names, value } => {
-                self.build_expr(&value.node);
-                let top = self.stack.pop();
-                if let Some(entry) = top {
-                    let total_width = entry.width;
-                    let n = names.len() as u32;
-                    let elem_width = if n > 0 { total_width / n } else { 1 };
-
-                    for name in names.iter().rev() {
-                        let depth = self.stack.access_var(&name.node);
-                        self.flush_stack_effects();
-                        if elem_width == 1 {
-                            self.ops.push(TIROp::Swap(depth));
-                            self.ops.push(TIROp::Pop(1));
-                        }
-                    }
-                    let _ = total_width;
-                }
+                self.build_tuple_assign(names, &value.node);
             }
 
             Stmt::Expr(expr) => {
@@ -298,17 +310,23 @@ impl TIRBuilder {
                     .cloned()
                     .unwrap_or_default();
 
+                // Keep evaluated payloads in the model until every expression is
+                // built, so later variable loads see their actual stack depth.
+                let mut field_count = 0;
                 for def_name in &decl_order {
                     if let Some((_name, val)) = fields.iter().find(|(n, _)| n.node == *def_name) {
                         self.build_expr(&val.node);
-                        self.stack.pop();
+                        field_count += self.stack.last().map_or(0, |v| v.width);
                     }
+                }
+                for _ in &decl_order {
+                    self.stack.pop();
                 }
 
                 self.ops.push(TIROp::Reveal {
                     name: event_name.node.clone(),
                     tag,
-                    field_count: decl_order.len() as u32,
+                    field_count,
                 });
             }
 
@@ -323,7 +341,16 @@ impl TIRBuilder {
                     }
                 }
 
-                self.stack.spill_all_named();
+                // Assembly shares source RAM. Spilling named locals around an
+                // opaque block would expose them to its arbitrary RAM accesses.
+                // Keep the compiler-owned stack prefix in place; the assembly
+                // contract requires the block to preserve that prefix.
+                if *effect < 0 && !self.stack.can_pop_anonymous(effect.unsigned_abs()) {
+                    self.ops.push(TIROp::Comment(
+                        "ERROR: inline assembly stack effect consumes a named binding or exceeds the available anonymous stack".into(),
+                    ));
+                    return;
+                }
                 self.flush_stack_effects();
 
                 let lines: Vec<String> = body
@@ -344,9 +371,7 @@ impl TIRBuilder {
                         self.stack.push_temp(1);
                     }
                 } else if *effect < 0 {
-                    for _ in 0..effect.unsigned_abs() {
-                        self.stack.pop();
-                    }
+                    self.stack.pop_anonymous(effect.unsigned_abs());
                 }
             }
 
@@ -370,15 +395,17 @@ impl TIRBuilder {
                     .get(&event_name.node)
                     .cloned()
                     .unwrap_or_default();
-                let field_count = decl_order.len() as u32;
-
-                // Push fields in reverse declaration order (so first declared
-                // field ends up on top after all pushes).
-                for def_name in decl_order.iter().rev() {
+                // Same declaration-order evaluation and bottom-first flattened
+                // payload as Reveal. The machine adapter chooses hash word order.
+                let mut field_count = 0;
+                for def_name in &decl_order {
                     if let Some((_name, val)) = fields.iter().find(|(n, _)| n.node == *def_name) {
                         self.build_expr(&val.node);
-                        self.stack.pop();
+                        field_count += self.stack.last().map_or(0, |v| v.width);
                     }
+                }
+                for _ in &decl_order {
+                    self.stack.pop();
                 }
 
                 self.ops.push(TIROp::Seal {

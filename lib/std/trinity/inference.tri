@@ -1,27 +1,16 @@
 module std.trinity.inference
 
-// Provable private neural inference with Rosetta Stone unification.
+// Composed arithmetic demonstration: weighted ciphertext-shaped vectors,
+// plaintext dense layer, shared-LUT sponge, custom hash, PBS witness transport,
+// and a two-qubit field-matrix simulation. This is NOT secure private inference
+// or TFHE. A VM proof authenticates the executed constraints, not omitted ones.
 //
-// Five domains, one program, one lookup table:
-//   Phase 1  — Privacy:  LWE homomorphic encryption (real TFHE over Goldilocks)
-//   Phase 2  — Neural:   Dense layer (matvec + bias + LUT ReLU)       [Reader 1]
-//   Phase 3  — Crypto:   LUT sponge hash commitment (S-box from LUT)  [Reader 2]
-//   Phase 4  — FHE/PBS:  Programmable bootstrapping (test poly = LUT)  [Reader 3]
-//   Phase 5  — Quantum:  2-qubit Bell pair commitment circuit
-//
-// The Rosetta Stone: one RAM-based lookup table (lut_addr) serves
-// three independent readers in the same program:
-//   Reader 1: lut.apply    in dense_layer     — neural activation
-//   Reader 2: lut.read     in lut_sponge      — crypto S-box
-//   Reader 3: lut.read     in pbs.build_test  — FHE test polynomial
-// All reads from the same RAM address, authenticated by STARK consistency.
-//
-// Poseidon2 remains as the binding commitment (proven security).
-// LUT sponge demonstrates the Rosetta Stone crypto reader.
-//
-// Pitch parameters:
-//   LWE dimension 8, 8 encrypted inputs, 16-neuron hidden layer,
-//   ring dimension 64 for PBS, domain 1024, 2-qubit Bell commitment.
+// Missing bindings: PBS rotation/source/sign/key-switch witnesses are not tied
+// to the input ciphertext; LUT field quotients are not canonical integer
+// quotients; supplied key/weight digests are not recomputed from their arrays.
+// The legacy custom hash has no reviewed security bound, and a single Field
+// output or the final Bool is not a cryptographic commitment to inference.
+// See reference/trinity-arithmetic.md and its independent full29arg fixtures.
 use vm.core.field
 
 use vm.core.convert
@@ -45,11 +34,11 @@ use std.crypto.lut_sponge
 use std.quantum.gates
 
 // ---------------------------------------------------------------------------
-// Phase 1: Private linear layer via LWE encryption
+// Phase 1: LWE-shaped linear arithmetic
 // ---------------------------------------------------------------------------
-// Real homomorphic computation: encrypted input vector multiplied by
+// Ciphertext-shaped arithmetic: input vector multiplied by
 // plaintext weight matrix. Each output is an LWE ciphertext encoding
-// the weighted sum. The STARK proof covers every field operation.
+// the weighted sum. This alone does not establish encryption security.
 pub fn private_linear(
     cts_addr: Field,
     w_addr: Field,
@@ -124,10 +113,10 @@ pub fn dense_layer(
 }
 
 // ---------------------------------------------------------------------------
-// Phase 3: Hash commitment — dual hash (Poseidon2 + LUT sponge)
+// Phase 3: Custom hash and LUT-sponge arithmetic
 // ---------------------------------------------------------------------------
 // Two hashes of the same data:
-//   Poseidon2: production binding (proven security, x^7 S-box).
+//   Legacy custom permutation: caller constants, no reviewed binding guarantee.
 //   LUT sponge: Rosetta Stone demo (S-box from shared lookup table).
 //
 // The LUT sponge reads from lut_addr — the SAME table as Phase 2 ReLU.
@@ -180,7 +169,8 @@ pub fn lut_hash_commit(
 //
 // The circuit asserts the bootstrapped plaintext matches the
 // divine()-decrypted value — proving PBS and direct decryption
-// produce the same result on the same table.
+// produce the same supplied plaintext in this demo. This does not constrain
+// rotation or key switching against the original ciphertext.
 pub fn pbs_demo(
     sample_ct_addr: Field,
     s_addr: Field,
@@ -205,9 +195,9 @@ pub fn pbs_demo(
 }
 
 // ---------------------------------------------------------------------------
-// Phase 5: Quantum commitment (2-qubit Bell pair)
+// Phase 5: Two-qubit field-matrix simulation
 // ---------------------------------------------------------------------------
-// Superdense coding commitment circuit:
+// Unnormalized arithmetic circuit inspired by superdense coding:
 //   |00> -> H(q0) -> CNOT -> conditional CZ -> CNOT -> H(q0) -> measure q0
 //
 // class=0: |00> -> Bell -> skip CZ -> decode -> |00> -> p0>p1 -> true
@@ -245,19 +235,19 @@ pub fn quantum_commit(class: Field) -> Bool {
 // ---------------------------------------------------------------------------
 // Full Trinity pipeline — Rosetta Stone unification
 // ---------------------------------------------------------------------------
-// 1. Private linear layer (LWE homomorphic encryption)
+// 1. Ciphertext-shaped linear arithmetic
 // 2. Decrypt encrypted outputs (bridge to plaintext)
 // 3. Dense neural layer with LUT ReLU           [Reader 1: lut.apply]
-// 4. LUT sponge hash commitment (S-box = LUT)   [Reader 2: lut.read]
-//    + Poseidon2 hash commitment (binding)
+// 4. LUT sponge arithmetic (S-box = LUT)   [Reader 2: lut.read]
+//    + legacy custom scalar hash
 // 5. PBS demo (test polynomial = LUT)            [Reader 3: lut.read]
-// 6. Quantum commitment (2-qubit Bell circuit)
+// 6. Two-qubit field-matrix simulation
 //
 // One table (lut_addr), four readers: the Rosetta Stone.
 // Readers 1-3 demonstrated here. Reader 4 (STARK LogUp) is upstream.
 // All reads from the same RAM address, authenticated by STARK consistency.
 //
-// Returns: Bool from quantum measurement confirming the commitment.
+// Returns the field-matrix simulation Bool; this does not bind any message.
 pub fn trinity(
     cts_addr: Field,
     s_addr: Field,
@@ -304,7 +294,7 @@ pub fn trinity(
         class, lut_addr, domain, sponge_rc_addr
     )
     assert.eq(lut_digest, expected_lut_digest)
-    // Phase 3b: Poseidon2 hash — binding commitment (production security)
+    // Phase 3b: legacy custom hash arithmetic; no production binding claim
     let digest: Field = hash_commit(activated_addr, neurons, weights_digest, key_digest, class, rc_addr)
     assert.eq(digest, expected_digest)
     // Phase 4: PBS demo — Reader 3 (lut.read on lut_addr via build_test_poly)
@@ -314,6 +304,6 @@ pub fn trinity(
         pbs_acc_addr, pbs_test_addr, pbs_tmp_addr,
         pbs_expected_m
     )
-    // Phase 5: Quantum commitment on computed class
+    // Phase 5: Field-matrix simulation on computed class
     quantum_commit(class)
 }

@@ -43,6 +43,12 @@ pub struct ProveArgs {
     /// Secret/divine input values (comma-separated field elements)
     #[arg(long, value_delimiter = ',')]
     pub secret: Option<Vec<u64>>,
+    /// Nondeterministic digest queue (comma-separated field elements)
+    #[arg(long, value_delimiter = ',')]
+    pub digests: Option<Vec<u64>>,
+    /// Input/witness file in the selected warrior's format
+    #[arg(long, conflicts_with_all = ["input_values", "secret", "digests"])]
+    pub input_file: Option<PathBuf>,
     /// Output path for the proof file
     #[arg(long)]
     pub output: Option<PathBuf>,
@@ -88,6 +94,19 @@ pub fn cmd_prove(args: ProveArgs) {
         if let Some(ref state_name) = state_for_warrior {
             extra.push("--state".to_string());
             extra.push(state_name.clone());
+        }
+        if let Some(ref vals) = args.digests {
+            extra.push("--digests".to_string());
+            extra.push(
+                vals.iter()
+                    .map(u64::to_string)
+                    .collect::<Vec<_>>()
+                    .join(","),
+            );
+        }
+        if let Some(ref path) = args.input_file {
+            extra.push("--input-file".to_string());
+            extra.push(path.display().to_string());
         }
         let refs: Vec<&str> = extra.iter().map(|s| s.as_str()).collect();
         super::delegate_to_warrior(&warrior_bin, "prove", &refs);

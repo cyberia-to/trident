@@ -2,6 +2,9 @@
 
 Status: approved migration implemented and committed; installed and archived
 distribution checks passed on Darwin arm64 CPU. Full proof-release gates remain open.
+The later security review found Triton2 superseded by AIR soundness fixes;
+all historical proof checks here require repetition after the Triton7 migration.
+See [the active release ledger](full-release-preparation.md).
 The initial findings below are retained as the audit trail. The implementation
 checkpoint records their disposition. Current contracts are in
 [warrior-api](../reference/warrior-api.md).
@@ -188,21 +191,22 @@ All source paths in this table describe the migrated layout.
 | Resource layout | Trident `lib/` and `catalog/`; Trisha `lib/`, `targets/`, `networks/`. Embedded resources replace checkout-dependent resolution. Other catalog machines explicitly remain declared designs. |
 | Artifact packaging | Artifact extension follows the selected machine; manifests name and authenticate the actual program file. CLI packaging delegates foreign lowering, preserves network identity and hashes effective sources/ABI/cfg. Unknown foreign costs are absent. |
 | Runtime guards | Trisha CPU and GPU adapters reject wrong target/state bundles. Raw assembly and proof formats validate target too. Joy rejects unsupported state inputs. Runtime metadata distinguishes public Zheng certificates from private proofs. |
-| Recursive Neptune SDK | The former `verify_inner_proof` computed intermediate values without asserting validity. Removed from production packages together with dependent entry programs; preserved under `examples/experimental/neptune` with an explicit unimplemented status. Production imports fail. |
+| Recursive proof SDK | The former Neptune `verify_inner_proof` computed intermediate values without asserting validity. It remains excluded under `examples/experimental/neptune`. The replacement VM contract is `vm.triton.proof.verify(Digest)`, lowered by Trisha's registered `triton_stark_verify_v1`. It verifies the complete expected native claim using the pinned/backported official verifier; real compiled execution, claim/proof mutation rejection and a fresh outer STARK pass. Neptune transaction policy remains separate open work. |
 
-Final source-suite checkpoint: Trident 755 default + 44 neural tests pass;
+Historical ownership-only source-suite checkpoint: Trident 755 default + 44 neural tests pass;
 Trisha 227 default + 50 neural tests pass. All-features checks pass; Trisha
 has three pre-existing warnings in its vendored dependency. These totals include static/library tests;
 they do not imply execution coverage for every standard-library function.
 
-Joy's complete suite has 46 passing tests and three retained state-proof
+At that checkpoint Joy's suite had 46 passing tests and three retained state-proof
 acceptance failures (`UnsupportedRecursiveOpening`). Its new public execution
 and installed-package tests pass. The failures require authenticated recursive
 state constraints; changing ownership cannot make them pass.
 
-Full release gates still include private/state proofs, recursive Neptune
-verification and transaction validation, live deployment, and executable
-reference fixtures for all claimed baselines. The historical benchmark is
-1/43 verified. These remain explicit open work; no release was published by
-this migration. Final installed/source/binary candidate checks and hashes are in
-[warrior-release-validation](warrior-release-validation.md).
+Subsequent work implements public/private state execution and the VM recursive
+verifier. Current results and remaining full-release gates are recorded in
+[full-release-preparation](full-release-preparation.md). The historical benchmark
+at the ownership checkpoint was 1/43 verified; do not use it as current coverage.
+No release was published by this migration. The ownership-only candidate checks
+and hashes in [warrior-release-validation](warrior-release-validation.md) predate
+the current implementation and must be regenerated.

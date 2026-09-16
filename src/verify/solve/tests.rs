@@ -122,7 +122,7 @@ fn test_solver_with_if_else() {
     let report = parse_and_verify(
         "program test\nfn main() {\n    let x: Field = pub_read()\n    if x == 0 {\n        assert(true)\n    } else {\n        assert(true)\n    }\n}\n",
     );
-    assert!(report.is_safe());
+    assert_eq!(report.verdict, Verdict::Safe);
 }
 
 #[test]
@@ -130,5 +130,11 @@ fn test_inlined_function_verification() {
     let report = parse_and_verify(
         "program test\nfn check(x: Field) {\n    assert_eq(x + 0, x)\n}\nfn main() {\n    let a: Field = pub_read()\n    check(a)\n}\n",
     );
-    assert!(report.is_safe());
+    // The helper body proves the identity; no contract summary is assumed.
+    assert_eq!(report.verdict, Verdict::Safe);
+
+    let false_body = parse_and_verify(
+        "program test\nfn check(x: Field) {\n    assert_eq(x + 1, x)\n}\nfn main() {\n    check(0)\n}\n",
+    );
+    assert_eq!(false_body.verdict, Verdict::StaticViolation);
 }

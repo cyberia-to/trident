@@ -8,7 +8,7 @@ pub(crate) use std::path::Path;
 
 pub(crate) use crate::ast::{self, FileKind};
 pub(crate) use crate::cost;
-pub(crate) use crate::diagnostic::{render_diagnostics, Diagnostic};
+pub(crate) use crate::diagnostic::{Diagnostic, render_diagnostics};
 use crate::ir::tree::lower::nox::NoxCompiler;
 pub(crate) use crate::span;
 pub(crate) use crate::target::{Arch, TerrainConfig};
@@ -18,7 +18,9 @@ pub(crate) use crate::typecheck::{ModuleExports, TypeChecker};
 pub(crate) use crate::{format, lexer, parser, project, solve, sym};
 
 mod test;
-pub use test::{discover_tests, run_tests, TestResult};
+pub use test::{
+    TestProgram, TestPrograms, TestResult, discover_tests, prepare_test_programs, run_tests,
+};
 
 #[cfg(test)]
 mod tests;
@@ -117,9 +119,23 @@ impl CompileOptions {
         let checker = TypeChecker::with_target(self.target_config.clone())
             .with_cfg_flags(self.cfg_flags.clone());
         match &self.target_package {
-            Some(package) => checker.with_intrinsics(&package.intrinsics),
+            Some(package) => checker
+                .with_intrinsics(&package.intrinsics)
+                .with_target_abis(&package.intrinsic_abis),
             None => checker,
         }
+    }
+
+    pub(crate) fn target_intrinsic_widths(&self) -> std::collections::BTreeMap<String, (u32, u32)> {
+        self.target_package
+            .as_ref()
+            .map(|p| {
+                p.intrinsic_abis
+                    .iter()
+                    .map(|(name, abi)| (name.clone(), abi.widths(&self.target_config)))
+                    .collect()
+            })
+            .unwrap_or_default()
     }
 
     /// Create options for a named profile (debug/release/custom).
@@ -177,7 +193,7 @@ pub fn compile_with_options(
     let file = crate::parse_source(source, filename)?;
 
     // Type check
-    let exports = match options.checker().check_file(&file) {
+    let (file, exports) = match pipeline::PreparedProject::source(file, source, filename, options) {
         Ok(exports) => exports,
         Err(errors) => {
             render_diagnostics(&errors, filename, source);
@@ -261,7 +277,9 @@ pub fn compile_project_with_options(
 pub fn check(source: &str, filename: &str) -> Result<(), Vec<Diagnostic>> {
     let file = crate::parse_source(source, filename)?;
 
-    if let Err(errors) = TypeChecker::new().check_file(&file) {
+    if let Err(errors) =
+        pipeline::PreparedProject::source(file, source, filename, &CompileOptions::default())
+    {
         render_diagnostics(&errors, filename, source);
         return Err(errors);
     }
@@ -326,7 +344,7 @@ pub fn build_tir(
     options.validate()?;
     let file = crate::parse_source(source, filename)?;
 
-    let exports = match options.checker().check_file(&file) {
+    let (file, exports) = match pipeline::PreparedProject::source(file, source, filename, options) {
         Ok(exports) => exports,
         Err(errors) => {
             render_diagnostics(&errors, filename, source);
@@ -336,6 +354,7 @@ pub fn build_tir(
     exports.check_entry_requirements(&file, options)?;
 
     let ir = TIRBuilder::new(options.target_config.clone())
+        .with_target_intrinsics(options.target_intrinsic_widths())
         .with_cfg_flags(options.cfg_flags.clone())
         .with_mono_instances(exports.mono_instances)
         .with_call_resolutions(exports.call_resolutions)
@@ -390,6 +409,7 @@ pub fn build_tir_modules(
             .map(|e| e.call_resolutions.clone())
             .unwrap_or_default();
         let ir = TIRBuilder::new(options.target_config.clone())
+            .with_target_intrinsics(options.target_intrinsic_widths())
             .with_cfg_flags(options.cfg_flags.clone())
             .with_module_types(&project.modules.iter().map(|m| &m.file).collect::<Vec<_>>())
             .with_intrinsics(intrinsic_map.clone())
@@ -438,6 +458,7 @@ pub fn build_tir_project(
             .map(|e| e.call_resolutions.clone())
             .unwrap_or_default();
         let ir = TIRBuilder::new(options.target_config.clone())
+            .with_target_intrinsics(options.target_intrinsic_widths())
             .with_cfg_flags(options.cfg_flags.clone())
             .with_module_types(&project.modules.iter().map(|m| &m.file).collect::<Vec<_>>())
             .with_intrinsics(intrinsic_map.clone())

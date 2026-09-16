@@ -20,24 +20,31 @@ impl NoxCompiler {
             self.current_module = file.name.node.clone();
             self.module_aliases
                 .insert(self.current_module.clone(), aliases.clone());
+            // Resolve lexical size constants independently of declaration order.
+            for item in &file.items {
+                if active(&item.node, flags) {
+                    if let Item::Const(c) = &item.node {
+                        if let Expr::Literal(Literal::Integer(v)) = &c.value.node {
+                            self.constants.insert(self.symbol(&c.name.node), *v);
+                        }
+                    }
+                }
+            }
             for item in &file.items {
                 if !active(&item.node, flags) {
                     continue;
                 }
                 match &item.node {
-                    Item::Const(c) => {
-                        if let Expr::Literal(Literal::Integer(v)) = &c.value.node {
-                            self.constants.insert(self.symbol(&c.name.node), *v);
-                        }
-                    }
+                    Item::Const(_) => {}
                     Item::Fn(f) => {
                         let mut f = f.clone();
                         f.name.node = self.symbol(&f.name.node);
+                        let generics = f.type_params.iter().map(|p| p.node.clone()).collect();
                         for p in &mut f.params {
-                            p.ty.node = self.qualified_type(&p.ty.node);
+                            p.ty.node = self.qualified_type_preserving(&p.ty.node, &generics);
                         }
                         if let Some(t) = &mut f.return_ty {
-                            t.node = self.qualified_type(&t.node);
+                            t.node = self.qualified_type_preserving(&t.node, &generics);
                         }
                         self.fns.insert(f.name.node.clone(), f);
                     }
@@ -60,6 +67,7 @@ impl NoxCompiler {
                 aliases.insert(short.to_string(), file.name.node.clone());
             }
         }
+        self.scan_state_functions();
         self.current_module = entry.name.node.clone();
         let candidates = || {
             entry.items.iter().filter_map(|item| {
@@ -103,6 +111,10 @@ impl NoxCompiler {
     }
 
     pub(super) fn qualified_type(&self, ty: &ast::Type) -> ast::Type {
+        self.qualified_type_preserving(ty, &BTreeSet::new())
+    }
+
+    fn qualified_type_preserving(&self, ty: &ast::Type, generics: &BTreeSet<String>) -> ast::Type {
         match ty {
             ast::Type::Named(path) => ast::Type::Named(ast::ModulePath(
                 self.symbol(&path.as_dotted())
@@ -110,13 +122,49 @@ impl NoxCompiler {
                     .map(str::to_string)
                     .collect(),
             )),
-            ast::Type::Array(inner, size) => {
-                ast::Type::Array(Box::new(self.qualified_type(inner)), size.clone())
-            }
-            ast::Type::Tuple(ts) => {
-                ast::Type::Tuple(ts.iter().map(|t| self.qualified_type(t)).collect())
-            }
+            ast::Type::Array(inner, size) => ast::Type::Array(
+                Box::new(self.qualified_type_preserving(inner, generics)),
+                self.qualified_size(size, generics),
+            ),
+            ast::Type::Tuple(ts) => ast::Type::Tuple(
+                ts.iter()
+                    .map(|t| self.qualified_type_preserving(t, generics))
+                    .collect(),
+            ),
             _ => ty.clone(),
+        }
+    }
+
+    fn qualified_size(&self, size: &ast::ArraySize, generics: &BTreeSet<String>) -> ast::ArraySize {
+        use ast::ArraySize;
+        match size {
+            ArraySize::Param(name) if !generics.contains(name) => self
+                .constants
+                .get(&self.symbol(name))
+                .map(|n| ArraySize::Literal(*n))
+                // Keep lexical ownership even if a constant is unresolved;
+                // never capture an equally named entry-module constant.
+                .unwrap_or_else(|| ArraySize::Param(self.symbol(name))),
+            ArraySize::Add(a, b) | ArraySize::Mul(a, b) => {
+                let a = self.qualified_size(a, generics);
+                let b = self.qualified_size(b, generics);
+                if let (ArraySize::Literal(x), ArraySize::Literal(y)) = (&a, &b) {
+                    let value = if matches!(size, ArraySize::Add(..)) {
+                        x.checked_add(*y)
+                    } else {
+                        x.checked_mul(*y)
+                    };
+                    if let Some(value) = value {
+                        return ArraySize::Literal(value);
+                    }
+                }
+                if matches!(size, ArraySize::Add(..)) {
+                    ArraySize::Add(Box::new(a), Box::new(b))
+                } else {
+                    ArraySize::Mul(Box::new(a), Box::new(b))
+                }
+            }
+            _ => size.clone(),
         }
     }
 }
@@ -129,4 +177,37 @@ fn active(item: &Item, flags: &BTreeSet<String>) -> bool {
         Item::Event(e) => &e.cfg,
     };
     cfg.as_ref().is_none_or(|flag| flags.contains(&flag.node))
+}
+
+#[cfg(test)]
+mod size_tests {
+    use super::*;
+
+    #[test]
+    fn lexical_sizes_preserve_generics_and_never_wrap_arithmetic() {
+        use ast::ArraySize as S;
+        let mut compiler = NoxCompiler::new();
+        compiler.current_module = "library".into();
+        compiler.constants.insert("library.N".into(), 2);
+        let n = S::Param("N".into());
+        assert!(matches!(
+            compiler.qualified_size(&n, &BTreeSet::new()),
+            S::Literal(2)
+        ));
+        assert!(
+            matches!(compiler.qualified_size(&n, &BTreeSet::from(["N".into()])), S::Param(x) if x == "N")
+        );
+        for size in [
+            S::Add(Box::new(S::Literal(u64::MAX)), Box::new(S::Literal(1))),
+            S::Mul(Box::new(S::Literal(u64::MAX)), Box::new(S::Literal(2))),
+        ] {
+            assert!(!matches!(
+                compiler.qualified_size(&size, &BTreeSet::new()),
+                S::Literal(_)
+            ));
+        }
+        assert!(
+            matches!(compiler.qualified_size(&S::Param("unknown".into()), &BTreeSet::new()), S::Param(x) if x == "library.unknown")
+        );
+    }
 }

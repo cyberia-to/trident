@@ -393,5 +393,38 @@ impl BinOp {
 
 /// Canonical builtin name inside a parsed intrinsic attribute.
 pub fn intrinsic_name(attribute: &str) -> &str {
-    attribute.strip_prefix("intrinsic(").and_then(|s| s.strip_suffix(')')).unwrap_or(attribute)
+    attribute
+        .strip_prefix("intrinsic(")
+        .and_then(|s| s.strip_suffix(')'))
+        .unwrap_or(attribute)
+}
+
+/// Make source terminal values explicit without changing expression spans or scopes.
+/// Final conditionals/matches forward branch tails; intermediate branches discard them.
+/// Loops do not forward their iteration-local tail values.
+pub fn normalize_terminal_returns(body: &mut Block) {
+    if let Some(tail) = body.tail_expr.take() {
+        let span = tail.span;
+        body.stmts
+            .push(Spanned::new(Stmt::Return(Some(*tail)), span));
+    } else if let Some(last) = body.stmts.last_mut() {
+        match &mut last.node {
+            Stmt::If {
+                then_block,
+                else_block,
+                ..
+            } => {
+                normalize_terminal_returns(&mut then_block.node);
+                if let Some(other) = else_block {
+                    normalize_terminal_returns(&mut other.node);
+                }
+            }
+            Stmt::Match { arms, .. } => {
+                for arm in arms {
+                    normalize_terminal_returns(&mut arm.body.node);
+                }
+            }
+            _ => {}
+        }
+    }
 }

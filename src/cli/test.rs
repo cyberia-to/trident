@@ -46,21 +46,29 @@ pub fn cmd_test(args: TestArgs) {
     } = args;
     let ri = resolve_input(&input);
     let target = super::source_target(target.as_deref(), ri.project.as_ref());
-    let selected = engine
-        .as_deref()
-        .or(terrain.as_deref())
-        .or(network.as_deref())
-        .or(union_flag.as_deref())
-        .unwrap_or(&target);
-    if selected != "nox" {
-        eprintln!("warrior test command is not implemented for '{selected}'");
-        process::exit(1);
-    }
     let bf = super::resolve_battlefield_compile(&target, &engine, &terrain, &network, &union_flag);
     let target = bf.target;
 
     let options = resolve_options(&target, &profile, ri.project.as_ref());
-    let result = trident::run_tests(&ri.entry, &options);
+    let (entry, options) = trident::source_options(&input, &options).unwrap_or_else(|errors| {
+        for error in errors {
+            eprintln!("error: {}", error.message);
+        }
+        process::exit(1)
+    });
+    if target != "nox" {
+        if let Some(warrior) = super::find_warrior(&target) {
+            let entry = entry.display().to_string();
+            super::delegate_to_warrior(
+                &warrior,
+                "test",
+                &[&entry, "--target", &target, "--profile", &profile],
+            );
+            return;
+        }
+        super::missing_warrior(&target, "test");
+    }
+    let result = trident::run_tests(&entry, &options);
 
     match result {
         Ok(report) => {

@@ -9,7 +9,6 @@ use std::collections::BTreeMap;
 
 pub(crate) use crate::ast::display::format_ast_type as format_type_name;
 use crate::ast::*;
-use crate::span::Spanned;
 use crate::target::TerrainConfig;
 
 use super::TIRBuilder;
@@ -54,6 +53,45 @@ pub(crate) fn resolve_type_width_with_subs(
 // ─── TIRBuilder struct layout methods ──────────────────────────────
 
 impl TIRBuilder {
+    /// Resolve source argument order without choosing any machine I/O operation.
+    pub(crate) fn entry_leaves(&self, ty: &Type, out: &mut Vec<crate::tir::EntryLeaf>) {
+        use crate::tir::EntryLeaf;
+        match ty {
+            Type::Field => out.push(EntryLeaf::Field),
+            Type::Bool => out.push(EntryLeaf::Bool),
+            Type::U32 => out.push(EntryLeaf::U32),
+            Type::Digest => out.extend(vec![
+                EntryLeaf::Field;
+                self.target_config.digest_width as usize
+            ]),
+            Type::XField => out.extend(vec![
+                EntryLeaf::Field;
+                self.target_config.xfield_width as usize
+            ]),
+            Type::Tuple(elements) => {
+                for element in elements {
+                    self.entry_leaves(element, out);
+                }
+            }
+            Type::Array(element, size) => {
+                let count = size.eval(&self.current_subs);
+                for _ in 0..count {
+                    self.entry_leaves(element, out);
+                }
+            }
+            Type::Named(path) => {
+                let name = self.qualified_name(&path.0.join("."));
+                if let Some(definition) = self.struct_types.get(&name) {
+                    for field in &definition.fields {
+                        self.entry_leaves(&field.ty.node, out);
+                    }
+                } else {
+                    out.push(EntryLeaf::Unresolved(name));
+                }
+            }
+        }
+    }
+
     /// Register struct field layout from a type annotation.
     pub(crate) fn register_struct_layout_from_type(&mut self, var_name: &str, ty: &Type) {
         if let Type::Named(path) = ty {
@@ -91,6 +129,11 @@ impl TIRBuilder {
 
     /// Resolve field offset for Expr::FieldAccess.
     pub(crate) fn resolve_field_offset(&self, inner: &Expr, field: &str) -> Option<(u32, u32)> {
+        if let Some(ty) = self.expr_type(inner) {
+            if let Some((field_ty, offset)) = self.field_type_offset(&ty, field) {
+                return Some((offset, self.type_width(&field_ty)));
+            }
+        }
         if let Expr::Var(name) = inner {
             return self.find_field_offset_in_var(name, field);
         }
@@ -109,107 +152,28 @@ impl TIRBuilder {
         if fields.is_empty() {
             return None;
         }
-
-        // Start with the first field using the variable's layout.
-        let first_field = fields[0];
-        let (mut offset, mut width) = self.find_field_offset_in_var(var_name, first_field)?;
-
-        // For subsequent fields, we need to look up the struct type
-        // of the current field and compute sub-offsets within it.
-        let mut current_struct_name = self.find_field_struct_type(var_name, first_field);
-
-        for &field in &fields[1..] {
-            let sname = current_struct_name.as_ref()?;
-            let sdef = self.struct_types.get(sname)?;
-
-            // Compute offset of `field` within this struct.
-            let mut sub_offset = 0u32;
-            let total: u32 = sdef
-                .fields
-                .iter()
-                .map(|f| self.type_width(&f.ty.node))
-                .sum();
-            let mut found = false;
-            for sf in &sdef.fields {
-                let fw = self.type_width(&sf.ty.node);
-                if sf.name.node == field {
-                    let from_top = total - sub_offset - fw;
-                    // The sub-field is at `from_top` within the parent field.
-                    // Adjust: parent's offset already accounts for parent's
-                    // position within the whole struct. The sub-field is
-                    // within the parent's width window.
-                    offset = offset + (width - from_top - fw);
-                    width = fw;
-                    // Find struct type of this field for next iteration.
-                    current_struct_name = if let Type::Named(ref path) = sf.ty.node {
-                        path.0.last().cloned()
-                    } else {
-                        None
-                    };
-                    found = true;
-                    break;
-                }
-                sub_offset += fw;
-            }
-            if !found {
+        let mut ty = self.var_types.get(var_name)?.clone();
+        let mut offset = 0;
+        let mut width = 0;
+        for field in fields {
+            let Type::Named(path) = &ty else {
                 return None;
-            }
-        }
-
-        Some((offset, width))
-    }
-
-    /// Look up the struct type name for a field within a variable's struct.
-    fn find_field_struct_type(&self, var_name: &str, field_name: &str) -> Option<String> {
-        // First check struct_layouts to confirm the field exists.
-        if self.struct_layouts.get(var_name)?.get(field_name).is_none() {
-            return None;
-        }
-        // Find which struct type the variable is, then find the field's type.
-        for sdef in self.struct_types.values() {
-            let total: u32 = sdef
+            };
+            let name = self.qualified_name(&path.0.join("."));
+            let definition = self.struct_types.get(&name)?;
+            let position = definition
                 .fields
                 .iter()
+                .position(|f| f.name.node == *field)?;
+            let selected = &definition.fields[position];
+            // Both offsets are measured from the top of their own aggregate.
+            offset += definition.fields[position + 1..]
+                .iter()
                 .map(|f| self.type_width(&f.ty.node))
-                .sum();
-            // Check if this struct matches the variable's layout.
-            if let Some(layout) = self.struct_layouts.get(var_name) {
-                let layout_total: u32 = layout.values().map(|(_, w)| w).sum();
-                if total != layout_total {
-                    continue;
-                }
-            }
-            for sf in &sdef.fields {
-                if sf.name.node == field_name {
-                    if let Type::Named(ref path) = sf.ty.node {
-                        return path.0.last().cloned();
-                    }
-                    return None;
-                }
-            }
+                .sum::<u32>();
+            width = self.type_width(&selected.ty.node);
+            ty = selected.ty.node.clone();
         }
-        None
-    }
-
-    /// Compute field widths for a struct init.
-    pub(crate) fn compute_struct_field_widths(
-        &self,
-        ty: &Option<Spanned<Type>>,
-        fields: &[(Spanned<String>, Spanned<Expr>)],
-    ) -> Vec<u32> {
-        if let Some(sp_ty) = ty {
-            if let Type::Named(path) = &sp_ty.node {
-                if let Some(name) = path.0.last() {
-                    if let Some(sdef) = self.struct_types.get(name) {
-                        return sdef
-                            .fields
-                            .iter()
-                            .map(|f| self.type_width(&f.ty.node))
-                            .collect();
-                    }
-                }
-            }
-        }
-        vec![1u32; fields.len()]
+        Some((offset, width))
     }
 }

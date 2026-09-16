@@ -8,7 +8,7 @@ members = ["silicon"]
 
 [package]
 name = "trident-lang"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "A minimal, security-first universal language for provable computation"
 license-file = "LICENSE.md"
@@ -34,7 +34,7 @@ tower-lsp = "0.20"
 tokio = { version = "1", features = ["io-std", "rt-multi-thread", "macros"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-nox = { package = "cyber-nox", version = "0.2", path = "../nox/rs" }
+nox = { package = "cyber-nox", version = "0.3.0", path = "../nox/rs" }
 nebu = { package = "strata-nebu", version = "0.1", path = "../strata/nebu/rs" }
 hemera = { package = "cyber-hemera", version = "0.3", path = "../hemera/rs" }
 burn = { version = "0.20", features = ["wgpu", "autodiff", "ndarray"], optional = true }

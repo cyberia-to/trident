@@ -60,8 +60,7 @@ fn test_divine_input_tracking() {
 
 #[test]
 fn test_arithmetic_simplification() {
-    let v =
-        SymValue::Add(Box::new(SymValue::Const(3)), Box::new(SymValue::Const(4))).simplify();
+    let v = SymValue::Add(Box::new(SymValue::Const(3)), Box::new(SymValue::Const(4))).simplify();
     assert_eq!(v, SymValue::Const(7));
 }
 
@@ -102,12 +101,12 @@ fn test_range_u32_constraint() {
 }
 
 #[test]
-fn test_verify_file_safe() {
+fn test_verify_file_without_obligations_is_unknown() {
     let file = parse_program(
         "program test\nfn main() {\n    let x: Field = pub_read()\n    pub_write(x)\n}\n",
     );
     let result = verify_file(&file);
-    assert!(result.is_safe());
+    assert!(!result.is_safe());
 }
 
 #[test]
@@ -123,8 +122,14 @@ fn test_function_inlining() {
         "program test\nfn helper() {\n    assert(true)\n}\nfn main() {\n    helper()\n}\n",
     );
     let system = analyze(&file);
-    // The inlined assert(true) should produce a constraint
-    assert!(!system.constraints.is_empty());
+    assert!(system.unsupported.is_empty());
+    assert!(matches!(
+        system.constraints.as_slice(),
+        [Constraint::AssertTrue(SymValue::Const(1))]
+    ));
+    let bad =
+        parse_program("program test\nfn helper() { assert(false) }\nfn main() { helper() }\n");
+    assert!(!verify_file(&bad).is_safe());
 }
 
 #[test]

@@ -49,15 +49,15 @@ pub fn scale(x: Field, s: Field) -> Field {
 // ---------------------------------------------------------------------------
 // Compare hi 32-bit word of two field elements.
 // Separate function keeps stack shallow during split.
-fn field_hi_lt(a: Field, b: Field) -> Bool {
+fn field_lt(a: Field, b: Field) -> Bool {
     let (a_hi, a_lo) = convert.split(a)
     let (b_hi, b_lo) = convert.split(b)
-    a_hi < b_hi
+    if a_hi == b_hi { a_lo < b_lo } else { a_hi < b_hi }
 }
 
 pub fn relu(x: Field) -> Field {
     let threshold: Field = half_p()
-    if field_hi_lt(x, threshold) {
+    if field_lt(x, threshold) {
         x
     } else {
         0
@@ -176,12 +176,12 @@ pub fn dense(
 // ---------------------------------------------------------------------------
 // Check if a field value is "positive" (below half_p).
 fn is_positive(x: Field) -> Bool {
-    field_hi_lt(x, half_p())
+    field_lt(x, half_p())
 }
 
-// Check if a > b as unsigned field values (hi-word comparison).
-fn field_hi_gt(a: Field, b: Field) -> Bool {
-    field_hi_lt(b, a)
+// Check if a > b as unsigned field values (canonical 64-bit comparison).
+fn field_gt(a: Field, b: Field) -> Bool {
+    field_lt(b, a)
 }
 
 pub fn argmax(addr: Field, n: Field) -> Field {
@@ -201,7 +201,7 @@ pub fn argmax(addr: Field, n: Field) -> Field {
             if best_pos {
                 // Both positive — bigger u64 wins
                 let r_bv2: Field = mem.read(1073741874)
-                if field_hi_gt(val, r_bv2) {
+                if field_gt(val, r_bv2) {
                     mem.write(1073741873, idx)
                     mem.write(1073741874, val)
                 }

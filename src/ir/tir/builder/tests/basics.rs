@@ -465,3 +465,41 @@ fn deep_aggregate_index_preserves_word_order() {
         }
     }
 }
+
+#[test]
+fn typed_entry_metadata_resolves_source_order_without_machine_io() {
+    use crate::tir::EntryLeaf;
+    let source = "program entry\nstruct Pair { flag: Bool, count: U32 }\nfn main(first: Field, pair: Pair, array: [Bool; 2], last: XField) {}";
+    let file = crate::parse_source_silent(source, "entry.tri").unwrap();
+    let ops = make_builder().build_file(&file);
+    let position = ops
+        .iter()
+        .position(|op| matches!(op, TIROp::EntryParameters(_)))
+        .unwrap();
+    let TIROp::EntryParameters(leaves) = &ops[position] else {
+        unreachable!()
+    };
+    assert_eq!(
+        leaves,
+        &vec![
+            EntryLeaf::Field,
+            EntryLeaf::Bool,
+            EntryLeaf::U32,
+            EntryLeaf::Bool,
+            EntryLeaf::Bool,
+            EntryLeaf::Field,
+            EntryLeaf::Field,
+            EntryLeaf::Field
+        ]
+    );
+    assert!(matches!(&ops[position+1], TIROp::Entry(name) if name == "main"));
+    assert!(!ops[..position]
+        .iter()
+        .any(|op| matches!(op, TIROp::ReadIo(_))));
+    let mut library = file;
+    library.kind = FileKind::Module;
+    assert!(!make_builder()
+        .build_file(&library)
+        .iter()
+        .any(|op| matches!(op, TIROp::EntryParameters(_) | TIROp::Entry(_))));
+}

@@ -37,6 +37,7 @@ impl TypeChecker {
             }
         }
 
+        self.current_function = func.name.node.clone();
         let prev_pure = self.in_pure_fn;
         self.in_pure_fn = func.is_pure;
 
@@ -48,11 +49,143 @@ impl TypeChecker {
             self.define_var(&param.name.node, ty, false);
         }
 
-        let body = func.body.as_ref().expect("guarded by is_none check above");
-        self.check_block(&body.node);
+        let previous_return = self.expected_return.take();
+        self.expected_return = Some(
+            func.return_ty
+                .as_ref()
+                .map(|t| self.resolve_type(&t.node))
+                .unwrap_or(Ty::Unit),
+        );
+        let mut body = func
+            .body
+            .as_ref()
+            .expect("guarded by is_none check above")
+            .clone();
+        crate::ast::normalize_terminal_returns(&mut body.node);
+        let actual = self.check_block(&body.node);
+        let mut constants = self.constants.clone();
+        for param in &func.params {
+            constants.remove(&param.name.node);
+        }
+        if !self.block_always_returns(&body.node, &constants) {
+            if let Some(expected) = self.expected_return.clone() {
+                if actual != expected {
+                    self.error(
+                        format!(
+                            "return type mismatch: expected {} but got {}",
+                            expected.display(),
+                            actual.display()
+                        ),
+                        body.span,
+                    );
+                }
+            }
+        }
+        self.expected_return = previous_return;
 
         self.pop_scope();
         self.in_pure_fn = prev_pure;
+    }
+
+    fn block_always_returns(
+        &self,
+        body: &Block,
+        constants: &std::collections::BTreeMap<String, u64>,
+    ) -> bool {
+        fn constant(e: &Expr, constants: &std::collections::BTreeMap<String, u64>) -> Option<u64> {
+            match e {
+                Expr::Literal(Literal::Integer(n)) => Some(*n),
+                Expr::Var(name) => constants.get(name).copied(),
+                _ => None,
+            }
+        }
+        let mut visible = constants.clone();
+        for statement in &body.stmts {
+            let returns = match &statement.node {
+                Stmt::Return(_) => true,
+                Stmt::Let { pattern, .. } => {
+                    match pattern {
+                        Pattern::Name(name) => {
+                            visible.remove(&name.node);
+                        }
+                        Pattern::Tuple(names) => {
+                            for name in names {
+                                visible.remove(&name.node);
+                            }
+                        }
+                    }
+                    false
+                }
+                Stmt::If {
+                    cond,
+                    then_block,
+                    else_block,
+                } => {
+                    let taken = match &cond.node {
+                        Expr::Literal(Literal::Bool(b)) => Some(*b),
+                        e => constant(e, &visible).and_then(|n| {
+                            // Program Field atoms are canonicalized by both native owners.
+                            // Other target fields do not yet have a constant-folding contract here.
+                            if matches!(self.target_config.name.as_str(), "nox" | "triton") {
+                                let n = n % nebu::field::P;
+                                Some(if self.target_config.name == "nox" {
+                                    n == 0
+                                } else {
+                                    n != 0
+                                })
+                            } else {
+                                None
+                            }
+                        }),
+                    };
+                    let then_returns = self.block_always_returns(&then_block.node, &visible);
+                    let else_returns = else_block
+                        .as_ref()
+                        .is_some_and(|b| self.block_always_returns(&b.node, &visible));
+                    match taken {
+                        Some(true) => then_returns,
+                        Some(false) => else_returns,
+                        None => then_returns && else_returns,
+                    }
+                }
+                Stmt::For {
+                    var,
+                    start,
+                    end,
+                    bound,
+                    body,
+                } => match (
+                    constant(&start.node, &visible),
+                    constant(&end.node, &visible),
+                ) {
+                    (Some(start), Some(end)) if start < end && bound.is_none_or(|n| n > 0) => {
+                        let mut inner = visible.clone();
+                        inner.remove(&var.node);
+                        self.block_always_returns(&body.node, &inner)
+                    }
+                    _ => false,
+                },
+                Stmt::Match { arms, .. } => {
+                    !arms.is_empty()
+                        && arms.iter().all(|arm| {
+                            let mut inner = visible.clone();
+                            if let MatchPattern::Struct { fields, .. } = &arm.pattern.node {
+                                for field in fields {
+                                    if let FieldPattern::Binding(name) = &field.pattern.node {
+                                        inner.remove(name);
+                                    }
+                                }
+                            }
+                            self.block_always_returns(&arm.body.node, &inner)
+                        })
+                }
+                other => self.is_terminating_stmt(other),
+            };
+            if returns {
+                return true;
+            }
+        }
+        false
     }
 
     pub(super) fn check_block(&mut self, block: &Block) -> Ty {
@@ -131,6 +264,19 @@ impl TypeChecker {
                         def_name, event_name.node
                     ),
                     event_name.span,
+                );
+            }
+        }
+
+        let mut seen = std::collections::BTreeSet::new();
+        for (name, _) in fields {
+            if !seen.insert(&name.node) {
+                self.error(
+                    format!(
+                        "duplicate field '{}' in event '{}'",
+                        name.node, event_name.node
+                    ),
+                    name.span,
                 );
             }
         }

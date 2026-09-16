@@ -15,9 +15,20 @@ pub mod stack;
 
 use std::fmt;
 
+/// Resolved primitive leaves of a program entry's ordinary argument layout.
+/// Owners define how these values enter their machine; no ISA is implied.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum EntryLeaf {
+    Field,
+    Bool,
+    U32,
+    Unresolved(String),
+}
+
 // ─── IR Operations ────────────────────────────────────────────────
 
-/// 54 TIR operations across 4 tiers. Higher tier = narrower target set.
+/// 54 standard TIR operations, an opaque owner TargetCall, and entry metadata.
+/// Higher tier = narrower target set.
 ///
 /// **Tier 0 — Structure** (every program, every target)
 ///   Control flow (6), Program structure (3), Passthrough (2) = 11
@@ -33,7 +44,8 @@ use std::fmt;
 /// **Tier 3 — Recursion** (requires recursive verification capability)
 ///   Extension field (2), Folding (2), Verification (1) = 5
 ///
-/// Total: 11 + 31 + 7 + 5 = 54 variants
+/// Standard operations: 11 + 31 + 7 + 5 = 54; owner calls and entry metadata
+/// extend the representation without placing target ISA knowledge in the core.
 #[derive(Debug, Clone)]
 pub enum TIROp {
     // ═══════════════════════════════════════════════════════════════
@@ -44,6 +56,13 @@ pub enum TIROp {
 
     // ── Control flow — flat (3) ──
     Call(String),
+    /// Opaque operation authorized by the selected owner's typed package ABI.
+    /// The core preserves its word effect; the owner must implement or reject it.
+    TargetCall {
+        name: String,
+        inputs: u32,
+        outputs: u32,
+    },
     Return,
     Halt,
 
@@ -71,6 +90,8 @@ pub enum TIROp {
     FnEnd,
     /// Program entry point (main function label).
     Entry(String),
+    /// Program-only signature metadata, immediately before Entry.
+    EntryParameters(Vec<EntryLeaf>),
 
     // ── Passthrough (2) ──
     /// Comment text (without prefix — lowering adds target-specific prefix).
@@ -138,14 +159,16 @@ pub enum TIROp {
     },
 
     // ── Events (2) ──
-    /// Reveal an observable event. Fields are on the stack (topmost = first field).
-    /// Lowering maps to target-native events (Triton: write_io, EVM: LOG, etc.).
+    /// Reveal an event: payload words are flattened in declaration order,
+    /// first word deepest, last word on top. `field_count` counts words,
+    /// not source fields. Consumes all payload words; emits tag then payload.
     Reveal {
         name: String,
         tag: u64,
         field_count: u32,
     },
-    /// Seal (hash-commit) an event. Fields are on the stack (topmost = first field).
+    /// Seal an event with the same bottom-first payload and word count as Reveal.
+    /// Consumes the payload; emits the target hash of tag + payload + zero padding.
     Seal {
         name: String,
         tag: u64,
@@ -267,6 +290,11 @@ impl fmt::Display for TIROp {
             TIROp::RamRead { width } => write!(f, "ram_read {}", width),
             TIROp::RamWrite { width } => write!(f, "ram_write {}", width),
             TIROp::Call(label) => write!(f, "call {}", label),
+            TIROp::TargetCall {
+                name,
+                inputs,
+                outputs,
+            } => write!(f, "target_call {name} ({inputs} -> {outputs})"),
             TIROp::Return => write!(f, "return"),
             TIROp::Halt => write!(f, "halt"),
             TIROp::IfElse {
@@ -289,6 +317,7 @@ impl fmt::Display for TIROp {
             TIROp::FnStart(name) => write!(f, "fn_start {}", name),
             TIROp::FnEnd => write!(f, "fn_end"),
             TIROp::Entry(main) => write!(f, "entry {}", main),
+            TIROp::EntryParameters(leaves) => write!(f, "entry_parameters {:?}", leaves),
             TIROp::Comment(text) => write!(f, "// {}", text),
             TIROp::Asm { lines, effect } => {
                 write!(f, "asm({} lines, effect={})", lines.len(), effect)
@@ -403,6 +432,11 @@ mod tests {
                 body: vec![TIROp::ExtMul],
             },
             TIROp::Call("f".into()),
+            TIROp::TargetCall {
+                name: "owned".into(),
+                inputs: 7,
+                outputs: 4,
+            },
             TIROp::Return,
             TIROp::Halt,
             TIROp::IfElse {

@@ -28,9 +28,7 @@ module std.compiler.pipeline
 //   +10  scratch_base      Start of scratch memory (~100K words)
 //   +11  err_count         Total errors across all stages (set by compile)
 
-use vm.core.field
 
-use vm.core.convert
 
 use vm.io.mem
 
@@ -267,6 +265,7 @@ pub fn compile(state_base: Field) {
     mem.write(cg + 38, tok_base)
     // File kind
     mem.write(cg + 39, p_file_kind(sb))
+    mem.write(cg + 40, p_src_base(sb))
 
     codegen.codegen(cg)
 

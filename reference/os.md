@@ -10,10 +10,11 @@ the VM's instruction set and from a deployment instance's endpoint.
 
 | Surface | Implementation and limitations |
 |---|---|
-| `os.state.read` | Compiler builtin lowered to nox state lookups; not a portable OS source library and not authenticated public proof support |
+| `os.state.read` | Compiler builtin lowered to nox lookups; Joy authenticates supplied public BBG certificates and binds the lookup to execution |
 | `os.neptune.*` | Trisha-owned Neptune SDK source and transaction policy |
 | `os.neuron`, `os.signal`, `os.event` | Design vocabulary; no portable source implementations in Trident |
-| Cyber network SDK and state loading in Joy | Not implemented; `cyber` currently aliases stateless nox |
+| Joy state loading | Authenticated public BBG certificate files, including bounded hidden query coordinates over public tables |
+| Live Cyber network SDK | Not implemented; `cyber` aliases the supported nox runtime without network synchronization or deployment |
 | Other catalog OS entries | Discovery/design records, not available runtime modules |
 
 There are no implemented portable `.tri` OS modules hidden in Trident's
@@ -60,13 +61,27 @@ actual result.
 
 ## State and proof status
 
-The existence of `os.state.read` proves only that the compiler can express a
-state lookup. A runner needs a supplied state root and provider, and a proof
-needs an authenticated state relation. These are separate requirements.
-Joy rejects CLI state requests and stateless execution of bundles marked
-`reads_state`. Its public Zheng execution certificates do not support state,
-secrets or calls. Legacy state-proof acceptance failures remain release
-requirements; they are not covered by passing public execution tests.
+`os.state.read` lowers through active imported and local helper calls. The
+compiler propagates a hidden state root to stateful callees and marks the
+selected entry bundle with `reads_state`; stateless call subjects are unchanged.
+Joy supplies the root and provider from an authenticated public BBG certificate
+selected with `--state`. Stateful bundles require that certificate; stateless
+execution does not silently supply an unchecked root.
+
+`JOYST001` proves public state execution, binding active namespace/key/value
+coordinates and all four root limbs to the same verifier-derived Zheng relation.
+`JOYZK003` proves private inputs and query coordinates using Trisha's native
+Triton checker. Hidden queries require all ten authenticated public dimension
+tables and retain the2048-field/32768-gate limits. The database remains public.
+`JOYEXEC2` is the separate stateless public execution certificate; it discloses
+its witness and does not accept private calls. Proof verification checks the
+expected program, public input/output, selected cost and relevant state root.
+
+Dynamic continuations/variable noun shapes, a private database and live state
+synchronization remain outside the production proof contract. The experimental
+tagged relation is not used by these formats. See
+[Zheng execution contract](../../zheng/specs/execution.md) and
+[Joy CLI](../../joy/specs/cli.md) for exact admission and disclosure requirements.
 
 ## Design vocabulary
 

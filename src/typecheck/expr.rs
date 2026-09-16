@@ -5,8 +5,6 @@
 // ---
 //! Expression type checking: check_expr, check_binop.
 
-use std::collections::BTreeMap;
-
 use crate::ast::*;
 use crate::span::Span;
 use crate::types::Ty;
@@ -27,8 +25,8 @@ impl TypeChecker {
                     return info.ty.clone();
                 }
                 // Known constant
-                if self.constants.contains_key(name) {
-                    return Ty::Field;
+                if let Some(ty) = self.constant_types.get(name) {
+                    return ty.clone();
                 }
                 // Dotted name: could be nested field access (var.field.subfield)
                 // or module constant. Try resolving from the first dot outward.
@@ -93,14 +91,12 @@ impl TypeChecker {
                         }
                         let mut sizes = Vec::new();
                         for ga in generic_args {
-                            if let Some(n) = ga.node.as_literal() {
-                                sizes.push(n);
-                            } else {
-                                self.error(
-                                    format!("expected concrete size, got '{}'", ga.node),
-                                    ga.span,
-                                );
-                                sizes.push(0);
+                            match super::resolve::checked_size(&ga.node, &self.constants) {
+                                Ok(n) => sizes.push(n),
+                                Err(error) => {
+                                    self.error(error, ga.span);
+                                    sizes.push(0);
+                                }
                             }
                         }
                         sizes
@@ -110,11 +106,13 @@ impl TypeChecker {
                     };
 
                     // Build substitution map.
-                    let mut subs = BTreeMap::new();
+                    let mut subs = gdef.constants.clone();
                     for (param_name, size_val) in gdef.type_params.iter().zip(size_args.iter()) {
                         subs.insert(param_name.clone(), *size_val);
                     }
 
+                    // Resolve named types in the declaration module, not the caller.
+                    let caller_structs = std::mem::replace(&mut self.structs, gdef.structs.clone());
                     // Monomorphize the signature.
                     let params: Vec<(String, Ty)> = gdef
                         .params
@@ -127,6 +125,7 @@ impl TypeChecker {
                         .map(|t| self.resolve_type_with_subs(t, &subs))
                         .unwrap_or(Ty::Unit);
 
+                    self.structs = caller_structs;
                     // Type-check arguments against the monomorphized signature.
                     if arg_tys.len() != params.len() {
                         self.error(
@@ -159,13 +158,20 @@ impl TypeChecker {
 
                     // Record this monomorphized instance.
                     let instance = MonoInstance {
-                        name: fn_name.clone(),
+                        name: gdef
+                            .canonical_name
+                            .clone()
+                            .unwrap_or_else(|| fn_name.clone()),
                         size_args: size_args.clone(),
                     };
                     if !self.mono_instances.contains(&instance) {
                         self.mono_instances.push(instance.clone());
                     }
                     // Record per-call-site resolution for the emitter.
+                    self.generic_calls.insert(
+                        (self.current_function.clone(), span.start, span.end),
+                        instance.clone(),
+                    );
                     self.call_resolutions.push(instance);
 
                     return_ty
@@ -209,14 +215,13 @@ impl TypeChecker {
                         }
                     }
                     // H0003: detect redundant as_u32 range checks
-                    let base_name = fn_name.rsplit('.').next().unwrap_or(&fn_name);
-                    if base_name == "as_u32" && args.len() == 1 {
+                    if self.canonical_as_u32 && fn_name == "as_u32" && args.len() == 1 {
                         if let Expr::Var(var_name) = &args[0].node {
-                            if self.u32_proven.contains(var_name) {
+                            if let Some(binding) = self.u32_proven.get(var_name) {
                                 self.warning(
                                     format!(
-                                        "hint[H0003]: as_u32({}) is redundant — value is already proven U32",
-                                        var_name
+                                        "hint[H0003]: as_u32({}) can reuse prior U32 binding `{}`",
+                                        var_name, binding
                                     ),
                                     span,
                                 );
@@ -259,7 +264,19 @@ impl TypeChecker {
                 let inner_ty = self.check_expr(&inner.node, inner.span);
                 let _idx_ty = self.check_expr(&index.node, index.span);
                 match &inner_ty {
-                    Ty::Array(elem_ty, _) => *elem_ty.clone(),
+                    Ty::Array(elem_ty, length) => {
+                        if let Expr::Literal(Literal::Integer(index)) = index.node {
+                            if index >= *length {
+                                self.error(
+                                    format!(
+                                        "array index {index} out of bounds for length {length}"
+                                    ),
+                                    span,
+                                );
+                            }
+                        }
+                        *elem_ty.clone()
+                    }
                     // reference/language.md: Digest is `[Field; D]`. Limb access
                     // is lowered on tree targets (nox: D = 4, a balanced pair);
                     // the stack path has no digest-limb store yet.

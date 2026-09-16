@@ -51,6 +51,7 @@ module std.compiler.codegen
 //   +37  saved_count
 //   +38  tok_base          Token array base (for name comparison)
 //   +39  file_kind         0=library, 1=program
+//   +40  src_base          Source bytes for exact entry-name comparison
 
 use vm.core.field
 
@@ -1684,7 +1685,7 @@ fn do_assign_done(sb: Field, node: Field) {
         let depth: Field = stack_find_var(sb, name_tok)
         flush_effects(sb)
         if depth == field.neg(1) {
-            stack_pop(sb)
+            let _ = stack_pop(sb)
             emit_pop(sb, w)
         } else {
             if convert.as_u32(depth + w) < convert.as_u32(16) {
@@ -1693,7 +1694,7 @@ fn do_assign_done(sb: Field, node: Field) {
             } else {
                 emit_tir(sb, lower.OP_POP(), 1, 0, 0)
             }
-            stack_pop(sb)
+            let _ = stack_pop(sb)
         }
     }
 }
@@ -1806,11 +1807,11 @@ fn do_for_body_end(sb: Field, lbl: Field, save_idx: Field, pre_depth: Field, bod
     restore_stack_state(sb, save_idx)
     emit_tir(sb, lower.OP_LOOP(), lbl, body_start, body_end + field.neg(body_start))
     // Pop counter + end + index
-    stack_pop(sb)
-    stack_pop(sb)
+    let _ = stack_pop(sb)
+    let _ = stack_pop(sb)
     flush_effects(sb)
     emit_tir(sb, lower.OP_POP(), 2, 0, 0)
-    stack_pop(sb)
+    let _ = stack_pop(sb)
 }
 
 fn do_expr_stmt_done(sb: Field, pre_len: Field) {
@@ -1858,7 +1859,7 @@ fn do_seal_done(sb: Field, node: Field, fields_count: Field) {
 
 fn do_return_done(sb: Field) {
     // Return value has been built, just consume the width from result stack
-    rs_pop(sb)
+    let _ = rs_pop(sb)
 }
 
 fn do_fn_body_done(sb: Field, name_tok: Field, ret_w: Field) {
@@ -1909,9 +1910,19 @@ pub fn codegen(state_base: Field) {
         for i in 0..icu bounded 256 {
             let item: Field = items_start + convert.as_field(i)
             if ast_kind(sb, item) == parser.NK_FN() {
-                let rt: Field = ast_f(sb, item, 3)
-                if rt == 0 {
-                    main_tok = ast_f(sb, item, 0)
+                let name_tok: Field = ast_f(sb, item, 0)
+                let token: Field = s_tok_base(sb) + name_tok * 4
+                let start: Field = mem.read(token + 1)
+                let end: Field = mem.read(token + 2)
+                if end == start + 4 {
+                    let name: Field = mem.read(sb + 40) + start
+                    if mem.read(name) == 109 {
+                        if mem.read(name + 1) == 97 {
+                            if mem.read(name + 2) == 105 {
+                                if mem.read(name + 3) == 110 { main_tok = name_tok }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1957,14 +1968,7 @@ pub fn codegen(state_base: Field) {
                 ws_push(sb, WC_FN_BODY_DONE(), name_tok, ret_w)
                 do_block(sb, body_node)
                 // Run dispatch loop
-                let max: U32 = convert.as_u32(MAX_STEPS())
-                for _step in 0..max bounded 131072 {
-                    if s_work_depth(sb) == 0 {
-                        // done
-                    } else {
-                        dispatch_work(sb)
-                    }
-                }
+run_pending_work(sb)
             }
         }
     }
@@ -1976,4 +1980,12 @@ pub fn result_count(state_base: Field) -> Field {
 
 pub fn result_base(state_base: Field) -> Field {
     s_tir_base(state_base)
+}
+
+fn run_pending_work(sb: Field) {
+    let max: U32 = convert.as_u32(MAX_STEPS())
+    for _step in 0..max bounded 131072 {
+        if s_work_depth(sb) == 0 { return }
+        dispatch_work(sb)
+    }
 }

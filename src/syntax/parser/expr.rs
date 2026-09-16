@@ -54,7 +54,7 @@ impl Parser {
         lhs
     }
 
-    /// Parse postfix operations: .field, [index], .method() chains
+    /// Parse postfix field and index projections in any order.
     fn parse_postfix(&mut self, mut expr: Spanned<Expr>) -> Spanned<Expr> {
         loop {
             if self.at(&Lexeme::LBracket) {
@@ -66,6 +66,17 @@ impl Parser {
                     Expr::Index {
                         expr: Box::new(expr),
                         index: Box::new(index),
+                    },
+                    span,
+                );
+            } else if self.at(&Lexeme::Dot) {
+                self.advance();
+                let field = self.expect_ident();
+                let span = expr.span.merge(field.span);
+                expr = Spanned::new(
+                    Expr::FieldAccess {
+                        expr: Box::new(expr),
+                        field,
                     },
                     span,
                 );
@@ -296,18 +307,12 @@ impl Parser {
             // `a[i] = v` — array/element assignment.
             Expr::Index { expr: inner, index } => {
                 let base = self.expr_to_place(inner);
-                Spanned::new(
-                    Place::Index(Box::new(base), index.clone()),
-                    expr.span,
-                )
+                Spanned::new(Place::Index(Box::new(base), index.clone()), expr.span)
             }
             // `p.x = v` when it arrives as a structured field access.
             Expr::FieldAccess { expr: inner, field } => {
                 let base = self.expr_to_place(inner);
-                Spanned::new(
-                    Place::FieldAccess(Box::new(base), field.clone()),
-                    expr.span,
-                )
+                Spanned::new(Place::FieldAccess(Box::new(base), field.clone()), expr.span)
             }
             _ => Spanned::new(Place::Var("_error_".to_string()), expr.span),
         }

@@ -6,6 +6,8 @@ Triton-specific Tip5 and Merkle helpers live in Trisha as `vm.triton.hash`, `vm.
 
 The remaining sections are a **design catalog**, not an inventory of implemented modules or proof/security guarantees. Resolve actual availability through the installed package and the source tree. In particular, headings for quantum, private execution, proof composition, or deployment do not establish implemented capabilities.
 
+The implemented Trinity arithmetic demonstration and its unclosed cryptographic requirements are described in [Trinity arithmetic](trinity-arithmetic.md). Passing its composed execution fixtures does not establish private-inference security.
+
 ## std.* — A Unified Framework for Verifiable Intelligence, Privacy, and Quantum Computation
 
 ---
@@ -948,3 +950,6 @@ std.science ────► std.data ──────────────�
 See [Standard Library Design Philosophy](../docs/explanation/stdlib.md) for
 the rationale behind the layer architecture, intersection design, and token
 infrastructure decisions.
+
+See [Portable cryptographic arithmetic](crypto-arithmetic.md) for the pinned
+Poseidon2-HL API, truncated hash limits and U256 modular arithmetic contracts.

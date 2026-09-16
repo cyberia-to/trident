@@ -265,3 +265,49 @@ fn optimize_nested_bodies() {
         panic!("expected IfElse");
     }
 }
+
+#[test]
+fn lowering_errors_survive_peephole_and_nested_optimization() {
+    let error = TIROp::Comment("ERROR: unresolved variable 'missing'".into());
+    let leaf = vec![TIROp::Dup(0), TIROp::Pop(1), error.clone(), TIROp::Pop(0)];
+    let ops = vec![
+        error.clone(),
+        TIROp::IfElse {
+            then_body: leaf.clone(),
+            else_body: leaf.clone(),
+        },
+        TIROp::IfOnly {
+            then_body: leaf.clone(),
+        },
+        TIROp::Loop {
+            label: "loop".into(),
+            body: leaf.clone(),
+        },
+        TIROp::ProofBlock {
+            program_hash: "proof".into(),
+            body: leaf,
+        },
+    ];
+    let expected = vec![
+        error.clone(),
+        TIROp::IfElse {
+            then_body: vec![error.clone()],
+            else_body: vec![error.clone()],
+        },
+        TIROp::IfOnly {
+            then_body: vec![error.clone()],
+        },
+        TIROp::Loop {
+            label: "loop".into(),
+            body: vec![error.clone()],
+        },
+        TIROp::ProofBlock {
+            program_hash: "proof".into(),
+            body: vec![error],
+        },
+    ];
+    assert_eq!(
+        format!("{:?}", super::optimize(ops)),
+        format!("{:?}", expected)
+    );
+}

@@ -2,9 +2,10 @@
 
 [IR Reference](ir.md) | [Target Reference](targets.md) | [Grammar](grammar.md) | [Error Catalog](errors.md) | [Agent Briefing](briefing.md)
 
-Trident is a programming language for provable computation. One source
-file is designed to compile to 20 virtual machines — from zero-knowledge
-proof systems to EVM, WASM, and native x86-64. Write once. Prove anywhere.
+Trident is a programming language for provable computation. The implemented
+warriors are Joy for nox/Zheng and Trisha for Triton/Neptune. The shared frontend
+and target packages provide the boundary for additional machines; catalog
+entries alone do not supply an executable backend.
 
 Version 0.5 | File extension: `.tri` | Compiler: `trident`
 
@@ -12,9 +13,12 @@ Version 0.5 | File extension: `.tri` | Compiler: `trident`
 
 # Part I — Universal Language (Tier 0 + Tier 1)
 
-Everything here works on every target. A program that uses only Part I
-features compiles for TRITON, MIDEN, SP1, OPENVM, CAIRO, and any
-future target.
+Part I defines the shared language. A selected target package determines the
+available operations, field/digest ABI and runtime/proof capabilities. Programs
+must meet that target's supported surface; unsupported operations fail during
+compilation. For example, nox currently rejects `reveal` and `seal`, while Trisha
+implements their Triton event ABI. See the [target reference](targets.md) and
+[warrior contract](warrior-api.md) for discovery and compatibility checks.
 
 ---
 
@@ -97,6 +101,10 @@ entry = "main.tri"
 
 `Field` means "element of the target VM's native field." Programs reason about
 field arithmetic abstractly; the target implements it concretely.
+Integer literals used as Field values represent their residue modulo the target
+field's modulus. Emitted machine constants use the canonical representative.
+This rule does not wrap U32 literals or compile-time array dimensions: their
+respective integer range and overflow checks still apply.
 
 `Digest` is universal — every target has a hash function and produces digests.
 It is a content identifier: the fixed-width fingerprint of arbitrary data. The
@@ -176,6 +184,23 @@ let total: Field = sum<3>(a)    // N=3 explicit
 
 Only integer size parameters — no type-level generics.
 
+Public size-generic functions retain their size parameters across imports.
+Explicit sizes and sizes inferred from argument shapes have the same contract
+as local calls. Each instance is checked in its defining module, preserving
+private helpers, constants, types and conditional compilation. Instantiation
+errors (including invalid body operations) are compilation errors, not unchecked
+backend calls. Specializations receive collision-free internal names. Checked
+size arithmetic rejects unresolved names and overflow. A project is limited to
+1,024 concrete instances and 128 dependency-expansion rounds; exceeding a
+limit is a compilation error.
+Every function checks explicit returns and its reachable terminal expression
+against the declared return type; an omitted return type is unit. A value-returning
+function must return on every reachable path. A terminal if/else or match
+forwards its branch terminal values; intermediate branch values are discarded.
+An empty loop cannot establish
+that obligation.
+
+
 ### Structs
 
 ```trident
@@ -186,17 +211,30 @@ let p = Point { x: 1, y: 2 }
 let x: Field = p.x
 ```
 
+Struct literals may list fields in any order. Every declared field must appear
+exactly once. Field expressions are evaluated exactly once in **struct declaration
+order**, independently of their textual order in the literal. The flattened
+value uses that same declaration order, recursively for nested structs; arrays
+and tuples retain element order. This rule also determines the order of I/O and
+other effects in field expressions.
+
 ### Events
 
 ```trident
-event Transfer { from: Digest, to: Digest, amount: Field }
+event Transfer { from: Field, to: Field, amount: Field }
 ```
 
-Events are declared at module scope. Fields must be `Field`-width types.
-Maximum 9 fields. Events are emitted with `reveal` (public) or `seal`
+Events are declared at module scope. Payloads contain at most nine flattened
+field words; scalars, arrays, tuples, digests and structs use their resolved
+target widths. Events are emitted with `reveal` (public) or `seal`
 (committed) — see [Part II: Events](#10-events).
 
 ### Constants
+
+Constant references preserve their declared type, including across imports.
+A U32 integer constant must be in the range 0 through 4,294,967,295.
+Field literal values are reduced modulo the selected field prime when executed;
+compile-time array dimensions remain checked integers and are not field-reduced.
 
 ```trident
 const MAX_DEPTH: U32 = 32
@@ -317,6 +355,12 @@ match p {
 
 ### Return
 
+A return exits the current function, including from nested conditionals and
+fixed or explicitly bounded loops. Later iterations and statements have no
+effects. On nox these loops are unrolled with return-aware continuations; the
+existing formula/iteration limits still apply, and unbounded dynamic loops
+remain rejected. Returning from an inlined helper exits that helper only.
+
 ```trident
 fn foo(x: Field) -> Field {
     if x == 0 { return 1 }
@@ -330,7 +374,7 @@ fn foo(x: Field) -> Field {
 
 ### I/O and Non-Deterministic Input
 
-Signatures are available only when the resolved target package declares the intrinsic. Triton supports streaming public/secret I/O. Nox programs receive a subject and return a result; they do not support Triton streaming I/O. Joy's current public execution certificates reject secret and state witnesses.
+Signatures are available only when the resolved target package declares the intrinsic. Triton supports streaming public/secret I/O. Nox programs receive a subject and return a result; they do not support Triton streaming I/O. Joy's stateless public certificates reject secret and state witnesses; distinct private and authenticated-state protocols support the declared bounded cases.
 
 | Signature | Description |
 |-----------|-------------|
@@ -393,7 +437,7 @@ For sponge, Merkle, and extension field builtins (Tier 2-3), see
 
 ### Portable OS (`os.*`)
 
-Portable `os.neuron`, `os.signal`, and `os.time` modules are design concepts, not implemented libraries. The compiler has a narrower `os.state.read` builtin for nox; it does not establish working state proofs, and Joy's current certificate path rejects state execution. `lib/os/` is reserved for implemented portable contracts rather than populated with placeholders.
+Portable `os.neuron`, `os.signal`, and `os.time` modules are design concepts, not implemented libraries. The compiler has an `os.state.read` builtin for nox. Joy authenticates public BBG certificates with JOYST001 and supports bounded hidden queries over complete public tables with JOYZK003. This does not implement live state synchronization or a private database. `lib/os/` is reserved for implemented portable contracts rather than populated with placeholders.
 
 Network-specific SDKs are supplied by their owning runtime package. For example, `os.neptune.*` requires the explicit `neptune` target and lives in Trisha. The bare `triton` package does not export Neptune modules. See [os.md](os.md) for the design boundary and [warrior-api.md](warrior-api.md) for implemented package capabilities.
 
@@ -407,7 +451,7 @@ Network-specific SDKs are supplied by their owning runtime package. For example,
 | `#[test]` | Test function — run with `trident test` |
 | `#[pure]` | No I/O side effects allowed |
 | `#[intrinsic(name)]` | Declares a target intrinsic; signature and reachable capability are checked |
-| `#[requires(predicate)]` | Precondition — checked by `trident audit` |
+| `#[requires(predicate)]` | Precondition — modeled by `trident audit` in its [supported formal subset](formal-audit.md) |
 | `#[ensures(predicate)]` | Postcondition — `result` refers to return value |
 
 ```trident
@@ -432,15 +476,20 @@ fn test_withdraw() {
 
 ### Stack
 
-The operational stack has 16 directly accessible elements. The compiler manages
-stack layout automatically — variables are assigned stack positions, and when more
-than 16 are live, the compiler spills to RAM via an LRU policy.
+The compiler manages logical stack positions. The target adapter implements
+access beyond its machine's directly accessible stack window (16 words on
+Triton). Compiler-generated cleanup and stack access must preserve source RAM.
 
 The developer does not manage the stack.
 
 ### RAM
 
 Word-addressed memory. Each cell holds one Field element.
+
+Ordinary source RAM has no compiler-reserved address interval. Temporary memory
+used to implement a stack operation must have its prior contents restored before
+the next source operation, including inline assembly and target calls. An
+explicitly documented runtime intrinsic may have its own memory preconditions.
 
 ```trident
 ram_write(17, value)
@@ -453,17 +502,21 @@ reading returns whatever the prover supplies. Constrain with assertions.
 ### No Heap
 
 No dynamic allocation. No `alloc`, no `free`, no garbage collector. All data
-structures have compile-time-known sizes. This guarantees deterministic memory
-usage and predictable trace length.
+structures have compile-time-known sizes. Machine legalization may temporarily
+borrow zero RAM cells to implement a deep stack operation and restore those
+cells afterwards. The amount needed follows from the stack depth; finding the
+cells can depend on RAM contents, so a static size alone does not bound that
+search's execution cost. Failure to find space must fail explicitly rather than
+overwrite source memory.
 
 ---
 
 ## 9. Inline Assembly
 
 ```trident
-asm { dup 0 add }                   // zero net stack effect (default)
 asm(+1) { push 42 }                // pushes 1 element
-asm(-2) { pop 1 pop 1 }            // pops 2 elements
+asm { dup 0 add }                  // doubles the anonymous word, zero net effect
+asm(-1) { write_io 1 }             // consumes that word
 asm(triton)(+1) { push 42 }        // target-tagged + effect
 asm(miden) { dup.0 add }           // MIDEN assembly
 ```
@@ -475,6 +528,15 @@ compatibility.
 The compiler does not parse, validate, or optimize assembly contents. The effect
 annotation `(+N)` / `(-N)` is the contract between hand-written assembly and
 the compiler's stack model.
+
+Assembly executes on the current operand stack. It may create and consume
+anonymous words with its declared effect, but must preserve the compiler-owned
+prefix, including live named variables and control-flow bookkeeping. A negative
+effect that would consume a named binding is rejected. As with the declared net
+effect, preserving that prefix inside opaque assembly is the author's obligation;
+the compiler cannot infer clobbers from an unparsed instruction body. Named
+locals are not moved to a hidden RAM frame around assembly. RAM reads and writes
+inside assembly therefore see the same memory as surrounding source operations.
 
 ---
 
@@ -489,10 +551,11 @@ targets, they're structured logging (like `console.log`).
 Events are declared at module scope (see [Section 3](#3-declarations)):
 
 ```trident
-event Transfer { from: Digest, to: Digest, amount: Field }
+event Transfer { from: Field, to: Field, amount: Field }
 ```
 
-Fields must be `Field`-width types. Maximum 9 fields.
+The complete flattened payload must fit nine field words, including all
+coordinates of aggregate fields. A Triton `Digest` occupies five words.
 
 ### Reveal (Public Output)
 
@@ -500,8 +563,14 @@ Fields must be `Field`-width types. Maximum 9 fields.
 reveal Transfer { from: sender, to: receiver, amount: value }
 ```
 
-Each field is written to public output. The verifier sees all data.
-`reveal` is Tier 1 — it works on every target.
+Public output is the event tag followed by the flattened payload in declaration
+order. Tags are zero-based declaration indices in the compiled module. Struct
+fields follow their declaration order; arrays and tuples follow element order.
+Payload expressions are evaluated once in declaration order, regardless of the
+order of named fields in the statement. The verifier sees all data.
+
+Triton implements this event wire format. The current nox compiler rejects
+`reveal` and `seal`; they are not portable to nox yet.
 
 ### Seal (Committed Secret)
 
@@ -509,9 +578,15 @@ Each field is written to public output. The verifier sees all data.
 seal Transfer { from: sender, to: receiver, amount: value }
 ```
 
-Fields are hashed via the sponge construction. Only the commitment digest is
-written to public output. The verifier sees the commitment, not the data.
-`seal` requires sponge support (Tier 2).
+Triton applies fixed-length Tip5 to `[tag, payload..., zero padding...]`, a
+ten-word block, and emits its five digest coordinates in canonical order.
+Payload evaluation and flattening match `reveal`. This corrects the previous
+reversed/misindexed event payload and misplaced seal padding: consumers of old
+artifacts must regenerate expected output and commitments.
+
+Only the digest is emitted by this statement. Whether the execution proof hides
+the payload depends on the selected proof backend; the statement itself does
+not supply encryption, randomness, or protection against guessing small inputs.
 
 ---
 
@@ -524,8 +599,11 @@ Two distinct commands share the "check correctness" concept:
 | `trident audit` | Source code contracts | Symbolic execution, algebraic solver | Local (Trident) |
 | `trident verify` | Proof artifacts | STARK/SNARK proof verification | Warrior (external) |
 
-`audit` is static analysis — it checks `#[requires]`/`#[ensures]`
-contracts without executing the program. It runs entirely within Trident.
+`audit` checks supported straight-line scalar `#[requires]`/`#[ensures]`
+contracts without executing the program. Static tautologies or an UNSAT solver
+query can discharge obligations; sampling is not a universal proof. Unsupported
+semantics and absent obligations return UNKNOWN with nonzero exit status. See
+[the formal audit contract](formal-audit.md) for the exact scope and exit codes.
 
 `verify` checks a proof file produced by `trident prove`. It delegates
 to a warrior binary that has the target-specific verifier (e.g. triton-vm's

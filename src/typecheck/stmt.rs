@@ -41,16 +41,15 @@ impl TypeChecker {
                 match pattern {
                     Pattern::Name(name) => {
                         self.define_var(&name.node, resolved_ty.clone(), *mutable);
-                        // Track U32-proven variables for H0003:
-                        // When as_u32(x) or split(x) is called, the INPUT x
-                        // has been range-checked. Mark x as proven so a
-                        // subsequent as_u32(x) is flagged as redundant.
-                        if let Expr::Call { path, args, .. } = &init.node {
-                            let call_name = path.node.as_dotted();
-                            let base = call_name.rsplit('.').next().unwrap_or(&call_name);
-                            if (base == "as_u32" || base == "split") && !args.is_empty() {
-                                if let Expr::Var(arg_name) = &args[0].node {
-                                    self.u32_proven.insert(arg_name.clone());
+                        if self.canonical_as_u32 && !mutable && resolved_ty == Ty::U32 {
+                            if let Expr::Call { path, args, .. } = &init.node {
+                                if path.node.as_dotted() == "as_u32" && args.len() == 1 {
+                                    if let Expr::Var(arg_name) = &args[0].node {
+                                        if arg_name != &name.node && name.node != "_" {
+                                            self.u32_proven
+                                                .insert(arg_name.clone(), name.node.clone());
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -124,10 +123,7 @@ impl TypeChecker {
                         value.span,
                     );
                 }
-                // Invalidate U32-proven status on reassignment
-                if let Place::Var(name) = &place.node {
-                    self.u32_proven.remove(name);
-                }
+                self.u32_proven.clear();
             }
             Stmt::If {
                 cond,
@@ -180,6 +176,7 @@ impl TypeChecker {
                 self.pop_scope();
             }
             Stmt::TupleAssign { names, value } => {
+                self.u32_proven.clear();
                 let val_ty = self.check_expr(&value.node, value.span);
                 let valid = if let Ty::Tuple(elem_tys) = &val_ty {
                     if names.len() != elem_tys.len() {
@@ -236,8 +233,21 @@ impl TypeChecker {
                 self.check_expr(&expr.node, expr.span);
             }
             Stmt::Return(value) => {
-                if let Some(val) = value {
-                    self.check_expr(&val.node, val.span);
+                let actual = value
+                    .as_ref()
+                    .map(|val| self.check_expr(&val.node, val.span))
+                    .unwrap_or(Ty::Unit);
+                if let Some(expected) = self.expected_return.clone() {
+                    if actual != expected {
+                        self.error(
+                            format!(
+                                "return type mismatch: expected {} but got {}",
+                                expected.display(),
+                                actual.display()
+                            ),
+                            _span,
+                        );
+                    }
                 }
             }
             Stmt::Reveal { event_name, fields } | Stmt::Seal { event_name, fields } => {
@@ -255,6 +265,7 @@ impl TypeChecker {
                 self.check_event_stmt(event_name, fields);
             }
             Stmt::Asm { target, .. } => {
+                self.u32_proven.clear();
                 // Warn if asm block is tagged for a different target
                 if let Some(tag) = target {
                     if tag != &self.target_config.name {
@@ -403,10 +414,14 @@ impl TypeChecker {
                 }
 
                 // Exhaustiveness: require wildcard unless Bool with both true+false,
-                // or a struct pattern (structs have exactly one shape)
-                let has_struct_pattern = arms
-                    .iter()
-                    .any(|a| matches!(a.pattern.node, MatchPattern::Struct { .. }));
+                // or an irrefutable struct pattern. A literal field guard
+                // covers only some instances of that shape.
+                let has_struct_pattern = arms.iter().any(|a| match &a.pattern.node {
+                    MatchPattern::Struct { fields, .. } => fields
+                        .iter()
+                        .all(|f| !matches!(f.pattern.node, FieldPattern::Literal(_))),
+                    _ => false,
+                });
                 let exhaustive = has_wildcard
                     || (scrutinee_ty == Ty::Bool && has_true && has_false)
                     || has_struct_pattern;

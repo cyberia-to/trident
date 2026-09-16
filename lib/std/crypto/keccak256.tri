@@ -33,6 +33,8 @@ use vm.core.convert
 
 use vm.core.field
 
+use vm.io.mem
+
 // ---------------------------------------------------------------------------
 // Lane: a 64-bit value as two U32 halves (little-endian)
 // ---------------------------------------------------------------------------
@@ -546,4 +548,140 @@ pub fn keccak_f1600(st: KeccakState) -> KeccakState {
 // Returns 8 U32 values: the 256-bit digest in little-endian limb order.
 pub fn extract256(st: KeccakState) -> (U32, U32, U32, U32, U32, U32, U32, U32) {
     (st.s00.lo, st.s00.hi, st.s10.lo, st.s10.hi, st.s20.lo, st.s20.hi, st.s30.lo, st.s30.hi)
+}
+
+// ---------------------------------------------------------------------------
+// Caller-owned RAM permutation. State occupies 50 U32 words, scratch 70 words.
+// Both exclusive buffer ends must fit U32; regions must be disjoint. All input
+// limbs are checked before mutation. Writes are confined to those two regions.
+// This computes the same full24-round permutation as keccak_f1600(State).
+// ---------------------------------------------------------------------------
+fn ram_read_lane(addr: Field) -> Lane {
+    Lane { lo: convert.as_u32(mem.read(addr)), hi: convert.as_u32(mem.read(addr + 1)) }
+}
+
+fn ram_write_lane(addr: Field, lane: Lane) {
+    mem.write(addr, convert.as_field(lane.lo))
+    mem.write(addr + 1, convert.as_field(lane.hi))
+}
+
+fn ram_theta(state: Field, scratch: Field) {
+    for x in 0..5 bounded 5 {
+        let xf: Field = convert.as_field(x)
+        let mut parity: Lane = zero_lane()
+        for y in 0..5 bounded 5 {
+            parity = xor_lane(parity, ram_read_lane(state + 2 * (xf + 5 * convert.as_field(y))))
+        }
+        ram_write_lane(scratch + 2 * xf, parity)
+    }
+    for x in 0..5 bounded 5 {
+        let xf: Field = convert.as_field(x)
+        let (_pq, prev): (U32, U32) = convert.as_u32(xf + 4) /% convert.as_u32(5)
+        let (_nq, next): (U32, U32) = convert.as_u32(xf + 1) /% convert.as_u32(5)
+        let d: Lane = xor_lane(ram_read_lane(scratch + 2 * convert.as_field(prev)),
+            rot_lane_1(ram_read_lane(scratch + 2 * convert.as_field(next))))
+        ram_write_lane(scratch + 10 + 2 * xf, d)
+    }
+    for y in 0..5 bounded 5 {
+        for x in 0..5 bounded 5 {
+            let xf: Field = convert.as_field(x)
+            let addr: Field = state + 2 * (xf + 5 * convert.as_field(y))
+            ram_write_lane(addr, xor_lane(ram_read_lane(addr), ram_read_lane(scratch + 10 + 2 * xf)))
+        }
+    }
+}
+
+fn ram_rotate_to(src: Field, dst: Field, rotation: U32) {
+    ram_write_lane(dst, rot_lane(ram_read_lane(src), rotation))
+}
+
+fn ram_rho_pi(state: Field, scratch: Field) {
+    ram_rotate_to(state + 0, scratch + 20, convert.as_u32(0))
+    ram_rotate_to(state + 2, scratch + 40, convert.as_u32(1))
+    ram_rotate_to(state + 4, scratch + 60, convert.as_u32(62))
+    ram_rotate_to(state + 6, scratch + 30, convert.as_u32(28))
+    ram_rotate_to(state + 8, scratch + 50, convert.as_u32(27))
+    ram_rotate_to(state + 10, scratch + 52, convert.as_u32(36))
+    ram_rotate_to(state + 12, scratch + 22, convert.as_u32(44))
+    ram_rotate_to(state + 14, scratch + 42, convert.as_u32(6))
+    ram_rotate_to(state + 16, scratch + 62, convert.as_u32(55))
+    ram_rotate_to(state + 18, scratch + 32, convert.as_u32(20))
+    ram_rotate_to(state + 20, scratch + 34, convert.as_u32(3))
+    ram_rotate_to(state + 22, scratch + 54, convert.as_u32(10))
+    ram_rotate_to(state + 24, scratch + 24, convert.as_u32(43))
+    ram_rotate_to(state + 26, scratch + 44, convert.as_u32(25))
+    ram_rotate_to(state + 28, scratch + 64, convert.as_u32(39))
+    ram_rotate_to(state + 30, scratch + 66, convert.as_u32(41))
+    ram_rotate_to(state + 32, scratch + 36, convert.as_u32(45))
+    ram_rotate_to(state + 34, scratch + 56, convert.as_u32(15))
+    ram_rotate_to(state + 36, scratch + 26, convert.as_u32(21))
+    ram_rotate_to(state + 38, scratch + 46, convert.as_u32(8))
+    ram_rotate_to(state + 40, scratch + 48, convert.as_u32(18))
+    ram_rotate_to(state + 42, scratch + 68, convert.as_u32(2))
+    ram_rotate_to(state + 44, scratch + 38, convert.as_u32(61))
+    ram_rotate_to(state + 46, scratch + 58, convert.as_u32(56))
+    ram_rotate_to(state + 48, scratch + 28, convert.as_u32(14))
+}
+
+fn ram_chi(state: Field, scratch: Field) {
+    for y in 0..5 bounded 5 {
+        for x in 0..5 bounded 5 {
+            let xf: Field = convert.as_field(x)
+            let yf: Field = convert.as_field(y)
+            let (_q1, x1): (U32, U32) = convert.as_u32(xf + 1) /% convert.as_u32(5)
+            let (_q2, x2): (U32, U32) = convert.as_u32(xf + 2) /% convert.as_u32(5)
+            let a: Lane = ram_read_lane(scratch + 20 + 2 * (xf + 5 * yf))
+            let b: Lane = ram_read_lane(scratch + 20 + 2 * (convert.as_field(x1) + 5 * yf))
+            let c: Lane = ram_read_lane(scratch + 20 + 2 * (convert.as_field(x2) + 5 * yf))
+            ram_write_lane(state + 2 * (xf + 5 * yf), chi_lane(a,b,c))
+        }
+    }
+}
+
+fn ram_round_constant(round: U32) -> Lane {
+    if round == convert.as_u32(0) { rc0() }
+    else if round == convert.as_u32(1) { rc1() }
+    else if round == convert.as_u32(2) { rc2() }
+    else if round == convert.as_u32(3) { rc3() }
+    else if round == convert.as_u32(4) { rc4() }
+    else if round == convert.as_u32(5) { rc5() }
+    else if round == convert.as_u32(6) { rc6() }
+    else if round == convert.as_u32(7) { rc7() }
+    else if round == convert.as_u32(8) { rc8() }
+    else if round == convert.as_u32(9) { rc9() }
+    else if round == convert.as_u32(10) { rc10() }
+    else if round == convert.as_u32(11) { rc11() }
+    else if round == convert.as_u32(12) { rc12() }
+    else if round == convert.as_u32(13) { rc13() }
+    else if round == convert.as_u32(14) { rc14() }
+    else if round == convert.as_u32(15) { rc15() }
+    else if round == convert.as_u32(16) { rc16() }
+    else if round == convert.as_u32(17) { rc17() }
+    else if round == convert.as_u32(18) { rc18() }
+    else if round == convert.as_u32(19) { rc19() }
+    else if round == convert.as_u32(20) { rc20() }
+    else if round == convert.as_u32(21) { rc21() }
+    else if round == convert.as_u32(22) { rc22() }
+    else { rc23() }
+}
+
+pub fn keccak_f1600_in_ram(state_addr: Field, scratch_addr: Field) {
+    let state_start: U32 = convert.as_u32(state_addr)
+    let state_end: U32 = convert.as_u32(state_addr + 50)
+    let scratch_start: U32 = convert.as_u32(scratch_addr)
+    let scratch_end: U32 = convert.as_u32(scratch_addr + 70)
+    if state_end < scratch_start { }
+    else if state_end == scratch_start { }
+    else if scratch_end < state_start { }
+    else { assert(scratch_end == state_start) }
+    // Validate every original limb before modifying either buffer.
+    for i in 0..50 bounded 50 {
+        let _checked: U32 = convert.as_u32(mem.read(state_addr + convert.as_field(i)))
+    }
+    for round in 0..24 bounded 24 {
+        ram_theta(state_addr, scratch_addr)
+        ram_rho_pi(state_addr, scratch_addr)
+        ram_chi(state_addr, scratch_addr)
+        ram_write_lane(state_addr, xor_lane(ram_read_lane(state_addr), ram_round_constant(round)))
+    }
 }

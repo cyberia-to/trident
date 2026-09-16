@@ -1495,7 +1495,7 @@ fn handle_tuple_type(sb: Field) {
 
 fn handle_block(sb: Field) {
     expect(sb, lexer.TK_LBRACE())
-    let stmts_start: Field = get_node_count(sb)
+    let stmts_start: Field = get_node_count(sb) + 1
     // NK_BLOCK: kind, stmts_start, stmts_count, tail_node (0 = none)
     let block_node: Field = emit_node(sb, NK_BLOCK(), stmts_start, 0, 0, 0, 0, 0, 0)
     set_scratch_0(sb, block_node)
@@ -2112,6 +2112,11 @@ fn handle_expr_stmt_done(sb: Field) {
         inc_top_count(sb)
         push_frame(sb, STATE_ASSIGN_VALUE(), assign_node, 0, 0, 0, 0, 0, 0)
         set_cur_state(sb, STATE_PARSE_EXPR())
+    } else if at(sb, lexer.TK_RBRACE()) {
+        // A final expression is the block result, not a discarded statement.
+        pop_frame(sb)
+        backpatch(sb, top_node(sb), 3, expr_node)
+        set_cur_state(sb, STATE_BLOCK_STMTS())
     } else {
         // Expression statement
         emit_node(sb, NK_EXPR_STMT(), expr_node, 0, 0, 0, 0, 0, 0)
@@ -2305,8 +2310,8 @@ fn handle_postfix(sb: Field) {
         push_frame(sb, STATE_INDEX_EXPR(), idx_node_placeholder, 0, 0, 0, 0, 0, 0)
         set_cur_state(sb, STATE_PARSE_EXPR())
     } else {
-        // No more postfix — go to infix
-        pop_frame(sb)
+        // The current Pratt frame must inspect the following infix token.
+        set_cur_state(sb, STATE_EXPR_INFIX())
     }
 }
 
@@ -2446,8 +2451,9 @@ fn handle_expr_infix(sb: Field) {
             let lhs: Field = get_scratch_0(sb)
             // Save lhs and op in current frame
             set_frame_field(sb, 1, lhs)   // node_idx = lhs
-            set_frame_field(sb, 3, op)    // extra_0 = op (overwrite min_bp temporarily)
-            set_frame_field(sb, 4, r_bp)  // extra_1 = r_bp
+            set_frame_field(sb, 0, STATE_EXPR_INFIX_RHS())
+            // Preserve this frame's minimum binding power in extra_0.
+            set_frame_field(sb, 4, op)    // extra_1 = operator
 
             // Push new parse_expr with r_bp as min
             push_frame(sb, STATE_EXPR_INFIX(), 0, 0, r_bp, 0, 0, 0, 0)
@@ -2460,10 +2466,13 @@ fn handle_expr_infix(sb: Field) {
 }
 
 fn handle_expr_infix_rhs(sb: Field) {
-    // This state is not used in the current design.
-    // The infix handling is done within handle_expr_infix by
-    // reusing the current frame.
-    pop_frame(sb)
+    let lhs: Field = top_node(sb)
+    let rhs: Field = get_scratch_0(sb)
+    let op: Field = top_extra_1(sb)
+    let node: Field = emit_node(sb, NK_BINOP(), op, lhs, rhs, 0, 0, 0, 0)
+    set_scratch_0(sb, node)
+    set_frame_field(sb, 0, STATE_EXPR_INFIX())
+    set_cur_state(sb, STATE_EXPR_INFIX())
 }
 
 // =========================================================================
@@ -2718,6 +2727,6 @@ pub fn parse(tok_base_val: Field, tok_count_val: Field, ast_base_val: Field, err
     for _step in 0..max bounded 32768 {
         if get_done(sb) == 0 {
             dispatch(sb)
-        }
+        } else { return }
     }
 }

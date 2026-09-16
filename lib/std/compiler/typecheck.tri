@@ -217,7 +217,7 @@ fn init_scalar_types(sb: Field) {
     alloc_type(sb, TY_BOOL(), 0, 0, 0)
     alloc_type(sb, TY_U32(), 0, 0, 0)
     alloc_type(sb, TY_DIGEST(), get_digest_width(sb), 0, 0)
-    alloc_type(sb, TY_UNIT(), 0, 0, 0)
+    let _ = alloc_type(sb, TY_UNIT(), 0, 0, 0)
 }
 
 fn type_eq_inner(sb: Field, a: Field, b: Field) -> Bool {
@@ -672,7 +672,7 @@ fn register_builtins(sb: Field) {
     alloc_type(sb, TY_U32(), 0, 0, 0)
     alloc_type(sb, TY_DIGEST(), dw, 0, 0)
     let ms_rt: Field = alloc_type(sb, TY_TUPLE(), 2, ms_rs, 0)
-    register_fn(sb, field.neg(27), 1 + dw, ms_p, ms_rt, 1)
+    let _ = register_fn(sb, field.neg(27), 1 + dw, ms_p, ms_rt, 1)
 }
 
 // =========================================================================
@@ -779,7 +779,7 @@ fn reg_struct(sb: Field, node: Field) {
         let fti: Field = resolve_type_node(sb, ftn)
         add_sf(sb, fname, fti, fpub)
     }
-    register_struct(sb, nid, fc, fss)
+    let _ = register_struct(sb, nid, fc, fss)
 }
 
 fn reg_fn(sb: Field, node: Field) {
@@ -801,7 +801,7 @@ fn reg_fn(sb: Field, node: Field) {
     } else {
         rt = resolve_type_node(sb, rtn)
     }
-    register_fn(sb, nid, pc, pss, rt, 0)
+    let _ = register_fn(sb, nid, pc, pss, rt, 0)
 }
 
 fn reg_const(sb: Field, node: Field) {
@@ -810,7 +810,7 @@ fn reg_const(sb: Field, node: Field) {
     let vn: Field = ast_f(sb, node, 2)
     let ti: Field = resolve_type_node(sb, tn)
     let val: Field = ast_f(sb, vn, 0)
-    register_const(sb, nid, ti, val)
+    let _ = register_const(sb, nid, ti, val)
 }
 
 fn reg_event(sb: Field, node: Field) {
@@ -830,7 +830,7 @@ fn reg_event(sb: Field, node: Field) {
         }
         add_ef(sb, fname, fti)
     }
-    register_event(sb, nid, fc, fss)
+    let _ = register_event(sb, nid, fc, fss)
 }
 
 // =========================================================================
@@ -885,16 +885,21 @@ fn check_fn(sb: Field, node: Field) {
         }
 
         // Dispatch loop
-        let max: U32 = convert.as_u32(MAX_STEPS())
-        for _step in 0..max bounded 131072 {
-            if get_ws_depth(sb) == 0 {
-                // done
-            } else {
-                let code: Field = ws_top_code(sb)
-                let a0: Field = ws_top_a0(sb)
-                let a1: Field = ws_top_a1(sb)
-                ws_pop(sb)
-                dispatch(sb, code, a0, a1)
+run_pending_work(sb)
+        let tail: Field = ast_f(sb, body_blk, 2)
+        if tail == 0 {
+            // No block tail to check here.
+        } else {
+            ws_push(sb, WC_EXPR(), tail, 0)
+            run_pending_work(sb)
+            let actual: Field = rs_pop(sb)
+            let ret_node: Field = ast_f(sb, node, 3)
+            if ret_node == 0 { emit_error(sb, tail, ERR_TYPE_MISMATCH()) }
+            else {
+                let expected: Field = resolve_type_node(sb, ret_node)
+                if type_eq(sb, actual, expected) == false {
+                    emit_error(sb, tail, ERR_TYPE_MISMATCH())
+                }
             }
         }
 
@@ -935,7 +940,7 @@ fn dispatch(sb: Field, code: Field, a0: Field, a1: Field) {
     else { if code == WC_IF_THEN() { pop_scope(sb) }
     else { if code == WC_FOR_BODY() { pop_scope(sb) }
     else { if code == WC_MATCH_DONE() { do_match(sb, a0) }
-    else { if code == WC_DISCARD() { rs_pop(sb) }
+    else { if code == WC_DISCARD() { let _ = rs_pop(sb) }
     else { if code == WC_EVENT_DONE() { do_evfld(sb, a0) }
     else { if code == WC_POP_SCOPE() { pop_scope(sb) }
     else {
@@ -1499,4 +1504,16 @@ pub fn diag_node(state_base: Field, idx: Field) -> Field {
 
 pub fn diag_code(state_base: Field, idx: Field) -> Field {
     mem.read(get_err_base(state_base) + idx * ERR_STRIDE() + 2)
+}
+
+fn run_pending_work(sb: Field) {
+    let max: U32 = convert.as_u32(MAX_STEPS())
+    for _step in 0..max bounded 131072 {
+        if get_ws_depth(sb) == 0 { return }
+        let code: Field = ws_top_code(sb)
+        let a0: Field = ws_top_a0(sb)
+        let a1: Field = ws_top_a1(sb)
+        ws_pop(sb)
+        dispatch(sb, code, a0, a1)
+    }
 }

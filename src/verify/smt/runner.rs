@@ -22,27 +22,27 @@ pub fn run_z3(smt_script: &str) -> Result<SmtResult, String> {
     // Check if z3 is available
     let z3_path = which_z3().ok_or("z3 not found in PATH")?;
 
-    // Write script to temp file
-    let temp_dir = std::env::temp_dir();
-    let temp_file = temp_dir.join("trident_smt.smt2");
-    let mut f =
-        std::fs::File::create(&temp_file).map_err(|e| format!("cannot create temp file: {}", e))?;
-    f.write_all(smt_script.as_bytes())
-        .map_err(|e| format!("cannot write temp file: {}", e))?;
-    drop(f);
-
-    // Run Z3 with timeout
-    let output = Command::new(&z3_path)
-        .arg("-T:10") // 10 second timeout
-        .arg(temp_file.to_string_lossy().as_ref())
-        .output()
-        .map_err(|e| format!("cannot run z3: {}", e))?;
+    // Stdin is private to this solver process: concurrent audits cannot replace
+    // a shared temporary script and accidentally verify another program.
+    let mut child = Command::new(&z3_path)
+        .args(["-T:10", "-in"])
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("cannot run z3: {e}"))?;
+    child
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(smt_script.as_bytes())
+        .map_err(|e| format!("cannot write solver input: {e}"))?;
+    let output = child
+        .wait_with_output()
+        .map_err(|e| format!("cannot wait for z3: {e}"))?;
 
     let stdout = String::from_utf8_lossy(&output.stdout).to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).to_string();
-
-    // Clean up temp file
-    let _ = std::fs::remove_file(&temp_file);
 
     let full_output = if stderr.is_empty() {
         stdout.clone()
@@ -50,15 +50,17 @@ pub fn run_z3(smt_script: &str) -> Result<SmtResult, String> {
         format!("{}\n{}", stdout, stderr)
     };
 
-    let status = if stdout.starts_with("sat") {
-        SmtStatus::Sat
-    } else if stdout.starts_with("unsat") {
-        SmtStatus::Unsat
-    } else if stdout.contains("timeout") || stdout.contains("unknown") {
-        SmtStatus::Unknown
-    } else {
-        SmtStatus::Error(full_output.clone())
-    };
+    let status =
+        if !output.status.success() || !stderr.trim().is_empty() || stdout.contains("(error") {
+            SmtStatus::Error(full_output.clone())
+        } else {
+            match stdout.trim() {
+                "sat" => SmtStatus::Sat,
+                "unsat" => SmtStatus::Unsat,
+                "unknown" | "timeout" => SmtStatus::Unknown,
+                _ => SmtStatus::Error(full_output.clone()),
+            }
+        };
 
     // Extract model if SAT
     let model = if status == SmtStatus::Sat {

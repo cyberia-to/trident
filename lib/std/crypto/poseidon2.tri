@@ -2,20 +2,14 @@ module std.crypto.poseidon2
 
 use vm.io.mem
 
-// Poseidon2 hash function over the Goldilocks field (p = 2^64 - 2^32 + 1).
-//
-// Implements the Poseidon2 permutation (Grassi et al., 2023) with:
-//   - State width t = 8, rate = 4, capacity = 4
-//   - S-box: x^7
-//   - 8 full rounds (4 initial + 4 final) and 22 partial rounds
-//   - External linear layer: circulant(2,1,1,...,1)
-//   - Internal linear layer: diag(2,3,5,9,17,33,65,129) + ones_matrix
-//   - Round constants: deterministic from BLAKE3-seeded generation
-//
-// This is the SNARK-friendly hash used for content addressing throughout
-// the Trident toolchain. Matching parameters to src/poseidon2.rs ensures
-// that hashes computed in Trident programs can be verified against
-// compiler-generated content hashes on-chain.
+// Low-level custom Poseidon-style arithmetic with caller-provided constants.
+// This historical API is NOT the standard Poseidon2 permutation: its external
+// and internal matrices are custom. It supplies no independently reviewed
+// cryptographic security guarantee, even with nonzero constants.
+// Use std.crypto.poseidon for the pinned standard Poseidon2-HL permutation
+// and fixed-parameter hash APIs. Custom outputs below remain unchanged.
+// Width8, rate4, capacity4, x^7, full8/partial22; external I+J and custom
+// diag(2,3,5,9,17,33,65,129)+J. All 86 round constants are caller inputs.
 // ---------------------------------------------------------------------------
 // Poseidon2 state: 8 field elements
 // ---------------------------------------------------------------------------
@@ -95,32 +89,13 @@ fn partial_round(st: State, rc: Field) -> State {
 // ---------------------------------------------------------------------------
 // Round constants
 // ---------------------------------------------------------------------------
-// These are the deterministic round constants matching src/poseidon2.rs.
-// Generated from BLAKE3("Poseidon2-Goldilocks-t8-RF8-RP22-{round}-{element}"),
-// taking the first 8 bytes as a little-endian u64, reduced mod p.
-//
-// Layout: 4 full rounds (8 constants each) = 32,
-//         22 partial rounds (1 constant each) = 22,
-//         4 full rounds (8 constants each) = 32.
-// Total: 86 round constants.
-//
-// For efficiency in a constrained environment, these constants are
-// embedded as literals. The Rust implementation (src/poseidon2.rs)
-// generates them identically at runtime.
-//
-// Note: The actual constant values depend on the BLAKE3 derivation.
-// We use a parametric approach: the permutation function accepts
-// all round constants as arguments, allowing the caller to supply
-// the correct values. This avoids hardcoding 86 field constants
-// in source and enables verification against the Rust implementation.
+// The caller supplies 86 constants: 32 for four initial full rounds,
+// 22 for partial rounds, and 32 for four final full rounds. No standard
+// parameter derivation or cryptographic security level is attached to this API.
+// Use std.crypto.poseidon for the fixed, pinned standard permutation.
 // ---------------------------------------------------------------------------
-// Permutation: 4 full + 22 partial + 4 full rounds
+// Custom permutation: 4 full + 22 partial + 4 full rounds
 // ---------------------------------------------------------------------------
-// The permutation takes the state and all 86 round constants.
-// This is the core cryptographic primitive.
-//
-// For practical use, wrap this with functions that supply the
-// correct constants for a given security parameter set.
 // Apply 4 full rounds with 32 round constants (rc[0..32]).
 fn apply_full_rounds_4(
     st: State,
@@ -1000,8 +975,8 @@ pub fn hash4(
 //         rc_addr+54..rc_addr+85 = last full (32).
 //
 // This enables Poseidon2 in pipelines where passing 86 parameters
-// through the call chain is impractical. The STARK proof authenticates
-// all RAM reads through consistency.
+// through the call chain is impractical. The VM proof checks internal RAM consistency;
+// authenticating the chosen constants to an external policy is a caller obligation.
 pub fn permute_from_ram(st: State, rc_addr: Field) -> State {
     permute(
         st,

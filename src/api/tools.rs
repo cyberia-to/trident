@@ -47,14 +47,8 @@ pub fn verify_project_with_options(
             sym::analyze_all_with_target(&active_file(&pm.file, options), &options.target_config)
                 .map_err(|e| vec![Diagnostic::error(e, crate::span::Span::dummy())])?
         {
-            combined.constraints.extend(system.constraints);
-            combined.num_variables += system.num_variables;
-            for (k, v) in system.variables {
-                combined.variables.insert(k, v);
-            }
-            combined.pub_inputs.extend(system.pub_inputs);
-            combined.pub_outputs.extend(system.pub_outputs);
-            combined.divine_inputs.extend(system.divine_inputs);
+            let namespace = format!("function_{}", combined.num_variables);
+            combined.append_independent(system, &namespace);
         }
     }
 
@@ -108,10 +102,8 @@ pub fn format_source(source: &str, _filename: &str) -> Result<String, Vec<Diagno
 /// Used by the LSP server to get structured errors.
 pub fn check_silent(source: &str, filename: &str) -> Result<(), Vec<Diagnostic>> {
     let file = crate::parse_source_silent(source, filename)?;
-    CompileOptions::resolve("nox", "debug")
-        .map_err(|e| vec![e])?
-        .checker()
-        .check_file(&file)?;
+    let options = CompileOptions::resolve("nox", "debug").map_err(|e| vec![e])?;
+    super::pipeline::PreparedProject::source(file, source, filename, &options)?;
     Ok(())
 }
 
@@ -147,7 +139,8 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
         )?;
     }
 
-    // Parse and type-check all modules in dependency order
+    // Parse and type-check all modules in dependency order.
+    let mut concrete_modules = Vec::new();
     let mut all_exports: Vec<ModuleExports> = Vec::new();
     let file_path_canon = file_path
         .canonicalize()
@@ -164,6 +157,11 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
         let src = if is_target { source } else { &module.source };
         let parsed = crate::parse_source_silent(src, &module.file_path.to_string_lossy())?;
 
+        concrete_modules.push(super::pipeline::ParsedModule {
+            file_path: module.file_path.clone(),
+            source: src.to_string(),
+            file: parsed.clone(),
+        });
         let mut tc = options.checker();
         for exports in &all_exports {
             tc.import_module(exports);
@@ -190,6 +188,12 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
         }
     }
 
+    super::pipeline::PreparedProject::check_and_specialize(
+        &mut concrete_modules,
+        &options,
+        false,
+        true,
+    )?;
     Ok(())
 }
 
@@ -240,16 +244,20 @@ mod editor_tests {
             "module dep\npub fn value() -> Field { 7 }\n",
         )
         .unwrap();
-        assert!(check_file_in_project(
-            "program editor\nuse dep\nfn main() -> Field { dep.value() }\n",
-            &file
-        )
-        .is_ok());
-        assert!(check_file_in_project(
-            "program editor\nfn main() -> Digest { pub_read5() }\n",
-            &file
-        )
-        .is_err());
+        assert!(
+            check_file_in_project(
+                "program editor\nuse dep\nfn main() -> Field { dep.value() }\n",
+                &file
+            )
+            .is_ok()
+        );
+        assert!(
+            check_file_in_project(
+                "program editor\nfn main() -> Digest { pub_read5() }\n",
+                &file
+            )
+            .is_err()
+        );
         assert!(
             check_file_in_project("program editor\nuse missing_dep\nfn main() {}\n", &file)
                 .is_err()

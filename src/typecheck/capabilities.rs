@@ -1,10 +1,46 @@
 //! Infer target requirements through local and imported function calls.
-use super::{ModuleExports, TypeChecker};
+use super::{FnSig, ModuleExports, TypeChecker};
 use crate::ast::{File, Item};
 use crate::diagnostic::Diagnostic;
+use crate::types::Ty;
 use std::collections::{BTreeMap, BTreeSet};
 
 impl TypeChecker {
+    pub(crate) fn has_intrinsic_signature(&self, name: &str) -> bool {
+        self.intrinsic_signatures.contains_key(name)
+    }
+
+    pub(crate) fn with_target_abis(
+        mut self,
+        abis: &BTreeMap<String, crate::target::IntrinsicAbi>,
+    ) -> Self {
+        use crate::target::IntrinsicType;
+        let ty = |t: &IntrinsicType| match t {
+            IntrinsicType::Field => Ty::Field,
+            IntrinsicType::Bool => Ty::Bool,
+            IntrinsicType::U32 => Ty::U32,
+            IntrinsicType::Digest => Ty::Digest(self.target_config.digest_width),
+            IntrinsicType::XField => Ty::XField(self.target_config.xfield_width),
+        };
+        for (name, abi) in abis {
+            let params = abi
+                .params
+                .iter()
+                .enumerate()
+                .map(|(i, t)| (format!("arg{i}"), ty(t)))
+                .collect();
+            let result: Vec<_> = abi.results.iter().map(ty).collect();
+            let return_ty = match result.as_slice() {
+                [] => Ty::Unit,
+                [one] => one.clone(),
+                _ => Ty::Tuple(result),
+            };
+            self.intrinsic_signatures
+                .insert(name.clone(), FnSig { params, return_ty });
+        }
+        self
+    }
+
     pub(super) fn validate_intrinsic(
         &mut self,
         function: &crate::ast::FnDef,
