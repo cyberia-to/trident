@@ -219,6 +219,40 @@
             .lead b { color: var(--ink); font-weight: 400; }
             .lead code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.74rem; color: var(--cyan); }
 
+            .trinity-jump { display: inline-block; margin-top: 0.7rem; font-size: 0.82rem; }
+            #trinity { scroll-margin-top: 1.2rem; }
+            .trinity-panel {
+                display: grid;
+                grid-template-columns: 1.2fr 1fr;
+                gap: 2rem;
+                align-items: center;
+                padding: clamp(1.2rem, 4vw, 2rem);
+                border: 1px solid rgba(255, 143, 196, 0.35);
+                border-radius: 18px;
+                background:
+                    radial-gradient(ellipse at 100% 0, rgba(97, 226, 255, 0.08), transparent 65%),
+                    linear-gradient(135deg, rgba(255, 43, 141, 0.1), rgba(255, 43, 141, 0.02));
+            }
+            .trinity-panel > * { min-width: 0; }
+            .trinity-kicker { margin: 0 0 0.9rem; font-size: 0.68rem; letter-spacing: 0.14em; color: var(--cyan); text-transform: uppercase; }
+            .trinity-panel h2 { font-size: clamp(1.7rem, 3.6vw, 2.35rem); line-height: 1.16; letter-spacing: -0.02em; text-transform: none; }
+            .trinity-pitch { margin: 0; font-size: 0.88rem; color: var(--dim); line-height: 1.7; }
+            .trinity-pitch strong { color: var(--ink); font-weight: 400; }
+            .trinity-links { display: flex; flex-wrap: wrap; gap: 0.7rem 1.3rem; margin-top: 1.2rem; font-size: 0.8rem; }
+            .trinity-links a:first-child { color: var(--ink); border-bottom: 1px solid var(--pink); padding-bottom: 0.15rem; }
+            .trinity-links a:hover { color: var(--pink); }
+            .trinity-demo { margin: 0; }
+            .trinity-flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.65rem; }
+            .trinity-flow li { display: grid; grid-template-columns: 2.5rem 1fr; align-items: center; gap: 0.75rem; padding: 0.7rem 0.85rem; border: 1px solid var(--line); border-radius: 10px; background: rgba(10, 7, 20, 0.55); }
+            .trinity-flow .step { font-size: 1.1rem; color: var(--pink-soft); }
+            .trinity-flow li:nth-child(2) .step { color: var(--cyan); }
+            .trinity-flow li:nth-child(3) .step { color: var(--gold); }
+            .trinity-flow b { display: block; font-size: 0.8rem; font-weight: 400; color: var(--ink); }
+            .trinity-flow small { display: block; font-size: 0.7rem; color: var(--dim); }
+            .trinity-demo figcaption { margin-top: 0.9rem; text-align: center; font-size: 0.68rem; color: var(--cyan); line-height: 1.8; }
+            .trinity-scope { grid-column: 1 / -1; margin: -0.5rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.74rem; color: var(--dim); line-height: 1.65; }
+            .trinity-scope b { color: var(--ink); font-weight: 400; }
+
             .proofrow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
             pre {
                 margin: 0;
@@ -325,6 +359,7 @@
                 .cards { grid-template-columns: 1fr; }
                 .tools { grid-template-columns: 1fr 1fr; }
                 .get .grid { grid-template-columns: 1fr; }
+                .trinity-panel { grid-template-columns: 1fr; gap: 1.4rem; }
             }
         </style>
     </head>
@@ -336,6 +371,7 @@
                 <nav class="mono">
                     <a href="#get">install</a>
                     <a href="#changes">what's new</a>
+                    <a href="#trinity">trinity</a>
                     <a href="https://github.com/cyberia-to/trident">github</a>
                     <a href="https://github.com/cyberia-to/trident/tree/master/docs">docs</a>
                     <a href="https://github.com/cyberia-to/trident/releases/tag/v0.3.0">release</a>
@@ -352,6 +388,7 @@
                         joy proves on nox with zheng, trisha proves on Triton 7.
                         post-quantum, no trusted setup.
                     </p>
+                    <a class="trinity-jump" href="#trinity">meet Trinity: AI · privacy · quantum <span aria-hidden="true">↗</span></a>
                     <p class="quote">
                         The weapon is their language. They gave it all to us.
                         If you learn it, when you really learn it, you begin to
@@ -401,6 +438,49 @@
                 <div class="num"><b>6</b><span>native builds: macOS · Linux<br />· Windows × ARM64 · x64</span></div>
             </div>
             <p class="measured mono">measured with the released 0.3.0 binaries on an Apple M4 Max, 2026-09-16</p>
+
+            <section id="trinity" aria-labelledby="trinity-title">
+                <div class="trinity-panel">
+                    <div>
+                        <p class="trinity-kicker mono">Trinity · research demo</p>
+                        <h2 id="trinity-title">AI. Privacy. Quantum.<br /><i>One field.</i></h2>
+                        <p class="trinity-pitch">
+                            Three frontiers of computing, expressed in the same
+                            algebra. Trinity brings <strong>neural inference,
+                            encryption arithmetic and a simulated quantum circuit</strong>
+                            into one Trident program. Their calculations share
+                            a finite field and can be checked in one proof trace.
+                        </p>
+                        <div class="trinity-links">
+                            <a href="https://github.com/cyberia-to/trident/blob/master/reference/trinity-arithmetic.md">explore the demo <span aria-hidden="true">→</span></a>
+                            <a href="https://github.com/cyberia-to/trident/blob/master/lib/std/trinity/inference.tri">read the Trident source <span aria-hidden="true">↗</span></a>
+                        </div>
+                    </div>
+                    <figure class="trinity-demo">
+                        <ol class="trinity-flow" aria-label="Arithmetic stages in the Trinity demonstration">
+                            <li>
+                                <span class="step mono" aria-hidden="true">01</span>
+                                <div><b>Encryption arithmetic</b><small>weighted ciphertexts · witness-assisted decryption</small></div>
+                            </li>
+                            <li>
+                                <span class="step mono" aria-hidden="true">02</span>
+                                <div><b>Neural inference</b><small>dense layer · lookup activation · classification</small></div>
+                            </li>
+                            <li>
+                                <span class="step mono" aria-hidden="true">03</span>
+                                <div><b>Quantum simulation</b><small>two-qubit circuit · field-matrix arithmetic</small></div>
+                            </li>
+                        </ol>
+                        <figcaption class="mono">one program · one shared lookup table<br />one verifiable arithmetic trace</figcaption>
+                    </figure>
+                    <p class="trinity-scope">
+                        <b>Today's milestone:</b> an arithmetic demonstration,
+                        checked against independent reference fixtures on Triton.
+                        Secure FHE and private inference remain research goals;
+                        the quantum stage is a simulation.
+                    </p>
+                </div>
+            </section>
 
             <section>
                 <h2>hello, <i>proof</i></h2>
