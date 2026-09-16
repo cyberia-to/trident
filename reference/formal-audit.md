@@ -43,3 +43,8 @@ fails, and UNKNOWN, solver errors or a missing solver are inconclusive failures.
 Exit 0 means every analyzed function's obligations were discharged; exit 1 means
 counterexample or compilation error; exit 2 means incomplete/unsupported analysis.
 SMT exports reset solver state between functions to avoid shared variable IDs.
+
+Z3 is an optional external dependency, discovered directly through native PATH
+entries (`z3.exe` on Windows). Discovery does not require a shell or `which`.
+Solver input travels through a private stdin pipe; each query retains the
+10-second solver timeout and treats malformed/error replies as failures.

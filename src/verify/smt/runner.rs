@@ -5,7 +5,7 @@
 // ---
 //! Z3 process runner for SMT-LIB2 scripts.
 //!
-//! Locates Z3 in PATH, writes the SMT script to a temp file,
+//! Locates Z3 in PATH, writes the SMT script to private process stdin,
 //! invokes Z3 with a timeout, and parses the result.
 
 use std::io::Write;
@@ -83,18 +83,49 @@ pub fn run_z3(smt_script: &str) -> Result<SmtResult, String> {
 }
 
 /// Find z3 in PATH.
-fn which_z3() -> Option<String> {
-    use std::process::Command;
+fn which_z3() -> Option<std::path::PathBuf> {
+    find_z3(&std::env::var_os("PATH")?)
+}
 
-    // Try `which z3` on Unix
-    if let Ok(output) = Command::new("which").arg("z3").output() {
-        if output.status.success() {
-            let path = String::from_utf8_lossy(&output.stdout).trim().to_string();
-            if !path.is_empty() {
-                return Some(path);
+fn find_z3(path: &std::ffi::OsStr) -> Option<std::path::PathBuf> {
+    std::env::split_paths(path).find_map(|directory| {
+        let candidate = directory.join(format!("z3{}", std::env::consts::EXE_SUFFIX));
+        let metadata = candidate.metadata().ok()?;
+        if !metadata.is_file() {
+            return None;
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            if metadata.permissions().mode() & 0o111 == 0 {
+                return None;
             }
         }
-    }
+        Some(candidate)
+    })
+}
 
-    None
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn native_solver_discovery_needs_no_shell_and_preserves_unicode_paths() {
+        let root = tempfile::tempdir().unwrap();
+        let missing = root.path().join("missing");
+        let directory = root.path().join("solver пробел");
+        std::fs::create_dir(&directory).unwrap();
+        let candidate = directory.join(format!("z3{}", std::env::consts::EXE_SUFFIX));
+        let paths = std::env::join_paths([&missing, &directory]).unwrap();
+        std::fs::create_dir(&candidate).unwrap();
+        assert_eq!(super::find_z3(&paths), None);
+        std::fs::remove_dir(&candidate).unwrap();
+        std::fs::write(&candidate, b"fixture").unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&candidate, std::fs::Permissions::from_mode(0o600)).unwrap();
+            assert_eq!(super::find_z3(&paths), None);
+            std::fs::set_permissions(&candidate, std::fs::Permissions::from_mode(0o700)).unwrap();
+        }
+        assert_eq!(super::find_z3(&paths), Some(candidate));
+    }
 }

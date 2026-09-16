@@ -333,10 +333,12 @@ fn census_every_in_surface_module_has_a_differential() {
                 && trident::nox_cost_project(&path, &options).is_ok()
             {
                 in_surface.push(
-                    path.display()
-                        .to_string()
-                        .trim_start_matches(&format!("{root}/"))
-                        .to_string(),
+                    path.strip_prefix(root)
+                        .unwrap()
+                        .components()
+                        .map(|part| part.as_os_str().to_str().unwrap())
+                        .collect::<Vec<_>>()
+                        .join("/"),
                 );
             }
         }
