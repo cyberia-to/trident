@@ -1,16 +1,12 @@
-# Full release preparation — 2026-09-11
+# Full release preparation — 2026-09-16
 
-Status: active release preparation; no release has been published.
-2026-09-16 scope clarification: release the implemented, documented feature set.
-General nox expansion, live database integration, self-hosting and secure FHE
-are roadmap work rather than blockers for this release. Historical open-item
-lists below retain those broader objectives and must be read with this scope.
-Windows is now required alongside macOS and Linux. The recommended six-target
-CPU matrix and acceptance policy are in the
-[platform proposal](../../trisha/docs/reference/release-platforms.md);
-[observed portability gaps](../../trisha/audit/platform-scope-review.md)
-remain release work. The proposed architecture/OS floors are not validation
-claims. Historical candidate binaries do not contain subsequent changes.
+Status: published — Trident 0.3.0, Trisha 0.3.0 and Joy 0.5.0.
+
+All scoped release gates are closed. See the [published release report](release-2026-09-16.md) for exact source identities, six native targets, the 198-proof baseline gate, the 36-pair proof exchange, Neptune admission and artifact links. Broader nox and live database features remain roadmap work.
+
+## Historical pre-release checkpoints
+
+The following entries describe earlier candidates and do not represent current release blockers.
 
 2026-09-16 continuation: FINAL6 remains blocked by the confirmed source-RAM
 clobbers in [the scratch review](../../trisha/audit/ram-scratch-review.md).
