@@ -361,6 +361,29 @@
                 .get .grid { grid-template-columns: 1fr; }
                 .trinity-panel { grid-template-columns: 1fr; gap: 1.4rem; }
             }
+
+            /* the set: plays while you are here */
+            .set {
+                position: fixed; left: 0; right: 0; bottom: 0; z-index: 9;
+                display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
+                padding: 0.55rem 1.3rem;
+                background: rgba(10, 7, 20, 0.92); backdrop-filter: blur(8px);
+                border-top: 1px solid var(--line);
+                font-size: 0.74rem; color: var(--dim);
+            }
+            .set button {
+                font: inherit; cursor: pointer;
+                color: var(--ink); background: var(--card);
+                border: 1px solid var(--line); border-radius: 999px;
+                padding: 0.25rem 0.8rem; letter-spacing: 0.06em;
+            }
+            .set button:hover { border-color: var(--pink); color: var(--pink); }
+            .set .title { color: var(--ink); }
+            .set .title b { color: var(--pink); font-weight: 400; }
+            .set .time { min-width: 6.5em; }
+            .set .links { margin-left: auto; display: flex; gap: 0.9rem; flex-wrap: wrap; }
+            .set .links a { border-bottom: 1px dotted var(--line); }
+            body { padding-bottom: 3.2rem; }
         </style>
     </head>
     <body>
@@ -849,6 +872,48 @@
                     e.target.textContent = "copied";
                     setTimeout(function () { e.target.textContent = "copy"; }, 1400);
                 });
+            })();
+        </script>
+
+        <div class="set mono" id="set">
+            <button id="set-toggle" aria-label="play">▶ play</button>
+            <span class="title">trident.pink — <b>the set</b> · one song, nine bodies</span>
+            <span class="time" id="set-time">00:00 / 20:00</span>
+            <span class="links">
+                <a id="set-dl" href="https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.set.mp3" download>↓ mp3 · 20 min</a>
+                <a href="https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.cycle.mp3" download>↓ full cycle · 85 min</a>
+            </span>
+            <audio id="set-audio" preload="auto" src="media/trident.pink.set.mp3"></audio>
+        </div>
+        <script>
+            (function () {
+                // the set plays while the page is open. browsers allow sound only after the
+                // visitor touches the page, so: try at once, else start on the first gesture.
+                var a = document.getElementById("set-audio");
+                var btn = document.getElementById("set-toggle");
+                var time = document.getElementById("set-time");
+                var fallback = "https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.set.mp3";
+                var fmt = function (s) { s = Math.floor(s || 0); return (s < 600 ? "0" : "") + Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); };
+                var draw = function () {
+                    btn.textContent = a.paused ? "▶ play" : "❚❚ pause";
+                    time.textContent = fmt(a.currentTime) + " / " + fmt(a.duration || 1201);
+                };
+                a.addEventListener("error", function () { if (a.src !== fallback) { a.src = fallback; a.load(); a.play().catch(function () {}); } });
+                a.addEventListener("timeupdate", draw);
+                a.addEventListener("play", draw);
+                a.addEventListener("pause", draw);
+                a.addEventListener("ended", function () { a.currentTime = 0; a.play().catch(function () {}); });
+                btn.addEventListener("click", function () { if (a.paused) a.play(); else a.pause(); });
+                var armed = false;
+                var arm = function () {
+                    if (armed) return; armed = true;
+                    var go = function () { a.play().catch(function () {}); };
+                    ["pointerdown", "keydown", "touchstart", "wheel", "scroll"].forEach(function (ev) {
+                        window.addEventListener(ev, go, { once: true, passive: true });
+                    });
+                };
+                a.play().then(draw).catch(arm);
+                draw();
             })();
         </script>
     </body>

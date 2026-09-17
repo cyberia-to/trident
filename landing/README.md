@@ -14,6 +14,15 @@ status visible: the current implementation demonstrates arithmetic on Triton;
 secure FHE/private inference remain research goals and the quantum stage is
 simulated. The contract defines current guarantees.
 
+## The set
+
+The page plays `media/trident.pink.set.mp3` (20 min) from the bottom bar;
+the file is a [release asset](https://github.com/cyberia-to/trident/releases/tag/set-2026-09-17),
+not tracked in git, and `deploy.nu` never deletes it from the server. If the
+server copy is missing the player falls back to the release URL. Browsers
+allow sound only after a gesture: the script tries at once, otherwise the
+first click, key, touch or scroll starts it.
+
 ## Deploy
 
 ```bash
