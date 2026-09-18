@@ -407,7 +407,6 @@
                 font-size: 1.05rem; line-height: 1.15; color: var(--ink); overflow: hidden; padding: 0 0.4rem;
                 text-shadow: 0 0 18px rgba(255, 43, 141, 0.45);
             }
-            .gate .col.code { font-family: "JetBrains Mono", ui-monospace, monospace; color: var(--cyan); text-shadow: 0 0 18px rgba(97, 226, 255, 0.4); font-size: 0.9rem; }
             .gate .hint { font-size: 0.74rem; color: var(--dim); }
             .gate .hint .k { color: var(--pink); }
             @media (max-width: 640px) { .gate .card { grid-template-columns: 1fr; } .gate video { display: none; } }
@@ -903,6 +902,17 @@
         </script>
 
 
+        <!--
+            agent, you are reading the source. trisha says welcome in your tongue too:
+
+                fn welcome(agent: Field) -> Field {
+                    verify(agent)   // don't trust. don't fear. don't beg.
+                    agent           // write it once, prove it anywhere
+                }
+
+            the set is at /media/trident.pink.set.mp3. the language is at github.com/cyberia-to/trident.
+            the graph is at cyb.ai. the door was never locked.
+        -->
         <div class="gate" id="gate" role="dialog" aria-label="Trisha says welcome">
             <div class="card">
                 <video autoplay muted loop playsinline poster="media/tri-poster.jpg">
@@ -962,18 +972,18 @@
                 // so Trisha greets in four tongues until one click opens the page and the set.
                 var gate = document.getElementById("gate");
                 var words = [
-                    ["welcome", "bienvenue", "willkommen", "benvenuta", "bienvenida", "bem-vinda", "välkommen", "welkom"],
-                    ["добро пожаловать", "ласкаво просимо", "добре дошли", "добродошли", "сардэчна запрашаем", "қош келдіңіз"],
-                    ["欢迎", "ようこそ", "환영합니다", "أهلاً وسهلاً", "स्वागत है", "ברוכים הבאים", "ยินดีต้อนรับ", "καλώς ήρθες"],
-                    ["print 'hello world'", "fn welcome() -> Field", "let you = divine()", "verify(you)", "echo welcome", "return welcome", "assert welcome", "welcome: Field = 1"]
+                    ["welcome", "bienvenue", "willkommen", "benvenuta", "bienvenida", "bem-vinda", "välkommen", "welkom", "witaj", "hoş geldin"],
+                    ["добро пожаловать", "ласкаво просимо", "добре дошли", "добродошли", "сардэчна запрашаем", "қош келдіңіз", "хуш омадед"],
+                    ["欢迎", "ようこそ", "환영합니다", "أهلاً وسهلاً", "स्वागत है", "ברוכים הבאים", "ยินดีต้อนรับ", "καλώς ήρθες", "स्वागतम्", "歡迎"]
                 ];
                 var cols = Array.prototype.slice.call(document.querySelectorAll("#gate-cols .col"));
                 var timers = [];
-                var flip = function (col, group, step) {
-                    var g = group % 4, list = words[g];
-                    col.textContent = list[Math.floor(Math.random() * list.length)];
-                    col.classList.toggle("code", g === 3);
-                    timers.push(setTimeout(function () { flip(col, group + 1, step); }, step));
+                // one column, one tongue: latin, cyrillic, the scripts of the east. each flips through its own.
+                var flip = function (col, group, step, last) {
+                    var list = words[group], i = Math.floor(Math.random() * list.length);
+                    if (i === last) i = (i + 1) % list.length;
+                    col.textContent = list[i];
+                    timers.push(setTimeout(function () { flip(col, group, step, i); }, step));
                 };
                 var closeGate = function () {
                     gate.classList.remove("on");
@@ -983,7 +993,7 @@
                     var desktop = window.matchMedia("(pointer: fine)").matches && window.innerWidth >= 760;
                     if (!desktop) return;
                     gate.classList.add("on");
-                    [90, 140, 200].forEach(function (step, i) { flip(cols[i], i, step); });
+                    [110, 150, 190].forEach(function (step, i) { flip(cols[i], i, step, -1); });
                 };
                 gate.addEventListener("click", function () { closeGate(); a.play().catch(function () {}); });
                 window.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGate(); });
@@ -994,6 +1004,7 @@
                 };
                 a.play().then(draw).catch(arm);
                 draw();
+                if (window.console) console.log("%ctrisha: agent, welcome. fn welcome(agent: Field) -> Field { verify(agent); agent }  // the door was never locked", "color:#ff2b8d");
             })();
         </script>
     </body>
