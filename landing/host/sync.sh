@@ -4,7 +4,7 @@
 umask 022
 CLONE=/home/cyber/trident-pink-site
 DOCROOT_FILE=/home/cyber/trident-pink-docroot
-SET=https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.set.mp3
+REL=https://github.com/cyberia-to/trident/releases/download/set-2026-09-17
 
 # one run at a time: the first run downloads 48 MB and may outlive its minute
 exec 9>/tmp/trident-pink-sync.lock
@@ -25,11 +25,13 @@ fi
 # --chmod fixes what nginx needs. no --delete: the docroot holds the set mp3.
 rsync -rltp --chmod=D755,F644 --exclude=host --exclude=scripts --exclude=README.md "$CLONE/landing/" "$DOCROOT/"
 
-# the set is a release asset, not a tracked file: fetch it once, heal it if it vanishes
-MP3="$DOCROOT/media/trident.pink.set.mp3"
-if [ ! -s "$MP3" ]; then
-  curl -sfL -o "$MP3.part" "$SET" && mv "$MP3.part" "$MP3" && chmod 644 "$MP3"
-fi
+# the set and the cycle are release assets, not tracked files: fetch once, heal if they vanish
+for f in trident.pink.set.mp3 trident.pink.cycle.mp3; do
+  MP3="$DOCROOT/media/$f"
+  if [ ! -s "$MP3" ]; then
+    curl -sfL -o "$MP3.part" "$REL/$f" && mv "$MP3.part" "$MP3" && chmod 644 "$MP3"
+  fi
+done
 
 # keep the cron copy of this script current with the repo
 SELF=/home/cyber/trident-pink-sync.sh
