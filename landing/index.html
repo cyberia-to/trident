@@ -904,13 +904,20 @@
                 a.addEventListener("pause", draw);
                 a.addEventListener("ended", function () { a.currentTime = 0; a.play().catch(function () {}); });
                 btn.addEventListener("click", function () { if (a.paused) a.play(); else a.pause(); });
+                // which events count as a gesture is the browser's call: taps, clicks and keys
+                // do everywhere; a finger scroll ends in touchend, which counts; a wheel scroll
+                // does not count on desktop. so keep trying on every one of them until sound is on.
+                var events = ["pointerdown", "pointerup", "keydown", "touchend", "wheel", "scroll"];
                 var armed = false;
+                var go = function () {
+                    if (!a.paused) return;
+                    a.play().then(function () {
+                        events.forEach(function (ev) { window.removeEventListener(ev, go); });
+                    }).catch(function () {});
+                };
                 var arm = function () {
                     if (armed) return; armed = true;
-                    var go = function () { a.play().catch(function () {}); };
-                    ["pointerdown", "keydown", "touchstart", "wheel", "scroll"].forEach(function (ev) {
-                        window.addEventListener(ev, go, { once: true, passive: true });
-                    });
+                    events.forEach(function (ev) { window.addEventListener(ev, go, { passive: true }); });
                 };
                 a.play().then(draw).catch(arm);
                 draw();
