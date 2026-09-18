@@ -20,8 +20,8 @@ alias: Tri, tri, the provable language
 don't beg — write it once, prove it anywhere.* It plays on
 [trident.pink](https://trident.pink/) while you are there.
 [▶ teaser · 4 min video](https://trident.pink/media/trident.pink.teaser.mp4) ·
-[mp3 · 20 min](https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.set.mp3) ·
-[full focus cycle · 85 min](https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.cycle.mp3) ·
+[mp3 · 20 min](https://trident.pink/media/trident.pink.set.mp3) ·
+[full focus cycle · 85 min](https://trident.pink/media/trident.pink.cycle.mp3) ·
 [release notes](https://github.com/cyberia-to/trident/releases/tag/set-2026-09-17)
 
 Trident is a provable programming language.
