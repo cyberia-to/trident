@@ -384,6 +384,33 @@
             .set .links { margin-left: auto; display: flex; gap: 0.9rem; flex-wrap: wrap; }
             .set .links a { border-bottom: 1px dotted var(--line); }
             body { padding-bottom: 3.2rem; }
+
+            /* the gate: Trisha greets, one click lets you in and starts the set (desktop only) */
+            .gate {
+                position: fixed; inset: 0; z-index: 20; display: none;
+                align-items: center; justify-content: center; cursor: pointer;
+                background: rgba(10, 7, 20, 0.86); backdrop-filter: blur(10px);
+            }
+            .gate.on { display: flex; }
+            .gate .card {
+                display: grid; grid-template-columns: 168px 1fr; gap: 1.6rem; align-items: center;
+                padding: 1.4rem 1.6rem; max-width: 880px; width: calc(100% - 2.6rem);
+                border: 1px solid var(--line); border-radius: 14px;
+                background: rgba(10, 7, 20, 0.7); box-shadow: 0 0 80px rgba(255, 43, 141, 0.18);
+            }
+            .gate video { width: 168px; height: 210px; object-fit: cover; border-radius: 10px; display: block; }
+            .gate .who { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pink-soft); }
+            .gate .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 0.7rem 0 0.9rem; }
+            .gate .col {
+                height: 3.4rem; display: flex; align-items: center; justify-content: center; text-align: center;
+                border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+                font-size: 1.05rem; line-height: 1.15; color: var(--ink); overflow: hidden; padding: 0 0.4rem;
+                text-shadow: 0 0 18px rgba(255, 43, 141, 0.45);
+            }
+            .gate .col.code { font-family: "JetBrains Mono", ui-monospace, monospace; color: var(--cyan); text-shadow: 0 0 18px rgba(97, 226, 255, 0.4); font-size: 0.9rem; }
+            .gate .hint { font-size: 0.74rem; color: var(--dim); }
+            .gate .hint .k { color: var(--pink); }
+            @media (max-width: 640px) { .gate .card { grid-template-columns: 1fr; } .gate video { display: none; } }
         </style>
     </head>
     <body>
@@ -875,6 +902,21 @@
             })();
         </script>
 
+
+        <div class="gate" id="gate" role="dialog" aria-label="Trisha says welcome">
+            <div class="card">
+                <video autoplay muted loop playsinline poster="media/tri-poster.jpg">
+                    <source src="media/tri.mp4" type="video/mp4" />
+                </video>
+                <div>
+                    <div class="who mono">trisha says</div>
+                    <div class="cols" id="gate-cols">
+                        <div class="col"></div><div class="col"></div><div class="col"></div>
+                    </div>
+                    <div class="hint mono"><span class="k">click anywhere</span> to enter · the set starts playing · <span class="k">esc</span> for silence</div>
+                </div>
+            </div>
+        </div>
         <div class="set mono" id="set">
             <button id="set-toggle" aria-label="play">▶ play</button>
             <span class="title">trident.pink — <b>the set</b> · one song, nine bodies</span>
@@ -912,11 +954,42 @@
                 var go = function () {
                     if (!a.paused) return;
                     a.play().then(function () {
+                        closeGate();
                         events.forEach(function (ev) { window.removeEventListener(ev, go); });
                     }).catch(function () {});
                 };
+                // the gate: on a desktop the browser will not play sound before a gesture,
+                // so Trisha greets in four tongues until one click opens the page and the set.
+                var gate = document.getElementById("gate");
+                var words = [
+                    ["welcome", "bienvenue", "willkommen", "benvenuta", "bienvenida", "bem-vinda", "välkommen", "welkom"],
+                    ["добро пожаловать", "ласкаво просимо", "добре дошли", "добродошли", "сардэчна запрашаем", "қош келдіңіз"],
+                    ["欢迎", "ようこそ", "환영합니다", "أهلاً وسهلاً", "स्वागत है", "ברוכים הבאים", "ยินดีต้อนรับ", "καλώς ήρθες"],
+                    ["print 'hello world'", "fn welcome() -> Field", "let you = divine()", "verify(you)", "echo welcome", "return welcome", "assert welcome", "welcome: Field = 1"]
+                ];
+                var cols = Array.prototype.slice.call(document.querySelectorAll("#gate-cols .col"));
+                var timers = [];
+                var flip = function (col, group, step) {
+                    var g = group % 4, list = words[g];
+                    col.textContent = list[Math.floor(Math.random() * list.length)];
+                    col.classList.toggle("code", g === 3);
+                    timers.push(setTimeout(function () { flip(col, group + 1, step); }, step));
+                };
+                var closeGate = function () {
+                    gate.classList.remove("on");
+                    timers.forEach(clearTimeout); timers = [];
+                };
+                var openGate = function () {
+                    var desktop = window.matchMedia("(pointer: fine)").matches && window.innerWidth >= 760;
+                    if (!desktop) return;
+                    gate.classList.add("on");
+                    [90, 140, 200].forEach(function (step, i) { flip(cols[i], i, step); });
+                };
+                gate.addEventListener("click", function () { closeGate(); a.play().catch(function () {}); });
+                window.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGate(); });
                 var arm = function () {
                     if (armed) return; armed = true;
+                    openGate();
                     events.forEach(function (ev) { window.addEventListener(ev, go, { passive: true }); });
                 };
                 a.play().then(draw).catch(arm);
