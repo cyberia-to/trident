@@ -131,6 +131,8 @@ Work:
    logical module paths, dependency identities, entry, options and resource
    limits. A result is either a complete nox artifact or structured diagnostics
    with module/span/error identity. Exact CLI spelling is implementation work.
+   [SH0.3 native jobs](self-hosting-jobs.md) defines JOB1/RES1/ART1 and the
+   source package. Complete noun transport is owned by nox's NOXDAG01 codec.
 4. Define canonical source-package and output encodings using existing nox
    node identities. Preserve topology and exact byte lengths; reject missing
    nodes, invalid references, duplicate identities and noncanonical field words.

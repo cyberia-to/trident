@@ -171,8 +171,17 @@ impl Seq {
         max: u32,
         mut visits: u32,
     ) -> Result<Self> {
+        Self::decode_budget(ar, n, max, &mut visits)
+    }
+
+    pub fn decode_budget<const N: usize>(
+        ar: &mut Reduction<N>,
+        n: Order,
+        max: u32,
+        visits: &mut u32,
+    ) -> Result<Self> {
         let (len, root) = unwrap(ar, n, SEQ, max)?;
-        validate_tree(ar, root, len, height(len), &mut visits)?;
+        validate_tree(ar, root, len, height(len), visits)?;
         Ok(Self { len, root })
     }
 
@@ -266,16 +275,25 @@ impl Bytes {
         max: u32,
         mut visits: u32,
     ) -> Result<Self> {
+        Self::decode_budget(ar, n, max, &mut visits)
+    }
+
+    pub fn decode_budget<const N: usize>(
+        ar: &mut Reduction<N>,
+        n: Order,
+        max: u32,
+        visits: &mut u32,
+    ) -> Result<Self> {
         let (len, root) = unwrap(ar, n, BYTES, max)?;
         let words = Seq {
             len: word_count(len),
             root,
         };
-        validate_tree(ar, root, words.len, height(words.len), &mut visits)?;
+        validate_tree(ar, root, words.len, height(words.len), visits)?;
         for i in 0..words.len {
             // The payload scan is also charged; shape validation alone cannot
             // hide an unbounded second traversal behind a small visit budget.
-            visits = visits
+            *visits = visits
                 .checked_sub(height(words.len) + 1)
                 .ok_or(Error::Visits)?;
             let word = value(ar, words.get(ar, i)?)?;
@@ -357,11 +375,10 @@ pub fn display<const N: usize>(ar: &Reduction<N>, n: Order, visits: &mut u32) ->
 }
 
 #[cfg(test)]
-mod boundary_tests {
+pub(crate) mod boundary_tests {
     use super::*;
 
-    #[test]
-    fn sparse_height32_updates_and_growth_do_not_overflow_u32() {
+    pub(crate) fn sparse_height32_updates_and_growth_do_not_overflow_u32() {
         let mut ar = Reduction::<1024>::new();
         let zero = atom(&mut ar, 0).unwrap();
         let replacement = atom(&mut ar, 77).unwrap();

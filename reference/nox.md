@@ -111,3 +111,9 @@ Native Boolean results retain 0=true / 1=false. The
 [conformance evidence](../audit/self-hosting/native-data.md) records which small
 formulas actually ran; source-level libraries, bounded runtime loops, complete
 Joy artifact transport and compiler-scale Zheng coverage remain later gates.
+
+[SH0.3](self-hosting-jobs.md) defines explicit structured raw-noun/compiler-job
+profiles and canonical NOXDAG01 transport. These preserve complete result roots;
+they do not use the existing flat output words as a program artifact. ART1
+contains executable metadata/formula, while RES1 binds a particular compile job.
+Keeping producer/job identity outside ART1 is required for C2/C3 byte equality.
