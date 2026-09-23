@@ -115,12 +115,28 @@ and `as_u32()` (the latter inserts a range check).
 
 For extension field types, see [Extension Field](#16-extension-field).
 
-### Planned native data extension (0.4)
+### Native data extension (0.4 development)
 
 [Native compiler data](self-hosting-data.md) specifies the new `Noun` primitive,
 checked `vm.nox.noun` operations and persistent `std.nox.seq` / `std.nox.bytes`
-wrappers. This is an SH0 contract; the released parser/typechecker and intrinsic
-ABI do not implement it yet. SH1 must update those together with nox lowering.
+wrappers. The 0.4 development compiler implements `Noun` and the seven native
+operations together with parsing, type checking and direct nox lowering.
+The collection wrappers and reusable calls/loops remain SH1 work.
+
+`vm.nox.noun` exports `atom(Field) -> Noun`, `pair(Noun, Noun) -> Noun`,
+`head(Noun) -> Noun`, `tail(Noun) -> Noun`, `as_field(Noun) -> Field`,
+`eq(Noun, Noun) -> Bool`, and `identity(Noun) -> Digest`. Their intrinsic names
+are `nox_noun_` plus the function name. Projections check shape; equality uses
+the full native identity. These pure operations evaluate operands once, left
+to right. `as_field(U32)` remains the separate ordinary widening conversion.
+
+`fn main(input: Noun) -> Noun` uses the explicit ART1 raw input/output
+profiles 0/0 through `compile_raw_artifact_project` or `joy build --emit artifact`.
+This entry accepts the complete input noun and returns the complete result.
+Flat I/O declarations and host services are forbidden in the raw profile.
+The flat bundle entry adapter rejects Noun-containing parameters and results.
+Noun is allowed in internal native aggregates, with explicit checked operations;
+constants, event payloads, flat RAM/I/O declarations and `==` reject it.
 
 A Noun carries an immutable native subtree, with variable field-word width.
 Its containing aggregates also require a native layout. The fixed-width tables
@@ -141,11 +157,15 @@ Array sizes support compile-time expressions: `[Field; N]`, `[Field; M+N]`,
 `[Field; N*2]`.
 
 No enums. No sum types. No references. No pointers. All values are passed by
-copy on the stack. Structs are flattened to sequential stack/RAM elements.
+value. Fixed-layout stack backends flatten structs to stack/RAM elements;
+native nox keeps each field as a subtree.
 
 ### Type Widths
 
-All types have a compile-time-known width measured in field elements.
+Fixed-layout types have a compile-time-known width measured in field elements.
+`Noun` and every containing aggregate have no fixed field-word width; the
+semantic API returns `None` for these layouts. Shared TIR rejects them before
+computing widths, including inside deferred generic bodies.
 Widths marked with a variable are resolved from the target configuration.
 
 | Type | Width |

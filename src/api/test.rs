@@ -275,14 +275,14 @@ pub fn prepare_test_programs(
                 .with_constants(project.external_constants())
                 .with_mono_instances(exports.mono_instances.clone())
                 .with_call_resolutions(exports.call_resolutions.clone())
-                .build_file(&pm.file);
-            crate::ModuleTir {
+                .build_file(&pm.file)?;
+            Ok(crate::ModuleTir {
                 name: pm.file.name.node.clone(),
                 is_program: false,
                 ops: optimize_tir(ops),
-            }
+            })
         })
-        .collect();
+        .collect::<Result<Vec<_>, Vec<Diagnostic>>>()?;
     let tests = entries
         .into_iter()
         .map(|(module, function)| {

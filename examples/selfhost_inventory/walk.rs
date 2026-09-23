@@ -199,6 +199,7 @@ impl Visitor {
 
     fn type_node(&mut self, ty: &Type, span: Span) {
         let name = match ty {
+            Type::Noun => "type.Noun",
             Type::Field => "type.Field",
             Type::U32 => "type.U32",
             Type::Bool => "type.Bool",

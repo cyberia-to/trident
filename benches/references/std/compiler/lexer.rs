@@ -38,6 +38,7 @@ fn lexeme_to_tk(lexeme: &Lexeme) -> u64 {
         Lexeme::BoolTy => 25,
         Lexeme::U32Ty => 26,
         Lexeme::DigestTy => 27,
+        Lexeme::NounTy => panic!("Noun is outside the legacy RAM compiler fixture"),
         Lexeme::LParen => 28,
         Lexeme::RParen => 29,
         Lexeme::LBrace => 30,

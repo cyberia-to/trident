@@ -61,6 +61,7 @@ pub(super) const TAG_TY_TUPLE: u8 = 0x84;
 pub(super) const TAG_TY_DIGEST: u8 = 0x86;
 pub(super) const TAG_TY_XFIELD: u8 = 0x87;
 pub(super) const TAG_TY_NAMED: u8 = 0x88;
+pub(super) const TAG_TY_NOUN: u8 = 0x89;
 
 // Version byte for hash stability
 

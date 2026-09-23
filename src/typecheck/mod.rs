@@ -8,6 +8,7 @@ mod block;
 mod builtins;
 mod capabilities;
 mod expr;
+mod noun;
 mod resolve;
 pub(crate) mod specialize;
 mod stmt;
@@ -168,6 +169,7 @@ impl TypeChecker {
             in_pure_fn: false,
         };
         tc.register_builtins();
+        tc.register_noun_builtins();
         tc.intrinsic_signatures = tc.functions.clone();
         tc
     }
@@ -388,6 +390,9 @@ impl TypeChecker {
                 }
                 Item::Const(cdef) => {
                     let ty = self.resolve_type(&cdef.ty.node);
+                    if ty.width().is_none() {
+                        self.error("Noun constants are not supported".into(), cdef.ty.span);
+                    }
                     if let Expr::Literal(Literal::Integer(v)) = &cdef.value.node {
                         if !matches!(ty, Ty::Field | Ty::U32) {
                             self.error(
@@ -435,8 +440,11 @@ impl TypeChecker {
                         .collect();
                     let words = fields
                         .iter()
-                        .fold(0u32, |n, (_, ty)| n.saturating_add(ty.width()));
-                    if words > 9 {
+                        .try_fold(0u32, |n, (_, ty)| Some(n.saturating_add(ty.width()?)));
+                    if words.is_none() {
+                        self.error("Noun has no event payload layout".into(), edef.name.span);
+                    }
+                    if let Some(words) = words.filter(|w| *w > 9) {
                         self.error(
                             format!(
                                 "event '{}' has {} payload words, max is 9",
@@ -450,6 +458,7 @@ impl TypeChecker {
             }
         }
 
+        self.check_noun_boundaries(file);
         for item in &file.items {
             if let Item::Fn(f) = &item.node {
                 if let Some(generic) = self.generic_fns.get_mut(&f.name.node) {

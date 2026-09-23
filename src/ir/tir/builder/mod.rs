@@ -25,6 +25,7 @@ mod helpers;
 mod index;
 mod layout;
 mod match_;
+mod native_guard;
 mod stmt;
 mod types;
 #[cfg(test)]
@@ -162,7 +163,10 @@ impl TIRBuilder {
     // ── Top-level entry: build_file ───────────────────────────────
     // ═══════════════════════════════════════════════════════════════
 
-    pub fn build_file(mut self, file: &File) -> Vec<TIROp> {
+    pub fn build_file(
+        mut self,
+        file: &File,
+    ) -> Result<Vec<TIROp>, Vec<crate::diagnostic::Diagnostic>> {
         for item in &file.items {
             if !self.is_item_cfg_active(&item.node) {
                 continue;
@@ -175,11 +179,37 @@ impl TIRBuilder {
                     if let Some(ty) = &func.return_ty {
                         self.fn_return_types
                             .insert(func.name.node.clone(), ty.node.clone());
+                    } else {
+                        self.fn_return_types.remove(&func.name.node);
                     }
                 }
                 _ => {}
             }
         }
+
+        // ── Pre-scan: collect intrinsic mappings ──
+        for item in &file.items {
+            if !self.is_item_cfg_active(&item.node) {
+                continue;
+            }
+            if let Item::Fn(func) = &item.node {
+                if let Some(ref intrinsic) = func.intrinsic {
+                    let intr_value = if let Some(start) = intrinsic.node.find('(') {
+                        let end = intrinsic.node.rfind(')').unwrap_or(intrinsic.node.len());
+                        intrinsic.node[start + 1..end].to_string()
+                    } else {
+                        intrinsic.node.clone()
+                    };
+                    self.intrinsic_map
+                        .insert(func.name.node.clone(), intr_value);
+                } else {
+                    // Local functions shadow unqualified names imported from SDKs.
+                    self.intrinsic_map.remove(&func.name.node);
+                }
+            }
+        }
+
+        self.check_fixed_layout(file)?;
 
         // ── Pre-scan: collect return widths and detect generic functions ──
         for item in &file.items {
@@ -215,28 +245,6 @@ impl TIRBuilder {
                     .unwrap_or(0);
                 let mangled = inst.mangled_name();
                 self.fn_return_widths.insert(mangled, width);
-            }
-        }
-
-        // ── Pre-scan: collect intrinsic mappings ──
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                if let Some(ref intrinsic) = func.intrinsic {
-                    let intr_value = if let Some(start) = intrinsic.node.find('(') {
-                        let end = intrinsic.node.rfind(')').unwrap_or(intrinsic.node.len());
-                        intrinsic.node[start + 1..end].to_string()
-                    } else {
-                        intrinsic.node.clone()
-                    };
-                    self.intrinsic_map
-                        .insert(func.name.node.clone(), intr_value);
-                } else {
-                    // Local functions shadow unqualified names imported from SDKs.
-                    self.intrinsic_map.remove(&func.name.node);
-                }
             }
         }
 
@@ -339,7 +347,7 @@ impl TIRBuilder {
             }
         }
 
-        std::mem::take(&mut self.ops)
+        Ok(std::mem::take(&mut self.ops))
     }
 
     // ═══════════════════════════════════════════════════════════════

@@ -35,8 +35,9 @@ use std::collections::{BTreeMap, BTreeSet};
 mod entry;
 mod loops;
 mod modules;
+mod noun;
 mod path;
-use path::{element_access as elem_access, AxisPath};
+use path::{aggregate_element, element_access as elem_access, AxisPath};
 mod state;
 
 use super::Noun;
@@ -361,6 +362,7 @@ pub struct NoxCompiler {
     state_functions: BTreeSet<String>,
     /// Running count of nodes emitted by inlining (exponential-blowup guard).
     inline_nodes: usize,
+    raw_entry: bool,
 }
 
 impl NoxCompiler {
@@ -374,6 +376,7 @@ impl NoxCompiler {
             structs: BTreeMap::new(),
             call_stack: Vec::new(),
             inline_nodes: 0,
+            raw_entry: false,
             reads_state: false,
             state_functions: BTreeSet::new(),
         }
@@ -488,6 +491,7 @@ impl NoxCompiler {
                         .or_else(|| self.expr_type(&init.node));
                     let elem_tys: Vec<Option<ast::Type>> = match &init_ty {
                         Some(ast::Type::Tuple(ts)) => ts.iter().cloned().map(Some).collect(),
+                        Some(ast::Type::Digest) => vec![Some(ast::Type::Field); 4],
                         _ => vec![None; names.len()],
                     };
                     self.scope.bind("$tuple");
@@ -495,7 +499,11 @@ impl NoxCompiler {
                     let mut elem_forms = Vec::with_capacity(names.len());
                     for (i, name) in names.iter().enumerate() {
                         let temp_pos = self.scope.lookup("$tuple").unwrap();
-                        let elem_f = elem_access(nox_axis(stack_axis(temp_pos)), i as u64)?;
+                        let elem_f = aggregate_element(
+                            nox_axis(stack_axis(temp_pos)),
+                            init_ty.as_ref(),
+                            i as u64,
+                        )?;
                         self.scope.bind(&name.node);
                         if let Some(t) = &elem_tys[i] {
                             self.scope.note_type(&name.node, t.clone());
@@ -644,6 +652,7 @@ impl NoxCompiler {
                 // from the corresponding temp element, then drop the temp so the
                 // outer subject shape is restored.
                 let value_f = self.compile_expr(&value.node)?;
+                let value_ty = self.expr_type(&value.node);
                 self.scope.push_frame();
                 self.scope.bind("$tas");
                 self.check_depth()?;
@@ -654,7 +663,11 @@ impl NoxCompiler {
                         .scope
                         .lookup(&name.node)
                         .ok_or_else(|| format!("nox: undefined variable '{}'", name.node))?;
-                    let src = elem_access(nox_axis(stack_axis(temp_pos)), i as u64)?;
+                    let src = aggregate_element(
+                        nox_axis(stack_axis(temp_pos)),
+                        value_ty.as_ref(),
+                        i as u64,
+                    )?;
                     edits.push(subject_edit(stack_axis(pos), src)?);
                 }
                 let drop_temp = reify_drop(1, self.scope.depth);
@@ -878,9 +891,11 @@ impl NoxCompiler {
     /// field/index access. Returns None for scalars and unresolvable cases.
     fn expr_type(&self, e: &Expr) -> Option<ast::Type> {
         match e {
-            Expr::Var(name) => self.scope.lookup_type(name).cloned().or_else(|| {
-                self.dotted_path(name).ok().and_then(|(_, ty)| ty)
-            }),
+            Expr::Var(name) => self
+                .scope
+                .lookup_type(name)
+                .cloned()
+                .or_else(|| self.dotted_path(name).ok().and_then(|(_, ty)| ty)),
             Expr::StructInit { path, .. } => {
                 Some(self.qualified_type(&ast::Type::Named(path.node.clone())))
             }
@@ -917,6 +932,7 @@ impl NoxCompiler {
                     .get(&self.symbol(&name))
                     .and_then(|f| f.return_ty.as_ref())
                     .map(|t| t.node.clone())
+                    .or_else(|| noun::return_type(&name))
             }
             _ => None,
         }
@@ -972,7 +988,10 @@ impl NoxCompiler {
         match place {
             ast::Place::Var(name) => {
                 if let Some(pos) = self.scope.lookup(name) {
-                    return Ok((AxisPath::from_axis(stack_axis(pos))?, self.scope.lookup_type(name).cloned()));
+                    return Ok((
+                        AxisPath::from_axis(stack_axis(pos))?,
+                        self.scope.lookup_type(name).cloned(),
+                    ));
                 }
                 if name.contains('.') {
                     return self.dotted_path(name);
@@ -1061,7 +1080,9 @@ impl NoxCompiler {
     fn compile_expr(&mut self, expr: &Expr) -> LowerResult {
         match expr {
             Expr::Literal(lit) => match lit {
-                Literal::Integer(v) => Ok(nox_quote(Noun::atom(*v))),
+                Literal::Integer(v) => {
+                    Ok(nox_quote(Noun::atom(nebu::Goldilocks::new(*v).as_u64())))
+                }
                 Literal::Bool(b) => {
                     // nox convention: 0 = true, 1 = false
                     Ok(nox_quote(Noun::atom(if *b { 0 } else { 1 })))
@@ -1076,7 +1097,7 @@ impl NoxCompiler {
                 // A local binding shadows a module constant. The same rule
                 // governs eval_const, otherwise bounds/indices can miscompile.
                 if let Some(&val) = self.constants.get(&self.symbol(name)) {
-                    return Ok(nox_quote(Noun::atom(val)));
+                    return Ok(nox_quote(Noun::atom(nebu::Goldilocks::new(val).as_u64())));
                 }
 
                 // Dotted name = struct field access (`p.x`, `p.q.r`). trident's
@@ -1136,6 +1157,15 @@ impl NoxCompiler {
                             .to_string()
                     })
                     .unwrap_or(source_name);
+
+                if noun::return_type(&name).is_some() {
+                    return self.compile_noun_intrinsic(&name, args);
+                }
+                if self.raw_entry
+                    && matches!(name.as_str(), "divine" | "std.io.divine" | "os.state.read")
+                {
+                    return Err("raw ART1 profile forbids host services".into());
+                }
 
                 // Built-in functions
                 match name.as_str() {

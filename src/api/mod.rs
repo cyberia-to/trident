@@ -8,7 +8,7 @@ pub(crate) use std::path::Path;
 
 pub(crate) use crate::ast::{self, FileKind};
 pub(crate) use crate::cost;
-pub(crate) use crate::diagnostic::{Diagnostic, render_diagnostics};
+pub(crate) use crate::diagnostic::{render_diagnostics, Diagnostic};
 use crate::ir::tree::lower::nox::NoxCompiler;
 pub(crate) use crate::span;
 pub(crate) use crate::target::{Arch, TerrainConfig};
@@ -19,7 +19,7 @@ pub(crate) use crate::{format, lexer, parser, project, solve, sym};
 
 mod test;
 pub use test::{
-    TestProgram, TestPrograms, TestResult, discover_tests, prepare_test_programs, run_tests,
+    discover_tests, prepare_test_programs, run_tests, TestProgram, TestPrograms, TestResult,
 };
 
 #[cfg(test)]
@@ -358,7 +358,7 @@ pub fn build_tir(
         .with_cfg_flags(options.cfg_flags.clone())
         .with_mono_instances(exports.mono_instances)
         .with_call_resolutions(exports.call_resolutions)
-        .build_file(&file);
+        .build_file(&file)?;
     Ok(optimize_tir(ir))
 }
 
@@ -417,7 +417,7 @@ pub fn build_tir_modules(
             .with_constants(external_constants.clone())
             .with_mono_instances(mono)
             .with_call_resolutions(call_res)
-            .build_file(&pm.file);
+            .build_file(&pm.file)?;
         modules.push(ModuleTir {
             name: pm.file.name.node.clone(),
             is_program: pm.file.kind == FileKind::Program,
@@ -466,7 +466,7 @@ pub fn build_tir_project(
             .with_constants(external_constants.clone())
             .with_mono_instances(mono)
             .with_call_resolutions(call_res)
-            .build_file(&pm.file);
+            .build_file(&pm.file)?;
         all_ir.extend(optimize_tir(ir));
     }
     Ok(all_ir)
@@ -476,6 +476,10 @@ pub(crate) mod pipeline;
 mod tools;
 pub use tools::*;
 
+mod native;
+pub use native::{
+    compile_raw_artifact, compile_raw_artifact_project, RawArtifact, RAW_ARTIFACT_LIMITS,
+};
 mod bundle;
 pub use bundle::{bundle_with_assembly, compile_to_bundle};
 mod source;

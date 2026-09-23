@@ -383,6 +383,7 @@ impl TypeChecker {
         fn syntax(ty: &Ty) -> Option<crate::ast::Type> {
             use crate::ast::{ArraySize, ModulePath, Type};
             Some(match ty {
+                Ty::Noun => Type::Noun,
                 Ty::Field => Type::Field,
                 Ty::XField(_) => Type::XField,
                 Ty::Bool => Type::Bool,

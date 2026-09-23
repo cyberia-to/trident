@@ -250,3 +250,26 @@ log witness contents. This option conflicts with `--input-values`, `--secret`
 and `--digests`; explicit digest queues are forwarded unchanged. Trisha accepts
 its version1 public/secret/digest JSON format for recursive witnesses that exceed
 OS command-line limits. Other warriors reject unsupported input transports.
+
+### Native raw artifacts (0.4 development)
+
+`compile_raw_artifact_project(entry, options, limits)` resolves and checks the
+complete module closure, then emits `RawArtifact { bytes, particle, name }`.
+`compile_raw_artifact(source, filename, options, limits)` is the single-file API.
+The bytes are canonical NOXDAG01 containing exact ART1(0,0,0,formula), with
+`fn main(input: Noun) -> Noun`; the particle is the full ART1 identity.
+Metadata does not enter the ART1 tree. Joy's `build --emit artifact` publishes
+these bytes and `run-artifact` executes them using the existing raw profile.
+
+The seed emitter bounds the arena at 196608 lifetime nodes, output at 16 MiB,
+DAG depth at 4096 and formula traversal at 2000000 visits. Callers may tighten
+transport limits. A joined 256 MiB-stack worker holds the current fixed arena.
+These bounds cover emission; source parsing/host compilation time is not a
+sandboxed guest job. JOB1/RES1 compiler admission remains a separate SH1 slice.
+
+The semantic `Ty::width` and `StructTy::width` return `Option<u32>`: variable
+native trees have no fixed width. `StructTy::field` retrieves type/visibility
+independently of offsets. `TIRBuilder::build_file` now returns
+`Result<Vec<TIROp>, Vec<Diagnostic>>` and rejects native trees before stack
+layout. Rust callers must propagate that error. The target package wire schema
+and fixed-word external intrinsic ABI are unchanged.

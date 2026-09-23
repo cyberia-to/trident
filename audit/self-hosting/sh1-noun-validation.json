@@ -1,0 +1,220 @@
+{
+  "schema": "trident/sh1-native-noun-validation/v1",
+  "date": "2026-09-23",
+  "platform": "Darwin arm64",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)",
+  "owners": {
+    "trident": {
+      "base_commit": "0324005e193b6abb2e3a25f119ab522943d7f4b4",
+      "source_delta_sha256": {
+        "benches/references/std/compiler/lexer.rs": "a06633a707689da33b6bf4a4bca7930dbbe7c428c08a04312c0fded49698b6e8",
+        "benches/references/std/compiler/parser.rs": "74b8bcf41ace9d50a45372bf48d031077e2bb6c71a0c6ca0825198599f87e5d9",
+        "examples/selfhost_inventory/walk.rs": "3aa4234b6abedc0f05ed61d837a4f60b91dcee1bfa551d5fee13fbbb4b647b2c",
+        "lib/vm/nox/noun.tri": "a2795c828bf8a325b82edd59bb73fac9909984e63b2144573183db0a7a4a5603",
+        "src/api/mod.rs": "a76d2934a5779032fc4585bbd57a25492e9d54f0e60c69c39f995962d414529c",
+        "src/api/native.rs": "f9cd13dde6d5c32e7315f242be91629ce23af4bd3f4fa319386d8cb09e374151",
+        "src/api/test.rs": "d7c5d99d3d976c9ed103ccc1ff16359372cfee6ff13d27e3bc7cdb646c8125b3",
+        "src/ast/display.rs": "a2c8e0f62245155477855fb7cc1a656d1c9972f19cbe24166deee39aed114441",
+        "src/ast/mod.rs": "c0fa3fffdbc107c86352745ca3b4cc566de833f27de1359490fa636e4e50953d",
+        "src/ast/surface.rs": "c26bb8d1f2434069b7f430d769f3b30b3f214528dc9a0e98d461ecbeb5f90828",
+        "src/config/scaffold/mod.rs": "766c5f76c6d0e96bd5808b2c1016e097d6d40536bb0d93dd1dc8b91a36e5a82c",
+        "src/config/target/package.rs": "2d073de4fa4dd335683b8212c63a0e88132b708918cd54f86f037ad116ef649b",
+        "src/ir/tir/builder/call.rs": "b4040faa83b5b7e060a439909eb5cb3c544a00b92f63d5accac57ded448bb5a8",
+        "src/ir/tir/builder/layout.rs": "3232efe2819334006fc0856006347bdfe4070d1a0272e2f32440d513937c1376",
+        "src/ir/tir/builder/mod.rs": "5ade3b8162552690453bdbb3b584aea91709dd5f03ff91514784bd655978bef4",
+        "src/ir/tir/builder/native_guard.rs": "4cdea2c97a7ef72f323be7b31e723df919eb5a9eeb37702b9184946de7593138",
+        "src/ir/tir/builder/tests/advanced.rs": "1843651889b3bf162b151354b5e2d8fcba494e408e6a03b3744a321463d0bd2b",
+        "src/ir/tir/builder/tests/basics.rs": "b1067f0f084853a79a4ed62d7f24c73eead0c02c56cf6f66ce7c800f70f7db03",
+        "src/ir/tree/lower/nox.rs": "cc754397dfe52947659178926613183afc90a889402dfe715e6882d89f8774d1",
+        "src/ir/tree/lower/nox/entry.rs": "c2a8b020bd05a08d351d0d3183284cba71048a9aa89e5bc4189390350c7fe153",
+        "src/ir/tree/lower/nox/modules.rs": "b6482ae785ee7270fc0edcc56b5fcdaf6f8a5e1d3f565a7d03f45df1503c9242",
+        "src/ir/tree/lower/nox/noun.rs": "3fb08fac3a7eb88aafdc084e56e734ed755bde5abf841190a20bc71c75b71462",
+        "src/ir/tree/lower/nox/path.rs": "21422e12d200de9e3ab6646eaa72737cc19be883c614c8d71c811d8a8e59976f",
+        "src/lsp/incremental.rs": "30c6757fd499aaf85a5151b05363d7a59f48fb975ad3c554a528e06976e36bb9",
+        "src/lsp/intelligence.rs": "fae407e6a2a6c6e15c98eb2f504b4b9e213cc911b2bceb3cb214e87a2f4dbcfd",
+        "src/lsp/semantic/mod.rs": "1bc92f171696d0f6da1e1feb808b86742643488da3e48defe7f644701ac5eb46",
+        "src/package/hash/normalize.rs": "808c44d71ed84e0c62a29b2383a97c3d144884a243232d93b19c77da59e7bbaf",
+        "src/package/hash/serialize.rs": "a5ef36546b7f5f44a320fb239e3e466ef3f1f132e644ed2fa290641140be56e5",
+        "src/syntax/grammar/trident.rs": "02e6f425dd4f2e9b634b319d96fe3e4ba0af934d6754166e13b2586bbbebffc3",
+        "src/syntax/lexeme.rs": "c84f88a4daa2f25d1af2b3aa8b992e4c52c0f565444d8345ea07897ee7d70674",
+        "src/syntax/parser/types.rs": "1c956e60248a7523ce6772189e9b5327e80c400e11af72f31cf0b8e3158bfb3d",
+        "src/typecheck/block.rs": "5a6d61683194f65bd906ee75d137f077474d4007a44c304101150e2c7e87df0a",
+        "src/typecheck/builtins.rs": "41f2202b55555ae7ca993e2855804e92e3007646b761a1ec231805a1a2e74275",
+        "src/typecheck/expr.rs": "b06c58f44b01abda1bc5a5158aab0c6bbb2e0a54d0b786430f64c6231a69afcf",
+        "src/typecheck/mod.rs": "c6802ec779de6a7c197d23ba67b7ea3d6946a9a6ca940be0e416caee27422404",
+        "src/typecheck/noun.rs": "9e34ee1aa75b1d7c80e18894da25a92e8c9aa67bd3be7df0603ec36f3fccbb82",
+        "src/typecheck/resolve.rs": "f47cef2b640354e0fb4b7726131eee17dda689884209428eff01da05c0f5c84e",
+        "src/typecheck/stmt.rs": "cdc11c8883eeb26a40402ba146c9443d90897a3b69ba03e53e6a3de790ab82f3",
+        "src/typecheck/types.rs": "274701dc08d135bf207260fdd43990b3e32e1028cbf4afab7a56934c44f8aa2c",
+        "tests/native_noun.rs": "7e30c8eb0cff9152afd8bf88b5135ac9f61482fe1115ec82505ef1d2a8eae4b5"
+      }
+    },
+    "nox": {
+      "base_commit": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+      "source_delta_sha256": {
+        "cli/main.rs": "8599b62ecae40cbbfd37852ef754acc9a6b6765305f92ea00d035fef2feaf4cd",
+        "rs/benches/reduction.rs": "4e70a210cb805fc643ecd89c6a7ade473e897e736e4cbbec0d0274a9f03f4897",
+        "rs/bound.rs": "f453bfb52cdba6173bc0dbe71db7227bb6a1bb6bae03d7cbe1da1266c399062a",
+        "rs/brakedown_look.rs": "dc02ca8112f067a8a3ff94539ecbafd0a4b5b3616893bb7dfc4af869766a46ae",
+        "rs/call.rs": "0f959d2522617a7d9ce4e367d31f07e84294e031b103c4d68842fc7d7f20e212",
+        "rs/data/cost.rs": "746b16cff3747b2f8824b5f9163d73810adbbebda330ddd3674208385455e1b9",
+        "rs/data/inner.rs": "6fd946f5874707af0f9db665bbfe0e8b6939f990b3505a3b62891d4ae56fb084",
+        "rs/data/mod.rs": "4062376bc001094c481b813fbd6572a5c35be702662fa8859289a2ac57767d7f",
+        "rs/data/reduction.rs": "05d9438bc729f056b28dd01b00e0db98b8541e9ffc2e4f35bda0890a08516c48",
+        "rs/encode.rs": "a8cf9b0ae042a37e87aa3fd02bf7e85b62f18b751a15a03809a82a2494fab0ff",
+        "rs/examples/dump_formulas.rs": "7d97d1d33986a1b2945b5fad9ea4d28184bcd66a7edfb49a60f9bb505bd77db8",
+        "rs/jets/admission.rs": "8215f397ea598d734e4f8438b3612081ea276005744886c1d5165dad467e60e0",
+        "rs/jets/admission_tests.rs": "a4406c876b5665c3e131046e9034ff003061d5999de2d973d28b83aeef37f3d1",
+        "rs/jets/backends/cpu.rs": "b64836cdd4a97dc5b51f0e903a16d3c331062dc534e5cd501d311a94649045e0",
+        "rs/jets/backends/honeycrisp.rs": "5f1615176d76b0cd5ce036086b07b698a1a2cb307ab66c9417d40b20cbbfda50",
+        "rs/jets/decider.rs": "d657419097976e4514dfa5fe46d3cd1145706feb965cdd93e8f2c52886a0e026",
+        "rs/jets/formulas.rs": "ed867a96ec186ee054ed67f3f2a53bc15560c75771efb81ee21c95e8a064f1cd",
+        "rs/jets/fri_fold.rs": "26c250578dca31e3d5092451952496f9fac4f4a3840b2bea03bea2ebd9788b28",
+        "rs/jets/merkle_verify.rs": "5c4f4b895f2a4184b62d08317f7e6f9b1ad9b232dbd07650e0897d08fce3e546",
+        "rs/jets/mod.rs": "78b1e2acb047f281d9f3bff9d969351dd86d26018dca98036804b8c8c09e8044",
+        "rs/jets/ntt.rs": "b211848344834f36b3f93d2055cdf6deb6a70e23de142459d4d57c1f520a875b",
+        "rs/jets/poly_eval.rs": "59b383fa86c1dfb92d212ddc30c8cd38af0c240c1eedcf2400edf10995d2e28a",
+        "rs/jets/registry.rs": "87c8cf17f2c8ef0246adba3ee400340ebe0957d8fab04de160736f99af446088",
+        "rs/jets/state.rs": "4afb68c5387062a102b0fc5e58053839c2e2b85a43ee8ebe9214b91683de1272",
+        "rs/lib.rs": "aa50a00f868258d98dfcdd415daf88ae82bc4551d50f3637d533258e45cf05aa",
+        "rs/parallel.rs": "7b96e0411e6d7c234a5472641e726075bbb6c8735e35ff6ac7293022093b224b",
+        "rs/patterns/add.rs": "d8168977d3290f5baa745c7f822a61c2b7770f64101b754417a9473abed67b5a",
+        "rs/patterns/and.rs": "21fabce2e05385c6b513ead177fa096a95f17cf55bef578c9c2acdd8b1da750c",
+        "rs/patterns/axis.rs": "391e8d83008cfb35ab6b344236fb91250ba133e6b344e31445f5f018f2c81954",
+        "rs/patterns/branch.rs": "75bdf722f3761e4915c957301641eff97339ee41bfee2fd4c5ae97a4a42c398c",
+        "rs/patterns/call.rs": "d31b514af5ad416fba8d2b7f03dbebe6a0d599aa9971e1ac4a285909bd851dcc",
+        "rs/patterns/compose.rs": "f8e66397e92113946ad14ac4f7583bf7491e02a35edef91424e4d1c2e801bcd4",
+        "rs/patterns/cons.rs": "5f36798aecb0e342c21f40532293d9e063469df439d7ac4de54d0c6151b5b764",
+        "rs/patterns/eq.rs": "eaa7536013d56411cee55419dbfd330370e0dc2883056dc6960e07e196da10c6",
+        "rs/patterns/hash.rs": "7221d23070d9517a2e253f1c29d171804ea33045a0a028f17941d226b2425cf6",
+        "rs/patterns/inv.rs": "46853734e70f75685b4a8a7961d215acf05f8e2fbbf40b2a6272373b6145a5e0",
+        "rs/patterns/look.rs": "ef1eed279b67b0b9e4c0b384899c91f9ecf1e3634f8bb0bac5a5c57211e58040",
+        "rs/patterns/lt.rs": "d5c9afd14b29c21f7c70842e5b2ef0d3092a6e975d67619835b8edd052fc3dca",
+        "rs/patterns/mod.rs": "cf63780f4bcdaa3ed91e07e0e149cd69091214cce3de3d0f4c14c60322dbd05c",
+        "rs/patterns/mul.rs": "bf4c11307a93bf63062c17d2d5a14d054d7170095f30d72a47fb59f46a06d5f7",
+        "rs/patterns/not.rs": "de8d7b20350d396f352b48478917ac2976c747679eecb74474fb57cdd0f4111b",
+        "rs/patterns/quote.rs": "4222583dbb99701eebb7bf48d14499f2f63a4a3cf74d10ee9bf8cc81ed266751",
+        "rs/patterns/shl.rs": "df8d1f4ae1077f135595c9e6a05ae8c10574242d0c800e916402055171e2af16",
+        "rs/patterns/sub.rs": "40ea5fd59fa4c91d3107e152d4839f88e801acdd13d300262a33da3c9a888e2c",
+        "rs/patterns/xor.rs": "c7131b2546cad3ea52c1d8d2556a3ac9e986aa4c5a04efd4dfc6081051883d59",
+        "rs/reduce.rs": "eb245dbd83a7a2150bb55bfbbca2204ea9e55d0cdde672ae7b3616dc76eb92e7"
+      }
+    },
+    "joy": {
+      "base_commit": "b3059617ee150be6858647219e2cc0caf5ff14f4",
+      "source_delta_sha256": {
+        "cli/build_cmd.rs": "76bcfb917465cfdaaeb66301c3a82059193b4332263fb0f75457adac7667e5b8",
+        "cli/compile.rs": "be22cd754252979c285dfb58db7a284a524d9a6afeef3d87c8c47baf42025bd3",
+        "cli/main.rs": "cc6ae6a341670f7596f7ae7e5e898b9a26ad8584cd274193e44de7d37de3b3c6",
+        "cli/raw_build.rs": "4f2d6635e706f6e77ff5c193655ab525a7e3304ecb384fa5a9f8eae6baef2ac4",
+        "cli/tests/raw_source.rs": "c43d2a0b6d118f6d15d378699ae9bde8e4e4ebc2864a09248d2e9ca73398d2dc",
+        "targets/nox/capabilities.json": "4fa3dd19cee0f8a6cd150ccd5a7ad53fa6f74c235edefe25c469935417c7e2b3"
+      }
+    },
+    "trisha": {
+      "base_commit": "ba5fca686c81dbf4c5cd1970b309553b0d875b14",
+      "source_delta_sha256": {
+        "rs/lower/tests.rs": "6f0ca06cc4e0d30d4851b5ca34e7b3271edfdf5311770e61cad4fb1bef49639d",
+        "rs/tests/struct_literal_layout.rs": "b938e94ec82db2e255d2c3ba92ae71537fd2beb1b7db27f950a5226f70744d9b"
+      }
+    }
+  },
+  "checks": [
+    {
+      "repo": "trident",
+      "command": "cargo test --release --locked",
+      "log": "/tmp/trident-04-noun-full.log",
+      "log_sha256": "c7b77964da9ebfb72ba0942f50894b1ade77a318d483d46651961bfad19d7c8d",
+      "tests": {
+        "passed": 836,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repo": "trident",
+      "command": "cargo test --release --locked -p trident-silicon",
+      "log": "/tmp/trident-04-noun-silicon.log",
+      "log_sha256": "0f36bba35ee0674de4180ead64de83c46097f42847c7ad966f42fb455be5e076",
+      "tests": {
+        "passed": 34,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repo": "trident",
+      "command": "cargo test --release --locked --lib",
+      "log": "/tmp/trident-04-noun-lib.log",
+      "log_sha256": "4dc9b9b95913638e5eddca784537f818345735dad7d69bb3bd8d2ef56afe56c0",
+      "tests": {
+        "passed": 683,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repo": "trident",
+      "command": "cargo test --release --locked --test native_noun",
+      "log": "/tmp/trident-04-noun-tests.log",
+      "log_sha256": "7a4111ad79125ed77b8dd21a11e9d9fc721aab48fec54bcdf9b18c179a1766ce",
+      "tests": {
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repo": "trident",
+      "command": "cargo check --workspace --all-targets --locked",
+      "log": "/tmp/trident-04-noun-check.log",
+      "log_sha256": "f4dfc1943b90a726b7f34ae93ecff4fe637f95900101a114e61c1bc15a09b919"
+    },
+    {
+      "repo": "joy",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "log": "/tmp/joy-04-raw-full.log",
+      "log_sha256": "af5511bc826d0219b6b6bd1630b96e26b7b727342152601c4968a828522da9d3",
+      "tests": {
+        "passed": 88,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repo": "joy",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "log": "/tmp/joy-04-raw-check.log",
+      "log_sha256": "c32e0c5a3d89a62109cbb0cf2f3250b6770146717f7c02a8d7ffae29cfaafc2e"
+    },
+    {
+      "repo": "trisha",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "log": "/tmp/trisha-04-tir-tests.log",
+      "log_sha256": "2ec616d5b4aa7a8cd80c84cc61f274fdadea94e5050ad8fef4396eab9484d18e",
+      "tests": {
+        "passed": 362,
+        "failed": 0,
+        "ignored": 4
+      }
+    },
+    {
+      "repo": "trisha",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "log": "/tmp/trisha-04-tir-bench.log",
+      "log_sha256": "dc11340519bb6160a00a9fba863fab7eba6b24e8c3b64f1a23de9aa0793685f3"
+    }
+  ],
+  "formal_audit": {
+    "command": "target/release/trident audit lib/vm/nox/noun.tri --json",
+    "exit_code": 2,
+    "verdict": "unknown",
+    "reason": "intrinsic declarations have no scalar bodies",
+    "log_sha256": "78881b16943b0cf3b3f8e9496386ae9cd2cc17c05e26de287f33f5549821b6c4"
+  },
+  "scope_notes": [
+    "Full root suite followed by final diagnostic cleanup: library683 and native17 rerun on final code. Silicon34 reported separately.",
+    "Trisha four existing heavy proof gates ignored; no claim they ran.",
+    "Source ART1 seed compilation only; SH1 control flow/collections/JOB1 and SH2+ remain open."
+  ]
+}

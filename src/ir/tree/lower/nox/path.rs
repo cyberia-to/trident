@@ -90,3 +90,15 @@ pub(super) fn element_access(base: Noun, index: u64) -> LowerResult {
     path.append_element(index)?;
     Ok(seq(base, path.access()))
 }
+
+/// Digest limbs occupy a balanced pair; source tuples occupy a cons-list.
+pub(super) fn aggregate_element(base: Noun, ty: Option<&ast::Type>, index: u64) -> LowerResult {
+    if matches!(ty, Some(ast::Type::Digest)) {
+        if index >= 4 {
+            return Err("nox: digest has four limbs".into());
+        }
+        Ok(seq(base, nox_axis(4 + index)))
+    } else {
+        element_access(base, index)
+    }
+}

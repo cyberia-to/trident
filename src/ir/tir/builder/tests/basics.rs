@@ -53,7 +53,7 @@ fn test_minimal_program() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     assert!(
         ops.iter().any(|op| matches!(op, TIROp::Entry(_))),
@@ -114,7 +114,7 @@ fn test_if_else_produces_structural_op() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     let has_if_else = ops.iter().any(|op| matches!(op, TIROp::IfElse { .. }));
     assert!(has_if_else, "expected TIROp::IfElse in output");
@@ -151,7 +151,7 @@ fn test_for_loop_produces_loop_op() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     let has_loop = ops.iter().any(|op| matches!(op, TIROp::Loop { .. }));
     assert!(has_loop, "expected TIROp::Loop in output");
@@ -187,7 +187,7 @@ fn test_arithmetic_sequence() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     let flat: Vec<String> = ops.iter().map(|op| format!("{}", op)).collect();
     let joined = flat.join(" | ");
@@ -250,7 +250,7 @@ fn test_module_no_preamble() {
         }))],
     };
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     assert!(
         !ops.iter().any(|op| matches!(op, TIROp::Entry(_))),
@@ -292,7 +292,7 @@ fn test_if_only_produces_structural_op() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
     let has_if_only = ops.iter().any(|op| matches!(op, TIROp::IfOnly { .. }));
     assert!(has_if_only, "expected TIROp::IfOnly in output");
 }
@@ -324,7 +324,7 @@ fn test_let_and_var_ref() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     let flat: Vec<String> = ops.iter().map(|op| format!("{}", op)).collect();
     assert!(flat.contains(&"push 42".to_string()), "expected push 42");
@@ -364,7 +364,7 @@ fn test_intrinsic_pub_read_write() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     let has_read = ops.iter().any(|op| matches!(op, TIROp::ReadIo(1)));
     let has_write = ops.iter().any(|op| matches!(op, TIROp::WriteIo(1)));
@@ -412,7 +412,7 @@ fn test_if_else_nested_bodies_have_content() {
         })),
     })]);
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     for op in &ops {
         if let TIROp::IfElse {
@@ -471,7 +471,7 @@ fn typed_entry_metadata_resolves_source_order_without_machine_io() {
     use crate::tir::EntryLeaf;
     let source = "program entry\nstruct Pair { flag: Bool, count: U32 }\nfn main(first: Field, pair: Pair, array: [Bool; 2], last: XField) {}";
     let file = crate::parse_source_silent(source, "entry.tri").unwrap();
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
     let position = ops
         .iter()
         .position(|op| matches!(op, TIROp::EntryParameters(_)))
@@ -500,6 +500,7 @@ fn typed_entry_metadata_resolves_source_order_without_machine_io() {
     library.kind = FileKind::Module;
     assert!(!make_builder()
         .build_file(&library)
+        .unwrap()
         .iter()
         .any(|op| matches!(op, TIROp::EntryParameters(_) | TIROp::Entry(_))));
 }

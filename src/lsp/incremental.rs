@@ -228,6 +228,7 @@ pub(super) fn classify_edit_scope(
                             | Lexeme::XFieldTy
                             | Lexeme::BoolTy
                             | Lexeme::U32Ty
+                            | Lexeme::NounTy
                             | Lexeme::DigestTy
                             | Lexeme::LBracket
                             | Lexeme::RBracket

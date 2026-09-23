@@ -228,6 +228,13 @@ impl TerrainConfig {
                 "hash",
                 "divine",
                 "os.state.read",
+                "nox_noun_atom",
+                "nox_noun_pair",
+                "nox_noun_head",
+                "nox_noun_tail",
+                "nox_noun_as_field",
+                "nox_noun_eq",
+                "nox_noun_identity",
             ]
             .into_iter()
             .map(str::to_owned)

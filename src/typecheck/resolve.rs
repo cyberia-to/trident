@@ -94,6 +94,12 @@ impl TypeChecker {
     /// Resolve an AST type to a semantic type, substituting size parameters.
     pub(super) fn resolve_type_with_subs(&mut self, ty: &Type, subs: &BTreeMap<String, u64>) -> Ty {
         match ty {
+            Type::Noun => {
+                if self.target_config.name != "nox" {
+                    self.error("Noun requires the native nox target".into(), Span::dummy());
+                }
+                Ty::Noun
+            }
             Type::Field => Ty::Field,
             Type::XField => Ty::XField(self.target_config.xfield_width),
             Type::Bool => Ty::Bool,

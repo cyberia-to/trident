@@ -1,8 +1,9 @@
 # Native compiler data — SH0.2
 
 This is the version 1 data contract for [soft3 self-hosting](self-hosting.md).
-It specifies the 0.4 implementation target. The released compiler does not yet
-accept the `Noun` primitive or the library APIs below. SH1 implements them;
+It specifies the 0.4 implementation target. The 0.4 development compiler now
+accepts the `Noun` primitive and seven `vm.nox.noun` operations; the collection
+APIs below remain SH1 work. The stable release does not include this extension;
 SH0.3 specifies their job/artifact transport and SH0.4 their runtime budgets.
 The [conformance receipt](../audit/self-hosting/native-data.md) distinguishes
 Rust model tests and actual nox reductions from future source-language support.
@@ -34,8 +35,8 @@ must never silently enter the current flat-word adapter.
 
 ## Minimal intrinsic API
 
-Proposed module: `vm.nox.noun`. Signatures are normative for SH1; declarations
-must land with AST/typechecker, lowering and target-capability support together.
+Module: `vm.nox.noun`. The 0.4 implementation includes these declarations,
+AST/typechecker, direct lowering and target-capability support together.
 All operations are deterministic and pure with respect to program state.
 Allocation or reduction exhaustion can still fail an execution.
 

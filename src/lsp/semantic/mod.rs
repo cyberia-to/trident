@@ -226,9 +226,12 @@ fn classify_lexeme(
         | Lexeme::Match => Some((TT_KEYWORD, 0)),
         Lexeme::True | Lexeme::False => Some((TT_ENUM_MEMBER, 0)),
 
-        Lexeme::FieldTy | Lexeme::XFieldTy | Lexeme::BoolTy | Lexeme::U32Ty | Lexeme::DigestTy => {
-            Some((TT_TYPE, MOD_DEFAULT_LIBRARY))
-        }
+        Lexeme::FieldTy
+        | Lexeme::XFieldTy
+        | Lexeme::BoolTy
+        | Lexeme::U32Ty
+        | Lexeme::DigestTy
+        | Lexeme::NounTy => Some((TT_TYPE, MOD_DEFAULT_LIBRARY)),
 
         Lexeme::Integer(_) => Some((TT_NUMBER, 0)),
 

@@ -96,6 +96,7 @@ fn lexeme_to_tk(lexeme: &Lexeme) -> u64 {
         Lexeme::BoolTy => 25,
         Lexeme::U32Ty => 26,
         Lexeme::DigestTy => 27,
+        Lexeme::NounTy => panic!("Noun is outside the legacy RAM compiler fixture"),
         Lexeme::LParen => 28,
         Lexeme::RParen => 29,
         Lexeme::LBrace => 30,
@@ -346,6 +347,7 @@ impl AstBuilder {
 
     fn serialize_type(&mut self, ty: &Type) -> u64 {
         match ty {
+            Type::Noun => panic!("Noun is outside the legacy RAM compiler fixture"),
             Type::Field => self.emit(NK_TYPE_FIELD, [0; 7]),
             Type::XField => self.emit(NK_TYPE_XFIELD, [0; 7]),
             Type::Bool => self.emit(NK_TYPE_BOOL, [0; 7]),

@@ -13,6 +13,8 @@ pub enum Ty {
     U32,
     /// Hash digest — width in field elements (e.g. 5 for Tip5, 4 for RPO).
     Digest(u32),
+    /// Immutable native tree, with no fixed field-word layout.
+    Noun,
     Array(Box<Ty>, u64),
     Tuple(Vec<Ty>),
     Struct(StructTy),
@@ -27,49 +29,60 @@ pub struct StructTy {
 }
 
 impl StructTy {
-    pub fn width(&self) -> u32 {
+    pub fn width(&self) -> Option<u32> {
         self.fields
             .iter()
-            .fold(0u32, |n, (_, ty, _)| n.saturating_add(ty.width()))
+            .try_fold(0u32, |n, (_, ty, _)| Some(n.saturating_add(ty.width()?)))
+    }
+
+    /// Field type and visibility, independent of any stack representation.
+    pub fn field(&self, name: &str) -> Option<(Ty, bool)> {
+        self.fields
+            .iter()
+            .find(|(n, _, _)| n == name)
+            .map(|(_, ty, public)| (ty.clone(), *public))
     }
 
     /// Get a field's type and its offset from the "top" of the struct on the stack.
     /// Fields are pushed in order, so first field is deepest.
     /// Returns (type, offset_from_top, is_pub).
     pub fn field_offset(&self, field_name: &str) -> Option<(Ty, u32, bool)> {
-        let total = self.width();
+        let total = self.width()?;
         let mut offset = 0u32;
         for (name, ty, is_pub) in &self.fields {
             if name == field_name {
                 // Offset from top = total - offset - field_width
-                let from_top = total - offset - ty.width();
+                let from_top = total - offset - ty.width()?;
                 return Some((ty.clone(), from_top, *is_pub));
             }
-            offset += ty.width();
+            offset += ty.width()?;
         }
         None
     }
 }
 
 impl Ty {
-    /// Width in field elements (compile-time known for all types).
-    pub fn width(&self) -> u32 {
+    /// Fixed field-word width, absent for native trees and containing aggregates.
+    pub fn width(&self) -> Option<u32> {
         match self {
-            Ty::Field | Ty::Bool | Ty::U32 => 1,
-            Ty::XField(w) => *w,
-            Ty::Digest(w) => *w,
+            Ty::Noun => None,
+            Ty::Field | Ty::Bool | Ty::U32 => Some(1),
+            Ty::XField(w) | Ty::Digest(w) => Some(*w),
             Ty::Array(inner, n) => {
                 let len = u32::try_from(*n).unwrap_or(u32::MAX);
-                inner.width().saturating_mul(len)
+                Some(inner.width()?.saturating_mul(len))
             }
-            Ty::Tuple(elems) => elems.iter().fold(0u32, |n, t| n.saturating_add(t.width())),
+            Ty::Tuple(elems) => elems
+                .iter()
+                .try_fold(0u32, |n, t| Some(n.saturating_add(t.width()?))),
             Ty::Struct(s) => s.width(),
-            Ty::Unit => 0,
+            Ty::Unit => Some(0),
         }
     }
 
     pub fn display(&self) -> String {
         match self {
+            Ty::Noun => "Noun".to_string(),
             Ty::Field => "Field".to_string(),
             Ty::XField(_) => "XField".to_string(),
             Ty::Bool => "Bool".to_string(),

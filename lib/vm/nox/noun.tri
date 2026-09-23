@@ -1,0 +1,39 @@
+module vm.nox.noun
+
+// Native immutable values; allocation and failed projections can trap.
+#[pure]
+#[ensures(as_field(result) == value)]
+#[intrinsic(nox_noun_atom)]
+pub fn atom(value: Field) -> Noun
+
+#[pure]
+#[ensures(eq(head(result), left))]
+#[ensures(eq(tail(result), right))]
+#[intrinsic(nox_noun_pair)]
+pub fn pair(left: Noun, right: Noun) -> Noun
+
+// Requires a pair. Projection of an atom fails execution.
+#[pure]
+#[ensures(eq(pair(result, tail(value)), value))]
+#[intrinsic(nox_noun_head)]
+pub fn head(value: Noun) -> Noun
+
+#[pure]
+#[ensures(eq(pair(head(value), result), value))]
+#[intrinsic(nox_noun_tail)]
+pub fn tail(value: Noun) -> Noun
+
+// Requires an atom. Projection of a pair fails execution.
+#[pure]
+#[ensures(eq(atom(result), value))]
+#[intrinsic(nox_noun_as_field)]
+pub fn as_field(value: Noun) -> Field
+
+#[pure]
+#[ensures(result == (identity(a) == identity(b)))]
+#[intrinsic(nox_noun_eq)]
+pub fn eq(a: Noun, b: Noun) -> Bool
+
+#[pure]
+#[intrinsic(nox_noun_identity)]
+pub fn identity(value: Noun) -> Digest

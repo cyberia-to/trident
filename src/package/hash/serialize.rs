@@ -36,6 +36,7 @@ impl Normalizer {
 
     pub(crate) fn serialize_type(&mut self, ty: &Type) {
         match ty {
+            Type::Noun => self.write_u8(TAG_TY_NOUN),
             Type::Field => self.write_u8(TAG_TY_FIELD),
             Type::Bool => self.write_u8(TAG_TY_BOOL),
             Type::U32 => self.write_u8(TAG_TY_U32),

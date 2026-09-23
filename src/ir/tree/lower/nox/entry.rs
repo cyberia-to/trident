@@ -10,6 +10,30 @@ enum Shape {
 
 impl NoxCompiler {
     pub(super) fn adapt_entry(&self, function: &FnDef, body: Noun) -> LowerResult {
+        if self.raw_entry {
+            if function.params.len() != 1
+                || function.params[0].ty.node != ast::Type::Noun
+                || function.return_ty.as_ref().map(|t| &t.node) != Some(&ast::Type::Noun)
+                || function.name.node.rsplit('.').next() != Some("main")
+            {
+                return Err("raw ART1 entry requires fn main(input: Noun) -> Noun".into());
+            }
+            if self.reads_state {
+                return Err("raw ART1 profile forbids host services".into());
+            }
+            return Ok(seq(nox_cons(nox_axis(1), nox_unit()), body));
+        }
+        if function
+            .params
+            .iter()
+            .any(|p| self.contains_noun(&p.ty.node))
+            || function
+                .return_ty
+                .as_ref()
+                .is_some_and(|t| self.contains_noun(&t.node))
+        {
+            return Err("Noun entry requires the raw ART1 artifact profile".into());
+        }
         let mut words = 0;
         let mut nodes = 0;
         let shapes = function
@@ -53,6 +77,7 @@ impl NoxCompiler {
             return Err("nox: typed entry aggregate layout is too deep or large".into());
         }
         let shape = match ty {
+            ast::Type::Noun => return Err("Noun has no flat input layout".into()),
             ast::Type::Field | ast::Type::Bool | ast::Type::U32 => {
                 *words += 1;
                 Shape::Scalar(match ty {

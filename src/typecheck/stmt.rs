@@ -73,9 +73,9 @@ impl TypeChecker {
                                     self.define_var(&name.node, ty, *mutable);
                                 }
                             }
-                        } else if matches!(resolved_ty, Ty::Digest(_) | Ty::XField(_)) {
+                        } else if let Ty::Digest(width) | Ty::XField(width) = resolved_ty {
                             // Digest decomposition: let (f0, f1, ...) = digest
-                            let dw = resolved_ty.width() as usize;
+                            let dw = width as usize;
                             if names.len() != dw {
                                 self.error(
                                     format!(
@@ -152,8 +152,8 @@ impl TypeChecker {
                 bound,
                 body,
             } => {
-                let _start_ty = self.check_expr(&start.node, start.span);
-                let _end_ty = self.check_expr(&end.node, end.span);
+                self.check_scalar_index(&start.node, start.span, "loop start");
+                self.check_scalar_index(&end.node, end.span, "loop end");
 
                 // Check that start is a constant 0 or Field/U32
                 // end must be a constant or have bounded annotation
@@ -190,8 +190,8 @@ impl TypeChecker {
                         );
                     }
                     true
-                } else if matches!(val_ty, Ty::Digest(_) | Ty::XField(_)) {
-                    let dw = val_ty.width() as usize;
+                } else if let Ty::Digest(width) | Ty::XField(width) = val_ty {
+                    let dw = width as usize;
                     if names.len() != dw {
                         self.error(
                             format!(
@@ -343,9 +343,7 @@ impl TypeChecker {
                                 }
                                 // Validate each field in the pattern
                                 for spf in fields {
-                                    if let Some((field_ty, _, _)) =
-                                        sty.field_offset(&spf.field_name.node)
-                                    {
+                                    if let Some((field_ty, _)) = sty.field(&spf.field_name.node) {
                                         match &spf.pattern.node {
                                             FieldPattern::Literal(Literal::Integer(_)) => {
                                                 if field_ty != Ty::Field && field_ty != Ty::U32 {
@@ -398,9 +396,7 @@ impl TypeChecker {
                         if let Some(sty) = self.structs.get(&name.node).cloned() {
                             for spf in fields {
                                 if let FieldPattern::Binding(var_name) = &spf.pattern.node {
-                                    if let Some((field_ty, _, _)) =
-                                        sty.field_offset(&spf.field_name.node)
-                                    {
+                                    if let Some((field_ty, _)) = sty.field(&spf.field_name.node) {
                                         self.define_var(var_name, field_ty, false);
                                     }
                                 }
