@@ -50,6 +50,7 @@ Implementation reviews and release validation are indexed in
 | [Warrior API](warrior-api.md) | What a warrior may link: the library contract, features, stability |
 | [Self-hosting on soft3](self-hosting.md) | Working SH0–SH8 milestones: native compiler, self-build, reproducible bootstrap and Zheng proofs |
 | [Native compiler data](self-hosting-data.md) | SH0.2 contract: Noun source API, persistent sequences, exact byte encoding and bounds for the 0.4 implementation |
+| [Native compiler jobs](self-hosting-jobs.md) | SH0.3 source packages, job/result/program schemas, identities, diagnostics and complete DAG transport |
 
 ## Token Standards
 

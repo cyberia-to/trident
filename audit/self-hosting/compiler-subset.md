@@ -137,6 +137,13 @@ does not establish input/AST/update/formula/trace arena fit. SH4 measures it.
 
 ## Reproduce and maintain
 
+SH0.3's [job contract](../../reference/self-hosting-jobs.md) adds a complete
+source-package input, entry/options/limits and structured result/diagnostic
+driver to the planned native compiler. Its guest module resolver must process
+the packaged closure without Rust/host fallback. The Rust protocol harness and
+nox artifact codec are not `.tri` compiler dependencies and do not change the
+observed JSON inventory. Runtime resource enforcement remains SH0.4/SH1 work.
+
 From a pinned compatible workspace, at the Trident root:
 
 ```sh

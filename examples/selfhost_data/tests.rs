@@ -1,6 +1,11 @@
 use super::model::*;
 use nox::Reduction;
 
+#[test]
+fn sparse_height32_updates_and_growth_do_not_overflow_u32() {
+    super::model::boundary_tests::sparse_height32_updates_and_growth_do_not_overflow_u32();
+}
+
 fn noun<const N: usize>(ar: &mut Reduction<N>, tag: u64, len: u64, tree: nox::Order) -> nox::Order {
     let tag = atom(ar, tag).unwrap();
     let len = atom(ar, len).unwrap();
