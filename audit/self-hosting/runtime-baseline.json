@@ -1,0 +1,51 @@
+{
+  "arena_reserved_bytes": 6553616,
+  "arena_slots": 65536,
+  "budget": 1000000,
+  "probes": [
+    {
+      "allocated_nodes": 31,
+      "formula_particle": "ff4f582ea19c9830a1b1b151099b6856b93d4bb75def18b6ed8e8e5fea96ed99",
+      "iterations": 0,
+      "output": 0,
+      "reductions": 5,
+      "run_only_agrees": true,
+      "status": "ok",
+      "traced_rows": 5
+    },
+    {
+      "allocated_nodes": 32,
+      "formula_particle": "ff4f582ea19c9830a1b1b151099b6856b93d4bb75def18b6ed8e8e5fea96ed99",
+      "iterations": 1,
+      "output": 1,
+      "reductions": 20,
+      "run_only_agrees": true,
+      "status": "ok",
+      "traced_rows": 20
+    },
+    {
+      "allocated_nodes": 71,
+      "formula_particle": "ff4f582ea19c9830a1b1b151099b6856b93d4bb75def18b6ed8e8e5fea96ed99",
+      "iterations": 16,
+      "output": 16,
+      "reductions": 245,
+      "run_only_agrees": true,
+      "status": "ok",
+      "traced_rows": 245
+    },
+    {
+      "allocated_nodes": 2016,
+      "formula_particle": "ff4f582ea19c9830a1b1b151099b6856b93d4bb75def18b6ed8e8e5fea96ed99",
+      "iterations": 4097,
+      "output": null,
+      "reductions": null,
+      "run_only_agrees": true,
+      "status": "error:Malformed",
+      "traced_rows": 7480
+    }
+  ],
+  "profile": "recursive-sequential-pure-l1-baseline",
+  "trace_row_bytes": 128,
+  "usable_nodes": 49152,
+  "worker_stack_bytes": 134217728
+}
