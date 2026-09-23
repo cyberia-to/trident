@@ -48,3 +48,17 @@ Designed for 25 OSes. The OS is the runtime — storage, accounts, syscalls, bil
 
 See [targets.md](../reference/targets.md) for the full OS model, tier compatibility,
 type/builtin availability, and cost model overview.
+
+## Planned warrior owners
+
+| Family | Owner | Status |
+|---|---|---|
+| Ethereum | vitalina | Stub |
+| Polkadot | gaw | Stub |
+| Solana | tolya | Stub |
+| [Pearl](pearl/README.md) | pearla | Stub — blockchain inference |
+| [Zcash](zcash/README.md) | zenda | Stub |
+
+Ownership records reserve these names. Runtime capabilities require an
+implemented and validated target package from the owner. See
+[planned warriors](../../reference/warrior-api.md#planned-warriors).
