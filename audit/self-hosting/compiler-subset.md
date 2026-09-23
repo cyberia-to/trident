@@ -114,6 +114,27 @@ The six divmod sites are `codegen.tri:1023,1028,1943` and
 `lower.tri:208,739,872`; the port may remove their packed encodings rather than
 introducing divmod solely to preserve foreign-target representations.
 
+## Native data additions (SH0.2)
+
+The [data contract](../../reference/self-hosting-data.md) adds the following
+requirements to the planned native port. These are absent from the observed
+baseline and must enter the generated inventory when their sources land.
+
+| Addition | Implementation consequence / owner |
+|---|---|
+| Primitive `Noun`; nested native aggregates | Trident AST/typechecker/intrinsic ABI must distinguish subtree slots from field-word widths; foreign targets reject unsupported layouts |
+| `vm.nox.noun` atom/pair/projection/equality/identity operations | Seed lowering with checked shapes and full particle identity; no guest kind-test opcode or host RAM handles |
+| `std.nox.seq.Seq`, `std.nox.bytes.Bytes` and private typed record wrappers | New struct declarations/initializers/field access in the compiler closure; explicit encoding and validated construction |
+| Canonical balanced trees, packed U32 bytes | Bounded traversal and persistent updates; U32 masks, explicit conversions, field subtraction/multiplication/inverse constants; byte helpers need no new divmod opcode |
+| Runtime index/path state | SH1 dynamic access and bounded runtime loops; a fixed formula can already select a runtime axis on raw nox |
+| Explicit IDs, spans, record tags and state roots | Replace 638 syntactic RAM read/write sites with typed tables and state rebinding; complete target records defined during the frontend port |
+
+The new conformance harness is Rust test/reference code, not a `.tri` compiler
+dependency, so `compiler-subset.json` remains unchanged. The 321415-byte closure
+would need 80354 packed words at height 17 if concatenated without metadata;
+per-module padding and the SH0.3 package envelope add to that. This arithmetic
+does not establish input/AST/update/formula/trace arena fit. SH4 measures it.
+
 ## Reproduce and maintain
 
 From a pinned compatible workspace, at the Trident root:

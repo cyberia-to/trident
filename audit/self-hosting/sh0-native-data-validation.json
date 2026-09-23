@@ -1,0 +1,201 @@
+{
+  "date": "2026-09-23",
+  "milestone": "SH0.2",
+  "scope": "native data specification, Rust conformance model and raw nox formula probes; source-language implementation pending SH1",
+  "base_revision": "2894aba992b737fc6cbc37d58d617a8061fb185c",
+  "branch": "feat/0.4-sh0-native-data",
+  "integration_branch": "release/0.4",
+  "platform": "macOS aarch64",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)",
+  "siblings": {
+    "nox": "f8807c5a5b173c286b23d3125ac9ec480a2669b5",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "joy": "d4d8e3dd587ba8d246f4905c9bb24ce3f75429a3",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3",
+    "trisha": "ba5fca686c81dbf4c5cd1970b309553b0d875b14",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442"
+  },
+  "files_sha256": {
+    "examples/selfhost_data.rs": "2e68fdd4dfc8c62d59638b46ca212bef082c6d023f397feafac861605fbc969b",
+    "examples/selfhost_data/model.rs": "c4a8806680e8712ed8ea5866df4e93bb50fa2c08c6384e670368d4490cd2bcc9",
+    "examples/selfhost_data/tests.rs": "04d9963096305a6b54fbc9f6c740acf92610936178dd6afd5d38380da980ed80",
+    "examples/selfhost_data/vm.rs": "b9003ba24019960a182a333c5b29fa9fff1131c5743e72a0f31ecc89d4064f92",
+    "audit/self-hosting/native-data-vectors.json": "750213119b34b11eea951a119066bbee9b343dc486cdbeed8fcd09171f77f051",
+    "reference/self-hosting-data.md": "54954406c12114fdf8414615b7ce59a9fb7f6c9cf638943266bd382b14839636"
+  },
+  "commands": [
+    {
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "log_sha256": "1918f7d4b5bbcec26448dd40c8d764f6080a601e6b0aae77cce99be1f3da5de1",
+      "test_groups": []
+    },
+    {
+      "command": "cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "log_sha256": "9b8908a3da43d32172de0246376a5da2ff5cc5ca747fd2d7db4474a843cfe662",
+      "test_groups": [
+        {
+          "harness": "Running unittests src/lib.rs (target/release/deps/trident-c263c2464c9b2364)",
+          "passed": 683,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running unittests src/main.rs (target/release/deps/trident-644b8b10b7bc0f02)",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running unittests src/bin/trident-lsp.rs (target/release/deps/trident_lsp-c8e363069344f55b)",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/build_context.rs (target/release/deps/build_context-0be08efc04c03146)",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/cli_package.rs (target/release/deps/cli_package-2d3fdf87f724738b)",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/cli_test_execution.rs (target/release/deps/cli_test_execution-f1088e68ff31036d)",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/cli_warriors.rs (target/release/deps/cli_warriors-e23a69684521af53)",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/differential.rs (target/release/deps/differential-d543f090bcb28ae7)",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/formal_audit.rs (target/release/deps/formal_audit-d0314ed2672746c6)",
+          "passed": 17,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/imported_generics.rs (target/release/deps/imported_generics-703652b914c0320d)",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/nox_surface.rs (target/release/deps/nox_surface-9c6e6513740c9e9d)",
+          "passed": 53,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/source_api_parity.rs (target/release/deps/source_api_parity-421866f2463bab1c)",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/target_intrinsics.rs (target/release/deps/target_intrinsics-172253a6b6f05c96)",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/target_packages.rs (target/release/deps/target_packages-8248f8d215f2fe09)",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running tests/warrior_api.rs (target/release/deps/warrior_api-9e75abcc95bc7f24)",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running unittests src/lib.rs (target/release/deps/trident_silicon-8c0a4a558dda658c)",
+          "passed": 34,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Running unittests src/bin/main.rs (target/release/deps/silicon-844099b2a829d7f2)",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Doc-tests trident",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "harness": "Doc-tests trident_silicon",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "command": "cargo test --release --locked --example selfhost_data",
+      "exit_code": 0,
+      "log_sha256": "1daf2147a2edec95e3551c95a58a0909eed8704d4e33d6ab32c51e05aff36e14",
+      "test_groups": [
+        {
+          "harness": "Running unittests examples/selfhost_data.rs (target/release/examples/selfhost_data-5f241098199228ab)",
+          "passed": 18,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    }
+  ],
+  "additional_checks": [
+    {
+      "command": "target/release/examples/selfhost_data --output audit/self-hosting/native-data-vectors.json --check",
+      "exit_code": 0,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "target/release/examples/selfhost_inventory --root . --output audit/self-hosting/compiler-subset.json --check",
+      "exit_code": 0,
+      "output_sha256": "5ed6f74a756ab0e9a32c665768233a8543c4c1859015a6f47cbc5a4c2e2bb67a"
+    },
+    {
+      "command": "selfhost_data --check rejects stale receipt without mutation",
+      "exit_code": 1,
+      "output_sha256": "5f436530391ec026c2972913156577825444b9a5fb8cd79cdaee3941503003ee"
+    }
+  ],
+  "review": [
+    "Determinism, type/shape/range invariants, error persistence and readability reviewed.",
+    "Independent read-only review of nox primitives and the contract/model; suggested negative cases added.",
+    "New Rust files each below 500 lines; rustfmt and git diff --check passed.",
+    "Observed compiler inventory unchanged; inventory example tests passed 5/5."
+  ],
+  "limits": [
+    "No source Noun type, guest collection library or structured Joy transport implemented by this delivery.",
+    "No self-compilation or native Zheng proof of these workloads.",
+    "Default workspace features on macOS aarch64; neural features, six-platform release CI and Triton performance benchmarks not rerun.",
+    "Sparse height32 tests are not validation of billions of elements or compiler-scale runtime evidence."
+  ]
+}

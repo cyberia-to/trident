@@ -94,3 +94,20 @@ size-generic calls require explicit literal size arguments.
 Executable coverage: `tests/nox_surface.rs` compiles source and
 projects, reduces their emitted formulas on nox, and compares runtime
 results and reduction bills with the bundle and cost APIs.
+
+## Planned native compiler data (0.4)
+
+[SH0.2](self-hosting-data.md) specifies first-class Noun values, canonical
+persistent sequences and four-byte U32 packing for exact source bytes. This
+extension requires a new native source type/intrinsic representation and
+structured entry transport; the limits and flat-word ABI above describe the
+existing implementation. Host arena IDs must never stand in for Noun values.
+
+The minimal operations can use existing nox patterns: cons, checked axis/atom
+projection, full particle equality and identity. Dynamic lookup can construct
+an axis formula and evaluate it with deterministic composition. No guest
+`is_atom` operation is assumed, and witness calls cannot supply compiler work.
+Native Boolean results retain 0=true / 1=false. The
+[conformance evidence](../audit/self-hosting/native-data.md) records which small
+formulas actually ran; source-level libraries, bounded runtime loops, complete
+Joy artifact transport and compiler-scale Zheng coverage remain later gates.

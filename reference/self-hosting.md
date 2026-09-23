@@ -125,6 +125,8 @@ Work:
 2. Specify source-visible native data/collection operations, their types,
    bounds, equality, field/byte encoding and persistent update semantics.
    Propagate changes to language/grammar, intrinsic signatures and nox ABI.
+   [SH0.2 native data](self-hosting-data.md) fixes the target contract; SH1 must
+   implement the source type and intrinsic capability together.
 3. Define a versioned logical job/result schema. A job identifies source bytes,
    logical module paths, dependency identities, entry, options and resource
    limits. A result is either a complete nox artifact or structured diagnostics
