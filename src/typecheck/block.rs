@@ -332,7 +332,7 @@ impl TypeChecker {
             Place::FieldAccess(inner, field) => {
                 let (inner_ty, is_mut) = self.check_place(&inner.node, inner.span);
                 if let Ty::Struct(sty) = &inner_ty {
-                    if let Some((field_ty, _, _)) = sty.field_offset(&field.node) {
+                    if let Some((field_ty, _)) = sty.field(&field.node) {
                         (field_ty, is_mut)
                     } else {
                         (Ty::Field, false)
@@ -343,7 +343,7 @@ impl TypeChecker {
             }
             Place::Index(inner, index) => {
                 let (inner_ty, is_mut) = self.check_place(&inner.node, inner.span);
-                self.check_expr(&index.node, index.span);
+                self.check_scalar_index(&index.node, index.span, "index");
                 if let Ty::Array(elem_ty, _) = &inner_ty {
                     (*elem_ty.clone(), is_mut)
                 } else {

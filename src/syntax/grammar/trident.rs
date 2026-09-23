@@ -222,6 +222,7 @@ fn rules() -> Vec<(&'static str, Node)> {
                 str_("Bool"),
                 str_("U32"),
                 str_("Digest"),
+                str_("Noun"),
             ]),
         ),
         (

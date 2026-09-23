@@ -40,7 +40,7 @@ CORE            256K         64K
 vm spec          32K         16K
 language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun            128K        128K      ← 256K cleared in 0.2.0 (NounBuilder, subject, cost)
+Noun            128K        128K      ← native source Noun + raw ART1 in 0.4; reusable control flow pending
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K

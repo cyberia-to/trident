@@ -66,7 +66,7 @@ fn pass_through_hash_emits_minimal_ops() {
     builder
         .intrinsic_map
         .insert("hash".to_string(), "hash".to_string());
-    let ops = builder.build_file(&file);
+    let ops = builder.build_file(&file).unwrap();
 
     // Should be: FnStart, Hash, Return, FnEnd — 4 ops total.
     let fn_ops: Vec<&TIROp> = ops
@@ -122,7 +122,7 @@ fn non_pass_through_still_compiles_normally() {
         }))],
     };
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     // Should contain dup and add — NOT the pass-through shortcut.
     let flat: Vec<String> = ops.iter().map(|op| format!("{}", op)).collect();
@@ -196,7 +196,7 @@ fn pass_through_user_call_emits_call_and_return() {
         ],
     };
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     // Find wrapper's ops: between FnStart("wrapper") and FnEnd.
     let wrapper_start = ops
@@ -296,7 +296,7 @@ fn pass_through_multi_width_params_emits_minimal_ops() {
         ],
     };
 
-    let ops = make_builder().build_file(&file);
+    let ops = make_builder().build_file(&file).unwrap();
 
     let wrapper_start = ops
         .iter()

@@ -53,6 +53,7 @@ pub fn format_ast_type(ty: &Type) -> String {
         Type::XField => "XField".to_string(),
         Type::Bool => "Bool".to_string(),
         Type::U32 => "U32".to_string(),
+        Type::Noun => "Noun".to_string(),
         Type::Digest => "Digest".to_string(),
         Type::Array(inner, size) => format!("[{}; {}]", format_ast_type(inner), size),
         Type::Tuple(elems) => {

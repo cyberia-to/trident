@@ -12,9 +12,33 @@ impl NoxCompiler {
         entry: &ast::File,
         flags: &BTreeSet<String>,
     ) -> Result<Noun, String> {
+        self.compile_modules_profile(files, entry, flags, false)
+    }
+
+    /// Compile `fn main(input: Noun) -> Noun` for ART1 raw profiles 0/0.
+    pub fn compile_raw_modules(
+        &mut self,
+        files: &[&ast::File],
+        entry: &ast::File,
+        flags: &BTreeSet<String>,
+    ) -> Result<Noun, String> {
+        self.compile_modules_profile(files, entry, flags, true)
+    }
+
+    fn compile_modules_profile(
+        &mut self,
+        files: &[&ast::File],
+        entry: &ast::File,
+        flags: &BTreeSet<String>,
+        raw: bool,
+    ) -> Result<Noun, String> {
         // A compiler may be reused; symbols and state from its last program
         // must not affect this one.
         *self = Self::new();
+        self.raw_entry = raw;
+        if raw && !entry.declarations.is_empty() {
+            return Err("raw ART1 entry has no flat I/O declarations".into());
+        }
         let mut aliases = BTreeMap::new();
         for file in files {
             self.current_module = file.name.node.clone();

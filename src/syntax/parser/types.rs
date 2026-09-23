@@ -29,6 +29,10 @@ impl Parser {
                 self.advance();
                 Type::U32
             }
+            Lexeme::NounTy => {
+                self.advance();
+                Type::Noun
+            }
             Lexeme::DigestTy => {
                 self.advance();
                 Type::Digest
@@ -57,7 +61,7 @@ impl Parser {
             _ => {
                 self.error_with_help(
                     "expected type",
-                    "valid types are: Field, XField, Bool, U32, Digest, [T; N], (T, U), or a struct name",
+                    "valid types are: Field, XField, Bool, U32, Digest, Noun, [T; N], (T, U), or a struct name",
                 );
                 Type::Field // fallback
             }

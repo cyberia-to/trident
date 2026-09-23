@@ -438,7 +438,7 @@ mod abi_tests {
                 builder.build_call(name, &[], &[]);
                 assert_eq!(
                     builder.stack.stack_depth(),
-                    signature.return_ty.width(),
+                    signature.return_ty.width().unwrap(),
                     "{name}, digest={digest}, extension={extension}"
                 );
                 if name == "ram_read_block" {
@@ -479,7 +479,7 @@ mod abi_tests {
             pass_through.emit_call_only(name, &[], signature.params.len());
             assert_eq!(
                 regular.stack.stack_depth(),
-                signature.return_ty.width(),
+                signature.return_ty.width().unwrap(),
                 "{name}"
             );
             assert_eq!(

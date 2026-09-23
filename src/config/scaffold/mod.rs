@@ -232,6 +232,7 @@ fn spec_comment(requires: &[&str], ensures: &[&str]) -> String {
 /// Generate a default value expression for a type.
 pub fn default_value(ty: &Type) -> String {
     match ty {
+        Type::Noun => "nox_noun_atom(0)".to_string(),
         Type::Field | Type::XField | Type::U32 => "0".to_string(),
         Type::Bool => "false".to_string(),
         Type::Digest => "0".to_string(),

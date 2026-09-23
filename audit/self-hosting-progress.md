@@ -7,12 +7,14 @@ retain their original observations; they are not substituted for gate evidence.
 
 ## Current position
 
-**Next: SH1 native source data and Joy protocol admission.** SH0's compiler
+**Next: SH1 reusable native control flow, collections and Joy job admission.** SH0's compiler
 inventory, data/job formats and runtime/control-flow contract are reviewed and
 specified. Nox's complete codec, lifetime arena allowance and sequential heap
 executor and Joy's structured raw run are in `release/0.4`.
-The native source Noun type, collections, reusable source calls/loops and
-production compiler JOB1/RES1 admission remain required before SH1 closes.
+Native source Noun and source→ART1→Joy execution are implemented and tested
+in the current delivery branches; see [evidence](self-hosting/native-noun.md).
+Collections, reusable source calls/loops and production compiler JOB1/RES1
+admission remain required before SH1 closes.
 No self-compilation or compiler execution proof is claimed.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
@@ -23,7 +25,7 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 | Gate | Status | Missing acceptance evidence |
 |---|---|---|
 | [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Closed — contract gate | [Owner review and runtime evidence](self-hosting/native-runtime.md) |
-| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime foundation delivered | Source Noun/collections, reusable lowering and full compiler-job transport |
+| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime foundation delivered | Collections, reusable lowering and full compiler-job transport |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Open — needs SH1 | `.tri` compiler running on nox emits a separately executed nox program |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — needs SH2 | Whole compiler subset and executed differential/rejection corpus |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — starts after SH1 | Real closure, compiler-scale memory/runtime and boundary receipts |
@@ -66,8 +68,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH1 Joy raw transport slice: [PR5](https://github.com/cyberia-to/joy/pull/5),
   complete noun execution/publication with NoTrace;85 workspace tests passed.
 - [ ] SH1 Joy compiler-job slice: production JOB1/RES1 admission and binding.
-- [ ] SH1 Trident slice: implement Noun type/intrinsics and raw entry/artifact
-  generation; port native collections; reusable calls and bounded source loops.
+- [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
+- [ ] SH1 reusable calls/loops and dynamic indexing: [concrete next design](self-hosting/native-control-design.md).
+- [ ] SH1 native Seq/Bytes source libraries.
 
 Resolve protocol or language choices explicitly in their owner contracts before
 dependent implementation. Keep the next executable task and its dependencies
@@ -77,7 +80,7 @@ visible here as those decisions land.
 
 | Blocker | Owner / first gate | Baseline |
 |---|---|---|
-| RAM-based compiler structures; no source-level native dynamic data API | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
+| RAM-based compiler structures; native collection libraries still pending | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Calls inline; loops unroll; dynamic indexing and large typed entries reject | Trident / SH1 | [nox source probes](self-hosting-2026-09-23/soft3-source-probes.json) |
 | Full compiler arena/memory scale and source-loop lowering still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor and node cap delivered; compiler-scale workload remains pending |
 | Production compiler JOB1/RES1 admission is pending | Joy / SH1 | Complete raw ART1 transport delivered; compiler profile remains rejected |

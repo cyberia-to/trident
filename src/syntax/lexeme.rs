@@ -36,6 +36,7 @@ pub enum Lexeme {
     BoolTy,
     U32Ty,
     DigestTy,
+    NounTy,
 
     // Symbols
     LParen,       // (
@@ -109,6 +110,7 @@ impl Lexeme {
             "XField" => Some(Lexeme::XFieldTy),
             "Bool" => Some(Lexeme::BoolTy),
             "U32" => Some(Lexeme::U32Ty),
+            "Noun" => Some(Lexeme::NounTy),
             "Digest" => Some(Lexeme::DigestTy),
             "_" => Some(Lexeme::Underscore),
             _ => None,
@@ -143,6 +145,7 @@ impl Lexeme {
             Lexeme::XFieldTy => "'XField'",
             Lexeme::BoolTy => "'Bool'",
             Lexeme::U32Ty => "'U32'",
+            Lexeme::NounTy => "'Noun'",
             Lexeme::DigestTy => "'Digest'",
             Lexeme::LParen => "'('",
             Lexeme::RParen => "')'",

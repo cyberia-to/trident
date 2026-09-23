@@ -88,10 +88,12 @@ impl TridentLsp {
                         .map(|(n, t, _)| format!("    {}: {}", n, t.display()))
                         .collect();
                     let info = format!(
-                        "```trident\nstruct {} {{\n{}\n}}\n```\nWidth: {} field elements",
+                        "```trident\nstruct {} {{\n{}\n}}\n```\nWidth: {}",
                         st.name,
                         fields.join(",\n"),
                         st.width()
+                            .map(|w| format!("{w} field elements"))
+                            .unwrap_or_else(|| "variable (native noun)".into())
                     );
                     return Ok(Some(Hover {
                         contents: HoverContents::Markup(MarkupContent {
@@ -216,7 +218,7 @@ impl TridentLsp {
             });
         }
 
-        let type_kws = ["Field", "XField", "Bool", "U32", "Digest"];
+        let type_kws = ["Field", "XField", "Bool", "U32", "Digest", "Noun"];
         for ty in &type_kws {
             items.push(CompletionItem {
                 label: ty.to_string(),

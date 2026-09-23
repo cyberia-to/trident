@@ -45,6 +45,10 @@ Preserve the existing native loop's observable behavior during its replacement:
 - The start must initially be a compile-time canonical integer. For a constant
   end, execute candidates start through end-1; end<=start is empty. The old
   native backend ignores a `bounded` annotation when end is constant.
+- Outer immutable loop indices currently become constants during unrolling.
+  Preserve their use as inner starts/ends (`0..i`, `i..3`) through finite range
+  metadata when loops become reusable. This does not authorize arbitrary
+  dynamic starts. Loop-index array reads/writes must retain checked behavior.
 - For a dynamic end and bound B, consider exactly B candidates start+j. Evaluate
   end once per candidate in the current environment. Execute the body only if
   that candidate is smaller than end. A false guard skips that body; later

@@ -5,6 +5,7 @@
 // ---
 pub mod display;
 pub mod navigate;
+pub(crate) mod surface;
 
 use crate::span::Spanned;
 
@@ -192,6 +193,8 @@ pub enum Type {
     Bool,
     U32,
     Digest,
+    /// Native immutable nox tree; no fixed field-word width.
+    Noun,
     Array(Box<Type>, ArraySize),
     Tuple(Vec<Type>),
     Named(ModulePath),

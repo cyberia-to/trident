@@ -95,13 +95,14 @@ Executable coverage: `tests/nox_surface.rs` compiles source and
 projects, reduces their emitted formulas on nox, and compares runtime
 results and reduction bills with the bundle and cost APIs.
 
-## Planned native compiler data (0.4)
+## Native compiler data (0.4 development)
 
 [SH0.2](self-hosting-data.md) specifies first-class Noun values, canonical
 persistent sequences and four-byte U32 packing for exact source bytes. This
-extension requires a new native source type/intrinsic representation and
-structured entry transport; the limits and flat-word ABI above describe the
-existing implementation. Host arena IDs must never stand in for Noun values.
+extension now implements the Noun type, seven `vm.nox.noun` intrinsics and
+raw ART1 entry/emission. The limits and flat-word ABI above describe the
+legacy adapter; Noun entries require `joy build --emit artifact`.
+Host arena IDs must never stand in for Noun values.
 
 The minimal operations can use existing nox patterns: cons, checked axis/atom
 projection, full particle equality and identity. Dynamic lookup can construct
@@ -109,8 +110,9 @@ an axis formula and evaluate it with deterministic composition. No guest
 `is_atom` operation is assumed, and witness calls cannot supply compiler work.
 Native Boolean results retain 0=true / 1=false. The
 [conformance evidence](../audit/self-hosting/native-data.md) records which small
-formulas actually ran; source-level libraries, bounded runtime loops, complete
-Joy artifact transport and compiler-scale Zheng coverage remain later gates.
+formulas actually ran. Joy transports and executes complete raw artifacts;
+source collection libraries, reusable runtime loops/calls, production JOB1/RES1
+admission and compiler-scale Zheng coverage remain later gates.
 
 [SH0.3](self-hosting-jobs.md) defines explicit structured raw-noun/compiler-job
 profiles and canonical NOXDAG01 transport. These preserve complete result roots;

@@ -17,6 +17,7 @@ use super::TIRBuilder;
 
 pub(crate) fn resolve_type_width(ty: &Type, tc: &TerrainConfig) -> u32 {
     match ty {
+        Type::Noun => unreachable!("Noun rejected by checked TIR boundary"),
         Type::Field | Type::Bool | Type::U32 => 1,
         Type::XField => tc.xfield_width,
         Type::Digest => tc.digest_width,
@@ -35,6 +36,7 @@ pub(crate) fn resolve_type_width_with_subs(
     tc: &TerrainConfig,
 ) -> u32 {
     match ty {
+        Type::Noun => unreachable!("Noun rejected by checked TIR boundary"),
         Type::Field | Type::Bool | Type::U32 => 1,
         Type::XField => tc.xfield_width,
         Type::Digest => tc.digest_width,
@@ -57,6 +59,7 @@ impl TIRBuilder {
     pub(crate) fn entry_leaves(&self, ty: &Type, out: &mut Vec<crate::tir::EntryLeaf>) {
         use crate::tir::EntryLeaf;
         match ty {
+            Type::Noun => unreachable!("Noun rejected by checked TIR boundary"),
             Type::Field => out.push(EntryLeaf::Field),
             Type::Bool => out.push(EntryLeaf::Bool),
             Type::U32 => out.push(EntryLeaf::U32),

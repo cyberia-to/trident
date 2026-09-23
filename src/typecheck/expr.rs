@@ -243,7 +243,7 @@ impl TypeChecker {
             Expr::FieldAccess { expr: inner, field } => {
                 let inner_ty = self.check_expr(&inner.node, inner.span);
                 if let Ty::Struct(sty) = &inner_ty {
-                    if let Some((field_ty, _, _)) = sty.field_offset(&field.node) {
+                    if let Some((field_ty, _)) = sty.field(&field.node) {
                         field_ty
                     } else {
                         self.error(
@@ -262,7 +262,7 @@ impl TypeChecker {
             }
             Expr::Index { expr: inner, index } => {
                 let inner_ty = self.check_expr(&inner.node, inner.span);
-                let _idx_ty = self.check_expr(&index.node, index.span);
+                self.check_scalar_index(&index.node, index.span, "index");
                 match &inner_ty {
                     Ty::Array(elem_ty, length) => {
                         if let Expr::Literal(Literal::Integer(index)) = index.node {
@@ -397,6 +397,9 @@ impl TypeChecker {
                 }
             }
             BinOp::Eq => {
+                if lhs.width().is_none() || rhs.width().is_none() {
+                    self.error("Noun equality requires vm.nox.noun.eq".into(), span);
+                }
                 if lhs != rhs {
                     self.error(
                         format!(
@@ -478,7 +481,7 @@ impl TypeChecker {
                 let mut ty = info.ty.clone();
                 for field in &parts[split..] {
                     if let Ty::Struct(ref sty) = ty {
-                        if let Some((field_ty, _, _)) = sty.field_offset(field) {
+                        if let Some((field_ty, _)) = sty.field(field) {
                             ty = field_ty;
                         } else {
                             self.error(
