@@ -1,6 +1,9 @@
 # Plan: Self-Hosted Typechecker (typecheck.tri) + Prove End-to-End
 
-Status: IN PROGRESS
+Status: historical prototype plan; superseded 2026-09-23.
+Follow [self-hosting on soft3](../../reference/self-hosting.md) and its
+[progress ledger](../../audit/self-hosting-progress.md). The RAM/Triton design
+and completion language below describe the old plan, not current readiness.
 
 ## Context
 
