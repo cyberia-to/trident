@@ -7,14 +7,20 @@ retain their original observations; they are not substituted for gate evidence.
 
 ## Current position
 
-**Next: SH0.** No SH0–SH8 implementation milestone is closed. The existing
+**Next: SH0.2.** SH0.1 has a reproducible source inventory and migration map.
+No complete SH0–SH8 implementation milestone is closed. The existing
 Rust compiler/nox/Joy foundation and small probes are baseline evidence.
 The milestone contract is now written; native data/job APIs and limits still
 need their detailed owner specifications and implementation.
 
+Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
+`360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
+Active isolated checkout: `~/cyber/.worktrees/selfhost-0.4/trident`.
+PRs target the integration branch; master stays unchanged until 0.4 acceptance.
+
 | Gate | Status | Missing acceptance evidence |
 |---|---|---|
-| [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Open — next | Full feature inventory; concrete data/job/codec/limit contract and vectors |
+| [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Open — SH0.1 complete | Native data/job/codec/limit contract, vectors and owner review |
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Open — needs SH0 | Native collection/loop foundation and structured Joy transport |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Open — needs SH1 | `.tri` compiler running on nox emits a separately executed nox program |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — needs SH2 | Whole compiler subset and executed differential/rejection corpus |
@@ -26,11 +32,13 @@ need their detailed owner specifications and implementation.
 
 ## Next work, in order
 
-- [ ] SH0.1 Inventory the actual compiler/library closure and map constructs to
+- [x] SH0.1 Inventory the actual compiler/library closure and map constructs to
   existing support, seed extensions and native rewrites. Record original modules
-  and replacement owners, including the missing `.tri` nox generator. Planned
-  output: `audit/self-hosting/compiler-subset.md`, with source revisions and a
-  row for each construct/module; this inventory file is not implemented yet.
+  and replacement owners, including the missing `.tri` nox generator.
+  [Inventory and disposition](self-hosting/compiler-subset.md),
+  [machine-readable closure](self-hosting/compiler-subset.json),
+  [validation receipt](self-hosting/sh0-inventory-validation.json); regenerate/check
+  with `cargo run --locked --example selfhost_inventory -- --root . --output audit/self-hosting/compiler-subset.json --check`.
 - [ ] SH0.2 Specify typed native collections, byte encoding, identity/equality,
   persistence, bounds and the minimal source API. Update `reference/language.md`,
   `reference/grammar.md` and `reference/nox.md` together with the inventory.
@@ -90,6 +98,7 @@ private/succinct compilation and semantic preservation remain separate claims.
 |---|---|---|
 | 2026-09-23 | Compiler prototype and native soft3 assessment | Baseline probes recorded; self-compilation remains open |
 | 2026-09-23 | Working SH0–SH8 contract, dependencies, owners and acceptance | Documentation only; start SH0.1 inventory |
+| 2026-09-23 | SH0.1 AST inventory tool and migration disposition on the 0.4 delivery branch | 10 modules, 985 functions, 321415 bytes; proceed to SH0.2 native data contract |
 
 For a gate update, record its receipt link, exact owner commits/patches, passed
 and failed conditions, next action and any changed estimate. Preserve previous
