@@ -115,6 +115,20 @@ and `as_u32()` (the latter inserts a range check).
 
 For extension field types, see [Extension Field](#16-extension-field).
 
+### Planned native data extension (0.4)
+
+[Native compiler data](self-hosting-data.md) specifies the new `Noun` primitive,
+checked `vm.nox.noun` operations and persistent `std.nox.seq` / `std.nox.bytes`
+wrappers. This is an SH0 contract; the released parser/typechecker and intrinsic
+ABI do not implement it yet. SH1 must update those together with nox lowering.
+
+A Noun carries an immutable native subtree, with variable field-word width.
+Its containing aggregates also require a native layout. The fixed-width tables
+below describe the existing source types; they must not be extended by treating
+Noun as a scalar field word. The initial capability is nox-only, with explicit
+conversions and separately versioned structured entry transport. Other targets
+must reject it until their own representation is specified and implemented.
+
 ### Composite Types
 
 | Type | Width | Description |

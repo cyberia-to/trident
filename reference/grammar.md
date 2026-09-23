@@ -94,6 +94,24 @@ IDENT         = [a-zA-Z_][a-zA-Z0-9_]* ;
 comment       = "//" .* NEWLINE ;
 ```
 
+## Planned 0.4 native type extension
+
+The [SH0.2 native data contract](self-hosting-data.md) adds one primitive type
+alternative when SH1 implements the nox capability:
+
+```ebnf
+(* Future extension to type; not accepted as a primitive by the released compiler *)
+native_type   = "Noun" ;
+```
+
+`Noun` will be a reserved primitive type name, including inside tuples, fixed
+arrays and structs. Until then an identifier spelled Noun follows ordinary
+named-type resolution; it provides no native data capability. `Seq` and `Bytes`
+are library struct types, not grammar additions. Their APIs use existing calls,
+qualified names and explicit conversions. No type generics, pointers, mutable
+heap syntax or new loop syntax are introduced by this contract. Runtime execution
+of existing bounded loops and checked dynamic access still require SH1 lowering.
+
 ---
 
 ## 🔗 See Also
