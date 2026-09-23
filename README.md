@@ -332,6 +332,10 @@ The Rust compiler is the current implementation. `lib/std/compiler/` contains
 experimental components, not a complete self-hosted compiler or a proof
 that this compiler binary faithfully implements the language.
 
+[Self-hosting on soft3](reference/self-hosting.md) defines the native nox/Joy
+milestones and acceptance gates. The [progress ledger](audit/self-hosting-progress.md)
+records the current task and implementation evidence.
+
 Triton execution and STARK proving belong to [Trisha](../trisha).
 `trisha bench --full` requires explicit input/output fixtures and verifies
 proofs for the measured programs. Missing fixtures are reported as
