@@ -1,0 +1,29 @@
+{
+  "dynamic_apply_source": "[2 [[1 0] [3 [[0 2] [1 42]]]]]\n",
+  "public_inputs": [
+    1
+  ],
+  "runs": [
+    {
+      "label": "scalar-run",
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Executed in 22 reductions\n",
+      "seconds": 0.004
+    },
+    {
+      "label": "dynamic-apply-run",
+      "exit_code": 0,
+      "stdout": "42\n",
+      "stderr": "Executed in 6 reductions\n",
+      "seconds": 0.004
+    },
+    {
+      "label": "dynamic-apply-prove",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: unsupported execution relation: Unsupported(\"dynamic continuation\")\n",
+      "seconds": 0.002
+    }
+  ]
+}
