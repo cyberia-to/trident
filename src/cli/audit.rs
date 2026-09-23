@@ -75,158 +75,108 @@ fn cmd_audit_symbolic(args: AuditArgs) {
         eprintln!("error: {error}");
         process::exit(1);
     }
-    if trident::check_project_with_options(&entry, &options).is_err() {
+    if let Err(errors) = trident::check_project_with_options(&entry, &options) {
+        for error in errors {
+            eprintln!("error: {}", error.message);
+        }
         process::exit(1);
     }
 
     eprintln!("Auditing {}...", input.display());
 
-    let (system, parsed_file) = {
-        let (_source, mut file) = load_and_parse(&entry);
-        file.items.retain(|item| {
-            let cfg = match &item.node {
-                trident::ast::Item::Fn(value) => &value.cfg,
-                trident::ast::Item::Const(value) => &value.cfg,
-                trident::ast::Item::Struct(value) => &value.cfg,
-                trident::ast::Item::Event(value) => &value.cfg,
-            };
-            cfg.as_ref()
-                .is_none_or(|flag| options.cfg_flags.contains(&flag.node))
+    let (_source, mut file) = load_and_parse(&entry);
+    file.items.retain(|item| {
+        let cfg = match &item.node {
+            trident::ast::Item::Fn(value) => &value.cfg,
+            trident::ast::Item::Const(value) => &value.cfg,
+            trident::ast::Item::Struct(value) => &value.cfg,
+            trident::ast::Item::Event(value) => &value.cfg,
+        };
+        cfg.as_ref()
+            .is_none_or(|flag| options.cfg_flags.contains(&flag.node))
+    });
+    let per_fn = trident::sym::analyze_all_with_target(&file, &options.target_config)
+        .unwrap_or_else(|error| {
+            eprintln!("error: {error}");
+            process::exit(1)
         });
-        let per_fn = trident::sym::analyze_all_with_target(&file, &options.target_config)
-            .unwrap_or_else(|error| {
-                eprintln!("error: {error}");
-                process::exit(1)
-            });
-        if verbose {
-            if per_fn.is_empty() {
-                eprintln!("\n  No analyzable functions found.");
-            } else {
-                eprintln!();
-                for (fn_name, sys) in &per_fn {
-                    let violated = sys.violated_constraints().len();
-                    let status = if violated > 0 {
-                        format!("VIOLATED ({})", violated)
-                    } else if sys.constraints.is_empty() {
-                        "- (no constraints)".to_string()
-                    } else {
-                        "SAFE".to_string()
-                    };
-                    eprintln!(
-                        "  {:<30} {:>3} constraints, {:>3} variables  [{}]",
-                        fn_name,
-                        sys.active_constraints(),
-                        sys.num_variables,
-                        status,
-                    );
-                }
+    let mut exit_code = if per_fn.is_empty() { 2 } else { 0 };
+    let mut reports = Vec::new();
+    let mut scripts = String::new();
+    for (name, system) in &per_fn {
+        let report = trident::solve::verify(system);
+        let mut verdict = match report.verdict {
+            trident::solve::Verdict::Safe => "safe",
+            trident::solve::Verdict::Unknown => "unknown",
+            _ => "unsafe",
+        };
+        let supported = system.unsupported.is_empty() && !system.constraints.is_empty();
+        if supported {
+            let script = trident::smt::encode_system(system, trident::smt::QueryMode::SafetyCheck);
+            scripts.push_str(&format!("(reset)\n; Function: {name}\n{script}\n"));
+            if run_z3 {
+                verdict = match trident::smt::run_z3(&script) {
+                    Ok(result) => match result.status {
+                        trident::smt::SmtStatus::Unsat => "safe",
+                        trident::smt::SmtStatus::Sat => "unsafe",
+                        _ => "unknown",
+                    },
+                    Err(error) => {
+                        eprintln!("Z3 {name}: {error}");
+                        "unknown"
+                    }
+                };
+            }
+        } else {
+            verdict = "unknown";
+        }
+        if verdict == "unsafe" {
+            exit_code = 1;
+        } else if verdict == "unknown" && exit_code == 0 {
+            exit_code = 2;
+        }
+        if verbose || !json {
+            eprintln!(
+                "{name}: {} ({} obligations)",
+                verdict.to_uppercase(),
+                system.constraints.len()
+            );
+            for reason in &system.unsupported {
+                eprintln!("  unsupported: {reason}");
+            }
+            if system.constraints.is_empty() {
+                eprintln!("  no supported obligations");
             }
         }
-        let mut sys = trident::sym::ConstraintSystem::new();
-        for (_, fn_sys) in &per_fn {
-            sys.constraints.extend(fn_sys.constraints.clone());
-            sys.num_variables += fn_sys.num_variables;
-            for (k, v) in &fn_sys.variables {
-                sys.variables.insert(k.clone(), *v);
-            }
-            sys.pub_inputs.extend(fn_sys.pub_inputs.clone());
-            sys.pub_outputs.extend(fn_sys.pub_outputs.clone());
-            sys.divine_inputs.extend(fn_sys.divine_inputs.clone());
-        }
-        if verbose {
-            eprintln!("\nCombined: {}", sys.summary());
-        }
-        (sys, Some(file))
-    };
-
-    if let Some(ref smt_path) = smt_output {
-        let smt_script = trident::smt::encode_system(&system, trident::smt::QueryMode::SafetyCheck);
-        if let Err(e) = std::fs::write(smt_path, &smt_script) {
-            eprintln!("error: cannot write '{}': {}", smt_path.display(), e);
+        let detail: serde_json::Value = serde_json::from_str(
+            &trident::report::generate_json_report(name, system, &report),
+        )
+        .unwrap();
+        reports.push(serde_json::json!({"function": name, "verdict": verdict, "unsupported": system.unsupported, "analysis": detail}));
+    }
+    if let Some(path) = smt_output {
+        if let Err(error) = std::fs::write(&path, scripts) {
+            eprintln!("cannot write SMT: {error}");
             process::exit(1);
         }
-        eprintln!("SMT-LIB2 written to {}", smt_path.display());
     }
-
-    if run_z3 {
-        run_z3_analysis(&system);
-    }
-
     if synthesize {
-        if let Some(ref file) = parsed_file {
-            let specs = trident::synthesize::synthesize_specs(file);
-            eprintln!("\n{}", trident::synthesize::format_report(&specs));
-        }
+        eprintln!(
+            "{}",
+            trident::synthesize::format_report(&trident::synthesize::synthesize_specs(&file))
+        );
     }
-
-    let report = trident::solve::verify(&system);
-
     if json {
-        let file_name = entry.to_string_lossy().to_string();
-        let json_output = trident::report::generate_json_report(&file_name, &system, &report);
-        println!("{}", json_output);
-    } else {
-        eprintln!("\n{}", report.format_report());
+        println!(
+            "{}",
+            serde_json::json!({"file": entry, "verdict": if exit_code == 0 {"safe"} else if exit_code == 1 {"unsafe"} else {"unknown"}, "functions": reports})
+        );
     }
-    if !report.is_safe() {
-        process::exit(1);
+    if per_fn.is_empty() {
+        eprintln!("UNKNOWN: no analyzable function obligations");
     }
-}
-
-fn run_z3_analysis(sys: &trident::sym::ConstraintSystem) {
-    let smt_script = trident::smt::encode_system(sys, trident::smt::QueryMode::SafetyCheck);
-    match trident::smt::run_z3(&smt_script) {
-        Ok(result) => {
-            eprintln!("\nZ3 safety check:");
-            match result.status {
-                trident::smt::SmtStatus::Unsat => {
-                    eprintln!("  Result: UNSAT (formally verified safe)");
-                }
-                trident::smt::SmtStatus::Sat => {
-                    eprintln!("  Result: SAT (counterexample found)");
-                    if let Some(model) = &result.model {
-                        eprintln!("  Model:\n{}", model);
-                    }
-                }
-                trident::smt::SmtStatus::Unknown => {
-                    eprintln!("  Result: UNKNOWN (solver timed out or gave up)");
-                }
-                trident::smt::SmtStatus::Error(ref e) => {
-                    eprintln!("  Result: ERROR\n  {}", e);
-                }
-            }
-
-            if !sys.divine_inputs.is_empty() {
-                let witness_script =
-                    trident::smt::encode_system(sys, trident::smt::QueryMode::WitnessExistence);
-                if let Ok(witness_result) = trident::smt::run_z3(&witness_script) {
-                    eprintln!(
-                        "\nZ3 witness existence ({} divine inputs):",
-                        sys.divine_inputs.len()
-                    );
-                    match witness_result.status {
-                        trident::smt::SmtStatus::Sat => {
-                            eprintln!("  Result: SAT (valid witness exists)");
-                        }
-                        trident::smt::SmtStatus::Unsat => {
-                            eprintln!(
-                                "  Result: UNSAT (no valid witness — constraints unsatisfiable)"
-                            );
-                        }
-                        _ => {
-                            eprintln!(
-                                "  Result: {}",
-                                witness_result.output.lines().next().unwrap_or("unknown")
-                            );
-                        }
-                    }
-                }
-            }
-        }
-        Err(e) => {
-            eprintln!("\nZ3 not available: {}", e);
-            eprintln!("  Install Z3 or use --smt to export for external solvers.");
-        }
+    if exit_code != 0 {
+        process::exit(exit_code);
     }
 }
 

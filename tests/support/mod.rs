@@ -8,8 +8,9 @@ pub fn triton_package() -> trident::target::TargetPackage {
     )
     .unwrap();
     trident::target::TargetPackage {
+        intrinsic_abis: Default::default(),
         schema_version: 1,
-        compiler_api: 1,
+        compiler_api: trident::COMPILER_API,
         owner: "trisha".into(),
         version: "fixture".into(),
         intrinsics: include_str!("../fixtures/stack-intrinsics.txt")

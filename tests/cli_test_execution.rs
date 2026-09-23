@@ -100,24 +100,49 @@ fn imported_module_tests_and_private_helpers_execute_in_their_own_context() {
 
 #[test]
 fn non_nox_library_api_refuses_to_claim_test_success() {
-    let options = trident::CompileOptions::default().with_package(support::triton_package()).unwrap();
+    let options = trident::CompileOptions::default()
+        .with_package(support::triton_package())
+        .unwrap();
     let errors = trident::run_tests(std::path::Path::new("unused.tri"), &options).unwrap_err();
     assert!(errors[0]
         .message
-        .contains("warrior test command is not implemented"));
+        .contains("execution belongs to the target warrior"));
 }
 
 #[test]
-fn triton_cli_reports_unsupported_test_execution_and_exits_nonzero() {
-    let output = invoke(
+fn triton_test_delegation_requires_an_installed_matching_provider() {
+    let dir = tempfile::tempdir().unwrap();
+    support::write_triton_package(dir.path());
+    let entry = dir.path().join("main.tri");
+    std::fs::write(
+        &entry,
         "program foreign\nfn main() {}\n#[test]\nfn passes() { assert(true) }",
-        &["--target", "triton"],
-    );
+    )
+    .unwrap();
+    let output = Command::new(env!("CARGO_BIN_EXE_trident"))
+        .args(["test", entry.to_str().unwrap(), "--target", "triton"])
+        .env("PATH", dir.path())
+        .env("TRIDENT_TARGET_PACKAGES", dir.path())
+        .output()
+        .unwrap();
     assert!(!output.status.success());
     assert!(
-        report(&output).contains("warrior test command is not implemented"),
+        report(&output).contains("no warrior found"),
         "{}",
         report(&output)
     );
     assert!(!report(&output).contains("test result: ok"));
+}
+
+#[test]
+fn tests_check_their_own_capabilities_not_unrelated_main() {
+    let good = invoke("program independent\nfn main() -> Field { ram_read(0) }\n#[test]\nfn passes() { assert(true) }", &[]);
+    assert!(good.status.success(), "{}", report(&good));
+    let bad = invoke("program dependent\nfn main() {}\nfn helper() -> Field { ram_read(0) }\n#[test]\nfn fails() { assert(helper() == 0) }", &[]);
+    assert!(!bad.status.success());
+    assert!(
+        report(&bad).contains("requires intrinsic 'ram_read'"),
+        "{}",
+        report(&bad)
+    );
 }

@@ -11,7 +11,7 @@
 //! entry has an executed representative below, named by the actual functions
 //! checked. Compiler-module constants do not establish self-hosting; crypto
 //! initialization/prime fixtures do not establish full cryptographic algorithms.
-//! Original Fibonacci and Poseidon algorithm differentials remain unchanged.
+//! Fibonacci and standard Poseidon2-HL use independent integer references.
 
 use nebu::Goldilocks;
 use nox::{reduce, CallProvider, LookProvider, NoTrace, Outcome, Reduction};
@@ -188,23 +188,10 @@ fn fib_ref(n: u64) -> u64 {
     a
 }
 
-fn sbox(x: u64) -> u64 {
-    let x2 = fmul(x, x);
-    let x4 = fmul(x2, x2);
-    fmul(x4, x)
-}
-fn mix2(a: u64, b: u64) -> (u64, u64) {
-    (fadd(fadd(a, a), b), fadd(fadd(fadd(a, b), b), b))
-}
-fn round2(a: u64, b: u64, rc0: u64, rc1: u64) -> (u64, u64) {
-    mix2(sbox(fadd(a, rc0)), sbox(fadd(b, rc1)))
-}
+#[path = "../benches/references/common/poseidon_standard.rs"]
+mod standard_poseidon;
 fn poseidon_hash2_ref(a: u64, b: u64) -> u64 {
-    let mut s = (a, b);
-    for &(r0, r1) in &[(3, 7), (11, 13), (17, 19), (23, 29)] {
-        s = round2(s.0, s.1, r0, r1);
-    }
-    s.0
+    standard_poseidon::hash2(a, b)
 }
 
 // ── the differentials ───────────────────────────────────────────────────────
@@ -346,10 +333,12 @@ fn census_every_in_surface_module_has_a_differential() {
                 && trident::nox_cost_project(&path, &options).is_ok()
             {
                 in_surface.push(
-                    path.display()
-                        .to_string()
-                        .trim_start_matches(&format!("{root}/"))
-                        .to_string(),
+                    path.strip_prefix(root)
+                        .unwrap()
+                        .components()
+                        .map(|part| part.as_os_str().to_str().unwrap())
+                        .collect::<Vec<_>>()
+                        .join("/"),
                 );
             }
         }

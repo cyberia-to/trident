@@ -1,6 +1,6 @@
 //! Layout information carried across module boundaries into stack lowering.
 use super::TIRBuilder;
-use crate::ast::{Expr, File, Item, Type};
+use crate::ast::{ArraySize, BinOp, Expr, File, Item, Literal, Type};
 
 impl TIRBuilder {
     pub fn with_module_types(mut self, modules: &[&File]) -> Self {
@@ -62,13 +62,39 @@ impl TIRBuilder {
                 .get(&self.qualified_name(&path.node.0.join(".")))
                 .cloned(),
             Expr::StructInit { path, .. } => Some(Type::Named(path.node.clone())),
-            Expr::Var(name) => self.var_types.get(name).cloned(),
+            Expr::Var(name) => {
+                let mut parts = name.split('.');
+                let mut ty = self.var_types.get(parts.next()?)?.clone();
+                for field in parts {
+                    ty = self.field_type_offset(&ty, field)?.0;
+                }
+                Some(ty)
+            }
+            Expr::Index { expr, .. } => match self.expr_type(&expr.node)? {
+                Type::Array(element, _) => Some(*element),
+                _ => None,
+            },
+            Expr::FieldAccess { expr, field } => self
+                .field_type_offset(&self.expr_type(&expr.node)?, &field.node)
+                .map(|(ty, _)| ty),
+            Expr::ArrayInit(elements) => elements
+                .first()
+                .and_then(|e| self.expr_type(&e.node))
+                .map(|ty| Type::Array(Box::new(ty), ArraySize::Literal(elements.len() as u64))),
+            Expr::BinOp { op, lhs, .. } => match op {
+                BinOp::Eq | BinOp::Lt => Some(Type::Bool),
+                BinOp::BitAnd | BinOp::BitXor => Some(Type::U32),
+                BinOp::DivMod => Some(Type::Tuple(vec![Type::U32, Type::U32])),
+                BinOp::XFieldMul => Some(Type::XField),
+                BinOp::Add | BinOp::Mul => self.expr_type(&lhs.node).or(Some(Type::Field)),
+            },
+            Expr::Literal(Literal::Integer(_)) => Some(Type::Field),
+            Expr::Literal(Literal::Bool(_)) => Some(Type::Bool),
             Expr::Tuple(parts) => parts
                 .iter()
                 .map(|p| self.expr_type(&p.node))
                 .collect::<Option<Vec<_>>>()
                 .map(Type::Tuple),
-            _ => None,
         }
     }
 }

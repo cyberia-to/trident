@@ -5,29 +5,14 @@
 // ---
 //! Algebraic solver and bounded model checker for Trident constraint systems.
 //!
-//! Takes the `ConstraintSystem` from `sym.rs` and checks it using:
-//!
-//! 1. **Schwartz-Zippel testing**: Evaluate polynomial constraints at random
-//!    field points. If a polynomial identity holds at k random points over F_p,
-//!    the probability it's false is ≤ d/p where d is the degree. For our
-//!    degrees (< 2^16) and Goldilocks p (≈ 2^64), this is negligibly small.
-//!
-//! 2. **Bounded model checking**: Enumerate concrete variable assignments
-//!    and check all constraints. For programs with few free variables (< 20),
-//!    we can check a large sample. For programs with many variables, we use
-//!    random sampling with the Schwartz-Zippel guarantee.
-//!
-//! 3. **Counterexample generation**: When a constraint fails, report the
-//!    concrete variable assignment that violates it.
-//!
-//! 4. **Redundant assertion detection**: Identify constraints that hold for
-//!    all tested inputs (candidate tautologies) — these can be eliminated
-//!    to reduce proving cost.
+//! Static tautologies can establish supported obligations. Random sampling and
+//! bounded enumeration search for counterexamples; passing samples never proves
+//! a universal property. Opaque, empty and unsupported systems remain Unknown.
 
 use std::collections::BTreeMap;
 
-use nebu::field::P as GOLDILOCKS_P;
 use crate::sym::{Constraint, ConstraintSystem, SymValue};
+use nebu::field::P as GOLDILOCKS_P;
 
 mod eval;
 mod solver;
@@ -95,7 +80,7 @@ impl SolverResult {
         ));
 
         if self.counterexamples.is_empty() {
-            report.push_str("  Result: ALL PASSED\n");
+            report.push_str("  Result: NO COUNTEREXAMPLE IN SAMPLED ROUNDS\n");
         } else {
             report.push_str(&format!(
                 "  Result: {} VIOLATION(S) FOUND\n",
@@ -108,7 +93,7 @@ impl SolverResult {
 
         if !self.always_satisfied.is_empty() {
             report.push_str(&format!(
-                "  Redundant assertions (always true): {}\n",
+                "  Assertions satisfied in sampled rounds (not proofs): {}\n",
                 self.always_satisfied.len()
             ));
         }
@@ -129,6 +114,7 @@ impl SolverResult {
 /// Full verification result combining static analysis, random testing, and BMC.
 #[derive(Clone, Debug)]
 pub struct VerificationReport {
+    pub unsupported: Vec<String>,
     /// Static analysis: trivially violated constraints.
     pub static_violations: Vec<String>,
     /// Random testing (Schwartz-Zippel) result.
@@ -147,6 +133,8 @@ pub struct VerificationReport {
 pub enum Verdict {
     /// All checks passed — no violations found.
     Safe,
+    /// No proof: absent obligations, incomplete semantics or sampling only.
+    Unknown,
     /// Static analysis found definite violations.
     StaticViolation,
     /// Random testing found violations (high confidence).
@@ -164,9 +152,12 @@ impl VerificationReport {
         let mut report = String::new();
         report.push_str("═══ Verification Report ═══\n\n");
 
+        for reason in &self.unsupported {
+            report.push_str(&format!("Unsupported: {reason}\n"));
+        }
         // Static analysis
         if self.static_violations.is_empty() {
-            report.push_str("Static analysis: PASS (no trivially violated assertions)\n");
+            report.push_str("Static analysis: no trivially violated assertions\n");
         } else {
             report.push_str(&format!(
                 "Static analysis: FAIL ({} trivially violated assertion(s))\n",
@@ -179,7 +170,7 @@ impl VerificationReport {
         report.push('\n');
 
         // Random testing
-        report.push_str("Random testing (Schwartz-Zippel):\n");
+        report.push_str("Random sampling (not a universal proof):\n");
         report.push_str(&self.random_result.format_report());
         report.push('\n');
 
@@ -210,7 +201,8 @@ impl VerificationReport {
 
         // Verdict
         let verdict_str = match &self.verdict {
-            Verdict::Safe => "SAFE — no violations found",
+            Verdict::Safe => "SAFE — supported obligations discharged statically",
+            Verdict::Unknown => "UNKNOWN — obligations not formally discharged",
             Verdict::StaticViolation => "UNSAFE — static analysis found definite violations",
             Verdict::RandomViolation => {
                 "UNSAFE — random testing found violations (high confidence)"
@@ -245,31 +237,32 @@ pub fn verify(system: &ConstraintSystem) -> VerificationReport {
     // 3. Bounded model checking
     let bmc_result = bounded_check(system, &BmcConfig::default());
 
-    // 4. Collect redundant assertions (from both methods)
-    let mut redundant: Vec<usize> = random_result.always_satisfied.clone();
-    for idx in &bmc_result.always_satisfied {
-        if !redundant.contains(idx) {
-            redundant.push(*idx);
-        }
-    }
-    // Only keep constraints that are redundant in BOTH methods
-    redundant.retain(|idx| {
-        random_result.always_satisfied.contains(idx) && bmc_result.always_satisfied.contains(idx)
-    });
-    redundant.sort();
+    // Only syntactically discharged tautologies are safe to recommend removing.
+    // Passing random samples is not a proof of redundancy.
+    let redundant: Vec<usize> = system
+        .constraints
+        .iter()
+        .enumerate()
+        .filter_map(|(index, constraint)| constraint.is_trivial().then_some(index))
+        .collect();
 
     // 5. Determine verdict
-    let verdict = if !static_violations.is_empty() {
+    let verdict = if !system.unsupported.is_empty() || system.constraints.is_empty() {
+        Verdict::Unknown
+    } else if !static_violations.is_empty() {
         Verdict::StaticViolation
     } else if !random_result.all_passed {
         Verdict::RandomViolation
     } else if !bmc_result.all_passed {
         Verdict::BmcViolation
-    } else {
+    } else if system.constraints.iter().all(Constraint::is_trivial) {
         Verdict::Safe
+    } else {
+        Verdict::Unknown
     };
 
     VerificationReport {
+        unsupported: system.unsupported.clone(),
         static_violations,
         random_result,
         bmc_result,
@@ -289,7 +282,7 @@ fn collect_variables(system: &ConstraintSystem) -> Vec<String> {
             let key = if v == 0 {
                 name.clone()
             } else {
-                format!("{}_{}", name, v)
+                format!("{}#{}", name, v)
             };
             if !names.contains(&key) {
                 names.push(key);

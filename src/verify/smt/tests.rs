@@ -36,7 +36,7 @@ fn test_witness_existence_encoding() {
 #[test]
 fn test_variable_declarations() {
     let smt = parse_and_encode(
-        "program test\nfn main() {\n    let x: Field = pub_read()\n    pub_write(x)\n}\n",
+        "program test\nfn main() {\n    let x: Field = pub_read()\n    pub_write(x)\n    assert(x == x)\n}\n",
         QueryMode::SafetyCheck,
     );
     assert!(smt.contains("declare-fun"));
@@ -76,5 +76,6 @@ fn test_empty_constraints() {
         "program test\nfn main() {\n    let x: Field = pub_read()\n}\n",
         QueryMode::SafetyCheck,
     );
-    assert!(smt.contains("No constraints"));
+    assert!(smt.contains("unsupported or absent obligations"));
+    assert!(!smt.contains("(check-sat)"));
 }

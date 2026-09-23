@@ -318,3 +318,25 @@ fn pass_through_multi_width_params_emits_minimal_ops() {
     );
     assert!(matches!(wrapper_ops[1], TIROp::Call(ref n) if n == "target"));
 }
+
+#[test]
+fn alternate_xfield_product_preserves_neighbor_depth() {
+    for width in [2, 4, 7] {
+        let mut target = TerrainConfig::triton();
+        target.xfield_width = width;
+        target.stack_depth = 0;
+        let mut builder = TIRBuilder::new(target);
+        builder.stack.push_named("sentinel", 1);
+        builder.stack.push_named("lhs", width);
+        builder.stack.push_named("rhs", width);
+        builder.build_expr(&Expr::BinOp {
+            op: BinOp::XFieldMul,
+            lhs: Box::new(sp(Expr::Var("lhs".into()))),
+            rhs: Box::new(sp(Expr::Var("rhs".into()))),
+        });
+        assert_eq!(builder.stack.stack_depth(), 1 + 3 * width);
+        builder.ops.clear();
+        builder.build_expr(&Expr::Var("sentinel".into()));
+        assert!(matches!(builder.ops.as_slice(), [TIROp::Dup(depth)] if *depth == 3 * width));
+    }
+}

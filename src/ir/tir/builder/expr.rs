@@ -53,7 +53,7 @@ impl TIRBuilder {
                 self.stack.pop(); // lhs temp
                 let result_width = match op {
                     BinOp::DivMod => 2,
-                    BinOp::XFieldMul => 3,
+                    BinOp::XFieldMul => self.target_config.xfield_width,
                     _ => 1,
                 };
                 self.stack.push_temp(result_width);
@@ -112,10 +112,35 @@ impl TIRBuilder {
                 self.build_index(inner, index);
             }
 
-            Expr::StructInit { path: _, fields } => {
+            Expr::StructInit { path, fields } => {
+                let name = self.qualified_name(&path.node.as_dotted());
+                let Some(definition) = self.struct_types.get(&name).cloned() else {
+                    self.ops
+                        .push(TIROp::Comment(format!("ERROR: unresolved struct '{name}'")));
+                    return;
+                };
+                if definition.fields.len() != fields.len()
+                    || definition.fields.iter().any(|declared| {
+                        fields
+                            .iter()
+                            .filter(|(name, _)| name.node == declared.name.node)
+                            .count()
+                            != 1
+                    })
+                {
+                    self.ops.push(TIROp::Comment(format!(
+                        "ERROR: invalid fields for struct '{name}'"
+                    )));
+                    return;
+                }
                 let mut total_width = 0u32;
-                for (_name, val) in fields {
-                    self.build_expr(&val.node);
+                // Evaluation order and representation both follow the declaration.
+                for declared in &definition.fields {
+                    let (_, value) = fields
+                        .iter()
+                        .find(|(name, _)| name.node == declared.name.node)
+                        .expect("struct field set validated above");
+                    self.build_expr(&value.node);
                 }
                 for _ in fields {
                     if let Some(e) = self.stack.pop() {
@@ -162,11 +187,8 @@ impl TIRBuilder {
 
             if !resolved {
                 // Module constant fallback.
-                let last_dot = name.rfind('.').expect("dot guaranteed by contains check");
-                let suffix = &name[last_dot + 1..];
-                if let Some(&val) = self.constants.get(name) {
-                    self.emit_and_push(TIROp::Push(val), 1);
-                } else if let Some(&val) = self.constants.get(suffix) {
+                let qualified = self.qualified_name(name);
+                if let Some(&val) = self.constants.get(&qualified) {
                     self.emit_and_push(TIROp::Push(val), 1);
                 } else {
                     self.ops.push(TIROp::Comment(format!(
@@ -195,10 +217,13 @@ impl TIRBuilder {
                     self.ops.push(TIROp::Dup(depth + width - 1));
                 }
                 self.stack.push_temp(width);
+            } else if let Some(&value) = self.constants.get(name) {
+                self.emit_and_push(TIROp::Push(value), 1);
             } else {
-                // Variable not found — fallback.
-                self.ops.push(TIROp::Dup(0));
-                self.stack.push_temp(1);
+                self.ops.push(TIROp::Comment(format!(
+                    "ERROR: unresolved variable '{name}'"
+                )));
+                self.emit_and_push(TIROp::Push(0), 1);
             }
         }
     }
@@ -276,102 +301,82 @@ impl TIRBuilder {
     // ── Index expression ──────────────────────────────────────────
 
     pub(crate) fn build_index(&mut self, inner: &Spanned<Expr>, index: &Spanned<Expr>) {
-        // Fast path: constant index into a named variable already on the stack.
-        // Instead of copying the whole array then extracting one element,
-        // directly dup the target element from the variable's position.
-        if let Expr::Literal(Literal::Integer(idx)) = &index.node {
-            if let Expr::Var(var_name) = &inner.node {
-                let var_info = self.stack.find_var_with_elem_width(var_name);
-                self.flush_stack_effects();
-                if let Some((var_depth, var_width, elem_width)) = var_info {
-                    let idx_u = *idx as u32;
-                    if (idx_u + 1) * elem_width <= var_width {
-                        let base_offset = var_width - (idx_u + 1) * elem_width;
-                        let target_depth = var_depth + base_offset;
-                        for _ in 0..elem_width {
-                            self.ops.push(TIROp::Dup(target_depth + elem_width - 1));
-                        }
-                        self.stack.push_temp(elem_width);
-                        self.flush_stack_effects();
-                        return;
-                    }
-                }
-            }
-        }
-
-        self.build_expr(&inner.node);
-        let inner_entry = self.stack.last().cloned();
-
-        if let Expr::Literal(Literal::Integer(idx)) = &index.node {
-            // Constant index.
-            let idx = *idx as u32;
-            if let Some(entry) = inner_entry {
-                let array_width = entry.width;
-                let elem_width = entry.elem_width.unwrap_or(1);
-                let base_offset = array_width - (idx + 1) * elem_width;
-                for _ in 0..elem_width {
-                    self.ops.push(TIROp::Dup(base_offset + elem_width - 1));
-                }
-                self.stack.pop();
-                Self::append_branch_cleanup(&mut self.ops, array_width + elem_width, 0, elem_width);
-                self.stack.push_temp(elem_width);
-                self.flush_stack_effects();
-            } else {
-                self.stack.push_temp(1);
-                self.flush_stack_effects();
-            }
+        let element_type = match self.expr_type(&inner.node) {
+            Some(Type::Array(element, _)) => Some(*element),
+            _ => None,
+        };
+        let named = if let Expr::Var(name) = &inner.node {
+            self.stack
+                .find_var_with_elem_width(name)
+                .map(|info| (name.clone(), info))
         } else {
-            // Runtime index — use RAM-based access.
-            self.build_expr(&index.node);
-            let _idx_entry = self.stack.pop();
-            let arr_entry = self.stack.pop();
-
-            if let Some(arr) = arr_entry {
-                let array_width = arr.width;
-                let elem_width = arr.elem_width.unwrap_or(1);
-                let base = self.temp_ram_addr;
-                self.temp_ram_addr += array_width as u64;
-
-                // Store array elements to RAM.
-                self.ops.push(TIROp::Swap(1));
-                for i in 0..array_width {
-                    let addr = base + i as u64;
-                    self.ops.push(TIROp::Push(addr));
-                    self.ops.push(TIROp::Swap(1));
-                    self.ops.push(TIROp::WriteMem(1));
-                    self.ops.push(TIROp::Pop(1));
-                    if i + 1 < array_width {
-                        self.ops.push(TIROp::Swap(1));
-                    }
-                }
-
-                // Compute target address: base + idx * elem_width.
-                if elem_width > 1 {
-                    self.ops.push(TIROp::Push(elem_width as u64));
-                    self.ops.push(TIROp::Mul);
-                }
-                self.ops.push(TIROp::Push(base));
-                self.ops.push(TIROp::Add);
-
-                // Read elem_width elements from computed address.
-                for i in 0..elem_width {
-                    self.ops.push(TIROp::Dup(0));
-                    if i > 0 {
-                        self.ops.push(TIROp::Push(i as u64));
-                        self.ops.push(TIROp::Add);
-                    }
-                    self.ops.push(TIROp::ReadMem(1));
-                    self.ops.push(TIROp::Pop(1));
-                    self.ops.push(TIROp::Swap(1));
-                }
-                self.ops.push(TIROp::Pop(1)); // pop address
-
+            None
+        };
+        self.flush_stack_effects();
+        let (array_width, fallback_width) = if let Some((_, (_, width, element))) = &named {
+            (*width, *element)
+        } else {
+            self.build_expr(&inner.node);
+            self.stack
+                .last()
+                .map_or((0, 1), |e| (e.width, e.elem_width.unwrap_or(1)))
+        };
+        let elem_width = element_type
+            .as_ref()
+            .map(|ty| self.type_width(ty))
+            .unwrap_or(fallback_width);
+        let count = if elem_width > 0 {
+            array_width / elem_width
+        } else {
+            0
+        };
+        // Proven constant access to a named array needs only element copies.
+        if let (Some((_, (depth, _, _))), Expr::Literal(Literal::Integer(i))) =
+            (&named, &index.node)
+        {
+            if *i < count as u64 {
+                let source = depth + array_width - (*i as u32 + 1) * elem_width;
+                self.ops
+                    .extend((0..elem_width).map(|_| TIROp::Dup(source + elem_width - 1)));
                 self.stack.push_temp(elem_width);
-                self.flush_stack_effects();
-            } else {
-                self.stack.push_temp(1);
-                self.flush_stack_effects();
+                return;
             }
         }
+        self.build_expr(&index.node);
+        self.assert_index_bound(count);
+        let source_depth = if let Some((name, _)) = &named {
+            self.find_var_depth_and_width(name)
+                .map_or(1, |(depth, _)| depth)
+        } else {
+            1
+        };
+        if count > 0 {
+            let leaf = |i: u32| {
+                (0..elem_width)
+                    .map(|_| TIROp::Dup(source_depth + array_width - i * elem_width - 1))
+                    .collect()
+            };
+            if let Expr::Literal(Literal::Integer(i)) = index.node {
+                if i < count as u64 {
+                    self.ops.extend(leaf(i as u32));
+                }
+            } else {
+                self.ops.extend(super::index::select(0, 0, count, &leaf));
+            }
+            let dead = if named.is_some() { 1 } else { array_width + 1 };
+            Self::append_branch_cleanup(&mut self.ops, dead + elem_width, 0, elem_width);
+        }
+        self.stack.pop();
+        if named.is_none() {
+            self.stack.pop();
+        }
+        self.stack.push_temp(elem_width);
+        if let Some(Type::Array(nested, _)) = element_type {
+            let width = self.type_width(&nested);
+            if let Some(top) = self.stack.last_mut() {
+                top.elem_width = Some(width);
+            }
+        }
+        self.flush_stack_effects();
     }
 }

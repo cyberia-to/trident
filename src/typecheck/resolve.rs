@@ -13,6 +13,22 @@ use crate::types::Ty;
 
 use super::{GenericFnDef, TypeChecker};
 
+pub(crate) fn checked_size(size: &ArraySize, subs: &BTreeMap<String, u64>) -> Result<u64, String> {
+    match size {
+        ArraySize::Literal(n) => Ok(*n),
+        ArraySize::Param(name) => subs
+            .get(name)
+            .copied()
+            .ok_or_else(|| format!("unresolved array size '{name}'")),
+        ArraySize::Add(a, b) => checked_size(a, subs)?
+            .checked_add(checked_size(b, subs)?)
+            .ok_or_else(|| "array size addition overflow".into()),
+        ArraySize::Mul(a, b) => checked_size(a, subs)?
+            .checked_mul(checked_size(b, subs)?)
+            .ok_or_else(|| "array size multiplication overflow".into()),
+    }
+}
+
 impl TypeChecker {
     pub(super) fn is_constant_expr(&self, expr: &Expr) -> bool {
         matches!(expr, Expr::Literal(Literal::Integer(_)))
@@ -72,7 +88,7 @@ impl TypeChecker {
     }
 
     pub(super) fn resolve_type(&mut self, ty: &Type) -> Ty {
-        self.resolve_type_with_subs(ty, &BTreeMap::new())
+        self.resolve_type_with_subs(ty, &self.constants.clone())
     }
 
     /// Resolve an AST type to a semantic type, substituting size parameters.
@@ -84,7 +100,13 @@ impl TypeChecker {
             Type::U32 => Ty::U32,
             Type::Digest => Ty::Digest(self.target_config.digest_width),
             Type::Array(inner, n) => {
-                let size = n.eval(subs);
+                let size = match checked_size(n, subs) {
+                    Ok(n) => n,
+                    Err(error) => {
+                        self.error(error, Span::dummy());
+                        0
+                    }
+                };
                 Ty::Array(Box::new(self.resolve_type_with_subs(inner, subs)), size)
             }
             Type::Tuple(elems) => {

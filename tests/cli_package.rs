@@ -161,6 +161,17 @@ fn neptune_package_preserves_union_and_embedded_sdk_identity() {
     )
     .unwrap();
     warrior(dir.path());
+    // Registry publication cannot turn a state flag into a chain operation.
+    // Reject it before invoking the compiler warrior or creating an artifact.
+    let rejected = invoke(
+        dir.path(),
+        &["deploy", ".", "--state", "mainnet", "--dry-run"],
+    );
+    assert!(!rejected.status.success());
+    assert!(String::from_utf8_lossy(&rejected.stderr)
+        .contains("registry artifact publication does not apply a chain state selection"));
+    assert!(!dir.path().join("warrior.args").exists());
+    assert!(!dir.path().join("demo.deploy").exists());
     require(invoke(dir.path(), &["package", "."]));
     assert!(!invoke(dir.path(), &["package", ".", "--state", "mainnet"])
         .status

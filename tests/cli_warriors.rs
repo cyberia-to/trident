@@ -72,7 +72,7 @@ fn project_target_and_explicit_target_select_the_same_warrior_for_all_actions() 
     .unwrap();
     stub(root, "trident-triton");
     stub(root, "trident-nox");
-    for action in ["build", "run", "prove", "verify"] {
+    for action in ["build", "run", "prove", "verify", "test"] {
         let output = invoke(root, root, &[action, "."]);
         assert!(
             output.status.success(),
@@ -206,4 +206,55 @@ fn describe_and_execution_use_the_same_wrapper() {
         String::from_utf8_lossy(&output.stderr)
     );
     assert!(String::from_utf8_lossy(&output.stdout).starts_with("wrapper\nrun\n"));
+}
+
+#[test]
+fn witness_transport_reaches_the_owner_without_reading_or_expanding_its_file() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    support::write_triton_package(root);
+    stub(root, "trident-triton");
+    fs::write(root.join("main.tri"), "program witness\nfn main() {}\n").unwrap();
+    // The stub owns this deliberately absent path; core must only forward it.
+    let witness = "private witness $(literal).json";
+    for action in ["run", "prove"] {
+        let args = [
+            action,
+            "main.tri",
+            "--target",
+            "triton",
+            "--input-file",
+            witness,
+        ];
+        let output = invoke(root, root, &args);
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(
+            String::from_utf8_lossy(&output.stdout).contains(&format!("--input-file\n{witness}\n"))
+        );
+        for flag in ["--input-values", "--secret", "--digests"] {
+            let mut conflicting = args.to_vec();
+            conflicting.extend([flag, "1"]);
+            let rejected = invoke(root, root, &conflicting);
+            assert_eq!(rejected.status.code(), Some(2));
+            assert!(rejected.stdout.is_empty());
+        }
+        let output = invoke(
+            root,
+            root,
+            &[
+                action,
+                "main.tri",
+                "--target",
+                "triton",
+                "--digests",
+                "1,2,3,4,5",
+            ],
+        );
+        assert!(output.status.success());
+        assert!(String::from_utf8_lossy(&output.stdout).contains("--digests\n1,2,3,4,5\n"));
+    }
 }

@@ -86,7 +86,10 @@ pub fn cmd_deploy(args: DeployArgs) {
         &state,
     );
     let target = bf.target;
-    let state_selection = bf.state;
+    if bf.state.is_some() {
+        eprintln!("error: registry artifact publication does not apply a chain state selection; use the warrior's deployment interface");
+        process::exit(1);
+    }
 
     // Handle pre-packaged .deploy/ artifact directory
     if input.is_dir() && input.join("manifest.json").exists() {
@@ -117,12 +120,6 @@ pub fn cmd_deploy(args: DeployArgs) {
             eprintln!("error: deployment artifact target differs from the requested target");
             process::exit(1);
         }
-        if state_selection.is_some() {
-            eprintln!(
-                "error: registry artifact publication does not apply a chain state selection"
-            );
-            process::exit(1);
-        }
 
         if dry_run {
             eprintln!("Dry run — would deploy artifact:");
@@ -145,44 +142,8 @@ pub fn cmd_deploy(args: DeployArgs) {
     let art = prepare_artifact(&input, &target, &profile, audit);
     let output_base = art.entry.parent().unwrap_or(Path::new(".")).to_path_buf();
 
-    // Resolve state config if specified
-    let state_config = if let Some(ref state_name) = state_selection {
-        if let Some(ref os) = art.resolved.os {
-            match trident::target::StateConfig::resolve(&os.name, state_name) {
-                Ok(Some(sc)) => Some(sc),
-                Ok(None) => {
-                    eprintln!(
-                        "error: unknown state '{}' for union '{}'",
-                        state_name, os.name
-                    );
-                    let available = trident::target::StateConfig::list_states(&os.name);
-                    if !available.is_empty() {
-                        eprintln!("  available: {}", available.join(", "));
-                    }
-                    process::exit(1);
-                }
-                Err(e) => {
-                    eprintln!("error: {}", e.message);
-                    process::exit(1);
-                }
-            }
-        } else {
-            eprintln!(
-                "error: --state requires a union target, not bare terrain '{}'",
-                target
-            );
-            process::exit(1);
-        }
-    } else {
-        None
-    };
-
     let target_display = if let Some(ref os) = art.resolved.os {
-        if let Some(ref sc) = state_config {
-            format!("{} {} ({})", os.name, sc.display_name, art.resolved.vm.name)
-        } else {
-            format!("{} ({})", os.name, art.resolved.vm.name)
-        }
+        format!("{} ({})", os.name, art.resolved.vm.name)
     } else {
         art.resolved.vm.name.clone()
     };
@@ -194,12 +155,6 @@ pub fn cmd_deploy(args: DeployArgs) {
         eprintln!("  Name:            {}", art.name);
         eprintln!("  Version:         {}", art.version);
         eprintln!("  Target:          {}", target_display);
-        if let Some(ref sc) = state_config {
-            eprintln!("  State:           {} (chain_id: {})", sc.name, sc.chain_id);
-            if !sc.rpc_url.is_empty() {
-                eprintln!("  RPC:             {}", sc.rpc_url);
-            }
-        }
         eprintln!("  Program digest:  {}", program_digest.to_hex());
         if art.cost.table_names.is_empty() {
             eprintln!("  Costs:           unknown (no estimate supplied by the warrior)");

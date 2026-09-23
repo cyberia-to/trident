@@ -323,6 +323,8 @@ pub use os::*;
 mod tests;
 
 mod package;
+mod intrinsic;
+pub use intrinsic::{IntrinsicAbi, IntrinsicType};
 pub use package::{RuntimeCapabilities, TargetPackage};
 
 mod discover;

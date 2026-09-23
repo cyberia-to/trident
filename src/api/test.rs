@@ -44,26 +44,30 @@ pub struct TestResult {
 pub fn run_tests(entry_path: &Path, options: &CompileOptions) -> Result<String, Vec<Diagnostic>> {
     if options.target_config.name != "nox" {
         return Err(vec![Diagnostic::error(
-            format!("test execution for '{}' is unsupported: the warrior test command is not implemented; use --target nox for nox tests", options.target_config.name),
+            format!("test execution for '{}' is unsupported: execution belongs to the target warrior; use prepare_test_programs or trident test", options.target_config.name),
             Span::dummy(),
         )]);
     }
     let mut options = options.clone();
     options.cfg_flags.insert("test".to_string());
-    let project = PreparedProject::build_quiet(entry_path, &options)?;
+    let project = PreparedProject::build_tests(entry_path, &options)?;
     let files: Vec<_> = project.modules.iter().map(|m| &m.file).collect();
     let mut results = Vec::new();
-    for module in &project.modules {
+    let mut skipped = 0;
+    for (module_index, module) in project.modules.iter().enumerate() {
         for item in &module.file.items {
             let ast::Item::Fn(function) = &item.node else {
                 continue;
             };
-            if !function.is_test
-                || function
-                    .cfg
-                    .as_ref()
-                    .is_some_and(|f| !options.cfg_flags.contains(&f.node))
+            if !function.is_test {
+                continue;
+            }
+            if function
+                .cfg
+                .as_ref()
+                .is_some_and(|f| !options.cfg_flags.contains(&f.node))
             {
+                skipped += 1;
                 continue;
             }
             let name = format!("{}.{}", module.file.name.node, function.name.node);
@@ -84,7 +88,9 @@ pub fn run_tests(entry_path: &Path, options: &CompileOptions) -> Result<String, 
                     f.is_pub = true;
                 }
                 let mut entry = module.file.clone();
+                entry.kind = ast::FileKind::Module;
                 entry.items = vec![selected];
+                project.exports[module_index].check_entry_requirements(&entry, &options)?;
                 let mut compiler = NoxCompiler::new();
                 compiler
                     .compile_modules(&files, &entry, &options.cfg_flags)
@@ -98,7 +104,9 @@ pub fn run_tests(entry_path: &Path, options: &CompileOptions) -> Result<String, 
         }
     }
     if results.is_empty() {
-        return Ok("No active #[test] functions found.\n".to_string());
+        return Ok(format!(
+            "No active #[test] functions found. {skipped} skipped.\n"
+        ));
     }
     let passed = results.iter().filter(|r| r.passed).count();
     let failed = results.len() - passed;
@@ -118,7 +126,7 @@ pub fn run_tests(entry_path: &Path, options: &CompileOptions) -> Result<String, 
         }
     }
     report.push_str(&format!(
-        "\ntest result: {}. {passed} passed; {failed} failed\n",
+        "\ntest result: {}. {passed} passed; {failed} failed; {skipped} skipped\n",
         if failed == 0 { "ok" } else { "FAILED" }
     ));
     if failed == 0 {
@@ -168,4 +176,133 @@ fn execute(formula: Noun) -> Result<(), String> {
         .map_err(|e| format!("cannot start nox test worker: {e}"))?
         .join()
         .map_err(|_| "nox test worker panicked".to_string())?
+}
+
+/// One executable test entry, with all original module definitions retained.
+#[derive(Clone, Debug)]
+pub struct TestProgram {
+    pub name: String,
+    pub modules: Vec<crate::ModuleTir>,
+}
+
+/// Target-independent test preparation for warrior-owned execution.
+#[derive(Clone, Debug)]
+pub struct TestPrograms {
+    pub tests: Vec<TestProgram>,
+    pub skipped: usize,
+}
+
+/// Resolve and check the project once, then give each active test its own entry.
+/// The caller supplies project-resolved options, as for `build_tir_modules`.
+/// No application entry is executed or used to infer a test's capabilities.
+pub fn prepare_test_programs(
+    entry_path: &Path,
+    options: &CompileOptions,
+) -> Result<TestPrograms, Vec<Diagnostic>> {
+    use crate::tir::{builder::TIRBuilder, optimize::optimize as optimize_tir, TIROp};
+    let mut options = options.clone();
+    options.cfg_flags.insert("test".to_string());
+    let mut project = PreparedProject::build_tests(entry_path, &options)?;
+    let mut entries = Vec::new();
+    let mut skipped = 0;
+    for (index, module) in project.modules.iter().enumerate() {
+        for item in &module.file.items {
+            let ast::Item::Fn(function) = &item.node else {
+                continue;
+            };
+            if !function.is_test {
+                continue;
+            }
+            if function
+                .cfg
+                .as_ref()
+                .is_some_and(|f| !options.cfg_flags.contains(&f.node))
+            {
+                skipped += 1;
+                continue;
+            }
+            if !function.params.is_empty()
+                || !function.type_params.is_empty()
+                || function.return_ty.is_some()
+                || function.body.is_none()
+            {
+                return Err(vec![Diagnostic::error(
+                    "tests require a body, no parameters, no generics and no return type"
+                        .to_string(),
+                    function.name.span,
+                )]);
+            }
+            let mut selected = item.clone();
+            if let ast::Item::Fn(f) = &mut selected.node {
+                f.is_pub = true;
+            }
+            let mut view = module.file.clone();
+            view.kind = ast::FileKind::Module;
+            view.items = vec![selected];
+            project.exports[index].check_entry_requirements(&view, &options)?;
+            entries.push((module.file.name.node.clone(), function.name.node.clone()));
+        }
+    }
+    // Emit test bodies through the normal builder, retaining main and helpers.
+    for module in &mut project.modules {
+        module.file.kind = ast::FileKind::Module;
+        for item in &mut module.file.items {
+            if let ast::Item::Fn(function) = &mut item.node {
+                function.is_test = false;
+            }
+        }
+    }
+    let mut harness = "__trident_tests".to_string();
+    while project
+        .modules
+        .iter()
+        .any(|m| m.file.name.node.replace('.', "_") == harness)
+    {
+        harness.push('_');
+    }
+    let files: Vec<_> = project.modules.iter().map(|m| &m.file).collect();
+    let modules: Vec<_> = project
+        .modules
+        .iter()
+        .zip(&project.exports)
+        .map(|(pm, exports)| {
+            let ops = TIRBuilder::new(options.target_config.clone())
+                .with_target_intrinsics(options.target_intrinsic_widths())
+                .with_cfg_flags(options.cfg_flags.clone())
+                .with_module_types(&files)
+                .with_intrinsics(project.intrinsic_map())
+                .with_module_aliases(project.module_aliases())
+                .with_constants(project.external_constants())
+                .with_mono_instances(exports.mono_instances.clone())
+                .with_call_resolutions(exports.call_resolutions.clone())
+                .build_file(&pm.file);
+            crate::ModuleTir {
+                name: pm.file.name.node.clone(),
+                is_program: false,
+                ops: optimize_tir(ops),
+            }
+        })
+        .collect();
+    let tests = entries
+        .into_iter()
+        .map(|(module, function)| {
+            let mut modules = modules.clone();
+            modules.push(crate::ModuleTir {
+                name: harness.clone(),
+                is_program: true,
+                ops: vec![
+                    TIROp::Entry("main".into()),
+                    TIROp::FnStart("main".into()),
+                    TIROp::Call(format!("@{}__{}", module.replace('.', "_"), function)),
+                    TIROp::Return,
+                    TIROp::FnEnd,
+                ],
+            });
+            TestProgram {
+                name: format!("{module}.{function}"),
+                modules,
+            }
+        })
+        .collect();
+    Ok(TestPrograms { tests, skipped })
 }

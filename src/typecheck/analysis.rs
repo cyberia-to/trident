@@ -18,6 +18,9 @@ impl TypeChecker {
         let mut call_graph: BTreeMap<String, Vec<String>> = BTreeMap::new();
 
         for item in &file.items {
+            if !self.is_item_cfg_active(&item.node) {
+                continue;
+            }
             if let Item::Fn(func) = &item.node {
                 if let Some(body) = &func.body {
                     let mut callees = Vec::new();

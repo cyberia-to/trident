@@ -404,6 +404,8 @@ impl Parser {
     fn current_lexeme_text(&self) -> String {
         match self.peek() {
             Lexeme::Ident(s) => s.clone(),
+            Lexeme::True => "true".to_string(),
+            Lexeme::False => "false".to_string(),
             Lexeme::Integer(n) => n.to_string(),
             Lexeme::Plus => "+".to_string(),
             Lexeme::Star => "*".to_string(),

@@ -69,8 +69,9 @@ mod tests {
     fn signatures_follow_target_abi() {
         let nox = CompileOptions::default();
         let package = crate::target::TargetPackage {
+            intrinsic_abis: Default::default(),
             schema_version: 1,
-            compiler_api: 1,
+            compiler_api: crate::COMPILER_API,
             owner: "fixture".into(),
             version: "1".into(),
             terrain: crate::target::TerrainConfig::triton(),

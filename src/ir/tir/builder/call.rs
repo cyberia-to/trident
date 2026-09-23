@@ -40,6 +40,17 @@ impl TIRBuilder {
             return;
         }
         let effective_name = resolved_name.as_deref().unwrap_or(name);
+        if let Some(&(inputs, outputs)) = self.target_intrinsics.get(effective_name) {
+            self.emit_and_push(
+                TIROp::TargetCall {
+                    name: effective_name.to_string(),
+                    inputs,
+                    outputs,
+                },
+                outputs,
+            );
+            return;
+        }
         if let Some((operation, width)) = self.stream_operation(effective_name) {
             self.emit_and_push(operation, width);
             return;
@@ -203,6 +214,14 @@ impl TIRBuilder {
             return;
         }
         let effective_name = resolved_name.as_deref().unwrap_or(name);
+        if let Some(&(inputs, outputs)) = self.target_intrinsics.get(effective_name) {
+            self.ops.push(TIROp::TargetCall {
+                name: effective_name.to_string(),
+                inputs,
+                outputs,
+            });
+            return;
+        }
         if let Some((operation, _)) = self.stream_operation(effective_name) {
             self.ops.push(operation);
             return;

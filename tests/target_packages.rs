@@ -8,8 +8,9 @@ use trident::{
 fn package() -> TargetPackage {
     let terrain = TerrainConfig::nox();
     TargetPackage {
+        intrinsic_abis: Default::default(),
         schema_version: 1,
-        compiler_api: 1,
+        compiler_api: trident::COMPILER_API,
         owner: "joy".into(),
         version: "test".into(),
         intrinsics: terrain.supported_intrinsics(),
@@ -47,9 +48,11 @@ fn module_bytes_versions_and_abi_are_checked() {
         .unwrap()
         .push_str("// changed\n");
     assert!(changed.validate().is_err());
-    let mut changed = valid.clone();
-    changed.compiler_api = 2;
-    assert!(changed.validate().is_err());
+    for unsupported in [0, 1, 2, trident::COMPILER_API + 1] {
+        let mut changed = valid.clone();
+        changed.compiler_api = unsupported;
+        assert!(changed.validate().is_err());
+    }
     let mut changed = valid.clone();
     changed.terrain.output_extension = "./escape".into();
     assert!(changed.validate().is_err());

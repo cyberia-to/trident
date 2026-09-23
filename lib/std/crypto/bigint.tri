@@ -75,28 +75,13 @@ fn add_u32_carry(a: U32, b: U32, carry_in: U32) -> (U32, U32) {
 // Implementation: compute (2^32 + a) - b - borrow_in to avoid underflow.
 // The result's hi limb after split tells us if we borrowed.
 fn sub_u32_borrow(a: U32, b: U32, borrow_in: U32) -> (U32, U32) {
-    let fa: Field = convert.as_field(a)
-    let fb: Field = convert.as_field(b)
-    let fbi: Field = convert.as_field(borrow_in)
-    // Add 2^32 to a to ensure non-negative, then subtract b and borrow_in.
-    // Result = (2^32 + a) - b - borrow_in
-    // If a >= b + borrow_in: result >= 2^32, so hi = 1, borrow_out = 0.
-    // If a < b + borrow_in:  result < 2^32,  so hi = 0, borrow_out = 1.
-    // We need the constant 2^32. We can get it via field arithmetic.
-    // 2^32 = 4294967296. We build it as 65536 * 65536.
-    let half: Field = convert.as_field(convert.as_u32(65536))
-    let pow2_32: Field = half * half
-    let diff_field: Field = pow2_32 + fa + field.neg(fb) + field.neg(fbi)
-    let (hi, lo) = convert.split(diff_field)
-    // hi = 1 means no borrow needed, hi = 0 means borrow was needed
-    // borrow_out = 1 - hi
-    if hi == convert.as_u32(1) {
-        let zero_borrow: U32 = convert.as_u32(0)
-        (lo, zero_borrow)
-    } else {
-        let one_borrow: U32 = convert.as_u32(1)
-        (lo, one_borrow)
-    }
+    // This exact integer lies in [0,2^33-1], below Goldilocks p.
+    let shifted: Field = 4294967296 + convert.as_field(a)
+        + field.neg(convert.as_field(b)) + field.neg(convert.as_field(borrow_in))
+    let (hi, lo) = convert.split(shifted)
+    // hi=1 iff no borrow. Arithmetic selection avoids secret-dependent branching.
+    let borrow: U32 = convert.as_u32(1 + field.neg(convert.as_field(hi)))
+    (lo, borrow)
 }
 
 // ---------------------------------------------------------------------------
@@ -121,7 +106,7 @@ pub fn add256(a: U256, b: U256) -> (U256, U32) {
 // ---------------------------------------------------------------------------
 // 256-bit Subtraction
 // ---------------------------------------------------------------------------
-// Subtract b from a (assumes a >= b), returning result.
+// Subtract b from a modulo 2^256, returning the low 256 bits.
 // Propagates borrows through all 8 limbs.
 pub fn sub256(a: U256, b: U256) -> U256 {
     let bw0: U32 = convert.as_u32(0)
@@ -221,6 +206,8 @@ pub fn eq256(a: U256, b: U256) -> Bool {
 // ---------------------------------------------------------------------------
 // Multiply a U256 by a single U32 limb, returning (U256 result, U32 carry).
 // This is the core building block for schoolbook multiplication.
+// Let B=2^32. Each carry is at most B-2, so each product+carry is
+// at most (B-1)^2+(B-2)=B^2-B-1=p-2: no Goldilocks reduction loses bits.
 fn mul256_by_u32(a: U256, b: U32) -> (U256, U32) {
     let fb: Field = convert.as_field(b)
     let zero: U32 = convert.as_u32(0)
@@ -339,8 +326,14 @@ pub fn mod_reduce_once(a: U256, m: U256) -> U256 {
 // Assumes a < m and b < m, so a + b < 2m, and a single conditional
 // subtraction suffices.
 pub fn add_mod(a: U256, b: U256, m: U256) -> U256 {
-    let (sum, _carry) = add256(a, b)
-    mod_reduce_once(sum, m)
+    let (sum, carry) = add256(a, b)
+    if carry == convert.as_u32(1) {
+        // The true sum is 2^256 + sum. Since a,b < m, subtracting m
+        // yields a reduced value. Wrapped subtraction retains that value.
+        sub256(sum, m)
+    } else {
+        mod_reduce_once(sum, m)
+    }
 }
 
 // Modular subtraction: (a - b) mod m.
@@ -356,14 +349,69 @@ pub fn sub_mod(a: U256, b: U256, m: U256) -> U256 {
     }
 }
 
-// Modular multiplication: (a * b) mod m.
-// NOTE: This computes only the low 256 bits of a*b, then reduces once.
-// For full correctness with large operands, a multi-word Barrett or
-// Montgomery reduction would be needed.
-// TODO: requires full 512-bit multiplication and proper Barrett reduction
+// Consume one limb from most significant bit to least significant bit.
+// Invariant: remainder < m. The caller handles m = 1 separately.
+fn reduce_limb_mod(remainder: U256, limb: U32, m: U256) -> U256 {
+    let mut result: U256 = remainder
+    let mut word: U32 = limb
+    let mut mask: U32 = convert.as_u32(2147483648)
+    let two: U32 = convert.as_u32(2)
+    for i in 0..32 {
+        result = add_mod(result, result, m)
+        let (bit, rest) = word /% mask
+        word = rest
+        if bit == convert.as_u32(1) {
+            result = add_mod(result, one256(), m)
+        }
+        let (next_mask, unused) = mask /% two
+        mask = next_mask
+    }
+    result
+}
+
+// Consume a multiplier limb from least significant bit to most significant.
+// Both accumulator and base remain reduced even when doubling overflows U256.
+fn mul_limb_mod(accumulator: U256, base: U256, limb: U32, m: U256) -> (U256, U256) {
+    let mut result: U256 = accumulator
+    let mut power: U256 = base
+    let mut word: U32 = limb
+    let two: U32 = convert.as_u32(2)
+    for i in 0..32 {
+        let (next_word, bit) = word /% two
+        word = next_word
+        if bit == convert.as_u32(1) {
+            result = add_mod(result, power, m)
+        }
+        power = add_mod(power, power, m)
+    }
+    (result, power)
+}
+
+// Modular multiplication for arbitrary U256 operands and every nonzero modulus.
+// Reduces a with 256 binary steps, then computes a*b with 256 double/add steps.
+// Never truncates an unreduced product. The result is in [0,m).
+// Control flow depends on operand bits; this is arithmetic, not a constant-time
+// host cryptography implementation. Zero modulus is rejected.
 pub fn mul_mod(a: U256, b: U256, m: U256) -> U256 {
-    let product: U256 = mul256_low(a, b)
-    mod_reduce_once(product, m)
+    assert(is_zero(m) == false)
+    if eq256(m, one256()) { return zero256() }
+    let a7: U256 = reduce_limb_mod(zero256(), a.l7, m)
+    let a6: U256 = reduce_limb_mod(a7, a.l6, m)
+    let a5: U256 = reduce_limb_mod(a6, a.l5, m)
+    let a4: U256 = reduce_limb_mod(a5, a.l4, m)
+    let a3: U256 = reduce_limb_mod(a4, a.l3, m)
+    let a2: U256 = reduce_limb_mod(a3, a.l2, m)
+    let a1: U256 = reduce_limb_mod(a2, a.l1, m)
+    let reduced: U256 = reduce_limb_mod(a1, a.l0, m)
+    let (r0, p0) = mul_limb_mod(zero256(), reduced, b.l0, m)
+    let (r1, p1) = mul_limb_mod(r0, p0, b.l1, m)
+    let (r2, p2) = mul_limb_mod(r1, p1, b.l2, m)
+    let (r3, p3) = mul_limb_mod(r2, p2, b.l3, m)
+    let (r4, p4) = mul_limb_mod(r3, p3, b.l4, m)
+    let (r5, p5) = mul_limb_mod(r4, p4, b.l5, m)
+    let (r6, p6) = mul_limb_mod(r5, p5, b.l6, m)
+    let (result, unused_power) = mul_limb_mod(r6, p6, b.l7, m)
+    result
 }
 
 // ---------------------------------------------------------------------------

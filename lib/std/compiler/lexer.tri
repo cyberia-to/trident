@@ -378,8 +378,12 @@ fn classify_keyword(sb: Field, start: Field, len: Field) -> Field {
 
 fn skip_ws_and_comments(sb: Field) {
     set_scratch(sb, 0)
-    for _i in 0..8192 bounded 8192 {
+    for _i in 0..src_len(sb) bounded 8192 {
         let mode: Field = get_scratch(sb)
+        if mode == 2 {
+            set_scratch(sb, 0)
+            return
+        }
         if mode == 0 {
             if pos_lt_len(sb) {
                 let p: Field = get_pos(sb)
@@ -434,7 +438,7 @@ fn scan_ident_or_keyword(sb: Field) {
     let start: Field = get_pos(sb)
     // Advance while is_ident_continue
     set_scratch(sb, 0)
-    for _i in 0..8192 bounded 8192 {
+    for _i in 0..src_len(sb) bounded 8192 {
         let done: Field = get_scratch(sb)
         if done == 0 {
             if pos_lt_len(sb) {
@@ -732,7 +736,7 @@ fn scan_asm_block(sb: Field, kw_start: Field) {
             let body_start: Field = bp + 1
             // Track brace depth, find matching '}'
             set_scratch(sb, 1)
-            for _i in 0..8192 bounded 8192 {
+            for _i in 0..src_len(sb) bounded 8192 {
                 let depth: Field = get_scratch(sb)
                 if depth == 0 {
                     // done
@@ -798,7 +802,7 @@ pub fn lex(
     mem.write(state_base + 7, 0)
     // Main loop: at most 8192 tokens (bounded by max source length)
     // Uses state_base + 7 as eof flag after skip_ws_and_comments resets it
-    for _i in 0..8192 bounded 8192 {
+    for _i in 0..src_len_val + 1 bounded 8193 {
         let eof_done: Field = mem.read(state_base + 7)
         if eof_done == 0 {
             skip_ws_and_comments(state_base)
@@ -818,6 +822,7 @@ pub fn lex(
                 // EOF
                 emit_token(state_base, TK_EOF(), get_pos(state_base), get_pos(state_base), 0)
                 mem.write(state_base + 7, 1)
+                return
             }
         }
     }

@@ -27,6 +27,10 @@ module std.crypto.sha256
 //   - Bitwise NOT is x ^ 0xFFFFFFFF.
 use vm.core.convert
 
+use vm.io.mem
+
+use vm.core.field
+
 // ---------------------------------------------------------------------------
 // SHA-256 state: 8 U32 working variables
 // ---------------------------------------------------------------------------
@@ -918,4 +922,103 @@ pub fn double_sha256_single_block(
         zero,
         bit_len
     )
+}
+
+// ---------------------------------------------------------------------------
+// Caller-owned RAM APIs. See reference/crypto-arithmetic.md for exact layouts.
+// Compression: state8, input block16 (read-only), scratch72; all disjoint.
+// Double hash: caller-padded block16, output8, scratch88; all disjoint.
+// Exclusive ends and every input word are checked as U32 before mutation.
+// ---------------------------------------------------------------------------
+fn ram_disjoint(a: Field, a_len: Field, b: Field, b_len: Field) {
+    let a_start: U32 = convert.as_u32(a)
+    let a_end: U32 = convert.as_u32(a + a_len)
+    let b_start: U32 = convert.as_u32(b)
+    let b_end: U32 = convert.as_u32(b + b_len)
+    if a_end < b_start { }
+    else if a_end == b_start { }
+    else if b_end < a_start { }
+    else { assert(b_end == a_start) }
+}
+
+fn ram_word(addr: Field) -> U32 { convert.as_u32(mem.read(addr)) }
+fn ram_write_word(addr: Field, value: U32) { mem.write(addr,convert.as_field(value)) }
+
+fn ram_round(work: Field, word: U32, constant: U32) {
+    let t1: U32 = add32_5(ram_word(work + 7), big_sigma1(ram_word(work + 4)),
+        ch(ram_word(work + 4),ram_word(work + 5),ram_word(work + 6)), constant, word)
+    let t2: U32 = add32(big_sigma0(ram_word(work)),
+        maj(ram_word(work),ram_word(work + 1),ram_word(work + 2)))
+    ram_write_word(work + 7,ram_word(work + 6))
+    ram_write_word(work + 6,ram_word(work + 5))
+    ram_write_word(work + 5,ram_word(work + 4))
+    ram_write_word(work + 4,add32(ram_word(work + 3),t1))
+    ram_write_word(work + 3,ram_word(work + 2))
+    ram_write_word(work + 2,ram_word(work + 1))
+    ram_write_word(work + 1,ram_word(work))
+    ram_write_word(work,add32(t1,t2))
+}
+
+pub fn compress_in_ram(state_addr: Field, block_addr: Field, scratch_addr: Field) {
+    ram_disjoint(state_addr,8,block_addr,16)
+    ram_disjoint(state_addr,8,scratch_addr,72)
+    ram_disjoint(block_addr,16,scratch_addr,72)
+    for i in 0..8 bounded 8 {
+        let _checked: U32 = ram_word(state_addr + convert.as_field(i))
+    }
+    for i in 0..16 bounded 16 {
+        let _checked: U32 = ram_word(block_addr + convert.as_field(i))
+    }
+    for i in 0..16 bounded 16 {
+        ram_write_word(scratch_addr + convert.as_field(i),ram_word(block_addr + convert.as_field(i)))
+    }
+    for i in 16..64 bounded 48 {
+        let idx: Field = convert.as_field(i)
+        let word: U32 = add32_3(
+            little_sigma1(ram_word(scratch_addr + idx + field.neg(2))),
+            ram_word(scratch_addr + idx + field.neg(7)),
+            add32(little_sigma0(ram_word(scratch_addr + idx + field.neg(15))),ram_word(scratch_addr + idx + field.neg(16))))
+        ram_write_word(scratch_addr + idx,word)
+    }
+    for i in 0..8 bounded 8 {
+        ram_write_word(scratch_addr + 64 + convert.as_field(i),ram_word(state_addr + convert.as_field(i)))
+    }
+    for i in 0..64 bounded 64 {
+        ram_round(scratch_addr + 64,ram_word(scratch_addr + convert.as_field(i)),k(i))
+    }
+    for i in 0..8 bounded 8 {
+        let idx: Field = convert.as_field(i)
+        ram_write_word(state_addr + idx,add32(ram_word(state_addr + idx),ram_word(scratch_addr + 64 + idx)))
+    }
+}
+
+fn ram_init(state_addr: Field) {
+    ram_write_word(state_addr,convert.as_u32(1779033703))
+    ram_write_word(state_addr + 1,convert.as_u32(3144134277))
+    ram_write_word(state_addr + 2,convert.as_u32(1013904242))
+    ram_write_word(state_addr + 3,convert.as_u32(2773480762))
+    ram_write_word(state_addr + 4,convert.as_u32(1359893119))
+    ram_write_word(state_addr + 5,convert.as_u32(2600822924))
+    ram_write_word(state_addr + 6,convert.as_u32(528734635))
+    ram_write_word(state_addr + 7,convert.as_u32(1541459225))
+}
+
+pub fn double_sha256_single_block_in_ram(block_addr: Field, out_addr: Field, scratch_addr: Field) {
+    ram_disjoint(block_addr,16,out_addr,8)
+    ram_disjoint(block_addr,16,scratch_addr,88)
+    ram_disjoint(out_addr,8,scratch_addr,88)
+    for i in 0..16 bounded 16 {
+        let _checked: U32 = ram_word(block_addr + convert.as_field(i))
+    }
+    ram_init(out_addr)
+    compress_in_ram(out_addr,block_addr,scratch_addr)
+    let second_block: Field = scratch_addr + 72
+    for i in 0..8 bounded 8 {
+        ram_write_word(second_block + convert.as_field(i),ram_word(out_addr + convert.as_field(i)))
+    }
+    ram_write_word(second_block + 8,convert.as_u32(2147483648))
+    for i in 9..15 bounded 6 { ram_write_word(second_block + convert.as_field(i),convert.as_u32(0)) }
+    ram_write_word(second_block + 15,convert.as_u32(256))
+    ram_init(out_addr)
+    compress_in_ram(out_addr,second_block,scratch_addr)
 }

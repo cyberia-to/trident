@@ -3,190 +3,65 @@ use super::*;
 use crate::span::Spanned;
 
 impl TIRBuilder {
+    /// Evaluate all tuple components before replacing any destination. The
+    /// remaining RHS words stay in the model until each component is stored.
+    pub(crate) fn build_tuple_assign(&mut self, names: &[Spanned<String>], value: &Expr) {
+        let widths: Vec<_> = names
+            .iter()
+            .map(|name| {
+                let info = self.stack.find_var_depth_and_width(&name.node);
+                self.flush_stack_effects();
+                info.map_or(0, |(_, width)| width)
+            })
+            .collect();
+        self.build_expr(value);
+        let rhs_width = self.stack.last().map_or(0, |v| v.width);
+        if widths.contains(&0) || widths.iter().sum::<u32>() != rhs_width {
+            self.ops.push(TIROp::Comment(
+                "ERROR: tuple assignment has unresolved or incompatible target widths".into(),
+            ));
+            self.emit_pop(rhs_width);
+            self.stack.pop();
+            return;
+        }
+        for (name, &width) in names.iter().zip(&widths).rev() {
+            let depth = self.stack.access_var(&name.node);
+            self.flush_stack_effects();
+            self.store_top_words_into(depth, width);
+            if let Some(rhs) = self.stack.last_mut() {
+                rhs.width -= width;
+            }
+        }
+        self.stack.pop();
+    }
+
     /// Lower an assignment `place = value` on the stack machine.
     ///
-    /// Handles three place forms produced by the parser:
-    /// - simple variable `x`
-    /// - dotted struct field `p.x` / `p.q.r` (a dotted `Place::Var`)
-    /// - array/struct element `a[i]` (a `Place::Index`), constant index
-    ///
-    /// Each writes a single-word slot in place (evaluate the value, then
-    /// `swap`/`pop` it into the target slot). Multi-word field/element writes
-    /// and runtime array indices are not yet supported on the stack machine and
-    /// emit an explicit error rather than miscompiling.
+    /// Whole values and projections retain their complete declared word width.
+    /// Runtime indices are bounds checked before evaluating the right-hand side.
     pub(crate) fn build_assign(&mut self, place: &Place, value: &Expr) {
         match place {
             Place::Var(name) if !name.contains('.') => {
-                // Simple variable reassignment (width-1 slot).
+                // Reload before evaluating so a spill reload cannot cover
+                // the new value. Each pop exposes the next aggregate word;
+                // its corresponding destination remains at the same depth.
+                self.stack.access_var(name);
+                self.flush_stack_effects();
                 self.build_expr(value);
                 let depth = self.stack.access_var(name);
+                let width = self.stack.last().map_or(0, |value| value.width);
                 self.flush_stack_effects();
-                self.store_top_into(depth);
+                self.store_top_words_into(depth, width);
                 self.stack.pop();
             }
-            // Dotted field access `p.x` — the parser encodes this as a dotted
-            // Place::Var; a structured FieldAccess reduces to the same store.
-            Place::Var(name) => {
-                self.build_dotted_field_store(name, value);
-            }
-            Place::FieldAccess(inner, field) => {
-                // Flatten a structured field-access place into a dotted name
-                // when the base is a (possibly dotted) variable.
-                if let Some(base) = Self::place_dotted_name(inner) {
-                    let full = format!("{}.{}", base, field.node);
-                    self.build_dotted_field_store(&full, value);
-                } else {
-                    self.build_expr(value);
-                    self.ops.push(TIROp::Comment(
-                        "ERROR: unsupported field-assignment target".to_string(),
-                    ));
-                    self.ops.push(TIROp::Pop(1));
-                    self.stack.pop();
-                }
-            }
-            Place::Index(inner, index) => {
-                self.build_index_store(inner, index, value);
-            }
+            _ => self.build_projected_store(place, value),
         }
     }
 
-    /// Store the single word on top of the stack into the slot at `depth`
-    /// (measured from the current top, with the value already pushed).
-    fn store_top_into(&mut self, depth: u32) {
-        self.ops.extend([TIROp::Swap(depth), TIROp::Pop(1)]);
-    }
-
-    /// Recover a dotted variable name from a place whose base is a variable.
-    fn place_dotted_name(place: &Spanned<Place>) -> Option<String> {
-        match &place.node {
-            Place::Var(name) => Some(name.clone()),
-            Place::FieldAccess(inner, field) => {
-                Self::place_dotted_name(inner).map(|b| format!("{}.{}", b, field.node))
-            }
-            Place::Index(..) => None,
+    fn store_top_words_into(&mut self, depth: u32, width: u32) {
+        for _ in 0..width {
+            self.ops.extend([TIROp::Swap(depth), TIROp::Pop(1)]);
         }
-    }
-
-    /// Store into a dotted struct field `base.f0.f1…` (width-1 field only).
-    fn build_dotted_field_store(&mut self, name: &str, value: &Expr) {
-        let parts: Vec<&str> = name.split('.').collect();
-        // Find the longest prefix that names a live variable, and bring it onto
-        // the stack BEFORE evaluating the value (so a reload can't land on top
-        // of the value word).
-        let mut base_split = None;
-        for split in 1..parts.len() {
-            let var_name = parts[..split].join(".");
-            if self.stack.has_var(&var_name) {
-                self.stack.access_var(&var_name);
-                self.flush_stack_effects();
-                base_split = Some(split);
-                break;
-            }
-        }
-        self.build_expr(value);
-        let Some(split) = base_split else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: unresolved assignment target '{}'",
-                name
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        let var_name = parts[..split].join(".");
-        let fields = &parts[split..];
-        let base_info = self.stack.find_var_depth_and_width(&var_name);
-        self.flush_stack_effects();
-        let Some((base_depth, _)) = base_info else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: unresolved assignment target '{}'",
-                name
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        match self.resolve_nested_field_offset(&var_name, fields) {
-            Some((combined_offset, 1)) => {
-                let real_depth = base_depth + combined_offset;
-                self.store_top_into(real_depth);
-            }
-            Some((_, field_width)) => {
-                self.ops.push(TIROp::Comment(format!(
-                    "ERROR: assignment to multi-word field '{}' (width {}) not yet supported on the stack machine",
-                    name, field_width
-                )));
-                self.ops.push(TIROp::Pop(1));
-            }
-            None => {
-                self.ops.push(TIROp::Comment(format!(
-                    "ERROR: unresolved field path '{}'",
-                    name
-                )));
-                self.ops.push(TIROp::Pop(1));
-            }
-        }
-        self.stack.pop();
-    }
-
-    /// Store into `a[idx]` with a constant index into a named variable
-    /// (width-1 element only).
-    fn build_index_store(&mut self, inner: &Spanned<Place>, index: &Spanned<Expr>, value: &Expr) {
-        let base_name = match &inner.node {
-            Place::Var(name) if !name.contains('.') => Some(name.clone()),
-            _ => None,
-        };
-        let const_idx = match &index.node {
-            Expr::Literal(Literal::Integer(i)) => Some(*i as u32),
-            _ => None,
-        };
-        let (Some(name), Some(idx)) = (base_name, const_idx) else {
-            self.build_expr(value);
-            self.ops.push(TIROp::Comment(
-                "ERROR: only constant-index assignment into a named array is supported on the stack machine".to_string(),
-            ));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        if self.stack.has_var(&name) {
-            self.stack.access_var(&name);
-            self.flush_stack_effects();
-        }
-        self.build_expr(value);
-        let info = self.stack.find_var_with_elem_width(&name);
-        self.flush_stack_effects();
-        let Some((var_depth, var_width, elem_width)) = info else {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: unresolved array '{}'",
-                name
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        };
-        if elem_width != 1 {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: assignment to multi-word array element '{}[{}]' (elem width {}) not yet supported",
-                name, idx, elem_width
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        }
-        if (idx + 1) * elem_width > var_width {
-            self.ops.push(TIROp::Comment(format!(
-                "ERROR: index {} out of bounds for '{}' (width {})",
-                idx, name, var_width
-            )));
-            self.ops.push(TIROp::Pop(1));
-            self.stack.pop();
-            return;
-        }
-        let base_offset = var_width - (idx + 1) * elem_width;
-        let real_depth = var_depth + base_offset;
-        self.store_top_into(real_depth);
-        self.stack.pop();
     }
 
     /// Append Pop ops to clean up locals created in an if/else branch.
@@ -215,6 +90,31 @@ impl TIRBuilder {
 #[cfg(test)]
 mod cleanup_tests {
     use super::*;
+
+    #[test]
+    fn aggregate_reassignment_replaces_all_words_without_disturbing_neighbors() {
+        for width in 1..=20u32 {
+            for above in 0..=20u32 {
+                let mut builder = TIRBuilder::new(crate::target::TerrainConfig::nox());
+                builder.store_top_words_into(width + above, width);
+                let mut stack: Vec<_> = (0..3 + width + above + width).collect();
+                let mut expected = stack[..(3 + width + above) as usize].to_vec();
+                expected[3..(3 + width) as usize]
+                    .copy_from_slice(&stack[(3 + width + above) as usize..]);
+                for op in builder.ops {
+                    match op {
+                        TIROp::Swap(depth) => {
+                            let top = stack.len() - 1;
+                            stack.swap(top, top - depth as usize);
+                        }
+                        TIROp::Pop(count) => stack.truncate(stack.len() - count as usize),
+                        _ => unreachable!(),
+                    }
+                }
+                assert_eq!(stack, expected, "width={width} above={above}");
+            }
+        }
+    }
 
     #[test]
     fn branch_cleanup_preserves_outer_stack_and_result_order() {

@@ -1,0 +1,2542 @@
+{
+  "schema": 1,
+  "proofs_generated": 0,
+  "frozen_source_sha256": "7c63fcad9d12a220036b531f85eacc1a91984ff87c18687703aeeac57b3df415",
+  "before_binary_sha256": "9265f599c5200f330d29da19f1fccfeb18d5b9cdd905ba713bd15a068532d47b",
+  "after_binary_sha256": "9a31217f9ce51e710aa7e4e6368d967e459108757c9ed66ffde5a943fad4b632",
+  "fixtures": 133,
+  "positive": 99,
+  "negative": 34,
+  "baselines": 43,
+  "changed_native_programs": 40,
+  "native_programs": [
+    {
+      "source": "baselines/triton/fixtures/assert/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(4774527829702288502), BFieldElement(4039792505474400814), BFieldElement(5810479892430978672), BFieldElement(3526400261884748481), BFieldElement(744038570602045887)])",
+      "after_native_hash": "Digest([BFieldElement(4774527829702288502), BFieldElement(4039792505474400814), BFieldElement(5810479892430978672), BFieldElement(3526400261884748481), BFieldElement(744038570602045887)])",
+      "final5_sha256": "33c536763c416bdde1ee3587844f2c5bfb56ef03b7be5097a934c35ddadbe208",
+      "live_sha256": "33c536763c416bdde1ee3587844f2c5bfb56ef03b7be5097a934c35ddadbe208"
+    },
+    {
+      "source": "baselines/triton/fixtures/assert-mismatch/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(4774527829702288502), BFieldElement(4039792505474400814), BFieldElement(5810479892430978672), BFieldElement(3526400261884748481), BFieldElement(744038570602045887)])",
+      "after_native_hash": "Digest([BFieldElement(4774527829702288502), BFieldElement(4039792505474400814), BFieldElement(5810479892430978672), BFieldElement(3526400261884748481), BFieldElement(744038570602045887)])",
+      "final5_sha256": "d330cde502cf158da183ef5495ac28ca3c30e1ed3d8e19564412f021c7c0a8d8",
+      "live_sha256": "d330cde502cf158da183ef5495ac28ca3c30e1ed3d8e19564412f021c7c0a8d8"
+    },
+    {
+      "source": "baselines/triton/fixtures/auth-preimage/main.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(12780609085792684293), BFieldElement(12824358982907426902), BFieldElement(1321137703898379008), BFieldElement(13606954203059050405), BFieldElement(16948581695893288327)])",
+      "after_native_hash": "Digest([BFieldElement(12780609085792684293), BFieldElement(12824358982907426902), BFieldElement(1321137703898379008), BFieldElement(13606954203059050405), BFieldElement(16948581695893288327)])",
+      "final5_sha256": "960fb5e4e40ba032074674db73ec54ca0d0b30ce82ec3f7720b69bc72379adb1",
+      "live_sha256": "960fb5e4e40ba032074674db73ec54ca0d0b30ce82ec3f7720b69bc72379adb1"
+    },
+    {
+      "source": "baselines/triton/fixtures/auth-preimage-bad/main.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(12780609085792684293), BFieldElement(12824358982907426902), BFieldElement(1321137703898379008), BFieldElement(13606954203059050405), BFieldElement(16948581695893288327)])",
+      "after_native_hash": "Digest([BFieldElement(12780609085792684293), BFieldElement(12824358982907426902), BFieldElement(1321137703898379008), BFieldElement(13606954203059050405), BFieldElement(16948581695893288327)])",
+      "final5_sha256": "85c0792df59744ee9ee8ef5ae360d48765f0b82d46451ad2a35100ffd796b0e5",
+      "live_sha256": "85c0792df59744ee9ee8ef5ae360d48765f0b82d46451ad2a35100ffd796b0e5"
+    },
+    {
+      "source": "baselines/triton/fixtures/bigint-carry/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(9984451567965777959), BFieldElement(6632171500997745288), BFieldElement(16544884286953288006), BFieldElement(16063149845873375047), BFieldElement(13186776575020294949)])",
+      "after_native_hash": "Digest([BFieldElement(6384601648141112331), BFieldElement(2202531545000479736), BFieldElement(7548778864541457740), BFieldElement(11716460680420559137), BFieldElement(554374524508411492)])",
+      "final5_sha256": "bad55867157aea9947c937875187e0e6e798fad448c6fa9fc6e65bf470ec8dcf",
+      "live_sha256": "12bf6f52836fc2110be26de50a98ece3cbb6bfd5f26b3919e3f0288237aa507c"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-lexer-associativity/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "after_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "final5_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1",
+      "live_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-lexer-parentheses/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "after_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "final5_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1",
+      "live_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-lexer-precedence/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "after_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "final5_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1",
+      "live_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-lexer-reject/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "after_native_hash": "Digest([BFieldElement(2053311625298852908), BFieldElement(7461318626686225519), BFieldElement(9875766501805926288), BFieldElement(14450838781073812220), BFieldElement(3538952669900136917)])",
+      "final5_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1",
+      "live_sha256": "62d42a8400280fcf6f6b74e46679bcd071b4b87c435c029303fa15ed32dbe3f1"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-parser-associativity/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(776601144556476724), BFieldElement(16896778093610586256), BFieldElement(4858182073580269921), BFieldElement(4397442811636268157), BFieldElement(10901673158635914727)])",
+      "after_native_hash": "Digest([BFieldElement(18052776956462261454), BFieldElement(12625349686349781760), BFieldElement(4611272029554770461), BFieldElement(4549488742884370398), BFieldElement(1636790754665740643)])",
+      "final5_sha256": "521bc70e3a41ebaa80e985bff4eb0119c4c4d34e4973c8747d1972a96dc9bc7b",
+      "live_sha256": "2512d323649fbaf61724df44cf03a56ab0782f1e30e25b9014f21375d09a1d48"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-parser-parentheses/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(776601144556476724), BFieldElement(16896778093610586256), BFieldElement(4858182073580269921), BFieldElement(4397442811636268157), BFieldElement(10901673158635914727)])",
+      "after_native_hash": "Digest([BFieldElement(18052776956462261454), BFieldElement(12625349686349781760), BFieldElement(4611272029554770461), BFieldElement(4549488742884370398), BFieldElement(1636790754665740643)])",
+      "final5_sha256": "521bc70e3a41ebaa80e985bff4eb0119c4c4d34e4973c8747d1972a96dc9bc7b",
+      "live_sha256": "2512d323649fbaf61724df44cf03a56ab0782f1e30e25b9014f21375d09a1d48"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-parser-precedence/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(776601144556476724), BFieldElement(16896778093610586256), BFieldElement(4858182073580269921), BFieldElement(4397442811636268157), BFieldElement(10901673158635914727)])",
+      "after_native_hash": "Digest([BFieldElement(18052776956462261454), BFieldElement(12625349686349781760), BFieldElement(4611272029554770461), BFieldElement(4549488742884370398), BFieldElement(1636790754665740643)])",
+      "final5_sha256": "521bc70e3a41ebaa80e985bff4eb0119c4c4d34e4973c8747d1972a96dc9bc7b",
+      "live_sha256": "2512d323649fbaf61724df44cf03a56ab0782f1e30e25b9014f21375d09a1d48"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-parser-reject/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(776601144556476724), BFieldElement(16896778093610586256), BFieldElement(4858182073580269921), BFieldElement(4397442811636268157), BFieldElement(10901673158635914727)])",
+      "after_native_hash": "Digest([BFieldElement(18052776956462261454), BFieldElement(12625349686349781760), BFieldElement(4611272029554770461), BFieldElement(4549488742884370398), BFieldElement(1636790754665740643)])",
+      "final5_sha256": "521bc70e3a41ebaa80e985bff4eb0119c4c4d34e4973c8747d1972a96dc9bc7b",
+      "live_sha256": "2512d323649fbaf61724df44cf03a56ab0782f1e30e25b9014f21375d09a1d48"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-pipeline-associativity/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(6781883199467161243), BFieldElement(17565564095479773826), BFieldElement(2574340571097687144), BFieldElement(18402030929200188346), BFieldElement(15185678909763325239)])",
+      "after_native_hash": "Digest([BFieldElement(1657274495614884824), BFieldElement(2180265950710486177), BFieldElement(15593360373915906958), BFieldElement(8611125618301996537), BFieldElement(7438747722008393269)])",
+      "final5_sha256": "0b0cb83ded6c15d1c6601fd139eb8df05e42d210f34ba8e2cf23f3d390b62848",
+      "live_sha256": "0a227d18c4b84c41368af1b7744b2a9b7d050de20dc20759454d289aa8d351f6"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-pipeline-parentheses/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(6781883199467161243), BFieldElement(17565564095479773826), BFieldElement(2574340571097687144), BFieldElement(18402030929200188346), BFieldElement(15185678909763325239)])",
+      "after_native_hash": "Digest([BFieldElement(1657274495614884824), BFieldElement(2180265950710486177), BFieldElement(15593360373915906958), BFieldElement(8611125618301996537), BFieldElement(7438747722008393269)])",
+      "final5_sha256": "0b0cb83ded6c15d1c6601fd139eb8df05e42d210f34ba8e2cf23f3d390b62848",
+      "live_sha256": "0a227d18c4b84c41368af1b7744b2a9b7d050de20dc20759454d289aa8d351f6"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-pipeline-precedence/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(6781883199467161243), BFieldElement(17565564095479773826), BFieldElement(2574340571097687144), BFieldElement(18402030929200188346), BFieldElement(15185678909763325239)])",
+      "after_native_hash": "Digest([BFieldElement(1657274495614884824), BFieldElement(2180265950710486177), BFieldElement(15593360373915906958), BFieldElement(8611125618301996537), BFieldElement(7438747722008393269)])",
+      "final5_sha256": "0b0cb83ded6c15d1c6601fd139eb8df05e42d210f34ba8e2cf23f3d390b62848",
+      "live_sha256": "0a227d18c4b84c41368af1b7744b2a9b7d050de20dc20759454d289aa8d351f6"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-pipeline-reject/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(6781883199467161243), BFieldElement(17565564095479773826), BFieldElement(2574340571097687144), BFieldElement(18402030929200188346), BFieldElement(15185678909763325239)])",
+      "after_native_hash": "Digest([BFieldElement(1657274495614884824), BFieldElement(2180265950710486177), BFieldElement(15593360373915906958), BFieldElement(8611125618301996537), BFieldElement(7438747722008393269)])",
+      "final5_sha256": "0b0cb83ded6c15d1c6601fd139eb8df05e42d210f34ba8e2cf23f3d390b62848",
+      "live_sha256": "0a227d18c4b84c41368af1b7744b2a9b7d050de20dc20759454d289aa8d351f6"
+    },
+    {
+      "source": "baselines/triton/fixtures/compiler-pipeline-type-reject/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(6781883199467161243), BFieldElement(17565564095479773826), BFieldElement(2574340571097687144), BFieldElement(18402030929200188346), BFieldElement(15185678909763325239)])",
+      "after_native_hash": "Digest([BFieldElement(1657274495614884824), BFieldElement(2180265950710486177), BFieldElement(15593360373915906958), BFieldElement(8611125618301996537), BFieldElement(7438747722008393269)])",
+      "final5_sha256": "0b0cb83ded6c15d1c6601fd139eb8df05e42d210f34ba8e2cf23f3d390b62848",
+      "live_sha256": "0a227d18c4b84c41368af1b7744b2a9b7d050de20dc20759454d289aa8d351f6"
+    },
+    {
+      "source": "baselines/triton/fixtures/convert/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(14368564945328569842), BFieldElement(11167882132242718579), BFieldElement(1038092112032976562), BFieldElement(725216646516473498), BFieldElement(1372734534705956865)])",
+      "after_native_hash": "Digest([BFieldElement(14368564945328569842), BFieldElement(11167882132242718579), BFieldElement(1038092112032976562), BFieldElement(725216646516473498), BFieldElement(1372734534705956865)])",
+      "final5_sha256": "a92456ccd4fdfab0752c839d4f1517c871cc9c5ae6b792fd05fe743921bf44bc",
+      "live_sha256": "a92456ccd4fdfab0752c839d4f1517c871cc9c5ae6b792fd05fe743921bf44bc"
+    },
+    {
+      "source": "baselines/triton/fixtures/convert-overflow/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(14368564945328569842), BFieldElement(11167882132242718579), BFieldElement(1038092112032976562), BFieldElement(725216646516473498), BFieldElement(1372734534705956865)])",
+      "after_native_hash": "Digest([BFieldElement(14368564945328569842), BFieldElement(11167882132242718579), BFieldElement(1038092112032976562), BFieldElement(725216646516473498), BFieldElement(1372734534705956865)])",
+      "final5_sha256": "eb86a03eee29a00e6c020052216ec9d6f3f2f68fc1f731082c0bfc8ed0aca5b9",
+      "live_sha256": "eb86a03eee29a00e6c020052216ec9d6f3f2f68fc1f731082c0bfc8ed0aca5b9"
+    },
+    {
+      "source": "baselines/triton/fixtures/custom-poseidon2-lanes/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(8673349599809150255), BFieldElement(7454613798500875452), BFieldElement(5972565781066843051), BFieldElement(2869121655089388303), BFieldElement(3471190932648393951)])",
+      "after_native_hash": "Digest([BFieldElement(17496356225448352204), BFieldElement(15793401888573538079), BFieldElement(1876586832568372721), BFieldElement(8332925157471821075), BFieldElement(7477199815270909149)])",
+      "final5_sha256": "5e0765d1aaea209d481da7e5a9e25d539f55599bbb34d5e4519638c6f42bd847",
+      "live_sha256": "0a8824be7bf4b3b65c31cc776b6a623f5b4df757f77b5ec5f49127e56721344c"
+    },
+    {
+      "source": "baselines/triton/fixtures/custom-poseidon2-ram/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(5482263578944367173), BFieldElement(7703756831746097270), BFieldElement(6758222906377572584), BFieldElement(8355676234713570687), BFieldElement(5564055001789320947)])",
+      "after_native_hash": "Digest([BFieldElement(13837347124137693546), BFieldElement(12282152516497936105), BFieldElement(9246284607461687232), BFieldElement(10868013175072179464), BFieldElement(9139952189878761128)])",
+      "final5_sha256": "9024d95ba9c7ee82d1c2c16f6d36742c787774e0fa7fd0a8edbf067c2247afdc",
+      "live_sha256": "839ed426367ece2c358b8e67738c8fbd1931d3c17fdbaf9687fb98ed526b1172"
+    },
+    {
+      "source": "baselines/triton/fixtures/custom-poseidon2-zero/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(8673349599809150255), BFieldElement(7454613798500875452), BFieldElement(5972565781066843051), BFieldElement(2869121655089388303), BFieldElement(3471190932648393951)])",
+      "after_native_hash": "Digest([BFieldElement(17496356225448352204), BFieldElement(15793401888573538079), BFieldElement(1876586832568372721), BFieldElement(8332925157471821075), BFieldElement(7477199815270909149)])",
+      "final5_sha256": "5e0765d1aaea209d481da7e5a9e25d539f55599bbb34d5e4519638c6f42bd847",
+      "live_sha256": "0a8824be7bf4b3b65c31cc776b6a623f5b4df757f77b5ec5f49127e56721344c"
+    },
+    {
+      "source": "examples/neptune/types/custom_token.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(3058354958887721743), BFieldElement(16203502030505493987), BFieldElement(4937636188403465505), BFieldElement(13862983029658181394), BFieldElement(14100034534270611552)])",
+      "after_native_hash": "Digest([BFieldElement(10243246221932160615), BFieldElement(5978723401737524803), BFieldElement(415630301930688647), BFieldElement(11597320269626423572), BFieldElement(16072624879679679400)])",
+      "final5_sha256": "fba7957f294b9a377ccf36ac91d737f157f122e5d66e3c1d66b393c6b08c9f35",
+      "live_sha256": "3781e104966faa3a400bc01bfb5f0442ad70f0c1ba52ca0d68f7af39fe80bcb0"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-cross-limb/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-even-order/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-half/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-high/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-invalid-r/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-order/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-oversized-limb/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/ecdsa-zero/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7159677487943743407), BFieldElement(14732308794476282554), BFieldElement(2795395953906253795), BFieldElement(3705162945818458234), BFieldElement(14781668775425668728)])",
+      "after_native_hash": "Digest([BFieldElement(12771291909250865979), BFieldElement(17539280004602070827), BFieldElement(9795109955415340008), BFieldElement(1987659403506626107), BFieldElement(3183474354870431011)])",
+      "final5_sha256": "353bbe8465d473c1cff4c6839303a45a528ff8448e5cfc5dfdca4789217bba42",
+      "live_sha256": "b6ab689b54bb49ad19ec4a048b26835fad6ce3598288322255836835794fb600"
+    },
+    {
+      "source": "baselines/triton/fixtures/fibonacci-0/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "after_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "final5_sha256": "c9af3ab39a14cb61f49106b11183a4145a0ef8e4173feb01a7df66d65f05080c",
+      "live_sha256": "c9af3ab39a14cb61f49106b11183a4145a0ef8e4173feb01a7df66d65f05080c"
+    },
+    {
+      "source": "baselines/triton/fixtures/fibonacci-1/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "after_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "final5_sha256": "83d868f544bfc9ef84642c41c188d466928726445f503a2ceafb2f7649d2bb9c",
+      "live_sha256": "83d868f544bfc9ef84642c41c188d466928726445f503a2ceafb2f7649d2bb9c"
+    },
+    {
+      "source": "baselines/triton/fixtures/fibonacci-10/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "after_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "final5_sha256": "0fdafed3356ab338927ca5821ebb31737dc8439eea0ec66219b19c906eae69b1",
+      "live_sha256": "0fdafed3356ab338927ca5821ebb31737dc8439eea0ec66219b19c906eae69b1"
+    },
+    {
+      "source": "baselines/triton/fixtures/fibonacci-100/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "after_native_hash": "Digest([BFieldElement(5923484105421092362), BFieldElement(8827193783441263566), BFieldElement(11307683343020206142), BFieldElement(6267445337957306399), BFieldElement(3404498554093206954)])",
+      "final5_sha256": "8a55f08a37cafeb7f7b8422ef86f862b3b90e7508075bd2845d689d1de9c59b9",
+      "live_sha256": "8a55f08a37cafeb7f7b8422ef86f862b3b90e7508075bd2845d689d1de9c59b9"
+    },
+    {
+      "source": "baselines/triton/fixtures/field/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5584935702086661225), BFieldElement(10962467337748116197), BFieldElement(2423993391489379917), BFieldElement(15834739649032459213), BFieldElement(5617337100621280111)])",
+      "after_native_hash": "Digest([BFieldElement(5584935702086661225), BFieldElement(10962467337748116197), BFieldElement(2423993391489379917), BFieldElement(15834739649032459213), BFieldElement(5617337100621280111)])",
+      "final5_sha256": "2ac2950095adb907d553e31a83b61daeafccb96b79801f812c31f98dc04d3cd5",
+      "live_sha256": "2ac2950095adb907d553e31a83b61daeafccb96b79801f812c31f98dc04d3cd5"
+    },
+    {
+      "source": "examples/neptune/locks/generation.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(10436957676134477874), BFieldElement(8020845052319449525), BFieldElement(15843398152041457660), BFieldElement(16841367675233454415), BFieldElement(7905674084337025757)])",
+      "after_native_hash": "Digest([BFieldElement(10436957676134477874), BFieldElement(8020845052319449525), BFieldElement(15843398152041457660), BFieldElement(16841367675233454415), BFieldElement(7905674084337025757)])",
+      "final5_sha256": "0000024fb3bb5afe98e5b53ddcf72f3ef639cdd5af3c71ee3655a0dc39da7e0b",
+      "live_sha256": "0000024fb3bb5afe98e5b53ddcf72f3ef639cdd5af3c71ee3655a0dc39da7e0b"
+    },
+    {
+      "source": "baselines/triton/fixtures/io/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(12536909880751699855), BFieldElement(15695080681288588828), BFieldElement(179035181993461929), BFieldElement(8803116968053515788), BFieldElement(6757687157385196563)])",
+      "after_native_hash": "Digest([BFieldElement(12536909880751699855), BFieldElement(15695080681288588828), BFieldElement(179035181993461929), BFieldElement(8803116968053515788), BFieldElement(6757687157385196563)])",
+      "final5_sha256": "6fce8e827f198722e447e771761ccdd3b6b30740ab18e0de833fe68fdc0ed9a5",
+      "live_sha256": "6fce8e827f198722e447e771761ccdd3b6b30740ab18e0de833fe68fdc0ed9a5"
+    },
+    {
+      "source": "baselines/triton/fixtures/keccak-lanes/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(15061076329631436011), BFieldElement(2143318860733106647), BFieldElement(11376592605660264508), BFieldElement(9474296019842662516), BFieldElement(2773030048720870946)])",
+      "after_native_hash": "Digest([BFieldElement(2497198883772720169), BFieldElement(403171033809684181), BFieldElement(14870851575492763096), BFieldElement(3521805585956559390), BFieldElement(3885320933177891429)])",
+      "final5_sha256": "38bf06cb737ec0df80e707529262748482b28cb3588967aad9d56fe9bfc572c2",
+      "live_sha256": "394f283ef67d393ef13e50edf6f9f4658d57727bc411dad15c0a9399598faeec"
+    },
+    {
+      "source": "baselines/triton/fixtures/keccak-zero/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(15061076329631436011), BFieldElement(2143318860733106647), BFieldElement(11376592605660264508), BFieldElement(9474296019842662516), BFieldElement(2773030048720870946)])",
+      "after_native_hash": "Digest([BFieldElement(2497198883772720169), BFieldElement(403171033809684181), BFieldElement(14870851575492763096), BFieldElement(3521805585956559390), BFieldElement(3885320933177891429)])",
+      "final5_sha256": "38bf06cb737ec0df80e707529262748482b28cb3588967aad9d56fe9bfc572c2",
+      "live_sha256": "394f283ef67d393ef13e50edf6f9f4658d57727bc411dad15c0a9399598faeec"
+    },
+    {
+      "source": "baselines/triton/fixtures/kernel-timestamp/main.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(1706706765926401367), BFieldElement(4551684311679187591), BFieldElement(16360421462830650121), BFieldElement(12414389249925864061), BFieldElement(10611368503817222826)])",
+      "after_native_hash": "Digest([BFieldElement(10040614963328411864), BFieldElement(9443722189345236333), BFieldElement(13031151967495420605), BFieldElement(3161874976625234017), BFieldElement(17582161157710551850)])",
+      "final5_sha256": "d84e4a38153e7f9be099e3503df24abdc8cb0dfcd21752e7972005ca8408d25a",
+      "live_sha256": "ae93efb6d51abf9f1ee09e0e45a7b967ee68781ec185eabe28da0e13d1732b2c"
+    },
+    {
+      "source": "baselines/triton/fixtures/kernel-timestamp-bad-path/main.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(1706706765926401367), BFieldElement(4551684311679187591), BFieldElement(16360421462830650121), BFieldElement(12414389249925864061), BFieldElement(10611368503817222826)])",
+      "after_native_hash": "Digest([BFieldElement(10040614963328411864), BFieldElement(9443722189345236333), BFieldElement(13031151967495420605), BFieldElement(3161874976625234017), BFieldElement(17582161157710551850)])",
+      "final5_sha256": "a1ac19737b58b6b907e50a92ae4cd923ef9ce123c7eeccf6f9816673e5e00845",
+      "live_sha256": "cfa8216780daf6e783b7b30b46b2074e7ad1dff4bae97d78f2b3b79990c2d657"
+    },
+    {
+      "source": "baselines/triton/fixtures/mem/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(3090271368123107252), BFieldElement(12451152031447013850), BFieldElement(7905988651456007615), BFieldElement(8082008490806028665), BFieldElement(7054375408415488242)])",
+      "after_native_hash": "Digest([BFieldElement(3090271368123107252), BFieldElement(12451152031447013850), BFieldElement(7905988651456007615), BFieldElement(8082008490806028665), BFieldElement(7054375408415488242)])",
+      "final5_sha256": "d88b0d02caacda471e2d32430551f43563d74812e79834ae58b12c2a5a239bf2",
+      "live_sha256": "d88b0d02caacda471e2d32430551f43563d74812e79834ae58b12c2a5a239bf2"
+    },
+    {
+      "source": "baselines/triton/fixtures/merkle-2/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(668795380405843847), BFieldElement(14593951937864830899), BFieldElement(15466709250786528460), BFieldElement(11588228346588164945), BFieldElement(14276252183300829795)])",
+      "after_native_hash": "Digest([BFieldElement(668795380405843847), BFieldElement(14593951937864830899), BFieldElement(15466709250786528460), BFieldElement(11588228346588164945), BFieldElement(14276252183300829795)])",
+      "final5_sha256": "312a1fc4d4ae02c02adb81a6ed824ad032131fbabda2733b8a366ccf3dbf4e0b",
+      "live_sha256": "312a1fc4d4ae02c02adb81a6ed824ad032131fbabda2733b8a366ccf3dbf4e0b"
+    },
+    {
+      "source": "baselines/triton/fixtures/merkle-3/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(668795380405843847), BFieldElement(14593951937864830899), BFieldElement(15466709250786528460), BFieldElement(11588228346588164945), BFieldElement(14276252183300829795)])",
+      "after_native_hash": "Digest([BFieldElement(668795380405843847), BFieldElement(14593951937864830899), BFieldElement(15466709250786528460), BFieldElement(11588228346588164945), BFieldElement(14276252183300829795)])",
+      "final5_sha256": "1bd7bd0b12f12c9842f1fb18a82cea229787f7f4965cb0fb1273062edce11cdd",
+      "live_sha256": "1bd7bd0b12f12c9842f1fb18a82cea229787f7f4965cb0fb1273062edce11cdd"
+    },
+    {
+      "source": "baselines/triton/fixtures/merkle-proof/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(15214035230332693799), BFieldElement(6783252761117059997), BFieldElement(12935386624741755130), BFieldElement(3711332902986074517), BFieldElement(18070673213106779234)])",
+      "after_native_hash": "Digest([BFieldElement(14603533757472445841), BFieldElement(14409358988859431352), BFieldElement(13310755296934291755), BFieldElement(14060049781900915147), BFieldElement(4737680050635420053)])",
+      "final5_sha256": "de8c80d1a829fc4195eea692016da3ee367ae217766b44791de82072444fad38",
+      "live_sha256": "c9a08520d4296cfaef33bd3b9b656d1ecd6c224d63f738a23d8baedcb9e7b00c"
+    },
+    {
+      "source": "baselines/triton/fixtures/merkle-proof-bad-path/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(15214035230332693799), BFieldElement(6783252761117059997), BFieldElement(12935386624741755130), BFieldElement(3711332902986074517), BFieldElement(18070673213106779234)])",
+      "after_native_hash": "Digest([BFieldElement(14603533757472445841), BFieldElement(14409358988859431352), BFieldElement(13310755296934291755), BFieldElement(14060049781900915147), BFieldElement(4737680050635420053)])",
+      "final5_sha256": "744a6bc1e6187227ca2af75b1a36000bded2d7d125b4039239164233d657f66d",
+      "live_sha256": "44251e1a27bbd0d85f157324c0414a2cb71f87b6f69887ab38075a5861df6c71"
+    },
+    {
+      "source": "examples/neptune/locks/multisig.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(15230011618877114906), BFieldElement(1008252864748170405), BFieldElement(5127545743595669738), BFieldElement(6009685138249248097), BFieldElement(832961942080276778)])",
+      "after_native_hash": "Digest([BFieldElement(15230011618877114906), BFieldElement(1008252864748170405), BFieldElement(5127545743595669738), BFieldElement(6009685138249248097), BFieldElement(832961942080276778)])",
+      "final5_sha256": "09c102336ecc94b9f7d7043886128e9bc44335b33a2b856c875125a3de002aff",
+      "live_sha256": "09c102336ecc94b9f7d7043886128e9bc44335b33a2b856c875125a3de002aff"
+    },
+    {
+      "source": "examples/neptune/types/native_currency.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(8845684665519133830), BFieldElement(8431568062136470503), BFieldElement(15229845956836125116), BFieldElement(13378597552817638876), BFieldElement(7592499816739591415)])",
+      "after_native_hash": "Digest([BFieldElement(8845684665519133830), BFieldElement(8431568062136470503), BFieldElement(15229845956836125116), BFieldElement(13378597552817638876), BFieldElement(7592499816739591415)])",
+      "final5_sha256": "088100bc7bf8f1b5fc5a7e48ed9ebb4bf8b371bbb7db26104fdc456d96974eae",
+      "live_sha256": "088100bc7bf8f1b5fc5a7e48ed9ebb4bf8b371bbb7db26104fdc456d96974eae"
+    },
+    {
+      "source": "examples/neptune/transaction_validation.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(9883588824180466777), BFieldElement(3365793386479212532), BFieldElement(11521487951826852503), BFieldElement(4560962331504196256), BFieldElement(4677621215717881117)])",
+      "after_native_hash": "Digest([BFieldElement(9883588824180466777), BFieldElement(3365793386479212532), BFieldElement(11521487951826852503), BFieldElement(4560962331504196256), BFieldElement(4677621215717881117)])",
+      "final5_sha256": "a3cb9836f301854edb91218352da43843ecfcf401e312d82c13c439aaf5fd7ed",
+      "live_sha256": "a3cb9836f301854edb91218352da43843ecfcf401e312d82c13c439aaf5fd7ed"
+    },
+    {
+      "source": "baselines/triton/fixtures/plumb-config/main.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7011027885272646955), BFieldElement(13774187623360423799), BFieldElement(1532396048405221523), BFieldElement(8712746831394137524), BFieldElement(8619710280555809515)])",
+      "after_native_hash": "Digest([BFieldElement(8973559121562323006), BFieldElement(10745910585079702507), BFieldElement(16889494682358529790), BFieldElement(14710136644234099104), BFieldElement(12783287078426666563)])",
+      "final5_sha256": "395516c6db1c2fc910a145d0238d50725108f8e7db1dfb4c6d23c2518075e91a",
+      "live_sha256": "fc535a77740e1e10b629b4bae317c39ad21dd2da1973381ea5e30770d7b4514f"
+    },
+    {
+      "source": "baselines/triton/fixtures/plumb-config-bad/main.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7011027885272646955), BFieldElement(13774187623360423799), BFieldElement(1532396048405221523), BFieldElement(8712746831394137524), BFieldElement(8619710280555809515)])",
+      "after_native_hash": "Digest([BFieldElement(8973559121562323006), BFieldElement(10745910585079702507), BFieldElement(16889494682358529790), BFieldElement(14710136644234099104), BFieldElement(12783287078426666563)])",
+      "final5_sha256": "395516c6db1c2fc910a145d0238d50725108f8e7db1dfb4c6d23c2518075e91a",
+      "live_sha256": "fc535a77740e1e10b629b4bae317c39ad21dd2da1973381ea5e30770d7b4514f"
+    },
+    {
+      "source": "examples/neptune/standards/card.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(2738399713067236875), BFieldElement(6941011893624587592), BFieldElement(17251530676021014596), BFieldElement(9480698042207698540), BFieldElement(3864963499897096895)])",
+      "after_native_hash": "Digest([BFieldElement(15449094627755597535), BFieldElement(9155805842209062346), BFieldElement(8216652151881631845), BFieldElement(11790461292496453990), BFieldElement(13599601782194237801)])",
+      "final5_sha256": "0446806612f46986d32a61837afe028b0d8a13bf78513e4d6b141c9d91623cb8",
+      "live_sha256": "a5d48f34e6a9c6cf9369b9c36a66c00316b307e9e7e796b729d2c9d900074811"
+    },
+    {
+      "source": "examples/neptune/standards/coin.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(7231004910403326540), BFieldElement(1101896842799875325), BFieldElement(13989729307717425897), BFieldElement(15534021599525428892), BFieldElement(10465914188228479411)])",
+      "after_native_hash": "Digest([BFieldElement(13135080370521375757), BFieldElement(16713006441684428395), BFieldElement(7183893021159136321), BFieldElement(11845017137183023898), BFieldElement(14675405649098343239)])",
+      "final5_sha256": "5b29f91d249802fd7c3d05c8decd1b43dc8f51311359e67c397e9e6e6b5d8547",
+      "live_sha256": "f04969b15120d3814dbbecde19854a55cfe9e79973b2a2074f9319717db3380f"
+    },
+    {
+      "source": "baselines/triton/fixtures/poly-eval/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(17842899202037096031), BFieldElement(17237847694212796806), BFieldElement(692312807440187864), BFieldElement(945407951690947778), BFieldElement(5971313200807613248)])",
+      "after_native_hash": "Digest([BFieldElement(17842899202037096031), BFieldElement(17237847694212796806), BFieldElement(692312807440187864), BFieldElement(945407951690947778), BFieldElement(5971313200807613248)])",
+      "final5_sha256": "cec8cb3a08eb3accd8710f9f2dc824d286ef967546f31dd4a249ffacbe523271",
+      "live_sha256": "cec8cb3a08eb3accd8710f9f2dc824d286ef967546f31dd4a249ffacbe523271"
+    },
+    {
+      "source": "baselines/triton/fixtures/poseidon-range/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(18238963703956224849), BFieldElement(7865731073863516205), BFieldElement(11281468199850335916), BFieldElement(14880830766076603802), BFieldElement(14831325043190191249)])",
+      "after_native_hash": "Digest([BFieldElement(18238963703956224849), BFieldElement(7865731073863516205), BFieldElement(11281468199850335916), BFieldElement(14880830766076603802), BFieldElement(14831325043190191249)])",
+      "final5_sha256": "62ecff8f1751240218b7b4c1092d412aa6f11ce07d721885d4154adfd55ae89b",
+      "live_sha256": "62ecff8f1751240218b7b4c1092d412aa6f11ce07d721885d4154adfd55ae89b"
+    },
+    {
+      "source": "baselines/triton/fixtures/poseidon-zero/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(18229294389932997334), BFieldElement(14815455325751413970), BFieldElement(1771857228113872056), BFieldElement(3851146552631508409), BFieldElement(6925775704592516028)])",
+      "after_native_hash": "Digest([BFieldElement(18229294389932997334), BFieldElement(14815455325751413970), BFieldElement(1771857228113872056), BFieldElement(3851146552631508409), BFieldElement(6925775704592516028)])",
+      "final5_sha256": "aa17b9ec2e72ce03439f0a78cfb5b2dd778bd22c4046b26128acc998d3d463bb",
+      "live_sha256": "aa17b9ec2e72ce03439f0a78cfb5b2dd778bd22c4046b26128acc998d3d463bb"
+    },
+    {
+      "source": "baselines/triton/fixtures/quantum-cnot/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5563429579590394751), BFieldElement(5098921690060667286), BFieldElement(898041562620631390), BFieldElement(11734151001633053209), BFieldElement(165930978744696050)])",
+      "after_native_hash": "Digest([BFieldElement(5563429579590394751), BFieldElement(5098921690060667286), BFieldElement(898041562620631390), BFieldElement(11734151001633053209), BFieldElement(165930978744696050)])",
+      "final5_sha256": "43692e74d0693cc49113deaf4d78bcbfdd3504cf1df63bf18d7f9fef98c2e841",
+      "live_sha256": "43692e74d0693cc49113deaf4d78bcbfdd3504cf1df63bf18d7f9fef98c2e841"
+    },
+    {
+      "source": "baselines/triton/fixtures/quantum-pure/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(17752539714810061575), BFieldElement(4350178953498016319), BFieldElement(15394088361262301530), BFieldElement(7294511062562875358), BFieldElement(15903460660923027220)])",
+      "after_native_hash": "Digest([BFieldElement(17752803015071608632), BFieldElement(17549081387342516505), BFieldElement(13832159611748998918), BFieldElement(3380911523907741085), BFieldElement(17698931901083064991)])",
+      "final5_sha256": "8120b209d1d9dd852aef9e7898cd243181b5bd81a22c5a469afb4867d656df8d",
+      "live_sha256": "9d3a90dd67b9954ec7c39190edf4aa990a65cbea9f071f653881820d104658f4"
+    },
+    {
+      "source": "baselines/triton/fixtures/quantum-ram-1/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(17964213956999827343), BFieldElement(2514868817882766450), BFieldElement(14871349151372629702), BFieldElement(1588716034584499489), BFieldElement(5154830007098615510)])",
+      "after_native_hash": "Digest([BFieldElement(1505155025959148870), BFieldElement(787564738351124348), BFieldElement(18212350881769297364), BFieldElement(4109658572556798855), BFieldElement(14240921779496345203)])",
+      "final5_sha256": "44d25af217769bc8fa02ac964e43db29e06ffa7dbdd3ce5eb4d3ea8907a3fa29",
+      "live_sha256": "71137ab08f0da5d4c9df8b1299153357d89377ee28aa80aba75a99d688b42e4b"
+    },
+    {
+      "source": "baselines/triton/fixtures/quantum-ram-2/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(8144537247794901019), BFieldElement(2189660376982727786), BFieldElement(7655834169953645310), BFieldElement(1636872441560510651), BFieldElement(16637218451203518747)])",
+      "after_native_hash": "Digest([BFieldElement(8589617504312759824), BFieldElement(12699017407921759592), BFieldElement(15654103420415590027), BFieldElement(6108242122985818410), BFieldElement(1750679158198288923)])",
+      "final5_sha256": "90d660ade041b024a032f23fbe9f31db277c853c2c0ff6ced537ccc3b1b92acf",
+      "live_sha256": "31789ea55f005db1af3c231c96a45036dd7dc1853b4138448ab2428097571aa8"
+    },
+    {
+      "source": "baselines/triton/fixtures/quantum-ram-3/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(17504167987448128896), BFieldElement(4151937760595510637), BFieldElement(7513936076875166790), BFieldElement(10009615931758750408), BFieldElement(11277727036763511425)])",
+      "after_native_hash": "Digest([BFieldElement(14240990611757898327), BFieldElement(708815137812894057), BFieldElement(17687311400972456065), BFieldElement(18255162941827505147), BFieldElement(1914912652705779785)])",
+      "final5_sha256": "f07bfc504484695840ca2b4c3fc850aa2bb8d7afc8c44b9c9117324e31c38eed",
+      "live_sha256": "dbeb23cb033468c523af62d6c4d7e994f2e04d854e04c9e4991d9e606f9a74cf"
+    },
+    {
+      "source": "examples/triton/proof_aggregator.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(3661414809083602986), BFieldElement(10652580051314306875), BFieldElement(15703978177078860267), BFieldElement(15409961925271657794), BFieldElement(14301729789063833837)])",
+      "after_native_hash": "Digest([BFieldElement(3661414809083602986), BFieldElement(10652580051314306875), BFieldElement(15703978177078860267), BFieldElement(15409961925271657794), BFieldElement(14301729789063833837)])",
+      "final5_sha256": "de14fb377c8603a9acdd9ddc8ebd0a3a0dca502f8909b14a7d815ffc1d9197a5",
+      "live_sha256": "de14fb377c8603a9acdd9ddc8ebd0a3a0dca502f8909b14a7d815ffc1d9197a5"
+    },
+    {
+      "source": "baselines/triton/fixtures/recursive-dot/main.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(8132469308711165062), BFieldElement(12368947579014349160), BFieldElement(11825686368270420259), BFieldElement(3750095305833790030), BFieldElement(10271815026673567920)])",
+      "after_native_hash": "Digest([BFieldElement(8132469308711165062), BFieldElement(12368947579014349160), BFieldElement(11825686368270420259), BFieldElement(3750095305833790030), BFieldElement(10271815026673567920)])",
+      "final5_sha256": "42e0a19dc10596ceeb24cbb9e42f4beafa49431824accbb28b220f3c5e5375fc",
+      "live_sha256": "42e0a19dc10596ceeb24cbb9e42f4beafa49431824accbb28b220f3c5e5375fc"
+    },
+    {
+      "source": "examples/triton/recursive_verifier.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(3877112376171117370), BFieldElement(3069655335554529737), BFieldElement(11256098953788645585), BFieldElement(7539886886791991539), BFieldElement(8799733424764647255)])",
+      "after_native_hash": "Digest([BFieldElement(3877112376171117370), BFieldElement(3069655335554529737), BFieldElement(11256098953788645585), BFieldElement(7539886886791991539), BFieldElement(8799733424764647255)])",
+      "final5_sha256": "aaadc59e4a4d0d807a99c69de5e7f7d9b32fbb4cef1fa926940b6abc1b27cd93",
+      "live_sha256": "aaadc59e4a4d0d807a99c69de5e7f7d9b32fbb4cef1fa926940b6abc1b27cd93"
+    },
+    {
+      "source": "examples/triton/proof_relay.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(11943207107395944512), BFieldElement(2889006450503360269), BFieldElement(14016790354958674371), BFieldElement(139318282186788423), BFieldElement(5011578154537801987)])",
+      "after_native_hash": "Digest([BFieldElement(11943207107395944512), BFieldElement(2889006450503360269), BFieldElement(14016790354958674371), BFieldElement(139318282186788423), BFieldElement(5011578154537801987)])",
+      "final5_sha256": "1e519d522617cb3cb75720bcfe6fe9d7844fa5838f8131c04da38f1e81d27c67",
+      "live_sha256": "1e519d522617cb3cb75720bcfe6fe9d7844fa5838f8131c04da38f1e81d27c67"
+    },
+    {
+      "source": "baselines/triton/fixtures/sha256-55bytes/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "after_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "final5_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb",
+      "live_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb"
+    },
+    {
+      "source": "baselines/triton/fixtures/sha256-abc/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "after_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "final5_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb",
+      "live_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb"
+    },
+    {
+      "source": "baselines/triton/fixtures/sha256-carry/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "after_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "final5_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb",
+      "live_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb"
+    },
+    {
+      "source": "baselines/triton/fixtures/sha256-empty/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "after_native_hash": "Digest([BFieldElement(9053792824937716110), BFieldElement(2689491362147941696), BFieldElement(5950470734784971840), BFieldElement(10149448585223381397), BFieldElement(10961756256343270711)])",
+      "final5_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb",
+      "live_sha256": "ebd1dbb4cedbeda2526a2d50a28aaa2753250d6aca70bb3402577e855970e3cb"
+    },
+    {
+      "source": "baselines/triton/fixtures/sha256-two-blocks/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(11083866987082913885), BFieldElement(10676765071233464111), BFieldElement(13441628662617464805), BFieldElement(11588709163682775963), BFieldElement(14332624913855808373)])",
+      "after_native_hash": "Digest([BFieldElement(11083866987082913885), BFieldElement(10676765071233464111), BFieldElement(13441628662617464805), BFieldElement(11588709163682775963), BFieldElement(14332624913855808373)])",
+      "final5_sha256": "68d3282c930ae191c074dc8b4856e9e4a0ef2ede55951baca946cc8511f63a39",
+      "live_sha256": "68d3282c930ae191c074dc8b4856e9e4a0ef2ede55951baca946cc8511f63a39"
+    },
+    {
+      "source": "examples/neptune/locks/symmetric.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(2365570066572824620), BFieldElement(12945312208475962680), BFieldElement(5735452084125630432), BFieldElement(1022802351584668131), BFieldElement(7220489039795930826)])",
+      "after_native_hash": "Digest([BFieldElement(383644554506417451), BFieldElement(16129777277725484315), BFieldElement(23486082254936500), BFieldElement(6080410822633421894), BFieldElement(15362097645465951764)])",
+      "final5_sha256": "88540199f4e9c86451b15156217fe036578867a124c2a3c11c783b2de33aea6e",
+      "live_sha256": "1ad4ead5a5bed8ddd88ba27a8699841835fcb373e6b1986890ef0c475db2b8b0"
+    },
+    {
+      "source": "baselines/triton/fixtures/tensor-boundaries/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(11923242405061266923), BFieldElement(18427433694904262826), BFieldElement(6946456128071730832), BFieldElement(10431739480969519407), BFieldElement(16075084994251251216)])",
+      "after_native_hash": "Digest([BFieldElement(11923242405061266923), BFieldElement(18427433694904262826), BFieldElement(6946456128071730832), BFieldElement(10431739480969519407), BFieldElement(16075084994251251216)])",
+      "final5_sha256": "39f94e3272df07e97978d27288bf1939a9d07b1ccdb90534f2e22cc399fe9033",
+      "live_sha256": "39f94e3272df07e97978d27288bf1939a9d07b1ccdb90534f2e22cc399fe9033"
+    },
+    {
+      "source": "baselines/triton/fixtures/tensor-matvec/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(7763537449494631191), BFieldElement(6970492268753999713), BFieldElement(9526019090459583681), BFieldElement(431959378250016636), BFieldElement(4854139290531305331)])",
+      "after_native_hash": "Digest([BFieldElement(7763537449494631191), BFieldElement(6970492268753999713), BFieldElement(9526019090459583681), BFieldElement(431959378250016636), BFieldElement(4854139290531305331)])",
+      "final5_sha256": "49384615ee0ac2e662c1c3b2a5d86e0b4c86183498dd12ad922bfc18efcad287",
+      "live_sha256": "49384615ee0ac2e662c1c3b2a5d86e0b4c86183498dd12ad922bfc18efcad287"
+    },
+    {
+      "source": "examples/neptune/locks/timelock.tri",
+      "target": "neptune",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(5148398682942479298), BFieldElement(9115783169567707507), BFieldElement(8259929390865304584), BFieldElement(17702465192510053871), BFieldElement(633784510437351171)])",
+      "after_native_hash": "Digest([BFieldElement(5091531169142571155), BFieldElement(11576758958981602247), BFieldElement(6936436089065007123), BFieldElement(3057177813852474361), BFieldElement(8175018303004154151)])",
+      "final5_sha256": "2726b738e96d0de64126d500611e9e327372310d8111610224c553a4f0ec5285",
+      "live_sha256": "5339e8823dc1962f970811b07655d3d3b7f29117df5eed51b45326f678bb805f"
+    },
+    {
+      "source": "baselines/triton/fixtures/tip5/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(14569088700963385991), BFieldElement(5034025859141270281), BFieldElement(12019606318531862651), BFieldElement(7860289394413688351), BFieldElement(788710096141046707)])",
+      "after_native_hash": "Digest([BFieldElement(14569088700963385991), BFieldElement(5034025859141270281), BFieldElement(12019606318531862651), BFieldElement(7860289394413688351), BFieldElement(788710096141046707)])",
+      "final5_sha256": "2c5439ecce0edd7e105079d2429283fc612298ab979bb324934c8f8c497c91a5",
+      "live_sha256": "2c5439ecce0edd7e105079d2429283fc612298ab979bb324934c8f8c497c91a5"
+    },
+    {
+      "source": "baselines/triton/fixtures/trinity-ascending/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(4526890815579261959), BFieldElement(11253086319473022884), BFieldElement(18420015904484156225), BFieldElement(4278919002679377121), BFieldElement(16738523153653640357)])",
+      "after_native_hash": "Digest([BFieldElement(12267841927386851524), BFieldElement(13719055516975438338), BFieldElement(15226160944397962031), BFieldElement(1501954957554008519), BFieldElement(5080813402518555047)])",
+      "final5_sha256": "8a08f9e965f7055bfe81f49bcfdada7e7d8f6a3e2d1d89d3c68bd8187fdafdee",
+      "live_sha256": "d1af9054dd9a01f7eabb545d19f3c316b1a76b6f638813d439a02a9ae8b43fb2"
+    },
+    {
+      "source": "baselines/triton/fixtures/trinity-descending/main.tri",
+      "target": "triton",
+      "equal": false,
+      "before_native_hash": "Digest([BFieldElement(8006765755714008532), BFieldElement(829219805172632725), BFieldElement(10773615770137312301), BFieldElement(17751599255689800429), BFieldElement(16179605939519074129)])",
+      "after_native_hash": "Digest([BFieldElement(7896133117492699395), BFieldElement(17420970035870058822), BFieldElement(7805842195637915371), BFieldElement(12949758798242141503), BFieldElement(2270694289733485509)])",
+      "final5_sha256": "ce61fdad2344626fe1d673b7b3a789a267b75767a13b5e93835185aa957386de",
+      "live_sha256": "ab4e89d1dc3a2af3405fd8daec50c9680cf1b8b6baa5ab40a9093286de51ea0d"
+    },
+    {
+      "source": "baselines/triton/fixtures/u32/main.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(17275382396712837425), BFieldElement(14629122272202020024), BFieldElement(5290241719645783684), BFieldElement(5596781342427762203), BFieldElement(4705326468499833618)])",
+      "after_native_hash": "Digest([BFieldElement(17275382396712837425), BFieldElement(14629122272202020024), BFieldElement(5290241719645783684), BFieldElement(5596781342427762203), BFieldElement(4705326468499833618)])",
+      "final5_sha256": "4943141bd601f253f742a3bfa1acb48c4b6121aeef0390efe900861dd193173b",
+      "live_sha256": "4943141bd601f253f742a3bfa1acb48c4b6121aeef0390efe900861dd193173b"
+    },
+    {
+      "source": "baselines/triton/fixtures/utxo/main.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(306532084980434540), BFieldElement(8837834274201772185), BFieldElement(3489458212259719166), BFieldElement(4972344887200233175), BFieldElement(4941549893969426638)])",
+      "after_native_hash": "Digest([BFieldElement(306532084980434540), BFieldElement(8837834274201772185), BFieldElement(3489458212259719166), BFieldElement(4972344887200233175), BFieldElement(4941549893969426638)])",
+      "final5_sha256": "473f24b16734a8490b6a9d988ff7378ca31a427992b4175cb532d5fad6a92fa4",
+      "live_sha256": "473f24b16734a8490b6a9d988ff7378ca31a427992b4175cb532d5fad6a92fa4"
+    },
+    {
+      "source": "baselines/triton/fixtures/utxo-mismatch/main.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(306532084980434540), BFieldElement(8837834274201772185), BFieldElement(3489458212259719166), BFieldElement(4972344887200233175), BFieldElement(4941549893969426638)])",
+      "after_native_hash": "Digest([BFieldElement(306532084980434540), BFieldElement(8837834274201772185), BFieldElement(3489458212259719166), BFieldElement(4972344887200233175), BFieldElement(4941549893969426638)])",
+      "final5_sha256": "1845b2adcf771902bf6e39bc0ebdd19da0c25f71c156ef6082d159be22db5f0c",
+      "live_sha256": "1845b2adcf771902bf6e39bc0ebdd19da0c25f71c156ef6082d159be22db5f0c"
+    },
+    {
+      "source": "baselines/triton/fixtures/xfield-inverse/main.tri",
+      "target": "neptune",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(5501796576634914055), BFieldElement(15074426818931612948), BFieldElement(17322676512493936358), BFieldElement(17664479147923079785), BFieldElement(4899139181316925488)])",
+      "after_native_hash": "Digest([BFieldElement(5501796576634914055), BFieldElement(15074426818931612948), BFieldElement(17322676512493936358), BFieldElement(17664479147923079785), BFieldElement(4899139181316925488)])",
+      "final5_sha256": "e30b23711e754974367e5882b325d21534b811e9b5d164a9912498ee83c9077e",
+      "live_sha256": "e30b23711e754974367e5882b325d21534b811e9b5d164a9912498ee83c9077e"
+    },
+    {
+      "source": "baselines/triton/reference/arithmetic.tri",
+      "target": "triton",
+      "equal": true,
+      "before_native_hash": "Digest([BFieldElement(8519626705468872403), BFieldElement(13958684835354007082), BFieldElement(18101231711269278126), BFieldElement(7162657258955796357), BFieldElement(9529266831968830345)])",
+      "after_native_hash": "Digest([BFieldElement(8519626705468872403), BFieldElement(13958684835354007082), BFieldElement(18101231711269278126), BFieldElement(7162657258955796357), BFieldElement(9529266831968830345)])",
+      "final5_sha256": "6f314e0701132a42cc867a14c3ff1bed8cb23ba21d2384126e7b0e57882299c0",
+      "live_sha256": "6f314e0701132a42cc867a14c3ff1bed8cb23ba21d2384126e7b0e57882299c0"
+    }
+  ],
+  "cycles_reduced": 48,
+  "cycles_increased": 0,
+  "cycles_unchanged": 51,
+  "cycles_removed_total": 15283,
+  "cycle_rows": [
+    {
+      "fixture": "fixtures/assert/vector.bench.toml",
+      "before": {
+        "classic": 9,
+        "hand": 9,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 9,
+        "hand": 9,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/assert-mismatch/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/auth-preimage/vector.bench.toml",
+      "before": {
+        "classic": 52,
+        "hand": 36,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 52,
+        "hand": 36,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/auth-preimage-bad/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/bigint-carry/vector.bench.toml",
+      "before": {
+        "classic": 1695,
+        "hand": 124,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 1675,
+        "hand": 124,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-lexer-associativity/vector.bench.toml",
+      "before": {
+        "classic": 35519,
+        "hand": 13284,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 35519,
+        "hand": 13284,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-lexer-parentheses/vector.bench.toml",
+      "before": {
+        "classic": 35738,
+        "hand": 14041,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 35738,
+        "hand": 14041,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-lexer-precedence/vector.bench.toml",
+      "before": {
+        "classic": 28976,
+        "hand": 11426,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 28976,
+        "hand": 11426,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-lexer-reject/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-parser-associativity/vector.bench.toml",
+      "before": {
+        "classic": 69428,
+        "hand": 14979,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 69428,
+        "hand": 14979,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-parser-parentheses/vector.bench.toml",
+      "before": {
+        "classic": 72870,
+        "hand": 15377,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 72870,
+        "hand": 15377,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-parser-precedence/vector.bench.toml",
+      "before": {
+        "classic": 54581,
+        "hand": 12441,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 54581,
+        "hand": 12441,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-parser-reject/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-pipeline-associativity/vector.bench.toml",
+      "before": {
+        "classic": 144677,
+        "hand": 14297,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 144453,
+        "hand": 14297,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-pipeline-parentheses/vector.bench.toml",
+      "before": {
+        "classic": 139860,
+        "hand": 14767,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 139636,
+        "hand": 14767,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-pipeline-precedence/vector.bench.toml",
+      "before": {
+        "classic": 112676,
+        "hand": 11903,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 112452,
+        "hand": 11903,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-pipeline-reject/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/compiler-pipeline-type-reject/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/convert/vector.bench.toml",
+      "before": {
+        "classic": 10,
+        "hand": 12,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 10,
+        "hand": 12,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/convert-overflow/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-poseidon2-lanes/vector.bench.toml",
+      "before": {
+        "classic": 108267,
+        "hand": 4139,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 107687,
+        "hand": 4139,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-poseidon2-ram/vector.bench.toml",
+      "before": {
+        "classic": 108514,
+        "hand": 5711,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 107933,
+        "hand": 5711,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-poseidon2-zero/vector.bench.toml",
+      "before": {
+        "classic": 108267,
+        "hand": 4139,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 107687,
+        "hand": 4139,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-token-v2-burn/vector.bench.toml",
+      "before": {
+        "classic": 25493,
+        "hand": 8437,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 25317,
+        "hand": 8437,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-token-v2-mint/vector.bench.toml",
+      "before": {
+        "classic": 25493,
+        "hand": 8437,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 25317,
+        "hand": 8437,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-token-v2-transfer/vector.bench.toml",
+      "before": {
+        "classic": 24846,
+        "hand": 8307,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 24680,
+        "hand": 8307,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/custom-token-v2-wrong-selfhash/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-cross-limb/vector.bench.toml",
+      "before": {
+        "classic": 28010,
+        "hand": 2927,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27788,
+        "hand": 2927,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-even-order/vector.bench.toml",
+      "before": {
+        "classic": 28296,
+        "hand": 3039,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 28070,
+        "hand": 3039,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-half/vector.bench.toml",
+      "before": {
+        "classic": 27836,
+        "hand": 2819,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27614,
+        "hand": 2819,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-high/vector.bench.toml",
+      "before": {
+        "classic": 27836,
+        "hand": 2819,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27614,
+        "hand": 2819,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-invalid-r/vector.bench.toml",
+      "before": {
+        "classic": 25851,
+        "hand": 2819,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 25660,
+        "hand": 2819,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-order/vector.bench.toml",
+      "before": {
+        "classic": 27832,
+        "hand": 2819,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27610,
+        "hand": 2819,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-oversized-limb/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/ecdsa-zero/vector.bench.toml",
+      "before": {
+        "classic": 21798,
+        "hand": 2709,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 21655,
+        "hand": 2709,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/fibonacci-0/vector.bench.toml",
+      "before": {
+        "classic": 25,
+        "hand": 16,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 25,
+        "hand": 16,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/fibonacci-1/vector.bench.toml",
+      "before": {
+        "classic": 45,
+        "hand": 28,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 45,
+        "hand": 28,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/fibonacci-10/vector.bench.toml",
+      "before": {
+        "classic": 225,
+        "hand": 136,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 225,
+        "hand": 136,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/fibonacci-100/vector.bench.toml",
+      "before": {
+        "classic": 2025,
+        "hand": 1216,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 2025,
+        "hand": 1216,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/field/vector.bench.toml",
+      "before": {
+        "classic": 27,
+        "hand": 34,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27,
+        "hand": 34,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/generation/vector.bench.toml",
+      "before": {
+        "classic": 50,
+        "hand": 36,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 50,
+        "hand": 36,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/generation-bad-preimage/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/io/vector.bench.toml",
+      "before": {
+        "classic": 10,
+        "hand": 14,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 10,
+        "hand": 14,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/keccak-lanes/vector.bench.toml",
+      "before": {
+        "classic": 826062,
+        "hand": 98515,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 824862,
+        "hand": 98515,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/keccak-zero/vector.bench.toml",
+      "before": {
+        "classic": 826062,
+        "hand": 98515,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 824862,
+        "hand": 98515,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/kernel-timestamp/vector.bench.toml",
+      "before": {
+        "classic": 1530,
+        "hand": 75,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 1520,
+        "hand": 75,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/kernel-timestamp-bad-path/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/mem/vector.bench.toml",
+      "before": {
+        "classic": 21,
+        "hand": 27,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 21,
+        "hand": 27,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/merkle-2/vector.bench.toml",
+      "before": {
+        "classic": 43,
+        "hand": 27,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 43,
+        "hand": 27,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/merkle-3/vector.bench.toml",
+      "before": {
+        "classic": 43,
+        "hand": 27,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 43,
+        "hand": 27,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/merkle-proof/vector.bench.toml",
+      "before": {
+        "classic": 1491,
+        "hand": 73,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 1481,
+        "hand": 73,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/merkle-proof-bad-path/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/multisig-3/vector.bench.toml",
+      "before": {
+        "classic": 132,
+        "hand": 109,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 132,
+        "hand": 109,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/multisig-5/vector.bench.toml",
+      "before": {
+        "classic": 141,
+        "hand": 109,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 141,
+        "hand": 109,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/multisig-6/vector.bench.toml",
+      "before": {
+        "classic": 150,
+        "hand": 109,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 150,
+        "hand": 109,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/multisig-7/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-native-currency/vector.bench.toml",
+      "before": {
+        "classic": 578365,
+        "hand": 578310,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 578365,
+        "hand": 578310,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-native-currency-wrong-input/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-transaction/valid.bench.toml",
+      "before": {
+        "classic": 833066,
+        "hand": 833060,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 833066,
+        "hand": 833060,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-transaction/wrong-kernel.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-transaction/wrong-output.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-transaction/wrong-program.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/neptune-transaction/wrong-version.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-config/vector.bench.toml",
+      "before": {
+        "classic": 19775,
+        "hand": 451,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 19575,
+        "hand": 451,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-config-bad/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-card-0/vector.bench.toml",
+      "before": {
+        "classic": 73754,
+        "hand": 5761,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 73208,
+        "hand": 5761,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-card-1/vector.bench.toml",
+      "before": {
+        "classic": 73117,
+        "hand": 5729,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 72571,
+        "hand": 5729,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-card-2/vector.bench.toml",
+      "before": {
+        "classic": 69226,
+        "hand": 5557,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 68712,
+        "hand": 5557,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-card-3/vector.bench.toml",
+      "before": {
+        "classic": 68486,
+        "hand": 5584,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 68026,
+        "hand": 5584,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-card-4/vector.bench.toml",
+      "before": {
+        "classic": 68323,
+        "hand": 5580,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 67831,
+        "hand": 5580,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-card-config/vector.bench.toml",
+      "before": {
+        "classic": 44513,
+        "hand": 1216,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 44071,
+        "hand": 1216,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-coin-0/vector.bench.toml",
+      "before": {
+        "classic": 107552,
+        "hand": 10109,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 106894,
+        "hand": 10109,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-coin-1/vector.bench.toml",
+      "before": {
+        "classic": 64716,
+        "hand": 5489,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 64268,
+        "hand": 5489,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-coin-2/vector.bench.toml",
+      "before": {
+        "classic": 44180,
+        "hand": 1198,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 43736,
+        "hand": 1198,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-coin-3/vector.bench.toml",
+      "before": {
+        "classic": 62504,
+        "hand": 5369,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 62078,
+        "hand": 5369,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/plumb-v2-coin-4/vector.bench.toml",
+      "before": {
+        "classic": 66163,
+        "hand": 5585,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 65705,
+        "hand": 5585,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/poly-eval/vector.bench.toml",
+      "before": {
+        "classic": 137,
+        "hand": 84,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 137,
+        "hand": 84,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/poseidon-range/vector.bench.toml",
+      "before": {
+        "classic": 7105,
+        "hand": 7027,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 7105,
+        "hand": 7027,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/poseidon-zero/vector.bench.toml",
+      "before": {
+        "classic": 7105,
+        "hand": 7027,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 7105,
+        "hand": 7027,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-cnot/vector.bench.toml",
+      "before": {
+        "classic": 65,
+        "hand": 27,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 65,
+        "hand": 27,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-pure/0.bench.toml",
+      "before": {
+        "classic": 27390,
+        "hand": 739,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27232,
+        "hand": 739,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-pure/1.bench.toml",
+      "before": {
+        "classic": 27388,
+        "hand": 739,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27230,
+        "hand": 739,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-pure/2.bench.toml",
+      "before": {
+        "classic": 27390,
+        "hand": 739,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27232,
+        "hand": 739,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-pure/3.bench.toml",
+      "before": {
+        "classic": 27390,
+        "hand": 739,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 27232,
+        "hand": 739,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-1/invalid-address.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-1/invalid-target.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-1/invalid-too-many.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-1/target-0.bench.toml",
+      "before": {
+        "classic": 3439,
+        "hand": 516,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 3407,
+        "hand": 516,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-2/target-0.bench.toml",
+      "before": {
+        "classic": 6750,
+        "hand": 855,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 6686,
+        "hand": 855,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-2/target-1.bench.toml",
+      "before": {
+        "classic": 6766,
+        "hand": 882,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 6702,
+        "hand": 882,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-3/target-0.bench.toml",
+      "before": {
+        "classic": 13356,
+        "hand": 1506,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 13228,
+        "hand": 1506,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-3/target-1.bench.toml",
+      "before": {
+        "classic": 13372,
+        "hand": 1533,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 13244,
+        "hand": 1533,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/quantum-ram-3/target-2.bench.toml",
+      "before": {
+        "classic": 13388,
+        "hand": 1560,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 13260,
+        "hand": 1560,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-aggregate-bad-second/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-aggregate-count-0/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-aggregate-count-17/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-aggregate-count-4294967296/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-aggregate-two/vector.bench.toml",
+      "before": {
+        "classic": 862385,
+        "hand": 862330,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 862385,
+        "hand": 862330,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-dot/vector.bench.toml",
+      "before": {
+        "classic": 136,
+        "hand": 76,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 136,
+        "hand": 76,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-proof/vector.bench.toml",
+      "before": {
+        "classic": 430449,
+        "hand": 430441,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 430449,
+        "hand": 430441,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-proof-bad-claim/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-relay/vector.bench.toml",
+      "before": {
+        "classic": 430463,
+        "hand": 430450,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 430463,
+        "hand": 430450,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-relay-bad-claim/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-verifier/vector.bench.toml",
+      "before": {
+        "classic": 430449,
+        "hand": 430442,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 430449,
+        "hand": 430442,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/recursive-verifier-bad-claim/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/sha256-55bytes/vector.bench.toml",
+      "before": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/sha256-abc/vector.bench.toml",
+      "before": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/sha256-carry/vector.bench.toml",
+      "before": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/sha256-empty/vector.bench.toml",
+      "before": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 188106,
+        "hand": 29259,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/sha256-two-blocks/vector.bench.toml",
+      "before": {
+        "classic": 187053,
+        "hand": 29263,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 187053,
+        "hand": 29263,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/symmetric/vector.bench.toml",
+      "before": {
+        "classic": 660,
+        "hand": 32,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 650,
+        "hand": 32,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/symmetric-bad-preimage/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/ascending.bench.toml",
+      "before": {
+        "classic": 304,
+        "hand": 710,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 304,
+        "hand": 710,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/cross-high.bench.toml",
+      "before": {
+        "classic": 302,
+        "hand": 710,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 302,
+        "hand": 710,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/descending.bench.toml",
+      "before": {
+        "classic": 292,
+        "hand": 696,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 292,
+        "hand": 696,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/negative.bench.toml",
+      "before": {
+        "classic": 262,
+        "hand": 564,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 262,
+        "hand": 564,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/same-high.bench.toml",
+      "before": {
+        "classic": 304,
+        "hand": 710,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 304,
+        "hand": 710,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/threshold-reversed.bench.toml",
+      "before": {
+        "classic": 270,
+        "hand": 564,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 270,
+        "hand": 564,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-boundaries/threshold.bench.toml",
+      "before": {
+        "classic": 210,
+        "hand": 550,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 210,
+        "hand": 550,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/tensor-matvec/vector.bench.toml",
+      "before": {
+        "classic": 258,
+        "hand": 198,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 258,
+        "hand": 198,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/timelock-16/vector.bench.toml",
+      "before": {
+        "classic": 2190,
+        "hand": 112,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 2170,
+        "hand": 112,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/timelock-17/vector.bench.toml",
+      "before": {
+        "classic": 2190,
+        "hand": 112,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 2170,
+        "hand": 112,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/timelock-18/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/tip5/vector.bench.toml",
+      "before": {
+        "classic": 42,
+        "hand": 36,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 42,
+        "hand": 36,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/trinity-ascending/vector.bench.toml",
+      "before": {
+        "classic": 139022,
+        "hand": 21364,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 138220,
+        "hand": 21364,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/trinity-ascending/wrong-witness.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/trinity-descending/vector.bench.toml",
+      "before": {
+        "classic": 138956,
+        "hand": 21332,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 138154,
+        "hand": 21332,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/trinity-descending/wrong-witness.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/u32/vector.bench.toml",
+      "before": {
+        "classic": 31,
+        "hand": 18,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 31,
+        "hand": 18,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/utxo/vector.bench.toml",
+      "before": {
+        "classic": 11,
+        "hand": 9,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 11,
+        "hand": 9,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "fixtures/utxo-mismatch/vector.bench.toml",
+      "before": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      },
+      "after": {
+        "classic": null,
+        "hand": null,
+        "status": "PASS (both executions rejected)"
+      }
+    },
+    {
+      "fixture": "fixtures/xfield-inverse/vector.bench.toml",
+      "before": {
+        "classic": 20,
+        "hand": 11,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 20,
+        "hand": 11,
+        "status": "PASS"
+      }
+    },
+    {
+      "fixture": "reference/arithmetic.bench.toml",
+      "before": {
+        "classic": 11,
+        "hand": 7,
+        "status": "PASS"
+      },
+      "after": {
+        "classic": 11,
+        "hand": 7,
+        "status": "PASS"
+      }
+    }
+  ],
+  "fixture_rebinding": [
+    {
+      "path": "baselines/triton/fixtures/custom-token-v2-burn/vector.bench.toml",
+      "changed_keys": [
+        "input",
+        "secret"
+      ],
+      "before_sha256": "faa26d8fa368293895e0fdb1c1216d26869a8d6e304edba3cf5ab015801d9617",
+      "after_sha256": "8ec56688679fec8eb88496b4fb0da6191ad9425d52cfadff0a55bb4ed18c5bfc"
+    },
+    {
+      "path": "baselines/triton/fixtures/custom-token-v2-mint/vector.bench.toml",
+      "changed_keys": [
+        "input",
+        "secret"
+      ],
+      "before_sha256": "8ef7ff39ae50ed4e41d901501b8d2e6c231897b6c54d91ab3c71363aa01bb804",
+      "after_sha256": "5f89b8af80232a69ea6828151d6e2ab32e50ab6579c3460505f4729562e9c3cb"
+    },
+    {
+      "path": "baselines/triton/fixtures/custom-token-v2-transfer/vector.bench.toml",
+      "changed_keys": [
+        "input",
+        "secret"
+      ],
+      "before_sha256": "cbc8958838f7e653a6a88c5170f5e2612b3edab38833b6743aaefc470cde6fa8",
+      "after_sha256": "f95690343cd41e8d2eebf8fa1a6c5593ea244f36836a8a62b779cf8eb1f29659"
+    }
+  ],
+  "logs": {
+    "/tmp/owner-stack-core-tir-suite.log": "1b5a163629b29634c1e51efaa85a4eb2093e86dadaf51b1adcd714e728785495",
+    "/tmp/owner-stack-native-tests.log": "97de1ee6d2a7c4978ad8ede5b71bcbdef50699cc6f4a04ba450c2e33fbaea957",
+    "/tmp/owner-stack-final5-execution.log": "152efe6e5cae098a4703ffea8143675aa4a71555775e2ef03d688e35a2aaea59",
+    "/tmp/owner-stack-live-original-fixtures.log": "63b3c63ea242731a6ede41136e32644ab50ac6a2e314e8b2ca6357623f2919b1",
+    "/tmp/owner-stack-live-execution.log": "42d592d8280b1582d4c3006158615b68b32e380ff0090d2d18e7c1cce9ea0e27",
+    "/tmp/owner-stack-custom-fixtures.log": "036e153eaa9366ee827c7e4ccd267fc487e432b8359888d066e878a647311410"
+  }
+}

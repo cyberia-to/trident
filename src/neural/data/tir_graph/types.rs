@@ -99,7 +99,7 @@ pub const NUM_OP_KINDS: usize = 54;
 impl OpKind {
     pub fn from_tir_op(op: &TIROp) -> Self {
         match op {
-            TIROp::Call(_) => OpKind::Call,
+            TIROp::Call(_) | TIROp::TargetCall { .. } => OpKind::Call,
             TIROp::Return => OpKind::Return,
             TIROp::Halt => OpKind::Halt,
             TIROp::IfElse { .. } => OpKind::IfElse,
@@ -107,7 +107,7 @@ impl OpKind {
             TIROp::Loop { .. } => OpKind::Loop,
             TIROp::FnStart(_) => OpKind::FnStart,
             TIROp::FnEnd => OpKind::FnEnd,
-            TIROp::Entry(_) => OpKind::Entry,
+            TIROp::Entry(_) | TIROp::EntryParameters(_) => OpKind::Entry,
             TIROp::Comment(_) => OpKind::Comment,
             TIROp::Asm { .. } => OpKind::Asm,
             TIROp::Push(_) => OpKind::Push,

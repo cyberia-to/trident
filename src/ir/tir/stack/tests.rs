@@ -6,6 +6,25 @@
 use super::*;
 
 #[test]
+fn assembly_effect_counts_words_and_preserves_named_prefix() {
+    let mut sm = StackManager::with_config(u32::MAX, 1000);
+    sm.push_named("sentinel", 5);
+    sm.push_temp(3);
+    sm.push_temp(2);
+    assert!(sm.can_pop_anonymous(5));
+    assert!(!sm.can_pop_anonymous(6));
+    sm.pop_anonymous(4);
+    assert_eq!(sm.stack_depth(), 6);
+    assert_eq!(sm.last().unwrap().width, 1);
+    assert_eq!(sm.access_var("sentinel"), 1);
+    sm.pop_anonymous(1);
+    assert_eq!(sm.last().unwrap().name.as_deref(), Some("sentinel"));
+    assert_eq!(sm.last().unwrap().width, 5);
+    assert!(!sm.can_pop_anonymous(1));
+    assert!(sm.drain_side_effects().is_empty());
+}
+
+#[test]
 fn test_basic_push_pop() {
     let mut sm = StackManager::with_config(16, 1000);
     sm.push_named("a", 1);

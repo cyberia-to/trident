@@ -18,11 +18,12 @@
 mod assign;
 mod call;
 mod cleanup;
+mod early_return;
 mod expr;
 mod functions;
 mod helpers;
+mod index;
 mod layout;
-mod legalize;
 mod match_;
 mod stmt;
 mod types;
@@ -66,10 +67,9 @@ pub struct TIRBuilder {
     pub(crate) struct_types: BTreeMap<String, StructDef>,
     /// Constants: qualified or short name -> integer value.
     pub(crate) constants: BTreeMap<String, u64>,
-    /// Next temporary RAM address for runtime array ops.
-    pub(crate) temp_ram_addr: u64,
     /// Intrinsic map: function name -> intrinsic TASM name.
     pub(crate) intrinsic_map: BTreeMap<String, String>,
+    pub(crate) target_intrinsics: BTreeMap<String, (u32, u32)>,
     /// Module alias map: short name -> full module name.
     pub(crate) module_aliases: BTreeMap<String, String>,
     /// Monomorphized generic function instances to emit.
@@ -89,6 +89,11 @@ pub struct TIRBuilder {
 }
 
 impl TIRBuilder {
+    pub(crate) fn with_target_intrinsics(mut self, abis: BTreeMap<String, (u32, u32)>) -> Self {
+        self.target_intrinsics = abis;
+        self
+    }
+
     pub fn new(target_config: TerrainConfig) -> Self {
         let stack = StackManager::with_config(
             // Track the complete abstract operand stack. RAM legalization
@@ -102,14 +107,14 @@ impl TIRBuilder {
             stack,
             struct_layouts: BTreeMap::new(),
             fn_return_widths: BTreeMap::new(),
-            fn_return_types: BTreeMap::new(),
+            fn_return_types: crate::typecheck::TypeChecker::builtin_return_types(&target_config),
             var_types: BTreeMap::new(),
             event_tags: BTreeMap::new(),
             event_defs: BTreeMap::new(),
             struct_types: BTreeMap::new(),
             constants: BTreeMap::new(),
-            temp_ram_addr: target_config.spill_ram_base / 2,
             intrinsic_map: BTreeMap::new(),
+            target_intrinsics: BTreeMap::new(),
             module_aliases: BTreeMap::new(),
             mono_instances: Vec::new(),
             generic_fn_defs: BTreeMap::new(),
@@ -295,6 +300,22 @@ impl TIRBuilder {
 
         // ── Program entry point ──
         if file.kind == FileKind::Program {
+            if let Some(main) = file.items.iter().find_map(|item| match &item.node {
+                Item::Fn(function)
+                    if function.name.node == "main" && self.is_item_cfg_active(&item.node) =>
+                {
+                    Some(function)
+                }
+                _ => None,
+            }) {
+                let mut leaves = Vec::new();
+                for parameter in &main.params {
+                    self.entry_leaves(&parameter.ty.node, &mut leaves);
+                }
+                if !leaves.is_empty() {
+                    self.ops.push(TIROp::EntryParameters(leaves));
+                }
+            }
             self.ops.push(TIROp::Entry("main".to_string()));
         }
 
@@ -318,8 +339,7 @@ impl TIRBuilder {
             }
         }
 
-        let ops = std::mem::take(&mut self.ops);
-        self.legalize_stack_ops(ops)
+        std::mem::take(&mut self.ops)
     }
 
     // ═══════════════════════════════════════════════════════════════

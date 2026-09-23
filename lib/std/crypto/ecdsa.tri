@@ -90,22 +90,27 @@ pub fn valid_range(sig: Signature, order: bigint.U256) -> Bool {
     }
 }
 
-// Check the "low-S" normalization (BIP-62 / Ethereum convention).
-// In low-S form, s <= n/2 where n is the curve order.
-// This prevents signature malleability.
+// Low-S normalization: 1 <= s <= floor(order / 2). Range-checking r is
+// the separate valid_range operation; this helper does not verify a signature.
+fn half_limb(low: U32, high: U32) -> U32 {
+    let (q, _rem): (U32, U32) = low /% convert.as_u32(2)
+    let carry: U32 = high & convert.as_u32(1)
+    convert.as_u32(convert.as_field(q) + convert.as_field(carry) * 2147483648)
+}
+
 pub fn is_low_s(sig: Signature, order: bigint.U256) -> Bool {
-    // Compute n/2 (integer division, rounding down).
-    // For odd n (which all standard curve orders are), this is (n-1)/2.
-    // We approximate by shifting right: divide each limb pair.
-    // Since the order is odd, (order - 1) is even, and we can shift right by 1.
-    //
-    // For simplicity, we check s < order and s <= half_order.
-    // half_order = (order - 1) / 2 for odd order.
-    // We construct it by subtracting 1 and dividing by 2.
-    //
-    // TODO: implement right-shift for U256 to compute half_order properly.
-    // For now, check that s < order (basic validity).
-    bigint.lt256(sig.s, order)
+    let half: bigint.U256 = bigint.U256 {
+        l0: half_limb(order.l0, order.l1),
+        l1: half_limb(order.l1, order.l2),
+        l2: half_limb(order.l2, order.l3),
+        l3: half_limb(order.l3, order.l4),
+        l4: half_limb(order.l4, order.l5),
+        l5: half_limb(order.l5, order.l6),
+        l6: half_limb(order.l6, order.l7),
+        l7: half_limb(order.l7, convert.as_u32(0)),
+    }
+    if bigint.is_zero(sig.s) { false }
+    else { bigint.lt256(half, sig.s) == false }
 }
 
 // ---------------------------------------------------------------------------

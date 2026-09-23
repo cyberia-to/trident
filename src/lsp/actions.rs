@@ -28,10 +28,6 @@ pub(super) fn code_actions(
             if let Some(a) = add_mut_keyword(source, diag, uri) {
                 actions.push(CodeActionOrCommand::CodeAction(a));
             }
-        } else if msg.starts_with("hint[H0003]: as_u32(") {
-            if let Some(a) = remove_redundant_as_u32(diag, uri) {
-                actions.push(CodeActionOrCommand::CodeAction(a));
-            }
         } else if msg.starts_with("missing field '") {
             if let Some(a) = insert_missing_field(source, diag, uri) {
                 actions.push(CodeActionOrCommand::CodeAction(a));
@@ -102,27 +98,6 @@ fn add_mut_keyword(source: &str, diag: &Diagnostic, uri: &Url) -> Option<CodeAct
     }
 
     None
-}
-
-/// Replace `as_u32(x)` with just `x`.
-fn remove_redundant_as_u32(diag: &Diagnostic, uri: &Url) -> Option<CodeAction> {
-    let msg = first_line(&diag.message);
-    // Extract variable name from "hint[H0003]: as_u32(X) is redundant..."
-    let start = msg.find("as_u32(")? + 7;
-    let end = msg[start..].find(')')? + start;
-    let var_name = &msg[start..end];
-
-    let edit = TextEdit {
-        range: diag.range,
-        new_text: var_name.to_string(),
-    };
-
-    Some(make_quickfix(
-        format!("Remove redundant `as_u32({})`", var_name),
-        uri,
-        vec![edit],
-        diag,
-    ))
 }
 
 /// Add missing field with a zero default before the closing `}`.
@@ -261,15 +236,7 @@ mod tests {
             (3, 20),
         );
         let actions = code_actions(source, &[diag], &test_uri());
-        assert_eq!(actions.len(), 1);
-        let action = match &actions[0] {
-            CodeActionOrCommand::CodeAction(a) => a,
-            _ => panic!("expected CodeAction"),
-        };
-        assert!(action.title.contains("Remove redundant"));
-        let edit = action.edit.as_ref().unwrap();
-        let edits = &edit.changes.as_ref().unwrap()[&test_uri()];
-        assert_eq!(edits[0].new_text, "a");
+        assert!(actions.is_empty(), "Field cannot replace a U32 result");
     }
 
     #[test]

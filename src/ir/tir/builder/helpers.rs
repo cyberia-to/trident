@@ -79,10 +79,14 @@ impl TIRBuilder {
 
     /// Build a block into a separate Vec<TIROp> by temporarily swapping out self.ops.
     pub(crate) fn build_block_as_ir(&mut self, block: &Block) -> Vec<TIROp> {
+        self.build_value_block_as_ir(block).0
+    }
+
+    pub(crate) fn build_value_block_as_ir(&mut self, block: &Block) -> (Vec<TIROp>, u32) {
         let saved_ops = std::mem::take(&mut self.ops);
-        self.build_block(block);
+        let width = self.build_block(block);
         let nested = std::mem::take(&mut self.ops);
         self.ops = saved_ops;
-        nested
+        (nested, width)
     }
 }

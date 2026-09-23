@@ -4,8 +4,9 @@ use trident::CompileOptions;
 fn nox_package() -> trident::target::TargetPackage {
     let terrain = trident::target::TerrainConfig::nox();
     let package = trident::target::TargetPackage {
+        intrinsic_abis: Default::default(),
         schema_version: 1,
-        compiler_api: 1,
+        compiler_api: trident::COMPILER_API,
         owner: "joy".into(),
         version: "fixture".into(),
         intrinsics: terrain.supported_intrinsics(),

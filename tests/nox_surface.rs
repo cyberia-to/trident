@@ -82,7 +82,14 @@ fn subject_noun(params: &[u64]) -> N {
 
 /// Compile `src` for nox, reduce against `params`, return the atom result.
 fn run(src: &str, params: &[u64]) -> u64 {
-    let formula_str = trident::compile_with_options(src, "surface.tri", &nox_options())
+    run_profile(src, params, "debug")
+}
+
+fn run_profile(src: &str, params: &[u64], profile: &str) -> u64 {
+    let mut options = nox_options();
+    options.profile = profile.into();
+    options.cfg_flags = std::collections::BTreeSet::from([profile.into()]);
+    let formula_str = trident::compile_with_options(src, "surface.tri", &options)
         .expect("compile for nox failed");
     let formula = parse(&formula_str);
     let subj = subject_noun(params);
@@ -408,3 +415,182 @@ fn merkle_path_depth_32_reduces_on_nox() {
 /// Execute the emitted formula and return its value and actual reduction bill.
 #[path = "nox_surface/project_contracts.rs"]
 mod project_contracts;
+
+#[test]
+fn event_statements_fail_closed_until_nox_has_an_event_wire_contract() {
+    for kind in ["reveal", "seal"] {
+        let source = format!("program events\nevent E{{a:Field}}\nfn main(){{{kind} E{{a:1}}}}");
+        let error =
+            trident::compile_with_options(&source, "events.tri", &nox_options()).unwrap_err();
+        assert!(
+            error
+                .iter()
+                .any(|d| d.message.contains("reveal/seal not yet supported")),
+            "{error:?}"
+        );
+    }
+}
+
+#[test]
+fn bounded_loop_return_exits_function_and_preserves_fallthrough_scope() {
+    let src = "program loop_return
+fn main(n: Field) -> Field {
+    let mut total: Field = 10
+    for i in 0..n bounded 4 {
+        let step = as_field(i) + 1
+        if as_field(i) == 2 { return total }
+        total = total + step
+    }
+    let after = total + 100
+    after
+}";
+    for profile in ["debug", "release"] {
+        for (input, expected) in [(0, 110), (2, 113), (4, 13), (20, 13)] {
+            assert_eq!(run_profile(src, &[input], profile), expected);
+        }
+    }
+}
+
+#[test]
+fn loop_returns_nested_aggregate_helper_without_executing_later_effects() {
+    let src = "program aggregate_return
+struct Pair { a: Field, b: Field }
+fn search(n: Field) -> Pair {
+    let mut total: Field = 3
+    for i in 0..3 {
+        let shadow = as_field(i)
+        for j in 0..2 {
+            if as_field(i) == n {
+                let shadow = total + as_field(j)
+                return Pair { a: shadow, b: 7 }
+            }
+            total = total + 1
+        }
+    }
+    Pair { a: total, b: 9 }
+}
+fn main(n: Field) -> Field {
+    let result = search(n)
+    result.a * 10 + result.b
+}";
+    let effects = "program suppressed
+fn helper() {
+    for i in 0..3 {
+        if as_field(i) == 1 { return }
+    }
+    let secret: Field = divine()
+    assert(secret == 9)
+}
+fn main() -> Field { helper()\n 42 }";
+    for profile in ["debug", "release"] {
+        for (n, expected) in [(0, 37), (1, 57), (2, 77), (9, 99)] {
+            assert_eq!(run_profile(src, &[n], profile), expected);
+        }
+        assert_eq!(run_profile(effects, &[], profile), 42);
+    }
+}
+
+#[test]
+fn loop_return_drops_iteration_shadowing_and_skips_unreachable_state_lookup() {
+    let src = "program state_return
+fn main(n: Field) -> Field {
+    for i in 0..2 {
+        if as_field(i) == 0 { return n }
+        let ignored = os.state.read(11)
+    }
+    os.state.read(12)
+}";
+    for profile in ["debug", "release"] {
+        let options = CompileOptions::for_profile(profile);
+        let text = trident::compile_with_options(src, "state.tri", &options).unwrap();
+        let mut arena = Reduction::<4096>::new();
+        let formula = load(&mut arena, &parse(&text));
+        let subject = load(&mut arena, &parse("[[1 [2 [3 4]]] [23 0]]"));
+        // NullCalls refuses all lookups: successful reduction proves neither
+        // the later iteration nor the post-loop state access was evaluated.
+        match reduce(
+            &mut arena,
+            subject,
+            formula,
+            1_000_000,
+            &NullCalls,
+            &mut NoTrace,
+        ) {
+            Outcome::Ok(value, _) => assert_eq!(arena.atom_value(value).unwrap().as_u64(), 23),
+            other => panic!("unreachable lookup executed: {other:?}"),
+        }
+    }
+    let fallthrough = "program shadow
+fn main() -> Field {
+    let x: Field = 11
+    for i in 0..2 {
+        let x: Field = 99
+        if x == 0 { return 1 }
+    }
+    let y = x + 2
+    y
+}";
+    for profile in ["debug", "release"] {
+        assert_eq!(run_profile(fallthrough, &[], profile), 13);
+    }
+}
+
+#[test]
+fn loop_without_return_preserves_scope_before_following_bindings() {
+    let src = "program later_binding
+fn main() -> Field {
+    let mut total: Field = 2
+    for i in 0..3 { total = total + as_field(i) }
+    let after = total + 10
+    after
+}";
+    for profile in ["debug", "release"] {
+        assert_eq!(run_profile(src, &[], profile), 15);
+    }
+}
+
+#[test]
+fn zero_bound_and_exclusive_end_do_not_enter_returning_body() {
+    for profile in ["debug", "release"] {
+        for range in ["3..3", "4..2", "0..n bounded 0"] {
+            let source = format!("program empty\nfn main(n: Field) -> Field {{ for i in {range} {{ return 99 }}\n 7 }}");
+            assert_eq!(run_profile(&source, &[9], profile), 7);
+        }
+        let source = "program exclusive\nfn main() -> Field { for i in 0..2 { if as_field(i) == 2 { return 99 } }\n 7 }";
+        assert_eq!(run_profile(source, &[], profile), 7);
+    }
+}
+
+#[test]
+fn returning_loop_seals_shadowed_aggregate_type_with_its_name() {
+    let source = "program typed_shadow
+struct Pair { a: Field, b: Field }
+struct Reverse { b: Field, a: Field }
+fn main(n: Field) -> Field {
+    let x = Pair { a: 11, b: 22 }
+    for i in 0..2 {
+        if n == as_field(i) { return x.a } else {
+            let x = Reverse { b: 99, a: 88 }
+        }
+        if x.a == 22 { return 999 }
+    }
+    x.a
+}";
+    for profile in ["debug", "release"] {
+        for n in [0, 1, 9] {
+            assert_eq!(run_profile(source, &[n], profile), 11);
+        }
+    }
+}
+
+#[path = "nox_surface/entry.rs"]
+mod entry;
+
+#[path = "nox_surface/imported_entry.rs"]
+mod imported_entry;
+
+#[path = "nox_surface/terminal.rs"]
+mod terminal;
+
+#[path = "nox_surface/loop_indices.rs"]
+mod loop_indices;
