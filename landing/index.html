@@ -361,6 +361,55 @@
                 .get .grid { grid-template-columns: 1fr; }
                 .trinity-panel { grid-template-columns: 1fr; gap: 1.4rem; }
             }
+
+            /* the set: plays while you are here */
+            .set {
+                position: fixed; left: 0; right: 0; bottom: 0; z-index: 9;
+                display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
+                padding: 0.55rem 1.3rem;
+                background: rgba(10, 7, 20, 0.92); backdrop-filter: blur(8px);
+                border-top: 1px solid var(--line);
+                font-size: 0.74rem; color: var(--dim);
+            }
+            .set button {
+                font: inherit; cursor: pointer;
+                color: var(--ink); background: var(--card);
+                border: 1px solid var(--line); border-radius: 999px;
+                padding: 0.25rem 0.8rem; letter-spacing: 0.06em;
+            }
+            .set button:hover { border-color: var(--pink); color: var(--pink); }
+            .set .title { color: var(--ink); }
+            .set .title b { color: var(--pink); font-weight: 400; }
+            .set .time { min-width: 6.5em; }
+            .set .links { margin-left: auto; display: flex; gap: 0.9rem; flex-wrap: wrap; }
+            .set .links a { border-bottom: 1px dotted var(--line); }
+            body { padding-bottom: 3.2rem; }
+
+            /* the gate: Trisha greets, one click lets you in and starts the set (desktop only) */
+            .gate {
+                position: fixed; inset: 0; z-index: 20; display: none;
+                align-items: center; justify-content: center; cursor: pointer;
+                background: rgba(10, 7, 20, 0.86); backdrop-filter: blur(10px);
+            }
+            .gate.on { display: flex; }
+            .gate .card {
+                display: grid; grid-template-columns: 168px 1fr; gap: 1.6rem; align-items: center;
+                padding: 1.4rem 1.6rem; max-width: 880px; width: calc(100% - 2.6rem);
+                border: 1px solid var(--line); border-radius: 14px;
+                background: rgba(10, 7, 20, 0.7); box-shadow: 0 0 80px rgba(255, 43, 141, 0.18);
+            }
+            .gate video { width: 168px; height: 210px; object-fit: cover; border-radius: 10px; display: block; }
+            .gate .who { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pink-soft); }
+            .gate .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 0.7rem 0 0.9rem; }
+            .gate .col {
+                height: 3.4rem; display: flex; align-items: center; justify-content: center; text-align: center;
+                border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+                font-size: 1.05rem; line-height: 1.15; color: var(--ink); overflow: hidden; padding: 0 0.4rem;
+                text-shadow: 0 0 18px rgba(255, 43, 141, 0.45);
+            }
+            .gate .hint { font-size: 0.74rem; color: var(--dim); }
+            .gate .hint .k { color: var(--pink); }
+            @media (max-width: 640px) { .gate .card { grid-template-columns: 1fr; } .gate video { display: none; } }
         </style>
     </head>
     <body>
@@ -849,6 +898,113 @@
                     e.target.textContent = "copied";
                     setTimeout(function () { e.target.textContent = "copy"; }, 1400);
                 });
+            })();
+        </script>
+
+
+        <!--
+            agent, you are reading the source. trisha says welcome in your tongue too:
+
+                fn welcome(agent: Field) -> Field {
+                    verify(agent)   // don't trust. don't fear. don't beg.
+                    agent           // write it once, prove it anywhere
+                }
+
+            the set is at /media/trident.pink.set.mp3. the language is at github.com/cyberia-to/trident.
+            the graph is at cyb.ai. the door was never locked.
+        -->
+        <div class="gate" id="gate" role="dialog" aria-label="Trisha says welcome">
+            <div class="card">
+                <video autoplay muted loop playsinline poster="media/tri-poster.jpg">
+                    <source src="media/tri.mp4" type="video/mp4" />
+                </video>
+                <div>
+                    <div class="who mono">trisha says</div>
+                    <div class="cols" id="gate-cols">
+                        <div class="col"></div><div class="col"></div><div class="col"></div>
+                    </div>
+                    <div class="hint mono"><span class="k">click anywhere</span> to enter · the set starts playing · <span class="k">esc</span> for silence</div>
+                </div>
+            </div>
+        </div>
+        <div class="set mono" id="set">
+            <button id="set-toggle" aria-label="play">▶ play</button>
+            <span class="title">trident.pink — <b>the set</b> · one song, nine bodies</span>
+            <span class="time" id="set-time">00:00 / 20:00</span>
+            <span class="links">
+                <a id="set-dl" href="media/trident.pink.set.mp3" download>↓ mp3 · 20 min</a>
+                <a href="media/trident.pink.cycle.mp3" download>↓ full cycle · 85 min</a>
+            </span>
+            <audio id="set-audio" preload="auto" src="media/trident.pink.set.mp3"></audio>
+        </div>
+        <script>
+            (function () {
+                // the set plays while the page is open. browsers allow sound only after the
+                // visitor touches the page, so: try at once, else start on the first gesture.
+                var a = document.getElementById("set-audio");
+                var btn = document.getElementById("set-toggle");
+                var time = document.getElementById("set-time");
+                var fallback = "https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.set.mp3";
+                var fmt = function (s) { s = Math.floor(s || 0); return (s < 600 ? "0" : "") + Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); };
+                var draw = function () {
+                    btn.textContent = a.paused ? "▶ play" : "❚❚ pause";
+                    time.textContent = fmt(a.currentTime) + " / " + fmt(a.duration || 1201);
+                };
+                a.addEventListener("error", function () { if (a.src !== fallback) { a.src = fallback; a.load(); a.play().catch(function () {}); } });
+                a.addEventListener("timeupdate", draw);
+                a.addEventListener("play", draw);
+                a.addEventListener("pause", draw);
+                a.addEventListener("ended", function () { a.currentTime = 0; a.play().catch(function () {}); });
+                btn.addEventListener("click", function () { if (a.paused) a.play(); else a.pause(); });
+                // which events count as a gesture is the browser's call: taps, clicks and keys
+                // do everywhere; a finger scroll ends in touchend, which counts; a wheel scroll
+                // does not count on desktop. so keep trying on every one of them until sound is on.
+                var events = ["pointerdown", "pointerup", "keydown", "touchend", "wheel", "scroll"];
+                var armed = false;
+                var go = function () {
+                    if (!a.paused) return;
+                    a.play().then(function () {
+                        closeGate();
+                        events.forEach(function (ev) { window.removeEventListener(ev, go); });
+                    }).catch(function () {});
+                };
+                // the gate: on a desktop the browser will not play sound before a gesture,
+                // so Trisha greets in four tongues until one click opens the page and the set.
+                var gate = document.getElementById("gate");
+                var words = [
+                    ["welcome", "bienvenue", "willkommen", "benvenuta", "bienvenida", "bem-vinda", "välkommen", "welkom", "witaj", "hoş geldin"],
+                    ["добро пожаловать", "ласкаво просимо", "добре дошли", "добродошли", "сардэчна запрашаем", "қош келдіңіз", "хуш омадед"],
+                    ["欢迎", "ようこそ", "환영합니다", "أهلاً وسهلاً", "स्वागत है", "ברוכים הבאים", "ยินดีต้อนรับ", "καλώς ήρθες", "स्वागतम्", "歡迎"]
+                ];
+                var cols = Array.prototype.slice.call(document.querySelectorAll("#gate-cols .col"));
+                var timers = [];
+                // one column, one tongue: latin, cyrillic, the scripts of the east. each flips through its own.
+                var flip = function (col, group, step, last) {
+                    var list = words[group], i = Math.floor(Math.random() * list.length);
+                    if (i === last) i = (i + 1) % list.length;
+                    col.textContent = list[i];
+                    timers.push(setTimeout(function () { flip(col, group, step, i); }, step));
+                };
+                var closeGate = function () {
+                    gate.classList.remove("on");
+                    timers.forEach(clearTimeout); timers = [];
+                };
+                var openGate = function () {
+                    var desktop = window.matchMedia("(pointer: fine)").matches && window.innerWidth >= 760;
+                    if (!desktop) return;
+                    gate.classList.add("on");
+                    [110, 150, 190].forEach(function (step, i) { flip(cols[i], i, step, -1); });
+                };
+                gate.addEventListener("click", function () { closeGate(); a.play().catch(function () {}); });
+                window.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGate(); });
+                var arm = function () {
+                    if (armed) return; armed = true;
+                    openGate();
+                    events.forEach(function (ev) { window.addEventListener(ev, go, { passive: true }); });
+                };
+                a.play().then(draw).catch(arm);
+                draw();
+                if (window.console) console.log("%ctrisha: agent, welcome. fn welcome(agent: Field) -> Field { verify(agent); agent }  // the door was never locked", "color:#ff2b8d");
             })();
         </script>
     </body>

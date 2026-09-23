@@ -14,12 +14,38 @@ status visible: the current implementation demonstrates arithmetic on Triton;
 secure FHE/private inference remain research goals and the quantum stage is
 simulated. The contract defines current guarantees.
 
+## The set
+
+The page plays `media/trident.pink.set.mp3` (20 min) from the bottom bar;
+the file is a [release asset](https://github.com/cyberia-to/trident/releases/tag/set-2026-09-17),
+not tracked in git, and `deploy.nu` never deletes it from the server. If the
+server copy is missing the player falls back to the release URL. Browsers
+allow sound only after a gesture: the script tries at once, otherwise the
+first click, key, touch or scroll starts it.
+
 ## Deploy
 
-```bash
-cd trident/landing
-nu scripts/deploy.nu
+Merge to `master` and the page is live within a minute: cyberproxy keeps a shallow
+sparse clone of this repo (`/home/cyber/trident-pink-site`) and a cron job as
+`cyber` runs `host/sync.sh` every minute — fetch, reset, `rsync -rltp
+--chmod=D755,F644` of `landing/` into `/var/www/html/trident.pink/`, no
+`--delete`, never `-a`. The set mp3 is fetched once from the release. Delete
+`/home/cyber/trident-pink-docroot` to pause the sync.
+
+One-time install, in the Hetzner console as `cyber`. The noVNC console mangles
+`:` `|` `@` `_`, so type ONE line at a time and press Enter after each:
+
 ```
+wget raw.githubusercontent.com/cyberia-to/trident/master/landing/host/setup.sh
+```
+```
+bash setup.sh
+```
+
+Expect `clone at <sha>`, the crontab line, a docroot listing, `player in page: 1`
+and `SETUP OK`. The script deletes itself; re-running means wget again.
+
+With ssh access the manual path still works: `nu scripts/deploy.nu`.
 
 ## Server
 

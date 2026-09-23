@@ -3,10 +3,10 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
-## Unreleased
+## 0.3.0 — 2026-09-16
 
-Coordinated Cargo candidate: **Trident 0.3.0**, compiler API **3**, with Trisha
-0.3.0 and Joy 0.5.0. Publication and final artifact verification are pending.
+Coordinated release: **Trident 0.3.0**, compiler API **3**, with Trisha
+0.3.0 and Joy 0.5.0. Validation receipts accompany the release archives.
 
 - Keep the frontend, typed TIR, nox lowering and generic neural harness in
   Trident. Triton emission/costs/neural target, Neptune SDK/network data and

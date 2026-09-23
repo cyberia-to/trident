@@ -9,7 +9,7 @@ date: 2026-03-25
 
 ## the opportunity
 
-trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[recursive brakedown|~2 KiB proofs]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and an 89-constraint decider that verifies all history.
+trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[recursive brakedown|Merkle-authenticated proofs today, ~2 KiB blocked on a soundness fix]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history (~70,000 constraints with jets today, ~89 the blocked target).
 
 no language change. no new syntax. one new compilation backend. the polynomial proof system becomes available to every `.tri` program.
 
@@ -251,6 +251,6 @@ trident's 14 algebraically irreducible languages ALL compile through nox:
 | Bt | F₂ tower | F₂ | Binius | binary ops native |
 | Rs | Z/2ⁿ words | split | split | systems programming proved |
 
-14 languages → 16 nox patterns → 1 polynomial proof system → ~2 KiB proofs, ~5 μs verify.
+14 languages → 16 nox patterns → 1 polynomial proof system → ~157 KiB proofs, ~1.0 ms verify today (~2 KiB / ~5 μs is the blocked target, see [[recursive brakedown]]).
 
 see [[polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[recursive brakedown]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
