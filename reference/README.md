@@ -48,11 +48,13 @@ Implementation reviews and release validation are indexed in
 | [Intermediate Representation](ir.md) | TIR operations (54 ops, 4 tiers), lowering paths |
 | [Target Reference](targets.md) | OS model, target profiles, cost models |
 | [Warrior API](warrior-api.md) | What a warrior may link: the library contract, features, stability |
+| [Self-hosting on soft3](self-hosting.md) | Working SH0–SH8 milestones: native compiler, self-build, reproducible bootstrap and Zheng proofs |
 
 ## Token Standards
 
 | Document | Description |
 |----------|-------------|
+| [PLUMB v2](plumb-v2.md) | Versioned full-Digest authority and atomic state-transition contract |
 | [PLUMB Framework](plumb.md) | Shared token framework: config, auth, hooks, proof envelope, security |
 | [TSP-1 — Coin](tsp1-coin.md) | Divisible asset standard. Conservation: `sum(balances) = supply` |
 | [TSP-2 — Card](tsp2-card.md) | Unique asset standard. Conservation: `owner_count(id) = 1` |
@@ -97,3 +99,5 @@ Per-target specs live alongside their config:
 | [Targets](errors/targets.md) | Target compatibility errors |
 | [Warnings](errors/warnings.md) | Non-fatal diagnostics |
 | [Hints](errors/hints.md) | Optimization suggestions |
+
+- [Neptune custom token v2](neptune-custom-token-v2.md): canonical UTXO and issuer policy.

@@ -24,19 +24,22 @@ formula; running it and proving it ran correctly are the same act.
 
 Trident is the language of the [soft3](https://soft3.org) stack. It
 compiles to **nox**, the proof-native VM, and the **joy** warrior runs,
-proves and verifies what it emits — a **zheng** proof, hash-based,
-post-quantum, no trusted setup, no elliptic curves. One algebra
+proves and verifies what it emits through **zheng**. Public execution
+certificates disclose their witness; private execution uses Trisha's Triton 7
+STARK to check Zheng's execution constraints. One algebra
 ([strata](https://github.com/cyberia-to/strata)), one hash
 ([hemera](https://github.com/cyberia-to/hemera)), one field, from source
 to proof. Twenty other engines and twenty-five unions are declared
 behind `--target`, Triton VM with its STARK is the second tested one,
-and the same formula compiles to native code for 25 backends via the
-in-repo `silicon` crate — from Cortex-M and CUDA to OpenQASM and
-Verilog.
+and the in-repo `silicon` crate contains experimental emitters for 25 native
+backends — from Cortex-M and CUDA to OpenQASM and Verilog. Catalog entries and
+experimental emitters do not establish runtime or proof support.
 
-```
-cargo install trident-lang cyber-joy
-```
+The coordinated CPU release is **Trident 0.3.0, Trisha 0.3.0 and Joy 0.5.0**.
+[Download native macOS, Linux and Windows archives](https://github.com/cyberia-to/trident/releases/tag/v0.3.0)
+or build the complete coordinated source archive. Individual registry installation
+of this release is not available. See the [release notes](audit/release-notes-v0.3.0.md)
+and [source-bound validation](audit/release-2026-09-16.md).
 
 ---
 
@@ -52,18 +55,10 @@ fn main() -> Field {
 }
 ```
 
-```
-$ trident build hello_proof.tri
-Compiled -> hello_proof.nox
-$ trident prove hello_proof.tri --secret 7,13
-Proved in 8 ms: 17 reductions, 1 accumulator groups, 1387 bytes
-Output: [20]
-hello_proof.zheng
-$ trident verify hello_proof.zheng
-Verification: PASS (zheng proof)
-  program: hello_proof
-  output:  [20]
-  cycles:  17
+```sh
+trident build hello_proof.tri --target nox
+trident prove hello_proof.tri --target nox --secret 7,13
+trident verify hello_proof.zheng
 ```
 
 A proof that `a + b = 20` without revealing `a` or `b`, checked
@@ -329,6 +324,10 @@ The Rust compiler is the current implementation. `lib/std/compiler/` contains
 experimental components, not a complete self-hosted compiler or a proof
 that this compiler binary faithfully implements the language.
 
+[Self-hosting on soft3](reference/self-hosting.md) defines the native nox/Joy
+milestones and acceptance gates. The [progress ledger](audit/self-hosting-progress.md)
+records the current task and implementation evidence.
+
 Triton execution and STARK proving belong to [Trisha](../trisha).
 `trisha bench --full` requires explicit input/output fixtures and verifies
 proofs for the measured programs. Missing fixtures are reported as
@@ -336,11 +335,15 @@ unverified and fail the command. Historical ratios from modified or
 non-executed assembly are not release evidence.
 
 The nox compiler and Joy executor support the surface documented in
-[reference/nox.md](reference/nox.md). Zheng's current proof verifier does
-not authenticate the relationship between execution and public output;
-Joy rejects external IO claims and reports output metadata as unverified.
-Stateful recursive openings are disabled until authenticated openings and
-execution constraints are implemented. This blocks a production proof release.
+[reference/nox.md](reference/nox.md). Zheng derives the execution constraints
+from the canonical program; verification binds public input, output, cost and
+authenticated state roots. Public JOYEXEC2 and JOYST001 certificates disclose
+the witness. Private JOYZK003 artifacts prove the same bounded relation using
+a real Triton STARK and omit private columns. Private queries select from
+bounded fully public state tables. Dynamic continuations, variable noun shapes
+and a private database remain unimplemented. Legacy unauthenticated recursive
+opening APIs remain disabled. See [Joy's proof contracts](../joy/README.md)
+and the [coordinated validation ledger](audit/full-release-preparation.md).
 
 ---
 
@@ -349,6 +352,7 @@ execution constraints are implemented. This blocks a production proof release.
 Build the coordinated development checkouts with their locked dependencies:
 
 ```sh
+nu ../trisha/patches/apply.nu
 cargo install --path . --locked
 cargo install --path ../joy/cli --locked
 cargo install --path ../trisha/cli --locked
@@ -403,6 +407,11 @@ The warriors live beside the compiler:
 [joy](https://github.com/cyberia-to/joy) (nox, the cyber battlefield) and
 [trisha](https://github.com/cyberia-to/trisha) (Triton VM, Neptune).
 
+Development stubs reserve five more warriors: **vitalina** (Ethereum),
+**gaw** (Polkadot/DOT), **tolya** (Solana/SOL), **pearla** (Pearl inference),
+and **zenda** (Zcash). See [planned warriors](reference/warrior-api.md#planned-warriors)
+for their ownership and current stub status.
+
 ---
 
 ## Standard Library
@@ -449,15 +458,18 @@ Full index: [docs/README.md](docs/README.md)
 
 ## Status
 
-0.3.0 is an unreleased migration candidate. The compiler owns shared
-front-end, nox lowering and optional generic neural infrastructure;
+Trident **0.3.0** is published with Trisha **0.3.0** and Joy **0.5.0**.
+The compiler owns the shared frontend, nox lowering and extension interfaces.
 Trisha owns Triton lowering, emission, execution, Neptune libraries and
-Triton benchmarks. See [the warrior API](reference/warrior-api.md).
+Triton baselines. Joy owns nox execution and Zheng proof integration.
+See [the warrior API](reference/warrior-api.md).
 
-Production readiness remains blocked by Zheng execution-proof soundness
-and the remaining acceptance gates in the
-[release repair plan](.claude/plans/warrior-release-repair.md).
-Passing compiler tests alone does not establish proof-system soundness.
+All scoped release gates passed: six native CPU targets, 133 execution fixtures
+on each target, 198 freshly generated and verified baseline proofs on the
+dedicated ARM Mac, all 36 cross-platform proof exchanges, and actual isolated
+Neptune transaction admission. The [published validation report](audit/release-2026-09-16.md)
+identifies the exact released sources and binaries. Broader nox execution and
+live node/database integration remain roadmap work.
 
 ---
 
