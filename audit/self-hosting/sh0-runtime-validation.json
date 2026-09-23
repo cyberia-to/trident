@@ -1,0 +1,78 @@
+{
+  "profile": "Trident default features; recursive nox without parallel; macOS aarch64; release runtime probe",
+  "baseline": "9f306c81c0b9f4c810ce7e949e3688be0391a306",
+  "owner_snapshots": {
+    "trident": {
+      "head": "9f306c81c0b9f4c810ce7e949e3688be0391a306",
+      "worktree_dirty": true,
+      "inspected_files": {
+        "src/ir/tree/lower/nox.rs": "d51177e211e8a4f32c368e64b7a2c369d8049c6cfabaa92b1d4816fb29d706d5",
+        "src/ir/tree/lower/nox/loops.rs": "6c926ba17a95d5a7caef400ad4f5749a4e32b3cc66d4420c151e8fd8d706be9e",
+        "src/ir/tir/builder/call.rs": "0b616d119cce8461805cdc37b85ebc8cb6cacb96a08affc0c4e177b222c759a9",
+        "src/ir/tir/builder/stmt.rs": "703ee9d1399328dfef91ec4557baf82a6e930abb666342d883a792e79ffece6b",
+        "src/ir/tir/builder/expr.rs": "e2d7d3ce743991ca0e01c6fef28a487c273f5a04e29dba351a9b3bcd2cbe8770"
+      }
+    },
+    "nox": {
+      "head": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+      "worktree_dirty": false,
+      "inspected_files": {
+        "rs/reduce.rs": "d8e9ab4ea7787a417febd36e1333db1ee03f60829a79260b765352d5b75626d7",
+        "rs/data/reduction.rs": "34625c3c94e420079771faa870fe7b4743d3d05f977ce5ffcebb5e4d9b2ba020",
+        "rs/sequential.rs": "ccc2623645927bdefca576ade13fc9174d341cda30ad34b5761ca5062236003b",
+        "specs/sequential.md": "cb64197ae43c970972645d24e49301715dc3b65b3570d3b57ee503c884c6c9c5",
+        "specs/artifact.md": "21070bcbb1f0d228d1f01d7f0f5ff24ba4620b59cfc76f4432fb5189adb263d5"
+      }
+    },
+    "joy": {
+      "head": "e9ef39a432b81437d994cfefcd0e8d6b77f83d50",
+      "worktree_dirty": false,
+      "inspected_files": {
+        "rs/warrior.rs": "e1d5d3bd4dd9226587ae572a129e14932306a3388377b894ea845cfd70ae2bbc",
+        "rs/structured.rs": "56e11bfccafe87a6537174955d0e94118fd5a7f1f84ab00e88ae7138f6f4e298",
+        "specs/structured-run.md": "c976b2fd1bf0054431ed8f4add0c04aab95b73d981f875ee5327652ed812be23",
+        "rs/file_input.rs": "19ff998e892d30b1d441079ee7cc2caa411f5b0a1866f47dedc4fb1512daf1f8",
+        "cli/publication.rs": "7fa4c9a60e6f97b8586bbb879b7d335efe8efa26b153698773b8607e9677f799"
+      }
+    },
+    "zheng": {
+      "head": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3",
+      "worktree_dirty": false,
+      "inspected_files": {
+        "specs/execution.md": "eb4467f0d020ae65296a369aed6bdbeed7dcac2c9c896f2916a8fa206d825300",
+        "rs/src/execution/relation.rs": "d05dbc68a0af4cd2c657e71a92ce50801fc080a4728c320a4e65201f30a80173",
+        "rs/src/execution/relation_eval.rs": "4592b9800afb4522fdbe6b3eb514a40c68eae930893fd004427af45ff1b14f0e",
+        "rs/src/execution/statement.rs": "27b3c3f02c5a6b2020e675f3ccba9047d7d4aefc42c8f6bf59828d593b65f4a0"
+      }
+    }
+  },
+  "checks": [
+    {
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "passed_tests": null,
+      "log_sha256": "734e9e8f7528596fd2666f29fb6f5af5dd4e9c58e48d14ad85b162a4439cbc95"
+    },
+    {
+      "command": "cargo run --release --locked --example selfhost_runtime -- --output audit/self-hosting/runtime-baseline.json --check",
+      "exit_code": 0,
+      "passed_tests": null,
+      "log_sha256": "80618c4642fcd87a5961720985340b0612d22f73e2fe867ec630ec0e87d4b3cc"
+    },
+    {
+      "command": "cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "passed_tests": 853,
+      "log_sha256": "66c32127041bfbf42f6406d7d87844064b8c6bf059f2988465454255352e5c06"
+    }
+  ],
+  "validation_note": "Trident snapshot is the feature baseline plus hashed local contract/example files. Other owner source revisions are committed. Nox default recursive behavior remains the observed baseline despite its additional heap API.",
+  "delivery_files": {
+    "reference/self-hosting-runtime.md": "ae16139fd6ccc2299cc47fd2a590cc19fce335b3e5d590ab02e5c66de294b0fb",
+    "examples/selfhost_runtime.rs": "2e3607d7482731e6dc414650e047f26cd598254939953a4c53695ca29b33b693",
+    "audit/self-hosting/runtime-baseline.json": "e95c9b59267c784abd51cff2746a7a95eaebc31ce70ef2ab71bd278a00c24e82",
+    "audit/self-hosting/native-runtime.md": "29508ac4f1dbf1e4e75462269a84ab7b4bf630294adf85a57045d0d58f76a5ac",
+    "audit/self-hosting-progress.md": "ca2d7263b8d8e0ceb1fabce916add14641f7a8c3a28e89261eb4b8afaadb0bae"
+  },
+  "local_links_checked": 109
+}

@@ -139,6 +139,8 @@ Work:
 5. Specify bounded loop/function execution, arena policy, accounting and
    failure behavior. Agree the compiler subset and which optimizations are
    required for self-compilation; optional optimizations may start disabled.
+   [SH0.4 runtime](self-hosting-runtime.md) fixes reusable native control flow,
+   sequential heap-frame evaluation, resource ownership and proof boundaries.
 
 **Accept when:** the owner specifications contain concrete types, encodings,
 limits and examples; codec golden vectors distinguish `[[1 2] 3]` from
