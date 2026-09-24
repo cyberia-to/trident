@@ -107,9 +107,11 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH4 bounded heap arena: nox allocation in place and explicit larger Joy
   pack/run allowance, preserving the current default and canonical output.
   [Execution and resource evidence](self-hosting/native-compiler-arena.md).
-- [ ] SH3 native scalars: U32, checked conversions, comparison and bit masking;
-  [next slice](../.claude/plans/native-compiler-scalars.md).
-- [ ] SH3 remaining native language: U32/loops, aggregates, imports and complete
+- [x] SH3 native scalars: U32, checked conversions, comparison and bit masking;
+  [source/JOB and installed CLI evidence](self-hosting/native-compiler-scalars.md).
+- [ ] SH3 native literal-range loops: reusable bodies, scoped index and return flow;
+  [next slice](../.claude/plans/native-compiler-loops.md).
+- [ ] SH3 remaining native language: loops, aggregates, imports and complete
   compiler closure coverage.
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
   whitespace workload's lifetime arena boundary and measure full compiler closure.
@@ -130,7 +132,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Explicit heap arena admits larger real compiler jobs; valid 4096-byte whitespace workload and full closure remain open |
-| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md), [typed control](self-hosting/native-compiler-control.md) and [reusable functions](self-hosting/native-compiler-functions.md) are accepted; remaining language stays open |
+| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md), [typed control](self-hosting/native-compiler-control.md), [reusable functions](self-hosting/native-compiler-functions.md) and [checked scalars](self-hosting/native-compiler-scalars.md) are accepted; remaining language stays open |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -255,3 +257,11 @@ Joy `820041b` and Trident runner `1e08ded`.
 artifacts and exact job quotas while admitting larger real native compilations.
 The valid 4096-byte whitespace workload remains an explicit SH4 boundary.
 Continue with [native scalar coverage](../.claude/plans/native-compiler-scalars.md).
+
+2026-09-24 continuation: native U32 and checked builtin operations accepted at
+Trident `fb2bcd9`, with diagnostic acceptance refinement `6a1abc2`.
+[Source and installed execution evidence](self-hosting/native-compiler-scalars.md)
+preserves previous ART1 identities, separates compilation from runtime conversion
+traps, and records increased compiler cost. Continue with
+[literal-range loops](../.claude/plans/native-compiler-loops.md); complete SH3/SH4,
+C2/C3, six-platform release and native compiler proofs remain open.
