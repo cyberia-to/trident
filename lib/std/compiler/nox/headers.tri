@@ -25,12 +25,13 @@ pub fn scalar(token: syntax.Token) -> Field {
     if token.kind == as_u32(20) { return types.BOOL }
     if token.kind == as_u32(28) { return types.UINT32 }
     if token.kind == as_u32(34) { return types.NOUN }
+    if token.kind == as_u32(35) { return types.DIGEST }
     types.INVALID
 }
 
 #[pure]
 fn type_error(token: syntax.Token) -> syntax.Error {
-    if token.kind == as_u32(1) { return syntax.error(6, token.start, token.end) }
+    if syntax.either(token.kind == as_u32(1), token.kind == as_u32(36)) { return syntax.error(6, token.start, token.end) }
     ast.failed(token, 2)
 }
 

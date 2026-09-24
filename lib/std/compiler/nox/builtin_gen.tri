@@ -29,6 +29,7 @@ pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> fo
         if kind == builtins.NOUN_EQ { return binary(9, left, right) }
         return binary(6, left, right)
     }
+    if kind == builtins.NOUN_IDENTITY { return flow.compose(right, flow.axis(0)) }
     if kind == builtins.NOUN_HEAD { return flow.compose(right, flow.axis(2)) }
     if kind == builtins.NOUN_TAIL { return flow.compose(right, flow.axis(3)) }
     if kind == builtins.NOUN_FIELD { return binary(5, right, flow.literal(0)) }

@@ -37,7 +37,7 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
             expected_type = noun.atom(headers.scalar(s.token))
             if noun.eq(expected_type, noun.atom(types.INVALID)) {
                 let mut code: Field = 2
-                if s.token.kind == as_u32(1) { code = 6 }
+                if syntax.either(s.token.kind == as_u32(1), s.token.kind == as_u32(36)) { code = 6 }
                 s.error = ast.failed(s.token, code)
                 return s
             }
