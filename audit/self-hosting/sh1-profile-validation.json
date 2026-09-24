@@ -1,0 +1,129 @@
+{
+  "schema": "trident/selfhost-validation/v1",
+  "gate": "SH1 compiler-profile seed integration and foundation acceptance",
+  "date": "2026-09-24",
+  "kind": "local development, not CI or release candidate",
+  "source_revisions": {
+    "trident": "6b8d4e37b1dbbbc86dcb952c38f667f8277a5cea",
+    "joy": "5db7fa3559382de7bc3c93e7712daf28b730e24d",
+    "trisha": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "provenance": "Code gates ran before source commits; tested code committed unchanged. Installed CLI acceptance repeated after committed rebuilds.",
+  "gates": [
+    {
+      "repository": "trident",
+      "revision": "6b8d4e37b1dbbbc86dcb952c38f667f8277a5cea",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-profile-check.log",
+      "log_sha256": "1f51bda6e66955996c92a818a6cbc5d2cee9b946ec75f78400fd3936d2f0c744",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trident",
+      "revision": "6b8d4e37b1dbbbc86dcb952c38f667f8277a5cea",
+      "command": "cargo test --workspace --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-profile-tests.log",
+      "log_sha256": "79c220ec924c61c9b020f2706487376d7aa72c48f396cce50fffb9ad23d21308",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 909,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "revision": "5db7fa3559382de7bc3c93e7712daf28b730e24d",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-profile-final-check.log",
+      "log_sha256": "233114322065b8685e5c24b1a55bd8977bfbade2d5721815558fa4d8afcbc30a",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "joy",
+      "revision": "5db7fa3559382de7bc3c93e7712daf28b730e24d",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-profile-final-tests.log",
+      "log_sha256": "059418386ae191018d9b249e76f9b588f46c6a1a13050bac8349c1108eb5f4d4",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 112,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-profile-tests.log",
+      "log_sha256": "f5f78debc15b7ce0ad634013fe99b9ccd3dd50954bf5bd4039d76c772c759039",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 362,
+        "failed": 0,
+        "ignored": 4
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-profile-bench.log",
+      "log_sha256": "113cfe8a83dcb8d3208608340a3cd2315feed93f5037da6700f79e864142fa8c",
+      "rust_warnings": 0,
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "comparison_log": "/tmp/trisha-04-jobs-bench.log",
+      "result_and_cycle_rows_unchanged": true
+    }
+  ],
+  "installed_cli_receipt": "../../../joy/audit/self-hosting/compiler-profile-cli.json",
+  "formal_audit": {
+    "repository": "joy",
+    "revision": "5db7fa3559382de7bc3c93e7712daf28b730e24d",
+    "command": "../trident/target/debug/trident audit rs/tests/fixtures/compiler_transport.tri --json",
+    "exit_code": 2,
+    "verdict": "UNKNOWN: aggregate returns unsupported; no proof claim",
+    "local_log": "/tmp/joy-04-profile-formal-audit.log"
+  },
+  "earlier_failures": [
+    {
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p joy-rs --lib trident_source_seed",
+      "exit_code": 101,
+      "local_log": "/tmp/joy-04-profile-seed-test.log",
+      "first_error": "expected ')', found identifier: fixture used unsupported hexadecimal literals; replaced with decimal tags"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 101,
+      "local_log": "/tmp/joy-04-profile-tests.log",
+      "first_error": "same initial hexadecimal fixture, fixed before final full workspace run"
+    }
+  ],
+  "sh1_prior_receipts": [
+    "sh1-noun-validation.json",
+    "sh1-control-validation.json",
+    "sh1-privacy-validation.json",
+    "sh1-collections-validation.json",
+    "../../../joy/audit/self-hosting/compiler-jobs-validation.json"
+  ],
+  "scope": [
+    "Source guest constructs bound RES1 and quotes a separately executed ART1; no guest source compilation yet.",
+    "SH2 remains open. Full compiler memory/fixed point/proofs remain SH4/SH6/SH7/SH8."
+  ]
+}

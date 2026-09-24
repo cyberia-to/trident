@@ -7,7 +7,7 @@ retain their original observations; they are not substituted for gate evidence.
 
 ## Current position
 
-**Next: explicit compiler-profile seed export, then SH2 native compiler.** SH0's compiler
+**Next: SH2 native source compiler and source-package driver.** SH0's compiler
 inventory, data/job formats and runtime/control-flow contract are reviewed and
 specified. Nox's complete codec, lifetime arena allowance and sequential heap
 executor and Joy's structured raw run are in `release/0.4`.
@@ -18,7 +18,8 @@ Reusable raw source calls/loops and checked dynamic array indexing now have
 [execution acceptance](self-hosting/native-collections.md). Production compiler
 JOB1/RES1 admission is delivered in Joy [PR9](https://github.com/cyberia-to/joy/pull/9);
 [receipt](../../joy/audit/self-hosting/compiler-jobs.md). Explicit compiler-profile
-seed export completes the source-to-job integration next.
+seed export and source-guest execution have [acceptance](self-hosting/native-compiler-profile.md).
+SH1 is closed; SH2 remains open.
 No self-compilation or compiler execution proof is claimed.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
@@ -29,10 +30,10 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 | Gate | Status | Missing acceptance evidence |
 |---|---|---|
 | [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Closed — contract gate | [Owner review and runtime evidence](self-hosting/native-runtime.md) |
-| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime and job transport delivered | Source compiler-profile export acceptance |
-| [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Open — needs SH1 | `.tri` compiler running on nox emits a separately executed nox program |
+| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
+| [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Open — foundation available | `.tri` compiler running on nox emits a separately executed nox program |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — needs SH2 | Whole compiler subset and executed differential/rejection corpus |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — starts after SH1 | Real closure, compiler-scale memory/runtime and boundary receipts |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — engineering can start | Real closure, compiler-scale memory/runtime and boundary receipts |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — needs SH3/SH4 | C1 compiles all of S into usable C2 on nox |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, regression corpus and six-platform CI |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design after SH0 | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
@@ -74,7 +75,11 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   complete noun execution/publication with NoTrace;85 workspace tests passed.
 - [x] SH1 Joy compiler-job slice: production JOB1/RES1 admission and binding,
   [PR9](https://github.com/cyberia-to/joy/pull/9), [receipt](../../joy/audit/self-hosting/compiler-jobs.md).
-- [ ] SH1 explicit compiler-profile seed export and source-guest JOB1/RES1 execution.
+- [x] SH1 explicit compiler-profile seed export and source-guest JOB1/RES1 execution:
+  [combined SH1 receipt](self-hosting/native-compiler-profile.md).
+- [ ] SH2 source-package driver: exact files to JOB1, with no host language stages.
+- [ ] SH2 native arithmetic compiler: shared guest validation budget, UTF-8/lexer,
+  iterative expression parser, native ART1/RES1 generation and executed corpus.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
   [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
@@ -91,7 +96,6 @@ visible here as those decisions land.
 | Blocker | Owner / first gate | Baseline |
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
-| Explicit source compiler-profile export acceptance remains | Trident + Joy / SH1 | Native raw lowering and Joy JOB1/RES1 are delivered |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
 | Seed frontend halting/return and empty-if parsing inconsistencies | Trident / SH3 | [repros and current source workarounds](self-hosting/native-collections.md#seed-frontend-findings-carried-into-sh3) |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
@@ -152,3 +156,7 @@ Continue with canonical source Seq/Bytes, then production compiler-job admission
 validation allowance and installed Joy runtime quota boundaries.
 [Collections receipt](self-hosting/sh1-collections-validation.json).
 Continue with production compiler JOB1/RES1 admission and binding in Joy.
+
+2026-09-24 continuation: explicit compiler-profile source export and real source-guest
+JOB1/RES1 execution accepted. SH1 closed by the [combined receipt](self-hosting/native-compiler-profile.md).
+Proceed with SH2 source packages and arithmetic compilation inside nox.
