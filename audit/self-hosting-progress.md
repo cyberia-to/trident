@@ -1,20 +1,21 @@
 # Self-hosting on soft3 — progress ledger
 
-Updated: 2026-09-23. Working contract:
+Updated: 2026-09-24. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
 This ledger is the current execution checklist. Dated assessments and receipts
 retain their original observations; they are not substituted for gate evidence.
 
 ## Current position
 
-**Next: SH1 reusable native control flow, collections and Joy job admission.** SH0's compiler
+**Next: SH1 native collections and Joy compiler-job admission.** SH0's compiler
 inventory, data/job formats and runtime/control-flow contract are reviewed and
 specified. Nox's complete codec, lifetime arena allowance and sequential heap
 executor and Joy's structured raw run are in `release/0.4`.
 Native source Noun and source→ART1→Joy execution are implemented and tested
 in the current delivery branches; see [evidence](self-hosting/native-noun.md).
-Collections, reusable source calls/loops and production compiler JOB1/RES1
-admission remain required before SH1 closes.
+Reusable raw source calls/loops and checked dynamic array indexing now have
+[execution acceptance](self-hosting/native-control.md). Collections and production
+compiler JOB1/RES1 admission remain required before SH1 closes.
 No self-compilation or compiler execution proof is claimed.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
@@ -25,7 +26,7 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 | Gate | Status | Missing acceptance evidence |
 |---|---|---|
 | [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Closed — contract gate | [Owner review and runtime evidence](self-hosting/native-runtime.md) |
-| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime foundation delivered | Collections, reusable lowering and full compiler-job transport |
+| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime foundation delivered | Collections and full compiler-job transport |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Open — needs SH1 | `.tri` compiler running on nox emits a separately executed nox program |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — needs SH2 | Whole compiler subset and executed differential/rejection corpus |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — starts after SH1 | Real closure, compiler-scale memory/runtime and boundary receipts |
@@ -64,12 +65,14 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH1 runtime slice: lifetime node allowance and sequential heap frames in
   nox [PR18](https://github.com/cyberia-to/nox/pull/18)/
   [PR19](https://github.com/cyberia-to/nox/pull/19); the same compact formula runs
-  4097/5000 iterations with traced/run-only agreement. Source lowering is pending.
+  4097/5000 iterations with traced/run-only agreement. Raw source lowering is now
+  covered by the separate reusable-control receipt below.
 - [x] SH1 Joy raw transport slice: [PR5](https://github.com/cyberia-to/joy/pull/5),
   complete noun execution/publication with NoTrace;85 workspace tests passed.
 - [ ] SH1 Joy compiler-job slice: production JOB1/RES1 admission and binding.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
-- [ ] SH1 reusable calls/loops and dynamic indexing: [concrete next design](self-hosting/native-control-design.md).
+- [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
+  [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
 - [ ] SH1 native Seq/Bytes source libraries.
 
 Resolve protocol or language choices explicitly in their owner contracts before
@@ -81,8 +84,8 @@ visible here as those decisions land.
 | Blocker | Owner / first gate | Baseline |
 |---|---|---|
 | RAM-based compiler structures; native collection libraries still pending | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
-| Calls inline; loops unroll; dynamic indexing and large typed entries reject | Trident / SH1 | [nox source probes](self-hosting-2026-09-23/soft3-source-probes.json) |
-| Full compiler arena/memory scale and source-loop lowering still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor and node cap delivered; compiler-scale workload remains pending |
+| Raw compiler profile still needs collections and JOB1/RES1; flat bundle lowering remains legacy | Trident + Joy / SH1 | [reusable raw lowering](self-hosting/native-control.md) |
+| Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
 | Production compiler JOB1/RES1 admission is pending | Joy / SH1 | Complete raw ART1 transport delivered; compiler profile remains rejected |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
@@ -132,3 +135,8 @@ when the complete reference acceptance is satisfied.
 
 2026-09-23 continuation: SH0.4/SH0.5 contract review closed; nox runtime
 PR18/PR19 merged into release/0.4. Joy raw transport PR5 also merged; native source data is next.
+
+2026-09-24 continuation: reusable raw-native calls/loops, checked dynamic array
+indexing and balanced frames passed Trident, Joy CLI and Trisha compatibility
+gates. [Pinned commands and observations](self-hosting/sh1-control-validation.json).
+Continue with canonical source Seq/Bytes, then production compiler-job admission.
