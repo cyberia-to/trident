@@ -1,0 +1,760 @@
+{
+  "schema": "trident/shared-validation-budget/v1",
+  "kind": "local-development",
+  "source_revisions": {
+    "trident": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+    "joy": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+    "trisha": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "gates": [
+    {
+      "repository": "trident",
+      "revision": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+      "command": "cargo check --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-shared-budget-check.log",
+      "log_sha256": "c8d3c8670676dabffb48a91818e106575d8c8110f9c63397c1f25e209186d129",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trident",
+      "revision": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+      "command": "cargo test --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-shared-budget-tests.log",
+      "log_sha256": "7518579ff351afa15150e33e9473b6057e1702fed531cd6c00d75b4f1e7a10b0",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 876,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trident",
+      "revision": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-shared-budget-workspace-check.log",
+      "log_sha256": "f591e097f22f91dd5c31fbbf7e587d80c0a4e0ed594f9c9012a544f38c52d926",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trident",
+      "revision": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+      "command": "cargo test -p trident-silicon --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-shared-budget-silicon-tests.log",
+      "log_sha256": "556fecdeadc219443a33c9675c6a0f91d00c681007134fde5a355b69a1759513",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 34,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-shared-budget-check.log",
+      "log_sha256": "2d90b2ff7a44ed2411fe834f7a0b3f25e4ef8b35f2335b0952af1c6ea3065d7d",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-shared-budget-tests.log",
+      "log_sha256": "6f839e28736842c36d82f7473d537a2eda08c4affd6512e3c0e2e41b523c88c2",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 120,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-shared-budget-bench.log",
+      "log_sha256": "f6c184d5f8e74a68aa3cbef3634ca5a3cd059ac54c80928ff3f6a0e14b5a3873",
+      "rust_warnings": 0,
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "unchanged_result_cycle_rows": true,
+      "comparison_log": "/tmp/trisha-04-pack-bench.log"
+    }
+  ],
+  "formal_audits": [
+    {
+      "command": "target/debug/trident audit lib/std/nox/seq.tri --json",
+      "revision": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+      "exit_code": 2,
+      "verdict": "UNKNOWN",
+      "reason": "Aggregate parameters/returns and scalar aggregate expressions remain unsupported by the formal analyzer.",
+      "report": {
+        "file": "lib/std/nox/seq.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "empty",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "empty: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "empty",
+            "unsupported": [
+              "empty: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "len",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "len: aggregate parameter"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "len",
+            "unsupported": [
+              "len: aggregate parameter"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "get",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "get: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "get",
+            "unsupported": [
+              "get: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "set",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "set: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "set",
+            "unsupported": [
+              "set: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "push",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "push: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "push",
+            "unsupported": [
+              "push: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "to_noun",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "to_noun: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "to_noun",
+            "unsupported": [
+              "to_noun: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "from_noun",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "from_noun: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "from_noun",
+            "unsupported": [
+              "from_noun: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "from_noun_budget",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "from_noun_budget: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "from_noun_budget",
+            "unsupported": [
+              "from_noun_budget: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      }
+    },
+    {
+      "command": "target/debug/trident audit lib/std/nox/bytes.tri --json",
+      "revision": "4a9a2838b6336fdc0ba9126b12b88e1a8ee43340",
+      "exit_code": 2,
+      "verdict": "UNKNOWN",
+      "reason": "Aggregate parameters/returns and scalar aggregate expressions remain unsupported by the formal analyzer.",
+      "report": {
+        "file": "lib/std/nox/bytes.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "empty",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "empty: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "empty",
+            "unsupported": [
+              "empty: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "len",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "len: aggregate parameter"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "len",
+            "unsupported": [
+              "len: aggregate parameter"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "quotient",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "quotient: unmodeled scalar/aggregate expression"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "quotient",
+            "unsupported": [
+              "quotient: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "word_count",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "word_count: unmodeled scalar/aggregate expression"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "word_count",
+            "unsupported": [
+              "word_count: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "scale",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "scale: unmodeled call convert.as_u32"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "scale",
+            "unsupported": [
+              "scale: unmodeled call convert.as_u32"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "inverse_scale",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "inverse_scale: unmodeled call convert.as_u32"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "inverse_scale",
+            "unsupported": [
+              "inverse_scale: unmodeled call convert.as_u32"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "get",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "get: aggregate parameter"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "get",
+            "unsupported": [
+              "get: aggregate parameter"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "set",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "set: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "set",
+            "unsupported": [
+              "set: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "push",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "push: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "push",
+            "unsupported": [
+              "push: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "to_noun",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "to_noun: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "to_noun",
+            "unsupported": [
+              "to_noun: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "validate_words_chunk",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "validate_words_chunk: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "validate_words_chunk",
+            "unsupported": [
+              "validate_words_chunk: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "from_noun",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "from_noun: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "from_noun",
+            "unsupported": [
+              "from_noun: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "from_noun_budget",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "from_noun_budget: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "from_noun_budget",
+            "unsupported": [
+              "from_noun_budget: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      }
+    }
+  ],
+  "provenance": "Source gates ran before source commit; tested source committed unchanged. Workspace silicon checks completed on source commit. No formal proof or native source compilation is claimed."
+}

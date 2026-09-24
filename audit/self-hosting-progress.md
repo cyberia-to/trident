@@ -160,3 +160,15 @@ Continue with production compiler JOB1/RES1 admission and binding in Joy.
 2026-09-24 continuation: explicit compiler-profile source export and real source-guest
 JOB1/RES1 execution accepted. SH1 closed by the [combined receipt](self-hosting/native-compiler-profile.md).
 Proceed with SH2 source packages and arithmetic compilation inside nox.
+
+2026-09-24 continuation: Joy [PR11](https://github.com/cyberia-to/joy/pull/11)
+landed exact-file source packaging on `release/0.4` at
+`a3dd4c5c7c2f870f6632deace5b137a141796173`. The native collection APIs now
+return remaining validation visits for a shared guest pass at Trident
+`4a9a2838b6336fdc0ba9126b12b88e1a8ee43340`. The chained Seq/Bytes execution
+matches the independent model at exact and insufficient allowances, including
+chunk boundaries. [Commands and revisions](self-hosting/shared-validation-budget.json)
+record 876 Trident package tests plus 34 silicon tests, 120 Joy tests and
+133/43 Trisha fixture/baseline checks with unchanged result/cycle rows.
+Formal collection analysis remains UNKNOWN. The SH2 lexical, grammar and
+diagnostic contract is now explicit; actual guest source compilation is next.
