@@ -111,8 +111,10 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [source/JOB and installed CLI evidence](self-hosting/native-compiler-scalars.md).
 - [x] SH3 native literal-range loops: reusable bodies, scoped index and return flow;
   [execution evidence](self-hosting/native-compiler-loops.md).
-- [ ] SH3 native Noun values and structured raw entry;
-  [next slice](../.claude/plans/native-compiler-nouns.md).
+- [x] SH3 native Noun values and structured raw entry;
+  [execution evidence](self-hosting/native-compiler-nouns.md).
+- [ ] SH3 canonical aggregate types, Digest and tuples;
+  [next slice](../.claude/plans/native-compiler-aggregate-types.md).
 - [ ] SH3 remaining native language: aggregates, imports and complete
   compiler closure coverage.
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
@@ -134,7 +136,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Explicit heap arena admits larger real compiler jobs; valid 4096-byte whitespace workload and full closure remain open |
-| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md), [typed control](self-hosting/native-compiler-control.md), [reusable functions](self-hosting/native-compiler-functions.md) [checked scalars](self-hosting/native-compiler-scalars.md) and [literal loops](self-hosting/native-compiler-loops.md) are accepted; remaining language stays open |
+| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md), [typed control](self-hosting/native-compiler-control.md), [reusable functions](self-hosting/native-compiler-functions.md) [checked scalars](self-hosting/native-compiler-scalars.md) [literal loops](self-hosting/native-compiler-loops.md) and [structured Noun values](self-hosting/native-compiler-nouns.md) are accepted; remaining language stays open |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -274,3 +276,11 @@ C2/C3, six-platform release and native compiler proofs remain open.
 cover nested scope, early return, raw U32 bounds and exact resource limits,
 while preserving prior ART1 identities. Continue with native Noun values and
 structured raw entry; full SH3/SH4 and C2/C3 remain open.
+
+2026-09-24 continuation: native Noun values and structured entry accepted at
+Trident `4dbd03e95defbff53c27d453ca6ca7e15bf292c7`, with CLI diagnostic assertions
+refined at `c5d1901f5be44caf097cc33e7e09132538ce7fa7`.
+[Full JOB/ART1 and installed acceptance](self-hosting/native-compiler-nouns.md)
+checks complete nested output, runtime projection traps and exact resource bounds.
+Continue with canonical aggregate descriptors, Digest and tuples. Full SH3/SH4,
+C2/C3 and platform acceptance remain open.
