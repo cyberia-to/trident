@@ -9,16 +9,11 @@ use std.compiler.nox.lexer
 use std.compiler.nox.ast
 use std.compiler.nox.ascii
 use std.compiler.nox.symbols
-
-pub struct Parsed { pub nodes: seq.Seq, pub value: U32, pub token: syntax.Token, pub error: syntax.Error }
-struct State {
-    operators: seq.Seq, values: seq.Seq, ops: U32, vals: U32,
-    token: syntax.Token, operand: Bool, done: Bool, error: syntax.Error,
-    capacity: U32, node_cap: U32, nodes: seq.Seq, bindings: seq.Seq, visible: Noun, before_block: Bool
-}
+use std.compiler.nox.expression_state
+use std.compiler.nox.call_parse
 
 #[pure]
-fn operator(s: State) -> U32 {
+fn operator(s: expression_state.State) -> U32 {
     as_u32(noun.as_field(seq.get(s.operators, syntax.dec(s.ops))))
 }
 
@@ -31,7 +26,7 @@ fn precedence(kind: U32) -> U32 {
 }
 
 #[pure]
-fn reduce(input: State) -> State {
+fn reduce(input: expression_state.State) -> expression_state.State {
     let mut s = input
     if s.vals < as_u32(2) {
         s.error = ast.failed(s.token, 2)
@@ -65,7 +60,7 @@ fn reduce(input: State) -> State {
 }
 
 #[pure]
-fn push_operator(input: State) -> State {
+fn push_operator(input: expression_state.State) -> expression_state.State {
     let mut s = input
     if s.ops == s.capacity {
         s.error = syntax.error(7, s.token.start, s.token.end)
@@ -85,9 +80,20 @@ fn boundary(kind: U32, before_block: Bool) -> Bool {
 }
 
 #[pure]
-fn step(source: bytes.Bytes, input: State) -> State {
+fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.State {
     let mut s = input
     let kind = s.token.kind
+    if syntax.either(kind == as_u32(6), kind == as_u32(26)) {
+        if (s.ops == as_u32(0)) == false {
+            let top = operator(s)
+            if top == expression_state.CALL_MARKER { return call_parse.finish(source, s, kind == as_u32(6)) }
+            if syntax.both(s.operand == false, (top == as_u32(5)) == false) { return reduce(s) }
+        }
+        if syntax.either(s.operand, kind == as_u32(26)) {
+            s.error = syntax.error(2, s.token.start, s.token.end)
+            return s
+        }
+    }
     if s.operand {
         if syntax.either(syntax.either(kind == as_u32(2), kind == as_u32(1)), syntax.either(kind == as_u32(21), kind == as_u32(22))) {
             if syntax.either(s.vals == s.capacity, seq.len(s.nodes) == s.node_cap) {
@@ -108,11 +114,10 @@ fn step(source: bytes.Bytes, input: State) -> State {
                 }
                 if following.kind == as_u32(5) {
                     if ascii.same_line(source, s.token.end, following.start) {
-                        s.error = syntax.error(6, s.token.start, following.end)
-                        return s
+                        return call_parse.enter(source, following, s)
                     }
                 }
-                let binding = symbols.lookup(source, s.token, s.bindings, s.visible)
+                let binding = symbols.lookup(source, s.token, s.context.bindings, s.context.visible)
                 if binding.exists == false {
                     s.error = syntax.error(5, s.token.start, s.token.end)
                     return s
@@ -145,7 +150,7 @@ fn step(source: bytes.Bytes, input: State) -> State {
         s.ops = syntax.dec(s.ops)
     } else if boundary(kind, s.before_block) {
         if (s.ops == as_u32(0)) == false {
-            if operator(s) == as_u32(5) {
+            if syntax.either(operator(s) == as_u32(5), operator(s) == expression_state.CALL_MARKER) {
                 s.error = ast.failed(s.token, 2)
                 return s
             }
@@ -162,7 +167,7 @@ fn step(source: bytes.Bytes, input: State) -> State {
 }
 
 #[pure]
-fn chunk(source: bytes.Bytes, input: State) -> State {
+fn chunk(source: bytes.Bytes, input: expression_state.State) -> expression_state.State {
     let mut s = input
     for turn in 0..32 {
         s = step(source, s)
@@ -173,20 +178,20 @@ fn chunk(source: bytes.Bytes, input: State) -> State {
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-pub fn parse(source: bytes.Bytes, token: syntax.Token, bindings: seq.Seq, visible: Noun, nodes: seq.Seq, cap: U32, before_block: Bool) -> Parsed {
+pub fn parse(source: bytes.Bytes, token: syntax.Token, context: expression_state.Context, nodes: seq.Seq, arguments: seq.Seq, edges: Noun, cap: U32, before_block: Bool) -> expression_state.Parsed {
     let zero = as_u32(0)
     let mut capacity = cap
     if syntax.STACK_CAP < capacity { capacity = syntax.STACK_CAP }
-    let mut s = State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,
+    let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,
         token, operand: true, done: false, error: syntax.error(0, zero, zero),
-        capacity, node_cap: cap, nodes, bindings, visible, before_block }
+        capacity, node_cap: cap, nodes, context, before_block, arguments, edges, frames: noun.atom(0) }
     for block in 0..256 {
         s = chunk(source, s)
-        if (s.error.code == zero) == false { return Parsed { nodes: s.nodes, value: zero, token: s.token, error: s.error } }
+        if (s.error.code == zero) == false { return expression_state.Parsed { nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: zero, token: s.token, error: s.error } }
         if s.done {
             assert_eq(as_field(s.vals), 1)
-            return Parsed { nodes: s.nodes, value: as_u32(noun.as_field(seq.get(s.values, zero))), token: s.token, error: s.error }
+            return expression_state.Parsed { nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: as_u32(noun.as_field(seq.get(s.values, zero))), token: s.token, error: s.error }
         }
     }
-    Parsed { nodes: s.nodes, value: zero, token: s.token, error: syntax.error(7, s.token.start, s.token.end) }
+    expression_state.Parsed { nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: zero, token: s.token, error: syntax.error(7, s.token.start, s.token.end) }
 }

@@ -1,0 +1,24 @@
+program native_function_plan
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.lexer
+use std.compiler.nox.headers
+use std.compiler.nox.check_functions
+use std.compiler.nox.function_plan
+
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let capacity = as_u32(noun.as_field(noun.tail(input)))
+    let declaration = lexer.next(source, as_u32(0))
+    let name = lexer.next(source, declaration.end)
+    let parsed = headers.parse(source, name.end, capacity)
+    if (parsed.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(parsed.error.code)), noun.atom(0)) }
+    let checked = check_functions.check(source, parsed.functions, parsed.params, capacity)
+    if (checked.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(checked.error.code)), noun.atom(0)) }
+    let plan = function_plan.plan(source, parsed.functions, checked.bodies, parsed.entry, capacity)
+    noun.pair(noun.atom(as_field(plan.error.code)), noun.pair(seq.to_noun(plan.order), plan.slots))
+}

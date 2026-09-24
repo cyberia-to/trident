@@ -1,0 +1,26 @@
+module std.compiler.nox.expression_state
+
+use vm.nox.noun
+use std.nox.seq
+use std.compiler.nox.syntax
+
+pub const CALL_MARKER: U32 = 27
+pub struct Context {
+    pub bindings: seq.Seq, pub visible: Noun, pub functions: seq.Seq, pub params: seq.Seq
+}
+pub struct Parsed {
+    pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun,
+    pub value: U32, pub token: syntax.Token, pub error: syntax.Error
+}
+pub struct State {
+    pub operators: seq.Seq, pub values: seq.Seq, pub ops: U32, pub vals: U32,
+    pub token: syntax.Token, pub operand: Bool, pub done: Bool, pub error: syntax.Error,
+    pub capacity: U32, pub node_cap: U32, pub nodes: seq.Seq,
+    pub context: Context, pub before_block: Bool,
+    pub arguments: seq.Seq, pub frames: Noun, pub edges: Noun
+}
+
+#[pure]
+pub fn context(bindings: seq.Seq, visible: Noun, functions: seq.Seq, params: seq.Seq) -> Context {
+    Context { bindings, visible, functions, params }
+}

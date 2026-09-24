@@ -1,0 +1,42 @@
+module std.compiler.nox.formula
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+
+pub struct Value { pub formula: Noun, pub depth: U32 }
+
+#[pure]
+pub fn axis(value: Field) -> Noun { noun.pair(noun.atom(0), noun.atom(value)) }
+
+#[pure]
+pub fn cons(a: Noun, b: Noun) -> Noun { noun.pair(noun.atom(3), noun.pair(a, b)) }
+
+// Fixed continuations are quoted; dynamic table dispatch uses apply instead.
+#[pure]
+pub fn compose(subject: Noun, code: Noun) -> Noun {
+    noun.pair(noun.atom(2), noun.pair(subject, noun.pair(noun.atom(1), code)))
+}
+
+#[pure]
+pub fn maximum(a: U32, b: U32) -> U32 { if a < b { return b } a }
+
+#[pure]
+pub fn value(values: seq.Seq, id: U32) -> Value {
+    let record = seq.get(values, id)
+    Value { formula: noun.tail(record), depth: as_u32(noun.as_field(noun.head(record))) }
+}
+
+#[pure]
+pub fn pack(value: Value) -> Noun { noun.pair(noun.atom(as_field(value.depth)), value.formula) }
+
+#[pure]
+pub fn pair(a: Value, b: Value) -> Value {
+    Value { formula: cons(a.formula, b.formula), depth: as_u32(as_field(maximum(a.depth, b.depth)) + 2) }
+}
+
+#[pure]
+pub fn apply(subject: Value, producer: Value) -> Value {
+    Value { formula: noun.pair(noun.atom(2), noun.pair(subject.formula, producer.formula)),
+        depth: as_u32(as_field(maximum(subject.depth, producer.depth)) + 2) }
+}

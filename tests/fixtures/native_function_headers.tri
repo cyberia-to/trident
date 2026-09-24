@@ -1,0 +1,25 @@
+program native_function_headers
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.lexer
+use std.compiler.nox.headers
+use std.compiler.nox.signatures
+
+// Component probe: [source Bytes capacity] -> [summary [first.open first.close]].
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let capacity = as_u32(noun.as_field(noun.tail(input)))
+    let declaration = lexer.next(source, as_u32(0))
+    let name = lexer.next(source, declaration.end)
+    let parsed = headers.parse(source, name.end, capacity)
+    if (parsed.error.code == as_u32(0)) == false {
+        return noun.pair(noun.atom(as_field(parsed.error.code) * 1000000), noun.pair(noun.atom(as_field(parsed.error.start)), noun.atom(as_field(parsed.error.end))))
+    }
+    let first = signatures.read(seq.get(parsed.functions, as_u32(0)))
+    let summary = as_field(parsed.entry) * 10000 + as_field(seq.len(parsed.functions)) * 100 + as_field(seq.len(parsed.params))
+    noun.pair(noun.atom(summary), noun.pair(noun.atom(as_field(first.open)), noun.atom(as_field(first.close))))
+}

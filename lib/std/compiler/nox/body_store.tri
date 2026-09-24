@@ -1,0 +1,51 @@
+module std.compiler.nox.body_store
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.body_state
+
+// Body records are compiler-owned. Public Seq handles are serialized here and
+// validated once when that body reaches emission; graph reads use only edges.
+#[pure]
+pub fn pack(s: body_state.State, terminal: Noun) -> Noun {
+    let sizes = noun.pair(noun.atom(as_field(seq.len(s.bindings))), noun.atom(as_field(s.root)))
+    let expressions = noun.pair(seq.to_noun(s.nodes), seq.to_noun(s.arguments))
+    let control = noun.pair(seq.to_noun(s.statements), seq.to_noun(s.blocks))
+    let flow = noun.pair(noun.atom(s.returns), noun.pair(s.edges, terminal))
+    noun.pair(sizes, noun.pair(expressions, noun.pair(control, flow)))
+}
+
+#[pure]
+pub fn locals(value: Noun) -> U32 { as_u32(noun.as_field(noun.head(noun.head(value)))) }
+
+#[pure]
+pub fn edges(value: Noun) -> Noun { noun.head(noun.tail(noun.tail(noun.tail(noun.tail(value))))) }
+
+#[pure]
+pub fn terminal(value: Noun) -> Noun { noun.tail(noun.tail(noun.tail(noun.tail(noun.tail(value))))) }
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn read(value: Noun, cap: U32) -> body_state.State {
+    let zero = as_u32(0)
+    let mut s = body_state.initial(syntax.token(0, zero, zero, 0))
+    let sizes = noun.head(value)
+    let contents = noun.tail(value)
+    let expressions = noun.head(contents)
+    let tail = noun.tail(contents)
+    let control = noun.head(tail)
+    let flow = noun.tail(tail)
+    // At most twice the next power-of-two leaves, including padding visits.
+    let visits = as_u32(as_field(cap) * 4 + 1)
+    s.nodes = seq.from_noun(noun.head(expressions), cap, visits)
+    s.arguments = seq.from_noun(noun.tail(expressions), cap, visits)
+    s.statements = seq.from_noun(noun.head(control), cap, visits)
+    s.blocks = seq.from_noun(noun.tail(control), cap, visits)
+    s.root = as_u32(noun.as_field(noun.tail(sizes)))
+    s.returns = noun.as_field(noun.head(flow))
+    s.edges = noun.head(noun.tail(flow))
+    s.done = true
+    s
+}

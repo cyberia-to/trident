@@ -98,9 +98,14 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [source/JOB execution evidence](self-hosting/native-compiler-locals.md).
 - [x] SH3 native compiler control: Bool, equality, scoped if/else and early return;
   [source/JOB and installed CLI evidence](self-hosting/native-compiler-control.md).
-- [ ] SH3 native compiler functions: typed reusable calls, forward signatures and
-  deterministic code tables; then aggregates, imports and remaining compiler language.
-  [Next slice](../.claude/plans/native-compiler-functions.md).
+- [x] SH3 native compiler functions: typed reusable calls, forward signatures and
+  deterministic reachable code tables;
+  [source/JOB and installed CLI evidence](self-hosting/native-compiler-functions.md).
+- [ ] SH4 bounded heap arena: nox allocation in place and explicit larger Joy
+  pack/run allowance, preserving the current default and canonical output.
+  [Next slice](../.claude/plans/native-compiler-arena.md).
+- [ ] SH3 remaining native language: U32/loops, aggregates, imports and complete
+  compiler closure coverage.
 - [ ] SH4 source closure and allocation scale: measure and repair the lifetime
   arena boundary observed during pilot source admission before full self-build.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
@@ -120,7 +125,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
-| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md) and [typed control](self-hosting/native-compiler-control.md) are accepted; reusable functions are next |
+| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md), [typed control](self-hosting/native-compiler-control.md) and [reusable functions](self-hosting/native-compiler-functions.md) are accepted; remaining language stays open |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -230,3 +235,11 @@ Field locals/assignments and actual runtime slots inside the guest compiler.
 accepted through full source/JOB/ART1 execution. [Pinned validation](self-hosting/sh3-native-locals-validation.json).
 Continue with native Bool/equality/control flow; compiler-scale arena remains
 open and is reproduced by the larger assignment workload.
+
+2026-09-24 continuation: native typed functions accepted at Trident
+`5339030b66c8e9835d79f175ef2ac5eb98d1e75e`. The installed Joy corpus covers
+forward/nested calls, fresh frames, Unit and final callable bindings;
+[commands, measurements and limits](self-hosting/native-compiler-functions.md).
+Continue with an in-place heap arena in nox and explicit larger structured
+pack/run allowance in Joy. Compiler cost increased and deep-call/default-arena
+failures remain recorded; full SH3/SH4 and self-build are open.

@@ -8,6 +8,7 @@ use std.compiler.nox.syntax
 use std.compiler.nox.lexer
 use std.compiler.nox.ast
 use std.compiler.nox.expression
+use std.compiler.nox.expression_state
 use std.compiler.nox.blocks
 use std.compiler.nox.contexts
 use std.compiler.nox.body_state
@@ -22,10 +23,16 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
         s.error = syntax.error(7, s.token.start, s.token.end)
         return s
     }
-    let condition = expression.parse(source, lexer.next(source, s.token.end), s.bindings, s.visible, s.nodes, cap, true)
+    let condition = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params), s.nodes, s.arguments, s.edges, cap, true)
     s.error = condition.error
     if (s.error.code == as_u32(0)) == false { return s }
     s.nodes = condition.nodes
+    if ast.ty(seq.get(s.nodes, condition.value)) == ast.UNIT {
+        s.error = ast.issue(5, seq.get(s.nodes, condition.value))
+        return s
+    }
+    s.arguments = condition.arguments
+    s.edges = condition.edges
     s.token = condition.token
     if (s.token.kind == as_u32(7)) == false { s.error = ast.failed(s.token, 2) return s }
     let frame = contexts.Frame { statements: s.current, visible: s.visible, returned: s.returned,
@@ -67,7 +74,6 @@ pub fn close(source: bytes.Bytes, input: body_state.State, cap: U32, consume: Bo
     s.blocks = seq.push(s.blocks, blocks.pack(block), cap)
     if consume { s.token = lexer.next(source, s.token.end) }
     if s.depth == as_u32(0) {
-        if (s.token.kind == as_u32(0)) == false { s.error = ast.failed(s.token, 2) return s }
         s.root = id
         s.done = true
         return s

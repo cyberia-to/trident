@@ -20,7 +20,7 @@ pub fn binding(name: syntax.Token, writable: Bool, ty: Field) -> Noun {
 }
 
 #[pure]
-fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
+pub fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
     let span = noun.head(binding)
     let start = as_u32(noun.as_field(noun.head(span)))
     let end = as_u32(noun.as_field(noun.tail(span)))

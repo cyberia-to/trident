@@ -1,0 +1,83 @@
+module std.compiler.nox.function_order
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+
+pub struct Ordered { pub ids: seq.Seq, pub next: U32, pub error: syntax.Error }
+struct Insert { ids: seq.Seq, gap: U32, done: Bool }
+
+#[pure]
+fn before(source: bytes.Bytes, left: syntax.Token, right: syntax.Token) -> Bool {
+    let mut a = left.start
+    let mut b = right.start
+    for turn in 0..4096 {
+        if a == left.end { return (b == right.end) == false }
+        if b == right.end { return false }
+        let x = bytes.get(source, a)
+        let y = bytes.get(source, b)
+        if x < y { return true }
+        if y < x { return false }
+        a = syntax.inc(a)
+        b = syntax.inc(b)
+    }
+    false
+}
+
+#[pure]
+fn insert_chunk(source: bytes.Bytes, functions: seq.Seq, name: syntax.Token, input: Insert) -> Insert {
+    let mut s = input
+    for turn in 0..8 {
+        if s.gap == as_u32(0) { s.done = true return s }
+        let previous = seq.get(s.ids, syntax.dec(s.gap))
+        let declaration = signatures.read(seq.get(functions, as_u32(noun.as_field(previous))))
+        if before(source, name, declaration.name) == false { s.done = true return s }
+        s.ids = seq.set(s.ids, s.gap, previous)
+        s.gap = syntax.dec(s.gap)
+    }
+    s
+}
+
+#[pure]
+fn insert(source: bytes.Bytes, functions: seq.Seq, input: seq.Seq, id: U32, cap: U32) -> seq.Seq {
+    let declaration = signatures.read(seq.get(functions, id))
+    let value = noun.atom(as_field(id))
+    let mut s = Insert { ids: seq.push(input, value, cap), gap: seq.len(input), done: false }
+    for turn in 0..512 {
+        s = insert_chunk(source, functions, declaration.name, s)
+        if s.done { return seq.set(s.ids, s.gap, value) }
+    }
+    // At most SOURCE_CAP final bindings can precede this insertion.
+    seq.set(s.ids, s.gap, value)
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, functions: seq.Seq, input: Ordered, cap: U32) -> Ordered {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(functions) { return s }
+        let declaration = signatures.read(seq.get(functions, s.next))
+        if signatures.lookup(source, declaration.name, functions) == s.next {
+            if seq.len(s.ids) == cap { s.error = syntax.error(7, declaration.name.start, declaration.name.end) return s }
+            s.ids = insert(source, functions, s.ids, s.next, cap)
+        }
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+pub fn sort(source: bytes.Bytes, functions: seq.Seq, cap: U32) -> Ordered {
+    let zero = as_u32(0)
+    let mut s = Ordered { ids: seq.empty(), next: zero, error: syntax.error(0, zero, zero) }
+    for turn in 0..512 {
+        s = chunk(source, functions, s, cap)
+        if syntax.either(s.next == seq.len(functions), (s.error.code == zero) == false) { return s }
+    }
+    s.error = syntax.error(7, zero, zero)
+    s
+}

@@ -1,0 +1,28 @@
+program native_function_expression
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.lexer
+use std.compiler.nox.headers
+use std.compiler.nox.signatures
+use std.compiler.nox.expression
+use std.compiler.nox.expression_state
+
+// Component probe returns typed AST and owned argument links for an independent
+// Rust interpreter. Function generation and full JOB validation are separate.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let capacity = as_u32(noun.as_field(noun.tail(input)))
+    let declaration = lexer.next(source, as_u32(0))
+    let name = lexer.next(source, declaration.end)
+    let parsed = headers.parse(source, name.end, capacity)
+    if (parsed.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(parsed.error.code)), noun.atom(0)) }
+    let entry = signatures.read(seq.get(parsed.functions, parsed.entry))
+    let scope = expression_state.context(seq.empty(), noun.atom(0), parsed.functions, parsed.params)
+    let value = expression.parse(source, lexer.next(source, entry.open), scope, seq.empty(), seq.empty(), noun.atom(0), capacity, false)
+    let body = noun.pair(seq.to_noun(value.nodes), noun.pair(seq.to_noun(value.arguments), noun.atom(as_field(value.value))))
+    noun.pair(noun.atom(as_field(value.error.code)), body)
+}

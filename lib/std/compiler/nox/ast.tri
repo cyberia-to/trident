@@ -7,12 +7,15 @@ use std.compiler.nox.syntax
 
 pub const FIELD: Field = 0
 pub const BOOL: Field = 1
+pub const UNIT: Field = 2
 pub const LITERAL: Field = 0
 pub const LOCAL: Field = 1
 pub const BOOLEAN: Field = 2
 pub const ADD: Field = 3
 pub const MUL: Field = 4
 pub const EQUAL: Field = 5
+pub const CALL: Field = 6
+pub const UNIT_VALUE: Field = 7
 
 // Postorder expression: [[kind [left right]] [type [start end]]].
 // Child IDs precede their parent. AST operations are independent of token kinds.
@@ -28,6 +31,7 @@ pub fn typed(kind: Field, left: Field, right: Field, ty: Field, start: U32, end:
 pub fn node(kind: Field, left: Field, right: Field) -> Noun {
     let mut ty = FIELD
     if syntax.either(kind == BOOLEAN, kind == EQUAL) { ty = BOOL }
+    if kind == UNIT_VALUE { ty = UNIT }
     typed(kind, left, right, ty, as_u32(0), as_u32(0))
 }
 

@@ -1,0 +1,131 @@
+module std.compiler.nox.call_codegen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.body_store
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+pub struct Context {
+    pub arguments: seq.Seq, pub bodies: seq.Seq, pub slots: Noun,
+    pub functions: U32, pub table: tree.Shape, pub capacity: U32
+}
+pub struct Built { pub output: formula.Value, pub failed: Bool }
+struct Collected { reversed: seq.Seq, head: U32, failed: Bool }
+struct Folded { values: seq.Seq, next: U32 }
+
+#[pure]
+pub fn empty() -> Context {
+    Context { arguments: seq.empty(), bodies: seq.empty(), slots: noun.atom(0),
+        functions: as_u32(0), table: tree.shape(as_u32(0)), capacity: as_u32(0) }
+}
+
+#[pure]
+fn collect_chunk(context: Context, values: seq.Seq, input: Collected) -> Collected {
+    let mut s = input
+    for turn in 0..8 {
+        if s.head == signatures.NONE { return s }
+        if seq.len(s.reversed) == context.capacity { s.failed = true return s }
+        let link = seq.get(context.arguments, s.head)
+        s.reversed = seq.push(s.reversed, seq.get(values, as_u32(noun.as_field(noun.head(link)))), context.capacity)
+        s.head = as_u32(noun.as_field(noun.tail(link)))
+    }
+    s
+}
+
+#[pure]
+fn collect(context: Context, values: seq.Seq, head: U32) -> Collected {
+    let mut s = Collected { reversed: seq.empty(), head, failed: false }
+    for turn in 0..512 {
+        s = collect_chunk(context, values, s)
+        if syntax.either(s.failed, s.head == signatures.NONE) { return s }
+    }
+    s.failed = true
+    s
+}
+
+#[pure]
+fn reverse_chunk(values: seq.Seq, input: Folded) -> Folded {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == as_u32(0) { return s }
+        s.next = syntax.dec(s.next)
+        s.values = seq.push(s.values, seq.get(values, s.next), seq.len(values))
+    }
+    s
+}
+
+#[pure]
+fn ordered(values: seq.Seq) -> seq.Seq {
+    let mut s = Folded { values: seq.empty(), next: seq.len(values) }
+    for turn in 0..512 {
+        s = reverse_chunk(values, s)
+        if s.next == as_u32(0) { return s.values }
+    }
+    s.values
+}
+
+#[pure]
+fn padding(level: U32) -> formula.Value {
+    formula.Value { formula: noun.pair(noun.atom(1), tree.empty(level)), depth: syntax.inc(level) }
+}
+
+#[pure]
+fn fold_chunk(values: seq.Seq, level: U32, input: Folded) -> Folded {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(values) { return s }
+        let left = formula.value(values, s.next)
+        s.next = syntax.inc(s.next)
+        let mut right = padding(level)
+        if s.next < seq.len(values) {
+            right = formula.value(values, s.next)
+            s.next = syntax.inc(s.next)
+        }
+        s.values = seq.push(s.values, formula.pack(formula.pair(left, right)), seq.len(values))
+    }
+    s
+}
+
+#[pure]
+fn fold(values: seq.Seq, level: U32) -> seq.Seq {
+    let mut s = Folded { values: seq.empty(), next: as_u32(0) }
+    for turn in 0..512 {
+        s = fold_chunk(values, level, s)
+        if s.next == seq.len(values) { return s.values }
+    }
+    s.values
+}
+
+// CONS evaluates the owned argument leaves once, in source order. All other
+// callee slots are canonical zero padding, independent of the caller's frame.
+#[pure]
+fn frame(arguments: seq.Seq, height: U32) -> formula.Value {
+    if seq.len(arguments) == as_u32(0) { return padding(height) }
+    let mut values = ordered(arguments)
+    for level in 0..12 {
+        if level == height { return formula.value(values, as_u32(0)) }
+        values = fold(values, level)
+    }
+    formula.value(values, as_u32(0))
+}
+
+#[pure]
+#[requires(callee < context.functions)]
+pub fn generate(context: Context, values: seq.Seq, callee: U32, head: U32) -> Built {
+    let mut s = Built { output: flow.literal(0), failed: false }
+    let collected = collect(context, values, head)
+    if collected.failed { s.failed = true return s }
+    let shape = tree.shape(body_store.locals(seq.get(context.bodies, callee)))
+    let environment = frame(collected.reversed, shape.height)
+    let subject = formula.pair(flow.axis(2), formula.pair(flow.literal(0), environment))
+    let occupied = noun.as_field(tree.get(context.slots, context.functions, callee))
+    if occupied == 0 { s.failed = true return s }
+    let slot = syntax.dec(as_u32(occupied))
+    s.output = formula.apply(subject, flow.axis(2 * context.table.capacity + as_field(slot)))
+    s
+}

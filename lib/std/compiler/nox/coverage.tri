@@ -1,0 +1,87 @@
+module std.compiler.nox.coverage
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.blocks
+use std.compiler.nox.terminal
+use std.compiler.nox.body_state
+
+pub struct Checked { pub flags: Noun, pub error: syntax.Error }
+struct State { flags: Noun, next: U32 }
+struct Block { covered: Bool, remaining: Noun }
+
+#[pure]
+fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32) -> Bool {
+    if s.kind == blocks.RETURN { return true }
+    if (s.kind == blocks.IF) == false { return false }
+    let yes = noun.as_field(tree.get(flags, count, s.b)) == 1
+    let mut no = false
+    if (s.c == blocks.NONE) == false { no = noun.as_field(tree.get(flags, count, s.c)) == 1 }
+    let condition = seq.get(nodes, s.a)
+    if syntax.either(ast.kind(condition) == ast.LITERAL, ast.kind(condition) == ast.BOOLEAN) {
+        if ast.left(condition) == 0 { return yes }
+        return no
+    }
+    syntax.both(yes, no)
+}
+
+#[pure]
+fn statement_chunk(input: Block, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32) -> Block {
+    let mut s = input
+    for turn in 0..8 {
+        if noun.eq(s.remaining, noun.atom(0)) { return s }
+        let id = as_u32(noun.as_field(noun.head(s.remaining)))
+        s.covered = syntax.either(s.covered, statement(blocks.read_statement(seq.get(statements, id)), nodes, flags, count))
+        s.remaining = noun.tail(s.remaining)
+    }
+    s
+}
+
+#[pure]
+fn block(body: blocks.Block, terminal: Bool, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32) -> Bool {
+    let mut s = Block { covered: syntax.both(body.has_tail, terminal), remaining: body.statements }
+    for turn in 0..512 {
+        s = statement_chunk(s, nodes, statements, flags, count)
+        if noun.eq(s.remaining, noun.atom(0)) { return s.covered }
+    }
+    // Source-built lists contain at most SOURCE_CAP statement records.
+    false
+}
+
+#[pure]
+fn chunk(input: State, s: body_state.State, terminal: Noun) -> State {
+    let mut state = input
+    let count = seq.len(s.blocks)
+    for turn in 0..8 {
+        if state.next == count { return state }
+        let tail_returns = noun.as_field(tree.get(terminal, count, state.next)) == 1
+        let covered = block(blocks.read(seq.get(s.blocks, state.next)), tail_returns, s.nodes, s.statements, state.flags, count)
+        state.flags = tree.set(state.flags, count, state.next, blocks.flag(covered))
+        state.next = syntax.inc(state.next)
+    }
+    state
+}
+
+// Type-check every terminal tail before coverage, including unselected arms.
+#[pure]
+#[requires(s.root < seq.len(s.blocks))]
+pub fn check(s: body_state.State) -> Checked {
+    let zero = as_u32(0)
+    let marked = terminal.mark(s.nodes, s.statements, s.blocks, s.root, s.returns)
+    if (marked.error.code == zero) == false { return Checked { flags: marked.flags, error: marked.error } }
+    let mut state = State { flags: tree.empty(tree.shape(seq.len(s.blocks)).height), next: zero }
+    for turn in 0..512 {
+        state = chunk(state, s, marked.flags)
+        if state.next == seq.len(s.blocks) {
+            if s.returns == ast.UNIT { return Checked { flags: marked.flags, error: syntax.error(0, zero, zero) } }
+            if noun.as_field(tree.get(state.flags, seq.len(s.blocks), s.root)) == 1 { return Checked { flags: marked.flags, error: syntax.error(0, zero, zero) } }
+            let root = blocks.read(seq.get(s.blocks, s.root))
+            return Checked { flags: marked.flags, error: syntax.error(5, root.start, root.end) }
+        }
+    }
+    Checked { flags: marked.flags, error: syntax.error(7, zero, zero) }
+}

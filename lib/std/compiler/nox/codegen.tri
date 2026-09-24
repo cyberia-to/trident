@@ -8,31 +8,11 @@ use std.nox.tree
 use std.compiler.nox.syntax
 use std.compiler.nox.ast
 use std.compiler.nox.emit
+use std.compiler.nox.formula
+use std.compiler.nox.call_codegen
 
 const HALF: Field = 9223372034707292161
 pub struct Compiled { pub formula: Noun, pub error: syntax.Error }
-pub struct Value { pub formula: Noun, pub depth: U32 }
-
-#[pure]
-pub fn axis(value: Field) -> Noun { noun.pair(noun.atom(0), noun.atom(value)) }
-
-#[pure]
-pub fn cons(a: Noun, b: Noun) -> Noun { noun.pair(noun.atom(3), noun.pair(a, b)) }
-
-#[pure]
-pub fn compose(subject: Noun, code: Noun) -> Noun {
-    noun.pair(noun.atom(2), noun.pair(subject, noun.pair(noun.atom(1), code)))
-}
-
-#[pure]
-pub fn maximum(a: U32, b: U32) -> U32 { if a < b { return b } a }
-
-#[pure]
-pub fn value(values: seq.Seq, id: U32) -> Value {
-    let record = seq.get(values, id)
-    Value { formula: noun.tail(record), depth: as_u32(noun.as_field(noun.head(record))) }
-}
-
 // Deepest ancestor first; every sibling axis reads the old subject.
 #[pure]
 fn zipper(slot: U32, shape: tree.Shape) -> Noun {
@@ -58,22 +38,22 @@ fn zipper(slot: U32, shape: tree.Shape) -> Noun {
 }
 
 #[pure]
-fn frame(value: Value) -> Value {
-    Value { formula: cons(axis(2), cons(axis(6), value.formula)), depth: as_u32(as_field(value.depth) + 4) }
+fn frame(value: formula.Value) -> formula.Value {
+    formula.Value { formula: formula.cons(formula.axis(2), formula.cons(formula.axis(6), value.formula)), depth: as_u32(as_field(value.depth) + 4) }
 }
 
 // The replacement occurs once; reconstruction preserves all sibling slots.
 #[pure]
-pub fn edit(slot: U32, shape: tree.Shape, replacement: Value) -> Value {
+pub fn edit(slot: U32, shape: tree.Shape, replacement: formula.Value) -> formula.Value {
     let mut path = zipper(slot, shape)
     let mut result = replacement
     for level in 0..12 {
         if level == shape.height { return frame(result) }
         let step = noun.head(path)
-        let sibling = axis(noun.as_field(noun.tail(step)))
-        if noun.as_field(noun.head(step)) == 0 { result.formula = cons(result.formula, sibling) }
-        else { result.formula = cons(sibling, result.formula) }
-        result.depth = as_u32(as_field(maximum(result.depth, as_u32(1))) + 2)
+        let sibling = formula.axis(noun.as_field(noun.tail(step)))
+        if noun.as_field(noun.head(step)) == 0 { result.formula = formula.cons(result.formula, sibling) }
+        else { result.formula = formula.cons(sibling, result.formula) }
+        result.depth = as_u32(as_field(formula.maximum(result.depth, as_u32(1))) + 2)
         path = noun.tail(path)
     }
     frame(result)
@@ -82,41 +62,52 @@ pub fn edit(slot: U32, shape: tree.Shape, replacement: Value) -> Value {
 pub struct Expressions { pub values: seq.Seq, pub next: U32, pub failed: Bool }
 
 #[pure]
-fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, depth_cap: U32) -> Expressions {
+fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, context: call_codegen.Context, depth_cap: U32) -> Expressions {
     let mut s = input
     for turn in 0..8 {
         if s.next == seq.len(nodes) { return s }
         let node = seq.get(nodes, s.next)
         let kind = ast.kind(node)
-        let mut formula = emit.literal(ast.left(node))
+        let mut code = emit.literal(ast.left(node))
         let mut depth = as_u32(1)
-        if kind == 1 { formula = axis(7 * shape.capacity + ast.left(node)) }
-        else if syntax.either(kind == ast.LITERAL, kind == ast.BOOLEAN) == false {
-            let left = value(s.values, as_u32(ast.left(node)))
-            let right = value(s.values, as_u32(ast.right(node)))
-            formula = emit.binary(as_u32(kind), left.formula, right.formula)
-            depth = as_u32(as_field(maximum(left.depth, right.depth)) + 2)
+        if kind == 1 { code = formula.axis(7 * shape.capacity + ast.left(node)) }
+        else if kind == ast.CALL {
+            let called = call_codegen.generate(context, s.values, as_u32(ast.left(node)), as_u32(ast.right(node)))
+            if called.failed { s.failed = true return s }
+            code = called.output.formula
+            depth = called.output.depth
+        }
+        else if syntax.either(syntax.either(kind == ast.LITERAL, kind == ast.BOOLEAN), kind == ast.UNIT_VALUE) == false {
+            let left = formula.value(s.values, as_u32(ast.left(node)))
+            let right = formula.value(s.values, as_u32(ast.right(node)))
+            code = emit.binary(as_u32(kind), left.formula, right.formula)
+            depth = as_u32(as_field(formula.maximum(left.depth, right.depth)) + 2)
         }
         // RES1 wraps ART1 with nine noun levels above the formula.
         if depth_cap < as_u32(as_field(depth) + 9) { s.failed = true return s }
-        s.values = seq.push(s.values, noun.pair(noun.atom(as_field(depth)), formula), seq.len(nodes))
+        s.values = seq.push(s.values, noun.pair(noun.atom(as_field(depth)), code), seq.len(nodes))
         s.next = syntax.inc(s.next)
     }
     s
 }
 
 #[pure]
-pub fn expressions(nodes: seq.Seq, shape: tree.Shape, depth_cap: U32) -> Expressions {
+pub fn with_calls(nodes: seq.Seq, shape: tree.Shape, context: call_codegen.Context, depth_cap: U32) -> Expressions {
     let mut s = Expressions { values: seq.empty(), next: as_u32(0), failed: false }
     for block in 0..512 {
-        s = expression_chunk(nodes, shape, s, depth_cap)
+        s = expression_chunk(nodes, shape, s, context, depth_cap)
         if syntax.either(s.failed, s.next == seq.len(nodes)) { return s }
     }
     s.failed = true
     s
 }
 
-struct Statements { output: Value, remaining: U32, failed: Bool }
+#[pure]
+pub fn expressions(nodes: seq.Seq, shape: tree.Shape, depth_cap: U32) -> Expressions {
+    with_calls(nodes, shape, call_codegen.empty(), depth_cap)
+}
+
+pub struct Statements { pub output: formula.Value, pub remaining: U32, pub failed: Bool }
 
 #[pure]
 fn statement_chunk(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, input: Statements, depth_cap: U32) -> Statements {
@@ -126,17 +117,17 @@ fn statement_chunk(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, inpu
         s.remaining = syntax.dec(s.remaining)
         let statement = seq.get(statements, s.remaining)
         let transformer = edit(as_u32(noun.as_field(noun.head(statement))), shape,
-            value(values, as_u32(noun.as_field(noun.tail(statement)))))
-        s.output.formula = compose(transformer.formula, s.output.formula)
-        s.output.depth = as_u32(as_field(maximum(transformer.depth, syntax.inc(s.output.depth))) + 2)
+            formula.value(values, as_u32(noun.as_field(noun.tail(statement)))))
+        s.output.formula = formula.compose(transformer.formula, s.output.formula)
+        s.output.depth = as_u32(as_field(formula.maximum(transformer.depth, syntax.inc(s.output.depth))) + 2)
         if depth_cap < as_u32(as_field(s.output.depth) + 9) { s.failed = true return s }
     }
     s
 }
 
 #[pure]
-fn statements(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, result: U32, depth_cap: U32) -> Statements {
-    let mut s = Statements { output: value(values, result), remaining: seq.len(statements), failed: false }
+pub fn statements(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, result: U32, depth_cap: U32) -> Statements {
+    let mut s = Statements { output: formula.value(values, result), remaining: seq.len(statements), failed: false }
     for block in 0..512 {
         s = statement_chunk(statements, values, shape, s, depth_cap)
         if syntax.either(s.failed, s.remaining == as_u32(0)) { return s }
@@ -159,8 +150,8 @@ pub fn generate(nodes: seq.Seq, writes: seq.Seq, result: U32, locals: U32, depth
     let mut output = folded.output
     if (locals == zero) == false {
         let frame = noun.pair(noun.atom(0), noun.pair(noun.atom(0), tree.empty(shape.height)))
-        output.formula = compose(noun.pair(noun.atom(1), frame), output.formula)
-        output.depth = as_u32(as_field(maximum(as_u32(as_field(shape.height) + 3), syntax.inc(output.depth))) + 2)
+        output.formula = formula.compose(noun.pair(noun.atom(1), frame), output.formula)
+        output.depth = as_u32(as_field(formula.maximum(as_u32(as_field(shape.height) + 3), syntax.inc(output.depth))) + 2)
     }
     if depth_cap < as_u32(as_field(output.depth) + 9) { return failure }
     Compiled { formula: output.formula, error: syntax.error(0, zero, zero) }
