@@ -10,44 +10,73 @@ pub const NONE: U32 = 0
 pub const TO_U32: U32 = 1
 pub const TO_FIELD: U32 = 2
 pub const SUBTRACT: U32 = 3
+pub const NOUN_ATOM: U32 = 4
+pub const NOUN_PAIR: U32 = 5
+pub const NOUN_HEAD: U32 = 6
+pub const NOUN_TAIL: U32 = 7
+pub const NOUN_FIELD: U32 = 8
+pub const NOUN_EQ: U32 = 9
+pub const COUNT: U32 = 10
 
 // Called only after lookup in the final user function namespace fails.
 #[pure]
 #[requires((bytes.len(source) < token.end) == false)]
 #[requires((token.end < token.start) == false)]
-#[ensures(result < as_u32(4))]
+#[ensures(result < COUNT)]
 pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
     let length = as_u32(field.sub(as_field(token.end), as_field(token.start)))
     if syntax.both(length == as_u32(6), token.value == 107148150649650) { return TO_U32 }
     if syntax.both(length == as_u32(3), token.value == 7566690) { return SUBTRACT }
     // The lexer retains a packed identifier only through seven bytes.
-    if (length == as_u32(8)) == false { return NONE }
-    let spelling = [97,115,95,102,105,101,108,100]
-    for i in 0..8 {
-        if (as_field(bytes.get(source, as_u32(as_field(token.start) + as_field(i)))) == spelling[i]) == false { return NONE }
+    if length == as_u32(8) {
+        let spelling = [97,115,95,102,105,101,108,100]
+        for i in 0..8 {
+            if (as_field(bytes.get(source, as_u32(as_field(token.start) + as_field(i)))) == spelling[i]) == false { return NONE }
+        }
+        return TO_FIELD
     }
-    TO_FIELD
+    if syntax.either(length == as_u32(11), syntax.either(length == as_u32(13), length == as_u32(17))) == false { return NONE }
+    let prefix = [110,111,120,95,110,111,117,110,95]
+    for i in 0..9 {
+        if (as_field(bytes.get(source, as_u32(as_field(token.start) + as_field(i)))) == prefix[i]) == false { return NONE }
+    }
+    let suffix = as_u32(field.sub(as_field(length), 9))
+    let mut packed: Field = 0
+    for i in 0..8 {
+        if i < suffix { packed = packed * 256 + as_field(bytes.get(source, as_u32(as_field(token.start) + 9 + as_field(i)))) }
+    }
+    // Identifier bytes are ASCII: even an eight-byte suffix fits below 2^63.
+    if syntax.both(suffix == as_u32(4), packed == 1635020653) { return NOUN_ATOM }
+    if syntax.both(suffix == as_u32(4), packed == 1885432178) { return NOUN_PAIR }
+    if syntax.both(suffix == as_u32(4), packed == 1751474532) { return NOUN_HEAD }
+    if syntax.both(suffix == as_u32(4), packed == 1952541036) { return NOUN_TAIL }
+    if syntax.both(suffix == as_u32(8), packed == 7022061137460292708) { return NOUN_FIELD }
+    if syntax.both(suffix == as_u32(2), packed == 25969) { return NOUN_EQ }
+    NONE
 }
 
 #[pure]
-#[requires(kind < as_u32(4))]
+#[requires(kind < COUNT)]
 #[ensures(result < as_u32(3))]
 pub fn arity(kind: U32) -> U32 {
     if kind == NONE { return as_u32(0) }
-    if kind == SUBTRACT { return as_u32(2) }
+    if syntax.either(kind == SUBTRACT, syntax.either(kind == NOUN_PAIR, kind == NOUN_EQ)) { return as_u32(2) }
     as_u32(1)
 }
 
 #[pure]
-#[requires(kind < as_u32(4))]
+#[requires(kind < COUNT)]
 pub fn parameter(kind: U32) -> Field {
+    if NOUN_ATOM < kind { return ast.NOUN }
     if kind == TO_FIELD { return ast.UINT32 }
     ast.FIELD
 }
 
 #[pure]
-#[requires(kind < as_u32(4))]
+#[requires(kind < COUNT)]
 pub fn returns(kind: U32) -> Field {
+    if kind == NOUN_EQ { return ast.BOOL }
+    if syntax.both((kind < NOUN_ATOM) == false, (kind == NOUN_FIELD) == false) { return ast.NOUN }
     if kind == TO_U32 { return ast.UINT32 }
     ast.FIELD
 }

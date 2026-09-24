@@ -1,6 +1,7 @@
 module std.compiler.nox.headers
 
 use vm.core.convert
+use vm.nox.noun
 use std.nox.bytes
 use std.nox.seq
 use std.compiler.nox.syntax
@@ -22,6 +23,7 @@ pub fn scalar(token: syntax.Token) -> Field {
     if token.kind == as_u32(12) { return ast.FIELD }
     if token.kind == as_u32(20) { return ast.BOOL }
     if token.kind == as_u32(28) { return ast.UINT32 }
+    if token.kind == as_u32(34) { return ast.NOUN }
     ast.INVALID_TYPE
 }
 
@@ -127,9 +129,12 @@ pub fn parse(source: bytes.Bytes, start: U32, cap: U32) -> header_state.State {
         if s.done {
             if s.entry == signatures.NONE { s.error = syntax.error(3, s.token.start, s.token.end) return s }
             let entry = signatures.read(seq.get(s.functions, s.entry))
-            if syntax.either((entry.count == as_u32(0)) == false, (entry.returns == ast.FIELD) == false) {
-                s.error = syntax.error(3, entry.name.start, entry.name.end)
+            if syntax.both(entry.count == as_u32(0), entry.returns == ast.FIELD) { return s }
+            if syntax.both(entry.count == as_u32(1), entry.returns == ast.NOUN) {
+                let parameter = seq.get(s.params, entry.params)
+                if noun.as_field(noun.tail(noun.tail(parameter))) == ast.NOUN { s.structured = true return s }
             }
+            s.error = syntax.error(3, entry.name.start, entry.name.end)
             return s
         }
     }

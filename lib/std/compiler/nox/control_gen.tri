@@ -14,6 +14,7 @@ use std.compiler.nox.flow
 use std.compiler.nox.block_gen
 use std.compiler.nox.call_codegen
 use std.compiler.nox.loop_gen
+use std.compiler.nox.entry_frame
 
 struct Linear { writes: seq.Seq, next: U32, eligible: Bool }
 
@@ -70,7 +71,7 @@ pub fn reusable(s: body_state.State, flags: Noun, locals: U32, context: call_cod
 }
 
 #[pure]
-pub fn standalone(built: Built, locals: U32, depth_cap: U32) -> codegen.Compiled {
+pub fn standalone(built: Built, locals: U32, depth_cap: U32, structured: Bool) -> codegen.Compiled {
     let zero = as_u32(0)
     let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
     if syntax.either(built.failed, (seq.len(built.loops) == zero) == false) { return failure }
@@ -78,7 +79,8 @@ pub fn standalone(built: Built, locals: U32, depth_cap: U32) -> codegen.Compiled
     if (locals == zero) == false {
         let shape = tree.shape(locals)
         let frame = noun.pair(noun.atom(0), noun.pair(noun.atom(0), tree.empty(shape.height)))
-        let initial = formula.Value { formula: noun.pair(noun.atom(1), frame), depth: as_u32(as_field(shape.height) + 3) }
+        let mut initial = formula.Value { formula: noun.pair(noun.atom(1), frame), depth: as_u32(as_field(shape.height) + 3) }
+        if structured { initial = entry_frame.subject(flow.literal(0), shape.height) }
         output = flow.compose(initial, output)
     }
     if depth_cap < as_u32(as_field(output.depth) + 9) { return failure }
@@ -94,5 +96,5 @@ pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
     let mut context = call_codegen.empty()
     context.arguments = s.arguments
     let built = reusable(s, marked.flags, locals, context, depth_cap)
-    standalone(built, locals, depth_cap)
+    standalone(built, locals, depth_cap, false)
 }

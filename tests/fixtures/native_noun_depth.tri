@@ -1,0 +1,19 @@
+program native_noun_depth
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.parser
+use std.compiler.nox.emit
+
+// [source Bytes depth cap] isolates generated depth from C1 admission depth.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let depth = as_u32(noun.as_field(noun.tail(input)))
+    let text = [115,97,109,112,108,101]
+    let mut name = bytes.empty()
+    for i in 0..6 { name = bytes.push(name, as_u32(text[i]), as_u32(6)) }
+    let result = parser.compile(source, name, as_u32(4096), depth)
+    noun.pair(noun.atom(as_field(result.error.code)), emit.artifact(result.formula))
+}

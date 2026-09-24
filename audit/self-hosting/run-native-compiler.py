@@ -1,4 +1,4 @@
-"""SH2/SH3 installed CLI acceptance: fixed guest through reusable literal-range loops."""
+"""SH2/SH3 installed CLI acceptance: fixed guest through structured Noun values."""
 import argparse
 import copy
 import hashlib
@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+import native_noun_cases
 
 P = 18446744069414584321
 
@@ -323,6 +324,8 @@ def main():
             observations.append({"case": name, "source_hex": content.hex(), "compiler_execution": compiled,
                                  "program_execution_error": "InvZero", "previous_output_preserved": True})
 
+        native_noun_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
+
         local_bytes = None
         for cap in [7, 8, 16]:
             directory, job = package(f"local-cap-{cap}", source("let mut x=7 let y=x x=9 y*100+x"),
@@ -430,7 +433,7 @@ def main():
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations and reusable literal-range loops; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun values; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

@@ -203,11 +203,11 @@ requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
 program := "program" identifier function+ EOF
-function := "fn" identifier "(" parameters? ")" ("->" scalar_type)? block
-parameters := identifier ":" scalar_type ("," identifier ":" scalar_type)* ","?
-scalar_type := "Field" | "Bool" | "U32"
+function := "fn" identifier "(" parameters? ")" ("->" primitive_type)? block
+parameters := identifier ":" primitive_type ("," identifier ":" primitive_type)* ","?
+primitive_type := "Field" | "Bool" | "U32" | "Noun"
 block := "{" statement* expression? "}"
-statement := "let" "mut"? identifier (":" scalar_type)? "=" expression
+statement := "let" "mut"? identifier (":" primitive_type)? "=" expression
            | identifier "=" expression | "return" expression?
            | if_statement | for_statement | expression
 if_statement := "if" expression block ("else" (block | if_statement))?
@@ -238,7 +238,7 @@ Generation preserves the expression tree: literal `[1 value]`, addition
 needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
 compiler identity, source paths and execution counters.
 
-Local declarations infer Field/Bool/U32/Unit or state a scalar type explicitly. A `let mut` binding
+Local declarations infer Field/Bool/U32/Noun/Unit or state a primitive type explicitly. A `let mut` binding
 permits assignment; other bindings reject writes. Initializers resolve names
 before installing the new binding, so `let x = x + 1` reads the previous `x`
 and rejects when no previous binding exists. Same-scope shadowing creates a
@@ -250,16 +250,16 @@ permits a following parenthesized expression where a statement boundary is valid
 CR alone keeps the same line, matching the seed parser.
 
 The guest builds a postorder expression sequence and ordered statement sequence.
-Expression records carry their Field/Bool/U32/Unit type and source span. Addition and
+Expression records carry their Field/Bool/U32/Noun/Unit type and source span. Addition and
 multiplication require Field operands; equality requires two operands of the same
-type and returns Bool, including equality between two Unit results. Equality
+non-Noun type and returns Bool, including equality between two Unit results. Equality
 binds below unsigned comparison, addition, multiplication and bitwise AND, in
 that increasing order of precedence. All binary operators associate left.
 Comparison and bitwise AND require U32 operands and return Bool and U32
 respectively. Decimal literals retain Field type; typed U32 locals, arguments
 and results require an explicit conversion or another U32 value. Native
 Bool literals/results encode true as zero and false as one. Assignments and
-explicit annotations preserve the binding's type; the entry returns Field.
+explicit annotations preserve the binding's type; validated entry signatures are listed below.
 Child references precede their parent; declarations own stable slots. Code generation uses the
 actual declaration count to size a balanced native frame `[0 [0 E(h)]]`, reads
 slot `i` at axis `7 * 2^h + i`, and composes persistent frame updates in statement
@@ -301,7 +301,7 @@ body is still checked against its own signature. Calls resolve in the function
 namespace, so a local with the same name does not replace the callable binding.
 Parameters are immutable and occupy distinct positional slots. Repeated parameter
 names retain their arity and select the last parameter during name lookup.
-The selected last `main` must have no parameters and return Field.
+The selected last `main` must have the scalar or structured signature below.
 
 An omitted result annotation means Unit; Unit has no explicit type spelling in
 this subset. Unit functions may fall through and produce native atom zero.
@@ -310,7 +310,7 @@ match the declared result. Local inference can retain Unit values; assignment
 preserves that type. Conditions still require Field or Bool. Imports, attributes,
 generic declarations and intrinsic declarations remain outside this subset.
 
-Three unqualified builtins are admitted: `as_u32(Field) -> U32`,
+The scalar unqualified builtins are: `as_u32(Field) -> U32`,
 `as_field(U32) -> Field` and `sub(Field, Field) -> Field`. Final user function
 bindings take precedence over builtin names, including forward declarations;
 local variables do not replace callable bindings. Builtins do not enter the
@@ -325,6 +325,30 @@ unsigned comparison, bitwise AND and subtraction. Conversion evaluates its
 argument once as a new subject, branches on the range check and either retains
 that atom or traps. Formula-depth accounting includes the complete guard and
 continuation. Accepted earlier no-builtin programs retain their artifact bytes.
+
+The native subset admits opaque Noun parameters, results and local bindings.
+A Noun frame slot retains a complete immutable subtree. Two entry signatures
+are accepted: the existing `main() -> Field`, and
+`main(input: Noun) -> Noun`. The latter receives the original runtime subject
+in its first parameter, in both standalone and table-dispatched programs.
+Generated ART1 profiles remain raw `(0,0)`; a structured entry alone does not
+request or establish the compiler JOB1/RES1 profile.
+
+Six direct nox builtins use their existing seed names:
+`nox_noun_atom(Field) -> Noun`, `nox_noun_pair(Noun,Noun) -> Noun`,
+`nox_noun_head(Noun) -> Noun`, `nox_noun_tail(Noun) -> Noun`,
+`nox_noun_as_field(Noun) -> Field`, and `nox_noun_eq(Noun,Noun) -> Bool`.
+User function bindings retain precedence. Arguments are evaluated once in
+source order; pair construction preserves both subtrees, and equality compares
+their native identities. Head and tail require a pair; as_field requires an
+atom and retains its runtime shape check. Invalid projections compile when
+well typed, then trap only when the emitted program reaches them.
+
+Noun arithmetic, ordering, bit operations, indexing and the `==` operator
+remain rejected; `nox_noun_eq` supplies explicit native equality. Conditions
+remain Field/Bool. Qualified calls require actual module/import resolution.
+Digest identity, aggregate source syntax and compiler-profile generation remain
+subsequent increments. Earlier scalar-entry programs retain their ART1 bytes.
 
 Literal-range loops admit `for name in A..B { body }`, where A and B are
 unsigned decimal literals, A is at most 2^32−1 and B is at most 2^32.

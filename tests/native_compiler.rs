@@ -132,3 +132,6 @@ mod scalars;
 
 #[path = "native_compiler/loops.rs"]
 mod loops;
+
+#[path = "native_compiler/nouns.rs"]
+mod nouns;

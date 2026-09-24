@@ -36,5 +36,5 @@ pub fn compile(source: bytes.Bytes, name: bytes.Bytes, cap: U32, depth_cap: U32)
     if (checked.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: checked.error } }
     let plan = function_plan.plan(source, parsed.functions, checked.bodies, parsed.entry, capacity)
     if (plan.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: plan.error } }
-    function_gen.generate(checked.bodies, plan, parsed.entry, capacity, depth_cap)
+    function_gen.generate(checked.bodies, plan, parsed.entry, capacity, depth_cap, parsed.structured)
 }

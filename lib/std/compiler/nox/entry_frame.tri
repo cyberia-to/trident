@@ -1,0 +1,22 @@
+module std.compiler.nox.entry_frame
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+// The original runtime subject occupies leaf zero. Padding is quoted data;
+// each CONS evaluates against that same original subject before dispatch.
+#[pure]
+#[requires((as_u32(32) < height) == false)]
+pub fn subject(table: formula.Value, height: U32) -> formula.Value {
+    let mut frame = flow.axis(1)
+    for level in 0..32 {
+        if level == height { return formula.pair(table, formula.pair(flow.literal(0), frame)) }
+        let padding = formula.Value { formula: noun.pair(noun.atom(1), tree.empty(level)), depth: syntax.inc(level) }
+        frame = formula.pair(frame, padding)
+    }
+    formula.pair(table, formula.pair(flow.literal(0), frame))
+}
