@@ -26,7 +26,8 @@ No self-compilation or compiler execution proof is claimed.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
 `360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
-Active isolated checkout: `~/cyber/.worktrees/selfhost-0.4/trident`.
+Active isolated checkout: `~/cyber/.worktrees/selfhost-0.4-clean/trident`.
+Dependencies use clean worktrees at the pinned receipt revisions.
 PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 
 | Gate | Status | Missing acceptance evidence |
@@ -89,10 +90,12 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH3 seed values: preserve zero-width structures and aggregates in shared
   TIR without renaming or consuming adjacent live values;
   [execution and boundary evidence](self-hosting/zero-width-values.md).
-- [ ] SH3 seed frontend: resolved halting-call semantics through return checking
-  and both backends.
-- [ ] SH3 native compiler: extend the arithmetic pilot into the complete required
-  language, with typed declarations, calls, control flow, aggregates and imports.
+- [x] SH3 seed frontend: resolved halting-call semantics through return checking
+  and both backends, with scoped callable/constant bindings;
+  [execution and validation](self-hosting/resolved-halting.md).
+- [ ] SH3 native compiler: start with native Field locals, mutable assignments
+  and stable runtime slots; then extend to typed declarations, calls, control
+  flow, aggregates and imports. [Next slice](../.claude/plans/native-compiler-locals.md).
 - [ ] SH4 source closure and allocation scale: measure and repair the lifetime
   arena boundary observed during pilot source admission before full self-build.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
@@ -112,7 +115,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
-| Seed frontend resolved halting/return semantics | Trident / SH3 | [halting repros](self-hosting/native-collections.md#seed-frontend-findings-carried-into-sh3); parser and zero-width repairs are accepted separately |
+| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values and [resolved halting](self-hosting/resolved-halting.md) are accepted; native locals are next |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -212,3 +215,8 @@ at Trident `f11a4320ed2b42be5f4a32789c06c5c5fe4fa1bd`, with Trisha
 [Exact commands and evidence](self-hosting/sh3-zero-width-validation.json).
 Continue with resolved halting-call semantics through type checking and lowering,
 then whole native compiler coverage. SH3 remains open.
+
+2026-09-24 continuation: resolved assertion failure, continuing branch values,
+per-owner callable/constant bindings and local root shadowing passed the
+[halting acceptance](self-hosting/resolved-halting.md). Continue with native
+Field locals/assignments and actual runtime slots inside the guest compiler.
