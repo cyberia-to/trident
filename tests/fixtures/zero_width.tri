@@ -1,0 +1,59 @@
+module zero_width
+
+pub struct Empty {}
+const N: U32 = 2
+const VALUE: Field = 13
+pub struct Holder { pub values: [Empty; N] }
+pub fn holder() -> Holder { Holder { values: [Empty {}, Empty {}] } }
+pub fn nothing(n: Field) { assert_eq(n, n) }
+pub fn pass<N>(values: [Empty; N]) -> [Empty; N] { values }
+struct Mixed { left: Field, empty: Empty, right: Field }
+
+fn make(n: Field) -> Empty { let local = n + 11 Empty {} }
+fn forward(value: Empty) -> Empty { value }
+fn early(n: Field) -> Empty {
+    for i in 0..2 {
+        if n == 0 { return Empty {} }
+    }
+    Empty {}
+}
+pub fn pick<N>(values: [Empty; N], index: U32) -> Empty { values[index] }
+
+pub fn keep(n: Field) -> Field {
+    let empty = Empty {}
+    let unit = assert_eq(n, n)
+    let none: [Field; 0] = []
+    let (ignored, from_call) = (nothing(n), n + 2)
+    let (ignored_again, from_binding) = (unit, n + 4)
+    let (empty_again, from_constant) = ([], VALUE)
+    assert_eq(from_call, n + 2)
+    assert_eq(from_binding, n + 4)
+    assert_eq(from_constant, 13)
+    let units = [nothing(n), nothing(n)]
+    let selected_unit = units[as_u32(n)]
+    let rows = [[], []]
+    let row = rows[as_u32(n)]
+    let mixed = Mixed { left: n + 3, empty: make(n), right: n + 5 }
+    let (first, middle, last) = (empty, n + 7, forward(empty))
+    let (_, kept, _) = (first, middle, last)
+    let mut left = first
+    let mut right = last
+    let mut scalar = kept
+    (left, scalar, right) = (make(n), n + 9, forward(empty))
+    left = early(n)
+    let mut values = [left, right]
+    values[as_u32(n)] = make(n)
+    let selected = values[as_u32(n)]
+    let generic = pick<2>(pass<2>(values), as_u32(n))
+    assert(selected == generic)
+    assert(none == [])
+    assert(unit == assert_eq(n, n))
+    mixed.left + mixed.right + scalar
+}
+
+pub fn read(n: Field) -> Field {
+    let sentinel = 71
+    let values = [Empty {}, Empty {}]
+    let selected = values[as_u32(n)]
+    sentinel
+}

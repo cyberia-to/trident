@@ -65,6 +65,19 @@ Optimizations in Trident preserve semantic
 stack effects. They must not introduce Triton instruction count limits into
 the common representation.
 
+Each expression contributes one logical value, including values whose declared
+layout occupies zero words: empty structs, empty arrays and Unit results.
+Zero-width bindings remain distinct from neighboring values through calls,
+aggregate construction, destructuring and assignment. They consume no machine
+words. Evaluation still performs all source effects in the declared order.
+Equality of two values of the same zero-width type evaluates both operands and
+returns true. Array bounds use the declared element count even when the element
+width is zero; reads and writes retain index checks and RHS effects without
+constructing a machine selection tree for absent words. Extents used by stack
+array access and entry transport must resolve to a U32 element count; unresolved
+or larger extents reject rather than wrap. Module constants resolve in their
+defining module, with generic size parameters taking precedence.
+
 Return-frame cleanup uses abstract stack permutations and pops, preserving the
 order of every result word without allocating source RAM. Target legalization
 must also preserve source RAM across every source-visible boundary. Consecutive

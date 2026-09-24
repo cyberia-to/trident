@@ -1,10 +1,30 @@
 //! Layout information carried across module boundaries into stack lowering.
 use super::TIRBuilder;
 use crate::ast::{ArraySize, BinOp, Expr, File, Item, Literal, Type};
+use std::collections::{BTreeMap, BTreeSet};
 
 impl TIRBuilder {
     pub fn with_module_types(mut self, modules: &[&File]) -> Self {
         for module in modules {
+            let constants: BTreeMap<_, _> = module
+                .items
+                .iter()
+                .filter_map(|item| {
+                    if !self.is_item_cfg_active(&item.node) {
+                        return None;
+                    }
+                    if let Item::Const(def) = &item.node {
+                        if let Expr::Literal(Literal::Integer(value)) = def.value.node {
+                            return Some((def.name.node.clone(), value));
+                        }
+                    }
+                    None
+                })
+                .collect();
+            for (name, value) in &constants {
+                self.constants
+                    .insert(format!("{}.{}", module.name.node, name), *value);
+            }
             for item in &module.items {
                 if !self.is_item_cfg_active(&item.node) {
                     continue;
@@ -13,18 +33,30 @@ impl TIRBuilder {
                     Item::Struct(def) => {
                         let mut def = def.clone();
                         for field in &mut def.fields {
-                            qualify(&mut field.ty.node, &module.name.node);
+                            qualify(
+                                &mut field.ty.node,
+                                &module.name.node,
+                                &constants,
+                                &BTreeSet::new(),
+                            );
                         }
                         self.struct_types
                             .insert(format!("{}.{}", module.name.node, def.name.node), def);
                     }
                     Item::Fn(func) => {
-                        if let Some(ty) = &func.return_ty {
-                            let mut ty = ty.node.clone();
-                            qualify(&mut ty, &module.name.node);
-                            self.fn_return_types
-                                .insert(format!("{}.{}", module.name.node, func.name.node), ty);
-                        }
+                        let mut ty = func
+                            .return_ty
+                            .as_ref()
+                            .map(|ty| ty.node.clone())
+                            .unwrap_or_else(|| Type::Tuple(Vec::new()));
+                        qualify(
+                            &mut ty,
+                            &module.name.node,
+                            &constants,
+                            &func.type_params.iter().map(|p| p.node.clone()).collect(),
+                        );
+                        self.fn_return_types
+                            .insert(format!("{}.{}", module.name.node, func.name.node), ty);
                     }
                     _ => {}
                 }
@@ -42,6 +74,28 @@ impl TIRBuilder {
         name.to_string()
     }
 
+    /// Checked logical extent, independent of the element's machine width.
+    pub(crate) fn array_count(&self, size: &ArraySize) -> Option<u32> {
+        u32::try_from(self.array_extent(size)?).ok()
+    }
+
+    fn array_extent(&self, size: &ArraySize) -> Option<u64> {
+        match size {
+            ArraySize::Literal(n) => Some(*n),
+            ArraySize::Param(name) => self
+                .current_subs
+                .get(name)
+                .or_else(|| self.constants.get(&self.qualified_name(name)))
+                .copied(),
+            ArraySize::Add(left, right) => self
+                .array_extent(left)?
+                .checked_add(self.array_extent(right)?),
+            ArraySize::Mul(left, right) => self
+                .array_extent(left)?
+                .checked_mul(self.array_extent(right)?),
+        }
+    }
+
     pub(crate) fn type_width(&self, ty: &Type) -> u32 {
         match ty {
             Type::Named(path) => self
@@ -49,7 +103,7 @@ impl TIRBuilder {
                 .get(&self.qualified_name(&path.0.join(".")))
                 .map(|s| s.fields.iter().map(|f| self.type_width(&f.ty.node)).sum())
                 .unwrap_or(1),
-            Type::Array(inner, n) => self.type_width(inner) * n.eval(&self.current_subs) as u32,
+            Type::Array(inner, n) => self.type_width(inner) * self.array_count(n).unwrap_or(0),
             Type::Tuple(parts) => parts.iter().map(|p| self.type_width(p)).sum(),
             _ => super::layout::resolve_type_width(ty, &self.target_config),
         }
@@ -64,7 +118,13 @@ impl TIRBuilder {
             Expr::StructInit { path, .. } => Some(Type::Named(path.node.clone())),
             Expr::Var(name) => {
                 let mut parts = name.split('.');
-                let mut ty = self.var_types.get(parts.next()?)?.clone();
+                let mut ty = match self.var_types.get(parts.next()?) {
+                    Some(ty) => ty.clone(),
+                    None if self.constants.contains_key(&self.qualified_name(name)) => {
+                        return Some(Type::Field)
+                    }
+                    None => return None,
+                };
                 for field in parts {
                     ty = self.field_type_offset(&ty, field)?.0;
                 }
@@ -80,6 +140,7 @@ impl TIRBuilder {
             Expr::ArrayInit(elements) => elements
                 .first()
                 .and_then(|e| self.expr_type(&e.node))
+                .or_else(|| elements.is_empty().then_some(Type::Field))
                 .map(|ty| Type::Array(Box::new(ty), ArraySize::Literal(elements.len() as u64))),
             Expr::BinOp { op, lhs, .. } => match op {
                 BinOp::Eq | BinOp::Lt => Some(Type::Bool),
@@ -99,16 +160,42 @@ impl TIRBuilder {
     }
 }
 
-fn qualify(ty: &mut Type, module: &str) {
+fn qualify(
+    ty: &mut Type,
+    module: &str,
+    constants: &BTreeMap<String, u64>,
+    parameters: &BTreeSet<String>,
+) {
     match ty {
         Type::Named(path) if path.0.len() == 1 => {
             path.0.insert(0, module.to_string());
         }
-        Type::Array(inner, _) => qualify(inner, module),
+        Type::Array(inner, size) => {
+            qualify(inner, module, constants, parameters);
+            qualify_size(size, module, constants, parameters);
+        }
         Type::Tuple(parts) => {
             for part in parts {
-                qualify(part, module);
+                qualify(part, module, constants, parameters);
             }
+        }
+        _ => {}
+    }
+}
+
+fn qualify_size(
+    size: &mut ArraySize,
+    module: &str,
+    constants: &BTreeMap<String, u64>,
+    parameters: &BTreeSet<String>,
+) {
+    match size {
+        ArraySize::Param(name) if constants.contains_key(name) && !parameters.contains(name) => {
+            *name = format!("{module}.{name}");
+        }
+        ArraySize::Add(left, right) | ArraySize::Mul(left, right) => {
+            qualify_size(left, module, constants, parameters);
+            qualify_size(right, module, constants, parameters);
         }
         _ => {}
     }

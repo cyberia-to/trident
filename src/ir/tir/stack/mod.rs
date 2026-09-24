@@ -84,9 +84,7 @@ impl StackManager {
     /// Push an anonymous temporary onto the stack.
     /// If the stack would exceed its configured window, spill the LRU variable first.
     pub(crate) fn push_temp(&mut self, width: u32) {
-        if width == 0 {
-            return;
-        }
+        // Every expression has a logical result, even when it has no words.
         self.ensure_space(width);
         let ts = self.tick();
         self.on_stack.push(ManagedVar {
@@ -100,9 +98,6 @@ impl StackManager {
 
     /// Push a named variable onto the stack.
     pub(crate) fn push_named(&mut self, name: &str, width: u32) {
-        if width == 0 {
-            return;
-        }
         self.ensure_space(width);
         let ts = self.tick();
         self.on_stack.push(ManagedVar {
@@ -205,6 +200,7 @@ impl StackManager {
         self.on_stack
             .iter()
             .rev()
+            .filter(|entry| entry.width > 0)
             .take_while(|entry| entry.name.is_none())
             .map(|entry| u64::from(entry.width))
             .sum::<u64>()
@@ -214,15 +210,21 @@ impl StackManager {
     /// Consume a previously checked anonymous word count, including partial
     /// aggregate entries. Named bindings never change position in the model.
     pub(crate) fn pop_anonymous(&mut self, mut count: u32) {
-        while count > 0 {
-            let Some(entry) = self.on_stack.last_mut() else {
+        let mut index = self.on_stack.len();
+        while count > 0 && index > 0 {
+            index -= 1;
+            let entry = &mut self.on_stack[index];
+            if entry.width == 0 {
+                continue;
+            }
+            if entry.name.is_some() {
                 break;
-            };
+            }
             let consumed = count.min(entry.width);
             entry.width -= consumed;
             count -= consumed;
             if entry.width == 0 {
-                self.on_stack.pop();
+                self.on_stack.remove(index);
             }
         }
     }
@@ -285,7 +287,7 @@ impl StackManager {
         let mut best_access = u64::MAX;
 
         for (i, entry) in self.on_stack.iter().enumerate() {
-            if entry.name.is_some() && entry.last_access < best_access {
+            if entry.width > 0 && entry.name.is_some() && entry.last_access < best_access {
                 best_access = entry.last_access;
                 best_idx = Some(i);
             }

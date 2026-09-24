@@ -6,24 +6,25 @@ impl TIRBuilder {
     /// Evaluate all tuple components before replacing any destination. The
     /// remaining RHS words stay in the model until each component is stored.
     pub(crate) fn build_tuple_assign(&mut self, names: &[Spanned<String>], value: &Expr) {
-        let widths: Vec<_> = names
+        let widths = names
             .iter()
             .map(|name| {
                 let info = self.stack.find_var_depth_and_width(&name.node);
                 self.flush_stack_effects();
-                info.map_or(0, |(_, width)| width)
+                info.map(|(_, width)| width)
             })
-            .collect();
+            .collect::<Option<Vec<_>>>();
         self.build_expr(value);
         let rhs_width = self.stack.last().map_or(0, |v| v.width);
-        if widths.contains(&0) || widths.iter().sum::<u32>() != rhs_width {
+        let widths = widths.filter(|widths| widths.iter().sum::<u32>() == rhs_width);
+        let Some(widths) = widths else {
             self.ops.push(TIROp::Comment(
                 "ERROR: tuple assignment has unresolved or incompatible target widths".into(),
             ));
             self.emit_pop(rhs_width);
             self.stack.pop();
             return;
-        }
+        };
         for (name, &width) in names.iter().zip(&widths).rev() {
             let depth = self.stack.access_var(&name.node);
             self.flush_stack_effects();

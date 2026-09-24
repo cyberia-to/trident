@@ -402,7 +402,8 @@ impl TypeChecker {
                         .chain(std::iter::once(def.name.clone()))
                         .collect(),
                 )),
-                Ty::Unit => return None,
+                // TIR uses an empty tuple as the fixed zero-word Unit layout.
+                Ty::Unit => Type::Tuple(Vec::new()),
             })
         }
         Self::with_target(config.clone())

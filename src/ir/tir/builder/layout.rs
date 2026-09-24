@@ -77,7 +77,17 @@ impl TIRBuilder {
                 }
             }
             Type::Array(element, size) => {
-                let count = size.eval(&self.current_subs);
+                let Some(count) = self.array_count(size) else {
+                    out.push(EntryLeaf::Unresolved(
+                        "array length must resolve to a U32 count".into(),
+                    ));
+                    return;
+                };
+                if self.type_width(element) == 0 {
+                    // Validate nested extents once, even when there are no words.
+                    self.entry_leaves(element, out);
+                    return;
+                }
                 for _ in 0..count {
                     self.entry_leaves(element, out);
                 }

@@ -191,3 +191,24 @@ fn typed_spill_reload_preserves_multiword_order_and_temporaries() {
         }
     }
 }
+
+#[test]
+fn zero_width_bindings_survive_word_effects_and_spill_pressure() {
+    let mut sm = StackManager::with_config(2, 1000);
+    sm.push_named("empty", 0);
+    sm.push_named("prefix", 1);
+    sm.push_temp(1);
+    sm.push_named("between", 0);
+    sm.push_temp(0);
+    assert!(sm.can_pop_anonymous(1));
+    assert!(!sm.can_pop_anonymous(2));
+    sm.pop_anonymous(1);
+    assert_eq!(sm.find_var_depth_and_width("empty"), Some((1, 0)));
+    assert_eq!(sm.find_var_depth_and_width("between"), Some((0, 0)));
+    assert_eq!(sm.find_var_depth_and_width("prefix"), Some((0, 1)));
+    sm.push_temp(2);
+    assert_eq!(sm.spilled.len(), 1);
+    assert_eq!(sm.spilled[0].name.as_deref(), Some("prefix"));
+    assert_eq!(sm.find_var_depth_and_width("empty"), Some((2, 0)));
+    assert_eq!(sm.find_var_depth_and_width("between"), Some((2, 0)));
+}
