@@ -9,10 +9,13 @@ older profile's limits; the progress ledger tracks the remaining SH1 gates.
 ## Source execution
 
 Ordinary functions compile to reusable nox formulas. Each reachable function
-specialization and each generated loop body has one code-table entry. Order
-entries by logical module path, function name, concrete generic arguments and,
-for generated continuations, source byte position and deterministic local index.
-Shared index helpers precede source entries in Get/Edit/Ascend order, including
+specialization and each generated loop body has one code-table entry. The Rust
+seed orders entries by logical module path, function name, concrete generic
+arguments and, for generated continuations, source byte position and deterministic
+local index. The current native guest subset places sorted reachable functions
+first, followed by loops grouped by that same owner order and their source-order
+IDs. Each compiler has a deterministic layout; byte parity between these two
+implementations is a separate claim. Shared index helpers precede seed source entries in Get/Edit/Ascend order, including
 only helpers needed by the reachable source surface. Generic specialization
 preserves defining names and concrete arguments as private preparation metadata;
 discovery serials do not order the table. Do not use hash-map iteration, host

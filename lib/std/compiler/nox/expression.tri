@@ -78,6 +78,7 @@ fn push_operator(input: expression_state.State) -> expression_state.State {
 
 #[pure]
 fn boundary(kind: U32, before_block: Bool) -> Bool {
+    if kind == as_u32(31) { return true }
     if syntax.either(syntax.either(kind == as_u32(8), kind == as_u32(15)), kind == as_u32(1)) { return true }
     if syntax.either(syntax.either(kind == as_u32(2), kind == as_u32(5)), kind == as_u32(25)) { return true }
     if syntax.either(syntax.either(kind == as_u32(21), kind == as_u32(22)), kind == as_u32(23)) { return true }

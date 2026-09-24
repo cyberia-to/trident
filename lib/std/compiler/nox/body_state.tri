@@ -7,7 +7,7 @@ use std.compiler.nox.syntax
 use std.compiler.nox.blocks
 
 pub struct State {
-    pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun,
+    pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun, pub loops: seq.Seq,
     pub functions: seq.Seq, pub params: seq.Seq, pub returns: Field, pub statements: seq.Seq, pub blocks: seq.Seq,
     pub bindings: seq.Seq, pub visible: Noun, pub current: Noun,
     pub frames: Noun, pub depth: U32, pub start: U32, pub end: U32,
@@ -18,7 +18,7 @@ pub struct State {
 #[pure]
 pub fn initial(token: syntax.Token) -> State {
     let zero = as_u32(0)
-    State { nodes: seq.empty(), arguments: seq.empty(), edges: noun.atom(0),
+    State { nodes: seq.empty(), arguments: seq.empty(), edges: noun.atom(0), loops: seq.empty(),
         functions: seq.empty(), params: seq.empty(), returns: 0, statements: seq.empty(), blocks: seq.empty(),
         bindings: seq.empty(), visible: noun.atom(0), current: noun.atom(0),
         frames: noun.atom(0), depth: zero, start: token.start, end: token.start, synthetic: false,

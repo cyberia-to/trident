@@ -436,9 +436,11 @@ present.
 
 A return exits the current function, including from nested conditionals and
 fixed or explicitly bounded loops. Later iterations and statements have no
-effects. On nox these loops are unrolled with return-aware continuations; the
-existing formula/iteration limits still apply, and unbounded dynamic loops
-remain rejected. Returning from an inlined helper exits that helper only.
+effects. The raw nox artifact backend stores reusable loop bodies in its code
+table and executes them under reductions, arena and frame quotas. The legacy
+flat bundle backend unrolls loops with return-aware continuations and retains
+its formula/iteration limits. Unbounded dynamic loops remain rejected.
+Returning from a helper exits that helper only.
 
 ```trident
 fn foo(x: Field) -> Field {

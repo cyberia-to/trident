@@ -1,4 +1,4 @@
-"""SH2/SH3 installed CLI acceptance: fixed guest through checked scalar operations."""
+"""SH2/SH3 installed CLI acceptance: fixed guest through reusable literal-range loops."""
 import argparse
 import copy
 import hashlib
@@ -182,9 +182,24 @@ def main():
             ("scalar-local-collision", source("let as_u32=9 let as_field=8 as_field(as_u32(7))+as_field"), None, 15),
             ("scalar-unselected-trap", source("if false{return as_field(as_u32(4294967296))} 7"), None, 7),
         ])
+        cases.extend([
+            (f"loop-count-{count}", source(f"let mut x=0 for i in 0..{count}{{x=x+1}} x"), None, count)
+            for count in [0, 1, 4097, 5000]
+        ])
+        cases.extend([
+            ("loop-nonzero", source("let mut x=0 for i in 2..5{x=x*10+as_field(i)} x"), None, 234),
+            ("loop-shadow", source("let i=7 let mut x=0 for i in 0..3{x=x+as_field(i)} x+i"), None, 10),
+            ("loop-nested", source("let mut x=0 for i in 0..3{for i in 1..3{x=x+as_field(i)} x=x+as_field(i)*10} x"), None, 39),
+            ("loop-return", source("for i in 0..5000{if as_field(i)==3{return 7}} as_field(as_u32(4294967296))"), None, 7),
+            ("loop-helper", function_source("fn f(x:Field)->Field{for i in 0..3{return x+as_field(i)}} fn main()->Field{let mut x=0 for i in 0..4{x=x+f(2)} x}"), None, 8),
+            ("loop-u32-last", source("for i in 4294967295..4294967296{return as_field(i)} 7"), None, 4294967295),
+            ("loop-full-range-return", source("for i in 0..4294967296{return as_field(i)+7} 9"), None, 7),
+            ("loop-tail-discard", source("for i in 0..1{7} 9"), None, 9),
+        ])
+        loop_sizes = {}
         table_bytes = None
         for name, content, formula, expected in cases:
-            directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith("scalar-") else None)
+            directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith(("scalar-", "loop-")) else None)
             program = directory / "program.dag"
             compiled = execute(job, program)
             assert compiled["execution"]["compiler_job"]["status"] == "success"
@@ -201,16 +216,28 @@ def main():
             if formula is not None:
                 assert emitted_formula == formula
             output = directory / "output.dag"
-            executed = run(["run-artifact", program, "--input", zero, "-o", output])
+            limits = ["--budget", "10000000", "--frames", "65536"] if name.startswith("loop-") else []
+            executed = run(["run-artifact", program, "--input", zero, "-o", output, *limits])
+            if name.startswith("loop-count-"):
+                loop_sizes[expected] = len(program.read_bytes())
+            if name == "loop-count-5000":
+                saved = output.read_bytes()
+                for constrained, error in [([], "Frames"), (["--frames", "65536", "--budget", "1"], "budget exhausted"), (["--frames", "65536", "--arena-nodes", "1000"], "Unavailable")]:
+                    run(["run-artifact", program, "--input", zero, "-o", output, "--force", *constrained], expected=1)
+                    assert error in commands[-1]["stderr"]
+                    assert output.read_bytes() == saved
             assert executed["execution"]["program_particle"] == compiled["published_particle"]
             assert decode(output) == expected
             observations.append({"case": name, "source_hex": content.hex(), "expected": expected,
                                  "compiler_execution": compiled, "program_execution": executed,
-                                 "exact_independent_formula": formula is not None,
+                                 "program_bytes": len(program.read_bytes()), "exact_independent_formula": formula is not None,
                                  "accepted_control_identity_preserved": name in prior_cases})
             if name == "precedence":
                 baseline = compiled["execution"]
                 prior_program = program.read_bytes()
+
+        assert abs(loop_sizes[1] - loop_sizes[5000]) < 1024
+        assert abs(loop_sizes[4097] - loop_sizes[5000]) < 128
 
         negatives = [("unknown", source("missing"), 5),
                      ("self-reference", source("let x=x x"), 5),
@@ -253,8 +280,19 @@ def main():
             ("scalar-qualified-unbound", source("convert.as_u32(7)"), 5),
             ("scalar-qualified-name", source("let convert=7 convert.as_u32(7)"), 6),
         ])
+        negatives.extend([
+            ("loop-missing-bound", source("for i in 0..{} 7"), 2),
+            ("loop-bool-bound", source("for i in true..1{} 7"), 5),
+            ("loop-index-write", source("for i in 0..2{i=as_u32(0)} 7"), 5),
+            ("loop-scope-escape", source("for i in 0..2{let x=7} x"), 5),
+            ("loop-empty-type", source("for i in 0..0{return false} 7"), 5),
+            ("loop-tail-coverage", source("for i in 0..1{7}"), 5),
+            ("loop-field-wrap", source("for i in 0..18446744069414584321{} 7"), 5),
+            ("loop-u32-overflow", source("for i in 0..4294967297{} 7"), 5),
+            ("loop-dynamic-unsupported", source("let n=3 for i in 0..n bounded 3{} 7"), 6),
+        ])
         for name, content, code in negatives:
-            directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith("scalar-") else None)
+            directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith(("scalar-", "loop-")) else None)
             report = execute(job, directory / "result.dag", emit="result")
             result = report["execution"]["compiler_job"]
             assert result["status"] == "compile_error" and len(result["diagnostics"]) == 1
@@ -392,7 +430,7 @@ def main():
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions and checked U32 scalar operations; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations and reusable literal-range loops; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

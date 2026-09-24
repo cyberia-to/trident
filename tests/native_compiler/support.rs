@@ -5,7 +5,7 @@ use trident::{CompileOptions, NativeArtifactProfile, NATIVE_ARTIFACT_LIMITS as L
 #[path = "../../examples/selfhost_data/model.rs"]
 pub mod data;
 #[path = "../native_control/support.rs"]
-mod native;
+pub mod native;
 #[path = "../../examples/selfhost_jobs/schema.rs"]
 pub mod schema;
 #[path = "../../examples/selfhost_jobs/validate.rs"]

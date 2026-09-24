@@ -1,0 +1,41 @@
+module std.compiler.nox.code_plan
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.body_store
+use std.compiler.nox.function_plan
+
+// Functions retain their old slots; loops follow, grouped by sorted owner.
+pub struct Plan { pub count: U32, pub bases: Noun, pub next: U32, pub failed: Bool }
+
+#[pure]
+fn chunk(bodies: seq.Seq, functions: function_plan.Plan, input: Plan, cap: U32) -> Plan {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(functions.order) { return s }
+        let owner = as_u32(noun.as_field(seq.get(functions.order, s.next)))
+        let count = body_store.loop_count(seq.get(bodies, owner))
+        let total = as_u32(as_field(s.count) + as_field(count))
+        if cap < total { s.failed = true return s }
+        s.bases = tree.set(s.bases, seq.len(bodies), owner, noun.atom(as_field(s.count)))
+        s.count = total
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn extend(bodies: seq.Seq, functions: function_plan.Plan, cap: U32) -> Plan {
+    let mut s = Plan { count: seq.len(functions.order), bases: tree.empty(tree.shape(seq.len(bodies)).height),
+        next: as_u32(0), failed: cap < seq.len(functions.order) }
+    for turn in 0..512 {
+        if syntax.either(s.failed, s.next == seq.len(functions.order)) { return s }
+        s = chunk(bodies, functions, s, cap)
+    }
+    if (s.next == seq.len(functions.order)) == false { s.failed = true }
+    s
+}

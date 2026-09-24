@@ -209,8 +209,9 @@ scalar_type := "Field" | "Bool" | "U32"
 block := "{" statement* expression? "}"
 statement := "let" "mut"? identifier (":" scalar_type)? "=" expression
            | identifier "=" expression | "return" expression?
-           | if_statement | expression
+           | if_statement | for_statement | expression
 if_statement := "if" expression block ("else" (block | if_statement))?
+for_statement := "for" identifier "in" decimal ".." decimal block
 expression := comparison ("==" comparison)*
 comparison := sum ("<" sum)*
 sum := term ("+" term)*
@@ -324,6 +325,32 @@ unsigned comparison, bitwise AND and subtraction. Conversion evaluates its
 argument once as a new subject, branches on the range check and either retains
 that atom or traps. Formula-depth accounting includes the complete guard and
 continuation. Accepted earlier no-builtin programs retain their artifact bytes.
+
+Literal-range loops admit `for name in A..B { body }`, where A and B are
+unsigned decimal literals, A is at most 2^32−1 and B is at most 2^32.
+The guest checks their raw source digits before Field normalization, including
+empty ranges; larger lexically valid literals receive semantic diagnostic 5.
+Overflow beyond the unsigned 64-bit lexical domain retains diagnostic 1. The same literals
+in ordinary expressions retain the existing Field normalization. End is exclusive;
+empty and reversed ranges execute no body iterations. Dynamic ranges, outer-index
+bounds and `bounded` annotations remain outside this guest increment.
+
+Each loop introduces an immutable U32 index in its child scope. Its body can
+mutate outer bindings, declare locals, call functions and contain nested loops.
+Index and child locals do not escape. The loop body is type checked even when
+empty or unreachable. A body tail is evaluated and discarded. An explicit return
+propagates through all enclosing loops to the current function; a helper return
+still exits only that helper. A body that returns on every path supplies function
+return coverage only when A<B and B<=2^32−1, matching seed coverage. Other ranges
+need a following return/tail. Following fallback statements remain accepted.
+
+The immutable code table stores each reachable function and each of its loop
+bodies once. Generated loop dispatch is separate from source-call recursion.
+Runtime state retains an index and remaining-candidate count; the last candidate
+finishes before incrementing the index, including index 2^32−1. Loop count does
+not unroll or duplicate the body formula. Source, sequence, table, output depth
+and execution quotas remain independent; no constant-memory execution is promised.
+Programs without loops retain their previously accepted ART1 bytes.
 
 The expression parser tracks call delimiters and argument ownership explicitly.
 Nested calls own separate argument lists; argument records need not be contiguous

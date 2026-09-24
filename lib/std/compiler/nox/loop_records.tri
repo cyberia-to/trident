@@ -1,0 +1,29 @@
+module std.compiler.nox.loop_records
+
+use vm.nox.noun
+use vm.core.convert
+
+pub struct Loop { pub index: U32, pub remaining: U32, pub first: Field, pub end: Field, pub body: U32 }
+
+#[pure]
+pub fn pack(value: Loop) -> Noun {
+    let slots = noun.pair(noun.atom(as_field(value.index)), noun.atom(as_field(value.remaining)))
+    let range = noun.pair(noun.atom(value.first), noun.atom(value.end))
+    noun.pair(slots, noun.pair(range, noun.atom(as_field(value.body))))
+}
+
+#[pure]
+pub fn read(value: Noun) -> Loop {
+    let slots = noun.head(value)
+    let contents = noun.tail(value)
+    let range = noun.head(contents)
+    Loop { index: as_u32(noun.as_field(noun.head(slots))), remaining: as_u32(noun.as_field(noun.tail(slots))),
+        first: noun.as_field(noun.head(range)), end: noun.as_field(noun.tail(range)), body: as_u32(noun.as_field(noun.tail(contents))) }
+}
+
+#[pure]
+#[requires(as_field(as_u32(value.first)) == value.first)]
+pub fn nonempty(value: Loop) -> Bool {
+    if value.end == 4294967296 { return true }
+    as_u32(value.first) < as_u32(value.end)
+}

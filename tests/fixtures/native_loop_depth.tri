@@ -1,0 +1,20 @@
+program native_loop_depth
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.parser
+use std.compiler.nox.emit
+
+// Nested loop entries share one table; independently measure complete DAG depth.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let data = [112,114,111,103,114,97,109,32,115,97,109,112,108,101,32,102,110,32,109,97,105,110,40,41,45,62,70,105,101,108,100,123,108,101,116,32,109,117,116,32,120,61,48,32,102,111,114,32,105,32,105,110,32,48,46,46,50,123,102,111,114,32,106,32,105,110,32,48,46,46,51,123,120,61,120,43,49,125,125,32,120,125]
+    let mut source = bytes.empty()
+    for i in 0..82 { source = bytes.push(source, as_u32(data[i]), as_u32(4096)) }
+    let text = [115,97,109,112,108,101]
+    let mut name = bytes.empty()
+    for i in 0..6 { name = bytes.push(name, as_u32(text[i]), as_u32(6)) }
+    let result = parser.compile(source, name, as_u32(4096), as_u32(noun.as_field(input)))
+    noun.pair(noun.atom(as_field(result.error.code)), emit.artifact(result.formula))
+}

@@ -9,14 +9,20 @@ use std.compiler.nox.ast
 use std.compiler.nox.blocks
 use std.compiler.nox.terminal
 use std.compiler.nox.body_state
+use std.compiler.nox.loop_records
 
 pub struct Checked { pub flags: Noun, pub error: syntax.Error }
 struct State { flags: Noun, next: U32 }
 struct Block { covered: Bool, remaining: Noun }
 
 #[pure]
-fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32) -> Bool {
+fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Bool {
     if s.kind == blocks.RETURN { return true }
+    if s.kind == blocks.FOR {
+        let record = loop_records.read(seq.get(loops, s.a))
+        if record.end == 4294967296 { return false }
+        return syntax.both(loop_records.nonempty(record), noun.as_field(tree.get(flags, count, record.body)) == 1)
+    }
     if (s.kind == blocks.IF) == false { return false }
     let yes = noun.as_field(tree.get(flags, count, s.b)) == 1
     let mut no = false
@@ -30,22 +36,22 @@ fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32) -> Bo
 }
 
 #[pure]
-fn statement_chunk(input: Block, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32) -> Block {
+fn statement_chunk(input: Block, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Block {
     let mut s = input
     for turn in 0..8 {
         if noun.eq(s.remaining, noun.atom(0)) { return s }
         let id = as_u32(noun.as_field(noun.head(s.remaining)))
-        s.covered = syntax.either(s.covered, statement(blocks.read_statement(seq.get(statements, id)), nodes, flags, count))
+        s.covered = syntax.either(s.covered, statement(blocks.read_statement(seq.get(statements, id)), nodes, flags, count, loops))
         s.remaining = noun.tail(s.remaining)
     }
     s
 }
 
 #[pure]
-fn block(body: blocks.Block, terminal: Bool, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32) -> Bool {
+fn block(body: blocks.Block, terminal: Bool, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Bool {
     let mut s = Block { covered: syntax.both(body.has_tail, terminal), remaining: body.statements }
     for turn in 0..512 {
-        s = statement_chunk(s, nodes, statements, flags, count)
+        s = statement_chunk(s, nodes, statements, flags, count, loops)
         if noun.eq(s.remaining, noun.atom(0)) { return s.covered }
     }
     // Source-built lists contain at most SOURCE_CAP statement records.
@@ -59,7 +65,7 @@ fn chunk(input: State, s: body_state.State, terminal: Noun) -> State {
     for turn in 0..8 {
         if state.next == count { return state }
         let tail_returns = noun.as_field(tree.get(terminal, count, state.next)) == 1
-        let covered = block(blocks.read(seq.get(s.blocks, state.next)), tail_returns, s.nodes, s.statements, state.flags, count)
+        let covered = block(blocks.read(seq.get(s.blocks, state.next)), tail_returns, s.nodes, s.statements, state.flags, count, s.loops)
         state.flags = tree.set(state.flags, count, state.next, blocks.flag(covered))
         state.next = syntax.inc(state.next)
     }

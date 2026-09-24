@@ -349,7 +349,7 @@ fn native_statement_records_preserve_tag_and_distinct_operand_ids() {
 #[test]
 fn native_scalar_type_recognition_keeps_unsupported_tokens_distinct_from_u32() {
     let assembly = fixture("native_compiler_scalar_type");
-    for kind in (0..=30).chain([u64::from(u32::MAX)]) {
+    for kind in (0..=33).chain([u64::from(u32::MAX)]) {
         let expected = match kind {
             12 => 0, // Field
             20 => 1, // Bool
