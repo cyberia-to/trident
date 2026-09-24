@@ -23,6 +23,9 @@ SH1 and SH2 are closed. The native source compiler has
 [SH2 acceptance](self-hosting/native-source-compiler.md): fresh source packages
 become separately executed nox programs through Joy.
 No self-compilation or compiler execution proof is claimed.
+The [bounded heap-arena increment](self-hosting/native-compiler-arena.md) admits
+larger native compiler jobs through explicit Joy quotas. Complete source-scale
+allocation remains open, including a valid 4096-byte whitespace workload.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
 `360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
@@ -36,7 +39,7 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executable corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — foundation accepted | Whole compiler subset and executed differential/rejection corpus |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — engineering can start | Real closure, compiler-scale memory/runtime and boundary receipts |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — bounded heap-arena increment accepted | Real closure, complete compiler-scale memory/runtime and boundary receipts |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — needs SH3/SH4 | C1 compiles all of S into usable C2 on nox |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, regression corpus and six-platform CI |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design after SH0 | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
@@ -101,13 +104,15 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH3 native compiler functions: typed reusable calls, forward signatures and
   deterministic reachable code tables;
   [source/JOB and installed CLI evidence](self-hosting/native-compiler-functions.md).
-- [ ] SH4 bounded heap arena: nox allocation in place and explicit larger Joy
+- [x] SH4 bounded heap arena: nox allocation in place and explicit larger Joy
   pack/run allowance, preserving the current default and canonical output.
-  [Next slice](../.claude/plans/native-compiler-arena.md).
+  [Execution and resource evidence](self-hosting/native-compiler-arena.md).
+- [ ] SH3 native scalars: U32, checked conversions, comparison and bit masking;
+  [next slice](../.claude/plans/native-compiler-scalars.md).
 - [ ] SH3 remaining native language: U32/loops, aggregates, imports and complete
   compiler closure coverage.
-- [ ] SH4 source closure and allocation scale: measure and repair the lifetime
-  arena boundary observed during pilot source admission before full self-build.
+- [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
+  whitespace workload's lifetime arena boundary and measure full compiler closure.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
   [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
@@ -124,7 +129,7 @@ visible here as those decisions land.
 | Blocker | Owner / first gate | Baseline |
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
-| Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
+| Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Explicit heap arena admits larger real compiler jobs; valid 4096-byte whitespace workload and full closure remain open |
 | Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md), [typed control](self-hosting/native-compiler-control.md) and [reusable functions](self-hosting/native-compiler-functions.md) are accepted; remaining language stays open |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
@@ -243,3 +248,10 @@ forward/nested calls, fresh frames, Unit and final callable bindings;
 Continue with an in-place heap arena in nox and explicit larger structured
 pack/run allowance in Joy. Compiler cost increased and deep-call/default-arena
 failures remain recorded; full SH3/SH4 and self-build are open.
+
+2026-09-24 continuation: bounded heap arena accepted at nox `568ac16`,
+Joy `820041b` and Trident runner `1e08ded`.
+[Measured acceptance](self-hosting/native-compiler-arena.md) preserves canonical
+artifacts and exact job quotas while admitting larger real native compilations.
+The valid 4096-byte whitespace workload remains an explicit SH4 boundary.
+Continue with [native scalar coverage](../.claude/plans/native-compiler-scalars.md).

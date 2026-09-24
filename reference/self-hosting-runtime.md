@@ -151,6 +151,13 @@ new persistent updates retain their history. Tightening a node allowance cannot
 invalidate existing nodes or be reversed. A failed compound allocation may
 leave charged nodes; it cannot return a partial success. Existing static arrays
 reserve memory for their full slot count even when the logical limit is small.
+Nox's fallible in-place heap constructor provides this fixed storage without
+a whole-arena stack temporary. Joy selects a trusted physical capacity from an
+explicit host allowance, then applies the job's lifetime quota to the same
+counter. Packing and execution share that policy; see
+[Joy's structured-run contract](../../joy/specs/structured-run.md). A larger
+physical capacity changes neither canonical data nor the admitted logical
+quota. Failure never retries with a larger allowance implicitly.
 Measure physical arena size, codec workspace, frame storage and trace mode;
 logical node count is not measured RSS. Worker cancellation/time supervision
 must not leave a detached computation that later publishes an artifact.

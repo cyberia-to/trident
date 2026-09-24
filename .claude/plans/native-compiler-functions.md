@@ -1,3 +1,2 @@
 # SH3 native compiler functions
-
 Accepted: forward Field/Bool parameters and Field/Bool/Unit results, owned call arguments, checked final-binding graph, sorted reachable bodies and fresh native frames. See `audit/self-hosting/native-compiler-functions.md` and its pinned validation; full language/self-build remain open. Continue with `.claude/plans/native-compiler-arena.md` before expanding compiler-scale source coverage.
