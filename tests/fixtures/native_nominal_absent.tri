@@ -1,0 +1,18 @@
+program native_nominal_absent
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.nominal
+
+// Trusted non-nominal types have no nominal field, including invalid tag5.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let name = bytes.push(bytes.empty(), as_u32(120), as_u32(1))
+    let selected = nominal.lookup(input, name, name)
+    let mut exists: Field = 0
+    let mut visible: Field = 0
+    if selected.exists { exists = 1 }
+    if selected.visible { visible = 1 }
+    noun.pair(selected.ty, noun.pair(noun.atom(as_field(selected.index)), noun.pair(noun.atom(exists), noun.atom(visible))))
+}

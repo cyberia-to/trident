@@ -13,6 +13,7 @@ pub const NOUN: Field = 4
 pub const INVALID: Field = 5
 pub const DIGEST: Field = 6
 pub const TUPLE: Field = 16
+pub const NOMINAL: Field = 17
 pub const MAX_ARITY: U32 = 16
 
 pub struct Info { pub depth: U32, pub nodes: U32, pub contains_noun: Bool, pub valid: Bool }
@@ -20,6 +21,7 @@ pub struct Built { pub ty: Noun, pub failed: Bool }
 
 // Descriptors are compiler-owned canonical values. Primitive types are atoms;
 // tuple: [16 [children-Seq [logical-depth [logical-nodes contains-Noun-flag]]]].
+// nominal.tri uses tag17 with the same metadata envelope and owned record identity.
 // Accessors consume known primitive tags or descriptors from these constructors.
 // Only constructors derive metadata. Source data never supplies descriptors.
 #[pure]
@@ -31,10 +33,11 @@ pub fn info(ty: Noun) -> Info {
     }
     let metadata = noun.tail(noun.tail(ty))
     let extent = noun.tail(metadata)
+    let kind = noun.as_field(noun.head(ty))
     Info { depth: as_u32(noun.as_field(noun.head(metadata))),
         nodes: as_u32(noun.as_field(noun.head(extent))),
         contains_noun: noun.as_field(noun.tail(extent)) == 1,
-        valid: noun.as_field(noun.head(ty)) == TUPLE }
+        valid: syntax.either(kind == TUPLE, kind == NOMINAL) }
 }
 
 #[pure]
@@ -82,6 +85,7 @@ pub fn parts(ty: Noun) -> Parts {
         return result
     }
     if info(ty).depth == as_u32(0) { return result }
+    if (noun.as_field(noun.head(ty)) == TUPLE) == false { return result }
     result.children = seq.from_noun(noun.head(noun.tail(ty)), MAX_ARITY, as_u32(31))
     result.count = seq.len(result.children)
     result.valid = true

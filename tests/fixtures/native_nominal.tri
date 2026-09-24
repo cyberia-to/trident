@@ -1,0 +1,86 @@
+program native_nominal
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.nominal
+use std.compiler.nox.types
+
+#[pure]
+fn string(value: Noun) -> bytes.Bytes {
+    bytes.from_noun(value, as_u32(4096), as_u32(1000000))
+}
+
+#[pure]
+fn packed(built: nominal.Built) -> Noun {
+    noun.pair(noun.atom(as_field(built.status)), noun.pair(noun.atom(as_field(built.field)), built.ty))
+}
+
+// [mode [owner [name [fields-Seq [[node-cap depth-cap] extra]]]]].
+// Each input field is rebuilt with nominal.field, not admitted as a descriptor.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let mode = noun.as_field(noun.head(input))
+    let payload = noun.tail(input)
+    let owner = string(noun.head(payload))
+    let body = noun.tail(payload)
+    let name = string(noun.head(body))
+    let rest = noun.tail(body)
+    let supplied = seq.from_noun(noun.head(rest), as_u32(33), as_u32(127))
+    let limits = noun.tail(rest)
+    let caps = noun.head(limits)
+    let nodes = as_u32(noun.as_field(noun.head(caps)))
+    let depth = as_u32(noun.as_field(noun.tail(caps)))
+    let extra = noun.tail(limits)
+    let mut members = seq.empty()
+    for index in 0..33 {
+        if index < seq.len(supplied) {
+            let item = seq.get(supplied, index)
+            let member = nominal.field(string(noun.head(item)), nominal.field_type(item), nominal.field_public(item))
+            members = seq.push(members, member, as_u32(33))
+        }
+    }
+    let mut built = nominal.build(owner, name, members, nodes, depth)
+    if mode == 3 {
+        let count = as_u32(noun.as_field(noun.head(extra)))
+        let shared = noun.as_field(noun.tail(extra)) == 1
+        let mut current = noun.atom(types.FIELD)
+        for step in 0..65 {
+            if step < count {
+                members = seq.push(seq.empty(), nominal.field(name, current, false), as_u32(2))
+                if shared { members = seq.push(members, nominal.field(owner, current, true), as_u32(2)) }
+                built = nominal.build(owner, name, members, nodes, depth)
+                if (built.status == as_u32(0)) == false { return packed(built) }
+                current = built.ty
+            }
+        }
+    }
+    if (built.status == as_u32(0)) == false { return packed(built) }
+    if mode == 4 {
+        let children = seq.push(seq.push(seq.empty(), built.ty, as_u32(2)), noun.atom(types.DIGEST), as_u32(2))
+        let wrapped = types.tuple(children, as_u32(4096), as_u32(64))
+        assert(wrapped.failed == false)
+        let parts = types.parts(wrapped.ty)
+        assert(parts.valid)
+        return noun.pair(wrapped.ty, types.component(parts, as_u32(0)))
+    }
+    if mode == 1 {
+        let info = types.info(built.ty)
+        let mut contains: Field = 0
+        if info.contains_noun { contains = 1 }
+        let mut parts: Field = 0
+        if types.parts(built.ty).valid { parts = 1 }
+        let meta = noun.pair(noun.atom(as_field(info.depth)), noun.pair(noun.atom(as_field(info.nodes)), noun.pair(noun.atom(contains), noun.atom(parts))))
+        return noun.pair(packed(built), noun.pair(nominal.owner(built.ty), noun.pair(nominal.name(built.ty), noun.pair(seq.to_noun(nominal.fields(built.ty)), meta))))
+    }
+    if mode == 2 {
+        let selected = nominal.lookup(built.ty, string(noun.head(extra)), string(noun.tail(extra)))
+        let mut exists: Field = 0
+        let mut visible: Field = 0
+        if selected.exists { exists = 1 }
+        if selected.visible { visible = 1 }
+        return noun.pair(selected.ty, noun.pair(noun.atom(as_field(selected.index)), noun.pair(noun.atom(exists), noun.atom(visible))))
+    }
+    packed(built)
+}

@@ -149,3 +149,6 @@ mod tuples;
 
 #[path = "native_compiler/type_syntax.rs"]
 mod type_syntax;
+
+#[path = "native_compiler/nominal.rs"]
+mod nominal;

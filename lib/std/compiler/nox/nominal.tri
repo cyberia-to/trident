@@ -1,0 +1,108 @@
+module std.compiler.nox.nominal
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.types
+
+pub const MAX_FIELDS: U32 = 32
+pub struct Built { pub ty: Noun, pub status: U32, pub field: U32 }
+pub struct Selected { pub ty: Noun, pub index: U32, pub exists: Bool, pub visible: Bool }
+
+// Names and child types are compiler-owned values. Source spelling is checked
+// by the frontend; this layer owns canonical layout, identity and visibility.
+#[pure]
+pub fn field(name: bytes.Bytes, ty: Noun, public: Bool) -> Noun {
+    let mut flag: Field = 0
+    if public { flag = 1 }
+    noun.pair(bytes.to_noun(name), noun.pair(ty, noun.atom(flag)))
+}
+
+#[pure]
+fn failure(status: Field, index: U32) -> Built {
+    Built { ty: noun.atom(types.INVALID), status: as_u32(status), field: index }
+}
+
+#[pure]
+pub fn field_name(member: Noun) -> Noun { noun.head(member) }
+
+#[pure]
+pub fn field_type(member: Noun) -> Noun { noun.head(noun.tail(member)) }
+
+#[pure]
+pub fn field_public(member: Noun) -> Bool { noun.as_field(noun.tail(noun.tail(member))) == 1 }
+
+// At most32 fields: compare complete names without a mutable name interner.
+#[pure]
+fn repeated(fields: seq.Seq, index: U32, name: Noun) -> Bool {
+    for earlier in 0..32 {
+        if earlier == index { return false }
+        if noun.eq(field_name(seq.get(fields, earlier)), name) { return true }
+    }
+    false
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < node_cap) == false)]
+#[requires((syntax.STACK_CAP < depth_cap) == false)]
+pub fn build(owner: bytes.Bytes, name: bytes.Bytes, fields: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
+    let zero = as_u32(0)
+    if syntax.either(bytes.len(owner) == zero, bytes.len(name) == zero) { return failure(5, zero) }
+    let count = seq.len(fields)
+    if syntax.either((MAX_FIELDS < count), node_cap == zero) { return failure(7, zero) }
+    let mut nodes: Field = 1
+    let mut depth = zero
+    let mut contains: Field = 0
+    for index in 0..32 {
+        if index < count {
+            let member = seq.get(fields, index)
+            let member_name = field_name(member)
+            if noun.eq(member_name, bytes.to_noun(bytes.empty())) { return failure(5, index) }
+            if repeated(fields, index, member_name) { return failure(5, index) }
+            let child = types.info(field_type(member))
+            if child.valid == false { return failure(5, index) }
+            nodes = nodes + as_field(child.nodes)
+            if node_cap < as_u32(nodes) { return failure(7, index) }
+            if depth < child.depth { depth = child.depth }
+            if child.contains_noun { contains = 1 }
+        }
+    }
+    depth = syntax.inc(depth)
+    if depth_cap < depth { return failure(7, zero) }
+    let identity = noun.pair(bytes.to_noun(owner), noun.pair(bytes.to_noun(name), seq.to_noun(fields)))
+    let metadata = noun.pair(noun.atom(as_field(depth)), noun.pair(noun.atom(nodes), noun.atom(contains)))
+    Built { ty: noun.pair(noun.atom(types.NOMINAL), noun.pair(identity, metadata)), status: zero, field: zero }
+}
+
+// These projections require a successfully constructed nominal descriptor.
+#[pure]
+pub fn owner(ty: Noun) -> Noun { noun.head(noun.head(noun.tail(ty))) }
+
+#[pure]
+pub fn name(ty: Noun) -> Noun { noun.head(noun.tail(noun.head(noun.tail(ty)))) }
+
+#[pure]
+pub fn fields(ty: Noun) -> seq.Seq {
+    seq.from_noun(noun.tail(noun.tail(noun.head(noun.tail(ty)))), MAX_FIELDS, as_u32(63))
+}
+
+#[pure]
+pub fn lookup(ty: Noun, current_owner: bytes.Bytes, member_name: bytes.Bytes) -> Selected {
+    let absent = Selected { ty: noun.atom(types.INVALID), index: as_u32(0), exists: false, visible: false }
+    let description = types.info(ty)
+    if syntax.either(description.valid == false, description.depth == as_u32(0)) { return absent }
+    if (noun.as_field(noun.head(ty)) == types.NOMINAL) == false { return absent }
+    let members = fields(ty)
+    let wanted = bytes.to_noun(member_name)
+    for index in 0..32 {
+        if index == seq.len(members) { return absent }
+        let member = seq.get(members, index)
+        if noun.eq(field_name(member), wanted) {
+            let visible = syntax.either(field_public(member), noun.eq(owner(ty), bytes.to_noun(current_owner)))
+            return Selected { ty: field_type(member), index, exists: true, visible }
+        }
+    }
+    absent
+}
