@@ -20,13 +20,15 @@ Function bodies retain their defining module's constants, private
 helpers, struct layouts and import aliases. Qualified calls such as
 `pkg.math.add` and the imported short alias `math.add` refer to that
 module's function. Equal member names in different modules have
-distinct identities. Calls inline the callee against a fresh parameter
-subject after evaluating arguments in the caller's scope.
+distinct identities. The flat bundle profile inlines callees; the raw ART1
+profile uses reusable code-table entries and fresh balanced callee frames.
 
 Local bindings and parameters shadow module constants. A shadowed
 constant is unavailable to compile-time folding of loop bounds and
 array indices. A dynamic bound uses the bounded-loop lowering; a
-dynamic index is rejected until the target supports it.
+dynamic index is checked at runtime in raw ART1 and rejected by the legacy
+flat bundle profile. The remaining details in this section describe that
+legacy profile.
 Each unrolled loop iteration carries its immutable U32 index as a scoped
 compile-time value. Array reads and writes may use that index, including in
 bounded loops with runtime end conditions. A nested or shadowing binding keeps
@@ -40,7 +42,7 @@ Assembly, static reduction costs and bundle state metadata use the same
 resolved-module lowering and active compile flags. Bundle metadata
 lists active functions. Compilation errors propagate to the caller.
 
-## Subject and supported surface
+## Flat bundle subject and supported surface
 
 The external input is a flat sequence of canonical field words, represented by
 Joy as `[word_last [... [word0 0]]]`. The selected source entry consumes exactly
@@ -84,7 +86,7 @@ shadow builtin names consistently during both call resolution and state
 analysis. Inactive cfg definitions and unreachable helpers do not change the
 selected entry subject or its `reads_state` metadata.
 
-Current limits: calls are statically inlined; recursive calls are
+Flat bundle limits: calls are statically inlined; recursive calls are
 rejected. Dynamic array indexing, extension-field operations, incremental sponge,
 mutable RAM and stream I/O builtins produce explicit errors. Inlining
 has a node budget; static loop unrolling and subject depth have fixed
@@ -111,8 +113,11 @@ an axis formula and evaluate it with deterministic composition. No guest
 Native Boolean results retain 0=true / 1=false. The
 [conformance evidence](../audit/self-hosting/native-data.md) records which small
 formulas actually ran. Joy transports and executes complete raw artifacts;
-source collection libraries, reusable runtime loops/calls, production JOB1/RES1
-admission and compiler-scale Zheng coverage remain later gates.
+source collection libraries, production JOB1/RES1 admission and compiler-scale
+Zheng coverage remain later gates. Raw source now uses reusable functions and
+loop bodies, stable balanced frames, checked dynamic array reads/writes and
+complete early-return propagation. See the [runtime contract](self-hosting-runtime.md)
+for argument order, loop semantics, table ordering and explicit resource limits.
 
 [SH0.3](self-hosting-jobs.md) defines explicit structured raw-noun/compiler-job
 profiles and canonical NOXDAG01 transport. These preserve complete result roots;

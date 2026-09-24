@@ -12,7 +12,7 @@ impl NoxCompiler {
         entry: &ast::File,
         flags: &BTreeSet<String>,
     ) -> Result<Noun, String> {
-        self.compile_modules_profile(files, entry, flags, false)
+        self.compile_modules_profile(files, entry, flags, false, &BTreeMap::new())
     }
 
     /// Compile `fn main(input: Noun) -> Noun` for ART1 raw profiles 0/0.
@@ -22,7 +22,17 @@ impl NoxCompiler {
         entry: &ast::File,
         flags: &BTreeSet<String>,
     ) -> Result<Noun, String> {
-        self.compile_modules_profile(files, entry, flags, true)
+        self.compile_modules_profile(files, entry, flags, true, &BTreeMap::new())
+    }
+
+    pub(crate) fn compile_raw_modules_with_origins(
+        &mut self,
+        files: &[&ast::File],
+        entry: &ast::File,
+        flags: &BTreeSet<String>,
+        origins: &BTreeMap<String, (String, Vec<u64>)>,
+    ) -> Result<Noun, String> {
+        self.compile_modules_profile(files, entry, flags, true, origins)
     }
 
     fn compile_modules_profile(
@@ -31,6 +41,7 @@ impl NoxCompiler {
         entry: &ast::File,
         flags: &BTreeSet<String>,
         raw: bool,
+        origins: &BTreeMap<String, (String, Vec<u64>)>,
     ) -> Result<Noun, String> {
         // A compiler may be reused; symbols and state from its last program
         // must not affect this one.
@@ -113,7 +124,11 @@ impl NoxCompiler {
             .get(&self.symbol(&f.name.node))
             .cloned()
             .ok_or_else(|| "entry module was not provided to nox lowering".to_string())?;
-        self.compile_fn(&f)
+        if raw {
+            native::compile(self, &f, origins)
+        } else {
+            self.compile_fn(&f)
+        }
     }
 
     /// Turn a name from the current body into its global identity. Dotted

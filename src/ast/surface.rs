@@ -4,6 +4,8 @@ use super::*;
 pub(crate) trait SurfaceVisitor {
     fn ty(&mut self, ty: &Type);
     fn call(&mut self, name: &str);
+    fn expression(&mut self, _: &Expr) {}
+    fn destination(&mut self, _: &Place) {}
 }
 
 pub(crate) fn item(item: &Item, visitor: &mut impl SurfaceVisitor) {
@@ -108,6 +110,7 @@ fn block(b: &Block, v: &mut impl SurfaceVisitor) {
 }
 
 fn place(p: &Place, v: &mut impl SurfaceVisitor) {
+    v.destination(p);
     match p {
         Place::Var(_) => {}
         Place::FieldAccess(p, _) => place(&p.node, v),
@@ -119,6 +122,7 @@ fn place(p: &Place, v: &mut impl SurfaceVisitor) {
 }
 
 fn expr(e: &Expr, v: &mut impl SurfaceVisitor) {
+    v.expression(e);
     match e {
         Expr::Literal(_) | Expr::Var(_) => {}
         Expr::BinOp { lhs, rhs, .. } => {

@@ -1,9 +1,10 @@
 # Native compiler control flow and runtime
 
-SH0.4 contract for Trident0.4 on nox through Joy. This specifies implementation
-requirements; [runtime baseline](../audit/self-hosting/runtime-baseline.json)
-records the recursive interpreter's actual limits. Source-level native calls,
-loops and the heap evaluator require SH1 acceptance before being advertised.
+SH0.4 contract for Trident0.4 on nox through Joy. The raw ART1 source profile
+uses reusable code tables and the bounded heap evaluator. The flat bundle/proof
+profile retains its legacy inline/unrolled lowering. The
+[runtime baseline](../audit/self-hosting/runtime-baseline.json) records that
+older profile's limits; the progress ledger tracks the remaining SH1 gates.
 
 ## Source execution
 
@@ -11,7 +12,11 @@ Ordinary functions compile to reusable nox formulas. Each reachable function
 specialization and each generated loop body has one code-table entry. Order
 entries by logical module path, function name, concrete generic arguments and,
 for generated continuations, source byte position and deterministic local index.
-Do not use hash-map iteration, host allocation IDs or nondeterministic naming.
+Shared index helpers precede source entries in Get/Edit/Ascend order, including
+only helpers needed by the reachable source surface. Generic specialization
+preserves defining names and concrete arguments as private preparation metadata;
+discovery serials do not order the table. Do not use hash-map iteration, host
+allocation IDs or nondeterministic naming.
 Quotation and native pattern2 (compose) select/apply a runtime formula. Pattern16
 is witness injection and must never implement ordinary calls or compiler work.
 
@@ -22,6 +27,20 @@ fresh callee environment. Use balanced environments where linear axes would
 exceed the native axis width; checked paths compose multiple axis operations.
 Native `Noun` values remain subtrees, including inside aggregates/environments.
 No field-width calculation may pretend they are one serialized field word.
+
+The raw private subject is `[code_table [0 frame]]`. Parameters occupy the first
+balanced frame leaves in source order; lexical locals and generated temporaries
+have stable slots planned before emission. A block returns `[0 subject]` to
+continue or `[1 value]` to return. Function boundaries unwrap the return value.
+Persistent edits retain unrelated slots; leaving a scope only removes names.
+Initial seed limits are 65536 frame/table leaves, 4096 reachable functions, and
+128 source-call planning levels, plus the existing formula/artifact ceilings.
+These compilation limits are separate from Joy's runtime node/frame budget.
+
+Array reads and projected writes use checked runtime indices over the public
+cons-list layout. Each assignment checks indices in path order before evaluating
+its right-hand side, once each. Digest reads use the balanced four-limb layout;
+source Digest indexed writes remain outside the admitted language surface.
 
 Evaluate native call arguments exactly once, in source order, against the
 caller environment. Then rearrange the already-evaluated values into the callee
@@ -46,9 +65,11 @@ Preserve the existing native loop's observable behavior during its replacement:
   end, execute candidates start through end-1; end<=start is empty. The old
   native backend ignores a `bounded` annotation when end is constant.
 - Outer immutable loop indices currently become constants during unrolling.
-  Preserve their use as inner starts/ends (`0..i`, `i..3`) through finite range
+  Preserve their use as inner starts/ends (`0..i bounded B`, `i..3`) through finite range
   metadata when loops become reusable. This does not authorize arbitrary
-  dynamic starts. Loop-index array reads/writes must retain checked behavior.
+  dynamic starts. Plain unbounded `0..i` is normally rejected by the frontend.
+  For accepted outer-index ends, specialization ignores B, including B=0.
+  Loop-index array reads/writes must retain checked behavior.
 - For a dynamic end and bound B, consider exactly B candidates start+j. Evaluate
   end once per candidate in the current environment. Execute the body only if
   that candidate is smaller than end. A false guard skips that body; later

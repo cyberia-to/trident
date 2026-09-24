@@ -178,38 +178,27 @@ impl TypeChecker {
             Stmt::TupleAssign { names, value } => {
                 self.u32_proven.clear();
                 let val_ty = self.check_expr(&value.node, value.span);
-                let valid = if let Ty::Tuple(elem_tys) = &val_ty {
-                    if names.len() != elem_tys.len() {
+                let elements = match &val_ty {
+                    Ty::Tuple(types) => Some(types.clone()),
+                    Ty::Digest(width) | Ty::XField(width) => Some(vec![Ty::Field; *width as usize]),
+                    _ => None,
+                };
+                if let Some(elements) = elements {
+                    if names.len() != elements.len() {
                         self.error(
                             format!(
                                 "tuple assignment: expected {} elements, got {} names",
-                                elem_tys.len(),
+                                elements.len(),
                                 names.len()
                             ),
                             value.span,
                         );
                     }
-                    true
-                } else if let Ty::Digest(width) | Ty::XField(width) = val_ty {
-                    let dw = width as usize;
-                    if names.len() != dw {
-                        self.error(
-                            format!(
-                                "field aggregate destructuring requires exactly {} names, got {}",
-                                dw,
-                                names.len()
-                            ),
-                            value.span,
-                        );
-                    }
-                    true
-                } else {
-                    false
-                };
-                if valid {
-                    for name in names {
+                    for (index, name) in names.iter().enumerate() {
                         if let Some(info) = self.lookup_var(&name.node) {
-                            if !info.mutable {
+                            let expected = info.ty.clone();
+                            let mutable = info.mutable;
+                            if !mutable {
                                 self.error_with_help(
                                     format!("cannot assign to immutable variable '{}'", name.node),
                                     name.span,
@@ -217,6 +206,24 @@ impl TypeChecker {
                                         .to_string(),
                                 );
                             }
+                            if let Some(actual) = elements.get(index) {
+                                if &expected != actual {
+                                    self.error(
+                                        format!(
+                                            "tuple assignment to '{}': expected {}, got {}",
+                                            name.node,
+                                            expected.display(),
+                                            actual.display()
+                                        ),
+                                        name.span,
+                                    );
+                                }
+                            }
+                        } else {
+                            self.error(
+                                format!("undefined tuple assignment target '{}'", name.node),
+                                name.span,
+                            );
                         }
                     }
                 } else {

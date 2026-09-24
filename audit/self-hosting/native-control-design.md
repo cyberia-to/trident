@@ -1,7 +1,8 @@
 # Next SH1 delivery: reusable native control flow
 
 Design checkpoint 2026-09-23, following the native Noun/raw ART1 slice.
-This is implementation work still to do, not an acceptance receipt.
+Implemented on `feat/0.4-native-control` on 2026-09-24.
+This design is preserved; the execution receipt records acceptance separately.
 The [runtime contract](../../reference/self-hosting-runtime.md) is normative.
 
 ## Delivery boundary
@@ -55,7 +56,7 @@ Two existing accepted cases require explicit compatibility work:
   bodies need checked dynamic read/write before replacing that lowering. Keep
   public cons-list array layout initially; generated cursor/zipper helpers can
   access and reconstruct it without copying the source loop body.
-- `for i in 0..3 { for j in 0..i { ... } }` and `for j in i..3` are finite today
+- `for i in 0..3 { for j in 0..i bounded B { ... } }` and `for j in i..3` are finite today
   because outer unrolling specializes i. Preserve these via immutable loop-index
   range metadata. General dynamic starts remain outside this initial contract;
   do not accidentally accept arbitrary mutable bounds as formerly constant.
