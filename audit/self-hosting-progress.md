@@ -323,3 +323,12 @@ struct increment. [Pinned evidence](self-hosting/unique-struct-initializers-vali
 records 1020 / 122 / 380 passing owner tests, unchanged 133 fixture rows and 43
 manual baselines, nine installed CLI commands and unchanged complete C1 bytes.
 All 64 formal audits remain UNKNOWN; guest structs and full SH3/SH4 stay open.
+
+
+2026-09-24 continuation: nominal descriptor identity, field layout and owner-based
+visibility accepted at `1e36ceb`. [Pinned evidence](self-hosting/native-compiler-nominal-validation.json)
+records 1026 / 122 / 380 passing owner tests, unchanged 133 fixture rows and 43
+manual baselines, 614 general CLI commands plus 52 component commands, and all
+105 prior positive ART1 identities unchanged. All 67 formal audits are UNKNOWN.
+Source struct declarations/constructors/reads follow; full SH3/SH4, C2/C3 and
+six-platform acceptance remain open. Noun temperature stays 128K.

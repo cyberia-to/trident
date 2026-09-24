@@ -375,6 +375,31 @@ construction failures cannot produce a valid descriptor. Equality eligibility
 reads contains-Noun; nested Noun components stay outside the ordinary equality
 operator.
 
+Nominal descriptor infrastructure uses tag17 with the same derived metadata
+envelope as tuples: `[17 [[owner-Bytes [name-Bytes fields-Seq]] metadata]]`.
+Each ordered field is `[name-Bytes [type public-flag]]`, where flag1 is public
+and flag0 is private. Identity retains complete defining-module and declaration
+names, field order, visibility and child descriptors; aliases, source spans and
+temporary registry indices do not define it. Name bytes are canonical owned
+Bytes values. Lexical spelling belongs to the eventual source frontend.
+
+The nominal constructor accepts empty records and at most32 fields, independently
+of tuple arity16. It derives logical nodes as1 plus all child occurrences,
+depth as1 plus maximum child depth (empty depth1), and recursive contains-Noun.
+Requested type-node and depth allowances still apply. Empty owner/type/field
+names, duplicate field names and invalid child types return semantic status5;
+field-count/node/depth exhaustion returns status7. Success returns status0 and
+the complete descriptor. For a member failure the result retains its field index.
+Accessors consume fields/descriptors made by these compiler constructors.
+
+Field lookup compares the complete name and returns its index/type, whether it
+exists, and whether access is permitted. A public field is visible from any
+module; a private field is visible only to its defining owner. A known primitive
+or tuple descriptor has no nominal fields. Nominal records remain distinct from
+tuples for destructuring. This foundation provides internal data and visibility
+checks; source struct syntax, actual import resolution and source-level privacy
+acceptance remain subsequent gates.
+
 Digest is primitive descriptor6 and occupies one complete native frame slot.
 `nox_noun_identity(Noun)->Digest` evaluates its argument once and returns the
 balanced native identity `[[a b][c d]]` through axis0. Digest equality compares
