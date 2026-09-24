@@ -1,0 +1,69 @@
+module std.compiler.nox.control_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.blocks
+use std.compiler.nox.body_state
+use std.compiler.nox.terminal
+use std.compiler.nox.codegen
+use std.compiler.nox.flow
+use std.compiler.nox.block_gen
+
+struct Linear { writes: seq.Seq, next: U32, eligible: Bool }
+
+#[pure]
+fn linear_chunk(statements: seq.Seq, input: Linear) -> Linear {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(statements) { return s }
+        let current = blocks.read_statement(seq.get(statements, s.next))
+        if (current.kind == blocks.WRITE) == false { s.eligible = false return s }
+        s.writes = seq.push(s.writes, noun.pair(noun.atom(as_field(current.a)), noun.atom(as_field(current.b))), seq.len(statements))
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+// Keep the canonical formula of the already accepted straight-line subset.
+#[pure]
+fn linear(statements: seq.Seq) -> Linear {
+    let mut s = Linear { writes: seq.empty(), next: as_u32(0), eligible: true }
+    for turn in 0..512 {
+        s = linear_chunk(statements, s)
+        if syntax.either(s.eligible == false, s.next == seq.len(statements)) { return s }
+    }
+    s.eligible = false
+    s
+}
+
+#[pure]
+#[requires(s.root < seq.len(s.blocks))]
+pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
+    let zero = as_u32(0)
+    let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
+    let marked = terminal.mark(s.nodes, s.statements, s.blocks, s.root)
+    if (marked.error.code == zero) == false { return codegen.Compiled { formula: noun.atom(0), error: marked.error } }
+    let root = blocks.read(seq.get(s.blocks, s.root))
+    if syntax.both(root.has_tail, seq.len(s.blocks) == as_u32(1)) {
+        let simple = linear(s.statements)
+        if simple.eligible { return codegen.generate(s.nodes, simple.writes, root.tail, seq.len(s.bindings), depth_cap) }
+    }
+    let shape = tree.shape(seq.len(s.bindings))
+    let expressions = codegen.expressions(s.nodes, shape, depth_cap)
+    if expressions.failed { return failure }
+    let emitted = block_gen.generate(s.blocks, marked.flags, s.statements, s.nodes, expressions.values, shape, depth_cap)
+    if emitted.failed { return failure }
+    let result = block_gen.read(emitted.values, s.root)
+    if result.covered == false { return codegen.Compiled { formula: noun.atom(0), error: syntax.error(5, root.start, root.end) } }
+    let mut output = flow.result(result.output)
+    if (seq.len(s.bindings) == zero) == false {
+        let frame = noun.pair(noun.atom(0), noun.pair(noun.atom(0), tree.empty(shape.height)))
+        let initial = codegen.Value { formula: noun.pair(noun.atom(1), frame), depth: as_u32(as_field(shape.height) + 3) }
+        output = flow.compose(initial, output)
+    }
+    if depth_cap < as_u32(as_field(output.depth) + 9) { return failure }
+    codegen.Compiled { formula: output.formula, error: syntax.error(0, zero, zero) }
+}

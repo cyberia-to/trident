@@ -154,6 +154,16 @@ pub fn try_compile_package(
     )
 }
 
+pub fn run_artifact(bytes: &[u8]) -> u64 {
+    run_input(bytes, 0)
+}
+
+pub fn run_input(bytes: &[u8], input: u64) -> u64 {
+    native::run(bytes, input, 1_000_000, 65536, 196608)
+        .unwrap()
+        .0
+}
+
 pub fn value(result: Result) -> u64 {
     match result {
         Result::Program { value, .. } => value,

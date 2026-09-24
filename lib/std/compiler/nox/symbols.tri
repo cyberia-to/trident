@@ -7,20 +7,23 @@ use std.nox.seq
 use std.nox.bytes
 use std.compiler.nox.syntax
 
-pub struct Found { pub exists: Bool, pub slot: U32, pub writable: Bool }
+pub struct Found { pub exists: Bool, pub slot: U32, pub writable: Bool, pub ty: Field }
 
-// A declaration owns its slot even after another declaration shadows its name.
+// The record index is its stable slot. Visible lists select lexical bindings;
+// restoring an outer list never reuses slots allocated in a finished branch.
 #[pure]
-pub fn binding(name: syntax.Token, writable: Bool) -> Noun {
+pub fn binding(name: syntax.Token, writable: Bool, ty: Field) -> Noun {
     let mut flag: Field = 0
     if writable { flag = 1 }
-    noun.pair(noun.atom(as_field(name.start)), noun.pair(noun.atom(as_field(name.end)), noun.atom(flag)))
+    let span = noun.pair(noun.atom(as_field(name.start)), noun.atom(as_field(name.end)))
+    noun.pair(span, noun.pair(noun.atom(flag), noun.atom(ty)))
 }
 
 #[pure]
 fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
-    let start = as_u32(noun.as_field(noun.head(binding)))
-    let end = as_u32(noun.as_field(noun.head(noun.tail(binding))))
+    let span = noun.head(binding)
+    let start = as_u32(noun.as_field(noun.head(span)))
+    let end = as_u32(noun.as_field(noun.tail(span)))
     if (field.sub(as_field(name.end), as_field(name.start)) == field.sub(as_field(end), as_field(start))) == false { return false }
     let mut a = name.start
     let mut b = start
@@ -35,15 +38,18 @@ fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < seq.len(bindings)) == false)]
-pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq) -> Found {
-    let mut index = seq.len(bindings)
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq, visible: Noun) -> Found {
+    let mut cursor = visible
     for step in 0..4096 {
-        if index == as_u32(0) { return Found { exists: false, slot: as_u32(0), writable: false } }
-        index = syntax.dec(index)
+        if noun.eq(cursor, noun.atom(0)) { return Found { exists: false, slot: as_u32(0), writable: false, ty: 0 } }
+        let index = as_u32(noun.as_field(noun.head(cursor)))
         let binding = seq.get(bindings, index)
         if same(source, name, binding) {
-            return Found { exists: true, slot: index, writable: noun.as_field(noun.tail(noun.tail(binding))) == 1 }
+            let metadata = noun.tail(binding)
+            return Found { exists: true, slot: index, writable: noun.as_field(noun.head(metadata)) == 1, ty: noun.as_field(noun.tail(metadata)) }
         }
+        cursor = noun.tail(cursor)
     }
-    Found { exists: false, slot: as_u32(0), writable: false }
+    Found { exists: false, slot: as_u32(0), writable: false, ty: 0 }
 }

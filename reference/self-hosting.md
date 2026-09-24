@@ -202,13 +202,16 @@ profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
 requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
-program := "program" identifier "fn" "main" "(" ")" "->" "Field"
-           "{" statement* expression "}" EOF
-statement := "let" "mut"? identifier (":" "Field")? "=" expression
-           | identifier "=" expression
-expression := term ("+" term)*
+program := "program" identifier "fn" "main" "(" ")" "->" "Field" block EOF
+block := "{" statement* expression? "}"
+statement := "let" "mut"? identifier (":" ("Field" | "Bool"))? "=" expression
+           | identifier "=" expression | "return" expression
+           | if_statement | expression
+if_statement := "if" expression block ("else" (block | if_statement))?
+expression := sum ("==" sum)*
+sum := term ("+" term)*
 term := primary ("*" primary)*
-primary := decimal | identifier | "(" expression ")"
+primary := decimal | "true" | "false" | identifier | "(" expression ")"
 ```
 
 Identifiers use the seed's ASCII identifier spelling; keywords, type words,
@@ -228,7 +231,7 @@ Generation preserves the expression tree: literal `[1 value]`, addition
 needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
 compiler identity, source paths and execution counters.
 
-Local declarations infer Field or state it explicitly. A `let mut` binding
+Local declarations infer Field/Bool or state the type explicitly. A `let mut` binding
 permits assignment; other bindings reject writes. Initializers resolve names
 before installing the new binding, so `let x = x + 1` reads the previous `x`
 and rejects when no previous binding exists. Same-scope shadowing creates a
@@ -240,16 +243,48 @@ permits a following parenthesized expression where a statement boundary is valid
 CR alone keeps the same line, matching the seed parser.
 
 The guest builds a postorder expression sequence and ordered statement sequence.
-Literal/local/add/multiply expressions all have type Field. Child references
-precede their parent; declarations own stable slots. Code generation uses the
+Expression records carry their Field/Bool type and source span. Addition and
+multiplication require Field operands; equality requires two operands of the same
+type and returns Bool. Equality binds below addition and multiplication. Native
+Bool literals/results encode true as zero and false as one. Assignments and
+explicit annotations preserve the binding's type; the entry returns Field.
+Child references precede their parent; declarations own stable slots. Code generation uses the
 actual declaration count to size a balanced native frame `[0 [0 E(h)]]`, reads
 slot `i` at axis `7 * 2^h + i`, and composes persistent frame updates in statement
 order. Statement-free arithmetic retains its existing formula bytes. Requested
 limits may reject work but do not select a different successful artifact.
 
+Blocks own explicit ordered statement lists and an optional tail expression.
+If is a statement. Initializers such as `let x = if ...` remain unsupported.
+Only the function tail and the tails of its terminal if/else branches become
+returns; an intermediate branch evaluates and discards its tail. Explicit return
+exits the whole function. Every branch is parsed and type checked, including an
+unselected branch. Statements after a direct return are rejected as unreachable.
+Return coverage follows the seed: literal conditions select their known arm;
+otherwise both arms must return, or a later statement must cover continuation.
+Conditions accept Bool and raw Field using the nox convention: canonical zero
+selects then. Types and return coverage reject with semantic diagnostic5.
+
+Branch scopes restore the previous bindings on exit, while allocated runtime
+slots remain unique across the function. Writes to a visible outer mutable
+binding survive; branch-local declarations do not escape. The parser uses a
+bounded stack of block continuations. Block and statement arenas retain explicit
+ownership and postorder child references. Nested bodies never share a presumed
+contiguous statement range.
+
+Generated block flow uses Continue `[0 subject]` and Return `[1 value]`, matching
+the native runtime contract. A continuation executes once against the updated
+subject; Return bypasses it. The nox branch evaluates only its selected arm.
+Successful arithmetic and linear Field-local programs retain their existing
+artifact bytes. Nested control uses its own bounded flow generator; every new
+collection and parser continuation is charged to the requested sequence limit.
+The block nesting ceiling is 64, further restricted by that limit. Exceeding
+known capacity returns diagnostic7 before the corresponding append.
+
 The compiler reports the first deterministic diagnostic: code 1 for encoding or
 tokens, 2 for malformed syntax, 3 for an entry mismatch, 5 for an unknown
-expression name or immutable assignment, 6 for an unsupported construct/request and 7 for a known
+expression name, immutable assignment or type/return error, 6 for an unsupported
+construct/request and 7 for a known
 compiler work-capacity limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
 imports, other declarations and attributes are rejected, including trailing items.

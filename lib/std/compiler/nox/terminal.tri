@@ -1,0 +1,50 @@
+module std.compiler.nox.terminal
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.blocks
+
+pub struct Marked { pub flags: Noun, pub remaining: U32, pub error: syntax.Error }
+
+// Each block has one owner. Parents follow children, so descending propagation
+// visits each terminal block once, including both arms of constant conditions.
+#[pure]
+fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, input: Marked) -> Marked {
+    let mut s = input
+    for turn in 0..8 {
+        if s.remaining == as_u32(0) { return s }
+        s.remaining = syntax.dec(s.remaining)
+        if noun.as_field(tree.get(s.flags, seq.len(bodies), s.remaining)) == 1 {
+            let block = blocks.read(seq.get(bodies, s.remaining))
+            if block.has_tail {
+                let tail = seq.get(nodes, block.tail)
+                if (ast.ty(tail) == ast.FIELD) == false { s.error = ast.issue(5, tail) return s }
+            } else if noun.eq(block.statements, noun.atom(0)) == false {
+                let last = blocks.read_statement(seq.get(statements, as_u32(noun.as_field(noun.head(block.statements)))))
+                if last.kind == blocks.IF {
+                    s.flags = tree.set(s.flags, seq.len(bodies), last.b, noun.atom(1))
+                    if (last.c == blocks.NONE) == false { s.flags = tree.set(s.flags, seq.len(bodies), last.c, noun.atom(1)) }
+                }
+            }
+        }
+    }
+    s
+}
+
+#[pure]
+#[requires(root < seq.len(bodies))]
+#[requires((syntax.SOURCE_CAP < seq.len(bodies)) == false)]
+pub fn mark(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, root: U32) -> Marked {
+    let flags = tree.set(tree.empty(tree.shape(seq.len(bodies)).height), seq.len(bodies), root, noun.atom(1))
+    let mut s = Marked { flags, remaining: seq.len(bodies), error: syntax.error(0, as_u32(0), as_u32(0)) }
+    for turn in 0..512 {
+        s = chunk(nodes, statements, bodies, s)
+        if syntax.either(s.remaining == as_u32(0), (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s.error = syntax.error(7, as_u32(0), as_u32(0))
+    s
+}

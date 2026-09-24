@@ -54,21 +54,21 @@ pub fn keyword(value: Field) -> Field {
     if value == 7173492 { return 16 } // mut
     if value == 427071271796 { return 13 } // const
     if value == 126943973696372 { return 13 } // struct
-    if value == 26982 { return 13 } // if
-    if value == 1701606245 { return 13 } // else
+    if value == 26982 { return 23 } // if
+    if value == 1701606245 { return 24 } // else
     if value == 6713202 { return 13 } // for
     if value == 26990 { return 13 } // in
     if value == 27707097871574372 { return 13 } // bounded
-    if value == 125780071117422 { return 13 } // return
-    if value == 1953658213 { return 13 } // true
-    if value == 439721161573 { return 13 } // false
+    if value == 125780071117422 { return 25 } // return
+    if value == 1953658213 { return 21 } // true
+    if value == 439721161573 { return 22 } // false
     if value == 435778055796 { return 13 } // event
     if value == 125780103618924 { return 13 } // reveal
     if value == 1936023916 { return 13 } // seal
     if value == 469786452840 { return 13 } // match
     if value == 302415965284 { return 12 } // Field
     if value == 97059439209572 { return 13 } // XField
-    if value == 1114599276 { return 13 } // Bool
+    if value == 1114599276 { return 20 } // Bool
     if value == 5583666 { return 13 } // U32
     if value == 1315927406 { return 13 } // Noun
     if value == 75219496956788 { return 13 } // Digest
@@ -88,6 +88,7 @@ pub fn punctuation(value: U32) -> Bool {
 #[pure]
 #[requires((bytes.len(source) < end) == false)]
 #[requires((end < start) == false)]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn same_line(source: bytes.Bytes, start: U32, end: U32) -> Bool {
     let mut pos = start
     for step in 0..4096 {

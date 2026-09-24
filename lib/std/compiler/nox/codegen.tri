@@ -11,24 +11,24 @@ use std.compiler.nox.emit
 
 const HALF: Field = 9223372034707292161
 pub struct Compiled { pub formula: Noun, pub error: syntax.Error }
-struct Value { formula: Noun, depth: U32 }
+pub struct Value { pub formula: Noun, pub depth: U32 }
 
 #[pure]
-fn axis(value: Field) -> Noun { noun.pair(noun.atom(0), noun.atom(value)) }
+pub fn axis(value: Field) -> Noun { noun.pair(noun.atom(0), noun.atom(value)) }
 
 #[pure]
-fn cons(a: Noun, b: Noun) -> Noun { noun.pair(noun.atom(3), noun.pair(a, b)) }
+pub fn cons(a: Noun, b: Noun) -> Noun { noun.pair(noun.atom(3), noun.pair(a, b)) }
 
 #[pure]
-fn compose(subject: Noun, code: Noun) -> Noun {
+pub fn compose(subject: Noun, code: Noun) -> Noun {
     noun.pair(noun.atom(2), noun.pair(subject, noun.pair(noun.atom(1), code)))
 }
 
 #[pure]
-fn maximum(a: U32, b: U32) -> U32 { if a < b { return b } a }
+pub fn maximum(a: U32, b: U32) -> U32 { if a < b { return b } a }
 
 #[pure]
-fn value(values: seq.Seq, id: U32) -> Value {
+pub fn value(values: seq.Seq, id: U32) -> Value {
     let record = seq.get(values, id)
     Value { formula: noun.tail(record), depth: as_u32(noun.as_field(noun.head(record))) }
 }
@@ -64,7 +64,7 @@ fn frame(value: Value) -> Value {
 
 // The replacement occurs once; reconstruction preserves all sibling slots.
 #[pure]
-fn edit(slot: U32, shape: tree.Shape, replacement: Value) -> Value {
+pub fn edit(slot: U32, shape: tree.Shape, replacement: Value) -> Value {
     let mut path = zipper(slot, shape)
     let mut result = replacement
     for level in 0..12 {
@@ -79,7 +79,7 @@ fn edit(slot: U32, shape: tree.Shape, replacement: Value) -> Value {
     frame(result)
 }
 
-struct Expressions { values: seq.Seq, next: U32, failed: Bool }
+pub struct Expressions { pub values: seq.Seq, pub next: U32, pub failed: Bool }
 
 #[pure]
 fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, depth_cap: U32) -> Expressions {
@@ -87,11 +87,11 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, depth
     for turn in 0..8 {
         if s.next == seq.len(nodes) { return s }
         let node = seq.get(nodes, s.next)
-        let kind = noun.as_field(noun.head(node))
+        let kind = ast.kind(node)
         let mut formula = emit.literal(ast.left(node))
         let mut depth = as_u32(1)
         if kind == 1 { formula = axis(7 * shape.capacity + ast.left(node)) }
-        else if (kind == 0) == false {
+        else if syntax.either(kind == ast.LITERAL, kind == ast.BOOLEAN) == false {
             let left = value(s.values, as_u32(ast.left(node)))
             let right = value(s.values, as_u32(ast.right(node)))
             formula = emit.binary(as_u32(kind), left.formula, right.formula)
@@ -106,7 +106,7 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, depth
 }
 
 #[pure]
-fn expressions(nodes: seq.Seq, shape: tree.Shape, depth_cap: U32) -> Expressions {
+pub fn expressions(nodes: seq.Seq, shape: tree.Shape, depth_cap: U32) -> Expressions {
     let mut s = Expressions { values: seq.empty(), next: as_u32(0), failed: false }
     for block in 0..512 {
         s = expression_chunk(nodes, shape, s, depth_cap)

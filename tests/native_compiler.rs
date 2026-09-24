@@ -105,3 +105,6 @@ mod locals;
 
 #[path = "native_compiler/codegen.rs"]
 mod codegen;
+
+#[path = "native_compiler/control.rs"]
+mod control;

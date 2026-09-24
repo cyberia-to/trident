@@ -5,18 +5,52 @@ use vm.core.convert
 use std.nox.seq
 use std.compiler.nox.syntax
 
-// Postorder records: [kind [left right]], kinds literal0/local1/add3/mul4.
-// Child IDs always precede their parent. All expressions have type Field.
+pub const FIELD: Field = 0
+pub const BOOL: Field = 1
+pub const LITERAL: Field = 0
+pub const LOCAL: Field = 1
+pub const BOOLEAN: Field = 2
+pub const ADD: Field = 3
+pub const MUL: Field = 4
+pub const EQUAL: Field = 5
+
+// Postorder expression: [[kind [left right]] [type [start end]]].
+// Child IDs precede their parent. AST operations are independent of token kinds.
+#[pure]
+pub fn typed(kind: Field, left: Field, right: Field, ty: Field, start: U32, end: U32) -> Noun {
+    let value = noun.pair(noun.atom(kind), noun.pair(noun.atom(left), noun.atom(right)))
+    let span = noun.pair(noun.atom(as_field(start)), noun.atom(as_field(end)))
+    noun.pair(value, noun.pair(noun.atom(ty), span))
+}
+
+// Internal component builders can omit source spans.
 #[pure]
 pub fn node(kind: Field, left: Field, right: Field) -> Noun {
-    noun.pair(noun.atom(kind), noun.pair(noun.atom(left), noun.atom(right)))
+    let mut ty = FIELD
+    if syntax.either(kind == BOOLEAN, kind == EQUAL) { ty = BOOL }
+    typed(kind, left, right, ty, as_u32(0), as_u32(0))
 }
 
 #[pure]
-pub fn left(node: Noun) -> Field { noun.as_field(noun.head(noun.tail(node))) }
+pub fn kind(node: Noun) -> Field { noun.as_field(noun.head(noun.head(node))) }
 
 #[pure]
-pub fn right(node: Noun) -> Field { noun.as_field(noun.tail(noun.tail(node))) }
+pub fn left(node: Noun) -> Field { noun.as_field(noun.head(noun.tail(noun.head(node)))) }
+
+#[pure]
+pub fn right(node: Noun) -> Field { noun.as_field(noun.tail(noun.tail(noun.head(node)))) }
+
+#[pure]
+pub fn ty(node: Noun) -> Field { noun.as_field(noun.head(noun.tail(node))) }
+
+#[pure]
+pub fn start(node: Noun) -> U32 { as_u32(noun.as_field(noun.head(noun.tail(noun.tail(node))))) }
+
+#[pure]
+pub fn end(node: Noun) -> U32 { as_u32(noun.as_field(noun.tail(noun.tail(noun.tail(node))))) }
+
+#[pure]
+pub fn issue(code: Field, node: Noun) -> syntax.Error { syntax.error(code, start(node), end(node)) }
 
 #[pure]
 pub fn store(stack: seq.Seq, length: U32, value: Noun, cap: U32) -> seq.Seq {
@@ -26,6 +60,7 @@ pub fn store(stack: seq.Seq, length: U32, value: Noun, cap: U32) -> seq.Seq {
 
 #[pure]
 pub fn failed(token: syntax.Token, fallback: Field) -> syntax.Error {
+    if syntax.either(token.kind == as_u32(20), token.kind == as_u32(23)) { return syntax.error(6, token.start, token.end) }
     if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
     if syntax.either(syntax.either(syntax.either(token.kind == as_u32(13), token.kind == as_u32(10)), token.kind == as_u32(11)), token.kind == as_u32(12)) {
         return syntax.error(6, token.start, token.end)

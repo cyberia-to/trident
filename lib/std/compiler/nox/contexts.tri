@@ -1,0 +1,37 @@
+module std.compiler.nox.contexts
+
+use vm.nox.noun
+use vm.core.convert
+use std.compiler.nox.blocks
+
+// A frame remembers its parent list/scope while one conditional arm is parsed.
+// Phase0 awaits then; phase1 awaits else. Synthetic else-if blocks close without
+// consuming an extra source brace, using the same ownership as the seed parser.
+pub struct Frame {
+    pub statements: Noun, pub visible: Noun, pub returned: Bool,
+    pub synthetic: Bool, pub start: U32, pub condition: U32,
+    pub then_block: U32, pub phase: Field
+}
+
+#[pure]
+pub fn pack(f: Frame) -> Noun {
+    let environment = noun.pair(f.statements, f.visible)
+    let flags = noun.pair(blocks.flag(f.returned), blocks.flag(f.synthetic))
+    let owner = noun.pair(noun.atom(as_field(f.start)), noun.atom(as_field(f.condition)))
+    let arms = noun.pair(noun.atom(as_field(f.then_block)), noun.atom(f.phase))
+    noun.pair(noun.pair(environment, flags), noun.pair(owner, arms))
+}
+
+#[pure]
+pub fn read(value: Noun) -> Frame {
+    let parent = noun.head(value)
+    let environment = noun.head(parent)
+    let flags = noun.tail(parent)
+    let child = noun.tail(value)
+    let owner = noun.head(child)
+    let arms = noun.tail(child)
+    Frame { statements: noun.head(environment), visible: noun.tail(environment),
+        returned: noun.as_field(noun.head(flags)) == 1, synthetic: noun.as_field(noun.tail(flags)) == 1,
+        start: as_u32(noun.as_field(noun.head(owner))), condition: as_u32(noun.as_field(noun.tail(owner))),
+        then_block: as_u32(noun.as_field(noun.head(arms))), phase: noun.as_field(noun.tail(arms)) }
+}

@@ -3,113 +3,13 @@ module std.compiler.nox.parser
 use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
-use std.nox.seq
 use std.compiler.nox.syntax
 use std.compiler.nox.ascii
 use std.compiler.nox.lexer
 use std.compiler.nox.ast
-use std.compiler.nox.symbols
-use std.compiler.nox.expression
 use std.compiler.nox.codegen
-
-struct State {
-    nodes: seq.Seq, statements: seq.Seq, bindings: seq.Seq,
-    token: syntax.Token, value: U32, error: syntax.Error, done: Bool
-}
-
-#[pure]
-fn statement(source: bytes.Bytes, input: State, cap: U32) -> State {
-    let mut s = input
-    let declaration = s.token.kind == as_u32(15)
-    let mut name = s.token
-    let mut writable = false
-    let mut slot = seq.len(s.bindings)
-    if declaration {
-        name = lexer.next(source, s.token.end)
-        if name.kind == as_u32(16) {
-            writable = true
-            name = lexer.next(source, name.end)
-        }
-        if (name.kind == as_u32(1)) == false { s.error = ast.failed(name, 2) return s }
-        s.token = lexer.next(source, name.end)
-        if s.token.kind == as_u32(17) {
-            s.token = lexer.next(source, s.token.end)
-            if (s.token.kind == as_u32(12)) == false {
-                let mut code: Field = 2
-                if s.token.kind == as_u32(1) { code = 6 }
-                s.error = ast.failed(s.token, code)
-                return s
-            }
-            s.token = lexer.next(source, s.token.end)
-        }
-    } else {
-        let binding = symbols.lookup(source, name, s.bindings)
-        if syntax.either(binding.exists == false, binding.writable == false) {
-            s.error = syntax.error(5, name.start, name.end)
-            return s
-        }
-        slot = binding.slot
-        s.token = lexer.next(source, name.end)
-    }
-    if (s.token.kind == as_u32(18)) == false { s.error = ast.failed(s.token, 2) return s }
-    if syntax.either(seq.len(s.statements) == cap, syntax.both(declaration, seq.len(s.bindings) == cap)) {
-        s.error = syntax.error(7, name.start, name.end)
-        return s
-    }
-    let rhs = expression.parse(source, lexer.next(source, s.token.end), s.bindings, s.nodes, cap)
-    s.error = rhs.error
-    if (s.error.code == as_u32(0)) == false { return s }
-    s.nodes = rhs.nodes
-    s.token = rhs.token
-    s.statements = seq.push(s.statements, noun.pair(noun.atom(as_field(slot)), noun.atom(as_field(rhs.value))), cap)
-    // Initializer sees the previous binding; only now does the new slot exist.
-    if declaration { s.bindings = seq.push(s.bindings, symbols.binding(name, writable), cap) }
-    s
-}
-
-#[pure]
-fn step(source: bytes.Bytes, input: State, cap: U32) -> State {
-    let mut s = input
-    if s.token.kind == as_u32(15) { return statement(source, s, cap) }
-    if s.token.kind == as_u32(1) {
-        let next = lexer.next(source, s.token.end)
-        if next.kind == as_u32(18) { return statement(source, s, cap) }
-    }
-    let tail = expression.parse(source, s.token, s.bindings, s.nodes, cap)
-    s.error = tail.error
-    if (s.error.code == as_u32(0)) == false { return s }
-    s.nodes = tail.nodes
-    s.value = tail.value
-    s.token = tail.token
-    if (s.token.kind == as_u32(8)) == false { s.error = ast.failed(s.token, 2) return s }
-    s.token = lexer.next(source, s.token.end)
-    if (s.token.kind == as_u32(0)) == false { s.error = ast.failed(s.token, 2) return s }
-    s.done = true
-    s
-}
-
-#[pure]
-fn chunk(source: bytes.Bytes, input: State, cap: U32) -> State {
-    let mut s = input
-    for turn in 0..8 {
-        s = step(source, s, cap)
-        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
-    }
-    s
-}
-
-#[pure]
-fn body(source: bytes.Bytes, start: U32, cap: U32, depth_cap: U32) -> codegen.Compiled {
-    let zero = as_u32(0)
-    let mut s = State { nodes: seq.empty(), statements: seq.empty(), bindings: seq.empty(),
-        token: lexer.next(source, start), value: zero, error: syntax.error(0, zero, zero), done: false }
-    for block in 0..512 {
-        s = chunk(source, s, cap)
-        if (s.error.code == zero) == false { return codegen.Compiled { formula: noun.atom(0), error: s.error } }
-        if s.done { return codegen.generate(s.nodes, s.statements, s.value, seq.len(s.bindings), depth_cap) }
-    }
-    codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, s.token.start, s.token.end) }
-}
+use std.compiler.nox.body
+use std.compiler.nox.control_gen
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
@@ -131,5 +31,7 @@ pub fn compile(source: bytes.Bytes, name: bytes.Bytes, cap: U32, depth_cap: U32)
     }
     let mut capacity = cap
     if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
-    body(source, pos, capacity, depth_cap)
+    let parsed = body.parse(source, pos, capacity)
+    if (parsed.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: parsed.error } }
+    control_gen.generate(parsed, depth_cap)
 }

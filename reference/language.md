@@ -371,8 +371,11 @@ if condition {
 }
 ```
 
-`else if` chains are parsed as nested `if/else`. Condition must be `Bool` or `Field`
-(0 = false, nonzero = true).
+`else if` chains are parsed as nested `if/else`. Conditions accept `Bool` or
+`Field`. Bool conditions follow their logical value. Raw Field conditions use
+the target convention after field canonicalization: nox selects `then` for zero;
+Triton selects `then` for nonzero. Portable source uses an explicit comparison
+producing Bool. The [formal audit contract](formal-audit.md) models the same rules.
 
 ### For Loops
 

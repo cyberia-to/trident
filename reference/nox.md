@@ -112,7 +112,9 @@ The minimal operations can use existing nox patterns: cons, checked axis/atom
 projection, full particle equality and identity. Dynamic lookup can construct
 an axis formula and evaluate it with deterministic composition. No guest
 `is_atom` operation is assumed, and witness calls cannot supply compiler work.
-Native Boolean results retain 0=true / 1=false. The
+Native Boolean results retain 0=true / 1=false. Raw Field conditions also select
+`then` for canonical zero and `else` for nonzero; an explicit comparison produces
+a logical Bool for portable source. The
 [conformance evidence](../audit/self-hosting/native-data.md) records which small
 formulas actually ran. Joy transports and executes complete raw artifacts and
 validates compiler JOB1/RES1. Compiler-scale Zheng coverage remains a later

@@ -1,4 +1,4 @@
-"""SH2/SH3 installed CLI acceptance: fixed guest, arithmetic and Field locals."""
+"""SH2/SH3 installed CLI acceptance: fixed guest, arithmetic, locals and control."""
 import argparse
 import copy
 import hashlib
@@ -61,6 +61,8 @@ def main():
     binary = args.joy.resolve()
     repo = Path(__file__).resolve().parents[2]
     commands, observations = [], []
+    accepted = json.loads((repo / "audit/self-hosting/native-locals-cli.json").read_text())
+    prior_cases = {item["case"]: item for item in accepted["observations"] if "case" in item and "expected" in item}
     host = ["--budget", "100000000", "--frames", "65536"]
     with tempfile.TemporaryDirectory(prefix="trident-sh2-") as temporary:
         root = Path(temporary)
@@ -127,12 +129,27 @@ def main():
             ("parenthesized-tail", source("let x=7 (x+1)"), None, 8),
             ("body-chunks", source("let mut x=0 " + "x=x+1 " * 9 + "x"), None, 9),
         ])
+        cases.extend([
+            ("bool-precedence", source("let b:Bool=1+2*3==7 if b {11} else {22}"), None, 11),
+            ("bool-mutation", source("let mut b=true b=false if b {11} else {22}"), None, 22),
+            ("field-zero", source("if 0 {11} else {22}"), None, 11),
+            ("field-nonzero", source("if 2 {11} else {22}"), None, 22),
+            ("terminal-nested", source("if true {if false {1} else {2}} else {3}"), None, 2),
+            ("intermediate-tail", source("if true {if true {false} else {false}} 7"), None, 7),
+            ("early-return", source("let mut x=1 if true {return x+6} else {x=9} x"), None, 7),
+            ("else-if", source("let mut x=0 if false{x=1}else if false{x=2}else{x=3} x=x+4 x"), None, 7),
+            ("branch-scope", source("let mut x=3 if true {x=7 let x=9 x} else {let x=8 x} x"), None, 7),
+            ("expression-statement", source("1 2"), None, 2),
+            ("empty-arms", source("if true {} else {} 7"), None, 7),
+        ])
         for name, content, formula, expected in cases:
             directory, job = package(name, content)
             program = directory / "program.dag"
             compiled = execute(job, program)
             assert compiled["execution"]["compiler_job"]["status"] == "success"
             assert compiled["execution"]["program_particle"] == compiler_particle
+            if name in prior_cases:
+                assert compiled["published_particle"] == prior_cases[name]["compiler_execution"]["published_particle"]
             actual = decode(program)
             emitted_formula = actual[1][1][1][1][0]
             assert actual == record(0x41525431, 0, 0, 0, emitted_formula)
@@ -144,7 +161,8 @@ def main():
             assert decode(output) == expected
             observations.append({"case": name, "source_hex": content.hex(), "expected": expected,
                                  "compiler_execution": compiled, "program_execution": executed,
-                                 "exact_independent_formula": formula is not None})
+                                 "exact_independent_formula": formula is not None,
+                                 "accepted_locals_identity_preserved": name in prior_cases})
             if name == "precedence":
                 baseline = compiled["execution"]
                 prior_program = program.read_bytes()
@@ -154,11 +172,20 @@ def main():
                      ("immutable-write", source("let x=1 x=2 x"), 5),
                      ("shadow-mutability", source("let mut x=1 let x=2 x=3 x"), 5),
                      ("malformed-local", source("let x: =7 x"), 2),
-                     ("unsupported-equality", source("let x=1 x==1"), 6), ("overflow", source("18446744073709551616"), 1),
+                     ("bool-return", source("let x=1 x==1"), 5), ("overflow", source("18446744073709551616"), 1),
                      ("syntax", source("(1"), 2), ("utf8", b"//\xed\xa0\x80", 1),
-                     ("unsupported", source("let x: Bool=true x"), 6),
+                     ("unsupported", source("let x: U32=1 x"), 6),
                      ("stack65", source("(" * 65 + "1" + ")" * 65), 7),
                      ("source4097", b"\xff" + bytes(4096), 7)]
+        negatives.extend([
+            ("unselected-type", source("if true {7} else {false}"), 5),
+            ("unselected-name", source("if true {7} else {missing}"), 5),
+            ("branch-name-escape", source("if true {let x=7} x"), 5),
+            ("bool-write-type", source("let mut b=true b=1 7"), 5),
+            ("missing-return", source("let b=true if b {7}"), 5),
+            ("unreachable", source("return 7 9"), 5),
+            ("malformed-else", source("if true {7} else 9"), 2),
+        ])
         for name, content, code in negatives:
             directory, job = package(name, content)
             report = execute(job, directory / "result.dag", emit="result")
@@ -190,6 +217,25 @@ def main():
                 assert decode(output) == 709
             observations.append({"case": "local-sequence-cap", "requested": cap,
                                  "compiler_execution": report, "expected": 709 if cap >= 8 else "diagnostic7"})
+
+        control_bytes = None
+        for cap in [1, 2, 3]:
+            directory, job = package(f"block-cap-{cap}", source("if true {7}"),
+                                     {"sequence_length": cap, "diagnostics": 1})
+            if cap == 1:
+                report = execute(job, directory / "result.dag", emit="result")
+                assert report["execution"]["compiler_job"]["diagnostics"][0]["code"] == 7
+            else:
+                program = directory / "program.dag"
+                report = execute(job, program)
+                if control_bytes is not None:
+                    assert program.read_bytes() == control_bytes
+                control_bytes = program.read_bytes()
+                output = directory / "output.dag"
+                run(["run-artifact", program, "--input", zero, "-o", output])
+                assert decode(output) == 7
+            observations.append({"case": "block-sequence-cap", "requested": cap,
+                                 "compiler_execution": report, "expected": 7 if cap >= 2 else "diagnostic7"})
 
         # These limits are enforced during the actual compiler execution.
         guest_visits = (112 + collection_visits(6, True) + collection_visits(4, True)
@@ -252,7 +298,7 @@ def main():
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 arithmetic and SH3 Field locals; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 typed locals, scoped control and early returns; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

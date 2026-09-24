@@ -58,21 +58,15 @@ fn local_errors_bind_the_offending_name_and_preserve_mutability() {
             "let mut = 1",
             "let x: = 1 x",
             "let x 1 x",
-            "let x=1",
             "let mut x=1 x=",
         ] {
             support::error(&support::source(body), 2);
         }
         for body in [
-            "let x: Bool = true x",
             "let x: U32 = 1 x",
-            "let x=1 if true { x } else { 0 }",
             "let x=7 x(1)",
             "let x=7 x\r(1)",
             "missing(1)",
-            "1==1",
-            "let x=1 x==1",
-            "let mut x=1 x==1",
             "let x: Other=1 x",
         ] {
             support::error(&support::source(body), 6);
