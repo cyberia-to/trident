@@ -13,6 +13,7 @@ use std.compiler.nox.blocks
 use std.compiler.nox.contexts
 use std.compiler.nox.body_state
 use std.compiler.nox.loop_records
+use std.compiler.nox.types
 
 struct Bound { value: Field, error: syntax.Error }
 
@@ -85,9 +86,9 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
         synthetic: s.synthetic, start: s.start, condition: id, then_block: blocks.NONE, phase: 2 }
     s.frames = noun.pair(contexts.pack(frame), s.frames)
     s.depth = syntax.inc(s.depth)
-    s.bindings = seq.push(s.bindings, symbols.binding(name, false, ast.UINT32), cap)
+    s.bindings = seq.push(s.bindings, symbols.binding(name, false, noun.atom(types.UINT32)), cap)
     // The remaining count can be 2^32. It is an invisible Field slot.
-    s.bindings = seq.push(s.bindings, symbols.binding(name, false, ast.FIELD), cap)
+    s.bindings = seq.push(s.bindings, symbols.binding(name, false, noun.atom(types.FIELD)), cap)
     s.visible = noun.pair(noun.atom(as_field(index)), s.visible)
     s.start = s.token.start
     s.token = lexer.next(source, s.token.end)

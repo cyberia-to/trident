@@ -1,0 +1,69 @@
+module std.compiler.nox.types
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.syntax
+
+pub const FIELD: Field = 0
+pub const BOOL: Field = 1
+pub const UNIT: Field = 2
+pub const UINT32: Field = 3
+pub const NOUN: Field = 4
+pub const INVALID: Field = 5
+pub const DIGEST: Field = 6
+pub const TUPLE: Field = 16
+pub const MAX_ARITY: U32 = 16
+
+pub struct Info { pub depth: U32, pub nodes: U32, pub contains_noun: Bool, pub valid: Bool }
+pub struct Built { pub ty: Noun, pub failed: Bool }
+
+// Descriptors are compiler-owned canonical values. Primitive types are atoms;
+// tuple: [16 [children-Seq [logical-depth [logical-nodes contains-Noun-flag]]]].
+// Accessors consume known primitive tags or descriptors from these constructors.
+// Only constructors derive metadata. Source data never supplies descriptors.
+#[pure]
+pub fn info(ty: Noun) -> Info {
+    for tag in 0..7 {
+        if noun.eq(ty, noun.atom(as_field(tag))) {
+            return Info { depth: as_u32(0), nodes: as_u32(1), contains_noun: as_field(tag) == NOUN, valid: (as_field(tag) == INVALID) == false }
+        }
+    }
+    let metadata = noun.tail(noun.tail(ty))
+    let extent = noun.tail(metadata)
+    Info { depth: as_u32(noun.as_field(noun.head(metadata))),
+        nodes: as_u32(noun.as_field(noun.head(extent))),
+        contains_noun: noun.as_field(noun.tail(extent)) == 1,
+        valid: noun.as_field(noun.head(ty)) == TUPLE }
+}
+
+#[pure]
+pub fn contains_noun(ty: Noun) -> Bool { info(ty).contains_noun }
+
+// Count logical type occurrences, including repeated children; sharing in the
+// canonical DAG does not evade source complexity or nesting allowances.
+#[pure]
+#[requires((syntax.SOURCE_CAP < node_cap) == false)]
+#[requires((syntax.STACK_CAP < depth_cap) == false)]
+pub fn tuple(children: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
+    let failure = Built { ty: noun.atom(INVALID), failed: true }
+    let count = seq.len(children)
+    if syntax.either(count == as_u32(0), MAX_ARITY < count) { return failure }
+    let mut depth = as_u32(0)
+    let mut nodes: Field = 1
+    let mut flag: Field = 0
+    for id in 0..16 {
+        if id < count {
+            let child = info(seq.get(children, id))
+            if child.valid == false { return failure }
+            nodes = nodes + as_field(child.nodes)
+            if node_cap < as_u32(nodes) { return failure }
+            if depth < child.depth { depth = child.depth }
+            if child.contains_noun { flag = 1 }
+        }
+    }
+    depth = syntax.inc(depth)
+    if depth_cap < depth { return failure }
+    let metadata = noun.pair(noun.atom(as_field(depth)), noun.pair(noun.atom(nodes), noun.atom(flag)))
+    Built { ty: noun.pair(noun.atom(TUPLE), noun.pair(seq.to_noun(children), metadata)), failed: false }
+}

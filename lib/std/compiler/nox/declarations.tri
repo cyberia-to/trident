@@ -13,6 +13,7 @@ use std.compiler.nox.expression_state
 use std.compiler.nox.blocks
 use std.compiler.nox.body_state
 use std.compiler.nox.headers
+use std.compiler.nox.types
 
 #[pure]
 pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -20,7 +21,7 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     let declaration = s.token.kind == as_u32(15)
     let mut name = s.token
     let mut writable = false
-    let mut expected_type = ast.FIELD
+    let mut expected_type = noun.atom(types.FIELD)
     let mut has_expected = false
     let mut slot = seq.len(s.bindings)
     if declaration {
@@ -33,8 +34,8 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
         s.token = lexer.next(source, name.end)
         if s.token.kind == as_u32(17) {
             s.token = lexer.next(source, s.token.end)
-            expected_type = headers.scalar(s.token)
-            if expected_type == ast.INVALID_TYPE {
+            expected_type = noun.atom(headers.scalar(s.token))
+            if noun.eq(expected_type, noun.atom(types.INVALID)) {
                 let mut code: Field = 2
                 if s.token.kind == as_u32(1) { code = 6 }
                 s.error = ast.failed(s.token, code)
@@ -63,7 +64,7 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     s.error = rhs.error
     if (s.error.code == as_u32(0)) == false { return s }
     let value = seq.get(rhs.nodes, rhs.value)
-    if syntax.both(has_expected, (expected_type == ast.ty(value)) == false) {
+    if syntax.both(has_expected, (noun.eq(expected_type, ast.ty(value))) == false) {
         s.error = ast.issue(5, value)
         return s
     }

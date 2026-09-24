@@ -10,6 +10,7 @@ use std.compiler.nox.lexer
 use std.compiler.nox.symbols
 use std.compiler.nox.signatures
 use std.compiler.nox.header_state
+use std.compiler.nox.types
 
 #[pure]
 fn expected(token: syntax.Token) -> syntax.Error {
@@ -20,11 +21,11 @@ fn expected(token: syntax.Token) -> syntax.Error {
 
 #[pure]
 pub fn scalar(token: syntax.Token) -> Field {
-    if token.kind == as_u32(12) { return ast.FIELD }
-    if token.kind == as_u32(20) { return ast.BOOL }
-    if token.kind == as_u32(28) { return ast.UINT32 }
-    if token.kind == as_u32(34) { return ast.NOUN }
-    ast.INVALID_TYPE
+    if token.kind == as_u32(12) { return types.FIELD }
+    if token.kind == as_u32(20) { return types.BOOL }
+    if token.kind == as_u32(28) { return types.UINT32 }
+    if token.kind == as_u32(34) { return types.NOUN }
+    types.INVALID
 }
 
 #[pure]
@@ -40,8 +41,8 @@ fn open(source: bytes.Bytes, input: header_state.State) -> header_state.State {
     s.token = lexer.next(source, s.token.end)
     if s.token.kind == as_u32(9) {
         s.token = lexer.next(source, s.token.end)
-        s.current.returns = scalar(s.token)
-        if s.current.returns == ast.INVALID_TYPE { s.error = type_error(s.token) return s }
+        s.current.returns = noun.atom(scalar(s.token))
+        if noun.eq(s.current.returns, noun.atom(types.INVALID)) { s.error = type_error(s.token) return s }
         s.token = lexer.next(source, s.token.end)
     }
     if (s.token.kind == as_u32(7)) == false { s.error = expected(s.token) return s }
@@ -62,9 +63,9 @@ fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32) -> header
     if (s.token.kind == as_u32(17)) == false { s.error = expected(s.token) return s }
     s.token = lexer.next(source, s.token.end)
     let ty = scalar(s.token)
-    if ty == ast.INVALID_TYPE { s.error = type_error(s.token) return s }
+    if ty == types.INVALID { s.error = type_error(s.token) return s }
     if seq.len(s.params) == cap { s.error = syntax.error(7, name.start, name.end) return s }
-    s.params = seq.push(s.params, symbols.binding(name, false, ty), cap)
+    s.params = seq.push(s.params, symbols.binding(name, false, noun.atom(ty)), cap)
     s.current.count = syntax.inc(s.current.count)
     s.token = lexer.next(source, s.token.end)
     if s.token.kind == as_u32(6) { return open(source, s) }
@@ -101,7 +102,7 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
     if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
     s.token = lexer.next(source, name.end)
     if (s.token.kind == as_u32(5)) == false { s.error = expected(s.token) return s }
-    s.current = signatures.Function { name, params: seq.len(s.params), count: as_u32(0), returns: ast.UNIT, open: as_u32(0), close: as_u32(0) }
+    s.current = signatures.Function { name, params: seq.len(s.params), count: as_u32(0), returns: noun.atom(types.UNIT), open: as_u32(0), close: as_u32(0) }
     s.phase = 1
     s.token = lexer.next(source, s.token.end)
     s
@@ -129,10 +130,10 @@ pub fn parse(source: bytes.Bytes, start: U32, cap: U32) -> header_state.State {
         if s.done {
             if s.entry == signatures.NONE { s.error = syntax.error(3, s.token.start, s.token.end) return s }
             let entry = signatures.read(seq.get(s.functions, s.entry))
-            if syntax.both(entry.count == as_u32(0), entry.returns == ast.FIELD) { return s }
-            if syntax.both(entry.count == as_u32(1), entry.returns == ast.NOUN) {
+            if syntax.both(entry.count == as_u32(0), noun.eq(entry.returns, noun.atom(types.FIELD))) { return s }
+            if syntax.both(entry.count == as_u32(1), noun.eq(entry.returns, noun.atom(types.NOUN))) {
                 let parameter = seq.get(s.params, entry.params)
-                if noun.as_field(noun.tail(noun.tail(parameter))) == ast.NOUN { s.structured = true return s }
+                if noun.eq(noun.tail(noun.tail(parameter)), noun.atom(types.NOUN)) { s.structured = true return s }
             }
             s.error = syntax.error(3, entry.name.start, entry.name.end)
             return s

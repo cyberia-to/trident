@@ -1,6 +1,6 @@
 use super::{codegen, support};
 #[path = "nouns/support.rs"]
-mod data;
+pub(super) mod data;
 use data::{Noun, Noun::Atom};
 
 #[test]

@@ -15,6 +15,7 @@ use std.compiler.nox.declarations
 use std.compiler.nox.control_parse
 use std.compiler.nox.signatures
 use std.compiler.nox.loop_parse
+use std.compiler.nox.types
 
 #[pure]
 fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -36,10 +37,10 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
     if returning {
         s.token = lexer.next(source, s.token.end)
         if s.token.kind == as_u32(8) {
-            if (s.returns == ast.UNIT) == false { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+            if (noun.eq(s.returns, noun.atom(types.UNIT))) == false { s.error = syntax.error(5, s.token.start, s.token.end) return s }
             if seq.len(s.nodes) == cap { s.error = syntax.error(7, s.token.start, s.token.end) return s }
             let id = seq.len(s.nodes)
-            s.nodes = seq.push(s.nodes, ast.typed(ast.UNIT_VALUE, 0, 0, ast.UNIT, s.token.start, s.token.start), cap)
+            s.nodes = seq.push(s.nodes, ast.typed(ast.UNIT_VALUE, 0, 0, noun.atom(types.UNIT), s.token.start, s.token.start), cap)
             s = body_state.append(s, blocks.statement(blocks.RETURN, id, as_u32(0), as_u32(0)), cap)
             s.returned = true
             return s
@@ -54,7 +55,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
     s.token = value.token
     if returning {
         let node = seq.get(s.nodes, value.value)
-        if (ast.ty(node) == s.returns) == false { s.error = ast.issue(5, node) return s }
+        if (noun.eq(ast.ty(node), s.returns)) == false { s.error = ast.issue(5, node) return s }
         s = body_state.append(s, blocks.statement(blocks.RETURN, value.value, as_u32(0), as_u32(0)), cap)
         s.returned = true
         return s

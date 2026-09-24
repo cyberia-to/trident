@@ -4,13 +4,8 @@ use vm.nox.noun
 use vm.core.convert
 use std.nox.seq
 use std.compiler.nox.syntax
+use std.compiler.nox.types
 
-pub const FIELD: Field = 0
-pub const BOOL: Field = 1
-pub const UNIT: Field = 2
-pub const UINT32: Field = 3
-pub const NOUN: Field = 4
-pub const INVALID_TYPE: Field = 5
 pub const LITERAL: Field = 0
 pub const LOCAL: Field = 1
 pub const BOOLEAN: Field = 2
@@ -26,20 +21,20 @@ pub const BUILTIN: Field = 10
 // Postorder expression: [[kind [left right]] [type [start end]]].
 // Child IDs precede their parent. AST operations are independent of token kinds.
 #[pure]
-pub fn typed(kind: Field, left: Field, right: Field, ty: Field, start: U32, end: U32) -> Noun {
+pub fn typed(kind: Field, left: Field, right: Field, ty: Noun, start: U32, end: U32) -> Noun {
     let value = noun.pair(noun.atom(kind), noun.pair(noun.atom(left), noun.atom(right)))
     let span = noun.pair(noun.atom(as_field(start)), noun.atom(as_field(end)))
-    noun.pair(value, noun.pair(noun.atom(ty), span))
+    noun.pair(value, noun.pair(ty, span))
 }
 
 // Internal component builders can omit source spans.
 #[pure]
 pub fn node(kind: Field, left: Field, right: Field) -> Noun {
-    let mut ty = FIELD
-    if syntax.either(kind == BOOLEAN, kind == EQUAL) { ty = BOOL }
-    if kind == UNIT_VALUE { ty = UNIT }
-    if kind == LESS { ty = BOOL }
-    if kind == BIT_AND { ty = UINT32 }
+    let mut ty = noun.atom(types.FIELD)
+    if syntax.either(kind == BOOLEAN, kind == EQUAL) { ty = noun.atom(types.BOOL) }
+    if kind == UNIT_VALUE { ty = noun.atom(types.UNIT) }
+    if kind == LESS { ty = noun.atom(types.BOOL) }
+    if kind == BIT_AND { ty = noun.atom(types.UINT32) }
     typed(kind, left, right, ty, as_u32(0), as_u32(0))
 }
 
@@ -53,7 +48,7 @@ pub fn left(node: Noun) -> Field { noun.as_field(noun.head(noun.tail(noun.head(n
 pub fn right(node: Noun) -> Field { noun.as_field(noun.tail(noun.tail(noun.head(node)))) }
 
 #[pure]
-pub fn ty(node: Noun) -> Field { noun.as_field(noun.head(noun.tail(node))) }
+pub fn ty(node: Noun) -> Noun { noun.head(noun.tail(node)) }
 
 #[pure]
 pub fn start(node: Noun) -> U32 { as_u32(noun.as_field(noun.head(noun.tail(noun.tail(node))))) }

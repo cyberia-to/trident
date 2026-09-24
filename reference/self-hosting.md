@@ -350,6 +350,23 @@ remain Field/Bool. Qualified calls require actual module/import resolution.
 Digest identity, aggregate source syntax and compiler-profile generation remain
 subsequent increments. Earlier scalar-entry programs retain their ART1 bytes.
 
+Compiler-owned type descriptors are canonical Noun values. Primitive tags
+Field/Bool/Unit/U32/Noun retain atoms0/1/2/3/4; atom5 marks an invalid type and
+atom6 reserves Digest. AST, binding and signature records store the complete
+descriptor. Native identity compares types independently of temporary arena
+indices and definition order. Primitive tests use their explicit tag atoms.
+
+The tuple constructor owns ordered child descriptors and derives logical depth,
+logical node count and recursive contains-Noun metadata. Logical nodes count
+repeated occurrences even when the canonical DAG shares their representation.
+Accessors and child arguments consume descriptors made by the compiler's type
+constructors; external modules supply source bytes. Type construction
+obeys the requested sequence allowance, a 64-level nesting ceiling and a guest
+arity ceiling16. Zero-child and invalid-child descriptors reject. Composite
+construction failures cannot produce a valid descriptor. Equality eligibility
+reads contains-Noun; nested Noun components stay outside the ordinary equality
+operator. Tuple source syntax and Digest operations are subsequent increments.
+
 Literal-range loops admit `for name in A..B { body }`, where A and B are
 unsigned decimal literals, A is at most 2^32−1 and B is at most 2^32.
 The guest checks their raw source digits before Field normalization, including

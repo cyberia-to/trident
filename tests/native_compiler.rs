@@ -135,3 +135,6 @@ mod loops;
 
 #[path = "native_compiler/nouns.rs"]
 mod nouns;
+
+#[path = "native_compiler/types.rs"]
+mod types;

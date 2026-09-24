@@ -17,7 +17,7 @@ fn main(input: Noun) -> Noun {
     let depth = as_u32(noun.as_field(input))
     let zero = as_u32(0)
     let token = syntax.token(1, zero, as_u32(1), 102)
-    let f = signatures.Function { name: token, params: zero, count: as_u32(1), returns: 0, open: zero, close: zero }
+    let f = signatures.Function { name: token, params: zero, count: as_u32(1), returns: noun.atom(0), open: zero, close: zero }
     let functions = seq.push(seq.empty(), signatures.pack(f), as_u32(1))
     let context = expression_state.context(seq.empty(), noun.atom(0), functions, seq.empty())
     let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: depth, vals: zero,

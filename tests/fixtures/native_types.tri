@@ -1,0 +1,123 @@
+program native_types
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.bytes
+use std.compiler.nox.body_state
+use std.compiler.nox.body_store
+use std.compiler.nox.blocks
+use std.compiler.nox.types
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.symbols
+use std.compiler.nox.signatures
+
+// Exercise every real record reader with a nested descriptor containing Noun.
+#[pure]
+fn records(ty: Noun) -> Noun {
+    let zero = as_u32(0)
+    let one = as_u32(1)
+    let name = syntax.token(1, zero, one, 120)
+    let source = bytes.push(bytes.empty(), as_u32(120), one)
+    let node = ast.typed(ast.LOCAL, 0, 0, ty, zero, one)
+    let bindings = seq.push(seq.empty(), symbols.binding(name, false, ty), one)
+    let found = symbols.lookup(source, name, bindings, noun.pair(noun.atom(0), noun.atom(0)))
+    assert(found.exists)
+    let f = signatures.Function { name, params: zero, count: one, returns: ty, open: zero, close: one }
+    let signature = signatures.read(signatures.pack(f))
+    let mut body = body_state.initial(name)
+    body.returns = ty
+    body.bindings = bindings
+    body.nodes = seq.push(body.nodes, node, one)
+    body.blocks = seq.push(body.blocks, blocks.pack(blocks.Block { statements: noun.atom(0), has_tail: true, tail: zero, start: zero, end: one }), one)
+    let restored = body_store.read(body_store.pack(body, noun.atom(1)), as_u32(4096))
+    let mut flag: Field = 0
+    if types.contains_noun(restored.returns) { flag = 1 }
+    noun.pair(noun.atom(flag), noun.pair(ast.ty(node), noun.pair(found.ty, noun.pair(signature.returns, restored.returns))))
+}
+
+// [mode [node cap depth cap]] exercises the actual canonical constructors.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let mode = noun.as_field(noun.head(input))
+    let caps = noun.tail(input)
+    let nodes = as_u32(noun.as_field(noun.head(caps)))
+    let depth = as_u32(noun.as_field(noun.tail(caps)))
+    if mode == 0 {
+        let name = syntax.token(1, as_u32(3), as_u32(7), 0)
+        let ty = noun.atom(types.UINT32)
+        let node = ast.typed(ast.LOCAL, 2, 0, ty, as_u32(3), as_u32(7))
+        let binding = symbols.binding(name, true, ty)
+        let f = signatures.Function { name, params: as_u32(0), count: as_u32(1), returns: ty, open: as_u32(8), close: as_u32(9) }
+        return noun.pair(node, noun.pair(binding, signatures.pack(f)))
+    }
+    let mut children = seq.empty()
+    if mode == 1 {
+        children = seq.push(children, noun.atom(types.FIELD), as_u32(16))
+        children = seq.push(children, noun.atom(types.UNIT), as_u32(16))
+        children = seq.push(children, noun.atom(types.NOUN), as_u32(16))
+    }
+    if mode == 2 {
+        children = seq.push(children, noun.atom(types.FIELD), as_u32(16))
+        children = seq.push(children, noun.atom(types.UINT32), as_u32(16))
+        let inner = types.tuple(children, as_u32(4096), as_u32(64))
+        children = seq.empty()
+        children = seq.push(children, inner.ty, as_u32(16))
+        children = seq.push(children, inner.ty, as_u32(16))
+    }
+    if mode == 3 {
+        children = seq.push(children, noun.atom(types.INVALID), as_u32(16))
+    }
+    if mode == 4 {
+        for i in 0..16 { children = seq.push(children, noun.atom(types.FIELD), as_u32(16)) }
+    }
+    if mode == 5 {
+        for i in 0..17 { children = seq.push(children, noun.atom(types.FIELD), as_u32(17)) }
+    }
+    if mode == 6 {
+        let mut current = noun.atom(types.FIELD)
+        for i in 0..64 {
+            children = seq.push(seq.empty(), current, as_u32(1))
+            let nested = types.tuple(children, nodes, depth)
+            if nested.failed { return noun.atom(types.INVALID) }
+            current = nested.ty
+        }
+        return current
+    }
+    if syntax.either(mode == 7, syntax.either(mode == 8, mode == 9)) {
+        let mut current = noun.atom(types.FIELD)
+        for i in 0..11 {
+            children = seq.push(seq.empty(), current, as_u32(2))
+            children = seq.push(children, current, as_u32(2))
+            let next = types.tuple(children, nodes, depth)
+            if next.failed { return noun.atom(types.INVALID) }
+            current = next.ty
+        }
+        if mode == 7 { return current }
+        for i in 0..2 {
+            children = seq.push(seq.empty(), current, as_u32(1))
+            let next = types.tuple(children, nodes, depth)
+            if next.failed { return noun.atom(types.INVALID) }
+            current = next.ty
+            if mode == 8 { return current }
+        }
+        return current
+    }
+    if syntax.either(mode == 10, syntax.either(mode == 11, mode == 12)) {
+        let mut a = types.FIELD
+        let mut b = types.NOUN
+        if mode == 11 { a = types.NOUN b = types.FIELD }
+        if mode == 12 { b = types.BOOL }
+        children = seq.push(children, noun.atom(a), as_u32(2))
+        children = seq.push(children, noun.atom(b), as_u32(2))
+        let inner = types.tuple(children, as_u32(4096), as_u32(64))
+        children = seq.push(seq.empty(), inner.ty, as_u32(2))
+        children = seq.push(children, noun.atom(types.UINT32), as_u32(2))
+        let outer = types.tuple(children, as_u32(4096), as_u32(64))
+        return records(outer.ty)
+    }
+    let built = types.tuple(children, nodes, depth)
+    if built.failed { return noun.atom(types.INVALID) }
+    built.ty
+}

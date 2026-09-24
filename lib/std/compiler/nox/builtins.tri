@@ -1,10 +1,11 @@
 module std.compiler.nox.builtins
 
+use vm.nox.noun
 use vm.core.convert
 use vm.core.field
 use std.nox.bytes
 use std.compiler.nox.syntax
-use std.compiler.nox.ast
+use std.compiler.nox.types
 
 pub const NONE: U32 = 0
 pub const TO_U32: U32 = 1
@@ -66,17 +67,17 @@ pub fn arity(kind: U32) -> U32 {
 
 #[pure]
 #[requires(kind < COUNT)]
-pub fn parameter(kind: U32) -> Field {
-    if NOUN_ATOM < kind { return ast.NOUN }
-    if kind == TO_FIELD { return ast.UINT32 }
-    ast.FIELD
+pub fn parameter(kind: U32) -> Noun {
+    if NOUN_ATOM < kind { return noun.atom(types.NOUN) }
+    if kind == TO_FIELD { return noun.atom(types.UINT32) }
+    noun.atom(types.FIELD)
 }
 
 #[pure]
 #[requires(kind < COUNT)]
-pub fn returns(kind: U32) -> Field {
-    if kind == NOUN_EQ { return ast.BOOL }
-    if syntax.both((kind < NOUN_ATOM) == false, (kind == NOUN_FIELD) == false) { return ast.NOUN }
-    if kind == TO_U32 { return ast.UINT32 }
-    ast.FIELD
+pub fn returns(kind: U32) -> Noun {
+    if kind == NOUN_EQ { return noun.atom(types.BOOL) }
+    if syntax.both((kind < NOUN_ATOM) == false, (kind == NOUN_FIELD) == false) { return noun.atom(types.NOUN) }
+    if kind == TO_U32 { return noun.atom(types.UINT32) }
+    noun.atom(types.FIELD)
 }
