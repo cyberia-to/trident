@@ -39,6 +39,10 @@ impl TIRBuilder {
                 match op {
                     BinOp::Add => self.ops.push(TIROp::Add),
                     BinOp::Mul => self.ops.push(TIROp::Mul),
+                    BinOp::Eq if self.stack.last().is_some_and(|value| value.width == 0) => {
+                        // Both operands were evaluated; neither contributes words.
+                        self.ops.push(TIROp::Push(1));
+                    }
                     BinOp::Eq => self.ops.push(TIROp::Eq),
                     BinOp::Lt => self.ops.push(TIROp::Lt),
                     BinOp::BitAnd => self.ops.push(TIROp::And),
@@ -301,9 +305,17 @@ impl TIRBuilder {
     // ── Index expression ──────────────────────────────────────────
 
     pub(crate) fn build_index(&mut self, inner: &Spanned<Expr>, index: &Spanned<Expr>) {
-        let element_type = match self.expr_type(&inner.node) {
-            Some(Type::Array(element, _)) => Some(*element),
-            _ => None,
+        let (element_type, declared_count) = match self.expr_type(&inner.node) {
+            Some(Type::Array(element, size)) => {
+                let Some(count) = self.array_count(&size) else {
+                    self.ops.push(TIROp::Comment(
+                        "ERROR: array length must resolve to a U32 count".into(),
+                    ));
+                    return;
+                };
+                (Some(*element), Some(count))
+            }
+            _ => (None, None),
         };
         let named = if let Expr::Var(name) = &inner.node {
             self.stack
@@ -325,11 +337,13 @@ impl TIRBuilder {
             .as_ref()
             .map(|ty| self.type_width(ty))
             .unwrap_or(fallback_width);
-        let count = if elem_width > 0 {
-            array_width / elem_width
-        } else {
-            0
-        };
+        let count = declared_count.unwrap_or_else(|| {
+            if elem_width > 0 {
+                array_width / elem_width
+            } else {
+                0
+            }
+        });
         // Proven constant access to a named array needs only element copies.
         if let (Some((_, (depth, _, _))), Expr::Literal(Literal::Integer(i))) =
             (&named, &index.node)
@@ -360,7 +374,7 @@ impl TIRBuilder {
                 if i < count as u64 {
                     self.ops.extend(leaf(i as u32));
                 }
-            } else {
+            } else if elem_width > 0 {
                 self.ops.extend(super::index::select(0, 0, count, &leaf));
             }
             let dead = if named.is_some() { 1 } else { array_width + 1 };

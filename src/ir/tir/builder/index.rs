@@ -129,7 +129,12 @@ impl TIRBuilder {
                         self.ops.extend([TIROp::Push(0), TIROp::Assert(1)]);
                         return;
                     };
-                    let count = size.eval(&self.current_subs) as u32;
+                    let Some(count) = self.array_count(&size) else {
+                        self.ops.push(TIROp::Comment(
+                            "ERROR: array length must resolve to a U32 count".into(),
+                        ));
+                        return;
+                    };
                     self.build_expr(&expr.node);
                     self.assert_index_bound(count);
                     if count == 0 {
@@ -151,7 +156,9 @@ impl TIRBuilder {
             self.ops.extend([TIROp::Push(0), TIROp::Assert(1)]);
             return;
         };
-        self.ops.extend(stores(&steps, 0, depth, width, indices));
+        if width > 0 {
+            self.ops.extend(stores(&steps, 0, depth, width, indices));
+        }
         self.stack.pop();
         self.emit_pop(indices);
         for _ in 0..indices {

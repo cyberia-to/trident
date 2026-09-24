@@ -129,7 +129,7 @@ impl TIRBuilder {
         let normalized;
         let body = if super::early_return::contains(&body.node) {
             // Slots are part of this function's frame and survive nested calls.
-            if ret_width > 0 {
+            if has_return {
                 for _ in 0..ret_width {
                     self.ops.push(TIROp::Push(0));
                 }
@@ -211,7 +211,9 @@ impl TIRBuilder {
 
             if has_return && total_width > 0 {
                 let to_pop = total_width.saturating_sub(ret_width);
-                if to_pop > 0 {
+                if ret_width == 0 {
+                    self.emit_pop(to_pop);
+                } else if to_pop > 0 {
                     self.ops.push(TIROp::Swap(to_pop));
                     self.emit_pop(to_pop);
                 }

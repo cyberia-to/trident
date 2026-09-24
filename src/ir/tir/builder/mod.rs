@@ -180,10 +180,23 @@ impl TIRBuilder {
                         self.fn_return_types
                             .insert(func.name.node.clone(), ty.node.clone());
                     } else {
-                        self.fn_return_types.remove(&func.name.node);
+                        self.fn_return_types
+                            .insert(func.name.node.clone(), Type::Tuple(Vec::new()));
                     }
                 }
                 _ => {}
+            }
+        }
+
+        // ── Pre-scan: collect constant values ──
+        for item in &file.items {
+            if !self.is_item_cfg_active(&item.node) {
+                continue;
+            }
+            if let Item::Const(cdef) = &item.node {
+                if let Expr::Literal(Literal::Integer(val)) = &cdef.value.node {
+                    self.constants.insert(cdef.name.node.clone(), *val);
+                }
             }
         }
 
@@ -256,18 +269,6 @@ impl TIRBuilder {
             if let Item::Struct(sdef) = &item.node {
                 self.struct_types
                     .insert(sdef.name.node.clone(), sdef.clone());
-            }
-        }
-
-        // ── Pre-scan: collect constant values ──
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Const(cdef) = &item.node {
-                if let Expr::Literal(Literal::Integer(val)) = &cdef.value.node {
-                    self.constants.insert(cdef.name.node.clone(), *val);
-                }
             }
         }
 
