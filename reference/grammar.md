@@ -56,9 +56,9 @@ let_stmt      = "let" "mut"? (IDENT | "(" IDENT ("," IDENT)* ")")
                 (":" type)? "=" expr ;
 assign_stmt   = place "=" expr ;
 place         = IDENT | place "." IDENT | place "[" expr "]" ;
-if_stmt       = "if" expr block ("else" block)? ;
-for_stmt      = "for" IDENT "in" expr ".." expr ("bounded" INTEGER)? block ;
-match_stmt    = "match" expr "{" match_arm* "}" ;
+if_stmt       = "if" before_block_expr block ("else" (block | if_stmt))? ;
+for_stmt      = "for" IDENT "in" expr ".." before_block_expr ("bounded" INTEGER)? block ;
+match_stmt    = "match" before_block_expr "{" match_arm* "}" ;
 match_arm     = pattern "=>" block ;
 pattern       = literal | "_" | struct_pattern ;
 struct_pattern = IDENT "{" (IDENT (":" (literal | IDENT))? ",")* "}" ;
@@ -77,6 +77,7 @@ expr_stmt     = expr ;
 
 (* Expressions *)
 expr          = primary ("." IDENT | "[" expr "]")* | bin_op ;
+before_block_expr = expr ; (* restriction below *)
 primary       = literal | module_path | call | struct_init
               | array_init | tuple_expr | "(" expr ")" ;
 bin_op        = expr ("+" | "*" | "==" | "<" | "&" | "^" | "/%"
@@ -93,6 +94,13 @@ INTEGER       = [0-9]+ ;
 IDENT         = [a-zA-Z_][a-zA-Z0-9_]* ;
 comment       = "//" .* NEWLINE ;
 ```
+
+An expression before a control-flow block assigns its unparenthesized `{` to
+that block. Struct literals in an `if` condition, a `for` range end, or a `match`
+scrutinee therefore require parentheses, for example `(Point { x: 1 }).x`.
+The restriction applies to binary operands at that level. Parenthesized
+expressions, call arguments, array elements and index expressions use the
+ordinary expression grammar and may contain struct literals directly.
 
 ## Native type extension (0.4 development)
 

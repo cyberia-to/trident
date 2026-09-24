@@ -262,6 +262,12 @@ value uses that same declaration order, recursively for nested structs; arrays
 and tuples retain element order. This rule also determines the order of I/O and
 other effects in field expressions.
 
+Before a control-flow block, `{` opens that block. A struct literal in an `if`
+condition, `for` range end or `match` scrutinee uses parentheses, such as
+`if (Point { x: 1, y: 2 }).x == 1 { ... }`. Struct literals inside call
+arguments, arrays and index expressions already have a delimited expression
+context. Ordinary initializers such as `let p = Empty {}` keep their syntax.
+
 ### Events
 
 ```trident
@@ -365,7 +371,7 @@ if condition {
 }
 ```
 
-No `else if` — use nested `if/else`. Condition must be `Bool` or `Field`
+`else if` chains are parsed as nested `if/else`. Condition must be `Bool` or `Field`
 (0 = false, nonzero = true).
 
 ### For Loops

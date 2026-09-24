@@ -1,0 +1,23 @@
+module boundary
+
+pub const ZERO: Field = 0
+const TWO: U32 = 2
+struct Point { x: Field }
+
+fn value(point: Point) -> Field { point.x }
+
+pub fn choose(n: Field) -> Field {
+    let x = 5
+    let point = Point { x }
+    let mut total: Field = 7
+    if n == ZERO {} else { total = 11 }
+    if n == ZERO { total } else { x }
+    if (Point { x: 1 }).x == 1 { total = total + 1 }
+    if value(Point { x: 2 }) == 2 { total = total + 2 }
+    if [Point { x: 3 }][0].x == 3 { total = total + 3 }
+    let values = [5, 9]
+    if values[as_u32(Point { x: 1 }.x)] == 9 { total = total + 4 }
+    for i in 0..TWO {}
+    for i in 0..TWO { total = total + 1 }
+    total
+}

@@ -84,8 +84,12 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH2 native arithmetic compiler: shared guest validation budget, UTF-8/lexer,
   iterative expression parser, native ART1/RES1 generation and executed corpus.
   [Acceptance](self-hosting/native-source-compiler.md).
+- [x] SH3 seed parser: explicit expression-before-block parsing for if/for/match;
+  [AST and cross-target execution evidence](self-hosting/block-expressions.md).
+- [ ] SH3 seed values: preserve zero-width structures and aggregates in shared
+  TIR without renaming or consuming adjacent live values.
 - [ ] SH3 seed frontend: resolved halting-call semantics through return checking
-  and both backends; explicit expression-before-block parsing for if/for/match.
+  and both backends.
 - [ ] SH3 native compiler: extend the arithmetic pilot into the complete required
   language, with typed declarations, calls, control flow, aggregates and imports.
 - [ ] SH4 source closure and allocation scale: measure and repair the lifetime
@@ -107,7 +111,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
-| Seed frontend halting/return and empty-if parsing inconsistencies | Trident / SH3 | [repros and current source workarounds](self-hosting/native-collections.md#seed-frontend-findings-carried-into-sh3) |
+| Seed frontend halting/return semantics and zero-width TIR values | Trident / SH3 | [halting repros](self-hosting/native-collections.md#seed-frontend-findings-carried-into-sh3); [parser repair and zero-width finding](self-hosting/block-expressions.md) |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -193,3 +197,10 @@ diagnostic, shared-validation and execution-limit cases passed; the source
 admission arena limit remains explicit. [Pinned evidence](self-hosting/sh2-native-compiler-validation.json).
 Continue with SH3 frontend repairs and whole-compiler language coverage, then
 SH4 resource work before attempting C2.
+
+2026-09-24 continuation: expression-before-block parsing accepted at Trident
+`fd64b73f094ff6a611f8473364f7758484c02fd9`, with Trisha companion
+`03b6f9dda71f08000265c929ea55dc32642b050f`.
+[Commands and evidence](self-hosting/sh3-block-expressions-validation.json).
+Continue with the observed zero-width TIR value defect and resolved halting
+semantics, then complete native compiler coverage. SH3 remains open.

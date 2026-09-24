@@ -5,10 +5,11 @@
 // ---
 mod advanced;
 mod basics;
+mod block_boundary;
 
-use crate::syntax::parser::Parser;
 use crate::ast::File;
 use crate::lexer::Lexer;
+use crate::syntax::parser::Parser;
 
 pub(super) fn parse(source: &str) -> File {
     let (tokens, _comments, lex_diags) = Lexer::new(source, 0).tokenize();
