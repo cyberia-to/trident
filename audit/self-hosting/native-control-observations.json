@@ -1,0 +1,579 @@
+{
+  "date": "2026-09-24",
+  "binary_sha256": "d9fa94d800bcf2aca057776629b7a09d51fdc9760e2a584133dd0fb9889a31fe",
+  "source_files": {
+    "constant_0.tri": "program control\nfn main(input: Noun) -> Noun { let mut n: Field = 0\nfor i in 0..0 { n = n + 1 }\nnox_noun_atom(n) }\n",
+    "constant_1.tri": "program control\nfn main(input: Noun) -> Noun { let mut n: Field = 0\nfor i in 0..1 { n = n + 1 }\nnox_noun_atom(n) }\n",
+    "constant_4097.tri": "program control\nfn main(input: Noun) -> Noun { let mut n: Field = 0\nfor i in 0..4097 { n = n + 1 }\nnox_noun_atom(n) }\n",
+    "constant_5000.tri": "program control\nfn main(input: Noun) -> Noun { let mut n: Field = 0\nfor i in 0..5000 { n = n + 1 }\nnox_noun_atom(n) }\n",
+    "dynamic.tri": "program control\nfn main(input: Noun) -> Noun { let end = as_u32(nox_noun_as_field(input))\nlet mut n: Field = 0\nfor i in 0..end bounded 5000 { n = n + 1 }\nnox_noun_atom(n) }\n"
+  },
+  "records": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "constant_0.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "constant_0.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"constant_0.dag\",\"artifact_bytes\":8117,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"control\",\"program_particle\":\"d5c846e525b126450ac7df63beb72e1dc214d223d1b2586e99eb94897ce931cf\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "command": "build",
+        "error": null,
+        "ok": true,
+        "result": {
+          "artifact": "constant_0.dag",
+          "artifact_bytes": 8117,
+          "compiler": {
+            "api": 3,
+            "name": "trident",
+            "version": "0.3.0"
+          },
+          "entry_point": "main",
+          "format": "artifact",
+          "input_profile": 0,
+          "kind": "build",
+          "output_profile": 0,
+          "profile": "debug",
+          "program": "control",
+          "program_particle": "d5c846e525b126450ac7df63beb72e1dc214d223d1b2586e99eb94897ce931cf",
+          "reads_state": false,
+          "target": "nox",
+          "target_os": null,
+          "target_package": {
+            "compilation_hash": "8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2",
+            "owner": "joy",
+            "version": "0.5.0"
+          },
+          "target_vm": "nox"
+        },
+        "schema": "joy/cli/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "constant_0.dag",
+        "--input",
+        "zero.dag",
+        "-o",
+        "input_0.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"input_0.dag\",\"execution\":{\"allocated_nodes\":94,\"arena_reserved_bytes\":26214416,\"charged_reductions\":57,\"elapsed_micros\":1043,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"peak_frames\":12,\"program_particle\":\"d5c846e525b126450ac7df63beb72e1dc214d223d1b2586e99eb94897ce931cf\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "input_0.dag",
+        "execution": {
+          "allocated_nodes": 94,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 57,
+          "elapsed_micros": 1043,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "peak_frames": 12,
+          "program_particle": "d5c846e525b126450ac7df63beb72e1dc214d223d1b2586e99eb94897ce931cf",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "constant_1.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "constant_1.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"constant_1.dag\",\"artifact_bytes\":17578,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"control\",\"program_particle\":\"bf80f920415f06ffd98f1bf35af6533c20c0212480cbb25176d5364b050eb82c\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "command": "build",
+        "error": null,
+        "ok": true,
+        "result": {
+          "artifact": "constant_1.dag",
+          "artifact_bytes": 17578,
+          "compiler": {
+            "api": 3,
+            "name": "trident",
+            "version": "0.3.0"
+          },
+          "entry_point": "main",
+          "format": "artifact",
+          "input_profile": 0,
+          "kind": "build",
+          "output_profile": 0,
+          "profile": "debug",
+          "program": "control",
+          "program_particle": "bf80f920415f06ffd98f1bf35af6533c20c0212480cbb25176d5364b050eb82c",
+          "reads_state": false,
+          "target": "nox",
+          "target_os": null,
+          "target_package": {
+            "compilation_hash": "8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2",
+            "owner": "joy",
+            "version": "0.5.0"
+          },
+          "target_vm": "nox"
+        },
+        "schema": "joy/cli/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "constant_1.dag",
+        "--input",
+        "zero.dag",
+        "-o",
+        "input_1.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"input_1.dag\",\"execution\":{\"allocated_nodes\":206,\"arena_reserved_bytes\":26214416,\"charged_reductions\":207,\"elapsed_micros\":1995,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"peak_frames\":20,\"program_particle\":\"bf80f920415f06ffd98f1bf35af6533c20c0212480cbb25176d5364b050eb82c\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "input_1.dag",
+        "execution": {
+          "allocated_nodes": 206,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 207,
+          "elapsed_micros": 1995,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe",
+          "peak_frames": 20,
+          "program_particle": "bf80f920415f06ffd98f1bf35af6533c20c0212480cbb25176d5364b050eb82c",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "constant_4097.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "constant_4097.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"constant_4097.dag\",\"artifact_bytes\":17813,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"control\",\"program_particle\":\"91069a0f37ce1f2ac558b60378741b89c6b01b51ddb78cda354cb5eda3c6adcc\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "command": "build",
+        "error": null,
+        "ok": true,
+        "result": {
+          "artifact": "constant_4097.dag",
+          "artifact_bytes": 17813,
+          "compiler": {
+            "api": 3,
+            "name": "trident",
+            "version": "0.3.0"
+          },
+          "entry_point": "main",
+          "format": "artifact",
+          "input_profile": 0,
+          "kind": "build",
+          "output_profile": 0,
+          "profile": "debug",
+          "program": "control",
+          "program_particle": "91069a0f37ce1f2ac558b60378741b89c6b01b51ddb78cda354cb5eda3c6adcc",
+          "reads_state": false,
+          "target": "nox",
+          "target_os": null,
+          "target_package": {
+            "compilation_hash": "8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2",
+            "owner": "joy",
+            "version": "0.5.0"
+          },
+          "target_vm": "nox"
+        },
+        "schema": "joy/cli/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "constant_4097.dag",
+        "--input",
+        "zero.dag",
+        "-o",
+        "input_4097.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"input_4097.dag\",\"execution\":{\"allocated_nodes\":57528,\"arena_reserved_bytes\":26214416,\"charged_reductions\":274639,\"elapsed_micros\":402471,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"f0ca9fd53ae4cafeee4643245c2c34e20db0c7f7c759c543d15a081f549655d9\",\"peak_frames\":32788,\"program_particle\":\"91069a0f37ce1f2ac558b60378741b89c6b01b51ddb78cda354cb5eda3c6adcc\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "input_4097.dag",
+        "execution": {
+          "allocated_nodes": 57528,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 274639,
+          "elapsed_micros": 402471,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "f0ca9fd53ae4cafeee4643245c2c34e20db0c7f7c759c543d15a081f549655d9",
+          "peak_frames": 32788,
+          "program_particle": "91069a0f37ce1f2ac558b60378741b89c6b01b51ddb78cda354cb5eda3c6adcc",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "constant_5000.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "constant_5000.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"constant_5000.dag\",\"artifact_bytes\":17813,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"control\",\"program_particle\":\"fcb386472526c2ab18a348e1b73c3b1273094f5ebd53e342b0ac5b8f35c4fa8b\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "command": "build",
+        "error": null,
+        "ok": true,
+        "result": {
+          "artifact": "constant_5000.dag",
+          "artifact_bytes": 17813,
+          "compiler": {
+            "api": 3,
+            "name": "trident",
+            "version": "0.3.0"
+          },
+          "entry_point": "main",
+          "format": "artifact",
+          "input_profile": 0,
+          "kind": "build",
+          "output_profile": 0,
+          "profile": "debug",
+          "program": "control",
+          "program_particle": "fcb386472526c2ab18a348e1b73c3b1273094f5ebd53e342b0ac5b8f35c4fa8b",
+          "reads_state": false,
+          "target": "nox",
+          "target_os": null,
+          "target_package": {
+            "compilation_hash": "8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2",
+            "owner": "joy",
+            "version": "0.5.0"
+          },
+          "target_vm": "nox"
+        },
+        "schema": "joy/cli/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "constant_5000.dag",
+        "--input",
+        "zero.dag",
+        "-o",
+        "input_5000.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"input_5000.dag\",\"execution\":{\"allocated_nodes\":70170,\"arena_reserved_bytes\":26214416,\"charged_reductions\":335140,\"elapsed_micros\":490196,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"35f4168424ec4ecb533e047fa9c3a2bbedff5eb1b1646aab51226f3947750bee\",\"peak_frames\":40012,\"program_particle\":\"fcb386472526c2ab18a348e1b73c3b1273094f5ebd53e342b0ac5b8f35c4fa8b\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "input_5000.dag",
+        "execution": {
+          "allocated_nodes": 70170,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 335140,
+          "elapsed_micros": 490196,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "35f4168424ec4ecb533e047fa9c3a2bbedff5eb1b1646aab51226f3947750bee",
+          "peak_frames": 40012,
+          "program_particle": "fcb386472526c2ab18a348e1b73c3b1273094f5ebd53e342b0ac5b8f35c4fa8b",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "dynamic.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "dynamic.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"dynamic.dag\",\"artifact_bytes\":22659,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"control\",\"program_particle\":\"c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "command": "build",
+        "error": null,
+        "ok": true,
+        "result": {
+          "artifact": "dynamic.dag",
+          "artifact_bytes": 22659,
+          "compiler": {
+            "api": 3,
+            "name": "trident",
+            "version": "0.3.0"
+          },
+          "entry_point": "main",
+          "format": "artifact",
+          "input_profile": 0,
+          "kind": "build",
+          "output_profile": 0,
+          "profile": "debug",
+          "program": "control",
+          "program_particle": "c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db",
+          "reads_state": false,
+          "target": "nox",
+          "target_os": null,
+          "target_package": {
+            "compilation_hash": "8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2",
+            "owner": "joy",
+            "version": "0.5.0"
+          },
+          "target_vm": "nox"
+        },
+        "schema": "joy/cli/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "dynamic.dag",
+        "--input",
+        "input_0.dag",
+        "-o",
+        "output_0.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"output_0.dag\",\"execution\":{\"allocated_nodes\":60213,\"arena_reserved_bytes\":26214416,\"charged_reductions\":590170,\"elapsed_micros\":426311,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"peak_frames\":40016,\"program_particle\":\"c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "output_0.dag",
+        "execution": {
+          "allocated_nodes": 60213,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 590170,
+          "elapsed_micros": 426311,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "peak_frames": 40016,
+          "program_particle": "c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "dynamic.dag",
+        "--input",
+        "input_1.dag",
+        "-o",
+        "output_1.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"output_1.dag\",\"execution\":{\"allocated_nodes\":60237,\"arena_reserved_bytes\":26214416,\"charged_reductions\":590192,\"elapsed_micros\":428428,\"frame_buffer_bytes\":11534336,\"input_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"output_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"peak_frames\":40016,\"program_particle\":\"c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "output_1.dag",
+        "execution": {
+          "allocated_nodes": 60237,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 590192,
+          "elapsed_micros": 428428,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe",
+          "output_particle": "8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe",
+          "peak_frames": 40016,
+          "program_particle": "c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "dynamic.dag",
+        "--input",
+        "input_4097.dag",
+        "-o",
+        "output_4097.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"output_4097.dag\",\"execution\":{\"allocated_nodes\":80718,\"arena_reserved_bytes\":26214416,\"charged_reductions\":680304,\"elapsed_micros\":559816,\"frame_buffer_bytes\":11534336,\"input_particle\":\"f0ca9fd53ae4cafeee4643245c2c34e20db0c7f7c759c543d15a081f549655d9\",\"output_particle\":\"f0ca9fd53ae4cafeee4643245c2c34e20db0c7f7c759c543d15a081f549655d9\",\"peak_frames\":40016,\"program_particle\":\"c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "output_4097.dag",
+        "execution": {
+          "allocated_nodes": 80718,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 680304,
+          "elapsed_micros": 559816,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "f0ca9fd53ae4cafeee4643245c2c34e20db0c7f7c759c543d15a081f549655d9",
+          "output_particle": "f0ca9fd53ae4cafeee4643245c2c34e20db0c7f7c759c543d15a081f549655d9",
+          "peak_frames": 40016,
+          "program_particle": "c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "dynamic.dag",
+        "--input",
+        "input_5000.dag",
+        "-o",
+        "output_5000.dag",
+        "--frames",
+        "65536",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"output_5000.dag\",\"execution\":{\"allocated_nodes\":85233,\"arena_reserved_bytes\":26214416,\"charged_reductions\":700170,\"elapsed_micros\":589015,\"frame_buffer_bytes\":11534336,\"input_particle\":\"35f4168424ec4ecb533e047fa9c3a2bbedff5eb1b1646aab51226f3947750bee\",\"output_particle\":\"35f4168424ec4ecb533e047fa9c3a2bbedff5eb1b1646aab51226f3947750bee\",\"peak_frames\":40016,\"program_particle\":\"c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "receipt": {
+        "artifact": "output_5000.dag",
+        "execution": {
+          "allocated_nodes": 85233,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 700170,
+          "elapsed_micros": 589015,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "35f4168424ec4ecb533e047fa9c3a2bbedff5eb1b1646aab51226f3947750bee",
+          "output_particle": "35f4168424ec4ecb533e047fa9c3a2bbedff5eb1b1646aab51226f3947750bee",
+          "peak_frames": 40016,
+          "program_particle": "c4f7f1fae49bd130bb32238eee617f63fb9def1d2a44497a539b8bdcbd9943db",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "dynamic.dag",
+        "--input",
+        "input_5000.dag",
+        "-o",
+        "output_5000.dag",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution resource/profile: Frames\n"
+    }
+  ],
+  "default_frame_failure_preserved_output_sha256": "1561cea3affbac04b51cb12a7ab8eb9453526abdb7f9374a107deb203afa6ac3",
+  "observations": "Complete canonical atom outputs independently checked; dynamic outputs byte-equal to constant outputs. No trace/proof requested.",
+  "owners": {
+    "trident": "4317c767607ce83210348d285c1390df0bed5d94",
+    "joy": "ecc17f45da87da63bd4edbd876867be40b53eec4",
+    "trisha": "ca7f11fdcd0164b54a468a69abf00301411a520f",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "command": "python3 /tmp/trident-04-control-cli.py (exact subprocess commands and source texts embedded below)"
+}

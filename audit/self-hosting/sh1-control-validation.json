@@ -1,0 +1,163 @@
+{
+  "date": "2026-09-24",
+  "purpose": "SH1 reusable raw native control acceptance; development feature branches, not a release candidate",
+  "owners": {
+    "trident": "4317c767607ce83210348d285c1390df0bed5d94",
+    "joy": "ecc17f45da87da63bd4edbd876867be40b53eec4",
+    "trisha": "ca7f11fdcd0164b54a468a69abf00301411a520f",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "platform": {
+    "os": "Darwin",
+    "architecture": "arm64",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)"
+  },
+  "checks": [
+    {
+      "repository": "trident",
+      "source_revision": "4317c767607ce83210348d285c1390df0bed5d94",
+      "command": "cargo test --workspace --locked",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-control-committed-tests.log",
+      "log_sha256": "8984cf8cd4f07add783c072dcd15e22150b158ede88f33321a6f6b7f5c5c2270",
+      "tests": {
+        "passed": 891,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trident",
+      "source_revision": "4317c767607ce83210348d285c1390df0bed5d94",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-control-final-check.log",
+      "log_sha256": "26e65931823f16bdfe215d7d02e140e9ec0b24c913886c7a2b07453a6f610c95"
+    },
+    {
+      "repository": "trident",
+      "source_revision": "4317c767607ce83210348d285c1390df0bed5d94",
+      "command": "cargo test --test native_control --test native_control_generics --locked -- --nocapture",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-control-observations.log",
+      "log_sha256": "5d3065739cfb614d1ca65df0f7bf1ab926f908327f1642efdbc230fd3d45f592",
+      "tests": {
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "source_revision": "ecc17f45da87da63bd4edbd876867be40b53eec4",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "log": "/tmp/joy-04-control-committed-tests.log",
+      "log_sha256": "aeef9fb726bf984d293daa29e33c103bd7194dc54fb1a457155d46541b9f7cec",
+      "tests": {
+        "passed": 89,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "source_revision": "ecc17f45da87da63bd4edbd876867be40b53eec4",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "log": "/tmp/joy-04-control-check.log",
+      "log_sha256": "ffc423025fb8cf4e74603ad727b226029d7ac45fd4c8cb6446a5944d9702a4e8"
+    },
+    {
+      "repository": "trisha",
+      "source_revision": "ca7f11fdcd0164b54a468a69abf00301411a520f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-control-tests.log",
+      "log_sha256": "798b445356920771ab4dbcc5f1180038746473f4c1e7efa75206bdefcc31d4ba",
+      "tests": {
+        "passed": 362,
+        "failed": 0,
+        "ignored": 4
+      }
+    },
+    {
+      "repository": "trisha",
+      "source_revision": "ca7f11fdcd0164b54a468a69abf00301411a520f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-control-bench.log",
+      "log_sha256": "1c2e43c28446ca74e1baba568f5560b06a12c0977721b2fa9265ff684fce8ea3",
+      "benchmark": {
+        "fixtures_passed": 133,
+        "fixtures_total": 133,
+        "baselines_verified": 43,
+        "baselines_total": 43
+      }
+    },
+    {
+      "repository": "trident",
+      "source_revision": "4317c767607ce83210348d285c1390df0bed5d94",
+      "command": "../install/bin/trident audit lib/vm/nox/noun.tri --json",
+      "exit_code": 2,
+      "log": "/tmp/trident-04-control-audit.log",
+      "log_sha256": "78881b16943b0cf3b3f8e9496386ae9cd2cc17c05e26de287f33f5549821b6c4",
+      "meaning": "UNKNOWN: no analyzable intrinsic bodies; no formal verification claim"
+    },
+    {
+      "repository": "trident",
+      "source_revision": "4317c767607ce83210348d285c1390df0bed5d94",
+      "command": "cargo install --path . --root ../install --locked --force",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-control-install.log",
+      "log_sha256": "7f642e7e1f871108b671853cabbe742c42c2fd3713ada9993f3f7a3231a5085c"
+    },
+    {
+      "repository": "joy",
+      "source_revision": "ecc17f45da87da63bd4edbd876867be40b53eec4",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo install --path cli --root ../install --locked --force",
+      "exit_code": 0,
+      "log": "/tmp/joy-04-control-install.log",
+      "log_sha256": "71257543e72946bec79e3967753372b2e51694f06199b516d7330f0d089cc4a2"
+    },
+    {
+      "repository": "trisha",
+      "source_revision": "ca7f11fdcd0164b54a468a69abf00301411a520f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo install --path cli --root ../install --locked --force",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-control-install.log",
+      "log_sha256": "cb8a46225fb495f54d3e82bfcc94f0e7f792f698635876826d5c7ca73b19adb8"
+    }
+  ],
+  "earlier_failed_gate": {
+    "command": "cargo test --workspace --locked",
+    "log": "/tmp/trident-04-control-full.log",
+    "status": "terminated after imported_generics debug arena construction stalled in stack probe",
+    "sample": "/tmp/trident-control-test-sample.txt",
+    "fix": "tests/imported_generics.rs now uses a joined 64 MiB worker stack; committed default command passed"
+  },
+  "differential": {
+    "source_functions": 5,
+    "inputs_each": 9,
+    "comparisons": [
+      "raw native",
+      "legacy flat nox",
+      "independent integer reference"
+    ]
+  },
+  "unexecuted": [
+    "Trisha four pre-existing expensive ignored proof tests",
+    "other operating systems/architectures",
+    "full compiler closure",
+    "C2/C3 self-hosting",
+    "native Zheng compiler proofs"
+  ],
+  "cli_observations": "native-control-observations.json"
+}

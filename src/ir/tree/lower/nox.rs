@@ -35,6 +35,7 @@ use std::collections::{BTreeMap, BTreeSet};
 mod entry;
 mod loops;
 mod modules;
+mod native;
 mod noun;
 mod path;
 use path::{aggregate_element, element_access as elem_access, AxisPath};

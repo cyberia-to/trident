@@ -139,7 +139,7 @@ impl NoxCompiler {
         Ok(Shape::List(shapes))
     }
 
-    fn entry_size(&self, size: &ast::ArraySize) -> Option<u64> {
+    pub(super) fn entry_size(&self, size: &ast::ArraySize) -> Option<u64> {
         match size {
             ast::ArraySize::Literal(n) => Some(*n),
             ast::ArraySize::Param(name) => self.constants.get(&self.symbol(name)).copied(),

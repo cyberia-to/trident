@@ -23,6 +23,18 @@ fn load(arena: &mut nox::Reduction<16384>, text: &[u8], offset: &mut usize) -> n
     }
 }
 fn execute(assembly: &str, subject: &str) -> u64 {
+    let assembly = assembly.to_string();
+    let subject = subject.to_string();
+    // The fixed arena and debug-mode construction temporaries exceed the
+    // default test thread stack. Match the other native execution harnesses.
+    std::thread::Builder::new()
+        .stack_size(64 << 20)
+        .spawn(move || execute_inner(&assembly, &subject))
+        .unwrap()
+        .join()
+        .unwrap()
+}
+fn execute_inner(assembly: &str, subject: &str) -> u64 {
     let mut arena = nox::Reduction::<16384>::new();
     let formula = load(&mut arena, assembly.as_bytes(), &mut 0);
     let subject = load(&mut arena, subject.as_bytes(), &mut 0);
@@ -156,13 +168,11 @@ fn standalone_generics_are_checked_after_concrete_substitution() {
 
 #[test]
 fn constants_keep_nominal_types_and_check_u32_range() {
-    assert!(
-        trident::check(
-            "program entry\nfn main(x:[Field;N])->Field{x[0]}\nconst N:U32=2",
-            "entry.tri"
-        )
-        .is_ok()
-    );
+    assert!(trident::check(
+        "program entry\nfn main(x:[Field;N])->Field{x[0]}\nconst N:U32=2",
+        "entry.tri"
+    )
+    .is_ok());
 
     let good = "program entry\nconst C:U32=4294967295\nfn main()->U32{C}";
     assert!(trident::check(good, "entry.tri").is_ok());

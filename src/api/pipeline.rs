@@ -11,10 +11,10 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use crate::CompileOptions;
 use crate::ast;
-use crate::diagnostic::{Diagnostic, render_diagnostics};
+use crate::diagnostic::{render_diagnostics, Diagnostic};
 use crate::typecheck::ModuleExports;
+use crate::CompileOptions;
 
 /// A single parsed module: path, source text, and parsed AST.
 pub(crate) struct ParsedModule {
@@ -27,6 +27,7 @@ pub(crate) struct ParsedModule {
 pub(crate) struct PreparedProject {
     pub modules: Vec<ParsedModule>,
     pub exports: Vec<ModuleExports>,
+    pub native_origins: BTreeMap<String, (String, Vec<u64>)>,
 }
 
 impl PreparedProject {
@@ -108,7 +109,14 @@ impl PreparedProject {
             });
         }
 
-        let exports = Self::check_and_specialize(&mut modules, options, render, tests)?;
+        let mut native_origins = BTreeMap::new();
+        let exports = Self::specialize_with_origins(
+            &mut modules,
+            options,
+            render,
+            tests,
+            &mut native_origins,
+        )?;
 
         if let Some((entry, exports)) = modules
             .iter()
@@ -120,7 +128,11 @@ impl PreparedProject {
                 exports.check_entry_requirements(&entry.file, options)?;
             }
         }
-        Ok(PreparedProject { modules, exports })
+        Ok(PreparedProject {
+            modules,
+            exports,
+            native_origins,
+        })
     }
 
     /// Resolve concrete generic calls before either backend sees the project.
@@ -129,6 +141,16 @@ impl PreparedProject {
         options: &CompileOptions,
         render: bool,
         tests: bool,
+    ) -> Result<Vec<ModuleExports>, Vec<Diagnostic>> {
+        Self::specialize_with_origins(modules, options, render, tests, &mut BTreeMap::new())
+    }
+
+    fn specialize_with_origins(
+        modules: &mut [ParsedModule],
+        options: &CompileOptions,
+        render: bool,
+        tests: bool,
+        origins: &mut BTreeMap<String, (String, Vec<u64>)>,
     ) -> Result<Vec<ModuleExports>, Vec<Diagnostic>> {
         use crate::ast::{Item, ModulePath};
         use crate::span::{Span, Spanned};
@@ -260,6 +282,13 @@ impl PreparedProject {
                             owner,
                             Spanned::new(Item::Fn(function), definition.name.span),
                         ));
+                        origins.insert(
+                            format!("{}.{}", modules[owner].file.name.node, name),
+                            (
+                                format!("{}.{}", modules[owner].file.name.node, base),
+                                instance.size_args.clone(),
+                            ),
+                        );
                         instances.insert(key, name.clone());
                         name
                     };
@@ -313,13 +342,32 @@ impl PreparedProject {
         filename: &str,
         options: &CompileOptions,
     ) -> Result<(ast::File, ModuleExports), Vec<Diagnostic>> {
+        let (file, exports, _) = Self::source_with_origins(file, source, filename, options)?;
+        Ok((file, exports))
+    }
+
+    pub(crate) fn source_with_origins(
+        file: ast::File,
+        source: &str,
+        filename: &str,
+        options: &CompileOptions,
+    ) -> Result<
+        (
+            ast::File,
+            ModuleExports,
+            BTreeMap<String, (String, Vec<u64>)>,
+        ),
+        Vec<Diagnostic>,
+    > {
         let mut modules = vec![ParsedModule {
             file_path: PathBuf::from(filename),
             source: source.into(),
             file,
         }];
-        let mut exports = Self::check_and_specialize(&mut modules, options, false, false)?;
-        Ok((modules.remove(0).file, exports.remove(0)))
+        let mut origins = BTreeMap::new();
+        let mut exports =
+            Self::specialize_with_origins(&mut modules, options, false, false, &mut origins)?;
+        Ok((modules.remove(0).file, exports.remove(0), origins))
     }
 
     /// Build a global intrinsic map from all modules.

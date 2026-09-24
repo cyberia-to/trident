@@ -260,6 +260,10 @@ The bytes are canonical NOXDAG01 containing exact ART1(0,0,0,formula), with
 `fn main(input: Noun) -> Noun`; the particle is the full ART1 identity.
 Metadata does not enter the ART1 tree. Joy's `build --emit artifact` publishes
 these bytes and `run-artifact` executes them using the existing raw profile.
+The seed raw backend emits reusable function/loop code and checked runtime
+array indexing. It preserves specialized function origins internally so an
+unreachable generic instance cannot renumber the emitted table. See the
+[native runtime contract](self-hosting-runtime.md) for semantics and limits.
 
 The seed emitter bounds the arena at 196608 lifetime nodes, output at 16 MiB,
 DAG depth at 4096 and formula traversal at 2000000 visits. Callers may tighten

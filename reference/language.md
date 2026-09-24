@@ -340,6 +340,11 @@ arr[i] = value
 (a, b) = some_function()                   // tuple assignment
 ```
 
+Tuple assignment evaluates its right-hand side once. Every target must already
+exist, be mutable, and have the corresponding component's type. Its arity must
+match the tuple (or the target's Digest/XField width). `_` is a discard binding
+in a `let` pattern; it is not a tuple-assignment target.
+
 ### If / Else
 
 ```trident
@@ -360,8 +365,10 @@ for i in 0..32 { body }               // constant bound — exactly 32 iteration
 for i in 0..n bounded 64 { body }     // runtime bound — at most 64 iterations
 ```
 
-All loops must have a compile-time-known or declared upper bound. This guarantees
-the compiler can compute exact trace length.
+All loops require a constant end or an explicit `bounded` annotation. Local
+variables shadow same-named global constants; an immutable local end still
+requires a bound. Native loop-index specialization follows the
+[native runtime contract](self-hosting-runtime.md#native-bounded-loops).
 
 No `while`. No `loop`. No `break`. No `continue`.
 

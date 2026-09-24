@@ -32,7 +32,7 @@ pub(crate) fn checked_size(size: &ArraySize, subs: &BTreeMap<String, u64>) -> Re
 impl TypeChecker {
     pub(super) fn is_constant_expr(&self, expr: &Expr) -> bool {
         matches!(expr, Expr::Literal(Literal::Integer(_)))
-            || matches!(expr, Expr::Var(name) if self.constants.contains_key(name))
+            || matches!(expr, Expr::Var(name) if self.lookup_var(name).is_none() && self.constants.contains_key(name))
     }
 
     /// Infer size arguments for a generic function from argument types.

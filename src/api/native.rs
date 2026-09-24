@@ -50,7 +50,12 @@ pub fn compile_raw_artifact_project(
             .ok_or_else(|| error("no entry module"))?;
         let files: Vec<_> = project.modules.iter().map(|m| &m.file).collect();
         let formula = NoxCompiler::new()
-            .compile_raw_modules(&files, &entry.file, &options.cfg_flags)
+            .compile_raw_modules_with_origins(
+                &files,
+                &entry.file,
+                &options.cfg_flags,
+                &project.native_origins,
+            )
             .map_err(error)?;
         emit(formula, entry.file.name.node.clone(), limits)
     })
@@ -67,10 +72,11 @@ pub fn compile_raw_artifact(
         require_nox_target(options)?;
         validate_limits(limits)?;
         let file = crate::parse_source_silent(source, filename)?;
-        let (file, exports) = PreparedProject::source(file, source, filename, options)?;
+        let (file, exports, origins) =
+            PreparedProject::source_with_origins(file, source, filename, options)?;
         exports.check_entry_requirements(&file, options)?;
         let formula = NoxCompiler::new()
-            .compile_raw_modules(&[&file], &file, &options.cfg_flags)
+            .compile_raw_modules_with_origins(&[&file], &file, &options.cfg_flags, &origins)
             .map_err(error)?;
         emit(formula, file.name.node, limits)
     })
