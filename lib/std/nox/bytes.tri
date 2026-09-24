@@ -124,6 +124,14 @@ fn validate_words_chunk(root: Noun, length: U32, words: U32, start: U32, visits:
 #[ensures((max_length < len(result)) == false)]
 #[ensures(noun.eq(to_noun(result), value))]
 pub fn from_noun(value: Noun, max_length: U32, max_visits: U32) -> Bytes {
+    let (value, remaining) = from_noun_budget(value, max_length, max_visits)
+    value
+}
+
+// Shape and payload validation leave one shared allowance for the next field.
+#[pure]
+#[requires((max_visits == ZERO) == false)]
+pub fn from_noun_budget(value: Noun, max_length: U32, max_visits: U32) -> (Bytes, U32) {
     assert_eq(noun.as_field(noun.head(value)), TAG)
     let body = noun.tail(value)
     let length = convert.as_u32(noun.as_field(noun.head(body)))
@@ -137,8 +145,8 @@ pub fn from_noun(value: Noun, max_length: U32, max_visits: U32) -> Bytes {
     // At most 2^30 packed words; chunks release the evaluator's loop frames.
     for chunk in 0..8388608 {
         (index, remaining) = validate_words_chunk(root, length, words, index, remaining, cost)
-        if index == words { return Bytes { length, root } }
+        if index == words { return (Bytes { length, root }, remaining) }
     }
     assert_eq(0, 1)
-    empty()
+    (empty(), ZERO)
 }

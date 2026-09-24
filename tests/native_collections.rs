@@ -343,3 +343,43 @@ fn bytes_validation_charges_shape_and_word_reads_to_one_allowance() {
         }
     });
 }
+
+#[test]
+fn successive_collections_share_one_allowance_and_return_exact_remainder() {
+    support::worker(|| {
+        let program = compile("let data = noun.head(input)\nlet allowance = as_u32(noun.as_field(noun.tail(input)))\nlet (s, left) = seq.from_noun_budget(noun.head(data), as_u32(1000), allowance)\nlet (b, remaining) = bytes.from_noun_budget(noun.tail(data), as_u32(1000), left)\nnoun.pair(noun.pair(seq.to_noun(s), bytes.to_noun(b)), noun.atom(convert.as_field(remaining)))");
+        for length in [0, 1, 3, 17, 129] {
+            let mut ar = Arena::new();
+            let values: Vec<_> = (0..length).map(|i| atom(&mut ar, i).unwrap()).collect();
+            let sequence = Seq::from_values(&mut ar, &values, 1000)
+                .unwrap()
+                .encode(&mut ar)
+                .unwrap();
+            let content: Vec<_> = (0..length * 4 + 1).map(|i| (i * 37) as u8).collect();
+            let bytes = Bytes::from_slice(&mut ar, &content, 1000)
+                .unwrap()
+                .encode(&mut ar)
+                .unwrap();
+            let mut left = 10000;
+            Seq::decode_budget(&mut ar, sequence, 1000, &mut left).unwrap();
+            Bytes::decode_budget(&mut ar, bytes, 1000, &mut left).unwrap();
+            let required = 10000 - left;
+            let data = pair(&mut ar, sequence, bytes).unwrap();
+            let fixture = artifact::encode(&ar, data, LIMITS).unwrap();
+            for budget in [0, required - 1, required, required + 1, required + 17] {
+                let mut ar = Arena::new();
+                let data = artifact::decode(&mut ar, &fixture, LIMITS).unwrap();
+                let allowance = atom(&mut ar, u64::from(budget)).unwrap();
+                let input = pair(&mut ar, data, allowance).unwrap();
+                let actual = run(&mut ar, &program, input);
+                if budget < required {
+                    assert!(actual.is_err(), "length={length},budget={budget}");
+                } else {
+                    let remaining = atom(&mut ar, u64::from(budget - required)).unwrap();
+                    let expected = pair(&mut ar, data, remaining).unwrap();
+                    equal(&ar, actual.unwrap(), expected);
+                }
+            }
+        }
+    });
+}

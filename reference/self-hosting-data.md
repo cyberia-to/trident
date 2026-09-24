@@ -198,10 +198,16 @@ constant-memory promise or evidence that a complete compiler workload fits.
 | Append | `push(s: Seq, v: Noun, max_len: U32) -> Seq` | `push(b: Bytes, v: U32, max_len: U32) -> Bytes` |
 | Encode | `to_noun(s: Seq) -> Noun` | `to_noun(b: Bytes) -> Noun` |
 | Validate/decode | `from_noun(n: Noun, max_len: U32, max_visits: U32) -> Seq` | `from_noun(n: Noun, max_len: U32, max_visits: U32) -> Bytes` |
+| Shared allowance | `from_noun_budget(n: Noun, max_len: U32, remaining: U32) -> (Seq, U32)` | `from_noun_budget(n: Noun, max_len: U32, remaining: U32) -> (Bytes, U32)` |
 
 Lengths must fit caller/job caps; push checks before incrementing, never wraps.
 Validators consume a visit allowance and trap on exhaustion. Exact global
 reduction/node limits belong to SH0.4 in addition to these algorithmic bounds.
+The budget variants return the unspent allowance, including Bytes word-read
+charges. A guest admission pass threads this value through successive wrappers;
+it never resets the allowance per field. The convenience `from_noun` wrappers
+delegate to the budget variants and discard the remainder. Fixed record checks
+belong to the caller's record-validation accounting.
 Byte pushes/sets use the affected packed word and one path update. A bulk builder
 may reduce allocation history, but must produce the identical canonical tree.
 
