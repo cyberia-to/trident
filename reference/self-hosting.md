@@ -205,7 +205,7 @@ requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 program := "program" identifier function+ EOF
 function := "fn" identifier "(" parameters? ")" ("->" primitive_type)? block
 parameters := identifier ":" primitive_type ("," identifier ":" primitive_type)* ","?
-primitive_type := "Field" | "Bool" | "U32" | "Noun"
+primitive_type := "Field" | "Bool" | "U32" | "Noun" | "Digest"
 block := "{" statement* expression? "}"
 statement := "let" "mut"? identifier (":" primitive_type)? "=" expression
            | identifier "=" expression | "return" expression?
@@ -216,7 +216,8 @@ expression := comparison ("==" comparison)*
 comparison := sum ("<" sum)*
 sum := term ("+" term)*
 term := bitwise ("*" bitwise)*
-bitwise := primary ("&" primary)*
+bitwise := postfix ("&" postfix)*
+postfix := primary ("[" expression "]")*
 primary := decimal | "true" | "false" | identifier | call | "(" expression ")"
 call := identifier "(" (expression ("," expression)* ","?)? ")"
 ```
@@ -238,7 +239,7 @@ Generation preserves the expression tree: literal `[1 value]`, addition
 needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
 compiler identity, source paths and execution counters.
 
-Local declarations infer Field/Bool/U32/Noun/Unit or state a primitive type explicitly. A `let mut` binding
+Local declarations infer Field/Bool/U32/Noun/Digest/Unit or state a primitive type explicitly. A `let mut` binding
 permits assignment; other bindings reject writes. Initializers resolve names
 before installing the new binding, so `let x = x + 1` reads the previous `x`
 and rejects when no previous binding exists. Same-scope shadowing creates a
@@ -250,7 +251,7 @@ permits a following parenthesized expression where a statement boundary is valid
 CR alone keeps the same line, matching the seed parser.
 
 The guest builds a postorder expression sequence and ordered statement sequence.
-Expression records carry their Field/Bool/U32/Noun/Unit type and source span. Addition and
+Expression records carry their Field/Bool/U32/Noun/Digest/Unit type and source span. Addition and
 multiplication require Field operands; equality requires two operands of the same
 non-Noun type and returns Bool, including equality between two Unit results. Equality
 binds below unsigned comparison, addition, multiplication and bitwise AND, in
@@ -347,12 +348,12 @@ well typed, then trap only when the emitted program reaches them.
 Noun arithmetic, ordering, bit operations, indexing and the `==` operator
 remain rejected; `nox_noun_eq` supplies explicit native equality. Conditions
 remain Field/Bool. Qualified calls require actual module/import resolution.
-Digest identity, aggregate source syntax and compiler-profile generation remain
+Aggregate source syntax and compiler-profile generation remain
 subsequent increments. Earlier scalar-entry programs retain their ART1 bytes.
 
 Compiler-owned type descriptors are canonical Noun values. Primitive tags
 Field/Bool/Unit/U32/Noun retain atoms0/1/2/3/4; atom5 marks an invalid type and
-atom6 reserves Digest. AST, binding and signature records store the complete
+atom6 is Digest. AST, binding and signature records store the complete
 descriptor. Native identity compares types independently of temporary arena
 indices and definition order. Primitive tests use their explicit tag atoms.
 
@@ -365,7 +366,23 @@ obeys the requested sequence allowance, a 64-level nesting ceiling and a guest
 arity ceiling16. Zero-child and invalid-child descriptors reject. Composite
 construction failures cannot produce a valid descriptor. Equality eligibility
 reads contains-Noun; nested Noun components stay outside the ordinary equality
-operator. Tuple source syntax and Digest operations are subsequent increments.
+operator. Tuple source syntax is a subsequent increment.
+
+Digest is primitive descriptor6 and occupies one complete native frame slot.
+`nox_noun_identity(Noun)->Digest` evaluates its argument once and returns the
+balanced native identity `[[a b][c d]]` through axis0. Digest equality compares
+complete values. Digest parameters, results, locals and whole-value assignments
+use the existing type rules; public entry signatures remain unchanged.
+
+Read indexing `digest[index]` accepts Field or U32 and returns Field. The base
+executes once before the index executes once, including discarded reads and
+unused arguments. Both literal and computed indices are checked at execution:
+values0..3 select the four components, other canonical field values trap with
+InvZero. Decimal Field normalization happens before indexing. Index brackets may
+follow across a newline, and nested call/group/index delimiters own their stacks.
+Invalid types and malformed delimiters fail compilation before publication.
+Digest indexed writes, aggregate source syntax and actual imports remain outside
+this increment. Runtime, parser stack, AST and formula-depth bounds are separate.
 
 Literal-range loops admit `for name in A..B { body }`, where A and B are
 unsigned decimal literals, A is at most 2^32−1 and B is at most 2^32.

@@ -115,7 +115,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [execution evidence](self-hosting/native-compiler-nouns.md).
 - [x] SH3 canonical type descriptors through AST, bindings, signatures and bodies;
   [execution and boundary evidence](self-hosting/native-compiler-types.md).
-- [ ] SH3 source Digest and tuples;
+- [x] SH3 native Digest identity, whole-value transport and checked read indexing;
+  [source/JOB and installed evidence](self-hosting/native-compiler-digest.md).
+- [ ] SH3 source tuples and destructuring;
   [next slice](../.claude/plans/native-compiler-aggregate-types.md).
 - [ ] SH3 remaining native language: aggregates, imports and complete
   compiler closure coverage.
@@ -292,3 +294,10 @@ Trident `adbb00e`. [Pinned validation](self-hosting/native-compiler-types.md)
 checks logical sharing/depth/arity bounds and retains every earlier positive
 ART1 identity. Continue with source Digest identity/indexing and tuples; full
 SH3/SH4 and C2/C3 remain open.
+
+2026-09-24 continuation: native Digest identity and checked component reads
+accepted at Trident `dbf3c13`. [Pinned validation](self-hosting/native-compiler-digest.md)
+compares every identity word with input particle bytes and covers runtime traps,
+ordering and exact quotas. Earlier positive ART1 identities remain unchanged.
+Continue with tuple annotations/values and destructuring; full SH3/SH4, C2/C3
+and six-platform acceptance remain open.

@@ -1,4 +1,4 @@
-"""SH2/SH3 installed CLI acceptance: fixed guest through structured Noun values."""
+"""SH2/SH3 installed CLI acceptance: fixed guest through Noun and Digest values."""
 import argparse
 import copy
 import hashlib
@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import native_noun_cases
+import native_digest_cases
 
 P = 18446744069414584321
 
@@ -325,6 +326,7 @@ def main():
                                  "program_execution_error": "InvZero", "previous_output_preserved": True})
 
         native_noun_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
+        native_digest_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
 
         local_bytes = None
         for cap in [7, 8, 16]:

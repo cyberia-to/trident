@@ -138,3 +138,6 @@ mod nouns;
 
 #[path = "native_compiler/types.rs"]
 mod types;
+
+#[path = "native_compiler/digests.rs"]
+mod digests;

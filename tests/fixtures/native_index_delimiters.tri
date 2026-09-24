@@ -1,0 +1,33 @@
+program native_index_delimiters
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.types
+use std.compiler.nox.expression_state
+use std.compiler.nox.index_parse
+
+// The actual push at the hard limit, isolated from source-parse arena cost.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let depth = as_u32(noun.as_field(input))
+    let zero = as_u32(0)
+    let one = as_u32(1)
+    let token = syntax.token(36, zero, one, 0)
+    let context = expression_state.context(seq.empty(), noun.atom(0), seq.empty(), seq.empty())
+    let nodes = seq.push(seq.empty(), ast.typed(ast.LOCAL, 0, 0, noun.atom(types.DIGEST), zero, one), one)
+    let values = seq.push(seq.empty(), noun.atom(0), one)
+    let mut s = expression_state.State { operators: seq.empty(), values, ops: depth, vals: one,
+        token, operand: false, done: false, error: syntax.error(0, zero, zero), capacity: as_u32(64),
+        node_cap: as_u32(4096), nodes, context, before_block: false,
+        arguments: seq.empty(), frames: noun.atom(0), edges: noun.atom(0) }
+    for i in 0..64 {
+        if i < depth { s.operators = seq.push(s.operators, noun.atom(5), as_u32(64)) }
+    }
+    let source = bytes.push(bytes.empty(), as_u32(91), one)
+    let parsed = index_parse.enter(source, s)
+    noun.atom(as_field(parsed.error.code) * 1000 + as_field(parsed.ops))
+}

@@ -64,7 +64,7 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
 // {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14,
 // let=15, mut=16, colon=17, assignment=18, equality=19, Bool=20,
 // true=21, false=22, if=23, else=24, return=25, comma=26;
-// 27 is the internal call marker; U32=28, less-than=29, &=30, for=31, in=32, ..=33, Noun=34.
+// 27 is the internal call marker; U32=28, less-than=29, &=30, for=31, in=32, ..=33, Noun=34, Digest=35, [=36, ]=37.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((bytes.len(source) < start) == false)]
@@ -96,6 +96,8 @@ pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
                 if syntax.both(c == as_u32(47), end < bytes.len(source)) {
                     if bytes.get(source, end) == as_u32(37) { return syntax.token(13, pos, syntax.inc(end), 0) }
                 }
+                if c == as_u32(91) { return syntax.token(36, pos, end, 0) }
+                if c == as_u32(93) { return syntax.token(37, pos, end, 0) }
                 if c == as_u32(44) { return syntax.token(26, pos, end, 0) }
                 if c == as_u32(60) { return syntax.token(29, pos, end, 0) }
                 if c == as_u32(38) { return syntax.token(30, pos, end, 0) }

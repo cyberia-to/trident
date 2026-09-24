@@ -116,7 +116,7 @@ fn noun_types_and_entry_signatures_reject_before_program_publication() {
                 "fn main(input:Noun)->Noun{let noun=input noun.head(input)}",
                 6,
             ),
-            ("fn main(input:Noun)->Noun{input[0]}", 6),
+            ("fn main(input:Noun)->Noun{input[0]}", 5),
         ] {
             let source = format!("program sample {body}");
             match support::compile_only(source.as_bytes(), data::caps()) {

@@ -1,0 +1,26 @@
+module std.compiler.nox.digest_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+#[pure]
+fn binary(opcode: Field, left: formula.Value, right: formula.Value) -> formula.Value {
+    formula.Value { formula: noun.pair(noun.atom(opcode), noun.pair(left.formula, right.formula)),
+        depth: as_u32(as_field(formula.maximum(left.depth, right.depth)) + 2) }
+}
+
+// The private subject is [balanced-Digest index]. Both source expressions run
+// once, base first; all successful branches only project that materialization.
+#[pure]
+pub fn read(base: formula.Value, index: formula.Value) -> formula.Value {
+    let mut choice = flow.axis(11)
+    for turn in 0..3 {
+        let i = sub(2, as_field(turn))
+        choice = flow.branch(binary(9, flow.axis(3), flow.literal(i)), flow.axis(8 + i), choice)
+    }
+    let crash = formula.Value { formula: noun.pair(noun.atom(8), flow.literal(0).formula), depth: as_u32(2) }
+    let checked = flow.branch(binary(10, flow.axis(3), flow.literal(4)), choice, crash)
+    flow.compose(flow.cons(base, index), checked)
+}

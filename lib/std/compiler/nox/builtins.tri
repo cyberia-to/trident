@@ -17,7 +17,8 @@ pub const NOUN_HEAD: U32 = 6
 pub const NOUN_TAIL: U32 = 7
 pub const NOUN_FIELD: U32 = 8
 pub const NOUN_EQ: U32 = 9
-pub const COUNT: U32 = 10
+pub const NOUN_IDENTITY: U32 = 10
+pub const COUNT: U32 = 11
 
 // Called only after lookup in the final user function namespace fails.
 #[pure]
@@ -52,6 +53,7 @@ pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
     if syntax.both(suffix == as_u32(4), packed == 1751474532) { return NOUN_HEAD }
     if syntax.both(suffix == as_u32(4), packed == 1952541036) { return NOUN_TAIL }
     if syntax.both(suffix == as_u32(8), packed == 7022061137460292708) { return NOUN_FIELD }
+    if syntax.both(suffix == as_u32(8), packed == 7594306396727374969) { return NOUN_IDENTITY }
     if syntax.both(suffix == as_u32(2), packed == 25969) { return NOUN_EQ }
     NONE
 }
@@ -77,6 +79,7 @@ pub fn parameter(kind: U32) -> Noun {
 #[requires(kind < COUNT)]
 pub fn returns(kind: U32) -> Noun {
     if kind == NOUN_EQ { return noun.atom(types.BOOL) }
+    if kind == NOUN_IDENTITY { return noun.atom(types.DIGEST) }
     if syntax.both((kind < NOUN_ATOM) == false, (kind == NOUN_FIELD) == false) { return noun.atom(types.NOUN) }
     if kind == TO_U32 { return noun.atom(types.UINT32) }
     noun.atom(types.FIELD)
