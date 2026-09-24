@@ -13,6 +13,7 @@ use std.compiler.nox.call_codegen
 use std.compiler.nox.builtin_gen
 use std.compiler.nox.digest_gen
 use std.compiler.nox.aggregate_gen
+use std.compiler.nox.record_edit_gen
 use std.compiler.nox.flow
 
 const HALF: Field = 9223372034707292161
@@ -84,6 +85,11 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, conte
             let aggregate = aggregate_gen.generate(s.values, context.arguments, as_u32(ast.right(node)), as_u32(ast.left(node)))
             code = aggregate.formula
             depth = aggregate.depth
+        }
+        else if kind == ast.RECORD_EDIT {
+            let edited = record_edit_gen.generate(nodes, s.values, as_u32(ast.left(node)), as_u32(ast.right(node)))
+            code = edited.formula
+            depth = edited.depth
         }
         else if kind == ast.PROJECT {
             let projection = flow.compose(formula.value(s.values, as_u32(ast.left(node))), flow.axis(ast.right(node)))

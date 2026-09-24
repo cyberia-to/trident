@@ -18,6 +18,7 @@ use std.compiler.nox.signatures
 use std.compiler.nox.loop_parse
 use std.compiler.nox.types
 use std.compiler.nox.tuple_declarations
+use std.compiler.nox.record_assign
 
 #[pure]
 fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -62,7 +63,10 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
         s.returned = true
         return s
     }
-    if s.token.kind == as_u32(18) { return tuple_declarations.assign(source, s, value.value, cap) }
+    if s.token.kind == as_u32(18) {
+        if ast.kind(seq.get(s.nodes, value.value)) == ast.PROJECT { return record_assign.assign(source, s, value.value, cap) }
+        return tuple_declarations.assign(source, s, value.value, cap)
+    }
     if s.token.kind == as_u32(8) {
         s.has_tail = true
         s.tail = value.value

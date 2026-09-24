@@ -425,13 +425,35 @@ textual label order. Complete values form a zero-ended cons-list, including
 empty records (zero), nested records, Digest and Noun subtrees. Each
 record occupies one native slot. Ordered links own initializer AST IDs; source
 order does not implicitly define the emitted record layout or evaluation order.
+The constructor decodes its trusted layout once into an owned field list and
+keeps initializer IDs in a bounded indexed tree. Empty leaves are zero; occupied
+leaves encode ASTid+1. Resuming a constructor preserves this private continuation
+without revalidating public sequence handles at each delimiter. External Seq
+and Bytes admission retains its existing validation.
 
 Postfix `.field` reads work on locals, calls, constructors and parenthesized
 bases, preserving complete field types and evaluating the base once. Lookup
 checks both existence and defining-owner/public visibility. Delimiter-owned
 constructor contexts permit constructors inside groups/calls/index expressions
-even when an outer condition precedes a block. Static nested field writes and
-qualified import/type resolution remain subsequent increments.
+even when an outer condition precedes a block. Qualified import/type resolution
+remains a subsequent increment.
+
+Static field assignment `local.field[.field...] = expression` requires a
+mutable local root, an existing visible field at each selection, and an RHS
+with the selected field's exact type. Whole nominal, tuple, Digest and Noun
+fields retain their complete values. Parameters and immutable/shadowing locals
+cannot be changed. Constructor and call results cannot be assignment roots;
+Digest indexed writes and field targets in tuple assignment remain outside
+this increment.
+
+The RHS executes once against the old environment. Persistent reconstruction
+changes the selected root slot while preserving snapshots, sibling fields and
+other frame slots. Typed projection links retain the stable root slot; field
+paths use separate relative axes, allowing combined paths longer than one
+machine axis. Rebuilding each parent reads only its original value. The full
+replacement expression and ordinary WRITE consume AST/statement allowances;
+their actual formula depth is checked independently. The bounded walk admits
+up to64 field selections, additionally constrained by nominal type depth.
 
 Digest is primitive descriptor6 and occupies one complete native frame slot.
 `nox_noun_identity(Noun)->Digest` evaluates its argument once and returns the

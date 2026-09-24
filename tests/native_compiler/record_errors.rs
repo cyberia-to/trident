@@ -22,7 +22,7 @@ fn nominal_source_types_names_and_initializer_errors_reject_before_emission() {
             ("struct S{x:Field} fn main()->Field{S{x:7].x}",2),
             ("struct S{x:Field} fn main()->Field{S{x:(7}.x}",2),
             ("struct S{x:Field} fn main()->Field{S{x:7}.y}",5),
-            ("struct S{x:Field} fn main()->Field{let s=S{x:7} s.x=true 7}",2),
+            ("struct S{x:Field} fn main()->Field{let s=S{x:7} s.x=true 7}",5),
             ("struct S{x:Field} struct T{x:Field} fn main()->Field{let t:T=S{x:7} 7}",5),
             ("struct S{x:Field} struct T{x:Field} fn f(s:S)->Field{s.x} fn main()->Field{f(T{x:7})}",5),
             ("struct S{x:Noun} fn main(input:Noun)->Noun{let s=S{x:input} s==s input}",5),
@@ -40,8 +40,6 @@ fn nominal_source_types_names_and_initializer_errors_reject_before_emission() {
                 support::Compilation::Errors(errors)=>assert_eq!(errors[0].code,code,"{source}"),
                 other=>panic!("{source}: {other:?}"),
             }
-            // Field writes are a deliberate later slice; their seed type failure
-            // still supplies a negative control here.
             assert!(trident::compile_raw_artifact(&source,"oracle.tri",&trident::CompileOptions::default(),trident::NATIVE_ARTIFACT_LIMITS).is_err(),"seed {source}");
         }
     });
