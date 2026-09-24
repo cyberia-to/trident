@@ -344,3 +344,17 @@ The valid combined long-name workload exhausts 786432 arena nodes and stays
 explicitly open under SH4. Next: persistent static field writes, then arrays
 and imports. Full SH3/SH4, C2/C3, six platforms and native proofs remain open.
 Noun temperature stays 128K.
+
+
+2026-09-24 continuation: persistent static record field writes accepted at
+`324a015`. [Pinned evidence](self-hosting/native-compiler-record-writes-validation.json)
+records 1040 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43
+manual baselines, 773 installed CLI commands / 262 observations and all 119
+previous positive ART1 identities unchanged. Eight new successful JOB1 programs
+exercise snapshots, nested values, calls, loops and complete Noun/Digest/tuple
+replacement. Constructor continuations decode owned layouts once; public
+Seq/Bytes admission remains intact. The five retained wide-source programs still
+exhaust 786432 nodes during generation; direct emitter path tests do not close
+this SH4 boundary. All 74 formal audits are UNKNOWN. Arrays, real imports,
+full SH3/SH4, generated compiler profiles, C2/C3, six platforms and native proof
+gates remain open. Noun temperature stays 128K.
