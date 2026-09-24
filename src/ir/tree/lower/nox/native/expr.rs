@@ -44,7 +44,7 @@ impl Compiler<'_> {
             },
             Expr::Call { path, .. } => {
                 let source = path.node.as_dotted();
-                if let Some(f) = self.owner.fns.get(&self.owner.symbol(&source)) {
+                if let Some(f) = self.owner.fns.get(&self.owner.function_symbol(&source)) {
                     return f.return_ty.as_ref().map(|t| t.node.clone());
                 }
                 if let Some(ty) = noun::return_type(&source) {

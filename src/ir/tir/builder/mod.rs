@@ -18,6 +18,7 @@
 mod assign;
 mod call;
 mod cleanup;
+mod divergence;
 mod early_return;
 mod expr;
 mod functions;
@@ -73,6 +74,7 @@ pub struct TIRBuilder {
     pub(crate) target_intrinsics: BTreeMap<String, (u32, u32)>,
     /// Module alias map: short name -> full module name.
     pub(crate) module_aliases: BTreeMap<String, String>,
+    pub(crate) function_aliases: BTreeMap<String, String>,
     /// Monomorphized generic function instances to emit.
     pub(crate) mono_instances: Vec<MonoInstance>,
     /// Generic function AST definitions (name -> FnDef).
@@ -117,6 +119,7 @@ impl TIRBuilder {
             intrinsic_map: BTreeMap::new(),
             target_intrinsics: BTreeMap::new(),
             module_aliases: BTreeMap::new(),
+            function_aliases: BTreeMap::new(),
             mono_instances: Vec::new(),
             generic_fn_defs: BTreeMap::new(),
             current_subs: BTreeMap::new(),
@@ -136,6 +139,11 @@ impl TIRBuilder {
 
     pub fn with_intrinsics(mut self, map: BTreeMap<String, String>) -> Self {
         self.intrinsic_map = map;
+        self
+    }
+
+    pub fn with_function_aliases(mut self, aliases: BTreeMap<String, String>) -> Self {
+        self.function_aliases = aliases;
         self
     }
 

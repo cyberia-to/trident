@@ -51,8 +51,14 @@ impl NoxCompiler {
             return Err("raw ART1 entry has no flat I/O declarations".into());
         }
         let mut aliases = BTreeMap::new();
+        let mut functions = BTreeMap::new();
+        let mut constants = BTreeMap::new();
         for file in files {
             self.current_module = file.name.node.clone();
+            self.function_aliases
+                .insert(self.current_module.clone(), functions.clone());
+            self.constant_aliases
+                .insert(self.current_module.clone(), constants.clone());
             self.module_aliases
                 .insert(self.current_module.clone(), aliases.clone());
             // Resolve lexical size constants independently of declaration order.
@@ -94,6 +100,38 @@ impl NoxCompiler {
                     Item::Event(_) => {}
                 }
             }
+            for item in &file.items {
+                if !active(&item.node, flags) {
+                    continue;
+                }
+                if let Item::Fn(f) = &item.node {
+                    if f.is_pub {
+                        let full = &file.name.node;
+                        let short = full.rsplit('.').next().unwrap_or(full);
+                        let canonical = format!("{full}.{}", f.name.node);
+                        functions.insert(canonical.clone(), canonical.clone());
+                        if short != full {
+                            functions.insert(format!("{short}.{}", f.name.node), canonical);
+                        }
+                    }
+                }
+            }
+            for item in &file.items {
+                if !active(&item.node, flags) {
+                    continue;
+                }
+                if let Item::Const(c) = &item.node {
+                    if c.is_pub {
+                        let full = &file.name.node;
+                        let short = full.rsplit('.').next().unwrap_or(full);
+                        let canonical = format!("{full}.{}", c.name.node);
+                        constants.insert(canonical.clone(), canonical.clone());
+                        if short != full {
+                            constants.insert(format!("{short}.{}", c.name.node), canonical);
+                        }
+                    }
+                }
+            }
             // This mirrors TypeChecker::import_module: dependent modules see
             // both the full name and the last-segment alias, in dependency
             // order. The function body keeps the aliases of its own module.
@@ -129,6 +167,22 @@ impl NoxCompiler {
         } else {
             self.compile_fn(&f)
         }
+    }
+
+    pub(super) fn function_symbol(&self, name: &str) -> String {
+        self.function_aliases
+            .get(&self.current_module)
+            .and_then(|aliases| aliases.get(name))
+            .cloned()
+            .unwrap_or_else(|| self.symbol(name))
+    }
+
+    pub(super) fn constant_symbol(&self, name: &str) -> String {
+        self.constant_aliases
+            .get(&self.current_module)
+            .and_then(|aliases| aliases.get(name))
+            .cloned()
+            .unwrap_or_else(|| self.symbol(name))
     }
 
     /// Turn a name from the current body into its global identity. Dotted
@@ -179,11 +233,11 @@ impl NoxCompiler {
         match size {
             ArraySize::Param(name) if !generics.contains(name) => self
                 .constants
-                .get(&self.symbol(name))
+                .get(&self.constant_symbol(name))
                 .map(|n| ArraySize::Literal(*n))
                 // Keep lexical ownership even if a constant is unresolved;
                 // never capture an equally named entry-module constant.
-                .unwrap_or_else(|| ArraySize::Param(self.symbol(name))),
+                .unwrap_or_else(|| ArraySize::Param(self.constant_symbol(name))),
             ArraySize::Add(a, b) | ArraySize::Mul(a, b) => {
                 let a = self.qualified_size(a, generics);
                 let b = self.qualified_size(b, generics);

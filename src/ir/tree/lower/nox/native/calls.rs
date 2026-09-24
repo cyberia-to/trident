@@ -3,7 +3,7 @@ use super::*;
 
 impl Compiler<'_> {
     pub(super) fn call(&mut self, source: &str, args: &[Spanned<Expr>]) -> LowerResult {
-        let symbol = self.owner.symbol(source);
+        let symbol = self.owner.function_symbol(source);
         if let Some(function) = self.plan.functions.get(&symbol) {
             if args.len() != function.definition.params.len() {
                 return Err("native call arity mismatch".into());

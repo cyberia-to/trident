@@ -245,7 +245,11 @@ impl TypeChecker {
                     .map(|val| self.check_expr(&val.node, val.span))
                     .unwrap_or(Ty::Unit);
                 if let Some(expected) = self.expected_return.clone() {
-                    if actual != expected {
+                    if actual != expected
+                        && !value
+                            .as_ref()
+                            .is_some_and(|val| self.is_halting_expr(&val.node))
+                    {
                         self.error(
                             format!(
                                 "return type mismatch: expected {} but got {}",

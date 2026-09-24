@@ -23,6 +23,7 @@ impl TIRBuilder {
         }
         let (body, result_width) = self.build_match_arms(&name, arms);
         self.ops.extend(body);
+        let result_width = result_width.unwrap_or(0);
         Self::append_branch_cleanup(&mut self.ops, width + result_width, 0, result_width);
         self.stack.pop(); // arm construction restores its caller model
         self.stack.push_temp(result_width);
@@ -30,10 +31,10 @@ impl TIRBuilder {
         self.struct_layouts = layouts;
     }
 
-    fn build_match_arms(&mut self, name: &str, arms: &[MatchArm]) -> (Vec<TIROp>, u32) {
+    fn build_match_arms(&mut self, name: &str, arms: &[MatchArm]) -> (Vec<TIROp>, Option<u32>) {
         let Some((arm, rest)) = arms.split_first() else {
             // Impossible fallthrough fails explicitly.
-            return (vec![TIROp::Push(0), TIROp::Assert(1)], 0);
+            return (vec![TIROp::Push(0), TIROp::Assert(1)], None);
         };
         let saved_ops = std::mem::take(&mut self.ops);
         let saved = self.stack.save_state();
@@ -113,29 +114,27 @@ impl TIRBuilder {
             &mut then_body,
             self.stack.stack_depth(),
             pre_depth,
-            then_width,
+            then_width.unwrap_or(0),
         );
         self.stack.restore_state(saved.clone());
         self.var_types = types.clone();
         self.struct_layouts = layouts.clone();
-        if conditional {
+        let result_width = if conditional {
             let (else_body, else_width) = self.build_match_arms(name, rest);
-            if !rest.is_empty() && else_width != then_width {
-                self.ops.push(TIROp::Comment(
-                    "ERROR: match arms have different result widths".into(),
-                ));
-            }
+            let width = self.join_width(then_width, else_width, "match arms");
             self.ops.push(TIROp::IfElse {
                 then_body,
                 else_body,
             });
+            width
         } else {
             self.ops.extend(then_body);
-        }
+            then_width
+        };
         self.stack.restore_state(saved);
         self.var_types = types;
         self.struct_layouts = layouts;
         let body = std::mem::replace(&mut self.ops, saved_ops);
-        (body, then_width)
+        (body, result_width)
     }
 }

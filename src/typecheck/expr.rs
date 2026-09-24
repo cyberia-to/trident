@@ -24,16 +24,16 @@ impl TypeChecker {
                 if let Some(info) = self.lookup_var(name) {
                     return info.ty.clone();
                 }
-                // Known constant
-                if let Some(ty) = self.constant_types.get(name) {
-                    return ty.clone();
-                }
                 // Dotted name: could be nested field access (var.field.subfield)
                 // or module constant. Try resolving from the first dot outward.
                 if name.contains('.') {
                     if let Some(ty) = self.resolve_nested_field_access(name, span) {
                         return ty;
                     }
+                }
+                // Known constant
+                if let Some(ty) = self.constant_types.get(name) {
+                    return ty.clone();
                 }
                 self.error_with_help(
                     format!("undefined variable '{}'", name),

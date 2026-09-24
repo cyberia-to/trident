@@ -101,6 +101,11 @@ counters terminate immediately when the flag is set. Synthetic target branch
 subroutines therefore never confuse a source function exit with their own return.
 Stack-target recursive source calls remain rejected by type checking.
 
+A branch ending in a resolved `assert(false)` has no continuing result. Its
+zero-word assertion result is distinct from a continuing Unit value. Conditional
+and match joins compare widths only among continuing branches; the failure path
+retains a failing assertion and cannot return a fabricated value.
+
 Fixed-size array reads and projected assignments use declared element widths,
 including arrays of structs and nested arrays. Runtime indices are checked
 before selection (and before an assignment RHS). Balanced structural branches

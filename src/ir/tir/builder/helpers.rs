@@ -82,11 +82,12 @@ impl TIRBuilder {
         self.build_value_block_as_ir(block).0
     }
 
-    pub(crate) fn build_value_block_as_ir(&mut self, block: &Block) -> (Vec<TIROp>, u32) {
+    pub(crate) fn build_value_block_as_ir(&mut self, block: &Block) -> (Vec<TIROp>, Option<u32>) {
+        let halts = self.block_halts(block);
         let saved_ops = std::mem::take(&mut self.ops);
         let width = self.build_block(block);
         let nested = std::mem::take(&mut self.ops);
         self.ops = saved_ops;
-        (nested, width)
+        (nested, (!halts).then_some(width))
     }
 }

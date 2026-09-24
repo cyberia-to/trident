@@ -387,45 +387,57 @@ impl PreparedProject {
         Ok((modules.remove(0).file, exports.remove(0), origins))
     }
 
-    /// Build a global intrinsic map from all modules.
-    ///
-    /// Maps function names (short, qualified, and short-alias qualified) to
-    /// their `#[intrinsic(...)]` values.
-    pub fn intrinsic_map(&self) -> BTreeMap<String, String> {
+    /// Import the same active, public intrinsic identities as the typechecker.
+    /// Bare names belong to each module's own declaration scan.
+    pub fn intrinsic_map(&self, before: usize) -> BTreeMap<String, String> {
         let mut map = BTreeMap::new();
-        for pm in &self.modules {
-            for item in &pm.file.items {
-                if let ast::Item::Fn(func) = &item.node {
-                    if let Some(ref intrinsic) = func.intrinsic {
-                        let intr_value = if let Some(start) = intrinsic.node.find('(') {
-                            let end = intrinsic.node.rfind(')').unwrap_or(intrinsic.node.len());
-                            intrinsic.node[start + 1..end].to_string()
-                        } else {
-                            intrinsic.node.clone()
-                        };
-                        // Short function name
-                        map.insert(func.name.node.clone(), intr_value.clone());
-                        // Qualified name (module.func)
-                        let qualified = format!("{}.{}", pm.file.name.node, func.name.node);
-                        map.insert(qualified, intr_value.clone());
-                        // Short alias (hash.func for std.hash)
-                        if let Some(short) = pm.file.name.node.rsplit('.').next() {
-                            if short != pm.file.name.node {
-                                let short_qualified = format!("{}.{}", short, func.name.node);
-                                map.insert(short_qualified, intr_value.clone());
-                            }
-                        }
-                    }
-                }
+        let direct: BTreeMap<_, _> = self
+            .exports
+            .iter()
+            .take(before)
+            .flat_map(|exports| {
+                exports.direct_intrinsics.iter().map(|(name, intrinsic)| {
+                    (
+                        format!("{}.{}", exports.module_name, name),
+                        intrinsic.clone(),
+                    )
+                })
+            })
+            .collect();
+        for (visible, canonical) in self.function_aliases(before) {
+            if let Some(intrinsic) = direct.get(&canonical) {
+                map.insert(visible, intrinsic.clone());
             }
         }
         map
     }
 
-    /// Build module alias map: short name -> full name for dotted modules.
-    pub fn module_aliases(&self) -> BTreeMap<String, String> {
+    /// Callable bindings mirror TypeChecker::import_module, per owner scope.
+    pub fn function_aliases(&self, before: usize) -> BTreeMap<String, String> {
         let mut aliases = BTreeMap::new();
-        for pm in &self.modules {
+        for exports in self.exports.iter().take(before) {
+            let full = &exports.module_name;
+            let short = full.rsplit('.').next().unwrap_or(full);
+            for name in exports
+                .functions
+                .iter()
+                .map(|(name, _, _)| name)
+                .chain(exports.generic_functions.iter().map(|(name, _)| name))
+            {
+                let canonical = format!("{full}.{name}");
+                aliases.insert(canonical.clone(), canonical.clone());
+                if short != full {
+                    aliases.insert(format!("{short}.{name}"), canonical);
+                }
+            }
+        }
+        aliases
+    }
+
+    /// Build module alias map: short name -> full name for dotted modules.
+    pub fn module_aliases(&self, before: usize) -> BTreeMap<String, String> {
+        let mut aliases = BTreeMap::new();
+        for pm in self.modules.iter().take(before) {
             let full_name = &pm.file.name.node;
             if let Some(short) = full_name.rsplit('.').next() {
                 if short != full_name.as_str() {
@@ -437,9 +449,9 @@ impl PreparedProject {
     }
 
     /// Build external constants map from all module exports.
-    pub fn external_constants(&self) -> BTreeMap<String, u64> {
+    pub fn external_constants(&self, before: usize) -> BTreeMap<String, u64> {
         let mut constants = BTreeMap::new();
-        for exp in &self.exports {
+        for exp in self.exports.iter().take(before) {
             let full = &exp.module_name;
             let short = full.rsplit('.').next().unwrap_or(full);
             let has_short = short != full;

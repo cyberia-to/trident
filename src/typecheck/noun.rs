@@ -37,6 +37,7 @@ impl TypeChecker {
             self.functions.insert(
                 format!("nox_noun_{name}"),
                 FnSig {
+                    intrinsic: None,
                     params: params
                         .into_iter()
                         .enumerate()

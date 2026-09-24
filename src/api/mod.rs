@@ -263,11 +263,6 @@ pub fn compile_project_with_options(
 
     // Stack targets: the core stops at TIR — see build_tir_modules and
     // stack_lowering_moved_error above. The warrior lowers and links.
-    let _ = (
-        project.intrinsic_map(),
-        project.module_aliases(),
-        project.external_constants(),
-    );
     Err(vec![stack_lowering_moved_error(
         &options.target_config.name,
     )])
@@ -316,11 +311,6 @@ pub fn compile_module(
 
     let project = PreparedProject::build(module_path, options)?;
 
-    let _ = (
-        project.intrinsic_map(),
-        project.module_aliases(),
-        project.external_constants(),
-    );
     if project.modules.is_empty() {
         return Err(vec![Diagnostic::error(
             "no module found".to_string(),
@@ -392,10 +382,6 @@ pub fn build_tir_modules(
 
     let project = PreparedProject::build(entry_path, options)?;
 
-    let intrinsic_map = project.intrinsic_map();
-    let module_aliases = project.module_aliases();
-    let external_constants = project.external_constants();
-
     let mut modules = Vec::new();
     for (i, pm) in project.modules.iter().enumerate() {
         let mono = project
@@ -412,9 +398,10 @@ pub fn build_tir_modules(
             .with_target_intrinsics(options.target_intrinsic_widths())
             .with_cfg_flags(options.cfg_flags.clone())
             .with_module_types(&project.modules.iter().map(|m| &m.file).collect::<Vec<_>>())
-            .with_intrinsics(intrinsic_map.clone())
-            .with_module_aliases(module_aliases.clone())
-            .with_constants(external_constants.clone())
+            .with_intrinsics(project.intrinsic_map(i))
+            .with_function_aliases(project.function_aliases(i))
+            .with_module_aliases(project.module_aliases(i))
+            .with_constants(project.external_constants(i))
             .with_mono_instances(mono)
             .with_call_resolutions(call_res)
             .build_file(&pm.file)?;
@@ -441,10 +428,6 @@ pub fn build_tir_project(
 
     let project = PreparedProject::build(entry_path, options)?;
 
-    let intrinsic_map = project.intrinsic_map();
-    let module_aliases = project.module_aliases();
-    let external_constants = project.external_constants();
-
     let mut all_ir = Vec::new();
     for (i, pm) in project.modules.iter().enumerate() {
         let mono = project
@@ -461,9 +444,10 @@ pub fn build_tir_project(
             .with_target_intrinsics(options.target_intrinsic_widths())
             .with_cfg_flags(options.cfg_flags.clone())
             .with_module_types(&project.modules.iter().map(|m| &m.file).collect::<Vec<_>>())
-            .with_intrinsics(intrinsic_map.clone())
-            .with_module_aliases(module_aliases.clone())
-            .with_constants(external_constants.clone())
+            .with_intrinsics(project.intrinsic_map(i))
+            .with_function_aliases(project.function_aliases(i))
+            .with_module_aliases(project.module_aliases(i))
+            .with_constants(project.external_constants(i))
             .with_mono_instances(mono)
             .with_call_resolutions(call_res)
             .build_file(&pm.file)?;

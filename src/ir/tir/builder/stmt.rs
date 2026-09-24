@@ -149,22 +149,21 @@ impl TIRBuilder {
                     let else_depth = self.stack.stack_depth();
                     self.stack.restore_state(saved);
 
-                    // Local bindings do not form part of a branch result.
-                    // Branches may have different local counts but must agree
-                    // on the width of the value they return.
-                    let keep = if then_width == else_width {
-                        then_width
-                    } else {
-                        0
-                    };
-                    if then_width != else_width {
-                        self.ops.push(TIROp::Comment(
-                            "ERROR: conditional branches have different result widths".into(),
-                        ));
-                    }
-
-                    Self::append_branch_cleanup(&mut then_body, then_depth, pre_depth, keep);
-                    Self::append_branch_cleanup(&mut else_body, else_depth, pre_depth, keep);
+                    let keep = self
+                        .join_width(then_width, else_width, "conditional branches")
+                        .unwrap_or(0);
+                    Self::append_branch_cleanup(
+                        &mut then_body,
+                        then_depth,
+                        pre_depth,
+                        then_width.unwrap_or(0),
+                    );
+                    Self::append_branch_cleanup(
+                        &mut else_body,
+                        else_depth,
+                        pre_depth,
+                        else_width.unwrap_or(0),
+                    );
 
                     self.ops.push(TIROp::IfElse {
                         then_body,
