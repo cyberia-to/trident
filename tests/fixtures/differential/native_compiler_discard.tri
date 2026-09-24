@@ -1,0 +1,9 @@
+program native_compiler_discard
+use std.compiler.nox.syntax
+use std.compiler.nox.tuple_pattern
+use vm.core.convert
+
+#[pure]
+pub fn main(kind: U32, value: Field) -> Field {
+    if tuple_pattern.discard(syntax.token(as_field(kind), as_u32(0), as_u32(1), value)) { 1 } else { 0 }
+}

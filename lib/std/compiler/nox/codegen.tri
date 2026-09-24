@@ -12,6 +12,8 @@ use std.compiler.nox.formula
 use std.compiler.nox.call_codegen
 use std.compiler.nox.builtin_gen
 use std.compiler.nox.digest_gen
+use std.compiler.nox.tuple_gen
+use std.compiler.nox.flow
 
 const HALF: Field = 9223372034707292161
 pub struct Compiled { pub formula: Noun, pub error: syntax.Error }
@@ -77,6 +79,16 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, conte
             let called = builtin_gen.generate(as_u32(ast.left(node)), s.values, context.arguments, as_u32(ast.right(node)))
             code = called.formula
             depth = called.depth
+        }
+        else if kind == ast.TUPLE_VALUE {
+            let tuple = tuple_gen.generate(s.values, context.arguments, as_u32(ast.right(node)), as_u32(ast.left(node)))
+            code = tuple.formula
+            depth = tuple.depth
+        }
+        else if kind == ast.PROJECT {
+            let projection = flow.compose(formula.value(s.values, as_u32(ast.left(node))), flow.axis(ast.right(node)))
+            code = projection.formula
+            depth = projection.depth
         }
         else if kind == ast.DIGEST_INDEX {
             let indexed = digest_gen.read(formula.value(s.values, as_u32(ast.left(node))), formula.value(s.values, as_u32(ast.right(node))))

@@ -130,6 +130,7 @@ fn calls_reject_unknown_names_arity_types_and_unbalanced_argument_delimiters() {
             "inner(1,2,3)",
             "inner(1,true)",
             "inner(1,unit())",
+            "inner((1,2))",
             "zero(1)",
             "unit()+1",
         ] {
@@ -139,7 +140,6 @@ fn calls_reject_unknown_names_arity_types_and_unbalanced_argument_delimiters() {
             "inner(,1)",
             "inner(1,,2)",
             "inner(1 2)",
-            "inner((1,2))",
             "inner(1,2+)",
             "inner(1,2",
             "1+inner(1 2)",

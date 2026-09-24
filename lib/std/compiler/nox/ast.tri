@@ -18,6 +18,8 @@ pub const LESS: Field = 8
 pub const BIT_AND: Field = 9
 pub const BUILTIN: Field = 10
 pub const DIGEST_INDEX: Field = 11
+pub const TUPLE_VALUE: Field = 12
+pub const PROJECT: Field = 13
 
 // Postorder expression: [[kind [left right]] [type [start end]]].
 // Child IDs precede their parent. AST operations are independent of token kinds.

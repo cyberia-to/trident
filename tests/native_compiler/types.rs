@@ -22,7 +22,7 @@ fn probe(mode: u64, nodes: u64, depth: u64) -> Vec<u8> {
         .unwrap()
         .bytes
 }
-fn tuple(children: &[Noun], depth: u64, nodes: u64, contains: u64) -> Noun {
+pub(super) fn tuple(children: &[Noun], depth: u64, nodes: u64, contains: u64) -> Noun {
     let mut leaves = children.to_vec();
     leaves.resize(children.len().next_power_of_two(), Atom(0));
     while leaves.len() > 1 {

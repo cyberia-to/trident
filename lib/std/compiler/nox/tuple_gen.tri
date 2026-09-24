@@ -1,0 +1,24 @@
+module std.compiler.nox.tuple_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+// Links run backward. Wrapping each component before the accumulated suffix
+// produces a cons-list whose evaluation preserves source order and whole values.
+#[pure]
+#[requires(count < as_u32(17))]
+pub fn generate(values: seq.Seq, arguments: seq.Seq, head: U32, count: U32) -> formula.Value {
+    let mut result = flow.literal(0)
+    let mut cursor = head
+    for i in 0..16 {
+        if i == count { return result }
+        let link = seq.get(arguments, cursor)
+        let value = formula.value(values, as_u32(noun.as_field(noun.head(link))))
+        result = flow.cons(value, result)
+        cursor = as_u32(noun.as_field(noun.tail(link)))
+    }
+    result
+}

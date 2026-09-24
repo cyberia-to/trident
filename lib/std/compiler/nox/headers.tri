@@ -11,6 +11,7 @@ use std.compiler.nox.symbols
 use std.compiler.nox.signatures
 use std.compiler.nox.header_state
 use std.compiler.nox.types
+use std.compiler.nox.type_parse
 
 #[pure]
 fn expected(token: syntax.Token) -> syntax.Error {
@@ -20,31 +21,20 @@ fn expected(token: syntax.Token) -> syntax.Error {
 }
 
 #[pure]
-pub fn scalar(token: syntax.Token) -> Field {
-    if token.kind == as_u32(12) { return types.FIELD }
-    if token.kind == as_u32(20) { return types.BOOL }
-    if token.kind == as_u32(28) { return types.UINT32 }
-    if token.kind == as_u32(34) { return types.NOUN }
-    if token.kind == as_u32(35) { return types.DIGEST }
-    types.INVALID
-}
+pub fn scalar(token: syntax.Token) -> Field { type_parse.scalar(token) }
 
 #[pure]
-fn type_error(token: syntax.Token) -> syntax.Error {
-    if syntax.either(token.kind == as_u32(1), token.kind == as_u32(36)) { return syntax.error(6, token.start, token.end) }
-    ast.failed(token, 2)
-}
-
-#[pure]
-fn open(source: bytes.Bytes, input: header_state.State) -> header_state.State {
+fn open(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
     let mut s = input
     // Called at the closing parameter parenthesis, with an optional annotation.
     s.token = lexer.next(source, s.token.end)
     if s.token.kind == as_u32(9) {
         s.token = lexer.next(source, s.token.end)
-        s.current.returns = noun.atom(scalar(s.token))
-        if noun.eq(s.current.returns, noun.atom(types.INVALID)) { s.error = type_error(s.token) return s }
-        s.token = lexer.next(source, s.token.end)
+        let parsed = type_parse.parse(source, s.token, cap)
+        s.error = parsed.error
+        if (s.error.code == as_u32(0)) == false { return s }
+        s.current.returns = parsed.ty
+        s.token = parsed.token
     }
     if (s.token.kind == as_u32(7)) == false { s.error = expected(s.token) return s }
     s.current.open = s.token.end
@@ -57,19 +47,20 @@ fn open(source: bytes.Bytes, input: header_state.State) -> header_state.State {
 #[pure]
 fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
     let mut s = input
-    if s.token.kind == as_u32(6) { return open(source, s) }
+    if s.token.kind == as_u32(6) { return open(source, s, cap) }
     let name = s.token
     if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
     s.token = lexer.next(source, name.end)
     if (s.token.kind == as_u32(17)) == false { s.error = expected(s.token) return s }
     s.token = lexer.next(source, s.token.end)
-    let ty = scalar(s.token)
-    if ty == types.INVALID { s.error = type_error(s.token) return s }
+    let parsed = type_parse.parse(source, s.token, cap)
+    s.error = parsed.error
+    if (s.error.code == as_u32(0)) == false { return s }
     if seq.len(s.params) == cap { s.error = syntax.error(7, name.start, name.end) return s }
-    s.params = seq.push(s.params, symbols.binding(name, false, noun.atom(ty)), cap)
+    s.params = seq.push(s.params, symbols.binding(name, false, parsed.ty), cap)
     s.current.count = syntax.inc(s.current.count)
-    s.token = lexer.next(source, s.token.end)
-    if s.token.kind == as_u32(6) { return open(source, s) }
+    s.token = parsed.token
+    if s.token.kind == as_u32(6) { return open(source, s, cap) }
     if (s.token.kind == as_u32(26)) == false { s.error = expected(s.token) return s }
     s.token = lexer.next(source, s.token.end)
     s
