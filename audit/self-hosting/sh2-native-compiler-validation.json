@@ -1,0 +1,1604 @@
+{
+  "schema": "trident/native-compiler-validation/v1",
+  "gate": "SH2 native arithmetic source compiler",
+  "kind": "local-development",
+  "source_revisions": {
+    "trident": "7684fd7e67d3d6610c42553088767844af379f36",
+    "joy": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+    "trisha": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "host": {
+    "uname -ms": "Darwin arm64",
+    "rustc -Vv": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-apple-darwin\nrelease: 1.95.0\nLLVM version: 22.1.3",
+    "sw_vers": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4.1\nBuildVersion:\t\t25E253",
+    "sysctl -n machdep.cpu.brand_string": "Apple M4 Max"
+  },
+  "gates": [
+    {
+      "repository": "trident",
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-pilot-final-check.log",
+      "log_sha256": "2865dff129e3e1960f8c2856c65ae838ebc316d47ca6721b7386a4d2ddc82b27",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trident",
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36",
+      "command": "cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-pilot-final-tests.log",
+      "log_sha256": "c1e5a39d1848c62c87ce983e3287eb4e760ba307e9659821f1a65fc76a843cd2",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 921,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-pilot-final-check.log",
+      "log_sha256": "a0d989898cb9f4248cd25e0362467f4b7130fe7e0ec15d0e0b0c01e8c108ff5d",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-pilot-final-tests.log",
+      "log_sha256": "db00a80e5f995af66547c4a74d4e048ecfb8877cd54096c69a6922745fbc3998",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 120,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-pilot-final-bench.log",
+      "log_sha256": "2968b9f08529a075ae7e5f68ddde7145fac3dacd01c97e4ecb24c98f35e96c2a",
+      "rust_warnings": 0,
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "unchanged_result_cycle_rows": true,
+      "comparison_log": "/tmp/trisha-04-shared-budget-bench.log"
+    }
+  ],
+  "formal_audits": [
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/ascii.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/ascii.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing lib/std/compiler/nox/ascii.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/ascii.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "digit",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "digit: unmodeled call syntax.both"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "digit",
+            "unsupported": [
+              "digit: unmodeled call syntax.both"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [
+                {
+                  "expression": "if (value < 4294967296) then 95 \u2208 U32",
+                  "index": 0,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if ((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) then 65 \u2208 U32",
+                  "index": 1,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if (((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) * (1 - ((1 - (value < 65)) == 0))) then 91 \u2208 U32",
+                  "index": 2,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if ((((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) * (1 - ((1 - (value < 65)) == 0))) * (1 - ((1 - (value < 91)) == 0))) then 97 \u2208 U32",
+                  "index": 3,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if (((((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) * (1 - ((1 - (value < 65)) == 0))) * (1 - ((1 - (value < 91)) == 0))) * (1 - ((1 - (value < 97)) == 0))) then 123 \u2208 U32",
+                  "index": 4,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                }
+              ],
+              "counterexamples": [],
+              "file": "initial",
+              "redundant_assertions": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "suggestions": [
+                {
+                  "constraint_index": 0,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #0 appears redundant (always true): if (value < 4294967296) then 95 \u2208 U32"
+                },
+                {
+                  "constraint_index": 1,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #1 appears redundant (always true): if ((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) then 65 \u2208 U32"
+                },
+                {
+                  "constraint_index": 2,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #2 appears redundant (always true): if (((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) * (1 - ((1 - (value < 65)) == 0))) then 91 \u2208 U32"
+                },
+                {
+                  "constraint_index": 3,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #3 appears redundant (always true): if ((((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) * (1 - ((1 - (value < 65)) == 0))) * (1 - ((1 - (value < 91)) == 0))) then 97 \u2208 U32"
+                },
+                {
+                  "constraint_index": 4,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #4 appears redundant (always true): if (((((value < 4294967296) * (1 - ((1 - (value == 95)) == 0))) * (1 - ((1 - (value < 65)) == 0))) * (1 - ((1 - (value < 91)) == 0))) * (1 - ((1 - (value < 97)) == 0))) then 123 \u2208 U32"
+                }
+              ],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 5,
+                "variables": 1
+              },
+              "unsupported": [],
+              "verdict": "safe",
+              "version": 1
+            },
+            "function": "initial",
+            "unsupported": [],
+            "verdict": "safe"
+          },
+          {
+            "analysis": {
+              "constraints": [
+                {
+                  "expression": "if (value < 4294967296) then 9 \u2208 U32",
+                  "index": 0,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if ((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) then 10 \u2208 U32",
+                  "index": 1,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if (((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) * (1 - ((1 - (value == 10)) == 0))) then 12 \u2208 U32",
+                  "index": 2,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if ((((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) * (1 - ((1 - (value == 10)) == 0))) * (1 - ((1 - (value == 12)) == 0))) then 13 \u2208 U32",
+                  "index": 3,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                },
+                {
+                  "expression": "if (((((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) * (1 - ((1 - (value == 10)) == 0))) * (1 - ((1 - (value == 12)) == 0))) * (1 - ((1 - (value == 13)) == 0))) then 32 \u2208 U32",
+                  "index": 4,
+                  "is_trivial": true,
+                  "is_violated": false,
+                  "kind": "conditional"
+                }
+              ],
+              "counterexamples": [],
+              "file": "space",
+              "redundant_assertions": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "suggestions": [
+                {
+                  "constraint_index": 0,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #0 appears redundant (always true): if (value < 4294967296) then 9 \u2208 U32"
+                },
+                {
+                  "constraint_index": 1,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #1 appears redundant (always true): if ((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) then 10 \u2208 U32"
+                },
+                {
+                  "constraint_index": 2,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #2 appears redundant (always true): if (((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) * (1 - ((1 - (value == 10)) == 0))) then 12 \u2208 U32"
+                },
+                {
+                  "constraint_index": 3,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #3 appears redundant (always true): if ((((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) * (1 - ((1 - (value == 10)) == 0))) * (1 - ((1 - (value == 12)) == 0))) then 13 \u2208 U32"
+                },
+                {
+                  "constraint_index": 4,
+                  "kind": "remove_redundant",
+                  "message": "Constraint #4 appears redundant (always true): if (((((value < 4294967296) * (1 - ((1 - (value == 9)) == 0))) * (1 - ((1 - (value == 10)) == 0))) * (1 - ((1 - (value == 12)) == 0))) * (1 - ((1 - (value == 13)) == 0))) then 32 \u2208 U32"
+                }
+              ],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 5,
+                "variables": 1
+              },
+              "unsupported": [],
+              "verdict": "safe",
+              "version": 1
+            },
+            "function": "space",
+            "unsupported": [],
+            "verdict": "safe"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "same",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "same: aggregate parameter"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "same",
+            "unsupported": [
+              "same: aggregate parameter"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "keyword",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 1
+              },
+              "unsupported": [],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "keyword",
+            "unsupported": [],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "punctuation",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "punctuation: unmodeled scalar/aggregate expression"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "punctuation",
+            "unsupported": [
+              "punctuation: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/emit.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/emit.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'std.compiler.nox.syntax'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/emit.tri:7:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m7 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ms\u001b[0m\u001b[33mt\u001b[0m\u001b[33md\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mm\u001b[0m\u001b[33mp\u001b[0m\u001b[33mi\u001b[0m\u001b[33ml\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33m.\u001b[0m\u001b[33mn\u001b[0m\u001b[33mo\u001b[0m\u001b[33mx\u001b[0m\u001b[33m.\u001b[0m\u001b[33ms\u001b[0m\u001b[33my\u001b[0m\u001b[33mn\u001b[0m\u001b[33mt\u001b[0m\u001b[33ma\u001b[0m\u001b[33mx\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m              \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'std.compiler.nox.syntax'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing lib/std/compiler/nox/emit.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/emit.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "literal",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "literal: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "literal",
+            "unsupported": [
+              "literal: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "binary",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "binary: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "binary",
+            "unsupported": [
+              "binary: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "artifact",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "artifact: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "artifact",
+            "unsupported": [
+              "artifact: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "result",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "result: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "result",
+            "unsupported": [
+              "result: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "success",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "success: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "success",
+            "unsupported": [
+              "success: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "text",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "text: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "text",
+            "unsupported": [
+              "text: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "message",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "message: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "message",
+            "unsupported": [
+              "message: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "failure",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "failure: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "failure",
+            "unsupported": [
+              "failure: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/job.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/job.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing lib/std/compiler/nox/job.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/job.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "charge",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "charge: unmodeled call field.sub"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "charge",
+            "unsupported": [
+              "charge: unmodeled call field.sub"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "slot",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "slot: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "slot",
+            "unsupported": [
+              "slot: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "record",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "record: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "record",
+            "unsupported": [
+              "record: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "reject",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "reject: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "reject",
+            "unsupported": [
+              "reject: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "read",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "read: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "read",
+            "unsupported": [
+              "read: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/lexer.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/ascii.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/lexer.tri:6:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m6 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing lib/std/compiler/nox/lexer.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/lexer.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "identifier",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "identifier: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "identifier",
+            "unsupported": [
+              "identifier: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "decimal",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "decimal: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "decimal",
+            "unsupported": [
+              "decimal: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "next",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "next: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "next",
+            "unsupported": [
+              "next: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/parser.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/ascii.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/emit.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'std.compiler.nox.syntax'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/emit.tri:7:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m7 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ms\u001b[0m\u001b[33mt\u001b[0m\u001b[33md\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mm\u001b[0m\u001b[33mp\u001b[0m\u001b[33mi\u001b[0m\u001b[33ml\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33m.\u001b[0m\u001b[33mn\u001b[0m\u001b[33mo\u001b[0m\u001b[33mx\u001b[0m\u001b[33m.\u001b[0m\u001b[33ms\u001b[0m\u001b[33my\u001b[0m\u001b[33mn\u001b[0m\u001b[33mt\u001b[0m\u001b[33ma\u001b[0m\u001b[33mx\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m              \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'std.compiler.nox.syntax'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/lexer.tri:6:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m6 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/parser.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'std.nox.bytes'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/parser.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ms\u001b[0m\u001b[33mt\u001b[0m\u001b[33md\u001b[0m\u001b[33m.\u001b[0m\u001b[33mn\u001b[0m\u001b[33mo\u001b[0m\u001b[33mx\u001b[0m\u001b[33m.\u001b[0m\u001b[33mb\u001b[0m\u001b[33my\u001b[0m\u001b[33mt\u001b[0m\u001b[33me\u001b[0m\u001b[33ms\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m         \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'std.nox.bytes'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing lib/std/compiler/nox/parser.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/parser.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "failed",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "failed: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "failed",
+            "unsupported": [
+              "failed: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "store",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "store: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "store",
+            "unsupported": [
+              "store: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "operator",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "operator: aggregate parameter"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "operator",
+            "unsupported": [
+              "operator: aggregate parameter"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "reduce",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "reduce: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "reduce",
+            "unsupported": [
+              "reduce: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "push_operator",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "push_operator: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "push_operator",
+            "unsupported": [
+              "push_operator: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "step",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "step: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "step",
+            "unsupported": [
+              "step: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "chunk",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "chunk: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "chunk",
+            "unsupported": [
+              "chunk: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "expression",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "expression: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "expression",
+            "unsupported": [
+              "expression: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "compile",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "compile: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "compile",
+            "unsupported": [
+              "compile: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/syntax.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "Auditing lib/std/compiler/nox/syntax.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/syntax.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "inc",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "inc: unmodeled scalar/aggregate expression"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "inc",
+            "unsupported": [
+              "inc: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "dec",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "dec: unmodeled scalar/aggregate expression"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "dec",
+            "unsupported": [
+              "dec: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "error",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "error: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "error",
+            "unsupported": [
+              "error: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "token",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "token: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "token",
+            "unsupported": [
+              "token: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "either",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 2
+              },
+              "unsupported": [],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "either",
+            "unsupported": [],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "both",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 2
+              },
+              "unsupported": [],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "both",
+            "unsupported": [],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/utf8.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mlib/std/compiler/nox/utf8.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing lib/std/compiler/nox/utf8.tri...\n",
+      "report": {
+        "file": "lib/std/compiler/nox/utf8.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "chunk",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "chunk: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "chunk",
+            "unsupported": [
+              "chunk: aggregate return"
+            ],
+            "verdict": "unknown"
+          },
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "validate",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "validate: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "validate",
+            "unsupported": [
+              "validate: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "compiler/nox/main.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/job.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/utf8.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/ascii.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/lexer.tri:6:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m6 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/emit.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'std.compiler.nox.syntax'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/emit.tri:7:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m7 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ms\u001b[0m\u001b[33mt\u001b[0m\u001b[33md\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mm\u001b[0m\u001b[33mp\u001b[0m\u001b[33mi\u001b[0m\u001b[33ml\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33m.\u001b[0m\u001b[33mn\u001b[0m\u001b[33mo\u001b[0m\u001b[33mx\u001b[0m\u001b[33m.\u001b[0m\u001b[33ms\u001b[0m\u001b[33my\u001b[0m\u001b[33mn\u001b[0m\u001b[33mt\u001b[0m\u001b[33ma\u001b[0m\u001b[33mx\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m              \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'std.compiler.nox.syntax'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/parser.tri:4:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m4 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'std.nox.bytes'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/Users/master/cyber/.worktrees/selfhost-0.4/trident/lib/std/compiler/nox/parser.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ms\u001b[0m\u001b[33mt\u001b[0m\u001b[33md\u001b[0m\u001b[33m.\u001b[0m\u001b[33mn\u001b[0m\u001b[33mo\u001b[0m\u001b[33mx\u001b[0m\u001b[33m.\u001b[0m\u001b[33mb\u001b[0m\u001b[33my\u001b[0m\u001b[33mt\u001b[0m\u001b[33me\u001b[0m\u001b[33ms\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m         \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'std.nox.bytes'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'vm.core.convert'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mcompiler/nox/main.tri:3:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mv\u001b[0m\u001b[33mm\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mr\u001b[0m\u001b[33me\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mn\u001b[0m\u001b[33mv\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33mt\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m          \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'vm.core.convert'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'std.compiler.nox.syntax'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0mcompiler/nox/main.tri:5:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ms\u001b[0m\u001b[33mt\u001b[0m\u001b[33md\u001b[0m\u001b[33m.\u001b[0m\u001b[33mc\u001b[0m\u001b[33mo\u001b[0m\u001b[33mm\u001b[0m\u001b[33mp\u001b[0m\u001b[33mi\u001b[0m\u001b[33ml\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33m.\u001b[0m\u001b[33mn\u001b[0m\u001b[33mo\u001b[0m\u001b[33mx\u001b[0m\u001b[33m.\u001b[0m\u001b[33ms\u001b[0m\u001b[33my\u001b[0m\u001b[33mn\u001b[0m\u001b[33mt\u001b[0m\u001b[33ma\u001b[0m\u001b[33mx\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m              \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'std.compiler.nox.syntax'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nAuditing compiler/nox/main.tri...\n",
+      "report": {
+        "file": "compiler/nox/main.tri",
+        "functions": [
+          {
+            "analysis": {
+              "constraints": [],
+              "counterexamples": [],
+              "file": "main",
+              "redundant_assertions": [],
+              "suggestions": [],
+              "summary": {
+                "active_constraints": 0,
+                "bmc_violations": 0,
+                "divine_inputs": 0,
+                "pub_inputs": 0,
+                "pub_outputs": 0,
+                "random_violations": 0,
+                "static_violations": 0,
+                "total_constraints": 0,
+                "variables": 0
+              },
+              "unsupported": [
+                "main: aggregate return"
+              ],
+              "verdict": "unknown",
+              "version": 1
+            },
+            "function": "main",
+            "unsupported": [
+              "main: aggregate return"
+            ],
+            "verdict": "unknown"
+          }
+        ],
+        "verdict": "unknown"
+      },
+      "revision": "7684fd7e67d3d6610c42553088767844af379f36"
+    }
+  ],
+  "protected_refs": {
+    "trident": {
+      "master": "1dd0c608608c4de8d745df772d41b30ea79ecceb",
+      "origin/master": "360b737e073ca2f969ab0c78460b4228bcac7b78"
+    },
+    "joy": {
+      "main": "63bec5eb8f4c2144470c670518b31f06f7568ab4",
+      "origin/main": "10844a890e2939d529a1003474298a09be30b75c"
+    },
+    "nox": {
+      "master": "2612673cae64239cb3511b13027d9ffaba77f48e",
+      "origin/master": "2612673cae64239cb3511b13027d9ffaba77f48e"
+    }
+  },
+  "installed_cli_receipt": "native-compiler-cli.json",
+  "earlier_failed_commands": [
+    {
+      "command": "../install/bin/joy build compiler/nox/main.tri --emit artifact --artifact-profile compiler-job -o /tmp/trident-04-pilot-c1.dag --force",
+      "source_state": "earlier uncommitted draft based on a29241f987f6b4d32e00c622260813d34fb1a1ef; not the final source revision",
+      "first_error": "installed seed lacked newly added packaged modules",
+      "local_log": "/tmp/trident-04-pilot-build.log",
+      "log_sha256": "af4d73a030c080b6c656e8d00826313cedc10524c7403cdc9d8893d3cc7810d0"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p cyber-joy -- build ../trident/compiler/nox/main.tri --emit artifact --artifact-profile compiler-job -o /tmp/trident-04-pilot-c1.dag --force",
+      "source_state": "earlier uncommitted draft based on a29241f987f6b4d32e00c622260813d34fb1a1ef; not the final source revision",
+      "first_error": "unexpected character '|' (draft used unsupported Boolean punctuation)",
+      "local_log": "/tmp/trident-04-pilot-build-current.log",
+      "log_sha256": "678896b9bfb0ccfd7503eca8e5753c9129b32ce50d760a92481ab4f8ef7ef0b2"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked --manifest-path ../joy/Cargo.toml -p cyber-joy -- build compiler/nox/main.tri --emit artifact --artifact-profile compiler-job -o /tmp/trident-04-pilot-c1.dag --force",
+      "source_state": "earlier uncommitted draft based on a29241f987f6b4d32e00c622260813d34fb1a1ef; not the final source revision",
+      "first_error": "expected identifier, found 'module' (draft local used reserved word)",
+      "local_log": "/tmp/trident-04-pilot-build-2.log",
+      "log_sha256": "9aa5194c0d5223000d3ee6bd747d68c39d3c52d0a659d3fad3effadcc18245b7"
+    },
+    {
+      "command": "cargo test --release --locked --test native_compiler bounds::operator_stack",
+      "source_state": "earlier uncommitted draft based on a29241f987f6b4d32e00c622260813d34fb1a1ef; not the final source revision",
+      "first_error": "draft stack128 case exhausted the lifetime arena; pilot stack ceiling set to64 and exact/one-more cases passed",
+      "local_log": "/tmp/trident-04-pilot-stack-optimized-tests.log",
+      "log_sha256": "360de3c974721d2ef69d27bce78bf7dfd1f654badc8e548d615002a51c8edbc2"
+    },
+    {
+      "command": "cargo test --release --locked --test native_compiler bounds::source_ceiling",
+      "source_state": "earlier uncommitted draft based on a29241f987f6b4d32e00c622260813d34fb1a1ef; not the final source revision",
+      "first_error": "source at algorithmic ceiling exhausted arena before lexical diagnostics; final test and installed receipt retain this runtime boundary",
+      "local_log": "/tmp/trident-04-pilot-source-cap-tests.log",
+      "log_sha256": "741b366acfa698a37e0b8ef8ba5b98e133ec6c0a4fdd8af50117bf9a7d2d6668"
+    },
+    {
+      "command": "cargo test --workspace --release --locked",
+      "source_state": "earlier uncommitted draft based on a29241f987f6b4d32e00c622260813d34fb1a1ef; not the final source revision",
+      "first_error": "census_every_in_surface_module_has_a_differential: new ascii/syntax scalar entries required executed fixtures and census registration",
+      "local_log": "/tmp/trident-04-pilot-tests-all.log",
+      "log_sha256": "7459073e2aff77ed4d65ea2c8acc5bcd1452435448d737ee91c736cf887fa7cf"
+    }
+  ],
+  "provenance": "Source gates ran before source commit; tested source committed unchanged. Installed CLI acceptance rerun after committed Trident/Joy rebuilds.",
+  "limitations": [
+    "The pilot covers the specified arithmetic grammar. It cannot compile its own implementation.",
+    "The source ceiling is an algorithmic bound. Full admitted source sizes may exhaust the independent lifetime arena during guest admission.",
+    "Formal audits remain UNKNOWN. No native dynamic execution proof, complete compiler workload or six-platform acceptance is claimed."
+  ]
+}
