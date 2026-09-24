@@ -7,7 +7,7 @@ retain their original observations; they are not substituted for gate evidence.
 
 ## Current position
 
-**Next: SH1 Joy compiler-job admission.** SH0's compiler
+**Next: explicit compiler-profile seed export, then SH2 native compiler.** SH0's compiler
 inventory, data/job formats and runtime/control-flow contract are reviewed and
 specified. Nox's complete codec, lifetime arena allowance and sequential heap
 executor and Joy's structured raw run are in `release/0.4`.
@@ -16,7 +16,9 @@ in the current delivery branches; see [evidence](self-hosting/native-noun.md).
 Reusable raw source calls/loops and checked dynamic array indexing now have
 [execution acceptance](self-hosting/native-control.md). Native Seq/Bytes have
 [execution acceptance](self-hosting/native-collections.md). Production compiler
-JOB1/RES1 admission remains required before SH1 closes.
+JOB1/RES1 admission is delivered in Joy [PR9](https://github.com/cyberia-to/joy/pull/9);
+[receipt](../../joy/audit/self-hosting/compiler-jobs.md). Explicit compiler-profile
+seed export completes the source-to-job integration next.
 No self-compilation or compiler execution proof is claimed.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
@@ -27,7 +29,7 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 | Gate | Status | Missing acceptance evidence |
 |---|---|---|
 | [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Closed — contract gate | [Owner review and runtime evidence](self-hosting/native-runtime.md) |
-| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime foundation delivered | Full compiler-job transport |
+| [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | In progress — runtime and job transport delivered | Source compiler-profile export acceptance |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Open — needs SH1 | `.tri` compiler running on nox emits a separately executed nox program |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — needs SH2 | Whole compiler subset and executed differential/rejection corpus |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — starts after SH1 | Real closure, compiler-scale memory/runtime and boundary receipts |
@@ -70,7 +72,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   covered by the separate reusable-control receipt below.
 - [x] SH1 Joy raw transport slice: [PR5](https://github.com/cyberia-to/joy/pull/5),
   complete noun execution/publication with NoTrace;85 workspace tests passed.
-- [ ] SH1 Joy compiler-job slice: production JOB1/RES1 admission and binding.
+- [x] SH1 Joy compiler-job slice: production JOB1/RES1 admission and binding,
+  [PR9](https://github.com/cyberia-to/joy/pull/9), [receipt](../../joy/audit/self-hosting/compiler-jobs.md).
+- [ ] SH1 explicit compiler-profile seed export and source-guest JOB1/RES1 execution.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
   [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
@@ -87,9 +91,8 @@ visible here as those decisions land.
 | Blocker | Owner / first gate | Baseline |
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
-| Raw compiler profile still needs JOB1/RES1; flat bundle lowering remains legacy | Trident + Joy / SH1 | [reusable raw lowering](self-hosting/native-control.md) |
+| Explicit source compiler-profile export acceptance remains | Trident + Joy / SH1 | Native raw lowering and Joy JOB1/RES1 are delivered |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
-| Production compiler JOB1/RES1 admission is pending | Joy / SH1 | Complete raw ART1 transport delivered; compiler profile remains rejected |
 | Seed frontend halting/return and empty-if parsing inconsistencies | Trident / SH3 | [repros and current source workarounds](self-hosting/native-collections.md#seed-frontend-findings-carried-into-sh3) |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |

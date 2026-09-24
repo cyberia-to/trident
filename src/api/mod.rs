@@ -478,7 +478,9 @@ pub use tools::*;
 
 mod native;
 pub use native::{
-    compile_raw_artifact, compile_raw_artifact_project, RawArtifact, RAW_ARTIFACT_LIMITS,
+    compile_native_artifact, compile_native_artifact_project, compile_raw_artifact,
+    compile_raw_artifact_project, NativeArtifact, NativeArtifactProfile, RawArtifact,
+    NATIVE_ARTIFACT_LIMITS, RAW_ARTIFACT_LIMITS,
 };
 mod bundle;
 pub use bundle::{bundle_with_assembly, compile_to_bundle};

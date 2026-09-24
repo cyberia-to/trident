@@ -114,9 +114,9 @@ an axis formula and evaluate it with deterministic composition. No guest
 `is_atom` operation is assumed, and witness calls cannot supply compiler work.
 Native Boolean results retain 0=true / 1=false. The
 [conformance evidence](../audit/self-hosting/native-data.md) records which small
-formulas actually ran. Joy transports and executes complete raw artifacts;
-source collection libraries, production JOB1/RES1 admission and compiler-scale
-Zheng coverage remain later gates. Raw source now uses reusable functions and
+formulas actually ran. Joy transports and executes complete raw artifacts and
+validates compiler JOB1/RES1. Compiler-scale Zheng coverage remains a later
+gate. Raw source now uses reusable functions and
 loop bodies, stable balanced frames, checked dynamic array reads/writes and
 complete early-return propagation. See the [runtime contract](self-hosting-runtime.md)
 for argument order, loop semantics, table ordering and explicit resource limits.
@@ -126,3 +126,19 @@ profiles and canonical NOXDAG01 transport. These preserve complete result roots;
 they do not use the existing flat output words as a program artifact. ART1
 contains executable metadata/formula, while RES1 binds a particular compile job.
 Keeping producer/job identity outside ART1 is required for C2/C3 byte equality.
+
+Seed API `compile_native_artifact` / `compile_native_artifact_project` selects
+`NativeArtifactProfile::RawNoun` or `CompilerJob` explicitly. Both compile the
+same pure `fn main(input: Noun) -> Noun` ABI; only ART1's paired input/output
+profile fields differ (0/0 or 1/1). Selecting compiler profile does not prove
+that the source implements a compiler or produces valid RES1. Joy validates
+the job/result boundary on execution. Mixed or unknown profiles cannot be
+requested through this enum. Profiles never come from a filename or source
+declaration, and host services remain forbidden.
+
+The existing `compile_raw_artifact` / `compile_raw_artifact_project` APIs retain
+their exact raw-profile output. `NativeArtifact` includes complete canonical
+bytes, particle, name and declared profile; `RawArtifact` remains a compatibility
+alias. `NATIVE_ARTIFACT_LIMITS` and its existing `RAW_ARTIFACT_LIMITS` alias bound
+seed emission. Joy exposes the explicit selection as
+`build --emit artifact --artifact-profile raw|compiler-job`, defaulting to raw.

@@ -1,4 +1,4 @@
-//! Native raw-profile compiler output; complete ART1 trees never pass through text.
+//! Explicit native profiles; complete ART1 trees never pass through text.
 use super::{pipeline::PreparedProject, require_nox_target, CompileOptions};
 use crate::ast::FileKind;
 use crate::diagnostic::Diagnostic;
@@ -15,20 +15,41 @@ const MODULUS: u64 = 0xffff_ffff_0000_0001;
 const ART1: u64 = 0x4152_5431;
 
 /// Initial seed emission ceilings, matching Joy's raw-artifact transport.
-pub const RAW_ARTIFACT_LIMITS: artifact::Limits = artifact::Limits {
+pub const NATIVE_ARTIFACT_LIMITS: artifact::Limits = artifact::Limits {
     max_bytes: 16 * 1024 * 1024,
     max_nodes: (ARENA / 4 * 3) as u32,
     max_depth: 4096,
 };
 
+/// Compatibility name for the native seed emission ceilings.
+pub const RAW_ARTIFACT_LIMITS: artifact::Limits = NATIVE_ARTIFACT_LIMITS;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NativeArtifactProfile {
+    RawNoun,
+    CompilerJob,
+}
+
+impl NativeArtifactProfile {
+    pub const fn value(self) -> u64 {
+        match self {
+            Self::RawNoun => 0,
+            Self::CompilerJob => 1,
+        }
+    }
+}
+
 #[derive(Debug)]
-pub struct RawArtifact {
-    /// Complete canonical NOXDAG01 container of ART1(0, 0, 0, formula).
+pub struct NativeArtifact {
+    /// Complete canonical NOXDAG01 container of ART1(0, profile, profile, formula).
     pub bytes: Vec<u8>,
     /// Full native identity of that ART1, independent of source metadata.
     pub particle: [u8; 32],
     pub name: String,
+    pub profile: NativeArtifactProfile,
 }
+
+pub type RawArtifact = NativeArtifact;
 
 /// Compile a resolved source package with exactly `fn main(input: Noun) -> Noun`.
 /// The profile is pure: host witness and persistent-state services are forbidden.
@@ -38,6 +59,17 @@ pub fn compile_raw_artifact_project(
     options: &CompileOptions,
     limits: artifact::Limits,
 ) -> Result<RawArtifact, Vec<Diagnostic>> {
+    compile_native_artifact_project(entry, options, NativeArtifactProfile::RawNoun, limits)
+}
+
+/// Compile an explicit structured entry profile. CompilerJob declares the
+/// JOB1/RES1 boundary; the warrior must validate those records at execution.
+pub fn compile_native_artifact_project(
+    entry: &Path,
+    options: &CompileOptions,
+    profile: NativeArtifactProfile,
+    limits: artifact::Limits,
+) -> Result<NativeArtifact, Vec<Diagnostic>> {
     worker(|| {
         require_nox_target(options)?;
         validate_limits(limits)?;
@@ -57,7 +89,7 @@ pub fn compile_raw_artifact_project(
                 &project.native_origins,
             )
             .map_err(error)?;
-        emit(formula, entry.file.name.node.clone(), limits)
+        emit(formula, entry.file.name.node.clone(), profile, limits)
     })
 }
 
@@ -68,6 +100,23 @@ pub fn compile_raw_artifact(
     options: &CompileOptions,
     limits: artifact::Limits,
 ) -> Result<RawArtifact, Vec<Diagnostic>> {
+    compile_native_artifact(
+        source,
+        filename,
+        options,
+        NativeArtifactProfile::RawNoun,
+        limits,
+    )
+}
+
+/// Single-file counterpart; imports require compile_native_artifact_project.
+pub fn compile_native_artifact(
+    source: &str,
+    filename: &str,
+    options: &CompileOptions,
+    profile: NativeArtifactProfile,
+    limits: artifact::Limits,
+) -> Result<NativeArtifact, Vec<Diagnostic>> {
     worker(|| {
         require_nox_target(options)?;
         validate_limits(limits)?;
@@ -78,7 +127,7 @@ pub fn compile_raw_artifact(
         let formula = NoxCompiler::new()
             .compile_raw_modules_with_origins(&[&file], &file, &options.cfg_flags, &origins)
             .map_err(error)?;
-        emit(formula, file.name.node, limits)
+        emit(formula, file.name.node, profile, limits)
     })
 }
 
@@ -114,8 +163,9 @@ fn worker<T: Send>(
 fn emit(
     formula: Noun,
     name: String,
+    profile: NativeArtifactProfile,
     limits: artifact::Limits,
-) -> Result<RawArtifact, Vec<Diagnostic>> {
+) -> Result<NativeArtifact, Vec<Diagnostic>> {
     let mut arena = Reduction::<ARENA>::new();
     arena.limit_allocations(limits.max_nodes);
     // Bounded iterative postorder avoids a bracket-text round trip and does not
@@ -162,7 +212,10 @@ fn emit(
     let mut root = arena
         .pair(formula, zero)
         .ok_or_else(|| error("raw artifact allocation limit exceeded"))?;
-    for head in [zero, zero, zero, tag] {
+    let profile_node = arena
+        .atom(Goldilocks::new(profile.value()))
+        .ok_or_else(|| error("native artifact allocation limit exceeded"))?;
+    for head in [profile_node, profile_node, zero, tag] {
         root = arena
             .pair(head, root)
             .ok_or_else(|| error("raw artifact allocation limit exceeded"))?;
@@ -174,10 +227,11 @@ fn emit(
             .digest(root)
             .ok_or_else(|| error("artifact identity missing"))?,
     );
-    Ok(RawArtifact {
+    Ok(NativeArtifact {
         bytes,
         particle,
         name,
+        profile,
     })
 }
 
