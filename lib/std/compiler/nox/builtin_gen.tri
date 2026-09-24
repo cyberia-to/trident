@@ -17,16 +17,22 @@ fn binary(opcode: Field, left: formula.Value, right: formula.Value) -> formula.V
 // builtin reconstructs left/right explicitly to preserve evaluation order.
 #[pure]
 #[requires(as_u32(0) < kind)]
-#[requires(kind < as_u32(4))]
+#[requires(kind < builtins.COUNT)]
 #[requires(head < seq.len(arguments))]
 pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> formula.Value {
     let link = seq.get(arguments, head)
     let right = formula.value(values, as_u32(noun.as_field(noun.head(link))))
-    if kind == builtins.SUBTRACT {
+    if builtins.arity(kind) == as_u32(2) {
         let first = seq.get(arguments, as_u32(noun.as_field(noun.tail(link))))
         let left = formula.value(values, as_u32(noun.as_field(noun.head(first))))
+        if kind == builtins.NOUN_PAIR { return formula.pair(left, right) }
+        if kind == builtins.NOUN_EQ { return binary(9, left, right) }
         return binary(6, left, right)
     }
+    if kind == builtins.NOUN_HEAD { return flow.compose(right, flow.axis(2)) }
+    if kind == builtins.NOUN_TAIL { return flow.compose(right, flow.axis(3)) }
+    if kind == builtins.NOUN_FIELD { return binary(5, right, flow.literal(0)) }
+    if kind == builtins.NOUN_ATOM { return right }
     if kind == builtins.TO_FIELD { return right }
     let crash = formula.Value { formula: noun.pair(noun.atom(8), flow.literal(0).formula), depth: as_u32(2) }
     let condition = binary(10, flow.axis(1), flow.literal(4294967296))

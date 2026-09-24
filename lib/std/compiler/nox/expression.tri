@@ -42,6 +42,10 @@ fn reduce(input: expression_state.State) -> expression_state.State {
     }
     let lhs = seq.get(s.nodes, as_u32(noun.as_field(left)))
     let rhs = seq.get(s.nodes, as_u32(noun.as_field(right)))
+    if syntax.both(ast.ty(lhs) == ast.NOUN, ast.ty(rhs) == ast.NOUN) {
+        s.error = syntax.error(5, ast.start(lhs), ast.end(rhs))
+        return s
+    }
     let op = operator(s)
     let mut kind = ast.ADD
     let mut ty = ast.FIELD

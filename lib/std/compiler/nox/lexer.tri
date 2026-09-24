@@ -64,7 +64,7 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
 // {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14,
 // let=15, mut=16, colon=17, assignment=18, equality=19, Bool=20,
 // true=21, false=22, if=23, else=24, return=25, comma=26;
-// 27 is the internal call marker; U32=28, less-than=29, &=30, for=31, in=32, ..=33.
+// 27 is the internal call marker; U32=28, less-than=29, &=30, for=31, in=32, ..=33, Noun=34.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((bytes.len(source) < start) == false)]

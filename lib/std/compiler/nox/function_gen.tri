@@ -13,6 +13,7 @@ use std.compiler.nox.call_codegen
 use std.compiler.nox.formula
 use std.compiler.nox.flow
 use std.compiler.nox.code_plan
+use std.compiler.nox.entry_frame
 
 struct Emitted { table: Noun, depth: U32, next: U32, failed: Bool }
 
@@ -52,7 +53,7 @@ fn chunk(bodies: seq.Seq, plan: function_plan.Plan, codes: code_plan.Plan, input
 #[pure]
 #[requires(entry < seq.len(bodies))]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
-pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32, depth_cap: U32) -> codegen.Compiled {
+pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32, depth_cap: U32, structured: Bool) -> codegen.Compiled {
     let zero = as_u32(0)
     let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
     let stored = seq.get(bodies, entry)
@@ -64,7 +65,7 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
         context.arguments = body.arguments
         context.capacity = cap
         let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), context, depth_cap)
-        return control_gen.standalone(built, body_store.locals(stored), depth_cap)
+        return control_gen.standalone(built, body_store.locals(stored), depth_cap, structured)
     }
     let codes = code_plan.extend(bodies, plan, cap)
     if codes.failed { return failure }
@@ -78,7 +79,11 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
             let subject = noun.pair(s.table, noun.pair(noun.atom(0), tree.empty(frame.height)))
             let table_depth = as_u32(as_field(s.depth) + as_field(shape.height))
             let subject_depth = syntax.inc(formula.maximum(table_depth, syntax.inc(frame.height)))
-            let initial = formula.Value { formula: noun.pair(noun.atom(1), subject), depth: syntax.inc(subject_depth) }
+            let mut initial = formula.Value { formula: noun.pair(noun.atom(1), subject), depth: syntax.inc(subject_depth) }
+            if structured {
+                let table = formula.Value { formula: noun.pair(noun.atom(1), s.table), depth: syntax.inc(table_depth) }
+                initial = entry_frame.subject(table, frame.height)
+            }
             let occupied = noun.as_field(tree.get(plan.slots, seq.len(bodies), entry))
             let slot = syntax.dec(as_u32(occupied))
             let dispatch = formula.apply(flow.axis(1), flow.axis(2 * shape.capacity + as_field(slot)))
