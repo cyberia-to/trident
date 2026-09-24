@@ -19,7 +19,6 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
         for text in [
             "module sample",
             "program sample use dependency fn main() -> Field { 1 }",
-            "program sample fn main() -> Field { let a=1 a }",
             "program sample fn main() -> Field { 1; }",
             "program sample fn main() -> Field { 1 } fn other() -> Field { 2 }",
             "#[pure] program sample fn main() -> Field { 1 }",

@@ -99,3 +99,9 @@ mod diagnostics;
 
 #[path = "native_compiler/bounds.rs"]
 mod bounds;
+
+#[path = "native_compiler/locals.rs"]
+mod locals;
+
+#[path = "native_compiler/codegen.rs"]
+mod codegen;

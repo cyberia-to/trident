@@ -1,0 +1,154 @@
+module std.compiler.nox.expression
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.ascii
+use std.compiler.nox.symbols
+
+pub struct Parsed { pub nodes: seq.Seq, pub value: U32, pub token: syntax.Token, pub error: syntax.Error }
+struct State {
+    operators: seq.Seq, values: seq.Seq, ops: U32, vals: U32,
+    token: syntax.Token, operand: Bool, done: Bool, error: syntax.Error,
+    capacity: U32, node_cap: U32, nodes: seq.Seq, bindings: seq.Seq
+}
+
+#[pure]
+fn operator(s: State) -> U32 {
+    as_u32(noun.as_field(seq.get(s.operators, syntax.dec(s.ops))))
+}
+
+#[pure]
+fn reduce(input: State) -> State {
+    let mut s = input
+    if s.vals < as_u32(2) {
+        s.error = ast.failed(s.token, 2)
+        return s
+    }
+    let right = seq.get(s.values, syntax.dec(s.vals))
+    let left = seq.get(s.values, syntax.dec(syntax.dec(s.vals)))
+    if seq.len(s.nodes) == s.node_cap {
+        s.error = syntax.error(7, s.token.start, s.token.end)
+        return s
+    }
+    let id = noun.atom(as_field(seq.len(s.nodes)))
+    s.nodes = seq.push(s.nodes, ast.node(as_field(operator(s)), noun.as_field(left), noun.as_field(right)), s.node_cap)
+    s.vals = syntax.dec(s.vals)
+    s.values = seq.set(s.values, syntax.dec(s.vals), id)
+    s.ops = syntax.dec(s.ops)
+    s
+}
+
+#[pure]
+fn push_operator(input: State) -> State {
+    let mut s = input
+    if s.ops == s.capacity {
+        s.error = syntax.error(7, s.token.start, s.token.end)
+        return s
+    }
+    s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(s.token.kind)), s.capacity)
+    s.ops = syntax.inc(s.ops)
+    s
+}
+
+#[pure]
+fn step(source: bytes.Bytes, input: State) -> State {
+    let mut s = input
+    let kind = s.token.kind
+    if s.operand {
+        if syntax.either(kind == as_u32(2), kind == as_u32(1)) {
+            if syntax.either(s.vals == s.capacity, seq.len(s.nodes) == s.node_cap) {
+                s.error = syntax.error(7, s.token.start, s.token.end)
+                return s
+            }
+            let mut node = ast.node(0, s.token.value, 0)
+            if kind == as_u32(1) {
+                let following = lexer.next(source, s.token.end)
+                if following.kind == as_u32(5) {
+                    if ascii.same_line(source, s.token.end, following.start) {
+                        s.error = syntax.error(6, s.token.start, following.end)
+                        return s
+                    }
+                }
+                let binding = symbols.lookup(source, s.token, s.bindings)
+                if binding.exists == false {
+                    s.error = syntax.error(5, s.token.start, s.token.end)
+                    return s
+                }
+                node = ast.node(1, as_field(binding.slot), 0)
+            }
+            let id = noun.atom(as_field(seq.len(s.nodes)))
+            s.nodes = seq.push(s.nodes, node, s.node_cap)
+            s.values = ast.store(s.values, s.vals, id, s.capacity)
+            s.vals = syntax.inc(s.vals)
+            s.operand = false
+        } else if kind == as_u32(5) { s = push_operator(s) }
+        else {
+            s.error = ast.failed(s.token, 2)
+            return s
+        }
+    } else if syntax.either(kind == as_u32(3), kind == as_u32(4)) {
+        if (s.ops == as_u32(0)) == false {
+            let top = operator(s)
+            if syntax.both((top == as_u32(5)) == false, (top < kind) == false) { return reduce(s) }
+        }
+        s = push_operator(s)
+        s.operand = true
+    } else if kind == as_u32(6) {
+        if s.ops == as_u32(0) {
+            s.error = ast.failed(s.token, 2)
+            return s
+        }
+        if (operator(s) == as_u32(5)) == false { return reduce(s) }
+        s.ops = syntax.dec(s.ops)
+    } else if syntax.either(syntax.either(syntax.either(kind == as_u32(8), kind == as_u32(15)), kind == as_u32(1)), syntax.either(kind == as_u32(2), kind == as_u32(5))) {
+        if (s.ops == as_u32(0)) == false {
+            if operator(s) == as_u32(5) {
+                s.error = ast.failed(s.token, 2)
+                return s
+            }
+            return reduce(s)
+        }
+        s.done = true
+        return s
+    } else {
+        s.error = ast.failed(s.token, 2)
+        return s
+    }
+    if s.error.code == as_u32(0) { s.token = lexer.next(source, s.token.end) }
+    s
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: State) -> State {
+    let mut s = input
+    for turn in 0..32 {
+        s = step(source, s)
+        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn parse(source: bytes.Bytes, token: syntax.Token, bindings: seq.Seq, nodes: seq.Seq, cap: U32) -> Parsed {
+    let zero = as_u32(0)
+    let mut capacity = cap
+    if syntax.STACK_CAP < capacity { capacity = syntax.STACK_CAP }
+    let mut s = State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,
+        token, operand: true, done: false, error: syntax.error(0, zero, zero),
+        capacity, node_cap: cap, nodes, bindings }
+    for block in 0..256 {
+        s = chunk(source, s)
+        if (s.error.code == zero) == false { return Parsed { nodes: s.nodes, value: zero, token: s.token, error: s.error } }
+        if s.done {
+            assert_eq(as_field(s.vals), 1)
+            return Parsed { nodes: s.nodes, value: as_u32(noun.as_field(seq.get(s.values, zero))), token: s.token, error: s.error }
+        }
+    }
+    Parsed { nodes: s.nodes, value: zero, token: s.token, error: syntax.error(7, s.token.start, s.token.end) }
+}

@@ -1,4 +1,4 @@
-"""SH2 installed CLI acceptance: fixed guest compiler, fresh exact source jobs."""
+"""SH2/SH3 installed CLI acceptance: fixed guest, arithmetic and Field locals."""
 import argparse
 import copy
 import hashlib
@@ -117,27 +117,46 @@ def main():
                  ("maximum", source("18446744073709551615"), (1, 4294967294), 4294967294),
                  ("unicode-comment", "// ж😀\r comment\nprogram\tsample\r\nfn main() -> Field { 2+3*4 }".encode(), precedence, 14),
                  ("stack64", source("(" * 64 + "1" + ")" * 64), (1, 1), 1)]
+        cases.extend([
+            ("typed-local", source("let x: Field=7 x"), None, 7),
+            ("dependent-local", source("let a=2+3 let b=a*4 b+a"), None, 25),
+            ("mutable-snapshot", source("let mut x=7 let y=x x=9 y*100+x"), None, 709),
+            ("shadow", source("let x=7 let x=x+1 x"), None, 8),
+            ("long-identifiers", source("let common_prefix_a=3 let common_prefix_b=7 common_prefix_a*10+common_prefix_b"), None, 37),
+            ("literal-tail", source("let x=7 9"), None, 9),
+            ("parenthesized-tail", source("let x=7 (x+1)"), None, 8),
+            ("body-chunks", source("let mut x=0 " + "x=x+1 " * 9 + "x"), None, 9),
+        ])
         for name, content, formula, expected in cases:
             directory, job = package(name, content)
             program = directory / "program.dag"
             compiled = execute(job, program)
             assert compiled["execution"]["compiler_job"]["status"] == "success"
             assert compiled["execution"]["program_particle"] == compiler_particle
-            assert decode(program) == record(0x41525431, 0, 0, 0, formula)
+            actual = decode(program)
+            emitted_formula = actual[1][1][1][1][0]
+            assert actual == record(0x41525431, 0, 0, 0, emitted_formula)
+            if formula is not None:
+                assert emitted_formula == formula
             output = directory / "output.dag"
             executed = run(["run-artifact", program, "--input", zero, "-o", output])
             assert executed["execution"]["program_particle"] == compiled["published_particle"]
             assert decode(output) == expected
             observations.append({"case": name, "source_hex": content.hex(), "expected": expected,
                                  "compiler_execution": compiled, "program_execution": executed,
-                                 "exact_independent_formula": True})
+                                 "exact_independent_formula": formula is not None})
             if name == "precedence":
                 baseline = compiled["execution"]
                 prior_program = program.read_bytes()
 
-        negatives = [("unknown", source("missing"), 5), ("overflow", source("18446744073709551616"), 1),
+        negatives = [("unknown", source("missing"), 5),
+                     ("self-reference", source("let x=x x"), 5),
+                     ("immutable-write", source("let x=1 x=2 x"), 5),
+                     ("shadow-mutability", source("let mut x=1 let x=2 x=3 x"), 5),
+                     ("malformed-local", source("let x: =7 x"), 2),
+                     ("unsupported-equality", source("let x=1 x==1"), 6), ("overflow", source("18446744073709551616"), 1),
                      ("syntax", source("(1"), 2), ("utf8", b"//\xed\xa0\x80", 1),
-                     ("unsupported", source("let x=1 x"), 6),
+                     ("unsupported", source("let x: Bool=true x"), 6),
                      ("stack65", source("(" * 65 + "1" + ")" * 65), 7),
                      ("source4097", b"\xff" + bytes(4096), 7)]
         for name, content, code in negatives:
@@ -152,6 +171,25 @@ def main():
             assert protected.read_bytes() == prior_program
             observations.append({"case": name, "source_hex": content.hex(), "diagnostics": result["diagnostics"],
                                  "compiler_execution": report, "previous_program_preserved": True})
+
+        local_bytes = None
+        for cap in [7, 8, 16]:
+            directory, job = package(f"local-cap-{cap}", source("let mut x=7 let y=x x=9 y*100+x"),
+                                     {"sequence_length": cap, "diagnostics": 1})
+            if cap == 7:
+                report = execute(job, directory / "result.dag", emit="result")
+                assert report["execution"]["compiler_job"]["diagnostics"][0]["code"] == 7
+            else:
+                program = directory / "program.dag"
+                report = execute(job, program)
+                if local_bytes is not None:
+                    assert program.read_bytes() == local_bytes
+                local_bytes = program.read_bytes()
+                output = directory / "output.dag"
+                run(["run-artifact", program, "--input", zero, "-o", output])
+                assert decode(output) == 709
+            observations.append({"case": "local-sequence-cap", "requested": cap,
+                                 "compiler_execution": report, "expected": 709 if cap >= 8 else "diagnostic7"})
 
         # These limits are enforced during the actual compiler execution.
         guest_visits = (112 + collection_visits(6, True) + collection_visits(4, True)
@@ -201,13 +239,20 @@ def main():
         assert protected.read_bytes() == prior_program
         observations.append({"case": "source4096-arena", "result": "runtime failure; no RES1 or program publication",
                              "previous_program_preserved": True})
+        directory, job = package("assignments31-arena", source("let mut x=0 " + "x=x+1 " * 31 + "x"))
+        protected = directory / "program.dag"
+        protected.write_bytes(prior_program)
+        execute(job, protected, expected=1, force=True)
+        assert protected.read_bytes() == prior_program
+        observations.append({"case": "assignments31-arena", "result": "runtime failure; no program publication",
+                             "previous_program_preserved": True})
         assert hashlib.sha256(compiler.read_bytes()).hexdigest() == compiler_sha
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 bounded arithmetic source compiler; no complete self-build or native execution proof"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 Field locals; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

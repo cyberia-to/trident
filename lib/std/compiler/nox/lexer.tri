@@ -61,7 +61,8 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
 }
 
 // Token kinds: EOF=0, identifier=1, decimal=2, +=3, *=4, (=5, )=6,
-// {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14.
+// {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14,
+// let=15, mut=16, colon=17, assignment=18.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((bytes.len(source) < start) == false)]
@@ -93,7 +94,14 @@ pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
                 if syntax.both(c == as_u32(47), end < bytes.len(source)) {
                     if bytes.get(source, end) == as_u32(37) { return syntax.token(13, pos, syntax.inc(end), 0) }
                 }
-                // Full-language punctuation outside the arithmetic subset.
+                if c == as_u32(58) { return syntax.token(17, pos, end, 0) }
+                if c == as_u32(61) {
+                    if end < bytes.len(source) {
+                        if bytes.get(source, end) == as_u32(61) { return syntax.token(13, pos, syntax.inc(end), 0) }
+                    }
+                    return syntax.token(18, pos, end, 0)
+                }
+                // Full-language punctuation outside the current subset.
                 if ascii.punctuation(c) {
                     return syntax.token(13, pos, end, 0)
                 }
