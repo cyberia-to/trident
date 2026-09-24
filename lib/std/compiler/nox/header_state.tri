@@ -1,10 +1,11 @@
 module std.compiler.nox.header_state
 
+use vm.nox.noun
 use vm.core.convert
 use std.nox.seq
-use std.compiler.nox.ast
 use std.compiler.nox.syntax
 use std.compiler.nox.signatures
+use std.compiler.nox.types
 
 pub struct State {
     pub functions: seq.Seq, pub params: seq.Seq, pub entry: U32,
@@ -16,6 +17,6 @@ pub struct State {
 pub fn initial(token: syntax.Token) -> State {
     let zero = as_u32(0)
     State { functions: seq.empty(), params: seq.empty(), entry: signatures.NONE, token,
-        current: signatures.Function { name: token, params: zero, count: zero, returns: ast.UNIT, open: zero, close: zero },
+        current: signatures.Function { name: token, params: zero, count: zero, returns: noun.atom(types.UNIT), open: zero, close: zero },
         structured: false, phase: 0, nesting: zero, error: syntax.error(0, zero, zero), done: false }
 }

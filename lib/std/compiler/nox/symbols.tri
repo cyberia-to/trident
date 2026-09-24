@@ -6,17 +6,18 @@ use vm.core.field
 use std.nox.seq
 use std.nox.bytes
 use std.compiler.nox.syntax
+use std.compiler.nox.types
 
-pub struct Found { pub exists: Bool, pub slot: U32, pub writable: Bool, pub ty: Field }
+pub struct Found { pub exists: Bool, pub slot: U32, pub writable: Bool, pub ty: Noun }
 
 // The record index is its stable slot. Visible lists select lexical bindings;
 // restoring an outer list never reuses slots allocated in a finished branch.
 #[pure]
-pub fn binding(name: syntax.Token, writable: Bool, ty: Field) -> Noun {
+pub fn binding(name: syntax.Token, writable: Bool, ty: Noun) -> Noun {
     let mut flag: Field = 0
     if writable { flag = 1 }
     let span = noun.pair(noun.atom(as_field(name.start)), noun.atom(as_field(name.end)))
-    noun.pair(span, noun.pair(noun.atom(flag), noun.atom(ty)))
+    noun.pair(span, noun.pair(noun.atom(flag), ty))
 }
 
 #[pure]
@@ -42,14 +43,14 @@ pub fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
 pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq, visible: Noun) -> Found {
     let mut cursor = visible
     for step in 0..4096 {
-        if noun.eq(cursor, noun.atom(0)) { return Found { exists: false, slot: as_u32(0), writable: false, ty: 0 } }
+        if noun.eq(cursor, noun.atom(0)) { return Found { exists: false, slot: as_u32(0), writable: false, ty: noun.atom(types.INVALID) } }
         let index = as_u32(noun.as_field(noun.head(cursor)))
         let binding = seq.get(bindings, index)
         if same(source, name, binding) {
             let metadata = noun.tail(binding)
-            return Found { exists: true, slot: index, writable: noun.as_field(noun.head(metadata)) == 1, ty: noun.as_field(noun.tail(metadata)) }
+            return Found { exists: true, slot: index, writable: noun.as_field(noun.head(metadata)) == 1, ty: noun.tail(metadata) }
         }
         cursor = noun.tail(cursor)
     }
-    Found { exists: false, slot: as_u32(0), writable: false, ty: 0 }
+    Found { exists: false, slot: as_u32(0), writable: false, ty: noun.atom(types.INVALID) }
 }

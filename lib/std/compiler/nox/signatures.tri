@@ -6,11 +6,12 @@ use std.nox.seq
 use std.nox.bytes
 use std.compiler.nox.syntax
 use std.compiler.nox.symbols
+use std.compiler.nox.types
 
 pub const NONE: U32 = 4096
 pub struct Function {
     pub name: syntax.Token, pub params: U32, pub count: U32,
-    pub returns: Field, pub open: U32, pub close: U32
+    pub returns: Noun, pub open: U32, pub close: U32
 }
 
 // Parameter ranges are allocated by a flat header pass; nested call arguments
@@ -20,7 +21,7 @@ pub fn pack(f: Function) -> Noun {
     let name = noun.pair(noun.atom(as_field(f.name.start)), noun.atom(as_field(f.name.end)))
     let params = noun.pair(noun.atom(as_field(f.params)), noun.atom(as_field(f.count)))
     let body = noun.pair(noun.atom(as_field(f.open)), noun.atom(as_field(f.close)))
-    return noun.pair(name, noun.pair(params, noun.pair(noun.atom(f.returns), body)))
+    return noun.pair(name, noun.pair(params, noun.pair(f.returns, body)))
 }
 
 #[pure]
@@ -32,7 +33,7 @@ pub fn read(value: Noun) -> Function {
     let body = noun.tail(result)
     Function { name: syntax.token(1, as_u32(noun.as_field(noun.head(name))), as_u32(noun.as_field(noun.tail(name))), 0),
         params: as_u32(noun.as_field(noun.head(params))), count: as_u32(noun.as_field(noun.tail(params))),
-        returns: noun.as_field(noun.head(result)), open: as_u32(noun.as_field(noun.head(body))),
+        returns: noun.head(result), open: as_u32(noun.as_field(noun.head(body))),
         close: as_u32(noun.as_field(noun.tail(body))) }
 }
 
@@ -45,7 +46,7 @@ fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, input: Sea
         if s.remaining == as_u32(0) { return s }
         s.remaining = syntax.dec(s.remaining)
         let candidate = read(seq.get(functions, s.remaining))
-        if symbols.same(source, name, symbols.binding(candidate.name, false, 0)) {
+        if symbols.same(source, name, symbols.binding(candidate.name, false, noun.atom(types.FIELD))) {
             s.found = s.remaining
             return s
         }

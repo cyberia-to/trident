@@ -1,7 +1,9 @@
 # SH3 aggregate descriptors, Digest and tuples
 Next after Noun; feature PRs into release/0.4. Preserve primitive program ART1 identities and the raw/structured entry ABIs. Current native compiler needs Digest identity, tuple return types/values, destructuring declarations and tuple assignment for validation-budget threading. Real imports/nominal structs/arrays still follow; these deliveries must not claim full SH3.
 
-## Canonical descriptors first
+## Canonical descriptors — accepted
+
+Internal foundation accepted at `adbb00e`; [validation](../../audit/self-hosting/native-compiler-types.md). Next source increment: Digest type, native identity, equality and checked Field/U32 read indexing. Preserve the seed's runtime OOB traps, base-before-index once-only evaluation, full balanced identity output and unchanged entry ABIs. Tuple syntax/destructuring follows.
 Represent types as canonical Noun values, with current primitive tags remaining atoms. Primitive AST/signature/binding records therefore preserve their bytes. Composite descriptors carry kind, ordered children, derived logical depth and contains_noun. Equality uses native identity of canonical descriptors; primitive tests compare with explicit tag atoms. No mutable type interner or O(n²) search, no evolving registry through every body.
 
 Move type ownership into types.tri; migrate AST type access, signatures, bindings, body result and builtins from Field to Noun. Primitive tags have one owner in types.tri; packed records insert complete descriptors without atom wrapping. Primitive construction/equality uses direct noun intrinsics so the guest compiler avoids an extra function invocation per check. Invalid type has a unique descriptor distinct from all valid primitives/composites. Keep token recognition and all current accepted syntax unchanged in the initial refactor. Component tests assert primitive record byte preservation, exact descriptor equality and bounded composite construction. Full old JOB/ART1 corpus must preserve outputs/identities. Formally audited UNKNOWN is still not proof.

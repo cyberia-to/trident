@@ -24,7 +24,7 @@ fn main(input: Noun) -> Noun {
     for i in 0..129 {
         if i < count {
             let name = syntax.token(1, i, syntax.inc(i), 0)
-            let f = signatures.Function { name, params: as_u32(0), count: as_u32(0), returns: 0, open: i, close: i }
+            let f = signatures.Function { name, params: as_u32(0), count: as_u32(0), returns: noun.atom(0), open: i, close: i }
             functions = seq.push(functions, signatures.pack(f), as_u32(129))
             let mut s = body_state.initial(name)
             if syntax.inc(i) < count { s.edges = noun.pair(noun.atom(as_field(i) + 1), noun.atom(0)) }

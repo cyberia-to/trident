@@ -54,9 +54,9 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
         let mut ty = builtins.parameter(frame.builtin)
         if frame.builtin == builtins.NONE {
             let parameter = seq.get(s.context.params, as_u32(as_field(params) + as_field(frame.count)))
-            ty = noun.as_field(noun.tail(noun.tail(parameter)))
+            ty = noun.tail(noun.tail(parameter))
         }
-        if (ast.ty(argument) == ty) == false { s.error = ast.issue(5, argument) return s }
+        if (noun.eq(ast.ty(argument), ty)) == false { s.error = ast.issue(5, argument) return s }
         if seq.len(s.arguments) == s.node_cap { s.error = syntax.error(7, frame.start, s.token.end) return s }
         let link = seq.len(s.arguments)
         s.arguments = seq.push(s.arguments, noun.pair(noun.atom(as_field(value)), noun.atom(as_field(frame.head))), s.node_cap)

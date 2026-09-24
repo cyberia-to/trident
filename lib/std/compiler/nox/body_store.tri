@@ -13,7 +13,7 @@ pub fn pack(s: body_state.State, terminal: Noun) -> Noun {
     let sizes = noun.pair(noun.atom(as_field(seq.len(s.bindings))), noun.pair(noun.atom(as_field(s.root)), noun.atom(as_field(seq.len(s.loops)))))
     let expressions = noun.pair(seq.to_noun(s.nodes), seq.to_noun(s.arguments))
     let control = noun.pair(seq.to_noun(s.statements), noun.pair(seq.to_noun(s.blocks), seq.to_noun(s.loops)))
-    let flow = noun.pair(noun.atom(s.returns), noun.pair(s.edges, terminal))
+    let flow = noun.pair(s.returns, noun.pair(s.edges, terminal))
     noun.pair(sizes, noun.pair(expressions, noun.pair(control, flow)))
 }
 
@@ -48,7 +48,7 @@ pub fn read(value: Noun, cap: U32) -> body_state.State {
     s.blocks = seq.from_noun(noun.head(noun.tail(control)), cap, visits)
     s.loops = seq.from_noun(noun.tail(noun.tail(control)), cap, visits)
     s.root = as_u32(noun.as_field(noun.head(noun.tail(sizes))))
-    s.returns = noun.as_field(noun.head(flow))
+    s.returns = noun.head(flow)
     s.edges = noun.head(noun.tail(flow))
     s.done = true
     s

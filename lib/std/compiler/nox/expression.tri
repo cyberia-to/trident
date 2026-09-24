@@ -11,6 +11,7 @@ use std.compiler.nox.ascii
 use std.compiler.nox.symbols
 use std.compiler.nox.expression_state
 use std.compiler.nox.call_parse
+use std.compiler.nox.types
 
 #[pure]
 fn operator(s: expression_state.State) -> U32 {
@@ -42,22 +43,24 @@ fn reduce(input: expression_state.State) -> expression_state.State {
     }
     let lhs = seq.get(s.nodes, as_u32(noun.as_field(left)))
     let rhs = seq.get(s.nodes, as_u32(noun.as_field(right)))
-    if syntax.both(ast.ty(lhs) == ast.NOUN, ast.ty(rhs) == ast.NOUN) {
+    let op = operator(s)
+    let mut kind = ast.ADD
+    let mut ty = noun.atom(types.FIELD)
+    if op == as_u32(4) { kind = ast.MUL }
+    if op == as_u32(19) { kind = ast.EQUAL ty = noun.atom(types.BOOL) }
+    let mut required = types.FIELD
+    if op == as_u32(29) { kind = ast.LESS ty = noun.atom(types.BOOL) required = types.UINT32 }
+    if op == as_u32(30) { kind = ast.BIT_AND ty = noun.atom(types.UINT32) required = types.UINT32 }
+    if syntax.either((noun.eq(ast.ty(lhs), ast.ty(rhs))) == false,
+        syntax.both((kind == ast.EQUAL) == false, (noun.eq(ast.ty(lhs), noun.atom(required))) == false)) {
         s.error = syntax.error(5, ast.start(lhs), ast.end(rhs))
         return s
     }
-    let op = operator(s)
-    let mut kind = ast.ADD
-    let mut ty = ast.FIELD
-    if op == as_u32(4) { kind = ast.MUL }
-    if op == as_u32(19) { kind = ast.EQUAL ty = ast.BOOL }
-    let mut required = ast.FIELD
-    if op == as_u32(29) { kind = ast.LESS ty = ast.BOOL required = ast.UINT32 }
-    if op == as_u32(30) { kind = ast.BIT_AND ty = ast.UINT32 required = ast.UINT32 }
-    if syntax.either((ast.ty(lhs) == ast.ty(rhs)) == false,
-        syntax.both((kind == ast.EQUAL) == false, (ast.ty(lhs) == required) == false)) {
-        s.error = syntax.error(5, ast.start(lhs), ast.end(rhs))
-        return s
+    if kind == ast.EQUAL {
+        if types.contains_noun(ast.ty(lhs)) {
+            s.error = syntax.error(5, ast.start(lhs), ast.end(rhs))
+            return s
+        }
     }
     let id = noun.atom(as_field(seq.len(s.nodes)))
     let node = ast.typed(kind, noun.as_field(left), noun.as_field(right), ty, ast.start(lhs), ast.end(rhs))
@@ -110,11 +113,11 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
                 s.error = syntax.error(7, s.token.start, s.token.end)
                 return s
             }
-            let mut node = ast.typed(ast.LITERAL, s.token.value, 0, ast.FIELD, s.token.start, s.token.end)
+            let mut node = ast.typed(ast.LITERAL, s.token.value, 0, noun.atom(types.FIELD), s.token.start, s.token.end)
             if syntax.either(kind == as_u32(21), kind == as_u32(22)) {
                 let mut value: Field = 0
                 if kind == as_u32(22) { value = 1 }
-                node = ast.typed(ast.BOOLEAN, value, 0, ast.BOOL, s.token.start, s.token.end)
+                node = ast.typed(ast.BOOLEAN, value, 0, noun.atom(types.BOOL), s.token.start, s.token.end)
             }
             if kind == as_u32(1) {
                 let following = lexer.next(source, s.token.end)

@@ -10,6 +10,7 @@ use std.compiler.nox.blocks
 use std.compiler.nox.terminal
 use std.compiler.nox.body_state
 use std.compiler.nox.loop_records
+use std.compiler.nox.types
 
 pub struct Checked { pub flags: Noun, pub error: syntax.Error }
 struct State { flags: Noun, next: U32 }
@@ -83,7 +84,7 @@ pub fn check(s: body_state.State) -> Checked {
     for turn in 0..512 {
         state = chunk(state, s, marked.flags)
         if state.next == seq.len(s.blocks) {
-            if s.returns == ast.UNIT { return Checked { flags: marked.flags, error: syntax.error(0, zero, zero) } }
+            if noun.eq(s.returns, noun.atom(types.UNIT)) { return Checked { flags: marked.flags, error: syntax.error(0, zero, zero) } }
             if noun.as_field(tree.get(state.flags, seq.len(s.blocks), s.root)) == 1 { return Checked { flags: marked.flags, error: syntax.error(0, zero, zero) } }
             let root = blocks.read(seq.get(s.blocks, s.root))
             return Checked { flags: marked.flags, error: syntax.error(5, root.start, root.end) }

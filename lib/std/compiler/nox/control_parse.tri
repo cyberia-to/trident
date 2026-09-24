@@ -13,6 +13,7 @@ use std.compiler.nox.blocks
 use std.compiler.nox.contexts
 use std.compiler.nox.body_state
 use std.compiler.nox.loop_records
+use std.compiler.nox.types
 
 #[pure]
 pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -29,7 +30,7 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     if (s.error.code == as_u32(0)) == false { return s }
     s.nodes = condition.nodes
     let condition_type = ast.ty(seq.get(s.nodes, condition.value))
-    if syntax.either(condition_type == ast.FIELD, condition_type == ast.BOOL) == false {
+    if syntax.either(noun.eq(condition_type, noun.atom(types.FIELD)), noun.eq(condition_type, noun.atom(types.BOOL))) == false {
         s.error = ast.issue(5, seq.get(s.nodes, condition.value))
         return s
     }
