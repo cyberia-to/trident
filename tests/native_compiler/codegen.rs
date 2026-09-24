@@ -17,6 +17,10 @@ fn generate(cap: u64) -> Result<Vec<u8>, u32> {
         .unwrap()
         .bytes
     });
+    generate_from(cap, bytes)
+}
+
+pub(super) fn generate_from(cap: u64, bytes: &[u8]) -> Result<Vec<u8>, u32> {
     let mut arena = Reduction::<{ 1 << 18 }>::new();
     assert!(arena.limit_allocations(196608));
     let compiler = artifact::decode(&mut arena, bytes, LIMITS).unwrap();
@@ -50,7 +54,7 @@ fn generate(cap: u64) -> Result<Vec<u8>, u32> {
 }
 
 // Independent DAG-depth measurement; it does not mirror codegen's recurrence.
-fn artifact_depth(bytes: &[u8]) -> u64 {
+pub(super) fn artifact_depth(bytes: &[u8]) -> u64 {
     let count = u32::from_le_bytes(bytes[40..44].try_into().unwrap());
     let mut depths = std::collections::BTreeMap::<[u8; 32], u64>::new();
     let mut cursor = 44;
@@ -82,5 +86,27 @@ fn generator_depth_matches_independent_dag_with_result_wrapper() {
         assert_eq!(generate(exact - 1), Err(7));
         assert_eq!(generate(exact).unwrap(), expected);
         assert_eq!(generate(exact + 1).unwrap(), expected);
+    });
+}
+
+#[test]
+fn control_depth_counts_branches_frames_and_return_continuations_exactly() {
+    support::worker(|| {
+        let probe = trident::compile_native_artifact_project(
+            &std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("tests/fixtures/native_control_codegen_depth.tri"),
+            &CompileOptions::default(),
+            NativeArtifactProfile::RawNoun,
+            LIMITS,
+        )
+        .unwrap()
+        .bytes;
+        let expected = generate_from(4096, &probe).unwrap();
+        let exact = artifact_depth(&expected) + 4;
+        assert_eq!(generate_from(exact - 1, &probe), Err(7));
+        assert_eq!(generate_from(exact, &probe).unwrap(), expected);
+        assert_eq!(generate_from(exact + 1, &probe).unwrap(), expected);
+        let value = support::run_artifact(&expected);
+        assert_eq!(value, 7);
     });
 }

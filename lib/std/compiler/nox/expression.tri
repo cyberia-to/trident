@@ -14,12 +14,20 @@ pub struct Parsed { pub nodes: seq.Seq, pub value: U32, pub token: syntax.Token,
 struct State {
     operators: seq.Seq, values: seq.Seq, ops: U32, vals: U32,
     token: syntax.Token, operand: Bool, done: Bool, error: syntax.Error,
-    capacity: U32, node_cap: U32, nodes: seq.Seq, bindings: seq.Seq
+    capacity: U32, node_cap: U32, nodes: seq.Seq, bindings: seq.Seq, visible: Noun, before_block: Bool
 }
 
 #[pure]
 fn operator(s: State) -> U32 {
     as_u32(noun.as_field(seq.get(s.operators, syntax.dec(s.ops))))
+}
+
+#[pure]
+fn precedence(kind: U32) -> U32 {
+    if kind == as_u32(4) { return as_u32(3) }
+    if kind == as_u32(3) { return as_u32(2) }
+    if kind == as_u32(19) { return as_u32(1) }
+    as_u32(0)
 }
 
 #[pure]
@@ -35,8 +43,21 @@ fn reduce(input: State) -> State {
         s.error = syntax.error(7, s.token.start, s.token.end)
         return s
     }
+    let lhs = seq.get(s.nodes, as_u32(noun.as_field(left)))
+    let rhs = seq.get(s.nodes, as_u32(noun.as_field(right)))
+    let op = operator(s)
+    let mut kind = ast.ADD
+    let mut ty = ast.FIELD
+    if op == as_u32(4) { kind = ast.MUL }
+    if op == as_u32(19) { kind = ast.EQUAL ty = ast.BOOL }
+    if syntax.either((ast.ty(lhs) == ast.ty(rhs)) == false,
+        syntax.both((kind == ast.EQUAL) == false, (ast.ty(lhs) == ast.FIELD) == false)) {
+        s.error = syntax.error(5, ast.start(lhs), ast.end(rhs))
+        return s
+    }
     let id = noun.atom(as_field(seq.len(s.nodes)))
-    s.nodes = seq.push(s.nodes, ast.node(as_field(operator(s)), noun.as_field(left), noun.as_field(right)), s.node_cap)
+    let node = ast.typed(kind, noun.as_field(left), noun.as_field(right), ty, ast.start(lhs), ast.end(rhs))
+    s.nodes = seq.push(s.nodes, node, s.node_cap)
     s.vals = syntax.dec(s.vals)
     s.values = seq.set(s.values, syntax.dec(s.vals), id)
     s.ops = syntax.dec(s.ops)
@@ -56,30 +77,47 @@ fn push_operator(input: State) -> State {
 }
 
 #[pure]
+fn boundary(kind: U32, before_block: Bool) -> Bool {
+    if syntax.either(syntax.either(kind == as_u32(8), kind == as_u32(15)), kind == as_u32(1)) { return true }
+    if syntax.either(syntax.either(kind == as_u32(2), kind == as_u32(5)), kind == as_u32(25)) { return true }
+    if syntax.either(syntax.either(kind == as_u32(21), kind == as_u32(22)), kind == as_u32(23)) { return true }
+    syntax.both(before_block, kind == as_u32(7))
+}
+
+#[pure]
 fn step(source: bytes.Bytes, input: State) -> State {
     let mut s = input
     let kind = s.token.kind
     if s.operand {
-        if syntax.either(kind == as_u32(2), kind == as_u32(1)) {
+        if syntax.either(syntax.either(kind == as_u32(2), kind == as_u32(1)), syntax.either(kind == as_u32(21), kind == as_u32(22))) {
             if syntax.either(s.vals == s.capacity, seq.len(s.nodes) == s.node_cap) {
                 s.error = syntax.error(7, s.token.start, s.token.end)
                 return s
             }
-            let mut node = ast.node(0, s.token.value, 0)
+            let mut node = ast.typed(ast.LITERAL, s.token.value, 0, ast.FIELD, s.token.start, s.token.end)
+            if syntax.either(kind == as_u32(21), kind == as_u32(22)) {
+                let mut value: Field = 0
+                if kind == as_u32(22) { value = 1 }
+                node = ast.typed(ast.BOOLEAN, value, 0, ast.BOOL, s.token.start, s.token.end)
+            }
             if kind == as_u32(1) {
                 let following = lexer.next(source, s.token.end)
+                if syntax.both(following.kind == as_u32(7), s.before_block == false) {
+                    s.error = syntax.error(6, s.token.start, following.end)
+                    return s
+                }
                 if following.kind == as_u32(5) {
                     if ascii.same_line(source, s.token.end, following.start) {
                         s.error = syntax.error(6, s.token.start, following.end)
                         return s
                     }
                 }
-                let binding = symbols.lookup(source, s.token, s.bindings)
+                let binding = symbols.lookup(source, s.token, s.bindings, s.visible)
                 if binding.exists == false {
                     s.error = syntax.error(5, s.token.start, s.token.end)
                     return s
                 }
-                node = ast.node(1, as_field(binding.slot), 0)
+                node = ast.typed(ast.LOCAL, as_field(binding.slot), 0, binding.ty, s.token.start, s.token.end)
             }
             let id = noun.atom(as_field(seq.len(s.nodes)))
             s.nodes = seq.push(s.nodes, node, s.node_cap)
@@ -91,10 +129,10 @@ fn step(source: bytes.Bytes, input: State) -> State {
             s.error = ast.failed(s.token, 2)
             return s
         }
-    } else if syntax.either(kind == as_u32(3), kind == as_u32(4)) {
+    } else if syntax.either(syntax.either(kind == as_u32(3), kind == as_u32(4)), kind == as_u32(19)) {
         if (s.ops == as_u32(0)) == false {
             let top = operator(s)
-            if syntax.both((top == as_u32(5)) == false, (top < kind) == false) { return reduce(s) }
+            if syntax.both((top == as_u32(5)) == false, (precedence(top) < precedence(kind)) == false) { return reduce(s) }
         }
         s = push_operator(s)
         s.operand = true
@@ -105,7 +143,7 @@ fn step(source: bytes.Bytes, input: State) -> State {
         }
         if (operator(s) == as_u32(5)) == false { return reduce(s) }
         s.ops = syntax.dec(s.ops)
-    } else if syntax.either(syntax.either(syntax.either(kind == as_u32(8), kind == as_u32(15)), kind == as_u32(1)), syntax.either(kind == as_u32(2), kind == as_u32(5))) {
+    } else if boundary(kind, s.before_block) {
         if (s.ops == as_u32(0)) == false {
             if operator(s) == as_u32(5) {
                 s.error = ast.failed(s.token, 2)
@@ -135,13 +173,13 @@ fn chunk(source: bytes.Bytes, input: State) -> State {
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-pub fn parse(source: bytes.Bytes, token: syntax.Token, bindings: seq.Seq, nodes: seq.Seq, cap: U32) -> Parsed {
+pub fn parse(source: bytes.Bytes, token: syntax.Token, bindings: seq.Seq, visible: Noun, nodes: seq.Seq, cap: U32, before_block: Bool) -> Parsed {
     let zero = as_u32(0)
     let mut capacity = cap
     if syntax.STACK_CAP < capacity { capacity = syntax.STACK_CAP }
     let mut s = State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,
         token, operand: true, done: false, error: syntax.error(0, zero, zero),
-        capacity, node_cap: cap, nodes, bindings }
+        capacity, node_cap: cap, nodes, bindings, visible, before_block }
     for block in 0..256 {
         s = chunk(source, s)
         if (s.error.code == zero) == false { return Parsed { nodes: s.nodes, value: zero, token: s.token, error: s.error } }

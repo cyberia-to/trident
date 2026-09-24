@@ -1,0 +1,75 @@
+module std.compiler.nox.declarations
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.symbols
+use std.compiler.nox.expression
+use std.compiler.nox.blocks
+use std.compiler.nox.body_state
+
+#[pure]
+pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
+    let mut s = input
+    let declaration = s.token.kind == as_u32(15)
+    let mut name = s.token
+    let mut writable = false
+    let mut expected_type: Field = 2
+    let mut slot = seq.len(s.bindings)
+    if declaration {
+        name = lexer.next(source, s.token.end)
+        if name.kind == as_u32(16) {
+            writable = true
+            name = lexer.next(source, name.end)
+        }
+        if (name.kind == as_u32(1)) == false { s.error = ast.failed(name, 2) return s }
+        s.token = lexer.next(source, name.end)
+        if s.token.kind == as_u32(17) {
+            s.token = lexer.next(source, s.token.end)
+            if syntax.either(s.token.kind == as_u32(12), s.token.kind == as_u32(20)) == false {
+                let mut code: Field = 2
+                if s.token.kind == as_u32(1) { code = 6 }
+                s.error = ast.failed(s.token, code)
+                return s
+            }
+            expected_type = ast.FIELD
+            if s.token.kind == as_u32(20) { expected_type = ast.BOOL }
+            s.token = lexer.next(source, s.token.end)
+        }
+    } else {
+        let binding = symbols.lookup(source, name, s.bindings, s.visible)
+        if syntax.either(binding.exists == false, binding.writable == false) {
+            s.error = syntax.error(5, name.start, name.end)
+            return s
+        }
+        slot = binding.slot
+        expected_type = binding.ty
+        s.token = lexer.next(source, name.end)
+    }
+    if (s.token.kind == as_u32(18)) == false { s.error = ast.failed(s.token, 2) return s }
+    if syntax.either(seq.len(s.statements) == cap, syntax.both(declaration, seq.len(s.bindings) == cap)) {
+        s.error = syntax.error(7, name.start, name.end)
+        return s
+    }
+    let rhs = expression.parse(source, lexer.next(source, s.token.end), s.bindings, s.visible, s.nodes, cap, false)
+    s.error = rhs.error
+    if (s.error.code == as_u32(0)) == false { return s }
+    let value = seq.get(rhs.nodes, rhs.value)
+    if syntax.both((expected_type == 2) == false, (expected_type == ast.ty(value)) == false) {
+        s.error = ast.issue(5, value)
+        return s
+    }
+    s.nodes = rhs.nodes
+    s.token = rhs.token
+    s = body_state.append(s, blocks.statement(blocks.WRITE, slot, rhs.value, as_u32(0)), cap)
+    // Initializer sees the previous binding; only now does the new slot exist.
+    if declaration {
+        s.bindings = seq.push(s.bindings, symbols.binding(name, writable, ast.ty(value)), cap)
+        s.visible = noun.pair(noun.atom(as_field(slot)), s.visible)
+    }
+    s
+}

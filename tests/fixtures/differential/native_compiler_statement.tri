@@ -1,0 +1,8 @@
+program native_compiler_statement
+
+use std.compiler.nox.blocks
+
+fn main(kind: Field, a: U32, b: U32, c: U32) -> (Field, U32, U32, U32) {
+    let s = blocks.statement(kind, a, b, c)
+    (s.kind, s.a, s.b, s.c)
+}

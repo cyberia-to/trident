@@ -33,6 +33,9 @@ balanced frame leaves in source order; lexical locals and generated temporaries
 have stable slots planned before emission. A block returns `[0 subject]` to
 continue or `[1 value]` to return. Function boundaries unwrap the return value.
 Persistent edits retain unrelated slots; leaving a scope only removes names.
+Conditions follow the native encoding: Bool true is zero, and raw Field zero
+selects `then` after field canonicalization. Field nonzero selects `else`.
+Use an explicit comparison when the source needs portable logical truthiness.
 Initial seed limits are 65536 frame/table leaves, 4096 reachable functions, and
 128 source-call planning levels, plus the existing formula/artifact ceilings.
 These compilation limits are separate from Joy's runtime node/frame budget.

@@ -1,0 +1,31 @@
+program native_control_nesting
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.contexts
+use std.compiler.nox.blocks
+use std.compiler.nox.body_state
+use std.compiler.nox.control_parse
+
+// Component gate for the actual enter operation. Seed its continuation stack
+// directly so the independent lifetime arena does not dominate this boundary.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let depth = as_u32(noun.as_field(input))
+    let zero = as_u32(0)
+    let mut s = body_state.initial(syntax.token(23, zero, as_u32(2), 0))
+    let frame = contexts.Frame { statements: noun.atom(0), visible: noun.atom(0),
+        returned: false, synthetic: false, start: zero, condition: zero,
+        then_block: blocks.NONE, phase: 0 }
+    for i in 0..64 {
+        if i < depth { s.frames = noun.pair(contexts.pack(frame), s.frames) }
+    }
+    s.depth = depth
+    let text = [105,102,32,116,114,117,101,32,123]
+    let mut source = bytes.empty()
+    for i in 0..9 { source = bytes.push(source, as_u32(text[i]), as_u32(9)) }
+    let parsed = control_parse.enter(source, s, syntax.SOURCE_CAP)
+    noun.atom(as_field(parsed.error.code) * 1000 + as_field(parsed.depth))
+}

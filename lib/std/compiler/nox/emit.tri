@@ -13,6 +13,7 @@ pub fn literal(value: Field) -> Noun { noun.pair(noun.atom(1), noun.atom(value))
 pub fn binary(kind: U32, left: Noun, right: Noun) -> Noun {
     let mut opcode: Field = 5
     if kind == as_u32(4) { opcode = 7 }
+    if kind == as_u32(5) { opcode = 9 }
     noun.pair(noun.atom(opcode), noun.pair(left, right))
 }
 

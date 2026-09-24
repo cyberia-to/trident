@@ -6,11 +6,9 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
         for text in [
             "",
             "program",
-            "program sample fn main() -> Field { }",
             "program sample fn main() -> Field { 1+ }",
             "program sample fn main() -> Field { (1 }",
             "program sample fn main() -> Field { 1) }",
-            "program sample fn main() -> Field { 1 2 }",
             "program sample fn main() -> Field { 1 } 2",
             "program sample fn main() -> Field { 1",
         ] {

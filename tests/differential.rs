@@ -330,6 +330,22 @@ fn native_compiler_scalar_helpers_match_ascii_and_bounded_integer_arithmetic() {
     }
 }
 
+#[test]
+fn native_statement_records_preserve_tag_and_distinct_operand_ids() {
+    let assembly = fixture("native_compiler_statement");
+    for operands in [
+        [0, 1, 2, 3],
+        [1, 7, 0, 4096],
+        [2, 4095, 0, 0],
+        [3, 0, u64::from(u32::MAX), 42],
+    ] {
+        // Flat entry tuples carry their canonical terminating zero.
+        let mut expected = operands.to_vec();
+        expected.push(0);
+        assert_eq!(execute(&assembly, &operands, &[]).unwrap(), expected);
+    }
+}
+
 /// Cost analysis of a library selects its first active public function.
 /// Every successful entry needs the scoped executed fixture above. This pin
 /// does not claim all functions in those modules lower or execute correctly.
@@ -365,6 +381,7 @@ fn census_every_in_surface_module_has_a_differential() {
             "lib/std/compiler/lexer.tri".to_string(),
             "lib/std/compiler/lower.tri".to_string(),
             "lib/std/compiler/nox/ascii.tri".to_string(),
+            "lib/std/compiler/nox/blocks.tri".to_string(),
             "lib/std/compiler/nox/syntax.tri".to_string(),
             "lib/std/compiler/parser.tri".to_string(),
             "lib/std/compiler/typecheck.tri".to_string(),

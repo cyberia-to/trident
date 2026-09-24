@@ -1,0 +1,50 @@
+program native_control_codegen_depth
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.ast
+use std.compiler.nox.syntax
+use std.compiler.nox.blocks
+use std.compiler.nox.body_state
+use std.compiler.nox.control_gen
+use std.compiler.nox.emit
+
+#[pure]
+fn ids(a: Field, b: Field) -> Noun {
+    noun.pair(noun.atom(a), noun.pair(noun.atom(b), noun.atom(0)))
+}
+
+#[pure]
+fn body(statements: Noun, tail: Bool, value: U32) -> Noun {
+    blocks.pack(blocks.Block { statements, has_tail: tail, tail: value, start: as_u32(0), end: as_u32(0) })
+}
+
+// Real generator, isolated from JOB/C1 admission depth:
+// let mut x=1; if x==1 { 1; x=7; return x } else { x=9 }; x
+#[pure]
+fn main(cap: Noun) -> Noun {
+    let zero = as_u32(0)
+    let mut s = body_state.initial(syntax.token(0, zero, zero, 0))
+    let capacity = as_u32(16)
+    s.nodes = seq.push(s.nodes, ast.node(ast.LITERAL, 1, 0), capacity)
+    s.nodes = seq.push(s.nodes, ast.node(ast.LOCAL, 0, 0), capacity)
+    s.nodes = seq.push(s.nodes, ast.node(ast.EQUAL, 1, 0), capacity)
+    s.nodes = seq.push(s.nodes, ast.node(ast.LITERAL, 7, 0), capacity)
+    s.nodes = seq.push(s.nodes, ast.node(ast.LOCAL, 0, 0), capacity)
+    s.nodes = seq.push(s.nodes, ast.node(ast.LITERAL, 9, 0), capacity)
+    s.nodes = seq.push(s.nodes, ast.node(ast.LOCAL, 0, 0), capacity)
+    s.statements = seq.push(s.statements, blocks.pack_statement(blocks.statement(blocks.WRITE, zero, zero, zero)), capacity)
+    s.statements = seq.push(s.statements, blocks.pack_statement(blocks.statement(blocks.EVAL, zero, zero, zero)), capacity)
+    s.statements = seq.push(s.statements, blocks.pack_statement(blocks.statement(blocks.WRITE, zero, as_u32(3), zero)), capacity)
+    s.statements = seq.push(s.statements, blocks.pack_statement(blocks.statement(blocks.RETURN, as_u32(4), zero, zero)), capacity)
+    s.statements = seq.push(s.statements, blocks.pack_statement(blocks.statement(blocks.WRITE, zero, as_u32(5), zero)), capacity)
+    s.statements = seq.push(s.statements, blocks.pack_statement(blocks.statement(blocks.IF, as_u32(2), zero, as_u32(1))), capacity)
+    s.blocks = seq.push(s.blocks, body(noun.pair(noun.atom(3), ids(2, 1)), false, zero), capacity)
+    s.blocks = seq.push(s.blocks, body(noun.pair(noun.atom(4), noun.atom(0)), false, zero), capacity)
+    s.blocks = seq.push(s.blocks, body(ids(5, 0), true, as_u32(6)), capacity)
+    s.bindings = seq.push(s.bindings, noun.atom(0), capacity)
+    s.root = as_u32(2)
+    let output = control_gen.generate(s, as_u32(noun.as_field(cap)))
+    noun.pair(noun.atom(as_field(output.error.code)), emit.artifact(output.formula))
+}

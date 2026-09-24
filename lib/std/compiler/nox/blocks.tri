@@ -1,0 +1,54 @@
+module std.compiler.nox.blocks
+
+use vm.nox.noun
+use vm.core.convert
+
+pub const WRITE: Field = 0
+pub const IF: Field = 1
+pub const RETURN: Field = 2
+pub const EVAL: Field = 3
+pub const NONE: U32 = 4096
+
+pub struct Statement { pub kind: Field, pub a: U32, pub b: U32, pub c: U32 }
+pub struct Block {
+    pub statements: Noun, pub has_tail: Bool, pub tail: U32,
+    pub start: U32, pub end: U32
+}
+
+// Statement IDs are owned by one reversed list. Nested block IDs precede parents.
+#[pure]
+pub fn statement(kind: Field, a: U32, b: U32, c: U32) -> Statement { Statement { kind, a, b, c } }
+
+#[pure]
+pub fn pack_statement(s: Statement) -> Noun {
+    noun.pair(noun.pair(noun.atom(s.kind), noun.atom(as_field(s.a))),
+        noun.pair(noun.atom(as_field(s.b)), noun.atom(as_field(s.c))))
+}
+
+#[pure]
+pub fn read_statement(value: Noun) -> Statement {
+    let a = noun.head(value)
+    let b = noun.tail(value)
+    Statement { kind: noun.as_field(noun.head(a)), a: as_u32(noun.as_field(noun.tail(a))),
+        b: as_u32(noun.as_field(noun.head(b))), c: as_u32(noun.as_field(noun.tail(b))) }
+}
+
+#[pure]
+pub fn flag(value: Bool) -> Noun { if value { return noun.atom(1) } noun.atom(0) }
+
+#[pure]
+pub fn pack(b: Block) -> Noun {
+    let tail = noun.pair(flag(b.has_tail), noun.atom(as_field(b.tail)))
+    let span = noun.pair(noun.atom(as_field(b.start)), noun.atom(as_field(b.end)))
+    noun.pair(noun.pair(b.statements, tail), span)
+}
+
+#[pure]
+pub fn read(value: Noun) -> Block {
+    let contents = noun.head(value)
+    let tail = noun.tail(contents)
+    let span = noun.tail(value)
+    Block { statements: noun.head(contents), has_tail: noun.as_field(noun.head(tail)) == 1,
+        tail: as_u32(noun.as_field(noun.tail(tail))), start: as_u32(noun.as_field(noun.head(span))),
+        end: as_u32(noun.as_field(noun.tail(span))) }
+}

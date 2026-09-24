@@ -1,0 +1,78 @@
+module std.compiler.nox.body
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.expression
+use std.compiler.nox.blocks
+use std.compiler.nox.body_state
+use std.compiler.nox.declarations
+use std.compiler.nox.control_parse
+
+#[pure]
+fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
+    let mut s = input
+    // An else-if owns a synthetic block containing exactly the completed If.
+    if syntax.both(s.synthetic, noun.eq(s.current, noun.atom(0)) == false) {
+        return control_parse.close(source, s, cap, false)
+    }
+    if s.token.kind == as_u32(8) { return control_parse.close(source, s, cap, true) }
+    if s.returned { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    if s.token.kind == as_u32(15) { return declarations.parse(source, s, cap) }
+    if s.token.kind == as_u32(1) {
+        let next = lexer.next(source, s.token.end)
+        if next.kind == as_u32(18) { return declarations.parse(source, s, cap) }
+    }
+    if s.token.kind == as_u32(23) { return control_parse.enter(source, s, cap) }
+    let returning = s.token.kind == as_u32(25)
+    if returning {
+        s.token = lexer.next(source, s.token.end)
+        if s.token.kind == as_u32(8) { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    }
+    let value = expression.parse(source, s.token, s.bindings, s.visible, s.nodes, cap, false)
+    s.error = value.error
+    if (s.error.code == as_u32(0)) == false { return s }
+    s.nodes = value.nodes
+    s.token = value.token
+    if returning {
+        let node = seq.get(s.nodes, value.value)
+        if (ast.ty(node) == ast.FIELD) == false { s.error = ast.issue(5, node) return s }
+        s = body_state.append(s, blocks.statement(blocks.RETURN, value.value, as_u32(0), as_u32(0)), cap)
+        s.returned = true
+        return s
+    }
+    if s.token.kind == as_u32(8) {
+        s.has_tail = true
+        s.tail = value.value
+        return control_parse.close(source, s, cap, true)
+    }
+    body_state.append(s, blocks.statement(blocks.EVAL, value.value, as_u32(0), as_u32(0)), cap)
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
+    let mut s = input
+    for turn in 0..8 {
+        s = step(source, s, cap)
+        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn parse(source: bytes.Bytes, start: U32, cap: U32) -> body_state.State {
+    let mut s = body_state.initial(lexer.next(source, start))
+    s.start = syntax.dec(start)
+    if cap == as_u32(0) { s.error = syntax.error(7, s.token.start, s.token.end) return s }
+    for turn in 0..512 {
+        s = chunk(source, s, cap)
+        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}

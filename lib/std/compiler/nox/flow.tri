@@ -1,0 +1,53 @@
+module std.compiler.nox.flow
+
+use vm.nox.noun
+use vm.core.convert
+use std.compiler.nox.codegen
+use std.compiler.nox.emit
+
+// A formula and its exact noun depth travel together through every constructor.
+#[pure]
+pub fn axis(value: Field) -> codegen.Value { codegen.Value { formula: codegen.axis(value), depth: as_u32(1) } }
+
+#[pure]
+pub fn literal(value: Field) -> codegen.Value { codegen.Value { formula: emit.literal(value), depth: as_u32(1) } }
+
+#[pure]
+pub fn cons(a: codegen.Value, b: codegen.Value) -> codegen.Value {
+    codegen.Value { formula: codegen.cons(a.formula, b.formula), depth: as_u32(as_field(codegen.maximum(a.depth, b.depth)) + 2) }
+}
+
+#[pure]
+pub fn compose(a: codegen.Value, b: codegen.Value) -> codegen.Value {
+    codegen.Value { formula: codegen.compose(a.formula, b.formula), depth: as_u32(as_field(codegen.maximum(a.depth, as_u32(as_field(b.depth) + 1))) + 2) }
+}
+
+#[pure]
+pub fn branch(condition: codegen.Value, yes: codegen.Value, no: codegen.Value) -> codegen.Value {
+    let arms = noun.pair(yes.formula, no.formula)
+    let depth = as_u32(as_field(codegen.maximum(yes.depth, no.depth)) + 1)
+    codegen.Value { formula: noun.pair(noun.atom(4), noun.pair(condition.formula, arms)),
+        depth: as_u32(as_field(codegen.maximum(condition.depth, depth)) + 2) }
+}
+
+#[pure]
+pub fn keep(subject: codegen.Value) -> codegen.Value { cons(literal(0), subject) }
+
+#[pure]
+pub fn returned(value: codegen.Value) -> codegen.Value { cons(literal(1), value) }
+
+#[pure]
+pub fn then(first: codegen.Value, next: codegen.Value) -> codegen.Value {
+    compose(first, branch(axis(2), compose(axis(3), next), axis(1)))
+}
+
+#[pure]
+pub fn result(value: codegen.Value) -> codegen.Value {
+    compose(value, branch(axis(2), literal(0), axis(3)))
+}
+
+// Evaluate the discarded expression once, and retain its original subject.
+#[pure]
+pub fn discard(value: codegen.Value) -> codegen.Value {
+    compose(cons(value, axis(1)), keep(axis(3)))
+}

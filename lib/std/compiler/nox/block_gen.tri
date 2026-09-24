@@ -1,0 +1,99 @@
+module std.compiler.nox.block_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.blocks
+use std.compiler.nox.codegen
+use std.compiler.nox.flow
+
+pub struct Built { pub output: codegen.Value, pub covered: Bool }
+struct Fold { output: codegen.Value, covered: Bool, remaining: Noun, failed: Bool }
+pub struct Emitted { pub values: seq.Seq, pub next: U32, pub failed: Bool }
+
+#[pure]
+pub fn read(values: seq.Seq, id: U32) -> Built {
+    let record = seq.get(values, id)
+    let value = noun.tail(record)
+    Built { output: codegen.Value { formula: noun.tail(value), depth: as_u32(noun.as_field(noun.head(value))) },
+        covered: noun.as_field(noun.head(record)) == 1 }
+}
+
+#[pure]
+fn statement(s: blocks.Statement, nodes: seq.Seq, values: seq.Seq, emitted: seq.Seq, shape: tree.Shape) -> Built {
+    if s.kind == blocks.WRITE { return Built { output: flow.keep(codegen.edit(s.a, shape, codegen.value(values, s.b))), covered: false } }
+    if s.kind == blocks.RETURN { return Built { output: flow.returned(codegen.value(values, s.a)), covered: true } }
+    if s.kind == blocks.EVAL { return Built { output: flow.discard(codegen.value(values, s.a)), covered: false } }
+    let yes = read(emitted, s.b)
+    let mut no = Built { output: flow.keep(flow.axis(1)), covered: false }
+    if (s.c == blocks.NONE) == false { no = read(emitted, s.c) }
+    let condition = seq.get(nodes, s.a)
+    let mut covered = syntax.both(yes.covered, no.covered)
+    if syntax.either(ast.kind(condition) == ast.LITERAL, ast.kind(condition) == ast.BOOLEAN) {
+        covered = no.covered
+        if ast.left(condition) == 0 { covered = yes.covered }
+    }
+    Built { output: flow.branch(codegen.value(values, s.a), yes.output, no.output), covered }
+}
+
+#[pure]
+fn chunk(statements: seq.Seq, nodes: seq.Seq, values: seq.Seq, emitted: seq.Seq, shape: tree.Shape, input: Fold, depth_cap: U32) -> Fold {
+    let mut s = input
+    for turn in 0..8 {
+        if noun.eq(s.remaining, noun.atom(0)) { return s }
+        let id = as_u32(noun.as_field(noun.head(s.remaining)))
+        let current = statement(blocks.read_statement(seq.get(statements, id)), nodes, values, emitted, shape)
+        s.output = flow.then(current.output, s.output)
+        s.covered = syntax.either(current.covered, s.covered)
+        s.remaining = noun.tail(s.remaining)
+        if depth_cap < as_u32(as_field(s.output.depth) + 9) { s.failed = true return s }
+    }
+    s
+}
+
+#[pure]
+fn block(body: blocks.Block, terminal: Bool, statements: seq.Seq, nodes: seq.Seq, values: seq.Seq, emitted: seq.Seq, shape: tree.Shape, depth_cap: U32) -> Fold {
+    let mut output = flow.keep(flow.axis(1))
+    let mut covered = false
+    if body.has_tail {
+        output = flow.discard(codegen.value(values, body.tail))
+        if terminal { output = flow.returned(codegen.value(values, body.tail)) covered = true }
+    }
+    let mut s = Fold { output, covered, remaining: body.statements, failed: false }
+    for turn in 0..512 {
+        s = chunk(statements, nodes, values, emitted, shape, s, depth_cap)
+        if syntax.either(s.failed, noun.eq(s.remaining, noun.atom(0))) { return s }
+    }
+    s.failed = true
+    s
+}
+
+#[pure]
+fn block_chunk(bodies: seq.Seq, flags: Noun, statements: seq.Seq, nodes: seq.Seq, values: seq.Seq, shape: tree.Shape, input: Emitted, depth_cap: U32) -> Emitted {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(bodies) { return s }
+        let terminal = noun.as_field(tree.get(flags, seq.len(bodies), s.next)) == 1
+        let built = block(blocks.read(seq.get(bodies, s.next)), terminal, statements, nodes, values, s.values, shape, depth_cap)
+        if built.failed { s.failed = true return s }
+        let output = noun.pair(noun.atom(as_field(built.output.depth)), built.output.formula)
+        s.values = seq.push(s.values, noun.pair(blocks.flag(built.covered), output), seq.len(bodies))
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(bodies)) == false)]
+pub fn generate(bodies: seq.Seq, flags: Noun, statements: seq.Seq, nodes: seq.Seq, values: seq.Seq, shape: tree.Shape, depth_cap: U32) -> Emitted {
+    let mut s = Emitted { values: seq.empty(), next: as_u32(0), failed: false }
+    for turn in 0..512 {
+        s = block_chunk(bodies, flags, statements, nodes, values, shape, s, depth_cap)
+        if syntax.either(s.failed, s.next == seq.len(bodies)) { return s }
+    }
+    s.failed = true
+    s
+}

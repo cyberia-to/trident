@@ -96,9 +96,11 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH3 native compiler locals: Field declarations, mutable assignments,
   stable runtime slots and lexical shadowing;
   [source/JOB execution evidence](self-hosting/native-compiler-locals.md).
-- [ ] SH3 native compiler control: Bool, equality, scoped if/else and early return;
-  then typed reusable functions, aggregates, imports and remaining compiler language.
-  [Next slice](../.claude/plans/native-compiler-control.md).
+- [x] SH3 native compiler control: Bool, equality, scoped if/else and early return;
+  [source/JOB and installed CLI evidence](self-hosting/native-compiler-control.md).
+- [ ] SH3 native compiler functions: typed reusable calls, forward signatures and
+  deterministic code tables; then aggregates, imports and remaining compiler language.
+  [Next slice](../.claude/plans/native-compiler-functions.md).
 - [ ] SH4 source closure and allocation scale: measure and repair the lifetime
   arena boundary observed during pilot source admission before full self-build.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
@@ -118,7 +120,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
-| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) and [native locals](self-hosting/native-compiler-locals.md) are accepted; typed control is next |
+| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) [native locals](self-hosting/native-compiler-locals.md) and [typed control](self-hosting/native-compiler-control.md) are accepted; reusable functions are next |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |

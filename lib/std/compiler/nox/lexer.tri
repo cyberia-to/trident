@@ -62,7 +62,8 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
 
 // Token kinds: EOF=0, identifier=1, decimal=2, +=3, *=4, (=5, )=6,
 // {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14,
-// let=15, mut=16, colon=17, assignment=18.
+// let=15, mut=16, colon=17, assignment=18, equality=19, Bool=20,
+// true=21, false=22, if=23, else=24, return=25.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((bytes.len(source) < start) == false)]
@@ -97,7 +98,7 @@ pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
                 if c == as_u32(58) { return syntax.token(17, pos, end, 0) }
                 if c == as_u32(61) {
                     if end < bytes.len(source) {
-                        if bytes.get(source, end) == as_u32(61) { return syntax.token(13, pos, syntax.inc(end), 0) }
+                        if bytes.get(source, end) == as_u32(61) { return syntax.token(19, pos, syntax.inc(end), 0) }
                     }
                     return syntax.token(18, pos, end, 0)
                 }

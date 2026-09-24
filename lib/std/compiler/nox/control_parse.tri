@@ -1,0 +1,94 @@
+module std.compiler.nox.control_parse
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.expression
+use std.compiler.nox.blocks
+use std.compiler.nox.contexts
+use std.compiler.nox.body_state
+
+#[pure]
+pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
+    let mut s = input
+    let mut nesting = cap
+    if syntax.STACK_CAP < nesting { nesting = syntax.STACK_CAP }
+    // The function's root block already occupies one nesting level.
+    if syntax.either(nesting == as_u32(0), syntax.inc(s.depth) == nesting) {
+        s.error = syntax.error(7, s.token.start, s.token.end)
+        return s
+    }
+    let condition = expression.parse(source, lexer.next(source, s.token.end), s.bindings, s.visible, s.nodes, cap, true)
+    s.error = condition.error
+    if (s.error.code == as_u32(0)) == false { return s }
+    s.nodes = condition.nodes
+    s.token = condition.token
+    if (s.token.kind == as_u32(7)) == false { s.error = ast.failed(s.token, 2) return s }
+    let frame = contexts.Frame { statements: s.current, visible: s.visible, returned: s.returned,
+        synthetic: s.synthetic, start: s.start, condition: condition.value,
+        then_block: blocks.NONE, phase: 0 }
+    s.frames = noun.pair(contexts.pack(frame), s.frames)
+    s.depth = syntax.inc(s.depth)
+    s.start = s.token.start
+    s.token = lexer.next(source, s.token.end)
+    s.current = noun.atom(0)
+    s.synthetic = false
+    s.returned = false
+    s.has_tail = false
+    s
+}
+
+#[pure]
+fn restore(input: body_state.State, frame: contexts.Frame, yes: U32, no: U32, cap: U32) -> body_state.State {
+    let mut s = input
+    s.current = frame.statements
+    s.visible = frame.visible
+    s.returned = frame.returned
+    s.synthetic = frame.synthetic
+    s.start = frame.start
+    s.has_tail = false
+    s.frames = noun.tail(s.frames)
+    s.depth = syntax.dec(s.depth)
+    body_state.append(s, blocks.statement(blocks.IF, frame.condition, yes, no), cap)
+}
+
+#[pure]
+pub fn close(source: bytes.Bytes, input: body_state.State, cap: U32, consume: Bool) -> body_state.State {
+    let mut s = input
+    if seq.len(s.blocks) == cap { s.error = syntax.error(7, s.token.start, s.token.end) return s }
+    let id = seq.len(s.blocks)
+    if consume { s.end = s.token.end }
+    let block = blocks.Block { statements: s.current, has_tail: s.has_tail, tail: s.tail,
+        start: s.start, end: s.end }
+    s.blocks = seq.push(s.blocks, blocks.pack(block), cap)
+    if consume { s.token = lexer.next(source, s.token.end) }
+    if s.depth == as_u32(0) {
+        if (s.token.kind == as_u32(0)) == false { s.error = ast.failed(s.token, 2) return s }
+        s.root = id
+        s.done = true
+        return s
+    }
+    let mut frame = contexts.read(noun.head(s.frames))
+    if frame.phase == 1 { return restore(s, frame, frame.then_block, id, cap) }
+    if (s.token.kind == as_u32(24)) == false { return restore(s, frame, id, blocks.NONE, cap) }
+    s.token = lexer.next(source, s.token.end)
+    if syntax.either(s.token.kind == as_u32(7), s.token.kind == as_u32(23)) == false {
+        s.error = ast.failed(s.token, 2)
+        return s
+    }
+    frame.then_block = id
+    frame.phase = 1
+    s.frames = noun.pair(contexts.pack(frame), noun.tail(s.frames))
+    s.current = noun.atom(0)
+    s.visible = frame.visible
+    s.start = s.token.start
+    s.synthetic = s.token.kind == as_u32(23)
+    s.returned = false
+    s.has_tail = false
+    if s.synthetic == false { s.token = lexer.next(source, s.token.end) }
+    s
+}
