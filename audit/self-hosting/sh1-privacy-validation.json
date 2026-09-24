@@ -1,0 +1,230 @@
+{
+  "date": "2026-09-24",
+  "scope": "SH1 validated native wrapper prerequisite; local development evidence",
+  "owners": {
+    "trident": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+    "joy": "612cfa1373ad2070dc105a39a59cc4633cd6a8b0",
+    "trisha": "f472d6bad61f42626dba33bfc872bbcb324299a2",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9"
+  },
+  "validation_context": "Gate commands ran before source commits. Tested source and test files were committed unchanged at the listed revisions; accompanying contract documentation was finalized before commit. This is not a release candidate or CI receipt.",
+  "checks": [
+    {
+      "repository": "trident",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "command": "cargo test --workspace --locked",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-privacy-final-tests.log",
+      "sha256": "8cff54c4d1e542257f375b9ac7109ad71d5cb7e6838990a8af651c13d8349317",
+      "passed": 898,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "repository": "trident",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-privacy-check.log",
+      "sha256": "5b68ca8ca2bf6cfcdf9fece92e2fd8fafdcb996a28de6fdd951811b32bd9607a"
+    },
+    {
+      "repository": "joy",
+      "source_commit": "612cfa1373ad2070dc105a39a59cc4633cd6a8b0",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "log": "/tmp/joy-04-privacy-tests.log",
+      "sha256": "cff62035f4113059adf07a20387f07b61dcd195aa5b5f55a4221d702a3d29999",
+      "passed": 89,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "repository": "joy",
+      "source_commit": "612cfa1373ad2070dc105a39a59cc4633cd6a8b0",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "log": "/tmp/joy-04-privacy-check.log",
+      "sha256": "f7c0cf7840ac6be0b7038171c45c8962e312327a6f97b20e8726d86ed14b04ab"
+    },
+    {
+      "repository": "trisha",
+      "source_commit": "f472d6bad61f42626dba33bfc872bbcb324299a2",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-privacy-tests.log",
+      "sha256": "69fb3b23f6735ae6c791990649fd860241e4d60b4a449fb5d91e95b045f0b571",
+      "passed": 362,
+      "failed": 0,
+      "ignored": 4
+    },
+    {
+      "repository": "trisha",
+      "source_commit": "f472d6bad61f42626dba33bfc872bbcb324299a2",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-privacy-final-bench.log",
+      "sha256": "beb66f0beda06dcd9f5d14b3f223b9b24b6646ae070423dcb22143efa95695cf"
+    },
+    {
+      "repository": "trisha",
+      "source_commit": "f472d6bad61f42626dba33bfc872bbcb324299a2",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check -p trisha-rs --all-targets --locked",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-privacy-check.log",
+      "sha256": "65ddd66858b15796af5c2d5aef518005ff30cbf7e1e7eefc374dde44935e9341",
+      "timing": "after source commit for installs; final Trisha check spanned the fixture-only commit"
+    },
+    {
+      "repository": "trident",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "command": "cargo install --path . --root ../install --locked --force",
+      "exit_code": 0,
+      "log": "/tmp/trident-04-privacy-install.log",
+      "sha256": "582662147d3b6a8f7a191987c46946c78c5d9637774bc516642cb27a8607a43d",
+      "timing": "after source commit for installs; final Trisha check spanned the fixture-only commit"
+    },
+    {
+      "repository": "joy",
+      "source_commit": "612cfa1373ad2070dc105a39a59cc4633cd6a8b0",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo install --path cli --root ../install --locked --force",
+      "exit_code": 0,
+      "log": "/tmp/joy-04-privacy-install.log",
+      "sha256": "5d685e263d53359fda2090bb19bdf17572be4ef96c438b67cfdc7b93954205ad",
+      "timing": "after source commit for installs; final Trisha check spanned the fixture-only commit"
+    },
+    {
+      "repository": "trisha",
+      "source_commit": "f472d6bad61f42626dba33bfc872bbcb324299a2",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo install --path cli --root ../install --locked --force",
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-privacy-install.log",
+      "sha256": "97cd7e13999af3b7e6fb55833aff0813b0b1db11ba5e60d5dccc56347898eb4e",
+      "timing": "after source commit for installs; final Trisha check spanned the fixture-only commit"
+    }
+  ],
+  "bench": {
+    "fixtures_passed": 133,
+    "fixtures_total": 133,
+    "baselines_verified": 43,
+    "baselines_total": 43,
+    "prior_log": "/tmp/trisha-04-control-bench.log",
+    "prior_trident_commit": "4317c767607ce83210348d285c1390df0bed5d94",
+    "fixture_rows_unchanged": true
+  },
+  "formal_audits": [
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/crypto/bigint.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-bigint.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "3e7eaebcf8dbaec028dad92da0fbd5800600ba97e8393b04cc8ceee68912bd2d"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/crypto/ecdsa.tri",
+        "--json"
+      ],
+      "exit_code": 1,
+      "log": "/tmp/trident-04-privacy-audit-ecdsa.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "4cb7408ed158d4c704ca06b1ea1777c7523ee7999479aa8b217955c5672d823b"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/crypto/keccak256.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-keccak256.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "9633f8133e18faea00655101526a17b53246c9d60fee08ffd3753a067936a3eb"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/crypto/poseidon.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-poseidon.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "c7d79340dbd6d6a1f5ea77717f444f20d2e6d1e471b49bfbf0d67eae269e9883"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/crypto/poseidon2.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-poseidon2.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "0aba1c42144346fcc49d19bfc4baa6ff2c46d95795307883737d83bb80977c29"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/crypto/sha256.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-sha256.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "e7a772742069975a8115faedddc1e7992dbb79849b1c78e2b63938c54a861ffd"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/quantum/gates.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-gates.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "c1d193a6334cb9bd4a3b649b51addc0f6990bd0d7cad7c49628529411f51c517"
+    },
+    {
+      "command": "PATH=\"../install/bin:$PATH\" target/debug/trident audit lib/std/crypto/ecdsa.tri --target triton --json",
+      "exit_code": 2,
+      "log": "/tmp/trident-04-privacy-audit-ecdsa-triton.log",
+      "source_commit": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54",
+      "sha256": "bb45e1d9168f0e6692a3e82e69da14eda4c4053e0fa57567e7bcc5529103b094"
+    }
+  ],
+  "earlier_failures": [
+    {
+      "log": "/tmp/trisha-04-privacy-bench-before-public-api.log",
+      "result": "112/133 fixtures and 40/43 baselines; raw arithmetic data APIs omitted pub fields, corrected in this delivery"
+    },
+    {
+      "log": "/tmp/joy-04-privacy-tests-before-public-api.log",
+      "result": "loop_indices imported Pair fields omitted pub; corrected fixture"
+    },
+    {
+      "log": "/tmp/trisha-04-privacy-tests-before-public-api.log",
+      "result": "entry_abi imported aggregate fields omitted pub; corrected fixture"
+    }
+  ],
+  "install_note": "Cargo printed its install-prefix PATH reminder; compilation emitted no Rust warnings."
+}

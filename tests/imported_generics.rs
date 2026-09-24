@@ -53,7 +53,7 @@ fn execute_inner(assembly: &str, subject: &str) -> u64 {
 #[test]
 fn imported_generics_keep_lexical_sizes_and_nested_entry_layout() {
     let dir = tempfile::tempdir().unwrap();
-    std::fs::write(dir.path().join("shapes.tri"),"module shapes\nconst N:U32=9\nconst K:U32=2\npub struct Pair {a:Field,b:Field}\nfn helper(x:Field)->Field{x+7}\npub fn first<M>(x:[Field;M])->Field{helper(x[0])}\npub fn outer<N>(x:[Field;N])->Field{first([11,13,17])+first(x)}\npub fn padded<N>(x:[Field;N+K])->Field{x[0]*100+x[2]}\n").unwrap();
+    std::fs::write(dir.path().join("shapes.tri"),"module shapes\nconst N:U32=9\nconst K:U32=2\npub struct Pair {pub a:Field,pub b:Field}\nfn helper(x:Field)->Field{x+7}\npub fn first<M>(x:[Field;M])->Field{helper(x[0])}\npub fn outer<N>(x:[Field;N])->Field{first([11,13,17])+first(x)}\npub fn padded<N>(x:[Field;N+K])->Field{x[0]*100+x[2]}\n").unwrap();
     let entry = dir.path().join("entry.tri");
     std::fs::write(&entry,"program entry\nuse shapes\nconst K:U32=17\nfn main(x:[shapes.Pair;2])->Field{shapes.first<3>([101,103,107])+shapes.outer([19,23])+shapes.padded<1>([3,5,7])+x[1].b}").unwrap();
     for profile in ["debug", "release"] {

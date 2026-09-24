@@ -13,8 +13,8 @@ use vm.io.io
 
 // An ECDSA signature consisting of (r, s), each a 256-bit scalar.
 pub struct Signature {
-    r: bigint.U256,
-    s: bigint.U256,
+    pub r: bigint.U256,
+    pub s: bigint.U256,
 }
 
 // ---------------------------------------------------------------------------

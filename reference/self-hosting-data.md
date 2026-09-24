@@ -168,6 +168,13 @@ Proposed modules `std.nox.seq` and `std.nox.bytes` own private validated wrapper
 API; these names do not claim files exist yet. An unchecked wrapper constructor
 is private. All externally received wrappers pass a bounded validator.
 
+The source type checker retains the defining module in struct identity and
+enforces private fields at construction, projection, mutation and patterns.
+An identical local struct cannot stand in for an imported wrapper. Module names
+must be unique in the parsed compilation closure before generic specialization;
+aliases and forwarded return values preserve their original owner. This protects
+source-level native handles. External raw entry data still requires `from_noun`.
+
 | Operation | Seq signature | Bytes signature |
 |---|---|---|
 | Empty | `empty() -> Seq` | `empty() -> Bytes` |

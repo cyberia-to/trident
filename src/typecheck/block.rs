@@ -332,7 +332,8 @@ impl TypeChecker {
             Place::FieldAccess(inner, field) => {
                 let (inner_ty, is_mut) = self.check_place(&inner.node, inner.span);
                 if let Ty::Struct(sty) = &inner_ty {
-                    if let Some((field_ty, _)) = sty.field(&field.node) {
+                    if let Some((field_ty, public)) = sty.field(&field.node) {
+                        self.check_field_visibility(sty, &field.node, public, field.span);
                         (field_ty, is_mut)
                     } else {
                         (Ty::Field, false)

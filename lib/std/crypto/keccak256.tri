@@ -40,8 +40,8 @@ use vm.io.mem
 // ---------------------------------------------------------------------------
 // lo holds bits [0..31], hi holds bits [32..63].
 pub struct Lane {
-    lo: U32,
-    hi: U32,
+    pub lo: U32,
+    pub hi: U32,
 }
 
 // Zero lane.
@@ -245,31 +245,31 @@ pub fn rot_lane(a: Lane, n: U32) -> Lane {
 // State[x][y] is stored as field s_{x}_{y} where x is column, y is row.
 // Flat naming: s00 = (0,0), s10 = (1,0), ..., s44 = (4,4).
 pub struct KeccakState {
-    s00: Lane,
-    s10: Lane,
-    s20: Lane,
-    s30: Lane,
-    s40: Lane,
-    s01: Lane,
-    s11: Lane,
-    s21: Lane,
-    s31: Lane,
-    s41: Lane,
-    s02: Lane,
-    s12: Lane,
-    s22: Lane,
-    s32: Lane,
-    s42: Lane,
-    s03: Lane,
-    s13: Lane,
-    s23: Lane,
-    s33: Lane,
-    s43: Lane,
-    s04: Lane,
-    s14: Lane,
-    s24: Lane,
-    s34: Lane,
-    s44: Lane,
+    pub s00: Lane,
+    pub s10: Lane,
+    pub s20: Lane,
+    pub s30: Lane,
+    pub s40: Lane,
+    pub s01: Lane,
+    pub s11: Lane,
+    pub s21: Lane,
+    pub s31: Lane,
+    pub s41: Lane,
+    pub s02: Lane,
+    pub s12: Lane,
+    pub s22: Lane,
+    pub s32: Lane,
+    pub s42: Lane,
+    pub s03: Lane,
+    pub s13: Lane,
+    pub s23: Lane,
+    pub s33: Lane,
+    pub s43: Lane,
+    pub s04: Lane,
+    pub s14: Lane,
+    pub s24: Lane,
+    pub s34: Lane,
+    pub s44: Lane,
 }
 
 // Zero-initialized Keccak state.

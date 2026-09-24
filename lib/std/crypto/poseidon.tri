@@ -10,14 +10,14 @@ module std.crypto.poseidon
 // Input length occupies capacity lane4. This does not change Hemera/state roots.
 
 pub struct State {
-    s0: Field,
-    s1: Field,
-    s2: Field,
-    s3: Field,
-    s4: Field,
-    s5: Field,
-    s6: Field,
-    s7: Field,
+    pub s0: Field,
+    pub s1: Field,
+    pub s2: Field,
+    pub s3: Field,
+    pub s4: Field,
+    pub s5: Field,
+    pub s6: Field,
+    pub s7: Field,
 }
 fn sbox(x: Field) -> Field {
     let x2: Field = x * x

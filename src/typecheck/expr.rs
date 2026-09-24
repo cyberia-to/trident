@@ -243,7 +243,8 @@ impl TypeChecker {
             Expr::FieldAccess { expr: inner, field } => {
                 let inner_ty = self.check_expr(&inner.node, inner.span);
                 if let Ty::Struct(sty) = &inner_ty {
-                    if let Some((field_ty, _)) = sty.field(&field.node) {
+                    if let Some((field_ty, public)) = sty.field(&field.node) {
+                        self.check_field_visibility(sty, &field.node, public, field.span);
                         field_ty
                     } else {
                         self.error(
@@ -301,7 +302,8 @@ impl TypeChecker {
                 let struct_name = path.node.as_dotted();
                 if let Some(sty) = self.structs.get(&struct_name).cloned() {
                     // Check all required fields are provided
-                    for (def_name, def_ty, _) in &sty.fields {
+                    for (def_name, def_ty, public) in &sty.fields {
+                        self.check_field_visibility(&sty, def_name, *public, span);
                         if let Some((_name, val)) =
                             init_fields.iter().find(|(n, _)| n.node == *def_name)
                         {
@@ -481,7 +483,8 @@ impl TypeChecker {
                 let mut ty = info.ty.clone();
                 for field in &parts[split..] {
                     if let Ty::Struct(ref sty) = ty {
-                        if let Some((field_ty, _)) = sty.field(field) {
+                        if let Some((field_ty, public)) = sty.field(field) {
+                            self.check_field_visibility(sty, field, public, span);
                             ty = field_ty;
                         } else {
                             self.error(

@@ -396,7 +396,11 @@ impl TypeChecker {
                     Type::Tuple(parts.iter().map(syntax).collect::<Option<Vec<_>>>()?)
                 }
                 Ty::Struct(def) => Type::Named(ModulePath(
-                    def.name.split('.').map(str::to_string).collect(),
+                    def.module
+                        .split('.')
+                        .map(str::to_string)
+                        .chain(std::iter::once(def.name.clone()))
+                        .collect(),
                 )),
                 Ty::Unit => return None,
             })

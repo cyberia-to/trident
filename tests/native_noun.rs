@@ -165,6 +165,7 @@ fn noun_containing_aggregates_keep_subtrees_through_mutation_and_calls() {
 fn native_layout_is_never_a_field_word_width() {
     use trident::types::{StructTy, Ty};
     let structure = StructTy {
+        module: "test".into(),
         name: "S".into(),
         fields: vec![
             ("tree".into(), Ty::Noun, true),
