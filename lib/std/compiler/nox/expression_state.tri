@@ -2,13 +2,15 @@ module std.compiler.nox.expression_state
 
 use vm.nox.noun
 use std.nox.seq
+use std.compiler.nox.type_registry
 use std.compiler.nox.syntax
 
 pub const CALL_MARKER: U32 = 27
 // Internal marker: a parenthesized expression becomes a tuple at its first comma.
 pub const TUPLE_MARKER: U32 = 38
+pub const RECORD_MARKER: U32 = 42
 pub struct Context {
-    pub bindings: seq.Seq, pub visible: Noun, pub functions: seq.Seq, pub params: seq.Seq
+    pub types: type_registry.Scope, pub bindings: seq.Seq, pub visible: Noun, pub functions: seq.Seq, pub params: seq.Seq
 }
 pub struct Parsed {
     pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun,
@@ -26,6 +28,6 @@ pub struct State {
 }
 
 #[pure]
-pub fn context(bindings: seq.Seq, visible: Noun, functions: seq.Seq, params: seq.Seq) -> Context {
-    Context { bindings, visible, functions, params }
+pub fn context(bindings: seq.Seq, visible: Noun, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope) -> Context {
+    Context { types: scope, bindings, visible, functions, params }
 }

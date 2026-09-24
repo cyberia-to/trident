@@ -5,6 +5,7 @@ use vm.core.convert
 use std.nox.bytes
 use std.nox.seq
 use std.compiler.nox.lexer
+use std.compiler.nox.type_registry
 use std.compiler.nox.headers
 use std.compiler.nox.signatures
 
@@ -15,7 +16,7 @@ fn main(input: Noun) -> Noun {
     let capacity = as_u32(noun.as_field(noun.tail(input)))
     let declaration = lexer.next(source, as_u32(0))
     let name = lexer.next(source, declaration.end)
-    let parsed = headers.parse(source, name.end, capacity)
+    let parsed = headers.parse(source, name.end, type_registry.name(source, name), capacity)
     if (parsed.error.code == as_u32(0)) == false {
         return noun.pair(noun.atom(as_field(parsed.error.code) * 1000000), noun.pair(noun.atom(as_field(parsed.error.start)), noun.atom(as_field(parsed.error.end))))
     }

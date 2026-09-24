@@ -4,6 +4,7 @@ use vm.nox.noun
 use vm.core.convert
 use std.nox.seq
 use std.nox.bytes
+use std.compiler.nox.type_registry
 use std.compiler.nox.syntax
 use std.compiler.nox.lexer
 use std.compiler.nox.ast
@@ -26,7 +27,7 @@ pub fn scalar(token: syntax.Token) -> Field {
 }
 
 #[pure]
-fn step(source: bytes.Bytes, input: State, cap: U32, stack: U32) -> State {
+fn step(source: bytes.Bytes, scope: type_registry.Scope, input: State, cap: U32, stack: U32) -> State {
     let mut s = input
     if s.operand {
         if s.token.kind == as_u32(5) {
@@ -35,6 +36,16 @@ fn step(source: bytes.Bytes, input: State, cap: U32, stack: U32) -> State {
             s.children = seq.empty()
             s.depth = syntax.inc(s.depth)
             s.token = lexer.next(source, s.token.end)
+            return s
+        }
+        if s.token.kind == as_u32(1) {
+            let following = lexer.next(source, s.token.end)
+            if following.kind == as_u32(41) { s.error = syntax.error(6, s.token.start, following.end) return s }
+            let found = type_registry.lookup(scope, type_registry.name(source, s.token))
+            if found.exists == false { s.error = ast.failed(s.token, 5) return s }
+            s.ty = found.ty
+            s.token = following
+            s.operand = false
             return s
         }
         let tag = scalar(s.token)
@@ -78,7 +89,7 @@ fn step(source: bytes.Bytes, input: State, cap: U32, stack: U32) -> State {
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
-pub fn parse(source: bytes.Bytes, token: syntax.Token, cap: U32) -> Parsed {
+pub fn parse(source: bytes.Bytes, token: syntax.Token, scope: type_registry.Scope, cap: U32) -> Parsed {
     let zero = as_u32(0)
     if cap == zero { return Parsed { ty: noun.atom(types.INVALID), token, error: syntax.error(7, token.start, token.end) } }
     let tag = scalar(token)
@@ -91,7 +102,7 @@ pub fn parse(source: bytes.Bytes, token: syntax.Token, cap: U32) -> Parsed {
         depth: zero, operand: true, done: false, error: syntax.error(0, zero, zero) }
     for block in 0..256 {
         for turn in 0..32 {
-            s = step(source, s, cap, stack)
+            s = step(source, scope, s, cap, stack)
             if syntax.either(s.done, (s.error.code == zero) == false) {
                 return Parsed { ty: s.ty, token: s.token, error: s.error }
             }

@@ -4,6 +4,7 @@ use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
 use std.compiler.nox.lexer
+use std.compiler.nox.type_registry
 use std.compiler.nox.headers
 use std.compiler.nox.check_functions
 
@@ -13,8 +14,8 @@ fn main(input: Noun) -> Noun {
     let capacity = as_u32(noun.as_field(noun.tail(input)))
     let declaration = lexer.next(source, as_u32(0))
     let name = lexer.next(source, declaration.end)
-    let parsed = headers.parse(source, name.end, capacity)
+    let parsed = headers.parse(source, name.end, type_registry.name(source, name), capacity)
     if (parsed.error.code == as_u32(0)) == false { return noun.atom(as_field(parsed.error.code)) }
-    let checked = check_functions.check(source, parsed.functions, parsed.params, capacity)
+    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, capacity)
     noun.atom(as_field(checked.error.code))
 }

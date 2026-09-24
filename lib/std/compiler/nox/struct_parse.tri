@@ -1,0 +1,69 @@
+module std.compiler.nox.struct_parse
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.lexer
+use std.compiler.nox.nominal
+use std.compiler.nox.type_registry
+use std.compiler.nox.type_parse
+
+pub struct Parsed { pub scope: type_registry.Scope, pub token: syntax.Token, pub error: syntax.Error }
+
+#[pure]
+fn failed(scope: type_registry.Scope, token: syntax.Token, code: Field) -> Parsed {
+    Parsed { scope, token, error: ast.failed(token, code) }
+}
+
+// Register only a complete layout. Field types resolve against the preceding
+// registry, so a declaration cannot refer to itself or a later layout.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Scope, public: Bool, cap: U32) -> Parsed {
+    let name_token = lexer.next(source, opening.end)
+    if (name_token.kind == as_u32(1)) == false { return failed(scope, name_token, 2) }
+    if seq.len(scope.records) == cap { return failed(scope, name_token, 7) }
+    let name = type_registry.name(source, name_token)
+    if type_registry.lookup(scope, name).exists { return failed(scope, name_token, 5) }
+    let mut token = lexer.next(source, name_token.end)
+    if (token.kind == as_u32(7)) == false { return failed(scope, token, 2) }
+    token = lexer.next(source, token.end)
+    let mut members = seq.empty()
+    let mut spans = seq.empty()
+    for index in 0..33 {
+        if token.kind == as_u32(8) {
+            let built = nominal.build(scope.owner, name, members, cap, syntax.STACK_CAP)
+            if (built.status == as_u32(0)) == false {
+                let mut at = name_token
+                if built.field < seq.len(spans) {
+                    let span = seq.get(spans, built.field)
+                    at = syntax.token(1, as_u32(noun.as_field(noun.head(span))), as_u32(noun.as_field(noun.tail(span))), 0)
+                }
+                return failed(scope, at, as_field(built.status))
+            }
+            let mut result = scope
+            result.records = seq.push(result.records, type_registry.record(built.ty, public), cap)
+            return Parsed { scope: result, token: lexer.next(source, token.end), error: syntax.error(0, as_u32(0), as_u32(0)) }
+        }
+        let mut visible = false
+        if token.kind == as_u32(40) { visible = true token = lexer.next(source, token.end) }
+        let field_token = token
+        if (field_token.kind == as_u32(1)) == false { return failed(scope, field_token, 2) }
+        if syntax.either(index == nominal.MAX_FIELDS, seq.len(members) == cap) { return failed(scope, field_token, 7) }
+        token = lexer.next(source, token.end)
+        if (token.kind == as_u32(17)) == false { return failed(scope, token, 2) }
+        token = lexer.next(source, token.end)
+        let parsed = type_parse.parse(source, token, scope, cap)
+        if (parsed.error.code == as_u32(0)) == false { return Parsed { scope, token: parsed.token, error: parsed.error } }
+        members = seq.push(members, nominal.field(type_registry.name(source, field_token), parsed.ty, visible), cap)
+        spans = seq.push(spans, noun.pair(noun.atom(as_field(field_token.start)), noun.atom(as_field(field_token.end))), cap)
+        token = parsed.token
+        if token.kind == as_u32(26) { token = lexer.next(source, token.end) }
+        else if (token.kind == as_u32(8)) == false { return failed(scope, token, 2) }
+    }
+    failed(scope, token, 7)
+}

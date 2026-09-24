@@ -152,3 +152,11 @@ mod type_syntax;
 
 #[path = "native_compiler/nominal.rs"]
 mod nominal;
+
+#[path = "native_compiler/record_errors.rs"]
+mod record_errors;
+#[path = "native_compiler/records.rs"]
+mod records;
+
+#[path = "native_compiler/record_bounds.rs"]
+mod record_bounds;

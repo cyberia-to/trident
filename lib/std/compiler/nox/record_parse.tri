@@ -1,0 +1,138 @@
+module std.compiler.nox.record_parse
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.lexer
+use std.compiler.nox.signatures
+use std.compiler.nox.nominal
+use std.compiler.nox.type_registry
+use std.compiler.nox.record_frames
+use std.compiler.nox.expression_state
+
+// A constructor starts only with an uppercase type name and named-field syntax.
+// A nested delimiter owns its braces even in an outer before-block expression.
+#[pure]
+pub fn starts(source: bytes.Bytes, name: syntax.Token, opening: syntax.Token, before_block: Bool, frames: Noun) -> Bool {
+    if syntax.both(before_block, noun.eq(frames, noun.atom(0))) { return false }
+    let first = bytes.get(source, name.start)
+    if syntax.either(first < as_u32(65), (first < as_u32(91)) == false) { return false }
+    let next = lexer.next(source, opening.end)
+    if next.kind == as_u32(8) { return true }
+    if (next.kind == as_u32(1)) == false { return false }
+    let following = lexer.next(source, next.end)
+    syntax.either(following.kind == as_u32(17), syntax.either(following.kind == as_u32(26), following.kind == as_u32(8)))
+}
+
+// This phase owns labels, colons and shorthand. Ordinary expression parsing
+// owns the selected initializer, including every nested delimiter.
+#[pure]
+fn member(source: bytes.Bytes, input: expression_state.State, input_frame: record_frames.Frame) -> expression_state.State {
+    let mut s = input
+    let mut f = input_frame
+    if s.token.kind == as_u32(8) {
+        f.pending = signatures.NONE
+        s.frames = noun.pair(record_frames.pack(f), noun.tail(s.frames))
+        return s
+    }
+    if (s.token.kind == as_u32(1)) == false { s.error = ast.failed(s.token, 2) return s }
+    let selected = nominal.lookup(f.ty, s.context.types.owner, type_registry.name(source, s.token))
+    if syntax.either(selected.exists == false, selected.visible == false) { s.error = ast.failed(s.token, 5) return s }
+    if (noun.as_field(seq.get(f.values, selected.index)) == as_field(signatures.NONE)) == false { s.error = ast.failed(s.token, 5) return s }
+    f.pending = selected.index
+    let following = lexer.next(source, s.token.end)
+    if following.kind == as_u32(17) { s.token = lexer.next(source, following.end) }
+    else if syntax.either(following.kind == as_u32(26), following.kind == as_u32(8)) == false {
+        s.error = ast.failed(following, 2) return s
+    }
+    s.frames = noun.pair(record_frames.pack(f), noun.tail(s.frames))
+    s
+}
+
+#[pure]
+pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state.State) -> expression_state.State {
+    let mut s = input
+    let found = type_registry.lookup(s.context.types, type_registry.name(source, s.token))
+    if found.exists == false { s.error = ast.failed(s.token, 5) return s }
+    if s.ops == s.capacity { s.error = ast.failed(opening, 7) return s }
+    let fields = nominal.fields(found.ty)
+    let mut values = seq.empty()
+    for index in 0..32 {
+        if index < seq.len(fields) {
+            let field = seq.get(fields, index)
+            if syntax.both(nominal.field_public(field) == false, noun.eq(nominal.owner(found.ty), bytes.to_noun(s.context.types.owner)) == false) {
+                s.error = ast.failed(s.token, 5) return s
+            }
+            values = seq.push(values, noun.atom(as_field(signatures.NONE)), as_u32(32))
+        }
+    }
+    let f = record_frames.Frame { ty: found.ty, fields, values, start: s.token.start, base: s.vals, count: as_u32(0), pending: signatures.NONE }
+    s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.RECORD_MARKER)), s.capacity)
+    s.ops = syntax.inc(s.ops)
+    s.frames = noun.pair(noun.atom(0), s.frames)
+    s.token = lexer.next(source, opening.end)
+    member(source, s, f)
+}
+
+#[pure]
+pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool) -> expression_state.State {
+    let mut s = input
+    let mut f = record_frames.read(noun.head(s.frames))
+    if s.operand == false {
+        if (s.vals == syntax.inc(f.base)) == false { s.error = ast.failed(s.token, 2) return s }
+        let id = as_u32(noun.as_field(seq.get(s.values, f.base)))
+        let value = seq.get(s.nodes, id)
+        if (noun.eq(ast.ty(value), nominal.field_type(seq.get(f.fields, f.pending)))) == false { s.error = ast.issue(5, value) return s }
+        f.values = seq.set(f.values, f.pending, noun.atom(as_field(id)))
+        f.count = syntax.inc(f.count)
+        s.vals = f.base
+    } else if syntax.either(closing == false, (f.pending == signatures.NONE) == false) { s.error = ast.failed(s.token, 2) return s }
+    if closing {
+        if (f.count == seq.len(f.fields)) == false { s.error = syntax.error(5, f.start, s.token.end) return s }
+        if syntax.either(seq.len(s.nodes) == s.node_cap, s.vals == s.capacity) { s.error = ast.failed(s.token, 7) return s }
+        let mut head = signatures.NONE
+        // Formula links follow declaration order, independent of source labels.
+        for index in 0..32 {
+            if index < f.count {
+                if seq.len(s.arguments) == s.node_cap { s.error = ast.failed(s.token, 7) return s }
+                let link = seq.len(s.arguments)
+                s.arguments = seq.push(s.arguments, noun.pair(seq.get(f.values, index), noun.atom(as_field(head))), s.node_cap)
+                head = link
+            }
+        }
+        let id = seq.len(s.nodes)
+        s.nodes = seq.push(s.nodes, ast.typed(ast.RECORD_VALUE, as_field(f.count), as_field(head), f.ty, f.start, s.token.end), s.node_cap)
+        s.values = ast.store(s.values, s.vals, noun.atom(as_field(id)), s.capacity)
+        s.vals = syntax.inc(s.vals)
+        s.ops = syntax.dec(s.ops)
+        s.frames = noun.tail(s.frames)
+        s.operand = false
+        s.token = lexer.next(source, s.token.end)
+        return s
+    }
+    s.operand = true
+    s.token = lexer.next(source, s.token.end)
+    member(source, s, f)
+}
+
+#[pure]
+pub fn project(source: bytes.Bytes, input: expression_state.State) -> expression_state.State {
+    let mut s = input
+    let name = lexer.next(source, s.token.end)
+    if (name.kind == as_u32(1)) == false { s.error = ast.failed(name, 2) return s }
+    let base = as_u32(noun.as_field(seq.get(s.values, syntax.dec(s.vals))))
+    let value = seq.get(s.nodes, base)
+    let selected = nominal.lookup(ast.ty(value), s.context.types.owner, type_registry.name(source, name))
+    if syntax.either(selected.exists == false, selected.visible == false) { s.error = ast.failed(name, 5) return s }
+    if seq.len(s.nodes) == s.node_cap { s.error = ast.failed(name, 7) return s }
+    let mut axis: Field = 2
+    for index in 0..32 { if index < selected.index { axis = axis * 2 + 2 } }
+    let id = seq.len(s.nodes)
+    s.nodes = seq.push(s.nodes, ast.typed(ast.PROJECT, as_field(base), axis, selected.ty, ast.start(value), name.end), s.node_cap)
+    s.values = seq.set(s.values, syntax.dec(s.vals), noun.atom(as_field(id)))
+    s.token = lexer.next(source, name.end)
+    s
+}

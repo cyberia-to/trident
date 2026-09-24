@@ -355,7 +355,7 @@ well typed, then trap only when the emitted program reaches them.
 Noun arithmetic, ordering, bit operations, indexing and the `==` operator
 remain rejected; `nox_noun_eq` supplies explicit native equality. Conditions
 remain Field/Bool. Qualified calls require actual module/import resolution.
-Nominal structs, arrays and compiler-profile generation remain
+Fixed arrays and compiler-profile generation remain
 subsequent increments. Earlier scalar-entry programs retain their ART1 bytes.
 
 Compiler-owned type descriptors are canonical Noun values. Primitive tags
@@ -397,8 +397,41 @@ exists, and whether access is permitted. A public field is visible from any
 module; a private field is visible only to its defining owner. A known primitive
 or tuple descriptor has no nominal fields. Nominal records remain distinct from
 tuples for destructuring. This foundation provides internal data and visibility
-checks; source struct syntax, actual import resolution and source-level privacy
-acceptance remain subsequent gates.
+checks. Module-local source syntax is described below; actual import resolution
+and cross-module source-level privacy acceptance remain subsequent gates.
+
+The bounded native source compiler admits module-local nominal declarations
+`[pub] struct Name { [pub] field: Type, ... }`, including empty layouts and
+trailing commas. Names retain complete source spelling. Duplicate declarations
+and fields reject with diagnostic5; up to32 fields and the requested registry,
+logical type-node and depth allowances apply independently. The current
+module's logical JOB1 name owns each descriptor. Type export visibility is
+stored separately from each field's visibility.
+
+Field types and ordinary function signatures resolve against declarations
+preceding them in source order. Every function body then sees the final
+immutable type registry. This admits later types in local annotations and
+constructors while rejecting forward/self-recursive layouts and earlier
+signatures referring to later types. Unknown named types produce diagnostic5.
+`Unit` remains available as a nominal declaration name; primitive Unit still
+has no explicit source spelling. Public local functions retain normal callable
+binding behavior. Actual cross-module exports/imports remain a later gate.
+
+Constructor recognition follows uppercase final names and named-field syntax.
+Each required field appears once, in explicit `name: expression` or shorthand
+`name` form; missing, extra, repeated and mistyped values reject. Constructor
+expressions execute exactly once in declaration order, regardless of their
+textual label order. Complete values form a zero-ended cons-list, including
+empty records (zero), nested records, Digest and Noun subtrees. Each
+record occupies one native slot. Ordered links own initializer AST IDs; source
+order does not implicitly define the emitted record layout or evaluation order.
+
+Postfix `.field` reads work on locals, calls, constructors and parenthesized
+bases, preserving complete field types and evaluating the base once. Lookup
+checks both existence and defining-owner/public visibility. Delimiter-owned
+constructor contexts permit constructors inside groups/calls/index expressions
+even when an outer condition precedes a block. Static nested field writes and
+qualified import/type resolution remain subsequent increments.
 
 Digest is primitive descriptor6 and occupies one complete native frame slot.
 `nox_noun_identity(Noun)->Digest` evaluates its argument once and returns the
@@ -413,14 +446,14 @@ values0..3 select the four components, other canonical field values trap with
 InvZero. Decimal Field normalization happens before indexing. Index brackets may
 follow across a newline, and nested call/group/index delimiters own their stacks.
 Invalid types and malformed delimiters fail compilation before publication.
-Digest indexed writes, nominal structs/arrays and actual imports remain outside
+Digest indexed writes, fixed arrays and actual imports remain outside
 this increment. Runtime, parser stack, AST and formula-depth bounds are separate.
 
 Tuple source types are ordered canonical descriptors. Type syntax admits
 `(T)` as a singleton and `(T,U,...)` with no trailing comma; empty type tuples
 reject. Annotations in locals, parameters and results use the same iterative
-bounded parser. Tuple parameters each occupy one native frame slot. Source
-`Unit` remains unavailable as an explicit type; inferred Unit components retain
+bounded parser. Tuple parameters each occupy one native frame slot. The
+primitive Unit type has no explicit spelling; inferred Unit components retain
 their zero leaf. Tuple values require at least two expressions and allow a final
 comma; `(x)` preserves grouping, while `()` and `(x,)` reject. Components execute
 once in source order, preserving complete nested Noun/tuple/Digest values in a
@@ -502,7 +535,8 @@ cycle, unknown expression name, immutable assignment or type/return error,
 6 for an unsupported construct/request and 7 for a known compiler work-capacity
 limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
-imports, non-function declarations and attributes are rejected, including trailing items.
+imports, declarations other than functions/structs, and attributes are rejected,
+including trailing items.
 Exhaustion of a VM or collection-validation allowance remains an execution
 failure outside RES1, as specified by the job contract.
 
