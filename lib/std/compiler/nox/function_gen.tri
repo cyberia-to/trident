@@ -41,11 +41,14 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
     let zero = as_u32(0)
     let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
     let stored = seq.get(bodies, entry)
-    // An acyclic one-body closure contains no calls. Preserve the existing
+    // An acyclic one-body closure contains no user calls. Preserve the existing
     // arithmetic, locals and control artifact identities, even with unused defs.
     if seq.len(plan.order) == as_u32(1) {
         let body = body_store.read(stored, cap)
-        let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), call_codegen.empty(), depth_cap)
+        let mut context = call_codegen.empty()
+        context.arguments = body.arguments
+        context.capacity = cap
+        let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), context, depth_cap)
         return control_gen.standalone(built, body_store.locals(stored), depth_cap)
     }
     let shape = tree.shape(seq.len(plan.order))

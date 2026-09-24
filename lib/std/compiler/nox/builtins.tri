@@ -1,0 +1,53 @@
+module std.compiler.nox.builtins
+
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+
+pub const NONE: U32 = 0
+pub const TO_U32: U32 = 1
+pub const TO_FIELD: U32 = 2
+pub const SUBTRACT: U32 = 3
+
+// Called only after lookup in the final user function namespace fails.
+#[pure]
+#[requires((bytes.len(source) < token.end) == false)]
+#[requires((token.end < token.start) == false)]
+#[ensures(result < as_u32(4))]
+pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
+    let length = as_u32(field.sub(as_field(token.end), as_field(token.start)))
+    if syntax.both(length == as_u32(6), token.value == 107148150649650) { return TO_U32 }
+    if syntax.both(length == as_u32(3), token.value == 7566690) { return SUBTRACT }
+    // The lexer retains a packed identifier only through seven bytes.
+    if (length == as_u32(8)) == false { return NONE }
+    let spelling = [97,115,95,102,105,101,108,100]
+    for i in 0..8 {
+        if (as_field(bytes.get(source, as_u32(as_field(token.start) + as_field(i)))) == spelling[i]) == false { return NONE }
+    }
+    TO_FIELD
+}
+
+#[pure]
+#[requires(kind < as_u32(4))]
+#[ensures(result < as_u32(3))]
+pub fn arity(kind: U32) -> U32 {
+    if kind == NONE { return as_u32(0) }
+    if kind == SUBTRACT { return as_u32(2) }
+    as_u32(1)
+}
+
+#[pure]
+#[requires(kind < as_u32(4))]
+pub fn parameter(kind: U32) -> Field {
+    if kind == TO_FIELD { return ast.UINT32 }
+    ast.FIELD
+}
+
+#[pure]
+#[requires(kind < as_u32(4))]
+pub fn returns(kind: U32) -> Field {
+    if kind == TO_U32 { return ast.UINT32 }
+    ast.FIELD
+}

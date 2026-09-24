@@ -1,0 +1,27 @@
+program native_scalar_depth
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.parser
+use std.compiler.nox.emit
+
+// Two argument depths exercise both sides of the range-guard depth maximum.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let shallow = [112,114,111,103,114,97,109,32,115,97,109,112,108,101,32,102,110,32,109,97,105,110,40,41,45,62,70,105,101,108,100,123,97,115,95,102,105,101,108,100,40,97,115,95,117,51,50,40,55,41,41,125,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32]
+    let deep = [112,114,111,103,114,97,109,32,115,97,109,112,108,101,32,102,110,32,109,97,105,110,40,41,45,62,70,105,101,108,100,123,97,115,95,102,105,101,108,100,40,97,115,95,117,51,50,40,115,117,98,40,115,117,98,40,115,117,98,40,115,117,98,40,50,48,44,49,41,44,50,41,44,51,41,44,52,41,41,41,125]
+    let mode = noun.as_field(noun.tail(input))
+    let cap = as_u32(noun.as_field(noun.head(input)))
+    let mut source = bytes.empty()
+    for i in 0..81 {
+        let mut value = shallow[i]
+        if mode == 1 { value = deep[i] }
+        source = bytes.push(source, as_u32(value), as_u32(4096))
+    }
+    let text = [115,97,109,112,108,101]
+    let mut name = bytes.empty()
+    for i in 0..6 { name = bytes.push(name, as_u32(text[i]), as_u32(6)) }
+    let result = parser.compile(source, name, as_u32(4096), cap)
+    noun.pair(noun.atom(as_field(result.error.code)), emit.artifact(result.formula))
+}

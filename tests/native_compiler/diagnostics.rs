@@ -37,9 +37,15 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
         for expression in ["1!2", "1|2", "1/2", "1%2", "1-2"] {
             support::error(&support::source(expression), 1);
         }
-        for expression in ["1^2", "1/%2", "1&2", "1<2"] {
+        for expression in ["1^2", "1/%2"] {
             support::error(&support::source(expression), 6);
         }
+        for expression in ["1&2", "1<2"] {
+            support::error(&support::source(expression), 5);
+        }
+        // Name lookup precedes the unsupported qualified-call punctuation.
+        support::error(&support::source("convert.as_u32(7)"), 5);
+        support::error(&support::source("let convert=7 convert.as_u32(7)"), 6);
         for word in [
             "program", "module", "use", "fn", "pub", "sec", "let", "mut", "const", "struct", "if",
             "else", "for", "in", "bounded", "return", "true", "false", "event", "reveal", "seal",

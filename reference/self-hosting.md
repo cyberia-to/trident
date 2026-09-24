@@ -205,15 +205,17 @@ requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 program := "program" identifier function+ EOF
 function := "fn" identifier "(" parameters? ")" ("->" scalar_type)? block
 parameters := identifier ":" scalar_type ("," identifier ":" scalar_type)* ","?
-scalar_type := "Field" | "Bool"
+scalar_type := "Field" | "Bool" | "U32"
 block := "{" statement* expression? "}"
-statement := "let" "mut"? identifier (":" ("Field" | "Bool"))? "=" expression
+statement := "let" "mut"? identifier (":" scalar_type)? "=" expression
            | identifier "=" expression | "return" expression?
            | if_statement | expression
 if_statement := "if" expression block ("else" (block | if_statement))?
-expression := sum ("==" sum)*
+expression := comparison ("==" comparison)*
+comparison := sum ("<" sum)*
 sum := term ("+" term)*
-term := primary ("*" primary)*
+term := bitwise ("*" bitwise)*
+bitwise := primary ("&" primary)*
 primary := decimal | "true" | "false" | identifier | call | "(" expression ")"
 call := identifier "(" (expression ("," expression)* ","?)? ")"
 ```
@@ -235,7 +237,7 @@ Generation preserves the expression tree: literal `[1 value]`, addition
 needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
 compiler identity, source paths and execution counters.
 
-Local declarations infer Field/Bool/Unit or state a scalar type explicitly. A `let mut` binding
+Local declarations infer Field/Bool/U32/Unit or state a scalar type explicitly. A `let mut` binding
 permits assignment; other bindings reject writes. Initializers resolve names
 before installing the new binding, so `let x = x + 1` reads the previous `x`
 and rejects when no previous binding exists. Same-scope shadowing creates a
@@ -247,10 +249,14 @@ permits a following parenthesized expression where a statement boundary is valid
 CR alone keeps the same line, matching the seed parser.
 
 The guest builds a postorder expression sequence and ordered statement sequence.
-Expression records carry their Field/Bool/Unit type and source span. Addition and
+Expression records carry their Field/Bool/U32/Unit type and source span. Addition and
 multiplication require Field operands; equality requires two operands of the same
 type and returns Bool, including equality between two Unit results. Equality
-binds below addition and multiplication. Native
+binds below unsigned comparison, addition, multiplication and bitwise AND, in
+that increasing order of precedence. All binary operators associate left.
+Comparison and bitwise AND require U32 operands and return Bool and U32
+respectively. Decimal literals retain Field type; typed U32 locals, arguments
+and results require an explicit conversion or another U32 value. Native
 Bool literals/results encode true as zero and false as one. Assignments and
 explicit annotations preserve the binding's type; the entry returns Field.
 Child references precede their parent; declarations own stable slots. Code generation uses the
@@ -301,7 +307,23 @@ this subset. Unit functions may fall through and produce native atom zero.
 Bare return is accepted only for Unit. Explicit and terminal return values must
 match the declared result. Local inference can retain Unit values; assignment
 preserves that type. Conditions still require Field or Bool. Imports, attributes,
-generic declarations and intrinsics remain outside this delivery's subset.
+generic declarations and intrinsic declarations remain outside this subset.
+
+Three unqualified builtins are admitted: `as_u32(Field) -> U32`,
+`as_field(U32) -> Field` and `sub(Field, Field) -> Field`. Final user function
+bindings take precedence over builtin names, including forward declarations;
+local variables do not replace callable bindings. Builtins do not enter the
+function graph or code table. Every argument is type checked and evaluated
+once in source order. Qualified names require future import resolution.
+
+`as_u32` checks that its evaluated Field argument is less than 2^32. Failure
+traps during execution of the emitted program through `inv(0)`; compiling that
+well-typed program succeeds. `as_field` preserves the underlying atom and
+`sub` subtracts modulo Goldilocks. The nox formulas use tags 10, 12 and 6 for
+unsigned comparison, bitwise AND and subtraction. Conversion evaluates its
+argument once as a new subject, branches on the range check and either retains
+that atom or traps. Formula-depth accounting includes the complete guard and
+continuation. Accepted earlier no-builtin programs retain their artifact bytes.
 
 The expression parser tracks call delimiters and argument ownership explicitly.
 Nested calls own separate argument lists; argument records need not be contiguous

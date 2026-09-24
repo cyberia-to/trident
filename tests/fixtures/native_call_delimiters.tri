@@ -27,7 +27,7 @@ fn main(input: Noun) -> Noun {
     for i in 0..64 {
         if i < depth {
             s.operators = seq.push(s.operators, noun.atom(as_field(expression_state.CALL_MARKER)), as_u32(64))
-            let frame = call_frames.Frame { callee: zero, start: zero, ops: i, vals: zero, count: zero, head: signatures.NONE }
+            let frame = call_frames.Frame { callee: zero, start: zero, ops: i, vals: zero, count: zero, head: signatures.NONE, builtin: zero }
             s.frames = noun.pair(call_frames.pack(frame), s.frames)
         }
     }

@@ -27,7 +27,8 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     s.error = condition.error
     if (s.error.code == as_u32(0)) == false { return s }
     s.nodes = condition.nodes
-    if ast.ty(seq.get(s.nodes, condition.value)) == ast.UNIT {
+    let condition_type = ast.ty(seq.get(s.nodes, condition.value))
+    if syntax.either(condition_type == ast.FIELD, condition_type == ast.BOOL) == false {
         s.error = ast.issue(5, seq.get(s.nodes, condition.value))
         return s
     }

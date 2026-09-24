@@ -65,7 +65,8 @@ fn local_errors_bind_the_offending_name_and_preserve_mutability() {
         for body in ["let x=7 x(1)", "let x=7 x\r(1)", "missing(1)"] {
             support::error(&support::source(body), 5);
         }
-        for body in ["let x: U32 = 1 x", "let x: Other=1 x"] {
+        support::error(&support::source("let x: U32 = 1 x"), 5);
+        for body in ["let x: XField = 1 x", "let x: Other=1 x"] {
             support::error(&support::source(body), 6);
         }
     });

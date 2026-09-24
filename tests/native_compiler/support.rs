@@ -74,7 +74,18 @@ pub enum Result {
     Errors(Vec<schema::Diagnostic>),
 }
 
-fn formula(ar: &Arena, root: Order) -> Order {
+#[derive(Debug)]
+pub enum Compilation {
+    Program {
+        bytes: Vec<u8>,
+        reductions: u64,
+        nodes: u32,
+        frames: u32,
+    },
+    Errors(Vec<schema::Diagnostic>),
+}
+
+fn formula<const N: usize>(ar: &Reduction<N>, root: Order) -> Order {
     let mut p = ar.tail(root).unwrap();
     for _ in 0..3 {
         p = ar.tail(p).unwrap();
@@ -103,13 +114,63 @@ pub fn try_compile_package(
     opts: schema::Options,
     caps: [u64; 11],
 ) -> std::result::Result<Result, String> {
-    let mut ar = Arena::new();
+    try_compile_only_package(modules, name, function, opts, caps).map(execute)
+}
+
+pub fn execute(compiled: Compilation) -> Result {
+    match compiled {
+        Compilation::Errors(errors) => Result::Errors(errors),
+        Compilation::Program {
+            bytes,
+            reductions,
+            nodes,
+            frames,
+        } => {
+            let value = try_run_artifact(&bytes).unwrap();
+            Result::Program {
+                bytes,
+                value,
+                reductions,
+                nodes,
+                frames,
+            }
+        }
+    }
+}
+
+pub fn compile_only(source: &[u8], caps: [u64; 11]) -> Compilation {
+    try_compile_only_package(&[module(source)], "sample", "main", options(), caps).unwrap()
+}
+
+pub fn try_compile_only_package(
+    modules: &[schema::Module],
+    name: &str,
+    function: &str,
+    opts: schema::Options,
+    caps: [u64; 11],
+) -> std::result::Result<Compilation, String> {
+    if caps[9] > 196608 {
+        compile_in::<{ 1 << 20 }>(modules, name, function, opts, caps)
+    } else {
+        compile_in::<{ 1 << 18 }>(modules, name, function, opts, caps)
+    }
+}
+
+fn compile_in<const N: usize>(
+    modules: &[schema::Module],
+    name: &str,
+    function: &str,
+    opts: schema::Options,
+    caps: [u64; 11],
+) -> std::result::Result<Compilation, String> {
+    let mut ar = Reduction::<N>::try_new_boxed().unwrap();
     assert!(ar.limit_allocations(caps[9] as u32));
     let c1 = artifact::decode(&mut ar, compiler(), LIMITS).unwrap();
     let job = schema::job(&mut ar, c1, modules, name, function, &opts, &caps).unwrap();
     let mut host = CAPS;
     host[0] = 4_194_304;
     host[3] = 65_536;
+    host[9] = (N / 4 * 3) as u64;
     let admitted = validate::job(&mut ar, job, c1, host).unwrap();
     let code = formula(&ar, c1);
     let run = sequential::reduce(
@@ -136,15 +197,13 @@ pub fn try_compile_package(
     let nodes = ar.count();
     Ok(
         match validate::result(&mut ar, result, job, &admitted).unwrap() {
-            validate::ResultValue::Failure(errors) => Result::Errors(errors),
+            validate::ResultValue::Failure(errors) => Compilation::Errors(errors),
             validate::ResultValue::Success {
                 artifact: program, ..
             } => {
                 let bytes = artifact::encode(&ar, program, LIMITS).unwrap();
-                let value = native::run(&bytes, 0, 1_000_000, 65536, 196608).unwrap().0;
-                Result::Program {
+                Compilation::Program {
                     bytes,
-                    value,
                     reductions: caps[8] - left,
                     nodes,
                     frames: run.peak_frames,
@@ -152,6 +211,16 @@ pub fn try_compile_package(
             }
         },
     )
+}
+
+pub fn try_run_artifact(bytes: &[u8]) -> std::result::Result<u64, String> {
+    native::run(bytes, 0, 1_000_000, 65536, 196608).map(|result| result.0)
+}
+
+pub fn trace_artifact(bytes: &[u8]) -> (u64, nox::trace::VecTrace) {
+    let mut trace = nox::trace::VecTrace::default();
+    let result = native::run_traced(bytes, 0, 1_000_000, 65536, 196608, &mut trace).unwrap();
+    (result.0, trace)
 }
 
 pub fn run_artifact(bytes: &[u8]) -> u64 {
@@ -234,6 +303,10 @@ impl Expr {
 // Separate Rust-seed differential on the identical source, using its flat
 // entry convention only as an oracle. Guest artifacts use canonical raw ART1.
 pub fn rust_value(source: &str) -> u64 {
+    try_rust_value(source).unwrap()
+}
+
+pub fn try_rust_value(source: &str) -> std::result::Result<u64, String> {
     fn load(ar: &mut Arena, text: &[u8], pos: &mut usize) -> Order {
         if text[*pos] == b'[' {
             *pos += 1;
@@ -273,12 +346,12 @@ pub fn rust_value(source: &str) -> u64 {
     .unwrap();
     let mut result = match run.outcome {
         Outcome::Ok(value, _) => value,
-        other => panic!("{other:?}"),
+        other => return Err(format!("{other:?}")),
     };
     while let Some(head) = ar.head(result) {
         result = head;
     }
-    ar.atom_value(result).unwrap().as_u64()
+    Ok(ar.atom_value(result).unwrap().as_u64())
 }
 
 // Isolate the guest pass: the model's input reader has a different visit

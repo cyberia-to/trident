@@ -18,10 +18,11 @@ fn expected(token: syntax.Token) -> syntax.Error {
 }
 
 #[pure]
-fn scalar(token: syntax.Token) -> Field {
+pub fn scalar(token: syntax.Token) -> Field {
     if token.kind == as_u32(12) { return ast.FIELD }
     if token.kind == as_u32(20) { return ast.BOOL }
-    3
+    if token.kind == as_u32(28) { return ast.UINT32 }
+    ast.INVALID_TYPE
 }
 
 #[pure]
@@ -38,7 +39,7 @@ fn open(source: bytes.Bytes, input: header_state.State) -> header_state.State {
     if s.token.kind == as_u32(9) {
         s.token = lexer.next(source, s.token.end)
         s.current.returns = scalar(s.token)
-        if s.current.returns == 3 { s.error = type_error(s.token) return s }
+        if s.current.returns == ast.INVALID_TYPE { s.error = type_error(s.token) return s }
         s.token = lexer.next(source, s.token.end)
     }
     if (s.token.kind == as_u32(7)) == false { s.error = expected(s.token) return s }
@@ -59,7 +60,7 @@ fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32) -> header
     if (s.token.kind == as_u32(17)) == false { s.error = expected(s.token) return s }
     s.token = lexer.next(source, s.token.end)
     let ty = scalar(s.token)
-    if ty == 3 { s.error = type_error(s.token) return s }
+    if ty == ast.INVALID_TYPE { s.error = type_error(s.token) return s }
     if seq.len(s.params) == cap { s.error = syntax.error(7, name.start, name.end) return s }
     s.params = seq.push(s.params, symbols.binding(name, false, ty), cap)
     s.current.count = syntax.inc(s.current.count)

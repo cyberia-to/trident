@@ -1,0 +1,34 @@
+module std.compiler.nox.builtin_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.builtins
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+#[pure]
+fn binary(opcode: Field, left: formula.Value, right: formula.Value) -> formula.Value {
+    formula.Value { formula: noun.pair(noun.atom(opcode), noun.pair(left.formula, right.formula)),
+        depth: as_u32(as_field(formula.maximum(left.depth, right.depth)) + 2) }
+}
+
+// The checker owns arity and linked arguments. Links are reversed; a binary
+// builtin reconstructs left/right explicitly to preserve evaluation order.
+#[pure]
+#[requires(as_u32(0) < kind)]
+#[requires(kind < as_u32(4))]
+#[requires(head < seq.len(arguments))]
+pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> formula.Value {
+    let link = seq.get(arguments, head)
+    let right = formula.value(values, as_u32(noun.as_field(noun.head(link))))
+    if kind == builtins.SUBTRACT {
+        let first = seq.get(arguments, as_u32(noun.as_field(noun.tail(link))))
+        let left = formula.value(values, as_u32(noun.as_field(noun.head(first))))
+        return binary(6, left, right)
+    }
+    if kind == builtins.TO_FIELD { return right }
+    let crash = formula.Value { formula: noun.pair(noun.atom(8), flow.literal(0).formula), depth: as_u32(2) }
+    let condition = binary(10, flow.axis(1), flow.literal(4294967296))
+    flow.compose(right, flow.branch(condition, flow.axis(1), crash))
+}

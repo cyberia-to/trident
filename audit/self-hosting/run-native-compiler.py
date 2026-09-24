@@ -1,4 +1,4 @@
-"""SH2/SH3 installed CLI acceptance: fixed guest, arithmetic, locals, control and functions."""
+"""SH2/SH3 installed CLI acceptance: fixed guest through checked scalar operations."""
 import argparse
 import copy
 import hashlib
@@ -92,6 +92,8 @@ def main():
                            "validation_visits": 1000000, "artifact_bytes": 16777216, "artifact_nodes": 196608,
                            "artifact_depth": 4096, "reductions": 100000000, "arena_nodes": 196608, "evaluator_frames": 65536}}
 
+        job_hosts = {}
+
         def package(name, source, limits=None):
             directory = root / name
             directory.mkdir()
@@ -101,12 +103,15 @@ def main():
                 manifest["limits"].update(limits)
             (directory / "package.json").write_text(json.dumps(manifest))
             job = directory / "job.dag"
-            run(["pack-job", "--compiler", compiler, "--manifest", directory / "package.json", "-o", job, *host])
+            arena = 786432 if manifest["limits"]["arena_nodes"] > 196608 else 196608
+            job_hosts[job] = arena
+            run(["pack-job", "--compiler", compiler, "--manifest", directory / "package.json", "-o", job,
+                 *host, "--arena-nodes", arena])
             return directory, job
 
         def execute(job, output, emit="program", expected=0, force=False):
             return run(["run-artifact", compiler, "--input", job, "--emit", emit, "-o", output,
-                        *host, *(["--force"] if force else [])], expected)
+                        *host, "--arena-nodes", job_hosts[job], *(["--force"] if force else [])], expected)
 
         def source(expression):
             return f"program sample fn main() -> Field {{ {expression} }}".encode()
@@ -162,9 +167,24 @@ def main():
             ("table-order-reversed", function_source("fn main()->Field{g(3)} fn g(x:Field)->Field{f(x)*2} fn f(x:Field)->Field{x+1}"), None, 8),
             ("table-order-unused", function_source("fn unused()->Field{9} fn main()->Field{g(3)} fn g(x:Field)->Field{f(x)*2} fn f(x:Field)->Field{x+1}"), None, 8),
         ])
+        cases.extend([
+            ("scalar-zero", source("as_field(as_u32(0))"), None, 0),
+            ("scalar-maximum", source("as_field(as_u32(4294967295))"), None, 4294967295),
+            ("scalar-modulus", source("as_field(as_u32(18446744069414584321))"), None, 0),
+            ("scalar-modulus-plus-one", source("as_field(as_u32(18446744069414584322))"), None, 1),
+            ("scalar-local", source("let mut x:U32=as_u32(7) let y=x x=as_u32(9) as_field(y)*10+as_field(x)"), None, 79),
+            ("scalar-mask", source("as_field(as_u32(4294967295)&as_u32(4278190080))"), None, 4278190080),
+            ("scalar-comparison", source("if as_u32(0)<as_u32(4294967295){7}else{9}"), None, 7),
+            ("scalar-precedence", source("if as_u32(2)<as_u32(3)&as_u32(1){7}else{9}"), None, 9),
+            ("scalar-subtraction", source("sub(sub(20,3),sub(7,2))"), None, 12),
+            ("scalar-typed-call", function_source("fn f(x:U32)->U32{x} fn main()->Field{as_field(f(as_u32(9)))}"), None, 9),
+            ("scalar-builtin-override", function_source("fn main()->Field{as_u32(7)} fn as_u32(x:Field)->Field{x+2}"), None, 9),
+            ("scalar-local-collision", source("let as_u32=9 let as_field=8 as_field(as_u32(7))+as_field"), None, 15),
+            ("scalar-unselected-trap", source("if false{return as_field(as_u32(4294967296))} 7"), None, 7),
+        ])
         table_bytes = None
         for name, content, formula, expected in cases:
-            directory, job = package(name, content)
+            directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith("scalar-") else None)
             program = directory / "program.dag"
             compiled = execute(job, program)
             assert compiled["execution"]["compiler_job"]["status"] == "success"
@@ -199,7 +219,8 @@ def main():
                      ("malformed-local", source("let x: =7 x"), 2),
                      ("bool-return", source("let x=1 x==1"), 5), ("overflow", source("18446744073709551616"), 1),
                      ("syntax", source("(1"), 2), ("utf8", b"//\xed\xa0\x80", 1),
-                     ("unsupported", source("let x: U32=1 x"), 6),
+                     ("unsupported", source("let x: XField=1 x"), 6),
+                     ("u32-field-literal", source("let x: U32=1 x"), 5),
                      ("stack65", source("(" * 65 + "1" + ")" * 65), 7),
                      ("source4097", b"\xff" + bytes(4096), 7)]
         negatives.extend([
@@ -221,18 +242,48 @@ def main():
             ("unused-body-type", function_source("fn f()->Field{false} fn main()->Field{7}"), 5),
             ("unit-condition", function_source("fn f(){} fn main()->Field{if f(){7}else{9}}"), 5),
         ])
+        negatives.extend([
+            ("scalar-builtin-type", source("as_field(7)"), 5),
+            ("scalar-builtin-arity", source("as_u32(1,2)"), 5),
+            ("scalar-addition-type", source("as_field(as_u32(1)+as_u32(2))"), 5),
+            ("scalar-condition-type", source("if as_u32(0){7}else{9}"), 5),
+            ("scalar-comparison-type", source("if 1<2{7}else{9}"), 5),
+            ("scalar-equality-type", source("if as_u32(7)==7{7}else{9}"), 5),
+            ("scalar-unknown-spelling", source("as_fiele(as_u32(7))"), 5),
+            ("scalar-qualified-unbound", source("convert.as_u32(7)"), 5),
+            ("scalar-qualified-name", source("let convert=7 convert.as_u32(7)"), 6),
+        ])
         for name, content, code in negatives:
-            directory, job = package(name, content)
+            directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith("scalar-") else None)
             report = execute(job, directory / "result.dag", emit="result")
             result = report["execution"]["compiler_job"]
             assert result["status"] == "compile_error" and len(result["diagnostics"]) == 1
-            assert result["diagnostics"][0]["code"] == code
+            assert result["diagnostics"][0]["code"] == code, (name, code, result["diagnostics"])
             protected = directory / "protected.dag"
             protected.write_bytes(prior_program)
             execute(job, protected, expected=1, force=True)
             assert protected.read_bytes() == prior_program
             observations.append({"case": name, "source_hex": content.hex(), "diagnostics": result["diagnostics"],
                                  "compiler_execution": report, "previous_program_preserved": True})
+
+        for name, content in [
+            ("scalar-overflow", source("as_field(as_u32(4294967296))")),
+            ("scalar-field-maximum", source("as_field(as_u32(18446744069414584320))")),
+            ("scalar-discarded-overflow", source("as_u32(4294967296) 7")),
+            ("scalar-unused-local-overflow", source("let x=as_u32(4294967296) 7")),
+            ("scalar-unused-argument-overflow", function_source("fn f(x:U32)->Field{7} fn main()->Field{f(as_u32(4294967296))}")),
+        ]:
+            directory, job = package(name, content, {"arena_nodes": 786432})
+            program = directory / "program.dag"
+            compiled = execute(job, program)
+            assert compiled["execution"]["compiler_job"]["status"] == "success"
+            output = directory / "output.dag"
+            output.write_bytes(zero.read_bytes())
+            run(["run-artifact", program, "--input", zero, "-o", output, "--force"], expected=1)
+            assert "InvZero" in commands[-1]["stderr"]
+            assert output.read_bytes() == zero.read_bytes()
+            observations.append({"case": name, "source_hex": content.hex(), "compiler_execution": compiled,
+                                 "program_execution_error": "InvZero", "previous_output_preserved": True})
 
         local_bytes = None
         for cap in [7, 8, 16]:
@@ -341,7 +392,7 @@ def main():
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 arithmetic and SH3 typed locals, scoped control, early returns and reusable functions; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions and checked U32 scalar operations; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

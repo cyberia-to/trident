@@ -346,6 +346,20 @@ fn native_statement_records_preserve_tag_and_distinct_operand_ids() {
     }
 }
 
+#[test]
+fn native_scalar_type_recognition_keeps_unsupported_tokens_distinct_from_u32() {
+    let assembly = fixture("native_compiler_scalar_type");
+    for kind in (0..=30).chain([u64::from(u32::MAX)]) {
+        let expected = match kind {
+            12 => 0, // Field
+            20 => 1, // Bool
+            28 => 3, // U32
+            _ => 4,  // Unsupported type, distinct from every admitted type.
+        };
+        assert_eq!(execute(&assembly, &[kind], &[]).unwrap(), vec![expected]);
+    }
+}
+
 /// Cost analysis of a library selects its first active public function.
 /// Every successful entry needs the scoped executed fixture above. This pin
 /// does not claim all functions in those modules lower or execute correctly.
@@ -382,6 +396,7 @@ fn census_every_in_surface_module_has_a_differential() {
             "lib/std/compiler/lower.tri".to_string(),
             "lib/std/compiler/nox/ascii.tri".to_string(),
             "lib/std/compiler/nox/blocks.tri".to_string(),
+            "lib/std/compiler/nox/headers.tri".to_string(),
             "lib/std/compiler/nox/syntax.tri".to_string(),
             "lib/std/compiler/parser.tri".to_string(),
             "lib/std/compiler/typecheck.tri".to_string(),
