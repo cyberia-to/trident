@@ -1,0 +1,99 @@
+module std.compiler.nox.loop_parse
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.symbols
+use std.compiler.nox.blocks
+use std.compiler.nox.contexts
+use std.compiler.nox.body_state
+use std.compiler.nox.loop_records
+
+struct Bound { value: Field, error: syntax.Error }
+
+// Tokens normalize decimal values in Goldilocks. Loop candidates instead use
+// their raw decimal range, including the exclusive end 2^32.
+#[pure]
+#[requires(syntax.either(last_digit == as_u32(5), last_digit == as_u32(6)))]
+fn bound(source: bytes.Bytes, token: syntax.Token, last_digit: U32) -> Bound {
+    let mut result = Bound { value: 0, error: syntax.error(0, token.start, token.end) }
+    if (token.kind == as_u32(2)) == false {
+        let mut code: Field = 2
+        if syntax.either(token.kind == as_u32(1), token.kind == as_u32(5)) { code = 6 }
+        if syntax.either(token.kind == as_u32(21), token.kind == as_u32(22)) { code = 5 }
+        result.error = ast.failed(token, code)
+        return result
+    }
+    let mut pos = token.start
+    for turn in 0..4096 {
+        if pos == token.end { return result }
+        let digit = as_u32(field.sub(as_field(bytes.get(source, pos)), 48))
+        if result.value == 4294967296 { result.error = syntax.error(5, token.start, token.end) return result }
+        let value = as_u32(result.value)
+        if syntax.either(as_u32(429496729) < value,
+            syntax.both(value == as_u32(429496729), last_digit < digit)) {
+            result.error = syntax.error(5, token.start, token.end)
+            return result
+        }
+        result.value = result.value * 10 + as_field(digit)
+        pos = syntax.inc(pos)
+    }
+    result.error = syntax.error(7, token.start, token.end)
+    result
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
+    let mut s = input
+    let mut nesting = cap
+    if syntax.STACK_CAP < nesting { nesting = syntax.STACK_CAP }
+    if syntax.either(nesting == as_u32(0), syntax.inc(s.depth) == nesting) {
+        s.error = syntax.error(7, s.token.start, s.token.end)
+        return s
+    }
+    let name = lexer.next(source, s.token.end)
+    if (name.kind == as_u32(1)) == false { s.error = ast.failed(name, 2) return s }
+    s.token = lexer.next(source, name.end)
+    if (s.token.kind == as_u32(32)) == false { s.error = ast.failed(s.token, 2) return s }
+    s.token = lexer.next(source, s.token.end)
+    let first = bound(source, s.token, as_u32(5))
+    s.error = first.error
+    if (s.error.code == as_u32(0)) == false { return s }
+    s.token = lexer.next(source, s.token.end)
+    if (s.token.kind == as_u32(33)) == false { s.error = ast.failed(s.token, 2) return s }
+    s.token = lexer.next(source, s.token.end)
+    let end = bound(source, s.token, as_u32(6))
+    s.error = end.error
+    if (s.error.code == as_u32(0)) == false { return s }
+    s.token = lexer.next(source, s.token.end)
+    if (s.token.kind == as_u32(7)) == false { s.error = ast.failed(s.token, 2) return s }
+    if syntax.either(seq.len(s.loops) == cap, cap < as_u32(as_field(seq.len(s.bindings)) + 2)) {
+        s.error = syntax.error(7, name.start, s.token.end)
+        return s
+    }
+    let id = seq.len(s.loops)
+    let index = seq.len(s.bindings)
+    let record = loop_records.Loop { index, remaining: syntax.inc(index), first: first.value, end: end.value, body: blocks.NONE }
+    s.loops = seq.push(s.loops, loop_records.pack(record), cap)
+    let frame = contexts.Frame { statements: s.current, visible: s.visible, returned: s.returned,
+        synthetic: s.synthetic, start: s.start, condition: id, then_block: blocks.NONE, phase: 2 }
+    s.frames = noun.pair(contexts.pack(frame), s.frames)
+    s.depth = syntax.inc(s.depth)
+    s.bindings = seq.push(s.bindings, symbols.binding(name, false, ast.UINT32), cap)
+    // The remaining count can be 2^32. It is an invisible Field slot.
+    s.bindings = seq.push(s.bindings, symbols.binding(name, false, ast.FIELD), cap)
+    s.visible = noun.pair(noun.atom(as_field(index)), s.visible)
+    s.start = s.token.start
+    s.token = lexer.next(source, s.token.end)
+    s.current = noun.atom(0)
+    s.synthetic = false
+    s.returned = false
+    s.has_tail = false
+    s
+}

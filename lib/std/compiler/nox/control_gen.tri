@@ -13,6 +13,7 @@ use std.compiler.nox.formula
 use std.compiler.nox.flow
 use std.compiler.nox.block_gen
 use std.compiler.nox.call_codegen
+use std.compiler.nox.loop_gen
 
 struct Linear { writes: seq.Seq, next: U32, eligible: Bool }
 
@@ -41,14 +42,14 @@ fn linear(statements: seq.Seq) -> Linear {
     s
 }
 
-pub struct Built { pub output: formula.Value, pub failed: Bool }
+pub struct Built { pub output: formula.Value, pub loops: seq.Seq, pub failed: Bool }
 
 // A reusable body consumes the existing [table [0 frame]] subject. Callers
 // initialize parameters and local padding; body emission never resets them.
 #[pure]
 #[requires(s.root < seq.len(s.blocks))]
 pub fn reusable(s: body_state.State, flags: Noun, locals: U32, context: call_codegen.Context, depth_cap: U32) -> Built {
-    let failure = Built { output: flow.literal(0), failed: true }
+    let failure = Built { output: flow.literal(0), loops: seq.empty(), failed: true }
     let shape = tree.shape(locals)
     let expressions = codegen.with_calls(s.nodes, shape, context, depth_cap)
     if expressions.failed { return failure }
@@ -57,20 +58,22 @@ pub fn reusable(s: body_state.State, flags: Noun, locals: U32, context: call_cod
         let simple = linear(s.statements)
         if simple.eligible {
             let output = codegen.statements(simple.writes, expressions.values, shape, root.tail, depth_cap)
-            return Built { output: output.output, failed: output.failed }
+            return Built { output: output.output, loops: seq.empty(), failed: output.failed }
         }
     }
-    let emitted = block_gen.generate(s.blocks, flags, s.statements, expressions.values, shape, depth_cap)
+    let emitted = block_gen.generate(s.blocks, flags, s.statements, expressions.values, shape, depth_cap, s.loops, context)
     if emitted.failed { return failure }
+    let loops = loop_gen.generate(s.loops, emitted.values, shape, context, depth_cap)
+    if loops.failed { return failure }
     let output = flow.result(block_gen.read(emitted.values, s.root).output)
-    Built { output, failed: depth_cap < as_u32(as_field(output.depth) + 9) }
+    Built { output, loops: loops.values, failed: depth_cap < as_u32(as_field(output.depth) + 9) }
 }
 
 #[pure]
 pub fn standalone(built: Built, locals: U32, depth_cap: U32) -> codegen.Compiled {
     let zero = as_u32(0)
     let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
-    if built.failed { return failure }
+    if syntax.either(built.failed, (seq.len(built.loops) == zero) == false) { return failure }
     let mut output = built.output
     if (locals == zero) == false {
         let shape = tree.shape(locals)

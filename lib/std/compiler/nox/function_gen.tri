@@ -12,23 +12,38 @@ use std.compiler.nox.function_plan
 use std.compiler.nox.call_codegen
 use std.compiler.nox.formula
 use std.compiler.nox.flow
+use std.compiler.nox.code_plan
 
 struct Emitted { table: Noun, depth: U32, next: U32, failed: Bool }
 
 #[pure]
-fn chunk(bodies: seq.Seq, plan: function_plan.Plan, input: Emitted, cap: U32, depth_cap: U32) -> Emitted {
+fn install(loops: seq.Seq, base: U32, count: U32, input: Emitted) -> Emitted {
+    let mut s = input
+    for id in 0..4096 {
+        if id == seq.len(loops) { return s }
+        let value = formula.value(loops, id)
+        s.table = tree.set(s.table, count, as_u32(as_field(base) + as_field(id)), value.formula)
+        s.depth = formula.maximum(s.depth, value.depth)
+    }
+    s
+}
+
+#[pure]
+fn chunk(bodies: seq.Seq, plan: function_plan.Plan, codes: code_plan.Plan, input: Emitted, cap: U32, depth_cap: U32) -> Emitted {
     let mut s = input
     for turn in 0..8 {
         if s.next == seq.len(plan.order) { return s }
         let id = as_u32(noun.as_field(seq.get(plan.order, s.next)))
         let stored = seq.get(bodies, id)
         let body = body_store.read(stored, cap)
+        let base = as_u32(noun.as_field(tree.get(codes.bases, seq.len(bodies), id)))
         let context = call_codegen.Context { arguments: body.arguments, bodies, slots: plan.slots,
-            functions: seq.len(bodies), table: tree.shape(seq.len(plan.order)), capacity: cap }
+            functions: seq.len(bodies), table: tree.shape(codes.count), capacity: cap, loop_base: base }
         let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), context, depth_cap)
         if built.failed { s.failed = true return s }
-        s.table = tree.set(s.table, seq.len(plan.order), s.next, built.output.formula)
+        s.table = tree.set(s.table, codes.count, s.next, built.output.formula)
         s.depth = formula.maximum(s.depth, built.output.depth)
+        s = install(built.loops, base, codes.count, s)
         s.next = syntax.inc(s.next)
     }
     s
@@ -43,7 +58,7 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
     let stored = seq.get(bodies, entry)
     // An acyclic one-body closure contains no user calls. Preserve the existing
     // arithmetic, locals and control artifact identities, even with unused defs.
-    if seq.len(plan.order) == as_u32(1) {
+    if syntax.both(seq.len(plan.order) == as_u32(1), body_store.loop_count(stored) == zero) {
         let body = body_store.read(stored, cap)
         let mut context = call_codegen.empty()
         context.arguments = body.arguments
@@ -51,10 +66,12 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
         let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), context, depth_cap)
         return control_gen.standalone(built, body_store.locals(stored), depth_cap)
     }
-    let shape = tree.shape(seq.len(plan.order))
+    let codes = code_plan.extend(bodies, plan, cap)
+    if codes.failed { return failure }
+    let shape = tree.shape(codes.count)
     let mut s = Emitted { table: tree.empty(shape.height), depth: zero, next: zero, failed: false }
     for turn in 0..512 {
-        s = chunk(bodies, plan, s, cap, depth_cap)
+        s = chunk(bodies, plan, codes, s, cap, depth_cap)
         if s.failed { return failure }
         if s.next == seq.len(plan.order) {
             let frame = tree.shape(body_store.locals(stored))

@@ -5,7 +5,8 @@ use vm.core.convert
 use std.compiler.nox.blocks
 
 // A frame remembers its parent list/scope while one conditional arm is parsed.
-// Phase0 awaits then; phase1 awaits else. Synthetic else-if blocks close without
+// Phase0 awaits then; phase1 awaits else; phase2 owns a loop in condition.
+// Synthetic else-if blocks close without
 // consuming an extra source brace, using the same ownership as the seed parser.
 pub struct Frame {
     pub statements: Noun, pub visible: Noun, pub returned: Bool,

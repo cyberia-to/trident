@@ -129,3 +129,6 @@ mod function_bounds;
 
 #[path = "native_compiler/scalars.rs"]
 mod scalars;
+
+#[path = "native_compiler/loops.rs"]
+mod loops;

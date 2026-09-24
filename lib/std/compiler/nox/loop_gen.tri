@@ -1,0 +1,74 @@
+module std.compiler.nox.loop_gen
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.loop_records
+use std.compiler.nox.codegen
+use std.compiler.nox.call_codegen
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+#[pure]
+fn binary(opcode: Field, a: formula.Value, b: formula.Value) -> formula.Value {
+    formula.Value { formula: noun.pair(noun.atom(opcode), noun.pair(a.formula, b.formula)),
+        depth: as_u32(as_field(formula.maximum(a.depth, b.depth)) + 2) }
+}
+
+#[pure]
+fn invoke(context: call_codegen.Context, id: U32) -> formula.Value {
+    formula.apply(flow.axis(1), flow.axis(2 * context.table.capacity + as_field(context.loop_base) + as_field(id)))
+}
+
+#[pure]
+pub fn initialize(record: loop_records.Loop, id: U32, shape: tree.Shape, context: call_codegen.Context) -> formula.Value {
+    if loop_records.nonempty(record) == false { return flow.keep(flow.axis(1)) }
+    let index = codegen.edit(record.index, shape, flow.literal(record.first))
+    let count = codegen.edit(record.remaining, shape, flow.literal(field.sub(record.end, record.first)))
+    flow.compose(flow.compose(index, count), invoke(context, id))
+}
+
+#[pure]
+fn iteration(record: loop_records.Loop, id: U32, body: formula.Value, shape: tree.Shape, context: call_codegen.Context) -> formula.Value {
+    if loop_records.nonempty(record) == false { return flow.keep(flow.axis(1)) }
+    let remaining = flow.axis(7 * shape.capacity + as_field(record.remaining))
+    let index = flow.axis(7 * shape.capacity + as_field(record.index))
+    let done = binary(9, remaining, flow.literal(0))
+    let decrement = codegen.edit(record.remaining, shape, binary(6, remaining, flow.literal(1)))
+    let increment = codegen.edit(record.index, shape, binary(5, index, flow.literal(1)))
+    // The final candidate exits before increment, including index U32_MAX.
+    let next = flow.compose(decrement, flow.branch(done, flow.keep(flow.axis(1)), flow.compose(increment, invoke(context, id))))
+    flow.branch(done, flow.keep(flow.axis(1)), flow.then(body, next))
+}
+
+pub struct Emitted { pub values: seq.Seq, pub next: U32, pub failed: Bool }
+
+#[pure]
+fn chunk(loops: seq.Seq, blocks: seq.Seq, shape: tree.Shape, context: call_codegen.Context, input: Emitted, depth_cap: U32) -> Emitted {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(loops) { return s }
+        let record = loop_records.read(seq.get(loops, s.next))
+        let value = iteration(record, s.next, formula.value(blocks, record.body), shape, context)
+        if depth_cap < as_u32(as_field(value.depth) + 9) { s.failed = true return s }
+        // Source-order IDs are independent of block postorder, including nesting.
+        s.values = seq.push(s.values, formula.pack(value), seq.len(loops))
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(loops)) == false)]
+pub fn generate(loops: seq.Seq, blocks: seq.Seq, shape: tree.Shape, context: call_codegen.Context, depth_cap: U32) -> Emitted {
+    let mut s = Emitted { values: seq.empty(), next: as_u32(0), failed: false }
+    for turn in 0..512 {
+        s = chunk(loops, blocks, shape, context, s, depth_cap)
+        if syntax.either(s.failed, s.next == seq.len(loops)) { return s }
+    }
+    s.failed = true
+    s
+}

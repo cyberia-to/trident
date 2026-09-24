@@ -40,7 +40,7 @@ CORE            256K         64K
 vm spec          32K         16K
 language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun            128K        128K      ← SH3 locals/control/functions/scalars; full generator and self-build pending
+Noun            128K        128K      ← SH3 locals/control/functions/scalars/loops; full generator and self-build pending
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
@@ -107,7 +107,7 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ◐ Native .tri arithmetic, typed locals, control, calls and U32 scalars execute on nox (SH2/SH3); full generator and self-build remain open (SH3–SH6)
+Noun        ◐ Native .tri arithmetic, typed locals, control, calls, U32 scalars and literal loops execute on nox (SH2/SH3); full generator and self-build remain open (SH3–SH6)
 cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ◐ Prototype pipeline emits TIR; lower wiring and self-compilation open

@@ -14,6 +14,7 @@ use std.compiler.nox.body_state
 use std.compiler.nox.declarations
 use std.compiler.nox.control_parse
 use std.compiler.nox.signatures
+use std.compiler.nox.loop_parse
 
 #[pure]
 fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -30,6 +31,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
         if next.kind == as_u32(18) { return declarations.parse(source, s, cap) }
     }
     if s.token.kind == as_u32(23) { return control_parse.enter(source, s, cap) }
+    if s.token.kind == as_u32(31) { return loop_parse.enter(source, s, cap) }
     let returning = s.token.kind == as_u32(25)
     if returning {
         s.token = lexer.next(source, s.token.end)
