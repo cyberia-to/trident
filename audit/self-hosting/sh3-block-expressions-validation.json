@@ -1,0 +1,235 @@
+{
+  "schema": "trident/sh3-seed-parser-validation/v1",
+  "kind": "local-development",
+  "source_revisions": {
+    "trident": "fd64b73f094ff6a611f8473364f7758484c02fd9",
+    "joy": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+    "trisha": "03b6f9dda71f08000265c929ea55dc32642b050f",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "host": {
+    "uname -ms": "Darwin arm64",
+    "rustc -Vv": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-apple-darwin\nrelease: 1.95.0\nLLVM version: 22.1.3",
+    "sw_vers": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4.1\nBuildVersion:\t\t25E253",
+    "sysctl -n machdep.cpu.brand_string": "Apple M4 Max"
+  },
+  "gates": [
+    {
+      "repository": "trident",
+      "revision": "fd64b73f094ff6a611f8473364f7758484c02fd9",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-block-check.log",
+      "log_sha256": "475c230fb19314eaef9153990872b3495c7235e7d4704cca7df9e8dd11ac87ed",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trident",
+      "revision": "fd64b73f094ff6a611f8473364f7758484c02fd9",
+      "command": "cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-block-tests.log",
+      "log_sha256": "a325a4937f8f388ba83e5d6a77ca4fe383009924daa2daf07ab18e5ba80640cd",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 926,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-block-check.log",
+      "log_sha256": "88f9b78d784b23ba77da8f9361cf14ab3761c9aa2da9bde02c68958c0c80e303",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-block-tests.log",
+      "log_sha256": "6aeab9a00dc27d40dc3520e36e06ac6c4b53e49e72434bacf43c4e790ef24c6a",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 120,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "03b6f9dda71f08000265c929ea55dc32642b050f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-block-check.log",
+      "log_sha256": "65fffdfaedb6d24f7549e7c1deb35aba09251aa98fdb2582c8db9e463f782eaf",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trisha",
+      "revision": "03b6f9dda71f08000265c929ea55dc32642b050f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-block-tests.log",
+      "log_sha256": "2df46dce4f89396aa6aaf0393b91aae757d088f48ae31a46323434d0ab93ead2",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 363,
+        "failed": 0,
+        "ignored": 4
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "03b6f9dda71f08000265c929ea55dc32642b050f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-block-bench.log",
+      "log_sha256": "b378b447df6c566b47431819f8c7f4ff11fdd767bf62c56fa8b5eaadf093c8a4",
+      "rust_warnings": 0,
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "unchanged_result_cycle_rows": true,
+      "comparison_log": "/tmp/trisha-04-pilot-final-bench.log"
+    }
+  ],
+  "formal_audits": [
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/ascii.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/emit.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/job.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/lexer.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/parser.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/syntax.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "lib/std/compiler/nox/utf8.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "target/release/trident",
+        "audit",
+        "compiler/nox/main.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    }
+  ],
+  "review": {
+    "passes": [
+      1,
+      5,
+      6,
+      9
+    ],
+    "independent_read_only_review": "No parser blocker; corrected release cfg selection; discovered existing zero-width TIR corruption."
+  },
+  "failed_drafts": [
+    {
+      "base_revision": "d28d7eb2f5af2270b96ced3a3b503ac35b602724",
+      "status": "uncommitted draft",
+      "command": "cargo test --release --locked --test control_blocks",
+      "first_error": "no method named push found for BTreeSet<String>",
+      "resolution": "Set cfg_flags to exactly the tested profile."
+    },
+    {
+      "trident_base": "d28d7eb2f5af2270b96ced3a3b503ac35b602724",
+      "trisha_base": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "status": "uncommitted draft with Empty initializer",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs --test control_blocks",
+      "first_error": "ERROR: unresolved variable 'n'",
+      "resolution": "Open separate zero-width TIR repair; retain Empty syntax in AST test, execute nonempty struct fixture in this parser delivery."
+    }
+  ],
+  "limits": [
+    "SH3 whole-language coverage remains open.",
+    "Zero-width TIR values and resolved halting calls remain open seed repairs.",
+    "Formal compiler-library analysis remains UNKNOWN; no proof claim.",
+    "Only recorded macOS host checked; six-platform release matrix remains open."
+  ],
+  "installed_cli": {
+    "command": "python3 audit/self-hosting/run-native-compiler.py --joy ../install/bin/joy --output /tmp/trident-04-block-cli.json",
+    "exit_code": 0,
+    "commands": 60,
+    "observations": 22,
+    "compiler_particle": "20f708f4075539e770536c210497d1231b7da4a1cf7e3026eab4264da0ef13f8",
+    "unchanged_from_sh2": true,
+    "receipt_sha256": "d35d4e714d96c018cfb70ee0fc463985df6c5c4f9687d7ad0dc1e27bb98fb4f8"
+  },
+  "committed_rebuilds": {
+    "trident": "2b147a50ecdce2586945d59376208cc23df9561e602bdcf109f822c5c1302b75",
+    "joy": "8c3def8b901e83fa297d684b0fe4bf06be73ee2e9f3ce029f57fe3be9b6a32c5",
+    "trisha": "38639b4dbc3bde39063b9ee17f5d5acc9bb4d27ee06db14b747d2c10b15a27ae"
+  }
+}
