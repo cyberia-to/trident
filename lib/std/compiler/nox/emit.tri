@@ -1,0 +1,62 @@
+module std.compiler.nox.emit
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+
+#[pure]
+pub fn literal(value: Field) -> Noun { noun.pair(noun.atom(1), noun.atom(value)) }
+
+#[pure]
+pub fn binary(kind: U32, left: Noun, right: Noun) -> Noun {
+    let mut opcode: Field = 5
+    if kind == as_u32(4) { opcode = 7 }
+    noun.pair(noun.atom(opcode), noun.pair(left, right))
+}
+
+#[pure]
+pub fn artifact(formula: Noun) -> Noun {
+    let zero = noun.atom(0)
+    noun.pair(noun.atom(1095914545), noun.pair(zero, noun.pair(zero, noun.pair(zero, noun.pair(formula, zero)))))
+}
+
+#[pure]
+fn result(input: Noun, status: Field, payload: Noun) -> Noun {
+    let (a, b, c, d) = noun.identity(input)
+    let identity = noun.pair(noun.pair(noun.atom(a), noun.atom(b)), noun.pair(noun.atom(c), noun.atom(d)))
+    noun.pair(noun.atom(1380274993), noun.pair(identity, noun.pair(noun.atom(status), noun.pair(payload, noun.atom(0)))))
+}
+
+#[pure]
+pub fn success(input: Noun, formula: Noun) -> Noun { result(input, 0, artifact(formula)) }
+
+#[pure]
+fn text(content: [Field; 24], length: U32) -> bytes.Bytes {
+    let mut value = bytes.empty()
+    for i in 0..24 {
+        if i == length { return value }
+        value = bytes.push(value, as_u32(content[i]), as_u32(24))
+    }
+    value
+}
+
+#[pure]
+fn message(code: U32) -> bytes.Bytes {
+    if code == as_u32(1) { return text([105,110,118,97,108,105,100,32,101,110,99,111,100,105,110,103,47,116,111,107,101,110,0,0], as_u32(22)) }
+    if code == as_u32(2) { return text([115,121,110,116,97,120,32,101,114,114,111,114,0,0,0,0,0,0,0,0,0,0,0,0], as_u32(12)) }
+    if code == as_u32(3) { return text([101,110,116,114,121,32,109,105,115,109,97,116,99,104,0,0,0,0,0,0,0,0,0,0], as_u32(14)) }
+    if code == as_u32(5) { return text([117,110,107,110,111,119,110,32,110,97,109,101,0,0,0,0,0,0,0,0,0,0,0,0], as_u32(12)) }
+    if code == as_u32(6) { return text([117,110,115,117,112,112,111,114,116,101,100,32,99,111,110,115,116,114,117,99,116,0,0,0], as_u32(21)) }
+    text([99,111,109,112,105,108,101,114,32,99,97,112,97,99,105,116,121,0,0,0,0,0,0,0], as_u32(17))
+}
+
+#[pure]
+pub fn failure(input: Noun, module_index: U32, error: syntax.Error) -> Noun {
+    let tail = noun.pair(bytes.to_noun(message(error.code)), noun.atom(0))
+    let span = noun.pair(noun.atom(as_field(error.start)), noun.pair(noun.atom(as_field(error.end)), tail))
+    let diagnostic = noun.pair(noun.atom(1145651505), noun.pair(noun.atom(as_field(error.code)), noun.pair(noun.atom(as_field(module_index)), span)))
+    let diagnostics = seq.push(seq.empty(), diagnostic, as_u32(1))
+    result(input, 1, seq.to_noun(diagnostics))
+}

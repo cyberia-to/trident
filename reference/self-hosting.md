@@ -242,6 +242,15 @@ independent nox arena, reduction and evaluator-frame limits. SH4 measures the
 complete compiler workload. An iterative operator/value stack avoids recursive
 descent; helper chunks return explicitly to release evaluator frames.
 
+The initial ceilings are 4096 selected source bytes and 64 live entries in
+each operator/value stack, further restricted by the requested sequence cap.
+At most 4096 nonempty tokens and 4096 operator reductions fit the 8192-step
+parser driver. UTF-8 validation uses 64-byte chunks; parsing uses 32-step
+chunks. Generated formula depth plus its ART1/RES1 wrappers must fit the
+requested artifact depth. The guest JOB reader charges every record projection,
+collection traversal and repeated admission payload read to its shared visit
+allowance; lexical and parsing reads use the execution budget after admission.
+
 Acceptance procedure:
 
 1. Rust Trident builds this compiler to `C1.nox` once.

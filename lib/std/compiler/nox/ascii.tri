@@ -1,0 +1,85 @@
+module std.compiler.nox.ascii
+
+use std.nox.bytes
+use std.compiler.nox.syntax
+use vm.core.convert
+use vm.core.field
+
+#[pure]
+pub fn digit(value: U32) -> Bool { syntax.both((value < as_u32(48)) == false, value < as_u32(58)) }
+
+#[pure]
+pub fn initial(value: U32) -> Bool {
+    if value == as_u32(95) { return true }
+    if value < as_u32(65) { return false }
+    if value < as_u32(91) { return true }
+    if value < as_u32(97) { return false }
+    value < as_u32(123)
+}
+
+#[pure]
+pub fn space(value: U32) -> Bool {
+    if value == as_u32(9) { return true }
+    if value == as_u32(10) { return true }
+    if value == as_u32(12) { return true }
+    if value == as_u32(13) { return true }
+    value == as_u32(32)
+}
+
+#[pure]
+#[requires((bytes.len(source) < end) == false)]
+#[requires((end < start) == false)]
+pub fn same(source: bytes.Bytes, start: U32, end: U32, name: bytes.Bytes) -> Bool {
+    let length = as_u32(field.sub(as_field(end), as_field(start)))
+    if (length == bytes.len(name)) == false { return false }
+    let mut pos = start
+    for i in 0..255 {
+        if pos == end { return true }
+        if (bytes.get(source, pos) == bytes.get(name, i)) == false { return false }
+        pos = syntax.inc(pos)
+    }
+    pos == end
+}
+
+// 1 identifier; 10 program; 11 fn; 12 Field; 13 reserved/unsupported.
+#[pure]
+pub fn keyword(value: Field) -> Field {
+    if value == 31651020194079085 { return 10 } // program
+    if value == 120325194214501 { return 13 } // module
+    if value == 7697253 { return 13 } // use
+    if value == 26222 { return 11 } // fn
+    if value == 7370082 { return 13 } // pub
+    if value == 7562595 { return 13 } // sec
+    if value == 7103860 { return 13 } // let
+    if value == 7173492 { return 13 } // mut
+    if value == 427071271796 { return 13 } // const
+    if value == 126943973696372 { return 13 } // struct
+    if value == 26982 { return 13 } // if
+    if value == 1701606245 { return 13 } // else
+    if value == 6713202 { return 13 } // for
+    if value == 26990 { return 13 } // in
+    if value == 27707097871574372 { return 13 } // bounded
+    if value == 125780071117422 { return 13 } // return
+    if value == 1953658213 { return 13 } // true
+    if value == 439721161573 { return 13 } // false
+    if value == 435778055796 { return 13 } // event
+    if value == 125780103618924 { return 13 } // reveal
+    if value == 1936023916 { return 13 } // seal
+    if value == 469786452840 { return 13 } // match
+    if value == 302415965284 { return 12 } // Field
+    if value == 97059439209572 { return 13 } // XField
+    if value == 1114599276 { return 13 } // Bool
+    if value == 5583666 { return 13 } // U32
+    if value == 1315927406 { return 13 } // Noun
+    if value == 75219496956788 { return 13 } // Digest
+    if value == 95 { return 13 } // _
+    if value == 6386541 { return 13 } // asm
+    1
+}
+
+#[pure]
+pub fn punctuation(value: U32) -> Bool {
+    let codes = [35,91,93,59,61,44,46,58,38,94,60,62]
+    for i in 0..12 { if as_field(value) == codes[i] { return true } }
+    false
+}

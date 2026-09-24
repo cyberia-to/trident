@@ -1,0 +1,5 @@
+program native_compiler_increment
+
+use std.compiler.nox.syntax
+
+fn main(value: U32) -> U32 { syntax.inc(value) }

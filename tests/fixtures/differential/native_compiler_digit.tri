@@ -1,0 +1,8 @@
+program native_compiler_digit
+
+use std.compiler.nox.ascii
+
+fn main(value: U32) -> Field {
+    if ascii.digit(value) { return 1 }
+    0
+}

@@ -1,0 +1,101 @@
+#[path = "native_compiler/support.rs"]
+mod support;
+use support::{Expr, Result};
+
+#[test]
+fn fixed_guest_compiles_fresh_arithmetic_to_exact_executable_formulas() {
+    support::worker(|| {
+        let c1 = support::compiler().to_vec(); // Build before constructing this corpus.
+        use Expr::{Add as A, Mul as M, Number as N};
+        let cases = vec![
+            (
+                "2+3*4".into(),
+                A(Box::new(N(2)), Box::new(M(Box::new(N(3)), Box::new(N(4))))),
+            ),
+            (
+                "(2+3)*4".into(),
+                M(Box::new(A(Box::new(N(2)), Box::new(N(3)))), Box::new(N(4))),
+            ),
+            (
+                "1+2+3".into(),
+                A(Box::new(A(Box::new(N(1)), Box::new(N(2)))), Box::new(N(3))),
+            ),
+            (
+                "2*3*4".into(),
+                M(Box::new(M(Box::new(N(2)), Box::new(N(3)))), Box::new(N(4))),
+            ),
+        ];
+        let mut expressions = cases;
+        let mut seed = 0x31415926u64;
+        for _ in 0..12 {
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let a = seed;
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let e = A(
+                Box::new(N(a)),
+                Box::new(M(Box::new(N(seed)), Box::new(N(seed >> 32)))),
+            );
+            expressions.push((e.text(), e));
+        }
+        for (text, expression) in expressions {
+            let source = support::source(&text);
+            match support::compile(&source) {
+                Result::Program { bytes, value, .. } => {
+                    assert_eq!(bytes, expression.artifact(), "{text}");
+                    assert_eq!(value, expression.value(), "{text}");
+                    assert_eq!(
+                        value,
+                        support::rust_value(std::str::from_utf8(&source).unwrap()),
+                        "{text}"
+                    );
+                }
+                other => panic!("{text}: {other:?}"),
+            }
+        }
+        assert_eq!(c1, support::compiler());
+    });
+}
+
+#[test]
+fn decimal_range_and_leading_zeroes_match_native_seed_goldilocks() {
+    support::worker(|| {
+        for literal in [
+            "0",
+            "00000000000000000000000000000001",
+            "4294967295",
+            "4294967296",
+            "18446744069414584320",
+            "18446744069414584321",
+            "18446744069414584322",
+            "18446744073709551615",
+        ] {
+            let source = support::source(literal);
+            let expected = (literal.parse::<u128>().unwrap() % 18446744069414584321) as u64;
+            assert_eq!(
+                support::value(support::compile(&source)),
+                expected,
+                "{literal}"
+            );
+            assert_eq!(
+                support::rust_value(std::str::from_utf8(&source).unwrap()),
+                expected
+            );
+        }
+        for literal in [
+            "18446744073709551616",
+            "99999999999999999999",
+            "100000000000000000000",
+            "00018446744073709551616",
+        ] {
+            let source = support::source(literal);
+            let error = support::error(&source, 1);
+            assert_eq!(error.end - error.start, literal.len() as u32);
+        }
+    });
+}
+
+#[path = "native_compiler/diagnostics.rs"]
+mod diagnostics;
+
+#[path = "native_compiler/bounds.rs"]
+mod bounds;
