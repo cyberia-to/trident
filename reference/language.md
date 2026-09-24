@@ -130,7 +130,8 @@ For extension field types, see [Extension Field](#16-extension-field).
 checked `vm.nox.noun` operations and persistent `std.nox.seq` / `std.nox.bytes`
 wrappers. The 0.4 development compiler implements `Noun` and the seven native
 operations together with parsing, type checking and direct nox lowering.
-The collection wrappers and reusable calls/loops remain SH1 work.
+Reusable raw calls/loops and the collection wrappers are implemented in 0.4
+development. Production Joy compiler-job admission remains SH1 work.
 
 `vm.nox.noun` exports `atom(Field) -> Noun`, `pair(Noun, Noun) -> Noun`,
 `head(Noun) -> Noun`, `tail(Noun) -> Noun`, `as_field(Noun) -> Field`,

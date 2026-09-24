@@ -1,0 +1,186 @@
+module std.nox.tree
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+
+// Raw indexed-tree helpers. Validated handles belong to seq and bytes.
+const ZERO: U32 = 0
+const MAX_HEIGHT: U32 = 32
+const HALF: Field = 9223372034707292161
+
+pub struct Shape { pub height: U32, pub capacity: Field }
+
+// Canonical all-zero padding, including E(0) = atom zero.
+#[pure]
+#[requires((MAX_HEIGHT < height) == false)]
+pub fn empty(height: U32) -> Noun {
+    assert((MAX_HEIGHT < height) == false)
+    let mut root = noun.atom(0)
+    for level in 0..32 {
+        if level == height { return root }
+        root = noun.pair(root, root)
+    }
+    root
+}
+
+// Capacity may be 2^32. Only values up to 2^31 are narrowed for comparison.
+#[pure]
+#[ensures((MAX_HEIGHT < result.height) == false)]
+pub fn shape(length: U32) -> Shape {
+    if length == ZERO { return Shape { height: ZERO, capacity: 1 } }
+    let last = convert.as_u32(field.sub(convert.as_field(length), 1))
+    let mut capacity: Field = 1
+    for height in 0..32 {
+        if last < convert.as_u32(capacity) {
+            return Shape { height, capacity }
+        }
+        capacity = capacity * 2
+    }
+    Shape { height: MAX_HEIGHT, capacity }
+}
+
+// Requires the canonical tree shape for length. Occupied leaves may be pairs.
+#[pure]
+#[requires(index < length)]
+pub fn get(root: Noun, length: U32, index: U32) -> Noun {
+    assert(index < length)
+    let geometry = shape(length)
+    let mut cursor = root
+    let mut offset = index
+    let mut capacity = geometry.capacity
+    for level in 0..32 {
+        if level == geometry.height { return cursor }
+        capacity = capacity * HALF
+        let half = convert.as_u32(capacity)
+        if offset < half {
+            cursor = noun.head(cursor)
+        } else {
+            cursor = noun.tail(cursor)
+            offset = convert.as_u32(field.sub(convert.as_field(offset), capacity))
+        }
+    }
+    cursor
+}
+
+// A zipper stores [direction sibling] records, deepest first on reconstruction.
+#[pure]
+fn zipper(root: Noun, geometry: Shape, index: U32) -> Noun {
+    let mut cursor = root
+    let mut offset = index
+    let mut capacity = geometry.capacity
+    let mut path = noun.atom(0)
+    for level in 0..32 {
+        if level == geometry.height { return path }
+        capacity = capacity * HALF
+        let half = convert.as_u32(capacity)
+        if offset < half {
+            path = noun.pair(noun.pair(noun.atom(0), noun.tail(cursor)), path)
+            cursor = noun.head(cursor)
+        } else {
+            path = noun.pair(noun.pair(noun.atom(1), noun.head(cursor)), path)
+            cursor = noun.tail(cursor)
+            offset = convert.as_u32(field.sub(convert.as_field(offset), capacity))
+        }
+    }
+    path
+}
+
+#[pure]
+#[requires(index < length)]
+pub fn set(root: Noun, length: U32, index: U32, value: Noun) -> Noun {
+    assert(index < length)
+    let geometry = shape(length)
+    let mut path = zipper(root, geometry, index)
+    let mut result = value
+    for level in 0..32 {
+        if level == geometry.height { return result }
+        let step = noun.head(path)
+        if noun.as_field(noun.head(step)) == 0 {
+            result = noun.pair(result, noun.tail(step))
+        } else {
+            result = noun.pair(noun.tail(step), result)
+        }
+        path = noun.tail(path)
+    }
+    result
+}
+
+#[pure]
+#[requires(length < max_length)]
+pub fn push(root: Noun, length: U32, value: Noun, max_length: U32) -> Noun {
+    assert(length < max_length)
+    let next = convert.as_u32(convert.as_field(length) + 1)
+    let old_shape = shape(length)
+    let next_shape = shape(next)
+    let mut expanded = root
+    if old_shape.height < next_shape.height {
+        expanded = noun.pair(root, empty(old_shape.height))
+    }
+    set(expanded, next, length, value)
+}
+
+// Task = [node [occupied [capacity canonical_empty]]].
+#[pure]
+fn task(node: Noun, occupied: U32, capacity: Field, padding: Noun) -> Noun {
+    noun.pair(node, noun.pair(noun.atom(convert.as_field(occupied)), noun.pair(noun.atom(capacity), padding)))
+}
+
+// Charge before each visit, even when identical children share arena storage.
+// Each call unwinds its loop frames before the driver starts the next chunk.
+#[pure]
+fn validate_chunk(todo: Noun, remaining: U32) -> (Noun, U32) {
+    let mut work = todo
+    let mut budget = remaining
+    for visit in 0..128 {
+        if noun.eq(work, noun.atom(0)) { return (work, budget) }
+        assert(ZERO < budget)
+        budget = convert.as_u32(field.sub(convert.as_field(budget), 1))
+        let current = noun.head(work)
+        work = noun.tail(work)
+        let node = noun.head(current)
+        let body = noun.tail(current)
+        let occupied = convert.as_u32(noun.as_field(noun.head(body)))
+        let geometry = noun.tail(body)
+        let capacity = noun.as_field(noun.head(geometry))
+        let padding = noun.tail(geometry)
+        if occupied == ZERO {
+            assert(noun.eq(node, padding))
+        } else {
+            if capacity == 1 {
+                // The entire Noun is the occupied value; do not descend into it.
+            } else {
+                let half_capacity = capacity * HALF
+                let half = convert.as_u32(half_capacity)
+                let mut left_count = occupied
+                let mut right_count = ZERO
+                if half < occupied {
+                    left_count = half
+                    right_count = convert.as_u32(field.sub(convert.as_field(occupied), half_capacity))
+                }
+                let child_padding = noun.head(padding)
+                let right = task(noun.tail(node), right_count, half_capacity, child_padding)
+                let left = task(noun.head(node), left_count, half_capacity, child_padding)
+                work = noun.pair(left, noun.pair(right, work))
+            }
+        }
+    }
+    (work, budget)
+}
+
+// Returns unspent visits for a caller's payload validation pass.
+#[pure]
+#[ensures((remaining < result) == false)]
+pub fn validate(root: Noun, length: U32, remaining: U32) -> U32 {
+    let geometry = shape(length)
+    let initial = task(root, length, geometry.capacity, empty(geometry.height))
+    let mut work = noun.pair(initial, noun.atom(0))
+    let mut budget = remaining
+    // ceil(U32::MAX / 128); every chunk consumes visits or returns/fails.
+    for chunk in 0..33554432 {
+        (work, budget) = validate_chunk(work, budget)
+        if noun.eq(work, noun.atom(0)) { return budget }
+    }
+    assert_eq(0, 1)
+    ZERO
+}

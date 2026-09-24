@@ -2,11 +2,12 @@
 
 This is the version 1 data contract for [soft3 self-hosting](self-hosting.md).
 It specifies the 0.4 implementation target. The 0.4 development compiler now
-accepts the `Noun` primitive and seven `vm.nox.noun` operations; the collection
-APIs below remain SH1 work. The stable release does not include this extension;
+accepts the `Noun` primitive, seven `vm.nox.noun` operations and the source
+collection APIs below. The stable release does not include this extension;
 SH0.3 specifies their job/artifact transport and SH0.4 their runtime budgets.
-The [conformance receipt](../audit/self-hosting/native-data.md) distinguishes
-Rust model tests and actual nox reductions from future source-language support.
+The original [model receipt](../audit/self-hosting/native-data.md) and the
+[source execution receipt](../audit/self-hosting/native-collections.md) distinguish
+reference-model tests from source libraries executed through Joy on nox.
 
 ## Native values and source types
 
@@ -163,9 +164,9 @@ reject inputs above U32 rather than silently truncating them.
 
 ## Library surface and compiler migration
 
-Proposed modules `std.nox.seq` and `std.nox.bytes` own private validated wrappers
+Modules `std.nox.seq` and `std.nox.bytes` own private validated wrappers
 `Seq` and `Bytes`. Their implementation is Trident library code over the intrinsic
-API; these names do not claim files exist yet. An unchecked wrapper constructor
+API in `lib/std/nox/`. An unchecked wrapper constructor
 is private. All externally received wrappers pass a bounded validator.
 
 The source type checker retains the defining module in struct identity and
@@ -174,6 +175,19 @@ An identical local struct cannot stand in for an imported wrapper. Module names
 must be unique in the parsed compilation closure before generic specialization;
 aliases and forwarded return values preserve their original owner. This protects
 source-level native handles. External raw entry data still requires `from_noun`.
+
+`std.nox.tree` owns the shared raw-tree operations: geometry, empty padding,
+path reads/updates, append and bounded shape validation. Its public helpers
+consume and produce raw Nouns; they cannot construct a validated Seq/Bytes
+handle. Seq and Bytes retain separate private constructors and field owners.
+Raw `get`, `set` and `push` require an existing canonical tree for their supplied
+length. Untrusted roots must pass `validate` before those operations.
+Shape validation returns the remaining visit allowance so Bytes can charge its
+word scan against the same budget. The traversal uses a Noun work stack and
+bounded helper chunks: returning from each chunk releases its evaluator frames.
+The outer driver returns explicitly on completion or fails on exhaustion.
+Outer driver frames still grow with the number of chunks; this is not a
+constant-memory promise or evidence that a complete compiler workload fits.
 
 | Operation | Seq signature | Bytes signature |
 |---|---|---|
