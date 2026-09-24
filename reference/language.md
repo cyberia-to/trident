@@ -66,6 +66,15 @@ pub fn create(owner: Digest, amount: Field) -> Balance {
 }
 ```
 
+A structure's identity includes its defining module. Identical names and field
+layouts in different modules denote different types. Import aliases and function
+return values preserve that identity, including size-generic functions.
+
+Only the defining module may initialize, read, assign, or explicitly name a
+private field in a match pattern. Importers may construct a structure only when
+all its fields are public; otherwise they obtain values through its module's
+functions. Passing and storing an opaque value does not expose its fields.
+
 ### Project Layout
 
 ```text

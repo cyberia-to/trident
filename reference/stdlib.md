@@ -8,6 +8,14 @@ The remaining sections are a **design catalog**, not an inventory of implemented
 
 The implemented Trinity arithmetic demonstration and its unclosed cryptographic requirements are described in [Trinity arithmetic](trinity-arithmetic.md). Passing its composed execution fixtures does not establish private-inference security.
 
+The arithmetic data APIs explicitly expose the limbs of `bigint.U256`,
+`poseidon.State`/`poseidon2.State`, `keccak256.Lane`/`KeccakState`,
+`sha256.Sha256State`, `ecdsa.Signature`, and the components of
+`quantum.gates.Complex`/`Qubit`/`TwoQubit` as public fields. These hold raw
+numbers and states; callers may construct and inspect them directly. A signature
+value still requires the applicable range and verification checks. Structures
+with private fields follow the module ownership rules in [the language](language.md#visibility).
+
 ## std.* — A Unified Framework for Verifiable Intelligence, Privacy, and Quantum Computation
 
 ---

@@ -14,14 +14,14 @@ use vm.io.mem
 // Poseidon2 state: 8 field elements
 // ---------------------------------------------------------------------------
 pub struct State {
-    s0: Field,
-    s1: Field,
-    s2: Field,
-    s3: Field,
-    s4: Field,
-    s5: Field,
-    s6: Field,
-    s7: Field,
+    pub s0: Field,
+    pub s1: Field,
+    pub s2: Field,
+    pub s3: Field,
+    pub s4: Field,
+    pub s5: Field,
+    pub s6: Field,
+    pub s7: Field,
 }
 
 pub fn zero_state() -> State {

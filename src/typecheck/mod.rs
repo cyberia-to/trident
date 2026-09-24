@@ -9,6 +9,7 @@ mod builtins;
 mod capabilities;
 mod expr;
 mod noun;
+mod privacy;
 mod resolve;
 pub(crate) mod specialize;
 mod stmt;
@@ -104,6 +105,7 @@ pub(crate) struct TypeChecker {
     pub(super) constant_types: BTreeMap<String, Ty>,
     /// Known struct types (name or module.name -> StructTy).
     pub(super) structs: BTreeMap<String, StructTy>,
+    pub(super) current_module: String,
     /// Known event types (name -> field list).
     pub(super) events: BTreeMap<String, Vec<(String, Ty)>>,
     /// Accumulated diagnostics.
@@ -154,6 +156,7 @@ impl TypeChecker {
             constants: BTreeMap::new(),
             constant_types: BTreeMap::new(),
             structs: BTreeMap::new(),
+            current_module: String::new(),
             events: BTreeMap::new(),
             diagnostics: Vec::new(),
             u32_proven: BTreeMap::new(),
@@ -280,6 +283,7 @@ impl TypeChecker {
     }
 
     pub(crate) fn check_file(mut self, file: &File) -> Result<ModuleExports, Vec<Diagnostic>> {
+        self.current_module = file.name.node.clone();
         let is_std_module = file.name.node.starts_with("std.")
             || file.name.node.starts_with("vm.")
             || file.name.node.starts_with("os.")
@@ -321,6 +325,7 @@ impl TypeChecker {
                         .map(|f| (f.name.node.clone(), self.resolve_type(&f.ty.node), f.is_pub))
                         .collect();
                     let sty = StructTy {
+                        module: self.current_module.clone(),
                         name: sdef.name.node.clone(),
                         fields,
                     };

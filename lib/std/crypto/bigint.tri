@@ -21,14 +21,14 @@ use vm.core.field
 // A 256-bit integer represented as 8 U32 limbs (little-endian).
 // l0 is the least significant limb, l7 is the most significant.
 pub struct U256 {
-    l0: U32,
-    l1: U32,
-    l2: U32,
-    l3: U32,
-    l4: U32,
-    l5: U32,
-    l6: U32,
-    l7: U32,
+    pub l0: U32,
+    pub l1: U32,
+    pub l2: U32,
+    pub l3: U32,
+    pub l4: U32,
+    pub l5: U32,
+    pub l6: U32,
+    pub l7: U32,
 }
 
 // ---------------------------------------------------------------------------

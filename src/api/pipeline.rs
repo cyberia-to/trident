@@ -154,6 +154,23 @@ impl PreparedProject {
     ) -> Result<Vec<ModuleExports>, Vec<Diagnostic>> {
         use crate::ast::{Item, ModulePath};
         use crate::span::{Span, Spanned};
+        // Logical ownership must be unique before imports or generic copies can
+        // confer access. Resolver keys may be legacy aliases or scanned headers;
+        // only parsed module names establish the semantic identity.
+        let mut owners = BTreeMap::new();
+        for module in modules.iter() {
+            if let Some(previous) = owners.insert(&module.file.name.node, &module.file_path) {
+                return Err(vec![Diagnostic::error(
+                    format!(
+                        "duplicate module '{}' declared by '{}' and '{}'",
+                        module.file.name.node,
+                        previous.display(),
+                        module.file_path.display()
+                    ),
+                    module.file.name.span,
+                )]);
+            }
+        }
         type Key = (usize, String, Vec<u64>);
         let mut instances: BTreeMap<Key, String> = BTreeMap::new();
         for _ in 0..128 {

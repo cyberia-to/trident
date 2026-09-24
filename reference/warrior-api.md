@@ -273,7 +273,11 @@ sandboxed guest job. JOB1/RES1 compiler admission remains a separate SH1 slice.
 
 The semantic `Ty::width` and `StructTy::width` return `Option<u32>`: variable
 native trees have no fixed width. `StructTy::field` retrieves type/visibility
-independently of offsets. `TIRBuilder::build_file` now returns
+independently of offsets. `StructTy::module` records its defining module and
+participates in type identity; constructing a semantic struct from Rust now
+requires that field. Importing or forwarding the type preserves it. Source
+private-field checks use this owner without removing fields from the layout.
+`TIRBuilder::build_file` now returns
 `Result<Vec<TIROp>, Vec<Diagnostic>>` and rejects native trees before stack
 layout. Rust callers must propagate that error. The target package wire schema
 and fixed-word external intrinsic ABI are unchanged.

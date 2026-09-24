@@ -25,8 +25,8 @@ use vm.io.mem
 // Represents a + bi where a, b are field elements.
 // ---------------------------------------------------------------------------
 pub struct Complex {
-    re: Field,
-    im: Field,
+    pub re: Field,
+    pub im: Field,
 }
 
 // ---------------------------------------------------------------------------
@@ -34,8 +34,8 @@ pub struct Complex {
 // zero = alpha (amplitude of |0>), one = beta (amplitude of |1>)
 // ---------------------------------------------------------------------------
 pub struct Qubit {
-    zero: Complex,
-    one: Complex,
+    pub zero: Complex,
+    pub one: Complex,
 }
 
 // ---------------------------------------------------------------------------
@@ -146,10 +146,10 @@ pub fn tgate(q: Qubit) -> Qubit {
 // Two-qubit state is 4 amplitudes: a|00> + b|01> + c|10> + d|11>
 // CNOT: a|00> + b|01> + d|10> + c|11> (swap c,d)
 pub struct TwoQubit {
-    q00: Complex,
-    q01: Complex,
-    q10: Complex,
-    q11: Complex,
+    pub q00: Complex,
+    pub q01: Complex,
+    pub q10: Complex,
+    pub q11: Complex,
 }
 
 pub fn two_qubit_product(a: Qubit, b: Qubit) -> TwoQubit {

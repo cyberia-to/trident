@@ -24,6 +24,8 @@ pub enum Ty {
 /// A resolved struct type with field layout.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StructTy {
+    /// Defining module: part of nominal identity, preserved through imports.
+    pub module: String,
     pub name: String,
     pub fields: Vec<(String, Ty, bool)>, // (name, type, is_pub)
 }
@@ -93,7 +95,7 @@ impl Ty {
                 let parts: Vec<_> = elems.iter().map(|t| t.display()).collect();
                 format!("({})", parts.join(", "))
             }
-            Ty::Struct(s) => s.name.clone(),
+            Ty::Struct(s) => format!("{}.{}", s.module, s.name),
             Ty::Unit => "()".to_string(),
         }
     }

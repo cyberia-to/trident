@@ -350,7 +350,15 @@ impl TypeChecker {
                                 }
                                 // Validate each field in the pattern
                                 for spf in fields {
-                                    if let Some((field_ty, _)) = sty.field(&spf.field_name.node) {
+                                    if let Some((field_ty, public)) =
+                                        sty.field(&spf.field_name.node)
+                                    {
+                                        self.check_field_visibility(
+                                            &sty,
+                                            &spf.field_name.node,
+                                            public,
+                                            spf.field_name.span,
+                                        );
                                         match &spf.pattern.node {
                                             FieldPattern::Literal(Literal::Integer(_)) => {
                                                 if field_ty != Ty::Field && field_ty != Ty::U32 {
