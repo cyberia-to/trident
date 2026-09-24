@@ -15,6 +15,7 @@ mod privacy;
 mod resolve;
 pub(crate) mod specialize;
 mod stmt;
+mod struct_init;
 #[cfg(test)]
 mod tests;
 pub mod types;

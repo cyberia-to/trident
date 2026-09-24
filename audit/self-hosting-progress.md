@@ -315,3 +315,11 @@ and the executed C1 artifact byte for byte. All 64 formal audits are UNKNOWN.
 The old 64-group default arena boundary remains green. Next: repair duplicate
 struct initializers in the seed, then nominal structs/field reads and nested
 writes. Full SH3/SH4, C2/C3, six-platform acceptance and compiler proofs remain open.
+
+
+2026-09-24 continuation: seed struct literals reject repeated initializers at
+`ac2481d`, closing an exactly-once field-contract violation before the nominal
+struct increment. [Pinned evidence](self-hosting/unique-struct-initializers-validation.json)
+records 1020 / 122 / 380 passing owner tests, unchanged 133 fixture rows and 43
+manual baselines, nine installed CLI commands and unchanged complete C1 bytes.
+All 64 formal audits remain UNKNOWN; guest structs and full SH3/SH4 stay open.
