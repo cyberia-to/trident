@@ -12,6 +12,7 @@ use std.compiler.nox.expression
 use std.compiler.nox.expression_state
 use std.compiler.nox.blocks
 use std.compiler.nox.body_state
+use std.compiler.nox.headers
 
 #[pure]
 pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -32,15 +33,14 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
         s.token = lexer.next(source, name.end)
         if s.token.kind == as_u32(17) {
             s.token = lexer.next(source, s.token.end)
-            if syntax.either(s.token.kind == as_u32(12), s.token.kind == as_u32(20)) == false {
+            expected_type = headers.scalar(s.token)
+            if expected_type == ast.INVALID_TYPE {
                 let mut code: Field = 2
                 if s.token.kind == as_u32(1) { code = 6 }
                 s.error = ast.failed(s.token, code)
                 return s
             }
             has_expected = true
-            expected_type = ast.FIELD
-            if s.token.kind == as_u32(20) { expected_type = ast.BOOL }
             s.token = lexer.next(source, s.token.end)
         }
     } else {

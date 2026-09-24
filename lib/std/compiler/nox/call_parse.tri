@@ -10,15 +10,20 @@ use std.compiler.nox.lexer
 use std.compiler.nox.signatures
 use std.compiler.nox.call_frames
 use std.compiler.nox.expression_state
+use std.compiler.nox.builtins
 
 #[pure]
 pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state.State) -> expression_state.State {
     let mut s = input
     let callee = signatures.lookup(source, s.token, s.context.functions)
-    if callee == signatures.NONE { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    let mut builtin = builtins.NONE
+    if callee == signatures.NONE {
+        builtin = builtins.lookup(source, s.token)
+        if builtin == builtins.NONE { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    }
     if s.ops == s.capacity { s.error = syntax.error(7, opening.start, opening.end) return s }
     let frame = call_frames.Frame { callee, start: s.token.start, ops: s.ops, vals: s.vals,
-        count: as_u32(0), head: signatures.NONE }
+        count: as_u32(0), head: signatures.NONE, builtin }
     s.frames = noun.pair(call_frames.pack(frame), s.frames)
     s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.CALL_MARKER)), s.capacity)
     s.ops = syntax.inc(s.ops)
@@ -32,14 +37,25 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
 pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool) -> expression_state.State {
     let mut s = input
     let mut frame = call_frames.read(noun.head(s.frames))
-    let function = signatures.read(seq.get(s.context.functions, frame.callee))
+    let mut count = builtins.arity(frame.builtin)
+    let mut returns = builtins.returns(frame.builtin)
+    let mut params = as_u32(0)
+    if frame.builtin == builtins.NONE {
+        let function = signatures.read(seq.get(s.context.functions, frame.callee))
+        count = function.count
+        returns = function.returns
+        params = function.params
+    }
     if s.operand == false {
         if (s.vals == syntax.inc(frame.vals)) == false { s.error = syntax.error(2, frame.start, s.token.end) return s }
-        if frame.count == function.count { s.error = syntax.error(5, frame.start, s.token.end) return s }
+        if frame.count == count { s.error = syntax.error(5, frame.start, s.token.end) return s }
         let value = as_u32(noun.as_field(seq.get(s.values, frame.vals)))
         let argument = seq.get(s.nodes, value)
-        let parameter = seq.get(s.context.params, as_u32(as_field(function.params) + as_field(frame.count)))
-        let ty = noun.as_field(noun.tail(noun.tail(parameter)))
+        let mut ty = builtins.parameter(frame.builtin)
+        if frame.builtin == builtins.NONE {
+            let parameter = seq.get(s.context.params, as_u32(as_field(params) + as_field(frame.count)))
+            ty = noun.as_field(noun.tail(noun.tail(parameter)))
+        }
         if (ast.ty(argument) == ty) == false { s.error = ast.issue(5, argument) return s }
         if seq.len(s.arguments) == s.node_cap { s.error = syntax.error(7, frame.start, s.token.end) return s }
         let link = seq.len(s.arguments)
@@ -49,15 +65,18 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
         s.vals = frame.vals
     } else if closing == false { s.error = syntax.error(2, s.token.start, s.token.end) return s }
     if closing {
-        if (frame.count == function.count) == false { s.error = syntax.error(5, frame.start, s.token.end) return s }
+        if (frame.count == count) == false { s.error = syntax.error(5, frame.start, s.token.end) return s }
         if syntax.either(seq.len(s.nodes) == s.node_cap, s.vals == s.capacity) { s.error = syntax.error(7, frame.start, s.token.end) return s }
         let id = seq.len(s.nodes)
-        s.nodes = seq.push(s.nodes, ast.typed(ast.CALL, as_field(frame.callee), as_field(frame.head), function.returns, frame.start, s.token.end), s.node_cap)
+        let mut kind = ast.CALL
+        let mut target = frame.callee
+        if (frame.builtin == builtins.NONE) == false { kind = ast.BUILTIN target = frame.builtin }
+        s.nodes = seq.push(s.nodes, ast.typed(kind, as_field(target), as_field(frame.head), returns, frame.start, s.token.end), s.node_cap)
         s.values = ast.store(s.values, s.vals, noun.atom(as_field(id)), s.capacity)
         s.vals = syntax.inc(s.vals)
         s.ops = frame.ops
         s.frames = noun.tail(s.frames)
-        s.edges = noun.pair(noun.atom(as_field(frame.callee)), s.edges)
+        if frame.builtin == builtins.NONE { s.edges = noun.pair(noun.atom(as_field(frame.callee)), s.edges) }
         s.operand = false
     } else {
         s.frames = noun.pair(call_frames.pack(frame), noun.tail(s.frames))

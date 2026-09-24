@@ -1,0 +1,8 @@
+program native_compiler_scalar_type
+
+use std.compiler.nox.syntax
+use std.compiler.nox.headers
+
+fn main(kind: Field) -> Field {
+    headers.scalar(syntax.token(kind, as_u32(0), as_u32(0), 0))
+}

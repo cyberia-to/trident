@@ -10,6 +10,7 @@ use std.compiler.nox.ast
 use std.compiler.nox.emit
 use std.compiler.nox.formula
 use std.compiler.nox.call_codegen
+use std.compiler.nox.builtin_gen
 
 const HALF: Field = 9223372034707292161
 pub struct Compiled { pub formula: Noun, pub error: syntax.Error }
@@ -71,6 +72,11 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, conte
         let mut code = emit.literal(ast.left(node))
         let mut depth = as_u32(1)
         if kind == 1 { code = formula.axis(7 * shape.capacity + ast.left(node)) }
+        else if kind == ast.BUILTIN {
+            let called = builtin_gen.generate(as_u32(ast.left(node)), s.values, context.arguments, as_u32(ast.right(node)))
+            code = called.formula
+            depth = called.depth
+        }
         else if kind == ast.CALL {
             let called = call_codegen.generate(context, s.values, as_u32(ast.left(node)), as_u32(ast.right(node)))
             if called.failed { s.failed = true return s }

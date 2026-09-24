@@ -19,8 +19,10 @@ fn operator(s: expression_state.State) -> U32 {
 
 #[pure]
 fn precedence(kind: U32) -> U32 {
-    if kind == as_u32(4) { return as_u32(3) }
-    if kind == as_u32(3) { return as_u32(2) }
+    if kind == as_u32(30) { return as_u32(5) }
+    if kind == as_u32(4) { return as_u32(4) }
+    if kind == as_u32(3) { return as_u32(3) }
+    if kind == as_u32(29) { return as_u32(2) }
     if kind == as_u32(19) { return as_u32(1) }
     as_u32(0)
 }
@@ -45,8 +47,11 @@ fn reduce(input: expression_state.State) -> expression_state.State {
     let mut ty = ast.FIELD
     if op == as_u32(4) { kind = ast.MUL }
     if op == as_u32(19) { kind = ast.EQUAL ty = ast.BOOL }
+    let mut required = ast.FIELD
+    if op == as_u32(29) { kind = ast.LESS ty = ast.BOOL required = ast.UINT32 }
+    if op == as_u32(30) { kind = ast.BIT_AND ty = ast.UINT32 required = ast.UINT32 }
     if syntax.either((ast.ty(lhs) == ast.ty(rhs)) == false,
-        syntax.both((kind == ast.EQUAL) == false, (ast.ty(lhs) == ast.FIELD) == false)) {
+        syntax.both((kind == ast.EQUAL) == false, (ast.ty(lhs) == required) == false)) {
         s.error = syntax.error(5, ast.start(lhs), ast.end(rhs))
         return s
     }
@@ -134,7 +139,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
             s.error = ast.failed(s.token, 2)
             return s
         }
-    } else if syntax.either(syntax.either(kind == as_u32(3), kind == as_u32(4)), kind == as_u32(19)) {
+    } else if as_u32(0) < precedence(kind) {
         if (s.ops == as_u32(0)) == false {
             let top = operator(s)
             if syntax.both((top == as_u32(5)) == false, (precedence(top) < precedence(kind)) == false) { return reduce(s) }

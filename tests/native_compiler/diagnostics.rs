@@ -37,8 +37,11 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
         for expression in ["1!2", "1|2", "1/2", "1%2", "1-2"] {
             support::error(&support::source(expression), 1);
         }
-        for expression in ["1^2", "1/%2", "1&2", "1<2"] {
+        for expression in ["1^2", "1/%2"] {
             support::error(&support::source(expression), 6);
+        }
+        for expression in ["1&2", "1<2"] {
+            support::error(&support::source(expression), 5);
         }
         for word in [
             "program", "module", "use", "fn", "pub", "sec", "let", "mut", "const", "struct", "if",

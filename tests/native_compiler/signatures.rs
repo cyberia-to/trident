@@ -120,7 +120,11 @@ fn native_headers_reject_missing_entry_types_delimiters_and_table_growth() {
                 2,
             ),
             ("program sample fn main()->Field{7} fn f()->{}", 4096, 2),
-            ("program sample fn main()->Field{7} fn f(x:U32){}", 4096, 6),
+            (
+                "program sample fn main()->Field{7} fn f(x:XField){}",
+                4096,
+                6,
+            ),
             (
                 "program sample fn main()->Field{7} fn f()->Other{}",
                 4096,

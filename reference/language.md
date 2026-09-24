@@ -343,7 +343,7 @@ Point { x: 1, y: 2 }           // struct initialization
 
 ```trident
 let x: Field = 42                          // immutable
-let mut counter: U32 = 0                   // mutable
+let mut counter: U32 = as_u32(0)           // mutable
 let (hi, lo): (U32, U32) = split(x)       // tuple destructuring
 ```
 

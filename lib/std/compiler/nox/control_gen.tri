@@ -88,6 +88,8 @@ pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
     let marked = coverage.check(s)
     if (marked.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: marked.error } }
     let locals = seq.len(s.bindings)
-    let built = reusable(s, marked.flags, locals, call_codegen.empty(), depth_cap)
+    let mut context = call_codegen.empty()
+    context.arguments = s.arguments
+    let built = reusable(s, marked.flags, locals, context, depth_cap)
     standalone(built, locals, depth_cap)
 }

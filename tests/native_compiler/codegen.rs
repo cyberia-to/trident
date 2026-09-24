@@ -21,15 +21,22 @@ fn generate(cap: u64) -> Result<Vec<u8>, u32> {
 }
 
 pub(super) fn generate_from(cap: u64, bytes: &[u8]) -> Result<Vec<u8>, u32> {
-    let mut arena = Reduction::<{ 1 << 18 }>::new();
-    assert!(arena.limit_allocations(196608));
+    generate_with_input::<{ 1 << 18 }>(bytes, |arena| support::data::atom(arena, cap).unwrap())
+}
+
+pub(super) fn generate_with_input<const N: usize>(
+    bytes: &[u8],
+    input: impl FnOnce(&mut Reduction<N>) -> nox::Order,
+) -> Result<Vec<u8>, u32> {
+    let mut arena = Reduction::<N>::try_new_boxed().unwrap();
+    assert!(arena.limit_allocations((N / 4 * 3) as u32));
     let compiler = artifact::decode(&mut arena, bytes, LIMITS).unwrap();
     let mut fields = arena.tail(compiler).unwrap();
     for _ in 0..3 {
         fields = arena.tail(fields).unwrap();
     }
     let formula = arena.head(fields).unwrap();
-    let input = support::data::atom(&mut arena, cap).unwrap();
+    let input = input(&mut arena);
     let run = sequential::reduce(
         &mut arena,
         input,
