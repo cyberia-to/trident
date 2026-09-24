@@ -1,0 +1,43 @@
+program native_record_edit
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.ast
+use std.compiler.nox.types
+use std.compiler.nox.flow
+use std.compiler.nox.formula
+use std.compiler.nox.emit
+use std.compiler.nox.record_edit_gen
+
+// Isolate code emission from source/descriptor admission. Input is a validated
+// Seq of field indices0..31. The emitted program consumes [record replacement]
+// and returns [old-record new-record]. Types are opaque to this emitter test;
+// source tests separately establish nominal path and mutable-root checking.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let path = seq.from_noun(input, as_u32(64), as_u32(127))
+    assert(as_u32(0) < seq.len(path))
+    let cap = as_u32(66)
+    let zero = as_u32(0)
+    let mut nodes = seq.push(seq.empty(), ast.typed(ast.LOCAL, 0, 0, noun.atom(types.NOUN), zero, zero), cap)
+    let mut values = seq.push(seq.empty(), noun.pair(noun.atom(1), flow.axis(2).formula), cap)
+    let mut last = zero
+    for level in 0..64 {
+        if level < seq.len(path) {
+            let index = as_u32(noun.as_field(seq.get(path, level)))
+            assert(index < as_u32(32))
+            let mut axis: Field = 2
+            for bit in 0..32 { if bit < index { axis = axis * 2 + 2 } }
+            let code = flow.compose(formula.value(values, last), flow.axis(axis))
+            nodes = seq.push(nodes, ast.typed(ast.PROJECT, as_field(last), axis, noun.atom(types.NOUN), zero, zero), cap)
+            values = seq.push(values, noun.pair(noun.atom(as_field(code.depth)), code.formula), cap)
+            last = as_u32(as_field(last) + 1)
+        }
+    }
+    let rhs = seq.len(values)
+    values = seq.push(values, noun.pair(noun.atom(1), flow.axis(3).formula), cap)
+    let edited = record_edit_gen.generate(nodes, values, last, rhs)
+    let result = flow.cons(flow.axis(2), edited)
+    noun.pair(noun.atom(0), emit.artifact(result.formula))
+}

@@ -160,3 +160,11 @@ mod records;
 
 #[path = "native_compiler/record_bounds.rs"]
 mod record_bounds;
+
+#[path = "native_compiler/record_write_bounds.rs"]
+mod record_write_bounds;
+#[path = "native_compiler/record_writes.rs"]
+mod record_writes;
+
+#[path = "native_compiler/record_edit_component.rs"]
+mod record_edit_component;

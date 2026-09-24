@@ -1,0 +1,49 @@
+module std.compiler.nox.record_edit_gen
+
+use vm.core.convert
+use vm.core.field
+use std.nox.seq
+use std.compiler.nox.ast
+use std.compiler.nox.formula
+
+const HALF: Field = 9223372034707292161
+
+// Rebuild one record using relative axes. The unchanged suffix stays whole;
+// each preceding field is read from the original parent, preserving siblings.
+#[pure]
+fn rebuild(parent: formula.Value, selected: Field, replacement: formula.Value) -> formula.Value {
+    // Every sibling has the same depth: compose(parent, axis). Compute it
+    // once; each additional cons then adds exactly two levels to the result.
+    let sibling_depth = as_u32(as_field(formula.maximum(parent.depth, as_u32(2))) + 2)
+    let suffix = formula.compose(parent.formula, formula.axis(selected + 1))
+    let mut result = formula.Value {
+        formula: formula.cons(replacement.formula, suffix),
+        depth: as_u32(as_field(formula.maximum(replacement.depth, sibling_depth)) + 2)
+    }
+    let mut axis = selected
+    for step in 0..32 {
+        if axis == 2 { return result }
+        axis = field.sub(axis, 2) * HALF
+        result.formula = formula.cons(formula.compose(parent.formula, formula.axis(axis)), result.formula)
+        result.depth = as_u32(as_field(result.depth) + 2)
+    }
+    result
+}
+
+// The checker admits only PROJECT chains ending at a mutable LOCAL. Complete
+// axes never concatenate: each field stays below 2^33, at any nesting depth.
+// Parent formulas only read the old frame; the RHS occurs once in the result.
+#[pure]
+#[requires(lhs < seq.len(nodes))]
+#[requires(rhs < seq.len(values))]
+pub fn generate(nodes: seq.Seq, values: seq.Seq, lhs: U32, rhs: U32) -> formula.Value {
+    let mut current = seq.get(nodes, lhs)
+    let mut result = formula.value(values, rhs)
+    for step in 0..65 {
+        if ast.kind(current) == ast.LOCAL { return result }
+        let parent = as_u32(ast.left(current))
+        result = rebuild(formula.value(values, parent), ast.right(current), result)
+        current = seq.get(nodes, parent)
+    }
+    result
+}

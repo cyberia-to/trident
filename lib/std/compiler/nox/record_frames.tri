@@ -2,27 +2,47 @@ module std.compiler.nox.record_frames
 
 use vm.nox.noun
 use vm.core.convert
-use std.nox.seq
+use std.compiler.nox.signatures
+use std.compiler.nox.nominal
 
-pub struct Frame { pub ty: Noun, pub fields: seq.Seq, pub values: seq.Seq,
-    pub start: U32, pub base: U32, pub count: U32, pub pending: U32 }
+// Owned continuation: fields are an immutable declaration-order list; values
+// are a canonical tree with arity leaves. Zero is empty, AST IDs store id+1.
+pub struct Frame { pub ty: Noun, pub fields: Noun, pub values: Noun, pub arity: U32,
+    pub start: U32, pub base: U32, pub count: U32, pub pending: U32, pub expected: Noun }
+pub struct Selected { pub ty: Noun, pub index: U32 }
+
+#[pure]
+pub fn find(f: Frame, wanted: Noun) -> Selected {
+    let mut cursor = f.fields
+    for index in 0..32 {
+        if index == f.arity { return Selected { ty: noun.atom(0), index: signatures.NONE } }
+        let member = noun.head(cursor)
+        if noun.eq(nominal.field_name(member), wanted) { return Selected { ty: nominal.field_type(member), index } }
+        cursor = noun.tail(cursor)
+    }
+    Selected { ty: noun.atom(0), index: signatures.NONE }
+}
 
 #[pure]
 pub fn pack(f: Frame) -> Noun {
     let position = noun.pair(noun.atom(as_field(f.start)), noun.atom(as_field(f.base)))
     let progress = noun.pair(noun.atom(as_field(f.count)), noun.atom(as_field(f.pending)))
-    let data = noun.pair(f.ty, noun.pair(seq.to_noun(f.fields), seq.to_noun(f.values)))
-    noun.pair(data, noun.pair(position, progress))
+    let data = noun.pair(f.ty, noun.pair(f.fields, f.values))
+    let layout = noun.pair(noun.atom(as_field(f.arity)), f.expected)
+    noun.pair(data, noun.pair(position, noun.pair(progress, layout)))
 }
 
+// Only pack/enter produce these frames. Public Seq admission is performed once
+// before constructing the owned field list, never bypassed by a forged handle.
 #[pure]
 pub fn read(value: Noun) -> Frame {
     let data = noun.head(value)
     let meta = noun.tail(value)
     let position = noun.head(meta)
-    let progress = noun.tail(meta)
-    Frame { ty: noun.head(data), fields: seq.from_noun(noun.head(noun.tail(data)), as_u32(32), as_u32(63)),
-        values: seq.from_noun(noun.tail(noun.tail(data)), as_u32(32), as_u32(63)),
+    let progress = noun.head(noun.tail(meta))
+    let layout = noun.tail(noun.tail(meta))
+    Frame { ty: noun.head(data), fields: noun.head(noun.tail(data)), values: noun.tail(noun.tail(data)),
+        arity: as_u32(noun.as_field(noun.head(layout))), expected: noun.tail(layout),
         start: as_u32(noun.as_field(noun.head(position))), base: as_u32(noun.as_field(noun.tail(position))),
         count: as_u32(noun.as_field(noun.head(progress))), pending: as_u32(noun.as_field(noun.tail(progress))) }
 }

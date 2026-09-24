@@ -4,6 +4,8 @@ use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
 use std.nox.seq
+use std.nox.tree
+use vm.core.field
 use std.compiler.nox.syntax
 use std.compiler.nox.ast
 use std.compiler.nox.lexer
@@ -39,10 +41,11 @@ fn member(source: bytes.Bytes, input: expression_state.State, input_frame: recor
         return s
     }
     if (s.token.kind == as_u32(1)) == false { s.error = ast.failed(s.token, 2) return s }
-    let selected = nominal.lookup(f.ty, s.context.types.owner, type_registry.name(source, s.token))
-    if syntax.either(selected.exists == false, selected.visible == false) { s.error = ast.failed(s.token, 5) return s }
-    if (noun.as_field(seq.get(f.values, selected.index)) == as_field(signatures.NONE)) == false { s.error = ast.failed(s.token, 5) return s }
+    let selected = record_frames.find(f, bytes.to_noun(type_registry.name(source, s.token)))
+    if selected.index == signatures.NONE { s.error = ast.failed(s.token, 5) return s }
+    if noun.eq(tree.get(f.values, f.arity, selected.index), noun.atom(0)) == false { s.error = ast.failed(s.token, 5) return s }
     f.pending = selected.index
+    f.expected = selected.ty
     let following = lexer.next(source, s.token.end)
     if following.kind == as_u32(17) { s.token = lexer.next(source, following.end) }
     else if syntax.either(following.kind == as_u32(26), following.kind == as_u32(8)) == false {
@@ -59,17 +62,20 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
     if found.exists == false { s.error = ast.failed(s.token, 5) return s }
     if s.ops == s.capacity { s.error = ast.failed(opening, 7) return s }
     let fields = nominal.fields(found.ty)
-    let mut values = seq.empty()
+    let arity = seq.len(fields)
+    let mut members = noun.atom(0)
+    let values = tree.empty(tree.shape(arity).height)
     for index in 0..32 {
-        if index < seq.len(fields) {
-            let field = seq.get(fields, index)
+        if index < arity {
+            let position = as_u32(field.sub(as_field(arity), as_field(index) + 1))
+            let field = seq.get(fields, position)
             if syntax.both(nominal.field_public(field) == false, noun.eq(nominal.owner(found.ty), bytes.to_noun(s.context.types.owner)) == false) {
                 s.error = ast.failed(s.token, 5) return s
             }
-            values = seq.push(values, noun.atom(as_field(signatures.NONE)), as_u32(32))
+            members = noun.pair(field, members)
         }
     }
-    let f = record_frames.Frame { ty: found.ty, fields, values, start: s.token.start, base: s.vals, count: as_u32(0), pending: signatures.NONE }
+    let f = record_frames.Frame { ty: found.ty, fields: members, values, arity, expected: noun.atom(0), start: s.token.start, base: s.vals, count: as_u32(0), pending: signatures.NONE }
     s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.RECORD_MARKER)), s.capacity)
     s.ops = syntax.inc(s.ops)
     s.frames = noun.pair(noun.atom(0), s.frames)
@@ -85,13 +91,13 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
         if (s.vals == syntax.inc(f.base)) == false { s.error = ast.failed(s.token, 2) return s }
         let id = as_u32(noun.as_field(seq.get(s.values, f.base)))
         let value = seq.get(s.nodes, id)
-        if (noun.eq(ast.ty(value), nominal.field_type(seq.get(f.fields, f.pending)))) == false { s.error = ast.issue(5, value) return s }
-        f.values = seq.set(f.values, f.pending, noun.atom(as_field(id)))
+        if (noun.eq(ast.ty(value), f.expected)) == false { s.error = ast.issue(5, value) return s }
+        f.values = tree.set(f.values, f.arity, f.pending, noun.atom(as_field(id) + 1))
         f.count = syntax.inc(f.count)
         s.vals = f.base
     } else if syntax.either(closing == false, (f.pending == signatures.NONE) == false) { s.error = ast.failed(s.token, 2) return s }
     if closing {
-        if (f.count == seq.len(f.fields)) == false { s.error = syntax.error(5, f.start, s.token.end) return s }
+        if (f.count == f.arity) == false { s.error = syntax.error(5, f.start, s.token.end) return s }
         if syntax.either(seq.len(s.nodes) == s.node_cap, s.vals == s.capacity) { s.error = ast.failed(s.token, 7) return s }
         let mut head = signatures.NONE
         // Formula links follow declaration order, independent of source labels.
@@ -99,7 +105,7 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
             if index < f.count {
                 if seq.len(s.arguments) == s.node_cap { s.error = ast.failed(s.token, 7) return s }
                 let link = seq.len(s.arguments)
-                s.arguments = seq.push(s.arguments, noun.pair(seq.get(f.values, index), noun.atom(as_field(head))), s.node_cap)
+                s.arguments = seq.push(s.arguments, noun.pair(noun.atom(field.sub(noun.as_field(tree.get(f.values, f.arity, index)), 1)), noun.atom(as_field(head))), s.node_cap)
                 head = link
             }
         }
