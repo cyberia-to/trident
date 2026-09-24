@@ -250,14 +250,15 @@ def main():
             ("scalar-comparison-type", source("if 1<2{7}else{9}"), 5),
             ("scalar-equality-type", source("if as_u32(7)==7{7}else{9}"), 5),
             ("scalar-unknown-spelling", source("as_fiele(as_u32(7))"), 5),
-            ("scalar-qualified-name", source("convert.as_u32(7)"), 6),
+            ("scalar-qualified-unbound", source("convert.as_u32(7)"), 5),
+            ("scalar-qualified-name", source("let convert=7 convert.as_u32(7)"), 6),
         ])
         for name, content, code in negatives:
             directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith("scalar-") else None)
             report = execute(job, directory / "result.dag", emit="result")
             result = report["execution"]["compiler_job"]
             assert result["status"] == "compile_error" and len(result["diagnostics"]) == 1
-            assert result["diagnostics"][0]["code"] == code
+            assert result["diagnostics"][0]["code"] == code, (name, code, result["diagnostics"])
             protected = directory / "protected.dag"
             protected.write_bytes(prior_program)
             execute(job, protected, expected=1, force=True)
