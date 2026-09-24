@@ -332,3 +332,15 @@ manual baselines, 614 general CLI commands plus 52 component commands, and all
 105 prior positive ART1 identities unchanged. All 67 formal audits are UNKNOWN.
 Source struct declarations/constructors/reads follow; full SH3/SH4, C2/C3 and
 six-platform acceptance remain open. Noun temperature stays 128K.
+
+
+2026-09-24 continuation: source nominal declarations, constructors and field reads
+accepted at `60ea10e`. [Pinned evidence](self-hosting/native-compiler-records-validation.json)
+records 1034 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43
+manual baselines, 712 installed CLI commands / 240 observations, and all 105
+previous positive ART1 identities unchanged. Rebuilt binaries and complete C1
+are byte-identical to those tested. All 71 formal audits remain UNKNOWN.
+The valid combined long-name workload exhausts 786432 arena nodes and stays
+explicitly open under SH4. Next: persistent static field writes, then arrays
+and imports. Full SH3/SH4, C2/C3, six platforms and native proofs remain open.
+Noun temperature stays 128K.
