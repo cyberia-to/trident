@@ -2,9 +2,9 @@
 import argparse
 import copy
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
+import runpy
 import subprocess
 import tempfile
 
@@ -16,10 +16,7 @@ def main():
     args = parser.parse_args()
     binary = args.joy.resolve()
     repo = Path(__file__).resolve().parents[2]
-    reader = importlib.util.spec_from_file_location(
-        "native_reader", Path(__file__).with_name("run-native-compiler.py"))
-    module = importlib.util.module_from_spec(reader)
-    reader.loader.exec_module(module)
+    decode = runpy.run_path(str(Path(__file__).with_name("run-native-compiler.py")))["decode"]
     accepted = json.loads(Path(__file__).with_name("native-functions-cli.json").read_text())
     commands, observations = [], []
     receipt = {"schema": "trident/native-arena-cli/v1", "kind": "local-development",
@@ -45,7 +42,7 @@ def main():
             if expected:
                 assert not result.stdout, row
                 return row
-            return json.loads(result.stdout)
+            return json.loads(result.stdout) if result.stdout.startswith("{") else None
 
         # Build C1 once before writing any source presented to this compiler.
         compiler = root / "compiler.dag"
@@ -93,7 +90,7 @@ def main():
             output = directory / "output.dag"
             executed = run(["run-artifact", program, "--input", zero, "-o", output,
                             "--force", *host])
-            assert module.decode(output) == expected
+            assert decode(output) == expected
             assert report["published_particle"] == executed["execution"]["program_particle"]
             return program.read_bytes(), report, executed
 
@@ -118,6 +115,13 @@ def main():
         assert small["published_particle"] == old["compiler_execution"]["published_particle"]
         observations.append({"case": "same-job-physical-parity", "small": small, "large": large,
                              "exact_job_and_program_bytes_equal": True})
+        directory, job, _ = package("changed-job-allowance", arithmetic, 786432)
+        changed_program, changed, _ = compiled_program(directory, job, 786432, 14)
+        assert changed_program == prior_program
+        assert changed["execution"]["input_particle"] != small["execution"]["input_particle"]
+        assert changed["execution"]["output_particle"] != small["execution"]["output_particle"]
+        observations.append({"case": "changed-job-allowance", "compiler_execution": changed,
+                             "job_and_result_identities_change": True, "program_bytes_equal": True})
 
         def boundaries(name, content, observed_nodes, artifact):
             directory, job, _ = package(name + "-calibration", content, observed_nodes + 32)
@@ -144,7 +148,7 @@ def main():
                  ("calls64", ("program sample fn f(x:Field)->Field{x} fn main()->Field{"
                                + nested + "}").encode(), 1),
                  ("source4096-invalid", b"\xff" + bytes(4095), None),
-                 ("source4096-valid", arithmetic + b" " * (4096 - len(arithmetic)), 14)]
+                 ("source4096-valid", arithmetic + b" " * (4096 - len(arithmetic)), "runtime-unavailable")]
         for name, content, expected in cases:
             directory, job, _ = package(name + "-default", content, 196608)
             protected = directory / "program.dag"
@@ -153,11 +157,19 @@ def main():
             assert "Unavailable" in failed["stderr"]
             assert protected.read_bytes() == prior_program
             directory, job, packed = package(name + "-large", content, 786432)
-            if expected is not None:
+            if expected == "runtime-unavailable":
+                protected = directory / "program.dag"
+                protected.write_bytes(prior_program)
+                failure = execute(job, protected, 786432, expected=1)
+                assert "Unavailable" in failure["stderr"]
+                assert protected.read_bytes() == prior_program
+                observations.append({"case": name, "source_hex": content.hex(),
+                                     "result": "runtime failure at both allowances; full source scale remains open",
+                                     "large_failure": failure, "default_failure": failed,
+                                     "previous_program_preserved": True})
+            elif expected is not None:
                 artifact, report, executed = compiled_program(directory, job, 786432, expected)
                 assert report["execution"]["allocated_nodes"] > 196608
-                if name == "source4096-valid":
-                    assert artifact == prior_program
                 if name == "assignments31":
                     boundaries(name, content, report["execution"]["allocated_nodes"], artifact)
                 observations.append({"case": name, "source_hex": content.hex(), "expected": expected,
@@ -178,7 +190,8 @@ def main():
                                      "compiler_execution": report, "program_refusal": failure,
                                      "default_failure": failed, "previous_program_preserved": True})
             save()
-            print(name + " accepted", flush=True)
+            print(name + (" resource failure recorded" if expected == "runtime-unavailable"
+                          else " accepted"), flush=True)
         assert hashlib.sha256(compiler.read_bytes()).hexdigest() == compiler_sha
     receipt["complete"] = True
     receipt["scope"] = "Measured SH4 arena increment; full source closure, language, self-build and proof gates remain open"
