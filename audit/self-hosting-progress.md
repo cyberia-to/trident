@@ -113,7 +113,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [execution evidence](self-hosting/native-compiler-loops.md).
 - [x] SH3 native Noun values and structured raw entry;
   [execution evidence](self-hosting/native-compiler-nouns.md).
-- [ ] SH3 canonical aggregate types, Digest and tuples;
+- [x] SH3 canonical type descriptors through AST, bindings, signatures and bodies;
+  [execution and boundary evidence](self-hosting/native-compiler-types.md).
+- [ ] SH3 source Digest and tuples;
   [next slice](../.claude/plans/native-compiler-aggregate-types.md).
 - [ ] SH3 remaining native language: aggregates, imports and complete
   compiler closure coverage.
@@ -284,3 +286,9 @@ refined at `c5d1901f5be44caf097cc33e7e09132538ce7fa7`.
 checks complete nested output, runtime projection traps and exact resource bounds.
 Continue with canonical aggregate descriptors, Digest and tuples. Full SH3/SH4,
 C2/C3 and platform acceptance remain open.
+
+2026-09-24 continuation: canonical aggregate descriptor foundation accepted at
+Trident `adbb00e`. [Pinned validation](self-hosting/native-compiler-types.md)
+checks logical sharing/depth/arity bounds and retains every earlier positive
+ART1 identity. Continue with source Digest identity/indexing and tuples; full
+SH3/SH4 and C2/C3 remain open.
