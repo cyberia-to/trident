@@ -9,13 +9,24 @@ use crate::span::Spanned;
 
 use super::Parser;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ExprContext {
+    Complete,
+    BeforeBlock,
+}
+
 impl Parser {
     pub(super) fn parse_expr(&mut self) -> Spanned<Expr> {
-        self.parse_expr_bp(0)
+        self.parse_expr_bp(0, ExprContext::Complete)
     }
 
-    fn parse_expr_bp(&mut self, min_bp: u8) -> Spanned<Expr> {
-        let mut lhs = self.parse_primary();
+    /// The next undelimited brace belongs to the control-flow body.
+    pub(super) fn parse_expr_before_block(&mut self) -> Spanned<Expr> {
+        self.parse_expr_bp(0, ExprContext::BeforeBlock)
+    }
+
+    fn parse_expr_bp(&mut self, min_bp: u8, context: ExprContext) -> Spanned<Expr> {
+        let mut lhs = self.parse_primary(context);
 
         // Apply postfix operators: .field and [index]
         lhs = self.parse_postfix(lhs);
@@ -39,7 +50,7 @@ impl Parser {
             }
 
             self.advance(); // consume operator
-            let rhs = self.parse_expr_bp(r_bp);
+            let rhs = self.parse_expr_bp(r_bp, context);
             let span = lhs.span.merge(rhs.span);
             lhs = Spanned::new(
                 Expr::BinOp {
@@ -87,7 +98,7 @@ impl Parser {
         expr
     }
 
-    fn parse_primary(&mut self) -> Spanned<Expr> {
+    fn parse_primary(&mut self, context: ExprContext) -> Spanned<Expr> {
         let start = self.current_span();
 
         match self.peek().clone() {
@@ -159,7 +170,10 @@ impl Parser {
                         },
                         span,
                     )
-                } else if self.at(&Lexeme::LBrace) && !path.0.is_empty() {
+                } else if context == ExprContext::Complete
+                    && self.at(&Lexeme::LBrace)
+                    && !path.0.is_empty()
+                {
                     // Could be struct init — but only if it looks like one
                     let empty = String::new();
                     let first_char = path

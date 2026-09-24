@@ -159,7 +159,7 @@ impl Parser {
     fn parse_if_stmt(&mut self) -> Spanned<Stmt> {
         let start = self.current_span();
         self.expect(&Lexeme::If);
-        let cond = self.parse_expr();
+        let cond = self.parse_expr_before_block();
         let then_block = self.parse_block();
         let else_block = if self.eat(&Lexeme::Else) {
             if self.at(&Lexeme::If) {
@@ -204,7 +204,7 @@ impl Parser {
         self.expect(&Lexeme::In);
         let range_start = self.parse_expr();
         self.expect(&Lexeme::DotDot);
-        let range_end = self.parse_expr();
+        let range_end = self.parse_expr_before_block();
 
         let bound = if self.eat(&Lexeme::Bounded) {
             Some(self.expect_integer())
@@ -263,7 +263,7 @@ impl Parser {
     fn parse_match_stmt(&mut self) -> Spanned<Stmt> {
         let start = self.current_span();
         self.expect(&Lexeme::Match);
-        let expr = self.parse_expr();
+        let expr = self.parse_expr_before_block();
         self.expect(&Lexeme::LBrace);
 
         let mut arms = Vec::new();
