@@ -1,0 +1,59 @@
+module std.nox.seq
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.tree
+
+const TAG: Field = 1397051697
+const ZERO: U32 = 0
+
+// Only this module can construct a handle. External trees enter via from_noun.
+pub struct Seq { length: U32, root: Noun }
+
+#[pure]
+#[ensures(len(result) == ZERO)]
+pub fn empty() -> Seq { Seq { length: ZERO, root: noun.atom(0) } }
+
+#[pure]
+#[ensures(result == s.length)]
+pub fn len(s: Seq) -> U32 { s.length }
+
+#[pure]
+#[requires(index < len(s))]
+pub fn get(s: Seq, index: U32) -> Noun { tree.get(s.root, s.length, index) }
+
+#[pure]
+#[requires(index < len(s))]
+#[ensures(len(result) == len(s))]
+#[ensures(noun.eq(get(result, index), value))]
+pub fn set(s: Seq, index: U32, value: Noun) -> Seq {
+    Seq { length: s.length, root: tree.set(s.root, s.length, index, value) }
+}
+
+#[pure]
+#[requires(len(s) < max_length)]
+#[ensures(convert.as_field(len(result)) == convert.as_field(len(s)) + 1)]
+pub fn push(s: Seq, value: Noun, max_length: U32) -> Seq {
+    assert(s.length < max_length)
+    let root = tree.push(s.root, s.length, value, max_length)
+    Seq { length: convert.as_u32(convert.as_field(s.length) + 1), root }
+}
+
+#[pure]
+#[ensures(noun.as_field(noun.head(result)) == TAG)]
+pub fn to_noun(s: Seq) -> Noun {
+    noun.pair(noun.atom(TAG), noun.pair(noun.atom(convert.as_field(s.length)), s.root))
+}
+
+#[pure]
+#[ensures((max_length < len(result)) == false)]
+#[ensures(noun.eq(to_noun(result), value))]
+pub fn from_noun(value: Noun, max_length: U32, max_visits: U32) -> Seq {
+    assert_eq(noun.as_field(noun.head(value)), TAG)
+    let body = noun.tail(value)
+    let length = convert.as_u32(noun.as_field(noun.head(body)))
+    assert((max_length < length) == false)
+    let root = noun.tail(body)
+    let remaining = tree.validate(root, length, max_visits)
+    Seq { length, root }
+}

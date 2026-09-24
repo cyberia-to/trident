@@ -1,0 +1,144 @@
+module std.nox.bytes
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.tree
+
+const TAG: Field = 1113150513
+const ZERO: U32 = 0
+const THREE: U32 = 3
+const BYTE_LIMIT: U32 = 256
+const INV4: Field = 13835058052060938241
+
+// The root contains packed U32 words, with no embedded Seq wrapper.
+pub struct Bytes { length: U32, root: Noun }
+
+#[pure]
+#[ensures(len(result) == ZERO)]
+pub fn empty() -> Bytes { Bytes { length: ZERO, root: noun.atom(0) } }
+
+#[pure]
+#[ensures(result == b.length)]
+pub fn len(b: Bytes) -> U32 { b.length }
+
+#[pure]
+fn quotient(value: U32) -> U32 {
+    let remainder = value & THREE
+    convert.as_u32(field.sub(convert.as_field(value), convert.as_field(remainder)) * INV4)
+}
+
+#[pure]
+fn word_count(length: U32) -> U32 {
+    let whole = quotient(length)
+    if (length & THREE) == ZERO { return whole }
+    convert.as_u32(convert.as_field(whole) + 1)
+}
+
+#[pure]
+#[requires(position < convert.as_u32(4))]
+fn scale(position: U32) -> Field {
+    let powers = [1, 256, 65536, 16777216]
+    powers[position]
+}
+
+#[pure]
+#[requires(position < convert.as_u32(4))]
+fn inverse_scale(position: U32) -> Field {
+    let inverses = [1, 18374686475393433601, 18446462594437939201, 18446742969902956801]
+    inverses[position]
+}
+
+#[pure]
+#[requires(index < len(b))]
+#[ensures(result < BYTE_LIMIT)]
+pub fn get(b: Bytes, index: U32) -> U32 {
+    assert(index < b.length)
+    let word = convert.as_u32(noun.as_field(tree.get(b.root, word_count(b.length), quotient(index))))
+    let position = index & THREE
+    let mask = convert.as_u32(255 * scale(position))
+    convert.as_u32(convert.as_field(word & mask) * inverse_scale(position))
+}
+
+#[pure]
+#[requires(index < len(b))]
+#[requires(value < BYTE_LIMIT)]
+#[ensures(len(result) == len(b))]
+#[ensures(get(result, index) == value)]
+pub fn set(b: Bytes, index: U32, value: U32) -> Bytes {
+    assert(index < b.length)
+    assert(value < BYTE_LIMIT)
+    let words = word_count(b.length)
+    let at = quotient(index)
+    let word = convert.as_u32(noun.as_field(tree.get(b.root, words, at)))
+    let factor = scale(index & THREE)
+    let mask = convert.as_u32(255 * factor)
+    let next = field.sub(convert.as_field(word), convert.as_field(word & mask)) + convert.as_field(value) * factor
+    Bytes { length: b.length, root: tree.set(b.root, words, at, noun.atom(next)) }
+}
+
+#[pure]
+#[requires(len(b) < max_length)]
+#[requires(value < BYTE_LIMIT)]
+#[ensures(convert.as_field(len(result)) == convert.as_field(len(b)) + 1)]
+pub fn push(b: Bytes, value: U32, max_length: U32) -> Bytes {
+    assert(b.length < max_length)
+    assert(value < BYTE_LIMIT)
+    let length = convert.as_u32(convert.as_field(b.length) + 1)
+    if (b.length & THREE) == ZERO {
+        let root = tree.push(b.root, word_count(b.length), noun.atom(convert.as_field(value)), word_count(max_length))
+        return Bytes { length, root }
+    }
+    // Existing high bytes are zero; exposing the next one preserves validity.
+    set(Bytes { length, root: b.root }, b.length, value)
+}
+
+#[pure]
+#[ensures(noun.as_field(noun.head(result)) == TAG)]
+pub fn to_noun(b: Bytes) -> Noun {
+    noun.pair(noun.atom(TAG), noun.pair(noun.atom(convert.as_field(b.length)), b.root))
+}
+
+// Payload reads share the shape validator's allowance and charge before get.
+#[pure]
+fn validate_words_chunk(root: Noun, length: U32, words: U32, start: U32, visits: U32, cost: U32) -> (U32, U32) {
+    let mut index = start
+    let mut remaining = visits
+    for step in 0..128 {
+        if index == words { return (index, remaining) }
+        assert((remaining < cost) == false)
+        remaining = convert.as_u32(field.sub(convert.as_field(remaining), convert.as_field(cost)))
+        let word = convert.as_u32(noun.as_field(tree.get(root, words, index)))
+        index = convert.as_u32(convert.as_field(index) + 1)
+        if index == words {
+            let used = length & THREE
+            if (used == ZERO) == false {
+                assert(word < convert.as_u32(scale(used)))
+            }
+        }
+    }
+    (index, remaining)
+}
+
+#[pure]
+#[ensures((max_length < len(result)) == false)]
+#[ensures(noun.eq(to_noun(result), value))]
+pub fn from_noun(value: Noun, max_length: U32, max_visits: U32) -> Bytes {
+    assert_eq(noun.as_field(noun.head(value)), TAG)
+    let body = noun.tail(value)
+    let length = convert.as_u32(noun.as_field(noun.head(body)))
+    assert((max_length < length) == false)
+    let root = noun.tail(body)
+    let words = word_count(length)
+    let mut remaining = tree.validate(root, words, max_visits)
+    let geometry = tree.shape(words)
+    let cost = convert.as_u32(convert.as_field(geometry.height) + 1)
+    let mut index = ZERO
+    // At most 2^30 packed words; chunks release the evaluator's loop frames.
+    for chunk in 0..8388608 {
+        (index, remaining) = validate_words_chunk(root, length, words, index, remaining, cost)
+        if index == words { return Bytes { length, root } }
+    }
+    assert_eq(0, 1)
+    empty()
+}

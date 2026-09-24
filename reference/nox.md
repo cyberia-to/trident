@@ -102,7 +102,9 @@ results and reduction bills with the bundle and cost APIs.
 [SH0.2](self-hosting-data.md) specifies first-class Noun values, canonical
 persistent sequences and four-byte U32 packing for exact source bytes. This
 extension now implements the Noun type, seven `vm.nox.noun` intrinsics and
-raw ART1 entry/emission. The limits and flat-word ABI above describe the
+raw ART1 entry/emission, reusable control flow, and source libraries
+`std.nox.tree`, `std.nox.seq`, `std.nox.bytes`. Seq/Bytes validate canonical
+trees before returning private-field handles. The limits and flat-word ABI above describe the
 legacy adapter; Noun entries require `joy build --emit artifact`.
 Host arena IDs must never stand in for Noun values.
 

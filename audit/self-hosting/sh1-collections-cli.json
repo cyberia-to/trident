@@ -1,0 +1,401 @@
+{
+  "fixture_generator_command": "cargo run --locked --example selfhost_collections -- --output-dir /tmp/trident-04-collection-fixtures",
+  "joy_binary_sha256": "111d76d30f12014fe7451eba30050213be8d74e145f350f26425e070561b5129",
+  "fixtures": {
+    "bytes_visits": 1441,
+    "fixtures": [
+      {
+        "name": "bytes-517",
+        "should_succeed": true
+      },
+      {
+        "name": "bytes-visits-short",
+        "should_succeed": false
+      },
+      {
+        "name": "bytes-bad-padding",
+        "should_succeed": false
+      },
+      {
+        "name": "seq-129",
+        "should_succeed": true
+      }
+    ]
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/tmp/trident-04-collection-fixtures/bytes-517/main.tri",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-517/program.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-04-collection-fixtures/bytes-517/program.dag\",\"artifact_bytes\":404832,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"byte_probe\",\"program_particle\":\"8e66838a6e18938ee8f55ea6129cf2c5c1cab672356f0b463ddc139d46b93325\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "artifact_bytes": 404832,
+      "artifact_sha256": "3479086dfdd6268c2cae4a3260a917a6d31edf880f10539c7dad402fc4188605"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-517/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-517/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-517/output.dag",
+        "--force",
+        "--budget",
+        "20000000",
+        "--frames",
+        "65536"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/tmp/trident-04-collection-fixtures/bytes-517/output.dag\",\"execution\":{\"allocated_nodes\":69155,\"arena_reserved_bytes\":26214416,\"charged_reductions\":989077,\"elapsed_micros\":714959,\"frame_buffer_bytes\":11534336,\"input_particle\":\"de09a8133fc3363f5374d0807b6955992a827abbad7f9c7cca42701fce142815\",\"output_particle\":\"9450d82f45bb2c911dfbfba805407578372837e2b5bdbf1695a546f9ad3a1801\",\"peak_frames\":1208,\"program_particle\":\"8e66838a6e18938ee8f55ea6129cf2c5c1cab672356f0b463ddc139d46b93325\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "matches_independent_reference_bytes": true,
+      "output_sha256": "5a39425bb1f3b8ee79f58acfcc992e5b6c2fd0bc4f5d937b3a9db8fd18f58b72",
+      "execution": {
+        "allocated_nodes": 69155,
+        "arena_reserved_bytes": 26214416,
+        "charged_reductions": 989077,
+        "elapsed_micros": 714959,
+        "frame_buffer_bytes": 11534336,
+        "input_particle": "de09a8133fc3363f5374d0807b6955992a827abbad7f9c7cca42701fce142815",
+        "output_particle": "9450d82f45bb2c911dfbfba805407578372837e2b5bdbf1695a546f9ad3a1801",
+        "peak_frames": 1208,
+        "program_particle": "8e66838a6e18938ee8f55ea6129cf2c5c1cab672356f0b463ddc139d46b93325",
+        "trace_mode": "none",
+        "worker_stack_bytes": 268435456
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-517/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-517/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-517/output.dag",
+        "--force",
+        "--budget",
+        "989077",
+        "--frames",
+        "1208",
+        "--arena-nodes",
+        "69155"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/tmp/trident-04-collection-fixtures/bytes-517/output.dag\",\"execution\":{\"allocated_nodes\":69155,\"arena_reserved_bytes\":26214416,\"charged_reductions\":989077,\"elapsed_micros\":680664,\"frame_buffer_bytes\":212608,\"input_particle\":\"de09a8133fc3363f5374d0807b6955992a827abbad7f9c7cca42701fce142815\",\"output_particle\":\"9450d82f45bb2c911dfbfba805407578372837e2b5bdbf1695a546f9ad3a1801\",\"peak_frames\":1208,\"program_particle\":\"8e66838a6e18938ee8f55ea6129cf2c5c1cab672356f0b463ddc139d46b93325\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "matches_independent_reference_bytes": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-517/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-517/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-517/output.dag",
+        "--force",
+        "--budget",
+        "989076",
+        "--frames",
+        "1208",
+        "--arena-nodes",
+        "69155"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution budget exhausted\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-517/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-517/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-517/output.dag",
+        "--force",
+        "--budget",
+        "989077",
+        "--frames",
+        "1207",
+        "--arena-nodes",
+        "69155"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution resource/profile: Frames\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-517/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-517/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-517/output.dag",
+        "--force",
+        "--budget",
+        "989077",
+        "--frames",
+        "1208",
+        "--arena-nodes",
+        "69154"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution failed: Unavailable\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/tmp/trident-04-collection-fixtures/bytes-visits-short/main.tri",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-visits-short/program.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-04-collection-fixtures/bytes-visits-short/program.dag\",\"artifact_bytes\":404832,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"byte_probe\",\"program_particle\":\"8e66838a6e18938ee8f55ea6129cf2c5c1cab672356f0b463ddc139d46b93325\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "artifact_bytes": 404832,
+      "artifact_sha256": "3479086dfdd6268c2cae4a3260a917a6d31edf880f10539c7dad402fc4188605"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-visits-short/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-visits-short/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-visits-short/output.dag",
+        "--force",
+        "--budget",
+        "20000000",
+        "--frames",
+        "65536"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution failed: InvZero\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/tmp/trident-04-collection-fixtures/bytes-bad-padding/main.tri",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-bad-padding/program.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-04-collection-fixtures/bytes-bad-padding/program.dag\",\"artifact_bytes\":404832,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"byte_probe\",\"program_particle\":\"8e66838a6e18938ee8f55ea6129cf2c5c1cab672356f0b463ddc139d46b93325\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "artifact_bytes": 404832,
+      "artifact_sha256": "3479086dfdd6268c2cae4a3260a917a6d31edf880f10539c7dad402fc4188605"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/bytes-bad-padding/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/bytes-bad-padding/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/bytes-bad-padding/output.dag",
+        "--force",
+        "--budget",
+        "20000000",
+        "--frames",
+        "65536"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution failed: InvZero\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/tmp/trident-04-collection-fixtures/seq-129/main.tri",
+        "--emit",
+        "artifact",
+        "--format",
+        "json-v1",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/seq-129/program.dag",
+        "--force"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-04-collection-fixtures/seq-129/program.dag\",\"artifact_bytes\":268462,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"seq_probe\",\"program_particle\":\"645259c551b2cfc59fc85935ab878735b4a52b520884120afd5d181bef998813\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "stderr": "",
+      "artifact_bytes": 268462,
+      "artifact_sha256": "6539dae4b0babf1e9b509a4b0c5f7fab1f4e6fe621800e5599a5c8ce0ed96416"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/seq-129/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/seq-129/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/seq-129/output.dag",
+        "--force",
+        "--budget",
+        "20000000",
+        "--frames",
+        "65536"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/tmp/trident-04-collection-fixtures/seq-129/output.dag\",\"execution\":{\"allocated_nodes\":32887,\"arena_reserved_bytes\":26214416,\"charged_reductions\":249304,\"elapsed_micros\":214632,\"frame_buffer_bytes\":11534336,\"input_particle\":\"5e3afd899f4fe7f477a5c0fb33ca969132137935bfc65ba7b8246298f04a18b1\",\"output_particle\":\"24e542a9fa9e597ff3c5bbeaa177099762afe6b7965214aa95e24e8be2e685c2\",\"peak_frames\":1158,\"program_particle\":\"645259c551b2cfc59fc85935ab878735b4a52b520884120afd5d181bef998813\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "matches_independent_reference_bytes": true,
+      "output_sha256": "e7fcd2e8cc6df989b85ec2d94c46218dd0d85fa56913d0f8ad8300d215a73452",
+      "execution": {
+        "allocated_nodes": 32887,
+        "arena_reserved_bytes": 26214416,
+        "charged_reductions": 249304,
+        "elapsed_micros": 214632,
+        "frame_buffer_bytes": 11534336,
+        "input_particle": "5e3afd899f4fe7f477a5c0fb33ca969132137935bfc65ba7b8246298f04a18b1",
+        "output_particle": "24e542a9fa9e597ff3c5bbeaa177099762afe6b7965214aa95e24e8be2e685c2",
+        "peak_frames": 1158,
+        "program_particle": "645259c551b2cfc59fc85935ab878735b4a52b520884120afd5d181bef998813",
+        "trace_mode": "none",
+        "worker_stack_bytes": 268435456
+      }
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/seq-129/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/seq-129/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/seq-129/output.dag",
+        "--force",
+        "--budget",
+        "249304",
+        "--frames",
+        "1158",
+        "--arena-nodes",
+        "32887"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/tmp/trident-04-collection-fixtures/seq-129/output.dag\",\"execution\":{\"allocated_nodes\":32887,\"arena_reserved_bytes\":26214416,\"charged_reductions\":249304,\"elapsed_micros\":216485,\"frame_buffer_bytes\":203808,\"input_particle\":\"5e3afd899f4fe7f477a5c0fb33ca969132137935bfc65ba7b8246298f04a18b1\",\"output_particle\":\"24e542a9fa9e597ff3c5bbeaa177099762afe6b7965214aa95e24e8be2e685c2\",\"peak_frames\":1158,\"program_particle\":\"645259c551b2cfc59fc85935ab878735b4a52b520884120afd5d181bef998813\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "matches_independent_reference_bytes": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/seq-129/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/seq-129/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/seq-129/output.dag",
+        "--force",
+        "--budget",
+        "249303",
+        "--frames",
+        "1158",
+        "--arena-nodes",
+        "32887"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution budget exhausted\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/seq-129/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/seq-129/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/seq-129/output.dag",
+        "--force",
+        "--budget",
+        "249304",
+        "--frames",
+        "1157",
+        "--arena-nodes",
+        "32887"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution resource/profile: Frames\n",
+      "previous_output_preserved": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/tmp/trident-04-collection-fixtures/seq-129/program.dag",
+        "--input",
+        "/tmp/trident-04-collection-fixtures/seq-129/input.dag",
+        "-o",
+        "/tmp/trident-04-collection-fixtures/seq-129/output.dag",
+        "--force",
+        "--budget",
+        "249304",
+        "--frames",
+        "1158",
+        "--arena-nodes",
+        "32886"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution failed: Unavailable\n",
+      "previous_output_preserved": true
+    }
+  ],
+  "source_revisions": {
+    "trident": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+    "joy": "773151304a9076963e8bd9a771fb28080d3f82af",
+    "trisha": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "provenance": "Local development execution before source commit; tested source and test files committed unchanged."
+}

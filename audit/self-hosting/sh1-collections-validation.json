@@ -1,0 +1,134 @@
+{
+  "schema": "trident/selfhost-validation/v1",
+  "gate": "SH1 native collections delivery",
+  "date": "2026-09-24",
+  "kind": "local development, not release candidate or CI",
+  "source_revisions": {
+    "trident": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+    "joy": "773151304a9076963e8bd9a771fb28080d3f82af",
+    "trisha": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "provenance": "Commands ran before source commit; source and test files committed unchanged. Documentation finalized separately.",
+  "gates": [
+    {
+      "repository": "trident",
+      "revision": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+      "command": "cargo test --workspace --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-collections-full-tests.log",
+      "log_sha256": "166076dd2d1b943c957db01c2e9b45032d44d283b0c0eabe353a345776088964",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 907,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trident",
+      "revision": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-collections-final-check.log",
+      "log_sha256": "6d9b360cdee96a9bda7c0319d314064a071eab7cf5b6770cac24bfd885af1bbb",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "joy",
+      "revision": "773151304a9076963e8bd9a771fb28080d3f82af",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-collections-tests.log",
+      "log_sha256": "05616d92baccfe07ce8ad9f89c73ac1bdd5bdff5a693e852f8449fc7ec83fbfe",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 89,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-collections-tests.log",
+      "log_sha256": "09bff259814a639b2c76637ef47bc471897206ee8ca658bd4c2235373f70bf5e",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 362,
+        "failed": 0,
+        "ignored": 4
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "cf89bf3cee97581ba6bd4bae87d42de793045085",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-collections-bench.log",
+      "log_sha256": "543b0bdced218aa5b9f788662f8ab34566b48c173eb468e7e8c515cb9f1b61bd",
+      "rust_warnings": 0,
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "fixture_result_and_cycle_rows_equal_previous_privacy_delivery": true,
+      "comparison_log": "/tmp/trisha-04-privacy-final-bench.log",
+      "comparison_trident_revision": "2c66db3cb133ee6b461b7dc9f6e3cb0662a59c54"
+    }
+  ],
+  "formal_audits": [
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/nox/tree.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-collections-audit-tree.log",
+      "revision": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+      "result": "UNKNOWN; no formal proof established",
+      "log_sha256": "635056b565ee17460168d84c26a9eeb9b924f3df63f3eab79e4ebbbf854955df"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/nox/seq.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-collections-audit-seq.log",
+      "revision": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+      "result": "UNKNOWN; no formal proof established",
+      "log_sha256": "85d99d631ee6732e1465d18f57655a2a555487dd1b6e054d240c674ee6ae9e2d"
+    },
+    {
+      "command": [
+        "target/debug/trident",
+        "audit",
+        "lib/std/nox/bytes.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "log": "/tmp/trident-04-collections-audit-bytes.log",
+      "revision": "fb7d6962f34c2a7206d5403025928f39eeb004dc",
+      "result": "UNKNOWN; no formal proof established",
+      "log_sha256": "1f39d25f530dc08e6459f4260dc720e1458b8c8065fe8a880e5745f685baa63e"
+    }
+  ],
+  "installed_cli_receipt": "sh1-collections-cli.json",
+  "limits": [
+    "Append-only arena; outer validation chunks still accumulate pending driver frames.",
+    "Reserved memory is not peak RSS. Full compiler-scale fit remains SH4.",
+    "No compiler JOB1/RES1 admission or self-compilation claim."
+  ]
+}
