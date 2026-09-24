@@ -141,3 +141,11 @@ mod types;
 
 #[path = "native_compiler/digests.rs"]
 mod digests;
+
+#[path = "native_compiler/tuple_errors.rs"]
+mod tuple_errors;
+#[path = "native_compiler/tuples.rs"]
+mod tuples;
+
+#[path = "native_compiler/type_syntax.rs"]
+mod type_syntax;

@@ -1,0 +1,101 @@
+module std.compiler.nox.type_parse
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.types
+
+pub struct Parsed { pub ty: Noun, pub token: syntax.Token, pub error: syntax.Error }
+struct State {
+    token: syntax.Token, ty: Noun, children: seq.Seq, frames: Noun,
+    depth: U32, operand: Bool, done: Bool, error: syntax.Error
+}
+
+#[pure]
+pub fn scalar(token: syntax.Token) -> Field {
+    if token.kind == as_u32(12) { return types.FIELD }
+    if token.kind == as_u32(20) { return types.BOOL }
+    if token.kind == as_u32(28) { return types.UINT32 }
+    if token.kind == as_u32(34) { return types.NOUN }
+    if token.kind == as_u32(35) { return types.DIGEST }
+    types.INVALID
+}
+
+#[pure]
+fn step(source: bytes.Bytes, input: State, cap: U32, stack: U32) -> State {
+    let mut s = input
+    if s.operand {
+        if s.token.kind == as_u32(5) {
+            if s.depth == stack { s.error = ast.failed(s.token, 7) return s }
+            s.frames = noun.pair(seq.to_noun(s.children), s.frames)
+            s.children = seq.empty()
+            s.depth = syntax.inc(s.depth)
+            s.token = lexer.next(source, s.token.end)
+            return s
+        }
+        let tag = scalar(s.token)
+        if tag == types.INVALID {
+            let mut code: Field = 2
+            if syntax.either(s.token.kind == as_u32(1), s.token.kind == as_u32(36)) { code = 6 }
+            s.error = ast.failed(s.token, code)
+            return s
+        }
+        s.ty = noun.atom(tag)
+        s.token = lexer.next(source, s.token.end)
+        s.operand = false
+        return s
+    }
+    if s.depth == as_u32(0) { s.done = true return s }
+    if syntax.either(seq.len(s.children) == types.MAX_ARITY, seq.len(s.children) == cap) {
+        s.error = ast.failed(s.token, 7) return s
+    }
+    s.children = seq.push(s.children, s.ty, cap)
+    if s.token.kind == as_u32(26) {
+        s.token = lexer.next(source, s.token.end)
+        s.operand = true
+        return s
+    }
+    if s.token.kind == as_u32(6) {
+        let built = types.tuple(s.children, cap, stack)
+        if built.failed { s.error = ast.failed(s.token, 7) return s }
+        s.ty = built.ty
+        s.children = seq.from_noun(noun.head(s.frames), cap, as_u32(1000))
+        s.frames = noun.tail(s.frames)
+        s.depth = syntax.dec(s.depth)
+        s.token = lexer.next(source, s.token.end)
+        return s
+    }
+    let mut code: Field = 2
+    if s.token.kind == as_u32(14) { code = 1 }
+    s.error = syntax.error(code, s.token.start, s.token.end)
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn parse(source: bytes.Bytes, token: syntax.Token, cap: U32) -> Parsed {
+    let zero = as_u32(0)
+    if cap == zero { return Parsed { ty: noun.atom(types.INVALID), token, error: syntax.error(7, token.start, token.end) } }
+    let tag = scalar(token)
+    if (tag == types.INVALID) == false {
+        return Parsed { ty: noun.atom(tag), token: lexer.next(source, token.end), error: syntax.error(0, zero, zero) }
+    }
+    let mut stack = cap
+    if syntax.STACK_CAP < stack { stack = syntax.STACK_CAP }
+    let mut s = State { token, ty: noun.atom(types.INVALID), children: seq.empty(), frames: noun.atom(0),
+        depth: zero, operand: true, done: false, error: syntax.error(0, zero, zero) }
+    for block in 0..256 {
+        for turn in 0..32 {
+            s = step(source, s, cap, stack)
+            if syntax.either(s.done, (s.error.code == zero) == false) {
+                return Parsed { ty: s.ty, token: s.token, error: s.error }
+            }
+        }
+    }
+    Parsed { ty: noun.atom(types.INVALID), token: s.token, error: syntax.error(7, s.token.start, s.token.end) }
+}

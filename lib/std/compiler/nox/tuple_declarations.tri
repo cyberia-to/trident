@@ -1,0 +1,86 @@
+module std.compiler.nox.tuple_declarations
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.lexer
+use std.compiler.nox.expression
+use std.compiler.nox.expression_state
+use std.compiler.nox.body_state
+use std.compiler.nox.type_parse
+use std.compiler.nox.tuple_pattern
+use std.compiler.nox.tuple_bind
+
+struct Read { body: body_state.State, id: U32 }
+
+#[pure]
+fn value(source: bytes.Bytes, input: body_state.State, cap: U32) -> Read {
+    let mut s = input
+    let parsed = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params), s.nodes, s.arguments, s.edges, cap, false)
+    s.nodes = parsed.nodes
+    s.arguments = parsed.arguments
+    s.edges = parsed.edges
+    s.token = parsed.token
+    s.error = parsed.error
+    Read { body: s, id: parsed.value }
+}
+
+#[pure]
+pub fn declare(source: bytes.Bytes, opening: syntax.Token, writable: Bool, input: body_state.State, cap: U32) -> body_state.State {
+    let mut s = input
+    let parsed = tuple_pattern.parse(source, lexer.next(source, opening.end), cap)
+    s.error = parsed.error
+    if (s.error.code == as_u32(0)) == false { return s }
+    s.token = parsed.token
+    let mut annotated = false
+    let mut expected = noun.atom(0)
+    if s.token.kind == as_u32(17) {
+        let ty = type_parse.parse(source, lexer.next(source, s.token.end), cap)
+        s.error = ty.error
+        if (s.error.code == as_u32(0)) == false { return s }
+        expected = ty.ty
+        annotated = true
+        s.token = ty.token
+    }
+    if (s.token.kind == as_u32(18)) == false { s.error = ast.failed(s.token, 2) return s }
+    let result = value(source, s, cap)
+    s = result.body
+    if (s.error.code == as_u32(0)) == false { return s }
+    let rhs = seq.get(s.nodes, result.id)
+    if syntax.both(annotated, noun.eq(expected, ast.ty(rhs)) == false) { s.error = ast.issue(5, rhs) return s }
+    tuple_bind.bind(source, s, parsed.names, writable, true, result.id, cap)
+}
+
+#[pure]
+pub fn assign(source: bytes.Bytes, input: body_state.State, lhs: U32, cap: U32) -> body_state.State {
+    let mut s = input
+    let node = seq.get(s.nodes, lhs)
+    if (ast.kind(node) == ast.TUPLE_VALUE) == false { s.error = ast.failed(s.token, 2) return s }
+    let count = as_u32(ast.left(node))
+    let mut cursor = as_u32(ast.right(node))
+    let mut reversed = noun.atom(0)
+    for i in 0..16 {
+        if i < count {
+            let link = seq.get(s.arguments, cursor)
+            let target = seq.get(s.nodes, as_u32(noun.as_field(noun.head(link))))
+            if (ast.kind(target) == ast.LOCAL) == false { s.error = ast.issue(5, target) return s }
+            let name = syntax.token(1, ast.start(target), ast.end(target), 0)
+            reversed = noun.pair(tuple_pattern.pack(name), reversed)
+            cursor = as_u32(noun.as_field(noun.tail(link)))
+        }
+    }
+    let mut names = seq.empty()
+    for i in 0..16 {
+        if i < count {
+            names = seq.push(names, noun.head(reversed), cap)
+            reversed = noun.tail(reversed)
+        }
+    }
+    let result = value(source, s, cap)
+    s = result.body
+    if (s.error.code == as_u32(0)) == false { return s }
+    tuple_bind.bind(source, s, names, false, false, result.id, cap)
+}

@@ -67,3 +67,31 @@ pub fn tuple(children: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
     let metadata = noun.pair(noun.atom(as_field(depth)), noun.pair(noun.atom(nodes), noun.atom(flag)))
     Built { ty: noun.pair(noun.atom(TUPLE), noun.pair(seq.to_noun(children), metadata)), failed: false }
 }
+
+
+pub struct Parts { pub children: seq.Seq, pub count: U32, pub digest: Bool, pub valid: Bool }
+
+// Known descriptors only. Decode the owned child sequence once per pattern.
+#[pure]
+pub fn parts(ty: Noun) -> Parts {
+    let mut result = Parts { children: seq.empty(), count: as_u32(0), digest: false, valid: false }
+    if noun.eq(ty, noun.atom(DIGEST)) {
+        result.digest = true
+        result.valid = true
+        result.count = as_u32(4)
+        return result
+    }
+    if info(ty).depth == as_u32(0) { return result }
+    result.children = seq.from_noun(noun.head(noun.tail(ty)), MAX_ARITY, as_u32(31))
+    result.count = seq.len(result.children)
+    result.valid = true
+    result
+}
+
+// Digest limbs have a fixed primitive type; they need no synthesized collection.
+#[pure]
+#[requires(index < parts.count)]
+pub fn component(parts: Parts, index: U32) -> Noun {
+    if parts.digest { return noun.atom(FIELD) }
+    seq.get(parts.children, index)
+}

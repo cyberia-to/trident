@@ -348,6 +348,8 @@ fn native_statement_records_preserve_tag_and_distinct_operand_ids() {
 
 #[test]
 fn native_scalar_type_recognition_keeps_unsupported_tokens_distinct_from_u32() {
+    // headers.scalar delegates directly to type_parse.scalar; both census
+    // entries execute against this independent recognition table.
     let assembly = fixture("native_compiler_scalar_type");
     for kind in (0..=37).chain([u64::from(u32::MAX)]) {
         let expected = match kind {
@@ -359,6 +361,19 @@ fn native_scalar_type_recognition_keeps_unsupported_tokens_distinct_from_u32() {
             _ => 5,  // Unsupported type, distinct from every admitted type.
         };
         assert_eq!(execute(&assembly, &[kind], &[]).unwrap(), vec![expected]);
+    }
+}
+
+#[test]
+fn native_tuple_discard_recognition_requires_both_token_kind_and_spelling() {
+    let assembly = fixture("native_compiler_discard");
+    for kind in (0..=38).chain([u64::from(u32::MAX)]) {
+        for value in [0, 94, 95, 96, 0x5f5f, 18446744069414584320] {
+            assert_eq!(
+                execute(&assembly, &[kind, value], &[]).unwrap(),
+                vec![u64::from(kind == 13 && value == 95)]
+            );
+        }
     }
 }
 
@@ -400,6 +415,8 @@ fn census_every_in_surface_module_has_a_differential() {
             "lib/std/compiler/nox/blocks.tri".to_string(),
             "lib/std/compiler/nox/headers.tri".to_string(),
             "lib/std/compiler/nox/syntax.tri".to_string(),
+            "lib/std/compiler/nox/tuple_pattern.tri".to_string(),
+            "lib/std/compiler/nox/type_parse.tri".to_string(),
             "lib/std/compiler/parser.tri".to_string(),
             "lib/std/compiler/typecheck.tri".to_string(),
             "lib/std/crypto/bigint.tri".to_string(),

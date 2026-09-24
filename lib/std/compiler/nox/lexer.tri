@@ -77,17 +77,23 @@ pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
         if comment {
             if c == as_u32(10) { comment = false }
         } else if ascii.space(c) == false {
-            if syntax.both(c == as_u32(47), syntax.inc(pos) < bytes.len(source)) {
-                if bytes.get(source, syntax.inc(pos)) == as_u32(47) { comment = true }
+            // Look ahead only for a slash. Eager helper arguments otherwise
+            // charge every tuple/group delimiter for comment-prefix work.
+            if c == as_u32(47) {
+                if syntax.inc(pos) < bytes.len(source) {
+                    if bytes.get(source, syntax.inc(pos)) == as_u32(47) { comment = true }
+                }
             }
             if comment == false {
+                // Parentheses delimit calls, groups and tuples. Recognize them
+                // before identifier/decimal classification on the hot path.
+                if c == as_u32(40) { return syntax.token(5, pos, syntax.inc(pos), 0) }
+                if c == as_u32(41) { return syntax.token(6, pos, syntax.inc(pos), 0) }
                 if ascii.initial(c) { return identifier(source, pos) }
                 if ascii.digit(c) { return decimal(source, pos) }
                 let end = syntax.inc(pos)
                 if c == as_u32(43) { return syntax.token(3, pos, end, 0) }
                 if c == as_u32(42) { return syntax.token(4, pos, end, 0) }
-                if c == as_u32(40) { return syntax.token(5, pos, end, 0) }
-                if c == as_u32(41) { return syntax.token(6, pos, end, 0) }
                 if c == as_u32(123) { return syntax.token(7, pos, end, 0) }
                 if c == as_u32(125) { return syntax.token(8, pos, end, 0) }
                 if syntax.both(c == as_u32(45), end < bytes.len(source)) {

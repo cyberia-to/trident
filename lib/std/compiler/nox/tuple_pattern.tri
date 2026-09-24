@@ -1,0 +1,57 @@
+module std.compiler.nox.tuple_pattern
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.lexer
+use std.compiler.nox.types
+
+pub struct Parsed { pub names: seq.Seq, pub token: syntax.Token, pub error: syntax.Error }
+
+#[pure]
+pub fn discard(token: syntax.Token) -> Bool {
+    syntax.both(token.kind == as_u32(13), token.value == 95)
+}
+
+#[pure]
+pub fn pack(token: syntax.Token) -> Noun {
+    let mut flag: Field = 0
+    if discard(token) { flag = 1 }
+    noun.pair(noun.atom(as_field(token.start)), noun.pair(noun.atom(as_field(token.end)), noun.atom(flag)))
+}
+
+#[pure]
+pub fn name(record: Noun) -> syntax.Token {
+    let end = noun.tail(record)
+    let mut kind: Field = 1
+    let mut value: Field = 0
+    if noun.as_field(noun.tail(end)) == 1 { kind = 13 value = 95 }
+    syntax.token(kind, as_u32(noun.as_field(noun.head(record))), as_u32(noun.as_field(noun.head(end))), value)
+}
+
+// Called just after the opening parenthesis. The seed accepts a trailing comma
+// and empty pattern syntax; component-count validation belongs to the binder.
+#[pure]
+pub fn parse(source: bytes.Bytes, token: syntax.Token, cap: U32) -> Parsed {
+    let zero = as_u32(0)
+    let mut s = Parsed { names: seq.empty(), token, error: syntax.error(0, zero, zero) }
+    for i in 0..17 {
+        if s.token.kind == as_u32(6) { s.token = lexer.next(source, s.token.end) return s }
+        if syntax.either(s.token.kind == as_u32(1), discard(s.token)) == false {
+            s.error = ast.failed(s.token, 2) return s
+        }
+        if syntax.either(seq.len(s.names) == cap, seq.len(s.names) == types.MAX_ARITY) {
+            s.error = ast.failed(s.token, 7) return s
+        }
+        s.names = seq.push(s.names, pack(s.token), cap)
+        s.token = lexer.next(source, s.token.end)
+        if s.token.kind == as_u32(6) { s.token = lexer.next(source, s.token.end) return s }
+        if (s.token.kind == as_u32(26)) == false { s.error = ast.failed(s.token, 2) return s }
+        s.token = lexer.next(source, s.token.end)
+    }
+    s.error = ast.failed(s.token, 7)
+    s
+}

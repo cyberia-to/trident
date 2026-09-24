@@ -13,6 +13,7 @@ use std.compiler.nox.expression_state
 use std.compiler.nox.call_parse
 use std.compiler.nox.types
 use std.compiler.nox.index_parse
+use std.compiler.nox.group_parse
 
 #[pure]
 fn operator(s: expression_state.State) -> U32 {
@@ -86,7 +87,7 @@ fn push_operator(input: expression_state.State) -> expression_state.State {
 
 #[pure]
 fn boundary(kind: U32, before_block: Bool) -> Bool {
-    if kind == as_u32(31) { return true }
+    if syntax.either(kind == as_u32(31), kind == as_u32(18)) { return true }
     if syntax.either(syntax.either(kind == as_u32(8), kind == as_u32(15)), kind == as_u32(1)) { return true }
     if syntax.either(syntax.either(kind == as_u32(2), kind == as_u32(5)), kind == as_u32(25)) { return true }
     if syntax.either(syntax.either(kind == as_u32(21), kind == as_u32(22)), kind == as_u32(23)) { return true }
@@ -101,20 +102,31 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
         if syntax.either(s.ops == as_u32(0), s.operand) { s.error = ast.failed(s.token, 2) return s }
         let top = operator(s)
         if top == as_u32(36) { return index_parse.finish(source, s) }
-        if syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER) { s.error = ast.failed(s.token, 2) return s }
+        if syntax.either(top == expression_state.TUPLE_MARKER, syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER)) { s.error = ast.failed(s.token, 2) return s }
         return reduce(s)
     }
     if syntax.either(kind == as_u32(6), kind == as_u32(26)) {
-        if (s.ops == as_u32(0)) == false {
-            let top = operator(s)
-            if top == as_u32(36) { s.error = ast.failed(s.token, 2) return s }
-            if top == expression_state.CALL_MARKER { return call_parse.finish(source, s, kind == as_u32(6)) }
-            if syntax.both(s.operand == false, (top == as_u32(5)) == false) { return reduce(s) }
+        if s.ops == as_u32(0) { s.error = ast.failed(s.token, 2) return s }
+        let top = operator(s)
+        if top == as_u32(36) { s.error = ast.failed(s.token, 2) return s }
+        if top == expression_state.CALL_MARKER { return call_parse.finish(source, s, kind == as_u32(6)) }
+        if top == expression_state.TUPLE_MARKER { return group_parse.finish(source, s, kind == as_u32(6), true) }
+        if top == as_u32(5) {
+            if kind == as_u32(6) {
+                let base = noun.as_field(noun.tail(noun.head(s.frames)))
+                if syntax.either(s.operand, (as_field(s.vals) == base + 1) == false) { s.error = ast.failed(s.token, 2) return s }
+                // A plain group preserves its child and needs no tuple parser state.
+                s.ops = syntax.dec(s.ops)
+                s.frames = noun.tail(s.frames)
+                s.token = lexer.next(source, s.token.end)
+                return s
+            }
+            return group_parse.finish(source, s, false, false)
         }
-        if syntax.either(s.operand, kind == as_u32(26)) {
-            s.error = syntax.error(2, s.token.start, s.token.end)
-            return s
-        }
+        if s.operand == false { return reduce(s) }
+
+        s.error = ast.failed(s.token, 2)
+        return s
     }
     if s.operand {
         if syntax.either(syntax.either(kind == as_u32(2), kind == as_u32(1)), syntax.either(kind == as_u32(21), kind == as_u32(22))) {
@@ -151,7 +163,13 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
             s.values = ast.store(s.values, s.vals, id, s.capacity)
             s.vals = syntax.inc(s.vals)
             s.operand = false
-        } else if kind == as_u32(5) { s = push_operator(s) }
+        } else if kind == as_u32(5) {
+            s = push_operator(s)
+            if s.error.code == as_u32(0) {
+                let position = noun.pair(noun.atom(as_field(s.token.start)), noun.atom(as_field(s.vals)))
+                s.frames = noun.pair(position, s.frames)
+            }
+        }
         else if kind == as_u32(36) { s.error = syntax.error(6, s.token.start, s.token.end) return s }
         else {
             s.error = ast.failed(s.token, 2)
@@ -165,16 +183,10 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
         }
         s = push_operator(s)
         s.operand = true
-    } else if kind == as_u32(6) {
-        if s.ops == as_u32(0) {
-            s.error = ast.failed(s.token, 2)
-            return s
-        }
-        if (operator(s) == as_u32(5)) == false { return reduce(s) }
-        s.ops = syntax.dec(s.ops)
     } else if boundary(kind, s.before_block) {
         if (s.ops == as_u32(0)) == false {
-            if syntax.either(operator(s) == as_u32(36), syntax.either(operator(s) == as_u32(5), operator(s) == expression_state.CALL_MARKER)) {
+            let top = operator(s)
+            if syntax.either(top == as_u32(36), syntax.either(top == expression_state.TUPLE_MARKER, syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER))) {
                 s.error = ast.failed(s.token, 2)
                 return s
             }

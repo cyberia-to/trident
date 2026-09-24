@@ -1,0 +1,92 @@
+module std.compiler.nox.group_parse
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.types
+use std.compiler.nox.lexer
+use std.compiler.nox.signatures
+use std.compiler.nox.expression_state
+
+struct Frame { start: U32, vals: U32, count: U32, head: U32 }
+
+#[pure]
+fn pack(f: Frame) -> Noun {
+    let position = noun.pair(noun.atom(as_field(f.start)), noun.atom(as_field(f.vals)))
+    let values = noun.pair(noun.atom(as_field(f.count)), noun.atom(as_field(f.head)))
+    noun.pair(position, values)
+}
+
+#[pure]
+fn read(record: Noun) -> Frame {
+    let position = noun.head(record)
+    let values = noun.tail(record)
+    Frame { start: as_u32(noun.as_field(noun.head(position))), vals: as_u32(noun.as_field(noun.tail(position))),
+        count: as_u32(noun.as_field(noun.head(values))), head: as_u32(noun.as_field(noun.tail(values))) }
+}
+
+#[pure]
+pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool, tuple: Bool) -> expression_state.State {
+    let mut s = input
+    let mut f = Frame { start: as_u32(0), vals: as_u32(0), count: as_u32(0), head: signatures.NONE }
+    if tuple { f = read(noun.head(s.frames)) }
+    else {
+        let position = noun.head(s.frames)
+        f.start = as_u32(noun.as_field(noun.head(position)))
+        f.vals = as_u32(noun.as_field(noun.tail(position)))
+        s.operators = seq.set(s.operators, syntax.dec(s.ops), noun.atom(as_field(expression_state.TUPLE_MARKER)))
+    }
+    if s.operand {
+        // Only a tuple with at least two completed items may trail a comma.
+        if syntax.either(closing == false, f.count < as_u32(2)) { s.error = ast.failed(s.token, 2) return s }
+    } else {
+        if (s.vals == syntax.inc(f.vals)) == false { s.error = ast.failed(s.token, 2) return s }
+        if syntax.either(f.count == types.MAX_ARITY, seq.len(s.arguments) == s.node_cap) {
+            s.error = ast.failed(s.token, 7) return s
+        }
+        let value = noun.as_field(seq.get(s.values, f.vals))
+        let link = seq.len(s.arguments)
+        s.arguments = seq.push(s.arguments, noun.pair(noun.atom(value), noun.atom(as_field(f.head))), s.node_cap)
+        f.head = link
+        f.count = syntax.inc(f.count)
+        s.vals = f.vals
+    }
+    if closing {
+        // Links are reversed. Gather their types once, in source order.
+        let mut cursor = f.head
+        let mut ordered = noun.atom(0)
+        for i in 0..16 {
+            if i < f.count {
+                let link = seq.get(s.arguments, cursor)
+                let child = seq.get(s.nodes, as_u32(noun.as_field(noun.head(link))))
+                ordered = noun.pair(ast.ty(child), ordered)
+                cursor = as_u32(noun.as_field(noun.tail(link)))
+            }
+        }
+        let mut children = seq.empty()
+        for i in 0..16 {
+            if i < f.count {
+                children = seq.push(children, noun.head(ordered), s.node_cap)
+                ordered = noun.tail(ordered)
+            }
+        }
+        let built = types.tuple(children, s.node_cap, s.capacity)
+        if built.failed { s.error = ast.failed(s.token, 7) return s }
+        if syntax.either(seq.len(s.nodes) == s.node_cap, s.vals == s.capacity) { s.error = ast.failed(s.token, 7) return s }
+        let id = seq.len(s.nodes)
+        s.nodes = seq.push(s.nodes, ast.typed(ast.TUPLE_VALUE, as_field(f.count), as_field(f.head), built.ty, f.start, s.token.end), s.node_cap)
+        s.values = ast.store(s.values, s.vals, noun.atom(as_field(id)), s.capacity)
+        s.vals = syntax.inc(s.vals)
+        s.ops = syntax.dec(s.ops)
+        s.frames = noun.tail(s.frames)
+        s.operand = false
+    } else {
+        s.frames = noun.pair(pack(f), noun.tail(s.frames))
+        s.operand = true
+    }
+    s.token = lexer.next(source, s.token.end)
+    s
+}
