@@ -117,8 +117,10 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [execution and boundary evidence](self-hosting/native-compiler-types.md).
 - [x] SH3 native Digest identity, whole-value transport and checked read indexing;
   [source/JOB and installed evidence](self-hosting/native-compiler-digest.md).
-- [ ] SH3 source tuples and destructuring;
-  [next slice](../.claude/plans/native-compiler-aggregate-types.md).
+- [x] SH3 source tuples and ordered destructuring;
+  [native/installed execution evidence](self-hosting/native-compiler-tuples.md).
+- [ ] SH3 nominal structs and field reads, followed by persistent nested writes;
+  [next increments](../.claude/plans/native-compiler-aggregate-types.md).
 - [ ] SH3 remaining native language: aggregates, imports and complete
   compiler closure coverage.
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
@@ -301,3 +303,15 @@ compares every identity word with input particle bytes and covers runtime traps,
 ordering and exact quotas. Earlier positive ART1 identities remain unchanged.
 Continue with tuple annotations/values and destructuring; full SH3/SH4, C2/C3
 and six-platform acceptance remain open.
+
+
+2026-09-24 continuation: native tuple annotations/values and ordered
+flat destructuring accepted at `850525c`. [Pinned evidence](self-hosting/sh3-native-tuples-validation.json)
+records 1017 Trident, 122 Joy and 380 Trisha passing tests, four existing
+ignored Trisha cases, zero Rust warnings, unchanged 133 fixture results and 43 baselines,
+614 installed commands / 207 observations and all 91 earlier positive ART1
+identities unchanged. The post-commit rebuild reproduces all three binaries
+and the executed C1 artifact byte for byte. All 64 formal audits are UNKNOWN.
+The old 64-group default arena boundary remains green. Next: repair duplicate
+struct initializers in the seed, then nominal structs/field reads and nested
+writes. Full SH3/SH4, C2/C3, six-platform acceptance and compiler proofs remain open.
