@@ -315,6 +315,21 @@ fn auth_verify_preimage_accepts_matching_secret_and_rejects_wrong_secret() {
 
 // ── the census pin ──────────────────────────────────────────────────────────
 
+#[test]
+fn native_compiler_scalar_helpers_match_ascii_and_bounded_integer_arithmetic() {
+    let digit = fixture("native_compiler_digit");
+    for value in (0..=255).chain([u64::from(u32::MAX)]) {
+        assert_eq!(
+            execute(&digit, &[value], &[]).unwrap(),
+            vec![u64::from((48..=57).contains(&value))]
+        );
+    }
+    let increment = fixture("native_compiler_increment");
+    for value in [0, 1, 255, 4094, 4095] {
+        assert_eq!(execute(&increment, &[value], &[]).unwrap(), vec![value + 1]);
+    }
+}
+
 /// Cost analysis of a library selects its first active public function.
 /// Every successful entry needs the scoped executed fixture above. This pin
 /// does not claim all functions in those modules lower or execute correctly.
@@ -349,6 +364,8 @@ fn census_every_in_surface_module_has_a_differential() {
         vec![
             "lib/std/compiler/lexer.tri".to_string(),
             "lib/std/compiler/lower.tri".to_string(),
+            "lib/std/compiler/nox/ascii.tri".to_string(),
+            "lib/std/compiler/nox/syntax.tri".to_string(),
             "lib/std/compiler/parser.tri".to_string(),
             "lib/std/compiler/typecheck.tri".to_string(),
             "lib/std/crypto/bigint.tri".to_string(),

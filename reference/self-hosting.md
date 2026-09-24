@@ -188,6 +188,69 @@ literals, parentheses, `+`, `*` and a tail expression. Define lexical/range
 rules explicitly; reject valid full-language constructs outside this subset
 as unsupported. Preserve precedence and associativity.
 
+### Native arithmetic pilot contract
+
+The SH2 entry lives in `compiler/nox/main.tri`; reusable native stages live in
+`std.compiler.nox.*`. The existing RAM compiler remains the SH3 porting input.
+The pilot selects the JOB1 entry module by its complete logical-path Bytes.
+Joy admits the complete JOB1 and binds the compiler identity before execution;
+the guest validates the collections it consumes with one threaded allowance.
+Unused modules remain identity-bound and structurally admitted without lexical
+analysis. The selected source is the complete reachable closure for this
+import-free subset. The requested entry function is `main` and generated
+profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
+requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
+
+```text
+program := "program" identifier "fn" "main" "(" ")" "->" "Field"
+           "{" expression "}" EOF
+expression := term ("+" term)*
+term := primary ("*" primary)*
+primary := decimal | "(" expression ")"
+```
+
+Identifiers use the seed's ASCII identifier spelling; keywords, type words,
+`_` and `asm` are reserved. The declared program name must equal the requested
+entry module. Whitespace is bytes 9, 10, 12, 13 and 32. `//` comments extend to
+LF or EOF, retaining CR inside a comment. The complete selected source must
+be valid UTF-8, including comment text; non-ASCII bytes outside comments are
+invalid tokens. Spans are offsets in the exact original bytes.
+
+Decimal tokens accept leading zeroes and values through `u64::MAX`, then
+normalize modulo Goldilocks as the Rust native seed does. Larger values fail
+as invalid tokens. Range checking compares significant decimal digits against
+`18446744073709551615`; field accumulation alone cannot detect overflow.
+Multiplication binds more tightly than addition; both associate to the left.
+Generation preserves the expression tree: literal `[1 value]`, addition
+`[5 [left right]]`, multiplication `[7 [left right]]`. No constant folding is
+needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
+compiler identity, source paths and execution counters.
+
+The pilot reports the first deterministic diagnostic: code 1 for encoding or
+tokens, 2 for malformed syntax, 3 for an entry mismatch, 5 for an unknown
+expression name, 6 for an unsupported construct/request and 7 for a known
+compiler work-capacity limit. A single diagnostic respects every admitted
+positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
+imports, declarations and attributes are rejected, including trailing items.
+Exhaustion of a VM or collection-validation allowance remains an execution
+failure outside RES1, as specified by the job contract.
+
+Source, token and stack ceilings bound the pilot's algorithm; executable
+acceptance must record their concrete values and boundary cases. They are
+admission ceilings, not a promise that every input under them fits the
+independent nox arena, reduction and evaluator-frame limits. SH4 measures the
+complete compiler workload. An iterative operator/value stack avoids recursive
+descent; helper chunks return explicitly to release evaluator frames.
+
+The initial ceilings are 4096 selected source bytes and 64 live entries in
+each operator/value stack, further restricted by the requested sequence cap.
+At most 4096 nonempty tokens and 4096 operator reductions fit the 8192-step
+parser driver. UTF-8 validation uses 64-byte chunks; parsing uses 32-step
+chunks. Generated formula depth plus its ART1/RES1 wrappers must fit the
+requested artifact depth. The guest JOB reader charges every record projection,
+collection traversal and repeated admission payload read to its shared visit
+allowance; lexical and parsing reads use the execution budget after admission.
+
 Acceptance procedure:
 
 1. Rust Trident builds this compiler to `C1.nox` once.

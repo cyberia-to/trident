@@ -1,0 +1,123 @@
+module std.compiler.nox.job
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+
+// Joy validates the complete JOB1 and compiler identity before this guest runs.
+// This view validates the records/collections it consumes; it does no I/O.
+pub struct View {
+    pub source: bytes.Bytes, pub name: bytes.Bytes, pub index: U32,
+    pub sequence_limit: U32, pub depth_limit: U32, pub error: syntax.Error
+}
+
+#[pure]
+#[requires((remaining < cost) == false)]
+fn charge(remaining: U32, cost: U32) -> U32 {
+    assert((remaining < cost) == false)
+    as_u32(field.sub(as_field(remaining), as_field(cost)))
+}
+
+// Exactly index tails and one head. The caller charges these projections.
+#[pure]
+#[requires(index < as_u32(11))]
+fn slot(body: Noun, index: U32) -> Noun {
+    let mut cursor = body
+    for i in 0..11 {
+        if i == index { return noun.head(cursor) }
+        cursor = noun.tail(cursor)
+    }
+    assert_eq(0, 1)
+    noun.atom(0)
+}
+
+// Tag head + atom + body tail, arity tails, and terminator atom = arity+4.
+#[pure]
+fn record(value: Noun, tag: Field, arity: U32, remaining: U32) -> (Noun, U32) {
+    let left = charge(remaining, as_u32(as_field(arity) + 4))
+    assert_eq(noun.as_field(noun.head(value)), tag)
+    let body = noun.tail(value)
+    let mut cursor = body
+    for i in 0..12 {
+        if i == arity {
+            assert_eq(noun.as_field(cursor), 0)
+            return (body, left)
+        }
+        cursor = noun.tail(cursor)
+    }
+    assert_eq(0, 1)
+    (body, left)
+}
+
+#[pure]
+fn reject(name: bytes.Bytes, index: U32, code: Field) -> View {
+    let zero = as_u32(0)
+    View { source: bytes.empty(), name, index, sequence_limit: zero,
+        depth_limit: zero, error: syntax.error(code, zero, zero) }
+}
+
+#[pure]
+pub fn read(input: Noun) -> View {
+    // Bootstrap: tail(JOB), slot5, tail(LIM), slot4, atom = 14 probes.
+    let raw_limits = slot(noun.tail(input), as_u32(5))
+    let allowance = as_u32(noun.as_field(slot(noun.tail(raw_limits), as_u32(4))))
+    let mut remaining = charge(allowance, as_u32(14))
+    let (job, r0) = record(input, 1246708273, as_u32(6), remaining)
+    let (limits, r1) = record(raw_limits, 1279872305, as_u32(11), r0)
+    // Slots 0,3,7, with scalar projection for each: 2+5+9.
+    remaining = charge(r1, as_u32(16))
+    let source_limit = as_u32(noun.as_field(slot(limits, as_u32(0))))
+    let sequence_limit = as_u32(noun.as_field(slot(limits, as_u32(3))))
+    let depth_limit = as_u32(noun.as_field(slot(limits, as_u32(7))))
+    // JOB entry name, function, options and package slots: 3+4+5+2.
+    remaining = charge(remaining, as_u32(14))
+    let entry = slot(job, as_u32(2))
+    let function = slot(job, as_u32(3))
+    let opts = slot(job, as_u32(4))
+    let package = slot(job, as_u32(1))
+    let (name, r2) = bytes.from_noun_budget(entry, as_u32(255), remaining)
+    let (entry_function, r3) = bytes.from_noun_budget(function, as_u32(255), r2)
+    let (options, r4) = record(opts, 1330664497, as_u32(5), r3)
+    // Generated profile slots1/2 and their scalar projections: 3+4.
+    remaining = charge(r4, as_u32(7))
+    let input_profile = noun.as_field(slot(options, as_u32(1)))
+    let output_profile = noun.as_field(slot(options, as_u32(2)))
+    let (pkg, r5) = record(package, 1347110705, as_u32(1), remaining)
+    remaining = charge(r5, as_u32(1))
+    let (modules, r6) = seq.from_noun_budget(slot(pkg, as_u32(0)), sequence_limit, remaining)
+    remaining = r6
+    for index in 0..65536 {
+        if index == seq.len(modules) {
+            assert_eq(0, 1)
+            return reject(name, as_u32(0), 3)
+        }
+        // Indexed reads charge their complete path (height+1).
+        // Bound is computed from the canonical occupied-leaf length.
+        let geometry = tree.shape(seq.len(modules))
+        remaining = charge(remaining, as_u32(as_field(geometry.height) + 1))
+        let (entry_record, left) = record(seq.get(modules, index), 1297040433, as_u32(4), remaining)
+        remaining = charge(left, as_u32(1))
+        if noun.eq(slot(entry_record, as_u32(0)), entry) {
+            if syntax.either((input_profile == 0) == false, (output_profile == 0) == false) { return reject(name, index, 6) }
+            if (bytes.len(entry_function) == as_u32(4)) == false { return reject(name, index, 6) }
+            // Four reads in the one-word entry-function payload.
+            remaining = charge(remaining, as_u32(4))
+            if syntax.either(syntax.either(syntax.either((bytes.get(entry_function, as_u32(0)) == as_u32(109)) == false, (bytes.get(entry_function, as_u32(1)) == as_u32(97)) == false), (bytes.get(entry_function, as_u32(2)) == as_u32(105)) == false), (bytes.get(entry_function, as_u32(3)) == as_u32(110)) == false) { return reject(name, index, 6) }
+            // Slot3 plus raw BYT1 length tail/head/atom: 4+3 probes.
+            remaining = charge(remaining, as_u32(7))
+            let source = slot(entry_record, as_u32(3))
+            let source_length = as_u32(noun.as_field(noun.head(noun.tail(source))))
+            if syntax.SOURCE_CAP < source_length { return reject(name, index, 7) }
+            let (content, left) = bytes.from_noun_budget(source, source_limit, remaining)
+            return View { source: content, name, index, sequence_limit, depth_limit,
+                error: syntax.error(0, as_u32(0), as_u32(0)) }
+        }
+    }
+    // The host contract guarantees a matching entry module.
+    assert_eq(0, 1)
+    reject(name, as_u32(0), 3)
+}

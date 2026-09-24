@@ -1,0 +1,62 @@
+module std.compiler.nox.utf8
+
+use std.nox.bytes
+use std.compiler.nox.syntax
+use vm.core.convert
+
+struct Scan { pos: U32, pending: U32, lead: U32, low: U32, high: U32, error: Bool }
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: Scan) -> Scan {
+    let mut s = input
+    for step in 0..64 {
+        if s.pos == bytes.len(source) { return s }
+        let c = bytes.get(source, s.pos)
+        if (s.pending == as_u32(0)) == false {
+            if syntax.either(c < s.low, (c < s.high) == false) {
+                s.error = true
+                s.pos = syntax.inc(s.pos)
+                return s
+            }
+            s.pending = syntax.dec(s.pending)
+            s.low = as_u32(128)
+            s.high = as_u32(192)
+        } else {
+            if (c < as_u32(128)) == false {
+                s.lead = s.pos
+                s.low = as_u32(128)
+                s.high = as_u32(192)
+                if syntax.either(c < as_u32(194), (c < as_u32(245)) == false) {
+                    s.error = true
+                    s.pos = syntax.inc(s.pos)
+                    return s
+                }
+                if c < as_u32(224) { s.pending = as_u32(1) }
+                else if c < as_u32(240) { s.pending = as_u32(2) }
+                else { s.pending = as_u32(3) }
+                if c == as_u32(224) { s.low = as_u32(160) }
+                if c == as_u32(237) { s.high = as_u32(160) }
+                if c == as_u32(240) { s.low = as_u32(144) }
+                if c == as_u32(244) { s.high = as_u32(144) }
+            }
+        }
+        s.pos = syntax.inc(s.pos)
+    }
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn validate(source: bytes.Bytes) -> syntax.Error {
+    let zero = as_u32(0)
+    let mut s = Scan { pos: zero, pending: zero, lead: zero, low: zero, high: zero, error: false }
+    for block in 0..64 {
+        s = chunk(source, s)
+        if s.error { return syntax.error(1, s.lead, s.pos) }
+        if s.pos == bytes.len(source) {
+            if (s.pending == zero) == false { return syntax.error(1, s.lead, s.pos) }
+            return syntax.error(0, s.pos, s.pos)
+        }
+    }
+    syntax.error(7, s.pos, s.pos)
+}

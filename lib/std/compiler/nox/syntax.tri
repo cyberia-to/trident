@@ -1,0 +1,37 @@
+module std.compiler.nox.syntax
+
+use vm.core.convert
+use vm.core.field
+
+pub const ZERO: U32 = 0
+pub const SOURCE_CAP: U32 = 4096
+pub const STACK_CAP: U32 = 64
+
+// Internal compiler records are shared explicitly between native stages.
+pub struct Error { pub code: U32, pub start: U32, pub end: U32 }
+pub struct Token { pub kind: U32, pub start: U32, pub end: U32, pub value: Field }
+
+#[pure]
+#[requires(value < SOURCE_CAP)]
+pub fn inc(value: U32) -> U32 { convert.as_u32(convert.as_field(value) + 1) }
+
+#[pure]
+#[requires((value == ZERO) == false)]
+pub fn dec(value: U32) -> U32 { convert.as_u32(field.sub(convert.as_field(value), 1)) }
+
+#[pure]
+pub fn error(code: Field, start: U32, end: U32) -> Error {
+    Error { code: convert.as_u32(code), start, end }
+}
+
+#[pure]
+pub fn token(kind: Field, start: U32, end: U32, value: Field) -> Token {
+    Token { kind: convert.as_u32(kind), start, end, value }
+}
+
+// Arguments are evaluated before these Boolean combinators are called.
+#[pure]
+pub fn either(a: Bool, b: Bool) -> Bool { if a { return true } b }
+
+#[pure]
+pub fn both(a: Bool, b: Bool) -> Bool { if a { return b } false }

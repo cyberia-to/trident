@@ -1,0 +1,106 @@
+module std.compiler.nox.lexer
+
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.ascii
+use vm.core.convert
+use vm.core.field
+
+#[pure]
+fn identifier(source: bytes.Bytes, start: U32) -> syntax.Token {
+    let mut pos = start
+    let mut packed: Field = 0
+    for step in 0..4096 {
+        if pos == bytes.len(source) { return syntax.token(ascii.keyword(packed), start, pos, packed) }
+        let c = bytes.get(source, pos)
+        if (syntax.either(ascii.initial(c), ascii.digit(c))) == false {
+            return syntax.token(ascii.keyword(packed), start, pos, packed)
+        }
+        if step < as_u32(7) { packed = packed * 256 + as_field(c) }
+        else { packed = 0 }
+        pos = syntax.inc(pos)
+    }
+    syntax.token(1, start, pos, 0)
+}
+
+#[pure]
+fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
+    let max_digits = [1,8,4,4,6,7,4,4,0,7,3,7,0,9,5,5,1,6,1,5]
+    let mut pos = start
+    let mut significant = as_u32(0)
+    let mut comparison: Field = 0
+    let mut value: Field = 0
+    let mut overflow = false
+    for step in 0..4096 {
+        if pos == bytes.len(source) {
+            if overflow { return syntax.token(14, start, pos, 0) }
+            return syntax.token(2, start, pos, value)
+        }
+        let c = bytes.get(source, pos)
+        if ascii.digit(c) == false {
+            if overflow { return syntax.token(14, start, pos, 0) }
+            return syntax.token(2, start, pos, value)
+        }
+        let digit = field.sub(as_field(c), 48)
+        value = value * 10 + digit
+        if syntax.either((significant == as_u32(0)) == false, (digit == 0) == false) {
+            if significant < as_u32(20) {
+                let expected = max_digits[significant]
+                if comparison == 0 {
+                    if as_u32(digit) < as_u32(expected) { comparison = 1 }
+                    if as_u32(expected) < as_u32(digit) { comparison = 2 }
+                }
+            }
+            significant = syntax.inc(significant)
+            if syntax.either(as_u32(20) < significant, (syntax.both(significant == as_u32(20), comparison == 2))) { overflow = true }
+        }
+        pos = syntax.inc(pos)
+    }
+    if overflow { return syntax.token(14, start, pos, 0) }
+    syntax.token(2, start, pos, value)
+}
+
+// Token kinds: EOF=0, identifier=1, decimal=2, +=3, *=4, (=5, )=6,
+// {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((bytes.len(source) < start) == false)]
+pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
+    let mut pos = start
+    let mut comment = false
+    for step in 0..4097 {
+        if pos == bytes.len(source) { return syntax.token(0, pos, pos, 0) }
+        let c = bytes.get(source, pos)
+        if comment {
+            if c == as_u32(10) { comment = false }
+        } else if ascii.space(c) == false {
+            if syntax.both(c == as_u32(47), syntax.inc(pos) < bytes.len(source)) {
+                if bytes.get(source, syntax.inc(pos)) == as_u32(47) { comment = true }
+            }
+            if comment == false {
+                if ascii.initial(c) { return identifier(source, pos) }
+                if ascii.digit(c) { return decimal(source, pos) }
+                let end = syntax.inc(pos)
+                if c == as_u32(43) { return syntax.token(3, pos, end, 0) }
+                if c == as_u32(42) { return syntax.token(4, pos, end, 0) }
+                if c == as_u32(40) { return syntax.token(5, pos, end, 0) }
+                if c == as_u32(41) { return syntax.token(6, pos, end, 0) }
+                if c == as_u32(123) { return syntax.token(7, pos, end, 0) }
+                if c == as_u32(125) { return syntax.token(8, pos, end, 0) }
+                if syntax.both(c == as_u32(45), end < bytes.len(source)) {
+                    if bytes.get(source, end) == as_u32(62) { return syntax.token(9, pos, syntax.inc(end), 0) }
+                }
+                if syntax.both(c == as_u32(47), end < bytes.len(source)) {
+                    if bytes.get(source, end) == as_u32(37) { return syntax.token(13, pos, syntax.inc(end), 0) }
+                }
+                // Full-language punctuation outside the arithmetic subset.
+                if ascii.punctuation(c) {
+                    return syntax.token(13, pos, end, 0)
+                }
+                return syntax.token(14, pos, end, 0)
+            }
+        }
+        pos = syntax.inc(pos)
+    }
+    syntax.token(14, pos, pos, 0)
+}

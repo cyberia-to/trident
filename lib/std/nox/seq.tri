@@ -49,11 +49,19 @@ pub fn to_noun(s: Seq) -> Noun {
 #[ensures((max_length < len(result)) == false)]
 #[ensures(noun.eq(to_noun(result), value))]
 pub fn from_noun(value: Noun, max_length: U32, max_visits: U32) -> Seq {
+    let (value, remaining) = from_noun_budget(value, max_length, max_visits)
+    value
+}
+
+// Return unspent visits so callers can validate several fields in one pass.
+#[pure]
+#[requires((max_visits == ZERO) == false)]
+pub fn from_noun_budget(value: Noun, max_length: U32, max_visits: U32) -> (Seq, U32) {
     assert_eq(noun.as_field(noun.head(value)), TAG)
     let body = noun.tail(value)
     let length = convert.as_u32(noun.as_field(noun.head(body)))
     assert((max_length < length) == false)
     let root = noun.tail(body)
     let remaining = tree.validate(root, length, max_visits)
-    Seq { length, root }
+    (Seq { length, root }, remaining)
 }

@@ -1,0 +1,178 @@
+module std.compiler.nox.parser
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ascii
+use std.compiler.nox.lexer
+use std.compiler.nox.emit
+
+pub struct Compiled { pub formula: Noun, pub error: syntax.Error }
+struct State {
+    operators: seq.Seq, values: seq.Seq, ops: U32, vals: U32,
+    token: syntax.Token, operand: Bool, done: Bool, error: syntax.Error,
+    capacity: U32, depth_cap: U32
+}
+
+#[pure]
+fn failed(token: syntax.Token, fallback: Field) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    if syntax.either(syntax.either(syntax.either(token.kind == as_u32(13), token.kind == as_u32(10)), token.kind == as_u32(11)), token.kind == as_u32(12)) {
+        return syntax.error(6, token.start, token.end)
+    }
+    syntax.error(fallback, token.start, token.end)
+}
+
+#[pure]
+fn store(stack: seq.Seq, length: U32, value: Noun, cap: U32) -> seq.Seq {
+    if length < seq.len(stack) { return seq.set(stack, length, value) }
+    seq.push(stack, value, cap)
+}
+
+#[pure]
+fn operator(s: State) -> U32 {
+    as_u32(noun.as_field(seq.get(s.operators, syntax.dec(s.ops))))
+}
+
+#[pure]
+fn reduce(input: State) -> State {
+    let mut s = input
+    if s.vals < as_u32(2) {
+        s.error = failed(s.token, 2)
+        return s
+    }
+    let right = seq.get(s.values, syntax.dec(s.vals))
+    let left = seq.get(s.values, syntax.dec(syntax.dec(s.vals)))
+    let mut depth = as_u32(noun.as_field(noun.head(left)))
+    let other = as_u32(noun.as_field(noun.head(right)))
+    if depth < other { depth = other }
+    depth = as_u32(as_field(depth) + 2)
+    if s.depth_cap < as_u32(as_field(depth) + 9) {
+        s.error = syntax.error(7, s.token.start, s.token.end)
+        return s
+    }
+    let formula = emit.binary(operator(s), noun.tail(left), noun.tail(right))
+    s.vals = syntax.dec(s.vals)
+    s.values = seq.set(s.values, syntax.dec(s.vals), noun.pair(noun.atom(as_field(depth)), formula))
+    s.ops = syntax.dec(s.ops)
+    s
+}
+
+#[pure]
+fn push_operator(input: State) -> State {
+    let mut s = input
+    if s.ops == s.capacity {
+        s.error = syntax.error(7, s.token.start, s.token.end)
+        return s
+    }
+    s.operators = store(s.operators, s.ops, noun.atom(as_field(s.token.kind)), s.capacity)
+    s.ops = syntax.inc(s.ops)
+    s
+}
+
+#[pure]
+fn step(source: bytes.Bytes, input: State) -> State {
+    let mut s = input
+    let kind = s.token.kind
+    if s.operand {
+        if kind == as_u32(2) {
+            if s.vals == s.capacity {
+                s.error = syntax.error(7, s.token.start, s.token.end)
+                return s
+            }
+            s.values = store(s.values, s.vals, noun.pair(noun.atom(1), emit.literal(s.token.value)), s.capacity)
+            s.vals = syntax.inc(s.vals)
+            s.operand = false
+        } else if kind == as_u32(5) { s = push_operator(s) }
+        else {
+            let mut code: Field = 2
+            if kind == as_u32(1) { code = 5 }
+            s.error = failed(s.token, code)
+            return s
+        }
+    } else if syntax.either(kind == as_u32(3), kind == as_u32(4)) {
+        if (s.ops == as_u32(0)) == false {
+            let top = operator(s)
+            if syntax.both((top == as_u32(5)) == false, (top < kind) == false) { return reduce(s) }
+        }
+        s = push_operator(s)
+        s.operand = true
+    } else if kind == as_u32(6) {
+        if s.ops == as_u32(0) {
+            s.error = failed(s.token, 2)
+            return s
+        }
+        if (operator(s) == as_u32(5)) == false { return reduce(s) }
+        s.ops = syntax.dec(s.ops)
+    } else if kind == as_u32(8) {
+        if (s.ops == as_u32(0)) == false {
+            if operator(s) == as_u32(5) {
+                s.error = failed(s.token, 2)
+                return s
+            }
+            return reduce(s)
+        }
+        s.done = true
+        return s
+    } else {
+        s.error = failed(s.token, 2)
+        return s
+    }
+    if s.error.code == as_u32(0) { s.token = lexer.next(source, s.token.end) }
+    s
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: State) -> State {
+    let mut s = input
+    for turn in 0..32 {
+        s = step(source, s)
+        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s
+}
+
+#[pure]
+fn expression(source: bytes.Bytes, start: U32, cap: U32, depth_cap: U32) -> Compiled {
+    let zero = as_u32(0)
+    if depth_cap < as_u32(10) { return Compiled { formula: noun.atom(0), error: syntax.error(7, start, start) } }
+    let mut capacity = cap
+    if syntax.STACK_CAP < capacity { capacity = syntax.STACK_CAP }
+    let mut s = State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,
+        token: lexer.next(source, start), operand: true, done: false,
+        error: syntax.error(0, zero, zero), capacity, depth_cap }
+    for block in 0..256 {
+        s = chunk(source, s)
+        if (s.error.code == zero) == false { return Compiled { formula: noun.atom(0), error: s.error } }
+        if s.done {
+            let tail = lexer.next(source, s.token.end)
+            if (tail.kind == zero) == false { return Compiled { formula: noun.atom(0), error: failed(tail, 2) } }
+            assert_eq(as_field(s.vals), 1)
+            return Compiled { formula: noun.tail(seq.get(s.values, zero)), error: syntax.error(0, zero, zero) }
+        }
+    }
+    Compiled { formula: noun.atom(0), error: syntax.error(7, s.token.start, s.token.end) }
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn compile(source: bytes.Bytes, name: bytes.Bytes, cap: U32, depth_cap: U32) -> Compiled {
+    let expected = [10,1,11,1,5,6,9,12,7]
+    let mut pos = as_u32(0)
+    for i in 0..9 {
+        let token = lexer.next(source, pos)
+        if (as_field(token.kind) == expected[i]) == false {
+            return Compiled { formula: noun.atom(0), error: failed(token, 2) }
+        }
+        if syntax.both(i == as_u32(1), ascii.same(source, token.start, token.end, name) == false) {
+            return Compiled { formula: noun.atom(0), error: syntax.error(3, token.start, token.end) }
+        }
+        if syntax.both(i == as_u32(3), (token.value == 1835100526) == false) {
+            return Compiled { formula: noun.atom(0), error: syntax.error(3, token.start, token.end) }
+        }
+        pos = token.end
+    }
+    expression(source, pos, cap, depth_cap)
+}
