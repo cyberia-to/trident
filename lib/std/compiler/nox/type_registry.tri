@@ -1,0 +1,55 @@
+module std.compiler.nox.type_registry
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.nominal
+use std.compiler.nox.types
+
+pub struct Scope { pub owner: bytes.Bytes, pub records: seq.Seq }
+pub struct Found { pub ty: Noun, pub exists: Bool, pub public: Bool }
+
+#[pure]
+pub fn empty() -> Scope { Scope { owner: bytes.empty(), records: seq.empty() } }
+
+// Names retain every byte; the lexer's seven-byte keyword hint is never identity.
+#[pure]
+#[requires((bytes.len(source) < token.end) == false)]
+#[requires((token.end < token.start) == false)]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn name(source: bytes.Bytes, token: syntax.Token) -> bytes.Bytes {
+    let mut result = bytes.empty()
+    let mut pos = token.start
+    for step in 0..4096 {
+        if pos == token.end { return result }
+        result = bytes.push(result, bytes.get(source, pos), syntax.SOURCE_CAP)
+        pos = syntax.inc(pos)
+    }
+    result
+}
+
+// Export visibility belongs to a declaration; field visibility belongs to its
+// nominal layout. Keeping the two separate permits private types with pub fields.
+#[pure]
+pub fn record(ty: Noun, public: Bool) -> Noun {
+    let mut flag: Field = 0
+    if public { flag = 1 }
+    noun.pair(ty, noun.atom(flag))
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(scope.records)) == false)]
+pub fn lookup(scope: Scope, name: bytes.Bytes) -> Found {
+    let wanted = bytes.to_noun(name)
+    for index in 0..4096 {
+        if index == seq.len(scope.records) { return Found { ty: noun.atom(types.INVALID), exists: false, public: false } }
+        let item = seq.get(scope.records, index)
+        let ty = noun.head(item)
+        if noun.eq(nominal.name(ty), wanted) {
+            return Found { ty, exists: true, public: noun.as_field(noun.tail(item)) == 1 }
+        }
+    }
+    Found { ty: noun.atom(types.INVALID), exists: false, public: false }
+}

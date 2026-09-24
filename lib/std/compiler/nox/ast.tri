@@ -20,6 +20,7 @@ pub const BUILTIN: Field = 10
 pub const DIGEST_INDEX: Field = 11
 pub const TUPLE_VALUE: Field = 12
 pub const PROJECT: Field = 13
+pub const RECORD_VALUE: Field = 14
 
 // Postorder expression: [[kind [left right]] [type [start end]]].
 // Child IDs precede their parent. AST operations are independent of token kinds.
@@ -70,6 +71,7 @@ pub fn store(stack: seq.Seq, length: U32, value: Noun, cap: U32) -> seq.Seq {
 
 #[pure]
 pub fn failed(token: syntax.Token, fallback: Field) -> syntax.Error {
+    if syntax.either(token.kind == as_u32(41), syntax.either(token.kind == as_u32(39), token.kind == as_u32(40))) { return syntax.error(6, token.start, token.end) }
     if token.kind == as_u32(35) { return syntax.error(6, token.start, token.end) }
     if syntax.either(token.kind == as_u32(34), token.kind == as_u32(28)) { return syntax.error(6, token.start, token.end) }
     if syntax.either(token.kind == as_u32(20), token.kind == as_u32(23)) { return syntax.error(6, token.start, token.end) }

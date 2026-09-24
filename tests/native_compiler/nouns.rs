@@ -114,7 +114,7 @@ fn noun_types_and_entry_signatures_reject_before_program_publication() {
             ("fn main(input:Noun)->Noun{nox_noun_atoms(7)}", 5),
             (
                 "fn main(input:Noun)->Noun{let noun=input noun.head(input)}",
-                6,
+                5,
             ),
             ("fn main(input:Noun)->Noun{input[0]}", 5),
         ] {

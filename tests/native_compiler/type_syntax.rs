@@ -91,7 +91,7 @@ fn iterative_type_parser_keeps_ordered_descriptors_and_first_unread_token_spans(
             ("(Field,,Bool)", 2),
             ("(Field Bool)", 2),
             ("(Field $)", 1),
-            ("Unit", 6),
+            ("Unit", 5),
             ("(Field,[Field;2])", 6),
         ] {
             assert_eq!(parse(text, 4096).0, code, "{text}");

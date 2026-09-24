@@ -4,6 +4,7 @@ use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
 use std.compiler.nox.lexer
+use std.compiler.nox.type_registry
 use std.compiler.nox.type_parse
 
 // [canonical-source-Bytes sequence-cap] exercises the real iterative parser.
@@ -11,7 +12,7 @@ use std.compiler.nox.type_parse
 fn main(input: Noun) -> Noun {
     let cap = as_u32(noun.as_field(noun.tail(input)))
     let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
-    let parsed = type_parse.parse(source, lexer.next(source, as_u32(0)), cap)
+    let parsed = type_parse.parse(source, lexer.next(source, as_u32(0)), type_registry.empty(), cap)
     let span = noun.pair(noun.atom(as_field(parsed.token.start)), noun.atom(as_field(parsed.token.end)))
     let token = noun.pair(noun.atom(as_field(parsed.token.kind)), span)
     noun.pair(noun.atom(as_field(parsed.error.code)), noun.pair(token, parsed.ty))

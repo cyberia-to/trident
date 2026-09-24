@@ -61,7 +61,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         ("noun-write-type", source("let mut x=input x=7 input"), 5),
         ("noun-builtin-type", source("nox_noun_pair(input,7)"), 5),
         ("noun-builtin-spelling", source("nox_noun_as_fielx(input) input"), 5),
-        ("noun-qualified", source("let noun=input noun.head(input)"), 6),
+        ("noun-qualified", source("let noun=input noun.head(input)"), 5),
     ]:
         directory, job = package(name, content, {"arena_nodes": 786432})
         report = execute(job, directory / "result.dag", emit="result")

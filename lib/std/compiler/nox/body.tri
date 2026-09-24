@@ -4,6 +4,7 @@ use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
 use std.nox.seq
+use std.compiler.nox.type_registry
 use std.compiler.nox.syntax
 use std.compiler.nox.lexer
 use std.compiler.nox.ast
@@ -47,7 +48,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
             return s
         }
     }
-    let value = expression.parse(source, s.token, expression_state.context(s.bindings, s.visible, s.functions, s.params), s.nodes, s.arguments, s.edges, cap, false)
+    let value = expression.parse(source, s.token, expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types), s.nodes, s.arguments, s.edges, cap, false)
     s.error = value.error
     if (s.error.code == as_u32(0)) == false { return s }
     s.nodes = value.nodes
@@ -120,10 +121,11 @@ fn parameter_chunk(input: Parameters, signature: signatures.Function, cap: U32) 
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-pub fn function(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, cap: U32) -> body_state.State {
+pub fn function(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, cap: U32) -> body_state.State {
     let mut s = Parameters { body: body_state.initial(lexer.next(source, signature.open)), next: as_u32(0) }
     s.body.start = syntax.dec(signature.open)
     s.body.returns = signature.returns
+    s.body.types = scope
     s.body.functions = functions
     s.body.params = params
     for turn in 0..512 {

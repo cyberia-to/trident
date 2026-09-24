@@ -3,13 +3,14 @@ module std.compiler.nox.body_state
 use vm.nox.noun
 use vm.core.convert
 use std.nox.seq
+use std.compiler.nox.type_registry
 use std.compiler.nox.syntax
 use std.compiler.nox.blocks
 use std.compiler.nox.types
 
 pub struct State {
     pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun, pub loops: seq.Seq,
-    pub functions: seq.Seq, pub params: seq.Seq, pub returns: Noun, pub statements: seq.Seq, pub blocks: seq.Seq,
+    pub types: type_registry.Scope, pub functions: seq.Seq, pub params: seq.Seq, pub returns: Noun, pub statements: seq.Seq, pub blocks: seq.Seq,
     pub bindings: seq.Seq, pub visible: Noun, pub current: Noun,
     pub frames: Noun, pub depth: U32, pub start: U32, pub end: U32,
     pub synthetic: Bool, pub returned: Bool, pub has_tail: Bool, pub tail: U32,
@@ -20,7 +21,7 @@ pub struct State {
 pub fn initial(token: syntax.Token) -> State {
     let zero = as_u32(0)
     State { nodes: seq.empty(), arguments: seq.empty(), edges: noun.atom(0), loops: seq.empty(),
-        functions: seq.empty(), params: seq.empty(), returns: noun.atom(types.FIELD), statements: seq.empty(), blocks: seq.empty(),
+        types: type_registry.empty(), functions: seq.empty(), params: seq.empty(), returns: noun.atom(types.FIELD), statements: seq.empty(), blocks: seq.empty(),
         bindings: seq.empty(), visible: noun.atom(0), current: noun.atom(0),
         frames: noun.atom(0), depth: zero, start: token.start, end: token.start, synthetic: false,
         returned: false, has_tail: false, tail: zero, token,

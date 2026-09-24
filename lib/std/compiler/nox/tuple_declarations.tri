@@ -19,7 +19,7 @@ struct Read { body: body_state.State, id: U32 }
 #[pure]
 fn value(source: bytes.Bytes, input: body_state.State, cap: U32) -> Read {
     let mut s = input
-    let parsed = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params), s.nodes, s.arguments, s.edges, cap, false)
+    let parsed = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types), s.nodes, s.arguments, s.edges, cap, false)
     s.nodes = parsed.nodes
     s.arguments = parsed.arguments
     s.edges = parsed.edges
@@ -38,7 +38,7 @@ pub fn declare(source: bytes.Bytes, opening: syntax.Token, writable: Bool, input
     let mut annotated = false
     let mut expected = noun.atom(0)
     if s.token.kind == as_u32(17) {
-        let ty = type_parse.parse(source, lexer.next(source, s.token.end), cap)
+        let ty = type_parse.parse(source, lexer.next(source, s.token.end), s.types, cap)
         s.error = ty.error
         if (s.error.code == as_u32(0)) == false { return s }
         expected = ty.ty
