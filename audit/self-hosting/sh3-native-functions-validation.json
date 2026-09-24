@@ -1,0 +1,680 @@
+{
+  "schema": "trident/sh3-native-functions-validation/v1",
+  "kind": "local-development",
+  "source_revisions": {
+    "trident": "5339030b66c8e9835d79f175ef2ac5eb98d1e75e",
+    "joy": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+    "trisha": "908d5e22a669e4aa0b6c02b5e9134e67c1a25675",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "host": {
+    "uname -ms": "Darwin arm64",
+    "rustc -Vv": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-apple-darwin\nrelease: 1.95.0\nLLVM version: 22.1.3",
+    "sw_vers": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4.1\nBuildVersion:\t\t25E253",
+    "sysctl -n machdep.cpu.brand_string": "Apple M4 Max"
+  },
+  "gates": [
+    {
+      "repository": "trident",
+      "command": [
+        "cargo",
+        "check",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/trident-04-functions-verified-check.log",
+      "sha256": "08d03a7f8dc9d29c2a844e8f9707f919693a3c76d5b182aac9e1dfd35892d521",
+      "rust_warnings": 0,
+      "revision": "5339030b66c8e9835d79f175ef2ac5eb98d1e75e"
+    },
+    {
+      "repository": "trident",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--workspace"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/trident-04-functions-verified-tests.log",
+      "sha256": "c76777994508f8cea7d8dcd0c86cee09006906dc64f55d252426c42bc9d505ff",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 970,
+        "failed": 0,
+        "ignored": 0
+      },
+      "revision": "5339030b66c8e9835d79f175ef2ac5eb98d1e75e"
+    },
+    {
+      "repository": "joy",
+      "command": [
+        "cargo",
+        "check",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/joy-04-functions-verified-check.log",
+      "sha256": "c1e7426abb80df79f7cc348008f823d5898b71fe0d23da32c918a8d7ff84a1db",
+      "rust_warnings": 0,
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173"
+    },
+    {
+      "repository": "joy",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--workspace"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/joy-04-functions-verified-tests.log",
+      "sha256": "194c39562cb9316aada4cadc4fb54e7dc73750ce8941378bd179e78f5f3429cd",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 120,
+        "failed": 0,
+        "ignored": 0
+      },
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173"
+    },
+    {
+      "repository": "trisha",
+      "command": [
+        "cargo",
+        "check",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-functions-verified-check.log",
+      "sha256": "8d0e29bcd3c74cbc3058e8db15ad254919c0d9425c5efa55e5885980168370e7",
+      "rust_warnings": 0,
+      "revision": "908d5e22a669e4aa0b6c02b5e9134e67c1a25675"
+    },
+    {
+      "repository": "trisha",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "-p",
+        "trisha-rs"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-functions-verified-tests.log",
+      "sha256": "1592a7cc8e8e20c1681355f947e25982ff380d72021932338a7356310ca2d91c",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 380,
+        "failed": 0,
+        "ignored": 4
+      },
+      "revision": "908d5e22a669e4aa0b6c02b5e9134e67c1a25675"
+    },
+    {
+      "repository": "trisha",
+      "command": [
+        "cargo",
+        "run",
+        "--release",
+        "--locked",
+        "--offline",
+        "-p",
+        "trisha",
+        "--",
+        "bench"
+      ],
+      "environment": {
+        "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4/trident/target"
+      },
+      "exit_code": 0,
+      "log": "/tmp/trisha-04-functions-verified-bench.log",
+      "sha256": "0d7ff5f64531f1e4656d828b143a7ec39928368ef014c483700f1f2455cacf74",
+      "rust_warnings": 0,
+      "revision": "908d5e22a669e4aa0b6c02b5e9134e67c1a25675",
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "unchanged_result_cycle_rows": true,
+      "comparison_log": "/tmp/trisha-04-control-verified-bench.log"
+    }
+  ],
+  "formal_audits": [
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/ascii.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/ast.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/block_gen.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/blocks.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/body.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/body_state.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/body_store.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/call_codegen.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/call_frames.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/call_graph.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/call_parse.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/check_functions.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/codegen.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/contexts.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/control_gen.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/control_parse.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/coverage.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/declarations.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/emit.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/expression.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/expression_state.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/flow.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/formula.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/function_gen.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/function_order.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/function_plan.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/header_state.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/headers.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/job.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/lexer.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/parser.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/signatures.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/symbols.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/syntax.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/terminal.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/utf8.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "compiler/nox/main.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    }
+  ],
+  "installed_cli": {
+    "command": "python3 audit/self-hosting/run-native-compiler.py --joy ../install/bin/joy --output /tmp/native-functions-cli.json",
+    "exit_code": 0,
+    "commands": 242,
+    "observations": 84,
+    "receipt": "native-functions-cli.json",
+    "sha256": "322f5b2ed68914e28376fe47a65c8b4cf0516c18ea31a7d4ddd70017b389a00b"
+  },
+  "review": {
+    "passes": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "resolved_findings": [
+      "Header signatures precede all body checks; final callable definitions and every declared body match seed replacement semantics.",
+      "Positional immutable parameters preserve arity; repeated parameter names resolve to their last slot; function calls do not consult local bindings.",
+      "Nested calls own linked arguments; source-order CONS leaves initialize a fresh callee frame with zero local padding.",
+      "Unit return coverage and inferred locals are distinct from Field/Bool; no magic expected-type sentinel aliases Unit.",
+      "Recursive function cycles use semantic5, preserving JOB1 code4 for import cycles.",
+      "Memoized graph suffix heights prevent black vertices from bypassing the maximum call depth.",
+      "Stored bodies retain checked terminal flags and explicit local counts; restored binding tables are intentionally empty.",
+      "Sorted reachable tables, raw dynamic apply and exact depth accounting preserve declaration-order-independent artifacts.",
+      "Existing arithmetic, locals and control artifact identities remain identical."
+    ]
+  },
+  "failed_drafts": [
+    {
+      "base_revision": "f1a2b46c386403600dd04dd280c6339ee144b366",
+      "status": "uncommitted component test draft",
+      "command": "cargo test --release --locked --offline --test native_compiler function_bounds -- --nocapture",
+      "log": "/tmp/trident-04-functions-bounds.log",
+      "first_error": "prepared graph test: Error(Unavailable) under196608 nodes",
+      "resolution": "Use an explicitly larger786432-node arena for the isolated graph-depth component; full JOB allowances stay196608."
+    },
+    {
+      "base_revision": "f1a2b46c386403600dd04dd280c6339ee144b366",
+      "status": "uncommitted component test draft",
+      "command": "cargo test --release --locked --offline --test native_compiler call_markers_share -- --nocapture",
+      "log": "/tmp/trident-04-functions-delimiters.log",
+      "first_error": "63 nested calls: Error(Unavailable) under the component execution allowances",
+      "resolution": "Test full expression parsing across7/8/9 calls; isolate the actual checked marker push at63/64/65; record full JOB64 calls as runtime exhaustion."
+    },
+    {
+      "base_revision": "f1a2b46c386403600dd04dd280c6339ee144b366",
+      "status": "terminated uncommitted component test draft",
+      "command": "cargo test --release --locked --offline --test native_compiler function_bounds -- --nocapture",
+      "log": "/tmp/trident-04-functions-bounds-fixed.log",
+      "first_error": "larger inline Reduction and return temporaries exceeded the256MiB worker stack; sample showed stack-probe store repeatedly faulting",
+      "sample": "/tmp/native-graph-sample.txt",
+      "resolution": "The isolated large graph probe now requests512MiB stack. Production heap allocation is next SH4 work; the final full workspace gate was restarted."
+    }
+  ],
+  "limits": [
+    "Complete native compiler language coverage and self-build remain open.",
+    "All native compiler formal verdicts remain UNKNOWN.",
+    "Full JOB source/runtime arena allowances remain unchanged; larger assignments, source admission and nested call workloads still fail without publication.",
+    "The128-function graph boundary is an isolated prepared DAG component with786432 nodes and512MiB worker stack, not a full JOB acceptance claim.",
+    "The64-call marker boundary is an isolated checked-push probe; full source expression parsing crosses7/8/9 nested calls.",
+    "Actual function-generator depth is independently measured; full JOB admission also bounds C1, so small output depth tests are component probes.",
+    "Only the recorded macOS host validated; six-platform acceptance and native Zheng compiler proofs remain open."
+  ],
+  "committed_rebuilds": {
+    "trident": {
+      "command": "CARGO_TARGET_DIR=/Users/master/cyber/.worktrees/selfhost-0.4/trident/target cargo install --path . --locked --offline --force --root ../install",
+      "exit_code": 0,
+      "sha256": "ea00ed2d3d51fa12641e5af5e5a61972ff4d1df179c627bb82f14b51bf79138b"
+    },
+    "joy": {
+      "command": "CARGO_TARGET_DIR=/Users/master/cyber/.worktrees/selfhost-0.4/trident/target cargo install --path cli --locked --offline --force --root ../install",
+      "exit_code": 0,
+      "sha256": "06a0345025662505e111c5af51cdc76aeb4b86b25ae1eadc73542c2e739165a0"
+    },
+    "trisha": {
+      "command": "CARGO_TARGET_DIR=/Users/master/cyber/.worktrees/selfhost-0.4/trident/target cargo install --path cli --locked --offline --force --root ../install",
+      "exit_code": 0,
+      "sha256": "8e63918a58f4be4b70d3b89313a7bfce09c3e0824ddbd23d7fcb8e23ce6c12a7"
+    }
+  },
+  "source_provenance": {
+    "checkout": "/Users/master/cyber/.worktrees/selfhost-0.4-clean",
+    "vendor_regeneration": {
+      "command": "nu patches/apply.nu",
+      "revision": "981d502105879b26e93b0cfa884aa45ffb377318",
+      "upstream_pins": {
+        "twenty-first": {
+          "version": "1.1.0",
+          "sha256": "2f2127e955aea73cc584e429c544f4a5997128fd5e4021c852cb63f309bf51ea"
+        },
+        "triton-vm": {
+          "version": "7.0.0",
+          "sha256": "5b7f98e447c631135092a38c29a5ba286e77540759560287f6798e2e840a3c79"
+        },
+        "triton-air": {
+          "version": "7.0.0",
+          "sha256": "05100018626561a14bdfee44f9e47c767bbec7c645f4707ac5a3541ec648d49f"
+        },
+        "triton-isa": {
+          "version": "7.0.0",
+          "sha256": "ee155aabdd118aa503e9bfe46e67c67a46d3c06b57b3ff94fa5a6ebf149e2371"
+        },
+        "triton-constraint-circuit": {
+          "version": "7.0.0",
+          "sha256": "961bfa562c091b39f65b8fa0c27890db36ed8968ff9cf1c842db548c76941536"
+        },
+        "triton-constraint-builder": {
+          "version": "7.0.0",
+          "sha256": "ceb01697a5d694084a6cb889cd543b86c6f7d8bf972f0f7ccac249a4aae63390"
+        },
+        "tasm-lib": {
+          "version": "7.0.0",
+          "sha256": "db7abc899995c0d6b41d82180e1e6cce607916b1677857326c37a28514dcfb87"
+        },
+        "tasm-object-derive": {
+          "version": "7.0.0",
+          "sha256": "2dd2733bd907d9dcd39df837cfe4feba2ef10aeba6547e8688e6b35efafdd3d7"
+        }
+      },
+      "log_sha256": "699b5cc2cd5700fc3e6a2cff137937be6e8f9bff802f10a273240cf8b4412a7e"
+    },
+    "source_state": "committed Trident implementation and clean pinned siblings; audit-only drafts may follow"
+  }
+}
