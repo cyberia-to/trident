@@ -89,7 +89,8 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         output = directory / "output.dag"
         output.write_bytes(zero.read_bytes())
         run(["run-artifact", program, "--input", input_file, "-o", output, "--force"], expected=1)
-        assert "Error(" in commands[-1]["stderr"], commands[-1]
+        expected_error = "TypeError" if name == "noun-field-trap" else "AxisError"
+        assert commands[-1]["stderr"] == f"error: execution failed: {expected_error}\n", commands[-1]
         assert output.read_bytes() == zero.read_bytes()
         observations.append({"case": name, "source_hex": content.hex(), "compiler_execution": compiled,
                              "program_execution_error": commands[-1]["stderr"], "previous_output_preserved": True})
