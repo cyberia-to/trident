@@ -74,6 +74,8 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
   [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
 - [ ] SH1 native Seq/Bytes source libraries.
+- [x] Native wrapper prerequisite: nominal module ownership, enforced private
+  fields and duplicate-owner rejection. [Validation](self-hosting/native-wrapper-privacy.md).
 
 Resolve protocol or language choices explicitly in their owner contracts before
 dependent implementation. Keep the next executable task and its dependencies
