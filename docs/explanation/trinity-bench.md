@@ -497,3 +497,36 @@ Trinity proves the Rosetta Stone unification:
 - Each domain contributes meaningfully to the computation
 
 `trident build std/trinity/inference.tri` -> `trisha prove` -> `trisha verify`.
+
+## Polynomial State and the Trinity
+
+The state the trinity program reads is one polynomial, not a forest of hash
+trees: bbg commits the whole graph to a single polynomial over Goldilocks and
+opens it through lens. Three consequences hold for the three pillars, and each
+was argued in March 2026 before the decision was implemented; what follows is
+the part that survived.
+
+- **Quantum.** Polynomial commitments add a computational assumption, but the
+  lens in use is Brakedown, a hash-based scheme whose soundness rests on
+  hemera collision resistance, the same hash the tree nodes used. The trust
+  root is unchanged; the post-quantum floor is not lowered.
+- **Privacy.** Public records (particles, axons, neuron aggregates) and
+  private records (cyberlinks, spends, balances) keep their separation; the
+  private side is a mutator set over its own polynomial. A private transition
+  proof references state through one opening per read instead of one hash path
+  per read.
+- **AI.** Graph reads inside a proof are field operations, not hash paths.
+  That is what lets the tri-kernel convergence fit a zheng circuit at all, and
+  what makes a compiled model's embedding lookup a polynomial evaluation.
+
+The shift among the four hardware primitives (fma, ntt, p2r, lut): p2r is
+released from state authentication and left with Fiat–Shamir and signal
+identity; fma and ntt take on state reads and updates. On a Goldilocks field
+processor that frees p2r units for proof throughput.
+
+Numbers from the March argument that measurement has since replaced: proof
+size landed at 1–2 KB as predicted; the per-ticket decide/verify measured
+9–19 ms, not the predicted tens of microseconds; the constant-size recursive
+step over Brakedown is blocked until the tensor-Merkle binding is proven
+(lens issue #6). Polynomial state removed a bottleneck; it did not make every
+projection true.
