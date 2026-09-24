@@ -1,0 +1,49 @@
+module std.compiler.nox.symbols
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.seq
+use std.nox.bytes
+use std.compiler.nox.syntax
+
+pub struct Found { pub exists: Bool, pub slot: U32, pub writable: Bool }
+
+// A declaration owns its slot even after another declaration shadows its name.
+#[pure]
+pub fn binding(name: syntax.Token, writable: Bool) -> Noun {
+    let mut flag: Field = 0
+    if writable { flag = 1 }
+    noun.pair(noun.atom(as_field(name.start)), noun.pair(noun.atom(as_field(name.end)), noun.atom(flag)))
+}
+
+#[pure]
+fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
+    let start = as_u32(noun.as_field(noun.head(binding)))
+    let end = as_u32(noun.as_field(noun.head(noun.tail(binding))))
+    if (field.sub(as_field(name.end), as_field(name.start)) == field.sub(as_field(end), as_field(start))) == false { return false }
+    let mut a = name.start
+    let mut b = start
+    for step in 0..4096 {
+        if a == name.end { return true }
+        if (bytes.get(source, a) == bytes.get(source, b)) == false { return false }
+        a = syntax.inc(a)
+        b = syntax.inc(b)
+    }
+    a == name.end
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(bindings)) == false)]
+pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq) -> Found {
+    let mut index = seq.len(bindings)
+    for step in 0..4096 {
+        if index == as_u32(0) { return Found { exists: false, slot: as_u32(0), writable: false } }
+        index = syntax.dec(index)
+        let binding = seq.get(bindings, index)
+        if same(source, name, binding) {
+            return Found { exists: true, slot: index, writable: noun.as_field(noun.tail(noun.tail(binding))) == 1 }
+        }
+    }
+    Found { exists: false, slot: as_u32(0), writable: false }
+}

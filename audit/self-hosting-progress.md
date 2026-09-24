@@ -93,9 +93,12 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH3 seed frontend: resolved halting-call semantics through return checking
   and both backends, with scoped callable/constant bindings;
   [execution and validation](self-hosting/resolved-halting.md).
-- [ ] SH3 native compiler: start with native Field locals, mutable assignments
-  and stable runtime slots; then extend to typed declarations, calls, control
-  flow, aggregates and imports. [Next slice](../.claude/plans/native-compiler-locals.md).
+- [x] SH3 native compiler locals: Field declarations, mutable assignments,
+  stable runtime slots and lexical shadowing;
+  [source/JOB execution evidence](self-hosting/native-compiler-locals.md).
+- [ ] SH3 native compiler control: Bool, equality, scoped if/else and early return;
+  then typed reusable functions, aggregates, imports and remaining compiler language.
+  [Next slice](../.claude/plans/native-compiler-control.md).
 - [ ] SH4 source closure and allocation scale: measure and repair the lifetime
   arena boundary observed during pilot source admission before full self-build.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
@@ -115,7 +118,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Heap executor, node cap and compact source-loop measurements delivered; compiler-scale workload pending |
-| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values and [resolved halting](self-hosting/resolved-halting.md) are accepted; native locals are next |
+| Full native compiler language coverage | Trident / SH3 | Parser, zero-width values, [resolved halting](self-hosting/resolved-halting.md) and [native locals](self-hosting/native-compiler-locals.md) are accepted; typed control is next |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -220,3 +223,8 @@ then whole native compiler coverage. SH3 remains open.
 per-owner callable/constant bindings and local root shadowing passed the
 [halting acceptance](self-hosting/resolved-halting.md). Continue with native
 Field locals/assignments and actual runtime slots inside the guest compiler.
+
+2026-09-24 continuation: native Field locals, mutation and lexical shadowing
+accepted through full source/JOB/ART1 execution. [Pinned validation](self-hosting/sh3-native-locals-validation.json).
+Continue with native Bool/equality/control flow; compiler-scale arena remains
+open and is reproduced by the larger assignment workload.

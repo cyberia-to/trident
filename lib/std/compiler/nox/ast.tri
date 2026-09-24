@@ -1,0 +1,34 @@
+module std.compiler.nox.ast
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.syntax
+
+// Postorder records: [kind [left right]], kinds literal0/local1/add3/mul4.
+// Child IDs always precede their parent. All expressions have type Field.
+#[pure]
+pub fn node(kind: Field, left: Field, right: Field) -> Noun {
+    noun.pair(noun.atom(kind), noun.pair(noun.atom(left), noun.atom(right)))
+}
+
+#[pure]
+pub fn left(node: Noun) -> Field { noun.as_field(noun.head(noun.tail(node))) }
+
+#[pure]
+pub fn right(node: Noun) -> Field { noun.as_field(noun.tail(noun.tail(node))) }
+
+#[pure]
+pub fn store(stack: seq.Seq, length: U32, value: Noun, cap: U32) -> seq.Seq {
+    if length < seq.len(stack) { return seq.set(stack, length, value) }
+    seq.push(stack, value, cap)
+}
+
+#[pure]
+pub fn failed(token: syntax.Token, fallback: Field) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    if syntax.either(syntax.either(syntax.either(token.kind == as_u32(13), token.kind == as_u32(10)), token.kind == as_u32(11)), token.kind == as_u32(12)) {
+        return syntax.error(6, token.start, token.end)
+    }
+    syntax.error(fallback, token.start, token.end)
+}

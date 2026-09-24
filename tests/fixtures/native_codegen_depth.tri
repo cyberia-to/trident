@@ -1,0 +1,22 @@
+program native_codegen_depth
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.ast
+use std.compiler.nox.codegen
+use std.compiler.nox.emit
+
+// Component probe: output depth is independently measured by the Rust test.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let mut nodes = seq.empty()
+    nodes = seq.push(nodes, ast.node(0, 7, 0), as_u32(2))
+    nodes = seq.push(nodes, ast.node(1, 0, 0), as_u32(2))
+    let mut writes = seq.empty()
+    for i in 0..9 {
+        writes = seq.push(writes, noun.pair(noun.atom(0), noun.atom(0)), as_u32(9))
+    }
+    let result = codegen.generate(nodes, writes, as_u32(1), as_u32(1), as_u32(noun.as_field(input)))
+    noun.pair(noun.atom(as_field(result.error.code)), emit.artifact(result.formula))
+}

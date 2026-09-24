@@ -188,7 +188,7 @@ literals, parentheses, `+`, `*` and a tail expression. Define lexical/range
 rules explicitly; reject valid full-language constructs outside this subset
 as unsupported. Preserve precedence and associativity.
 
-### Native arithmetic pilot contract
+### Native compiler subset contract
 
 The SH2 entry lives in `compiler/nox/main.tri`; reusable native stages live in
 `std.compiler.nox.*`. The existing RAM compiler remains the SH3 porting input.
@@ -203,10 +203,12 @@ requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
 program := "program" identifier "fn" "main" "(" ")" "->" "Field"
-           "{" expression "}" EOF
+           "{" statement* expression "}" EOF
+statement := "let" "mut"? identifier (":" "Field")? "=" expression
+           | identifier "=" expression
 expression := term ("+" term)*
 term := primary ("*" primary)*
-primary := decimal | "(" expression ")"
+primary := decimal | identifier | "(" expression ")"
 ```
 
 Identifiers use the seed's ASCII identifier spelling; keywords, type words,
@@ -226,12 +228,31 @@ Generation preserves the expression tree: literal `[1 value]`, addition
 needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
 compiler identity, source paths and execution counters.
 
-The pilot reports the first deterministic diagnostic: code 1 for encoding or
+Local declarations infer Field or state it explicitly. A `let mut` binding
+permits assignment; other bindings reject writes. Initializers resolve names
+before installing the new binding, so `let x = x + 1` reads the previous `x`
+and rejects when no previous binding exists. Same-scope shadowing creates a
+fresh slot. Each assignment evaluates its right-hand side once against the
+previous environment, then replaces only its selected slot. Identifier lookup
+compares every source byte, including names longer than seven bytes. An identifier
+followed by `(` on the same physical line is an unsupported call. LF between them
+permits a following parenthesized expression where a statement boundary is valid;
+CR alone keeps the same line, matching the seed parser.
+
+The guest builds a postorder expression sequence and ordered statement sequence.
+Literal/local/add/multiply expressions all have type Field. Child references
+precede their parent; declarations own stable slots. Code generation uses the
+actual declaration count to size a balanced native frame `[0 [0 E(h)]]`, reads
+slot `i` at axis `7 * 2^h + i`, and composes persistent frame updates in statement
+order. Statement-free arithmetic retains its existing formula bytes. Requested
+limits may reject work but do not select a different successful artifact.
+
+The compiler reports the first deterministic diagnostic: code 1 for encoding or
 tokens, 2 for malformed syntax, 3 for an entry mismatch, 5 for an unknown
-expression name, 6 for an unsupported construct/request and 7 for a known
+expression name or immutable assignment, 6 for an unsupported construct/request and 7 for a known
 compiler work-capacity limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
-imports, declarations and attributes are rejected, including trailing items.
+imports, other declarations and attributes are rejected, including trailing items.
 Exhaustion of a VM or collection-validation allowance remains an execution
 failure outside RES1, as specified by the job contract.
 
@@ -244,9 +265,13 @@ descent; helper chunks return explicitly to release evaluator frames.
 
 The initial ceilings are 4096 selected source bytes and 64 live entries in
 each operator/value stack, further restricted by the requested sequence cap.
+Expression records, statements and binding tables each obey the lesser of the
+requested sequence cap and the selected-source ceiling; every append checks
+capacity before modifying the collection.
 At most 4096 nonempty tokens and 4096 operator reductions fit the 8192-step
 parser driver. UTF-8 validation uses 64-byte chunks; parsing uses 32-step
-chunks. Generated formula depth plus its ART1/RES1 wrappers must fit the
+chunks; body parsing and expression/statement emission use eight-record chunks
+with explicit completion. Generated formula depth plus its ART1/RES1 wrappers must fit the
 requested artifact depth. The guest JOB reader charges every record projection,
 collection traversal and repeated admission payload read to its shared visit
 allowance; lexical and parsing reads use the execution budget after admission.

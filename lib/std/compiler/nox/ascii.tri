@@ -50,8 +50,8 @@ pub fn keyword(value: Field) -> Field {
     if value == 26222 { return 11 } // fn
     if value == 7370082 { return 13 } // pub
     if value == 7562595 { return 13 } // sec
-    if value == 7103860 { return 13 } // let
-    if value == 7173492 { return 13 } // mut
+    if value == 7103860 { return 15 } // let
+    if value == 7173492 { return 16 } // mut
     if value == 427071271796 { return 13 } // const
     if value == 126943973696372 { return 13 } // struct
     if value == 26982 { return 13 } // if
@@ -82,4 +82,18 @@ pub fn punctuation(value: U32) -> Bool {
     let codes = [35,91,93,59,61,44,46,58,38,94,60,62]
     for i in 0..12 { if as_field(value) == codes[i] { return true } }
     false
+}
+
+// Call punctuation belongs to an identifier only on the same physical line.
+#[pure]
+#[requires((bytes.len(source) < end) == false)]
+#[requires((end < start) == false)]
+pub fn same_line(source: bytes.Bytes, start: U32, end: U32) -> Bool {
+    let mut pos = start
+    for step in 0..4096 {
+        if pos == end { return true }
+        if bytes.get(source, pos) == as_u32(10) { return false }
+        pos = syntax.inc(pos)
+    }
+    true
 }
