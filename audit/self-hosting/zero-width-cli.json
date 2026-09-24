@@ -1,0 +1,290 @@
+{
+  "schema": "trident/zero-width-cli/v1",
+  "kind": "local-development",
+  "source_revisions": {
+    "trident": "f11a4320ed2b42be5f4a32789c06c5c5fe4fa1bd",
+    "trisha": "3140d30ff2a9d4ba57641148e3f227148577cc0f",
+    "joy": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/valid.tri",
+        "--emit",
+        "artifact",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/invalid.tri",
+        "--emit",
+        "artifact",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug-bounds.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug-bounds.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug-output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug-output.dag\",\"execution\":{\"allocated_nodes\":2157,\"arena_reserved_bytes\":26214416,\"charged_reductions\":5118,\"elapsed_micros\":24207,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"6ca107e26f1096701b9907ab4e2f52ef343b1168ed31043f8d24f18a79a95534\",\"peak_frames\":107,\"program_particle\":\"24860f9c359dd2095dd4a2b332bd289dc0ab00d4f6976415c4869e03afe36fd4\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"6ca107e26f1096701b9907ab4e2f52ef343b1168ed31043f8d24f18a79a95534\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug-bounds.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/fourteen.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/debug-output.dag",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution failed: InvZero\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/trisha",
+        "run",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/stack.tri",
+        "--profile",
+        "debug",
+        "--input-values",
+        "0"
+      ],
+      "exit_code": 0,
+      "stdout": "17\n97\n",
+      "stderr": "Backend: cpu\nExecuting stack (238 ops)...\nExecuted in 236 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/trisha",
+        "run",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/stack.tri",
+        "--profile",
+        "debug",
+        "--input-values",
+        "1"
+      ],
+      "exit_code": 0,
+      "stdout": "20\n97\n",
+      "stderr": "Backend: cpu\nExecuting stack (238 ops)...\nExecuted in 255 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/trisha",
+        "run",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/stack.tri",
+        "--profile",
+        "debug",
+        "--input-values",
+        "2"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Backend: cpu\nExecuting stack (238 ops)...\nerror: execution error: VM error: assertion failed: expected 1, got 0\nVM state:\n\n \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n \u2502 assert   \u2502\n\u256d\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 ip:                    177 \u2577 ci:                     10 \u2577 nia:                    3 \u2502                65 \u2502\n\u2502 jsp:                     2 \u2502 jso:  00000000000000000340 \u2502 jsd:                  109 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 osp:                    24 \u2575                                                                            \u2502\n\u2502                                                                                                         \u2502\n\u2502 st0-3:    [                    0 |                    2 |                   13 |                    6 ] \u2502\n\u2502 st4-7:    [                    4 |                    2 |                   97 |                    2 ] \u2502\n\u2502 st8-11:   [                    0 |                    0 |                    0 |                    0 ] \u2502\n\u2502 st12-15:  [                    0 |                    0 |                    0 |                    0 ] \u2502\n\u2502                                                                                                         \u2502\n\u2502 hv0-3:    [                    0 |                    0 |                    0 |                    0 ] \u2502\n\u2502 hv4-5:    [                    0 |                    0 ]                                               \u2502\n\u2502 ib6-0:    [ 0 | 0 | 0 | 1 | 0 | 1 | 0 ]                                                                 \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502                                     -- sponge is not initialized --                                     \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502   0: zero_width__keep                                                                                   \u2502\n\u2502         at 109                                                                                          \u2502\n\u2502   1: stack__main                                                                                        \u2502\n\u2502         at 00000000000000000334                                                                         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/valid.tri",
+        "--emit",
+        "artifact",
+        "--profile",
+        "release",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/invalid.tri",
+        "--emit",
+        "artifact",
+        "--profile",
+        "release",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release-bounds.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release-bounds.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release-output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release-output.dag\",\"execution\":{\"allocated_nodes\":2157,\"arena_reserved_bytes\":26214416,\"charged_reductions\":5118,\"elapsed_micros\":24185,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"6ca107e26f1096701b9907ab4e2f52ef343b1168ed31043f8d24f18a79a95534\",\"peak_frames\":107,\"program_particle\":\"24860f9c359dd2095dd4a2b332bd289dc0ab00d4f6976415c4869e03afe36fd4\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"6ca107e26f1096701b9907ab4e2f52ef343b1168ed31043f8d24f18a79a95534\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release-bounds.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/fourteen.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/release-output.dag",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution failed: InvZero\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/trisha",
+        "run",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/stack.tri",
+        "--profile",
+        "release",
+        "--input-values",
+        "0"
+      ],
+      "exit_code": 0,
+      "stdout": "17\n97\n",
+      "stderr": "Backend: cpu\nExecuting stack (238 ops)...\nExecuted in 236 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/trisha",
+        "run",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/stack.tri",
+        "--profile",
+        "release",
+        "--input-values",
+        "1"
+      ],
+      "exit_code": 0,
+      "stdout": "20\n97\n",
+      "stderr": "Backend: cpu\nExecuting stack (238 ops)...\nExecuted in 255 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4/install/bin/trisha",
+        "run",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-zero-width-2dhuz8b3/stack.tri",
+        "--profile",
+        "release",
+        "--input-values",
+        "2"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Backend: cpu\nExecuting stack (238 ops)...\nerror: execution error: VM error: assertion failed: expected 1, got 0\nVM state:\n\n \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n \u2502 assert   \u2502\n\u256d\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 ip:                    177 \u2577 ci:                     10 \u2577 nia:                    3 \u2502                65 \u2502\n\u2502 jsp:                     2 \u2502 jso:  00000000000000000340 \u2502 jsd:                  109 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 osp:                    24 \u2575                                                                            \u2502\n\u2502                                                                                                         \u2502\n\u2502 st0-3:    [                    0 |                    2 |                   13 |                    6 ] \u2502\n\u2502 st4-7:    [                    4 |                    2 |                   97 |                    2 ] \u2502\n\u2502 st8-11:   [                    0 |                    0 |                    0 |                    0 ] \u2502\n\u2502 st12-15:  [                    0 |                    0 |                    0 |                    0 ] \u2502\n\u2502                                                                                                         \u2502\n\u2502 hv0-3:    [                    0 |                    0 |                    0 |                    0 ] \u2502\n\u2502 hv4-5:    [                    0 |                    0 ]                                               \u2502\n\u2502 ib6-0:    [ 0 | 0 | 0 | 1 | 0 | 1 | 0 ]                                                                 \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502                                     -- sponge is not initialized --                                     \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502   0: zero_width__keep                                                                                   \u2502\n\u2502         at 109                                                                                          \u2502\n\u2502   1: stack__main                                                                                        \u2502\n\u2502         at 00000000000000000334                                                                         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\n\n"
+    }
+  ],
+  "observations": [
+    {
+      "owner": "joy",
+      "profile": "debug",
+      "expected": 37,
+      "bounds_failure_preserved_output": true,
+      "program_particle": "24860f9c359dd2095dd4a2b332bd289dc0ab00d4f6976415c4869e03afe36fd4",
+      "output_sha256": "429c76904dfb53e8c4207f04bf3b8b65e6a3fcfdeebcb2412e9500a63c9b696d"
+    },
+    {
+      "owner": "trisha",
+      "profile": "debug",
+      "input": 0,
+      "output": [
+        17,
+        97
+      ],
+      "bounds_failure": false
+    },
+    {
+      "owner": "trisha",
+      "profile": "debug",
+      "input": 1,
+      "output": [
+        20,
+        97
+      ],
+      "bounds_failure": false
+    },
+    {
+      "owner": "trisha",
+      "profile": "debug",
+      "input": 2,
+      "output": [],
+      "bounds_failure": true
+    },
+    {
+      "owner": "joy",
+      "profile": "release",
+      "expected": 37,
+      "bounds_failure_preserved_output": true,
+      "program_particle": "24860f9c359dd2095dd4a2b332bd289dc0ab00d4f6976415c4869e03afe36fd4",
+      "output_sha256": "429c76904dfb53e8c4207f04bf3b8b65e6a3fcfdeebcb2412e9500a63c9b696d"
+    },
+    {
+      "owner": "trisha",
+      "profile": "release",
+      "input": 0,
+      "output": [
+        17,
+        97
+      ],
+      "bounds_failure": false
+    },
+    {
+      "owner": "trisha",
+      "profile": "release",
+      "input": 1,
+      "output": [
+        20,
+        97
+      ],
+      "bounds_failure": false
+    },
+    {
+      "owner": "trisha",
+      "profile": "release",
+      "input": 2,
+      "output": [],
+      "bounds_failure": true
+    }
+  ]
+}

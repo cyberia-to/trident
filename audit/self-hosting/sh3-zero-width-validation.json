@@ -1,0 +1,258 @@
+{
+  "schema": "trident/sh3-zero-width-validation/v1",
+  "kind": "local-development",
+  "source_revisions": {
+    "trident": "f11a4320ed2b42be5f4a32789c06c5c5fe4fa1bd",
+    "joy": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+    "trisha": "3140d30ff2a9d4ba57641148e3f227148577cc0f",
+    "nox": "5271961a72a1f1e9922df36e3e4e3c65d1acff81",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "80a8ca90208c3b49c4f2a8507d75fd17785fdfe3"
+  },
+  "host": {
+    "uname -ms": "Darwin arm64",
+    "rustc -Vv": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-apple-darwin\nrelease: 1.95.0\nLLVM version: 22.1.3",
+    "sw_vers": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4.1\nBuildVersion:\t\t25E253",
+    "sysctl -n machdep.cpu.brand_string": "Apple M4 Max"
+  },
+  "gates": [
+    {
+      "repository": "trident",
+      "revision": "f11a4320ed2b42be5f4a32789c06c5c5fe4fa1bd",
+      "command": "cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-zero-accept-check.log",
+      "log_sha256": "f05c4de672c99f37c7f8c0518c0f3ae9a192e65a2bc90b398042a9e9f3a3913e",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trident",
+      "revision": "f11a4320ed2b42be5f4a32789c06c5c5fe4fa1bd",
+      "command": "cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trident-04-zero-accept-tests.log",
+      "log_sha256": "8affce9be4f7b83611cae6172cb770651d1186043230af892492e8f8864c24b0",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 928,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-zero-accept-check.log",
+      "log_sha256": "ee8ec7ed0b17773c4b5f1a77f34b11f93aaa4b5e775e6c38380944e8f1946930",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "joy",
+      "revision": "a3dd4c5c7c2f870f6632deace5b137a141796173",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --workspace --release --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/joy-04-zero-accept-tests.log",
+      "log_sha256": "f9dec26c26ea2407305bc0df9508bddaebefc5e280ba4dd9eae40636d98d87ed",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 120,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "3140d30ff2a9d4ba57641148e3f227148577cc0f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo check --workspace --all-targets --locked",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-zero-final-check.log",
+      "log_sha256": "0bcb158ba3cde595c6fbcf34a239758ad3e9f63ea42a22fe188c839db922529f",
+      "rust_warnings": 0
+    },
+    {
+      "repository": "trisha",
+      "revision": "3140d30ff2a9d4ba57641148e3f227148577cc0f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-zero-final-tests.log",
+      "log_sha256": "4b431d9f10cfada76ae7cc87a6d7ce7b07721a1a11e2e1fa71f630a14c14a89e",
+      "rust_warnings": 0,
+      "tests": {
+        "passed": 370,
+        "failed": 0,
+        "ignored": 4
+      }
+    },
+    {
+      "repository": "trisha",
+      "revision": "3140d30ff2a9d4ba57641148e3f227148577cc0f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo run --release --locked -p trisha -- bench",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-zero-final-bench.log",
+      "log_sha256": "7b84c092350e1ce7eea20fc9945bcf2d667661de1b0bb880a245d80ded51a1f0",
+      "rust_warnings": 0,
+      "verified_fixtures": 133,
+      "verified_independent_baselines": 43,
+      "unchanged_result_cycle_rows": true,
+      "comparison_log": "/tmp/trisha-04-block-bench.log"
+    },
+    {
+      "repository": "trisha",
+      "revision": "3140d30ff2a9d4ba57641148e3f227148577cc0f",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs --test zero_width",
+      "exit_code": 0,
+      "local_log": "/tmp/trisha-04-zero-accept-focused.log",
+      "log_sha256": "1509d49888867d48a425fe38afdcac03366f71aff2ca7cfe332bddaeccb0765d",
+      "tests": {
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0
+      },
+      "reason": "Final added generic-size-shadowing case after complete CPU run; already included in the seven test functions above."
+    }
+  ],
+  "formal_audits": [
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/ascii.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/emit.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/job.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/lexer.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/parser.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/syntax.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "lib/std/compiler/nox/utf8.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    },
+    {
+      "command": [
+        "../install/bin/trident",
+        "audit",
+        "compiler/nox/main.tri",
+        "--json"
+      ],
+      "exit_code": 2,
+      "verdict": "unknown"
+    }
+  ],
+  "installed_cli": {
+    "command": "python3 audit/self-hosting/run-zero-width.py --joy ../install/bin/joy --trisha ../install/bin/trisha --output audit/self-hosting/zero-width-cli.json",
+    "exit_code": 0,
+    "commands": 14,
+    "observations": 8,
+    "receipt": "zero-width-cli.json",
+    "sha256": "c518c4a4355e0a19fb6b8345ff8f6febdfce8f2f36df80014110168028dc07e1"
+  },
+  "review": {
+    "passes": [
+      1,
+      5,
+      6,
+      9
+    ],
+    "resolved_findings": [
+      "Preserve Unit layouts in mixed tuples and inferred arrays.",
+      "Preserve nested empty-array lengths.",
+      "Resolve local and defining-module constants before widths.",
+      "Reject oversized extents without U32 wrapping, including nested empty entry types."
+    ]
+  },
+  "failed_drafts": [
+    {
+      "trident_base": "06ea5984e13e3ec396328188aeb0266ea169dd41",
+      "trisha_base": "5fbd3f087cf316cbc3067c816b76272f166a72db",
+      "status": "uncommitted zero-width draft",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo test --release --locked -p trisha-rs --test zero_width",
+      "local_log": "/tmp/trisha-04-zero-inference.log",
+      "first_error": "array_extent_beyond_u32_rejects_without_wrapping_or_expanding_entry: unresolved type in program entry signature",
+      "resolution": "Rejection was correct but owner discarded its reason; Trisha now includes the unresolved-layout reason."
+    }
+  ],
+  "limits": [
+    "SH3 whole-language coverage and resolved halting-call repair remain open.",
+    "Formal compiler-library analysis remains UNKNOWN; no proof claim.",
+    "Only the recorded macOS host checked; six-platform release matrix remains open."
+  ],
+  "committed_rebuilds": {
+    "trident": {
+      "log_sha256": "a37ff3b4beb18aba86cffefaec2ca39c93f17ab82824a7d2266c439ee30ff35f",
+      "command": "cargo install --path . --locked --offline --force --root ../install",
+      "exit_code": 0
+    },
+    "joy": {
+      "log_sha256": "b115925e37a86177367c92bb04cf83486a5b54b2473f2898924df63c64f68ea0",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo install --path cli --locked --offline --force --root ../install",
+      "exit_code": 0
+    },
+    "trisha": {
+      "log_sha256": "75cfe11756597bcda1fa275384a8197ac5a5742dd6a8e98ae7618e2727d961d5",
+      "command": "CARGO_TARGET_DIR=../trident/target cargo install --path cli --locked --offline --force --root ../install",
+      "exit_code": 0
+    }
+  }
+}
