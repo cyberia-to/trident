@@ -349,6 +349,8 @@ pub struct NoxCompiler {
     /// with their full module name; entering a callee changes this context.
     current_module: String,
     module_aliases: BTreeMap<String, BTreeMap<String, String>>,
+    function_aliases: BTreeMap<String, BTreeMap<String, String>>,
+    constant_aliases: BTreeMap<String, BTreeMap<String, String>>,
     /// Resolved constants: name → value.
     constants: BTreeMap<String, u64>,
     /// All function definitions in the module, keyed by name (for inlining).
@@ -372,6 +374,8 @@ impl NoxCompiler {
             scope: Scope::new(),
             current_module: String::new(),
             module_aliases: BTreeMap::new(),
+            function_aliases: BTreeMap::new(),
+            constant_aliases: BTreeMap::new(),
             constants: BTreeMap::new(),
             fns: BTreeMap::new(),
             structs: BTreeMap::new(),
@@ -882,7 +886,13 @@ impl NoxCompiler {
             Expr::Literal(Literal::Integer(v)) => Some(*v),
             Expr::Var(name) => match self.scope.lookup(name) {
                 Some(_) => self.scope.lookup_constant(name),
-                None => self.constants.get(&self.symbol(name)).copied(),
+                None if name
+                    .split_once('.')
+                    .is_some_and(|(root, _)| self.scope.lookup(root).is_some()) =>
+                {
+                    None
+                }
+                None => self.constants.get(&self.constant_symbol(name)).copied(),
             },
             _ => None,
         }
@@ -930,7 +940,7 @@ impl NoxCompiler {
             Expr::Call { path, .. } => {
                 let name = path.node.as_dotted();
                 self.fns
-                    .get(&self.symbol(&name))
+                    .get(&self.function_symbol(&name))
                     .and_then(|f| f.return_ty.as_ref())
                     .map(|t| t.node.clone())
                     .or_else(|| noun::return_type(&name))
@@ -1097,7 +1107,7 @@ impl NoxCompiler {
                 }
                 // A local binding shadows a module constant. The same rule
                 // governs eval_const, otherwise bounds/indices can miscompile.
-                if let Some(&val) = self.constants.get(&self.symbol(name)) {
+                if let Some(val) = self.eval_const(expr) {
                     return Ok(nox_quote(Noun::atom(nebu::Goldilocks::new(val).as_u64())));
                 }
 
@@ -1138,7 +1148,7 @@ impl NoxCompiler {
                 let source_name = path.node.as_dotted();
                 // Lexically resolved user functions shadow unqualified builtin
                 // names, just as they do during type checking.
-                if let Some(function) = self.fns.get(&self.symbol(&source_name)).cloned() {
+                if let Some(function) = self.fns.get(&self.function_symbol(&source_name)).cloned() {
                     if function.intrinsic.is_none() && function.body.is_some() {
                         return self.inline_call(&function, args, generic_args);
                     }
@@ -1148,7 +1158,7 @@ impl NoxCompiler {
                 // API name, not a machine instruction or an inlinable body.
                 let name = self
                     .fns
-                    .get(&self.symbol(&source_name))
+                    .get(&self.function_symbol(&source_name))
                     .and_then(|f| f.intrinsic.as_ref())
                     .map(|i| {
                         i.node
@@ -1338,7 +1348,7 @@ impl NoxCompiler {
                         name
                     )),
                     _ => {
-                        if let Some(func) = self.fns.get(&self.symbol(&name)).cloned() {
+                        if let Some(func) = self.fns.get(&self.function_symbol(&name)).cloned() {
                             self.inline_call(&func, args, generic_args)
                         } else {
                             Err(format!(

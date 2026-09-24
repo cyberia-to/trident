@@ -412,6 +412,25 @@ match p {
 
 ### Return
 
+A direct call to the resolved boolean assertion intrinsic with the literal
+`false` terminates execution with an assertion failure. As a statement, tail
+expression or explicit return operand, it contributes no continuing result and
+can end a function with any declared return type. Both ordinary argument checks
+and intrinsic availability checks still apply. Ordinary functions named
+`assert`, imported wrappers and generic functions retain their own return
+semantics; halting is determined by the directly resolved intrinsic identity.
+Only continuing branches contribute a result at a conditional or match join.
+Imported intrinsic identities follow active public declarations; private and
+inactive declarations do not alter a caller's function bindings. Each module
+retains the imported function bindings visible when it was checked. Short
+function aliases resolve per exported function; later modules cannot redirect
+calls inside an earlier module. Imported constants likewise retain their visible
+public binding. Local bindings also shadow dotted constants below the same root.
+Constant conditions use the target's boolean encoding. On nox and Triton, a loop
+contributes guaranteed return coverage only when its body terminates and its
+constant range is nonempty within U32, with a positive iteration bound when
+present.
+
 A return exits the current function, including from nested conditionals and
 fixed or explicitly bounded loops. Later iterations and statements have no
 effects. On nox these loops are unrolled with return-aware continuations; the

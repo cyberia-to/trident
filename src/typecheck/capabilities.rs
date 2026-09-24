@@ -35,8 +35,14 @@ impl TypeChecker {
                 [one] => one.clone(),
                 _ => Ty::Tuple(result),
             };
-            self.intrinsic_signatures
-                .insert(name.clone(), FnSig { params, return_ty });
+            self.intrinsic_signatures.insert(
+                name.clone(),
+                FnSig {
+                    intrinsic: Some(name.clone()),
+                    params,
+                    return_ty,
+                },
+            );
         }
         self
     }

@@ -97,7 +97,7 @@ impl SurfaceVisitor for Guard<'_> {
         if let Some(ty) = self
             .builder
             .fn_return_types
-            .get(&self.builder.qualified_name(name))
+            .get(&self.builder.qualified_function(name))
         {
             self.ty(ty);
         }

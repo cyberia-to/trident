@@ -65,7 +65,7 @@ impl TypeChecker {
         let actual = self.check_block(&body.node);
         let mut constants = self.constants.clone();
         for param in &func.params {
-            constants.remove(&param.name.node);
+            shadow_flow_constant(&mut constants, &param.name.node);
         }
         if !self.block_always_returns(&body.node, &constants) {
             if let Some(expected) = self.expected_return.clone() {
@@ -87,130 +87,34 @@ impl TypeChecker {
         self.in_pure_fn = prev_pure;
     }
 
-    fn block_always_returns(
-        &self,
-        body: &Block,
-        constants: &std::collections::BTreeMap<String, u64>,
-    ) -> bool {
-        fn constant(e: &Expr, constants: &std::collections::BTreeMap<String, u64>) -> Option<u64> {
-            match e {
-                Expr::Literal(Literal::Integer(n)) => Some(*n),
-                Expr::Var(name) => constants.get(name).copied(),
-                _ => None,
-            }
-        }
-        let mut visible = constants.clone();
-        for statement in &body.stmts {
-            let returns = match &statement.node {
-                Stmt::Return(_) => true,
-                Stmt::Let { pattern, .. } => {
-                    match pattern {
-                        Pattern::Name(name) => {
-                            visible.remove(&name.node);
-                        }
-                        Pattern::Tuple(names) => {
-                            for name in names {
-                                visible.remove(&name.node);
-                            }
-                        }
-                    }
-                    false
-                }
-                Stmt::If {
-                    cond,
-                    then_block,
-                    else_block,
-                } => {
-                    let taken = match &cond.node {
-                        Expr::Literal(Literal::Bool(b)) => Some(*b),
-                        e => constant(e, &visible).and_then(|n| {
-                            // Program Field atoms are canonicalized by both native owners.
-                            // Other target fields do not yet have a constant-folding contract here.
-                            if matches!(self.target_config.name.as_str(), "nox" | "triton") {
-                                let n = n % nebu::field::P;
-                                Some(if self.target_config.name == "nox" {
-                                    n == 0
-                                } else {
-                                    n != 0
-                                })
-                            } else {
-                                None
-                            }
-                        }),
-                    };
-                    let then_returns = self.block_always_returns(&then_block.node, &visible);
-                    let else_returns = else_block
-                        .as_ref()
-                        .is_some_and(|b| self.block_always_returns(&b.node, &visible));
-                    match taken {
-                        Some(true) => then_returns,
-                        Some(false) => else_returns,
-                        None => then_returns && else_returns,
-                    }
-                }
-                Stmt::For {
-                    var,
-                    start,
-                    end,
-                    bound,
-                    body,
-                } => match (
-                    constant(&start.node, &visible),
-                    constant(&end.node, &visible),
-                ) {
-                    (Some(start), Some(end)) if start < end && bound.is_none_or(|n| n > 0) => {
-                        let mut inner = visible.clone();
-                        inner.remove(&var.node);
-                        self.block_always_returns(&body.node, &inner)
-                    }
-                    _ => false,
-                },
-                Stmt::Match { arms, .. } => {
-                    !arms.is_empty()
-                        && arms.iter().all(|arm| {
-                            let mut inner = visible.clone();
-                            if let MatchPattern::Struct { fields, .. } = &arm.pattern.node {
-                                for field in fields {
-                                    if let FieldPattern::Binding(name) = &field.pattern.node {
-                                        inner.remove(name);
-                                    }
-                                }
-                            }
-                            self.block_always_returns(&arm.body.node, &inner)
-                        })
-                }
-                other => self.is_terminating_stmt(other),
-            };
-            if returns {
-                return true;
-            }
-        }
-        false
-    }
-
     pub(super) fn check_block(&mut self, block: &Block) -> Ty {
         self.push_scope();
         let mut terminated = false;
         for stmt in &block.stmts {
             if terminated {
                 self.error_with_help(
-                    "unreachable code after return statement".to_string(),
+                    "unreachable code after terminating statement".to_string(),
                     stmt.span,
-                    "remove this code or move it before the return".to_string(),
+                    "remove this code or move it before the terminating statement".to_string(),
                 );
                 break;
             }
             self.check_stmt(&stmt.node, stmt.span);
-            if self.is_terminating_stmt(&stmt.node) {
-                terminated = true;
-            }
+            // Keep the source reachability diagnostic local. Return coverage
+            // can prove a loop total without rejecting its defensive fallback.
+            terminated = match &stmt.node {
+                Stmt::Return(_) => true,
+                Stmt::Expr(expr) => self.is_halting_expr(&expr.node),
+                _ => false,
+            };
         }
         if terminated {
             if let Some(tail) = &block.tail_expr {
                 self.error_with_help(
-                    "unreachable tail expression after return".to_string(),
+                    "unreachable tail expression after terminating statement".to_string(),
                     tail.span,
-                    "remove this expression or move it before the return".to_string(),
+                    "remove this expression or move it before the terminating statement"
+                        .to_string(),
                 );
             }
         }
@@ -221,25 +125,6 @@ impl TypeChecker {
         };
         self.pop_scope();
         ty
-    }
-
-    pub(super) fn is_terminating_stmt(&self, stmt: &Stmt) -> bool {
-        match stmt {
-            Stmt::Return(_) => true,
-            // assert(false) is an unconditional halt
-            Stmt::Expr(expr) => {
-                if let Expr::Call { path, args, .. } = &expr.node {
-                    let name = path.node.as_dotted();
-                    if (name == "assert" || name == "assert.is_true") && args.len() == 1 {
-                        if let Expr::Literal(Literal::Bool(false)) = &args[0].node {
-                            return true;
-                        }
-                    }
-                }
-                false
-            }
-            _ => false,
-        }
     }
 
     pub(super) fn check_event_stmt(

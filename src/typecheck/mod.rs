@@ -8,6 +8,8 @@ mod block;
 mod builtins;
 mod capabilities;
 mod expr;
+mod file;
+mod flow;
 mod noun;
 mod privacy;
 mod resolve;
@@ -27,6 +29,7 @@ use crate::types::{StructTy, Ty};
 /// A function signature for type checking.
 #[derive(Clone, Debug)]
 pub(super) struct FnSig {
+    pub(super) intrinsic: Option<String>,
     pub(super) params: Vec<(String, Ty)>,
     pub(super) return_ty: Ty,
 }
@@ -77,6 +80,8 @@ pub type FnExport = (String, Vec<(String, Ty)>, Ty);
 pub struct ModuleExports {
     pub module_name: String,
     pub functions: Vec<FnExport>,
+    /// Direct declared intrinsic ownership, separate from transitive requirements.
+    pub direct_intrinsics: BTreeMap<String, String>,
     /// Unresolved public size-generic signatures; never encoded as zero-sized ordinary functions.
     pub generic_functions: BTreeMap<String, GenericFnDef>,
     pub(crate) generic_calls: BTreeMap<(String, u32, u32), MonoInstance>,
@@ -173,6 +178,9 @@ impl TypeChecker {
         };
         tc.register_builtins();
         tc.register_noun_builtins();
+        for (name, signature) in &mut tc.functions {
+            signature.intrinsic = Some(name.clone());
+        }
         tc.intrinsic_signatures = tc.functions.clone();
         tc
     }
@@ -228,12 +236,15 @@ impl TypeChecker {
                     .insert(format!("{}.{}", short_prefix, fn_name), requirements);
             }
             let sig = FnSig {
+                intrinsic: exports.direct_intrinsics.get(fn_name).cloned(),
                 params: params.clone(),
                 return_ty: return_ty.clone(),
             };
+            self.generic_fns.remove(&qualified);
             self.functions.insert(qualified, sig.clone());
             if has_short {
                 let short = format!("{}.{}", short_prefix, fn_name);
+                self.generic_fns.remove(&short);
                 self.functions.insert(short, sig);
             }
         }
@@ -253,11 +264,14 @@ impl TypeChecker {
             }
             let mut definition = definition.clone();
             definition.canonical_name = Some(format!("{}.{}", exports.module_name, name));
+            self.functions
+                .remove(&format!("{}.{}", exports.module_name, name));
             self.generic_fns.insert(
                 format!("{}.{}", exports.module_name, name),
                 definition.clone(),
             );
             if has_short {
+                self.functions.remove(&format!("{}.{}", short_prefix, name));
                 self.generic_fns
                     .insert(format!("{}.{}", short_prefix, name), definition.clone());
             }
@@ -279,329 +293,6 @@ impl TypeChecker {
                 let short = format!("{}.{}", short_prefix, sty.name);
                 self.structs.insert(short, sty.clone());
             }
-        }
-    }
-
-    pub(crate) fn check_file(mut self, file: &File) -> Result<ModuleExports, Vec<Diagnostic>> {
-        self.current_module = file.name.node.clone();
-        let is_std_module = file.name.node.starts_with("std.")
-            || file.name.node.starts_with("vm.")
-            || file.name.node.starts_with("os.")
-            || file.name.node.starts_with("ext.")
-            || file.name.node.contains(".ext.");
-
-        // Module constants are visible in signatures regardless of declaration order.
-        // Their initializer/type/range diagnostics are still checked below.
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Const(constant) = &item.node {
-                if let Expr::Literal(Literal::Integer(value)) = constant.value.node {
-                    let ty = match constant.ty.node {
-                        Type::Field => Some(Ty::Field),
-                        Type::U32 => Some(Ty::U32),
-                        _ => None,
-                    };
-                    if let Some(ty) = ty {
-                        self.constants.insert(constant.name.node.clone(), value);
-                        self.constant_types.insert(constant.name.node.clone(), ty);
-                    }
-                }
-            }
-        }
-
-        // First pass: register all structs, function signatures, and constants
-        for item in &file.items {
-            // Skip items excluded by conditional compilation
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            match &item.node {
-                Item::Struct(sdef) => {
-                    let fields: Vec<(String, Ty, bool)> = sdef
-                        .fields
-                        .iter()
-                        .map(|f| (f.name.node.clone(), self.resolve_type(&f.ty.node), f.is_pub))
-                        .collect();
-                    let sty = StructTy {
-                        module: self.current_module.clone(),
-                        name: sdef.name.node.clone(),
-                        fields,
-                    };
-                    self.structs.insert(sdef.name.node.clone(), sty);
-                }
-                Item::Fn(func) => {
-                    let mut size_names = BTreeSet::new();
-                    for parameter in &func.type_params {
-                        if !size_names.insert(&parameter.node) {
-                            self.error(
-                                format!("duplicate size parameter '{}'", parameter.node),
-                                parameter.span,
-                            );
-                        }
-                    }
-                    if func.name.node == "as_u32" {
-                        self.canonical_as_u32 = false;
-                    }
-                    // #[intrinsic] is only allowed in vm.*/std.*/os.*/ext.* modules
-                    if func.intrinsic.is_some() && !is_std_module {
-                        self.error(
-                            format!(
-                                "#[intrinsic] is only allowed in vm.*/std.*/os.* modules, \
-                                 not in '{}'",
-                                file.name.node
-                            ),
-                            func.name.span,
-                        );
-                    }
-                    if func.type_params.is_empty() {
-                        // Non-generic function: resolve immediately.
-                        let params: Vec<(String, Ty)> = func
-                            .params
-                            .iter()
-                            .map(|p| (p.name.node.clone(), self.resolve_type(&p.ty.node)))
-                            .collect();
-                        let return_ty = func
-                            .return_ty
-                            .as_ref()
-                            .map(|t| self.resolve_type(&t.node))
-                            .unwrap_or(Ty::Unit);
-                        self.validate_intrinsic(func, &params, &return_ty);
-                        self.functions
-                            .insert(func.name.node.clone(), FnSig { params, return_ty });
-                    } else {
-                        if func.intrinsic.is_some() {
-                            self.error(
-                                "generic intrinsic declarations have no fixed target ABI".into(),
-                                func.name.span,
-                            );
-                        }
-                        // Generic function: store unresolved for monomorphization.
-                        let gdef = GenericFnDef {
-                            canonical_name: None,
-                            structs: BTreeMap::new(),
-                            constants: BTreeMap::new(),
-                            type_params: func.type_params.iter().map(|p| p.node.clone()).collect(),
-                            params: func
-                                .params
-                                .iter()
-                                .map(|p| (p.name.node.clone(), p.ty.node.clone()))
-                                .collect(),
-                            return_ty: func.return_ty.as_ref().map(|t| t.node.clone()),
-                        };
-                        self.generic_fns.insert(func.name.node.clone(), gdef);
-                    }
-                }
-                Item::Const(cdef) => {
-                    let ty = self.resolve_type(&cdef.ty.node);
-                    if ty.width().is_none() {
-                        self.error("Noun constants are not supported".into(), cdef.ty.span);
-                    }
-                    if let Expr::Literal(Literal::Integer(v)) = &cdef.value.node {
-                        if !matches!(ty, Ty::Field | Ty::U32) {
-                            self.error(
-                                "integer constant requires Field or U32 type".into(),
-                                cdef.ty.span,
-                            );
-                        }
-                        if ty == Ty::U32 && *v >= (1u64 << 32) {
-                            self.error("U32 constant is out of range".into(), cdef.value.span);
-                        }
-                        self.constant_types.insert(cdef.name.node.clone(), ty);
-                        self.constants.insert(cdef.name.node.clone(), *v);
-                    }
-                }
-                Item::Event(edef) => {
-                    let mut names = BTreeSet::new();
-                    for field in &edef.fields {
-                        if !names.insert(&field.name.node) {
-                            self.error(
-                                format!(
-                                    "duplicate field '{}' in event '{}'",
-                                    field.name.node, edef.name.node
-                                ),
-                                field.name.span,
-                            );
-                        }
-                    }
-                    if edef.fields.len() > 9 {
-                        self.error(
-                            format!(
-                                "event '{}' has {} fields, max is 9",
-                                edef.name.node,
-                                edef.fields.len()
-                            ),
-                            edef.name.span,
-                        );
-                    }
-                    let fields: Vec<(String, Ty)> = edef
-                        .fields
-                        .iter()
-                        .map(|f| {
-                            let ty = self.resolve_type(&f.ty.node);
-                            (f.name.node.clone(), ty)
-                        })
-                        .collect();
-                    let words = fields
-                        .iter()
-                        .try_fold(0u32, |n, (_, ty)| Some(n.saturating_add(ty.width()?)));
-                    if words.is_none() {
-                        self.error("Noun has no event payload layout".into(), edef.name.span);
-                    }
-                    if let Some(words) = words.filter(|w| *w > 9) {
-                        self.error(
-                            format!(
-                                "event '{}' has {} payload words, max is 9",
-                                edef.name.node, words
-                            ),
-                            edef.name.span,
-                        );
-                    }
-                    self.events.insert(edef.name.node.clone(), fields);
-                }
-            }
-        }
-
-        self.check_noun_boundaries(file);
-        for item in &file.items {
-            if let Item::Fn(f) = &item.node {
-                if let Some(generic) = self.generic_fns.get_mut(&f.name.node) {
-                    generic.structs = self.structs.clone();
-                    generic.constants = self.constants.clone();
-                }
-            }
-        }
-
-        // Recursion detection: build call graph and reject cycles
-        self.detect_recursion(file);
-
-        // Second pass: type check function bodies
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                self.check_fn(func);
-            }
-        }
-
-        // Unused import detection: collect used module prefixes from all calls
-        let mut used_prefixes: BTreeSet<String> = BTreeSet::new();
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                if let Some(body) = &func.body {
-                    Self::collect_used_modules_block(&body.node, &mut used_prefixes);
-                }
-            }
-        }
-        for use_stmt in &file.uses {
-            let module_path = use_stmt.node.as_dotted();
-            // Short alias: last segment
-            let short = module_path
-                .rsplit('.')
-                .next()
-                .unwrap_or(&module_path)
-                .to_string();
-            if !used_prefixes.contains(&short) && !used_prefixes.contains(&module_path) {
-                self.warning(format!("unused import '{}'", module_path), use_stmt.span);
-            }
-        }
-
-        let function_requirements = self.infer_requirements(file);
-        if file.kind == FileKind::Program {
-            if let Some(errors) = capabilities::entry_errors(
-                file,
-                &function_requirements,
-                &self.available_intrinsics,
-                &self.cfg_flags,
-                &self.target_config.name,
-            ) {
-                self.diagnostics.extend(errors);
-            }
-        }
-
-        // Collect exports (pub items only)
-        let module_name = file.name.node.clone();
-        let mut exported_fns = Vec::new();
-        let mut exported_consts = Vec::new();
-        let mut exported_structs = Vec::new();
-
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            match &item.node {
-                Item::Fn(func) if func.is_pub => {
-                    if !func.type_params.is_empty() {
-                        // An unresolved signature is exported separately; never pretend N=0.
-                        continue;
-                    }
-                    let params: Vec<(String, Ty)> = func
-                        .params
-                        .iter()
-                        .map(|p| (p.name.node.clone(), self.resolve_type(&p.ty.node)))
-                        .collect();
-                    let return_ty = func
-                        .return_ty
-                        .as_ref()
-                        .map(|t| self.resolve_type(&t.node))
-                        .unwrap_or(Ty::Unit);
-                    exported_fns.push((func.name.node.clone(), params, return_ty));
-                }
-                Item::Const(cdef) if cdef.is_pub => {
-                    let ty = self.resolve_type(&cdef.ty.node);
-                    if let Expr::Literal(Literal::Integer(v)) = &cdef.value.node {
-                        exported_consts.push((cdef.name.node.clone(), ty, *v));
-                    }
-                }
-                Item::Struct(sdef) if sdef.is_pub => {
-                    if let Some(sty) = self.structs.get(&sdef.name.node) {
-                        exported_structs.push(sty.clone());
-                    }
-                }
-                _ => {}
-            }
-        }
-
-        let has_errors = self
-            .diagnostics
-            .iter()
-            .any(|d| d.severity == crate::diagnostic::Severity::Error);
-        if has_errors {
-            Err(self.diagnostics)
-        } else {
-            Ok(ModuleExports {
-                module_name,
-                generic_functions: file
-                    .items
-                    .iter()
-                    .filter_map(|item| match &item.node {
-                        Item::Fn(function)
-                            if function.is_pub
-                                && self.is_item_cfg_active(&item.node)
-                                && !function.type_params.is_empty() =>
-                        {
-                            self.generic_fns
-                                .get(&function.name.node)
-                                .cloned()
-                                .map(|definition| (function.name.node.clone(), definition))
-                        }
-                        _ => None,
-                    })
-                    .collect(),
-                generic_calls: self.generic_calls,
-                functions: exported_fns,
-                function_requirements,
-                constants: exported_consts,
-                structs: exported_structs,
-                warnings: self.diagnostics,
-                mono_instances: self.mono_instances,
-                call_resolutions: self.call_resolutions,
-            })
         }
     }
 

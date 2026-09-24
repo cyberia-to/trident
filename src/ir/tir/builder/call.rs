@@ -371,14 +371,10 @@ impl TIRBuilder {
             };
             inst.mangled_name()
         } else if name.contains('.') {
-            let parts: Vec<&str> = name.rsplitn(2, '.').collect();
-            let fn_name = parts[0];
-            let short_module = parts[1];
-            let full_module = self
-                .module_aliases
-                .get(short_module)
-                .map(|s| s.as_str())
-                .unwrap_or(short_module);
+            let canonical = self.qualified_function(name);
+            let (full_module, fn_name) = canonical
+                .rsplit_once('.')
+                .expect("qualified call has module");
             let mangled = full_module.replace('.', "_");
             // @ prefix marks cross-module calls so the linker doesn't re-prefix them
             format!("@{}__{}", mangled, fn_name)
@@ -400,7 +396,7 @@ impl TIRBuilder {
 
         let ret_width = self
             .fn_return_types
-            .get(&self.qualified_name(name))
+            .get(&self.qualified_function(name))
             .map(|ty| self.type_width(ty))
             .or_else(|| self.fn_return_widths.get(&base_name).copied())
             .unwrap_or(0);

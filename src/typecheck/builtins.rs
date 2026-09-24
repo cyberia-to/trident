@@ -21,6 +21,7 @@ impl TypeChecker {
         b.insert(
             "pub_read".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![],
                 return_ty: Ty::Field,
             },
@@ -29,6 +30,7 @@ impl TypeChecker {
             b.insert(
                 format!("pub_read{}", n),
                 FnSig {
+                    intrinsic: None,
                     params: vec![],
                     return_ty: Ty::Tuple(vec![Ty::Field; n as usize]),
                 },
@@ -37,6 +39,7 @@ impl TypeChecker {
         b.insert(
             format!("pub_read{}", dw),
             FnSig {
+                intrinsic: None,
                 params: vec![],
                 return_ty: digest_ty.clone(),
             },
@@ -45,6 +48,7 @@ impl TypeChecker {
         b.insert(
             "pub_write".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("v".into(), Ty::Field)],
                 return_ty: Ty::Unit,
             },
@@ -53,6 +57,7 @@ impl TypeChecker {
             b.insert(
                 format!("pub_write{}", n),
                 FnSig {
+                    intrinsic: None,
                     params: (0..n).map(|i| (format!("v{}", i), Ty::Field)).collect(),
                     return_ty: Ty::Unit,
                 },
@@ -68,6 +73,7 @@ impl TypeChecker {
             b.insert(
                 "os.state.read".into(),
                 FnSig {
+                    intrinsic: None,
                     params: vec![("key".into(), Ty::Field)],
                     return_ty: Ty::Field,
                 },
@@ -78,6 +84,7 @@ impl TypeChecker {
         b.insert(
             "divine".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![],
                 return_ty: Ty::Field,
             },
@@ -86,6 +93,7 @@ impl TypeChecker {
             b.insert(
                 format!("divine{}", xw),
                 FnSig {
+                    intrinsic: None,
                     params: vec![],
                     return_ty: Ty::Tuple(vec![Ty::Field; xw as usize]),
                 },
@@ -94,6 +102,7 @@ impl TypeChecker {
         b.insert(
             format!("divine{}", dw),
             FnSig {
+                intrinsic: None,
                 params: vec![],
                 return_ty: digest_ty.clone(),
             },
@@ -103,6 +112,7 @@ impl TypeChecker {
         b.insert(
             "assert".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("cond".into(), Ty::Bool)],
                 return_ty: Ty::Unit,
             },
@@ -110,6 +120,7 @@ impl TypeChecker {
         b.insert(
             "assert_eq".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field), ("b".into(), Ty::Field)],
                 return_ty: Ty::Unit,
             },
@@ -117,6 +128,7 @@ impl TypeChecker {
         b.insert(
             "assert_digest".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![
                     ("a".into(), digest_ty.clone()),
                     ("b".into(), digest_ty.clone()),
@@ -129,6 +141,7 @@ impl TypeChecker {
         b.insert(
             "field_add".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field), ("b".into(), Ty::Field)],
                 return_ty: Ty::Field,
             },
@@ -136,6 +149,7 @@ impl TypeChecker {
         b.insert(
             "field_mul".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field), ("b".into(), Ty::Field)],
                 return_ty: Ty::Field,
             },
@@ -143,6 +157,7 @@ impl TypeChecker {
         b.insert(
             "inv".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field)],
                 return_ty: Ty::Field,
             },
@@ -150,6 +165,7 @@ impl TypeChecker {
         b.insert(
             "neg".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field)],
                 return_ty: Ty::Field,
             },
@@ -157,6 +173,7 @@ impl TypeChecker {
         b.insert(
             "sub".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field), ("b".into(), Ty::Field)],
                 return_ty: Ty::Field,
             },
@@ -166,6 +183,7 @@ impl TypeChecker {
         b.insert(
             "split".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field)],
                 return_ty: Ty::Tuple(vec![Ty::U32; fl as usize]),
             },
@@ -173,6 +191,7 @@ impl TypeChecker {
         b.insert(
             "log2".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::U32)],
                 return_ty: Ty::U32,
             },
@@ -180,6 +199,7 @@ impl TypeChecker {
         b.insert(
             "pow".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("base".into(), Ty::U32), ("exp".into(), Ty::U32)],
                 return_ty: Ty::U32,
             },
@@ -187,6 +207,7 @@ impl TypeChecker {
         b.insert(
             "popcount".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::U32)],
                 return_ty: Ty::U32,
             },
@@ -196,6 +217,7 @@ impl TypeChecker {
         b.insert(
             "hash".into(),
             FnSig {
+                intrinsic: None,
                 params: (0..hr).map(|i| (format!("x{}", i), Ty::Field)).collect(),
                 return_ty: digest_ty.clone(),
             },
@@ -203,6 +225,7 @@ impl TypeChecker {
         b.insert(
             "sponge_init".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![],
                 return_ty: Ty::Unit,
             },
@@ -210,6 +233,7 @@ impl TypeChecker {
         b.insert(
             "sponge_absorb".into(),
             FnSig {
+                intrinsic: None,
                 params: (0..hr).map(|i| (format!("x{}", i), Ty::Field)).collect(),
                 return_ty: Ty::Unit,
             },
@@ -217,6 +241,7 @@ impl TypeChecker {
         b.insert(
             "sponge_squeeze".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![],
                 return_ty: Ty::Array(Box::new(Ty::Field), hr as u64),
             },
@@ -224,6 +249,7 @@ impl TypeChecker {
         b.insert(
             "sponge_absorb_mem".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("ptr".into(), Ty::Field)],
                 return_ty: Ty::Unit,
             },
@@ -233,6 +259,7 @@ impl TypeChecker {
         b.insert(
             "merkle_step".into(),
             FnSig {
+                intrinsic: None,
                 params: {
                     let mut p = vec![("idx".into(), Ty::U32)];
                     for i in 0..dw {
@@ -248,6 +275,7 @@ impl TypeChecker {
         b.insert(
             "merkle_step_mem".into(),
             FnSig {
+                intrinsic: None,
                 params: {
                     let mut p = vec![("idx".into(), Ty::U32)];
                     for i in 0..dw {
@@ -264,6 +292,7 @@ impl TypeChecker {
         b.insert(
             "ram_read".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("addr".into(), Ty::Field)],
                 return_ty: Ty::Field,
             },
@@ -271,6 +300,7 @@ impl TypeChecker {
         b.insert(
             "ram_write".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("addr".into(), Ty::Field), ("val".into(), Ty::Field)],
                 return_ty: Ty::Unit,
             },
@@ -278,6 +308,7 @@ impl TypeChecker {
         b.insert(
             "ram_read_block".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("addr".into(), Ty::Field)],
                 return_ty: digest_ty.clone(),
             },
@@ -285,6 +316,7 @@ impl TypeChecker {
         b.insert(
             "ram_write_block".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("addr".into(), Ty::Field), ("d".into(), digest_ty.clone())],
                 return_ty: Ty::Unit,
             },
@@ -294,6 +326,7 @@ impl TypeChecker {
         b.insert(
             "as_u32".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::Field)],
                 return_ty: Ty::U32,
             },
@@ -301,6 +334,7 @@ impl TypeChecker {
         b.insert(
             "as_field".into(),
             FnSig {
+                intrinsic: None,
                 params: vec![("a".into(), Ty::U32)],
                 return_ty: Ty::Field,
             },
@@ -311,6 +345,7 @@ impl TypeChecker {
             b.insert(
                 "xfield".into(),
                 FnSig {
+                    intrinsic: None,
                     params: (0..xw)
                         .map(|i| (format!("{}", (b'a' + i as u8) as char), Ty::Field))
                         .collect(),
@@ -320,6 +355,7 @@ impl TypeChecker {
             b.insert(
                 "xinvert".into(),
                 FnSig {
+                    intrinsic: None,
                     params: vec![("a".into(), xfield_ty.clone())],
                     return_ty: xfield_ty.clone(),
                 },
@@ -327,6 +363,7 @@ impl TypeChecker {
             b.insert(
                 "xx_dot_step".into(),
                 FnSig {
+                    intrinsic: None,
                     params: vec![
                         ("acc".into(), xfield_ty.clone()),
                         ("ptr_a".into(), Ty::Field),
@@ -338,6 +375,7 @@ impl TypeChecker {
             b.insert(
                 "xb_dot_step".into(),
                 FnSig {
+                    intrinsic: None,
                     params: vec![
                         ("acc".into(), xfield_ty.clone()),
                         ("ptr_a".into(), Ty::Field),

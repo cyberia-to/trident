@@ -191,8 +191,7 @@ impl TIRBuilder {
 
             if !resolved {
                 // Module constant fallback.
-                let qualified = self.qualified_name(name);
-                if let Some(&val) = self.constants.get(&qualified) {
+                if let Some(val) = self.constant_value(name) {
                     self.emit_and_push(TIROp::Push(val), 1);
                 } else {
                     self.ops.push(TIROp::Comment(format!(

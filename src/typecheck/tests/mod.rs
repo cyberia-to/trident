@@ -5,6 +5,7 @@
 // ---
 mod advanced;
 mod basics;
+mod halting;
 
 use crate::diagnostic::Diagnostic;
 use crate::lexer::Lexer;

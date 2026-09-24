@@ -4,6 +4,10 @@
 // crystal-domain: comp
 // ---
 pub mod display;
+mod flow;
+pub(crate) use flow::{
+    constant_condition, constant_nonempty_loop, is_false_assert, shadow_flow_constant,
+};
 pub mod navigate;
 pub(crate) mod surface;
 

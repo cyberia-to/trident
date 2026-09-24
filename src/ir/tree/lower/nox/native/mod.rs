@@ -117,10 +117,16 @@ impl Compiler<'_> {
             Expr::Literal(Literal::Integer(n)) => Some((*n, *n)),
             Expr::Var(n) => match self.local(n) {
                 Some(local) => local.range,
+                None if n
+                    .split_once('.')
+                    .is_some_and(|(root, _)| self.local(root).is_some()) =>
+                {
+                    None
+                }
                 None => self
                     .owner
                     .constants
-                    .get(&self.owner.symbol(n))
+                    .get(&self.owner.constant_symbol(n))
                     .map(|n| (*n, *n)),
             },
             _ => None,

@@ -65,6 +65,13 @@ impl TIRBuilder {
         self
     }
 
+    pub(crate) fn qualified_function(&self, name: &str) -> String {
+        self.function_aliases
+            .get(name)
+            .cloned()
+            .unwrap_or_else(|| self.qualified_name(name))
+    }
+
     pub(crate) fn qualified_name(&self, name: &str) -> String {
         if let Some((module, tail)) = name.rsplit_once('.') {
             if let Some(full) = self.module_aliases.get(module) {
@@ -72,6 +79,13 @@ impl TIRBuilder {
             }
         }
         name.to_string()
+    }
+
+    pub(crate) fn constant_value(&self, name: &str) -> Option<u64> {
+        self.constants
+            .get(name)
+            .or_else(|| self.constants.get(&self.qualified_name(name)))
+            .copied()
     }
 
     /// Checked logical extent, independent of the element's machine width.
@@ -85,8 +99,8 @@ impl TIRBuilder {
             ArraySize::Param(name) => self
                 .current_subs
                 .get(name)
-                .or_else(|| self.constants.get(&self.qualified_name(name)))
-                .copied(),
+                .copied()
+                .or_else(|| self.constant_value(name)),
             ArraySize::Add(left, right) => self
                 .array_extent(left)?
                 .checked_add(self.array_extent(right)?),
@@ -113,16 +127,14 @@ impl TIRBuilder {
         match expr {
             Expr::Call { path, .. } => self
                 .fn_return_types
-                .get(&self.qualified_name(&path.node.0.join(".")))
+                .get(&self.qualified_function(&path.node.0.join(".")))
                 .cloned(),
             Expr::StructInit { path, .. } => Some(Type::Named(path.node.clone())),
             Expr::Var(name) => {
                 let mut parts = name.split('.');
                 let mut ty = match self.var_types.get(parts.next()?) {
                     Some(ty) => ty.clone(),
-                    None if self.constants.contains_key(&self.qualified_name(name)) => {
-                        return Some(Type::Field)
-                    }
+                    None if self.constant_value(name).is_some() => return Some(Type::Field),
                     None => return None,
                 };
                 for field in parts {

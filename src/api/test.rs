@@ -265,14 +265,16 @@ pub fn prepare_test_programs(
         .modules
         .iter()
         .zip(&project.exports)
-        .map(|(pm, exports)| {
+        .enumerate()
+        .map(|(i, (pm, exports))| {
             let ops = TIRBuilder::new(options.target_config.clone())
                 .with_target_intrinsics(options.target_intrinsic_widths())
                 .with_cfg_flags(options.cfg_flags.clone())
                 .with_module_types(&files)
-                .with_intrinsics(project.intrinsic_map())
-                .with_module_aliases(project.module_aliases())
-                .with_constants(project.external_constants())
+                .with_intrinsics(project.intrinsic_map(i))
+                .with_function_aliases(project.function_aliases(i))
+                .with_module_aliases(project.module_aliases(i))
+                .with_constants(project.external_constants(i))
                 .with_mono_instances(exports.mono_instances.clone())
                 .with_call_resolutions(exports.call_resolutions.clone())
                 .build_file(&pm.file)?;

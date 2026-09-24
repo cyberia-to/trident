@@ -22,3 +22,40 @@ fn imported_entry_sizes_keep_lexical_constants_and_generic_calls() {
     }
     std::fs::remove_dir_all(dir).unwrap();
 }
+
+#[test]
+fn legacy_local_struct_root_shadows_module_constant_value_and_type() {
+    let dir = tempfile::tempdir().unwrap();
+    std::fs::write(
+        dir.path().join("constants.tri"),
+        "module constants\npub const FLAG:Field=0",
+    )
+    .unwrap();
+    let path = dir.path().join("entry.tri");
+    for (field, init, body) in [
+        ("Field", "n", "if constants.FLAG {7} else {11}"),
+        ("Bool", "n==0", "assert(constants.FLAG) 7"),
+    ] {
+        let source=format!("program shadow\nuse constants\nstruct Dynamic {{FLAG:{field}}}\nfn main(n:Field)->Field {{let constants=Dynamic{{FLAG:{init}}} {body}}}");
+        std::fs::write(&path, source).unwrap();
+        for profile in ["debug", "release"] {
+            let bundle =
+                trident::compile_to_bundle(&path, &CompileOptions::for_profile(profile)).unwrap();
+            for input in [0, 1] {
+                let mut arena = Reduction::<8192>::new();
+                let f = load(&mut arena, &parse(&bundle.assembly));
+                let s = load(&mut arena, &subject_noun(&[input]));
+                match reduce(&mut arena, s, f, 100_000, &NullCalls, &mut NoTrace) {
+                    Outcome::Ok(r, _) => {
+                        assert!(field == "Field" || input == 0);
+                        assert_eq!(
+                            arena.atom_value(r).unwrap().as_u64(),
+                            if input == 0 { 7 } else { 11 }
+                        );
+                    }
+                    other => assert!(field == "Bool" && input == 1, "{other:?}"),
+                }
+            }
+        }
+    }
+}
