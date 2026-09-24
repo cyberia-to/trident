@@ -7,10 +7,12 @@ use std.nox.tree
 use std.compiler.nox.syntax
 use std.compiler.nox.blocks
 use std.compiler.nox.body_state
-use std.compiler.nox.terminal
+use std.compiler.nox.coverage
 use std.compiler.nox.codegen
+use std.compiler.nox.formula
 use std.compiler.nox.flow
 use std.compiler.nox.block_gen
+use std.compiler.nox.call_codegen
 
 struct Linear { writes: seq.Seq, next: U32, eligible: Bool }
 
@@ -39,31 +41,53 @@ fn linear(statements: seq.Seq) -> Linear {
     s
 }
 
+pub struct Built { pub output: formula.Value, pub failed: Bool }
+
+// A reusable body consumes the existing [table [0 frame]] subject. Callers
+// initialize parameters and local padding; body emission never resets them.
 #[pure]
 #[requires(s.root < seq.len(s.blocks))]
-pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
-    let zero = as_u32(0)
-    let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
-    let marked = terminal.mark(s.nodes, s.statements, s.blocks, s.root)
-    if (marked.error.code == zero) == false { return codegen.Compiled { formula: noun.atom(0), error: marked.error } }
+pub fn reusable(s: body_state.State, flags: Noun, locals: U32, context: call_codegen.Context, depth_cap: U32) -> Built {
+    let failure = Built { output: flow.literal(0), failed: true }
+    let shape = tree.shape(locals)
+    let expressions = codegen.with_calls(s.nodes, shape, context, depth_cap)
+    if expressions.failed { return failure }
     let root = blocks.read(seq.get(s.blocks, s.root))
     if syntax.both(root.has_tail, seq.len(s.blocks) == as_u32(1)) {
         let simple = linear(s.statements)
-        if simple.eligible { return codegen.generate(s.nodes, simple.writes, root.tail, seq.len(s.bindings), depth_cap) }
+        if simple.eligible {
+            let output = codegen.statements(simple.writes, expressions.values, shape, root.tail, depth_cap)
+            return Built { output: output.output, failed: output.failed }
+        }
     }
-    let shape = tree.shape(seq.len(s.bindings))
-    let expressions = codegen.expressions(s.nodes, shape, depth_cap)
-    if expressions.failed { return failure }
-    let emitted = block_gen.generate(s.blocks, marked.flags, s.statements, s.nodes, expressions.values, shape, depth_cap)
+    let emitted = block_gen.generate(s.blocks, flags, s.statements, expressions.values, shape, depth_cap)
     if emitted.failed { return failure }
-    let result = block_gen.read(emitted.values, s.root)
-    if result.covered == false { return codegen.Compiled { formula: noun.atom(0), error: syntax.error(5, root.start, root.end) } }
-    let mut output = flow.result(result.output)
-    if (seq.len(s.bindings) == zero) == false {
+    let output = flow.result(block_gen.read(emitted.values, s.root).output)
+    Built { output, failed: depth_cap < as_u32(as_field(output.depth) + 9) }
+}
+
+#[pure]
+pub fn standalone(built: Built, locals: U32, depth_cap: U32) -> codegen.Compiled {
+    let zero = as_u32(0)
+    let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
+    if built.failed { return failure }
+    let mut output = built.output
+    if (locals == zero) == false {
+        let shape = tree.shape(locals)
         let frame = noun.pair(noun.atom(0), noun.pair(noun.atom(0), tree.empty(shape.height)))
-        let initial = codegen.Value { formula: noun.pair(noun.atom(1), frame), depth: as_u32(as_field(shape.height) + 3) }
+        let initial = formula.Value { formula: noun.pair(noun.atom(1), frame), depth: as_u32(as_field(shape.height) + 3) }
         output = flow.compose(initial, output)
     }
     if depth_cap < as_u32(as_field(output.depth) + 9) { return failure }
     codegen.Compiled { formula: output.formula, error: syntax.error(0, zero, zero) }
+}
+
+#[pure]
+#[requires(s.root < seq.len(s.blocks))]
+pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
+    let marked = coverage.check(s)
+    if (marked.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: marked.error } }
+    let locals = seq.len(s.bindings)
+    let built = reusable(s, marked.flags, locals, call_codegen.empty(), depth_cap)
+    standalone(built, locals, depth_cap)
 }

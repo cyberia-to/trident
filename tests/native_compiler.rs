@@ -108,3 +108,21 @@ mod codegen;
 
 #[path = "native_compiler/control.rs"]
 mod control;
+
+#[path = "native_compiler/signatures.rs"]
+mod signatures;
+
+#[path = "native_compiler/call_expressions.rs"]
+mod call_expressions;
+
+#[path = "native_compiler/function_check.rs"]
+mod function_check;
+
+#[path = "native_compiler/function_plan.rs"]
+mod function_plan;
+
+#[path = "native_compiler/functions.rs"]
+mod functions;
+
+#[path = "native_compiler/function_bounds.rs"]
+mod function_bounds;

@@ -1,4 +1,4 @@
-"""SH2/SH3 installed CLI acceptance: fixed guest, arithmetic, locals and control."""
+"""SH2/SH3 installed CLI acceptance: fixed guest, arithmetic, locals, control and functions."""
 import argparse
 import copy
 import hashlib
@@ -61,7 +61,7 @@ def main():
     binary = args.joy.resolve()
     repo = Path(__file__).resolve().parents[2]
     commands, observations = [], []
-    accepted = json.loads((repo / "audit/self-hosting/native-locals-cli.json").read_text())
+    accepted = json.loads((repo / "audit/self-hosting/native-control-cli.json").read_text())
     prior_cases = {item["case"]: item for item in accepted["observations"] if "case" in item and "expected" in item}
     host = ["--budget", "100000000", "--frames", "65536"]
     with tempfile.TemporaryDirectory(prefix="trident-sh2-") as temporary:
@@ -142,6 +142,27 @@ def main():
             ("expression-statement", source("1 2"), None, 2),
             ("empty-arms", source("if true {} else {} 7"), None, 7),
         ])
+        def function_source(body):
+            return ("program sample " + body).encode()
+
+        cases.extend([
+            ("unused-function", function_source("fn helper()->Field{7} fn main()->Field{9}"), (1, 9), 9),
+            ("function-forward", function_source("fn main()->Field{f(2)} fn f(x:Field)->Field{x+1}"), None, 3),
+            ("function-nested", function_source("fn f(a:Field,b:Field)->Field{10*a+b} fn g(x:Field)->Field{x+1} fn main()->Field{f(g(2),g(3))}"), None, 34),
+            ("function-frame", function_source("fn f(a:Field,b:Field,c:Field)->Field{let d=9 let e=8 a+10*b+100*c+d+e} fn main()->Field{f(1,2,3,)}"), None, 338),
+            ("function-early-return", function_source("fn f(x:Field)->Field{if x==2{return 7} 9} fn main()->Field{let x=3 f(2)+f(x)+x}"), None, 19),
+            ("function-local-name", function_source("fn f()->Field{7} fn main()->Field{let f=9 f()+f}"), None, 16),
+            ("function-bool", function_source("fn f(x:Bool)->Bool{if x{return false} true} fn main()->Field{if f(false){7}else{9}}"), None, 7),
+            ("function-unit", function_source("fn f(){} fn main()->Field{let mut x=f() x=f() if x==f(){7}else{9}}"), None, 7),
+            ("function-bare-return", function_source("fn f(){return} fn g(){return f()} fn main()->Field{g() 7}"), None, 7),
+            ("duplicate-parameters", function_source("fn f(x:Field,x:Bool)->Bool{x} fn main()->Field{if f(4,true){7}else{9}}"), None, 7),
+            ("duplicate-functions", function_source("fn f()->Field{7} fn f()->Bool{true} fn main()->Field{if f(){7}else{9}}"), None, 7),
+            ("duplicate-main", function_source("fn main(x:Field)->Field{x} fn main()->Field{9}"), (1,9), 9),
+            ("table-order-original", function_source("fn f(x:Field)->Field{x+1} fn g(x:Field)->Field{f(x)*2} fn main()->Field{g(3)}"), None, 8),
+            ("table-order-reversed", function_source("fn main()->Field{g(3)} fn g(x:Field)->Field{f(x)*2} fn f(x:Field)->Field{x+1}"), None, 8),
+            ("table-order-unused", function_source("fn unused()->Field{9} fn main()->Field{g(3)} fn g(x:Field)->Field{f(x)*2} fn f(x:Field)->Field{x+1}"), None, 8),
+        ])
+        table_bytes = None
         for name, content, formula, expected in cases:
             directory, job = package(name, content)
             program = directory / "program.dag"
@@ -150,6 +171,10 @@ def main():
             assert compiled["execution"]["program_particle"] == compiler_particle
             if name in prior_cases:
                 assert compiled["published_particle"] == prior_cases[name]["compiler_execution"]["published_particle"]
+            if name.startswith("table-order-"):
+                if table_bytes is not None:
+                    assert program.read_bytes() == table_bytes
+                table_bytes = program.read_bytes()
             actual = decode(program)
             emitted_formula = actual[1][1][1][1][0]
             assert actual == record(0x41525431, 0, 0, 0, emitted_formula)
@@ -162,7 +187,7 @@ def main():
             observations.append({"case": name, "source_hex": content.hex(), "expected": expected,
                                  "compiler_execution": compiled, "program_execution": executed,
                                  "exact_independent_formula": formula is not None,
-                                 "accepted_locals_identity_preserved": name in prior_cases})
+                                 "accepted_control_identity_preserved": name in prior_cases})
             if name == "precedence":
                 baseline = compiled["execution"]
                 prior_program = program.read_bytes()
@@ -185,6 +210,16 @@ def main():
             ("missing-return", source("let b=true if b {7}"), 5),
             ("unreachable", source("return 7 9"), 5),
             ("malformed-else", source("if true {7} else 9"), 2),
+        ])
+        negatives.extend([
+            ("call-unknown", function_source("fn main()->Field{missing()}"), 5),
+            ("call-arity", function_source("fn f(x:Field)->Field{x} fn main()->Field{f()}"), 5),
+            ("call-type", function_source("fn f(x:Field)->Field{x} fn main()->Field{f(true)}"), 5),
+            ("call-recursive", function_source("fn main()->Field{main()}"), 5),
+            ("call-unused-cycle", function_source("fn f()->Field{g()} fn g()->Field{f()} fn main()->Field{7}"), 5),
+            ("call-unselected-cycle", function_source("fn f()->Field{if false{return f()} 7} fn main()->Field{7}"), 5),
+            ("unused-body-type", function_source("fn f()->Field{false} fn main()->Field{7}"), 5),
+            ("unit-condition", function_source("fn f(){} fn main()->Field{if f(){7}else{9}}"), 5),
         ])
         for name, content, code in negatives:
             directory, job = package(name, content)
@@ -292,13 +327,21 @@ def main():
         assert protected.read_bytes() == prior_program
         observations.append({"case": "assignments31-arena", "result": "runtime failure; no program publication",
                              "previous_program_preserved": True})
+        nested = "f(" * 64 + "1" + ")" * 64
+        directory, job = package("calls64-arena", function_source("fn f(x:Field)->Field{x} fn main()->Field{" + nested + "}"))
+        protected = directory / "program.dag"
+        protected.write_bytes(prior_program)
+        failure = execute(job, protected, expected=1, force=True)
+        assert protected.read_bytes() == prior_program
+        observations.append({"case": "calls64-arena", "result": "runtime failure; no program publication",
+                             "compiler_execution": failure, "previous_program_preserved": True})
         assert hashlib.sha256(compiler.read_bytes()).hexdigest() == compiler_sha
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 arithmetic and SH3 typed locals, scoped control and early returns; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 typed locals, scoped control, early returns and reusable functions; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

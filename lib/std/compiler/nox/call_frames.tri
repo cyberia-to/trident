@@ -1,0 +1,28 @@
+module std.compiler.nox.call_frames
+
+use vm.nox.noun
+use vm.core.convert
+
+pub struct Frame {
+    pub callee: U32, pub start: U32, pub ops: U32, pub vals: U32,
+    pub count: U32, pub head: U32
+}
+
+#[pure]
+pub fn pack(f: Frame) -> Noun {
+    let name = noun.pair(noun.atom(as_field(f.callee)), noun.atom(as_field(f.start)))
+    let base = noun.pair(noun.atom(as_field(f.ops)), noun.atom(as_field(f.vals)))
+    let args = noun.pair(noun.atom(as_field(f.count)), noun.atom(as_field(f.head)))
+    noun.pair(name, noun.pair(base, args))
+}
+
+#[pure]
+pub fn read(value: Noun) -> Frame {
+    let name = noun.head(value)
+    let state = noun.tail(value)
+    let base = noun.head(state)
+    let args = noun.tail(state)
+    Frame { callee: as_u32(noun.as_field(noun.head(name))), start: as_u32(noun.as_field(noun.tail(name))),
+        ops: as_u32(noun.as_field(noun.head(base))), vals: as_u32(noun.as_field(noun.tail(base))),
+        count: as_u32(noun.as_field(noun.head(args))), head: as_u32(noun.as_field(noun.tail(args))) }
+}

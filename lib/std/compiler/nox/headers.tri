@@ -1,0 +1,137 @@
+module std.compiler.nox.headers
+
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.lexer
+use std.compiler.nox.symbols
+use std.compiler.nox.signatures
+use std.compiler.nox.header_state
+
+#[pure]
+fn expected(token: syntax.Token) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    if token.kind == as_u32(13) { return syntax.error(6, token.start, token.end) }
+    syntax.error(2, token.start, token.end)
+}
+
+#[pure]
+fn scalar(token: syntax.Token) -> Field {
+    if token.kind == as_u32(12) { return ast.FIELD }
+    if token.kind == as_u32(20) { return ast.BOOL }
+    3
+}
+
+#[pure]
+fn type_error(token: syntax.Token) -> syntax.Error {
+    if token.kind == as_u32(1) { return syntax.error(6, token.start, token.end) }
+    ast.failed(token, 2)
+}
+
+#[pure]
+fn open(source: bytes.Bytes, input: header_state.State) -> header_state.State {
+    let mut s = input
+    // Called at the closing parameter parenthesis, with an optional annotation.
+    s.token = lexer.next(source, s.token.end)
+    if s.token.kind == as_u32(9) {
+        s.token = lexer.next(source, s.token.end)
+        s.current.returns = scalar(s.token)
+        if s.current.returns == 3 { s.error = type_error(s.token) return s }
+        s.token = lexer.next(source, s.token.end)
+    }
+    if (s.token.kind == as_u32(7)) == false { s.error = expected(s.token) return s }
+    s.current.open = s.token.end
+    s.phase = 2
+    s.nesting = as_u32(1)
+    s.token = lexer.next(source, s.token.end)
+    s
+}
+
+#[pure]
+fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
+    let mut s = input
+    if s.token.kind == as_u32(6) { return open(source, s) }
+    let name = s.token
+    if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
+    s.token = lexer.next(source, name.end)
+    if (s.token.kind == as_u32(17)) == false { s.error = expected(s.token) return s }
+    s.token = lexer.next(source, s.token.end)
+    let ty = scalar(s.token)
+    if ty == 3 { s.error = type_error(s.token) return s }
+    if seq.len(s.params) == cap { s.error = syntax.error(7, name.start, name.end) return s }
+    s.params = seq.push(s.params, symbols.binding(name, false, ty), cap)
+    s.current.count = syntax.inc(s.current.count)
+    s.token = lexer.next(source, s.token.end)
+    if s.token.kind == as_u32(6) { return open(source, s) }
+    if (s.token.kind == as_u32(26)) == false { s.error = expected(s.token) return s }
+    s.token = lexer.next(source, s.token.end)
+    s
+}
+
+#[pure]
+fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
+    let mut s = input
+    if s.phase == 1 { return parameter(source, s, cap) }
+    if s.phase == 2 {
+        if s.token.kind == as_u32(0) { s.error = expected(s.token) return s }
+        if s.token.kind == as_u32(14) { s.error = ast.failed(s.token, 1) return s }
+        if s.token.kind == as_u32(7) { s.nesting = syntax.inc(s.nesting) }
+        if s.token.kind == as_u32(8) {
+            s.nesting = syntax.dec(s.nesting)
+            if s.nesting == as_u32(0) {
+                // Function count is checked before its header/body scan begins.
+                if s.current.name.value == 1835100526 { s.entry = seq.len(s.functions) }
+                s.current.close = s.token.end
+                s.functions = seq.push(s.functions, signatures.pack(s.current), cap)
+                s.phase = 0
+            }
+        }
+        s.token = lexer.next(source, s.token.end)
+        return s
+    }
+    if s.token.kind == as_u32(0) { s.done = true return s }
+    if (s.token.kind == as_u32(11)) == false { s.error = expected(s.token) return s }
+    if seq.len(s.functions) == cap { s.error = syntax.error(7, s.token.start, s.token.end) return s }
+    let name = lexer.next(source, s.token.end)
+    if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
+    s.token = lexer.next(source, name.end)
+    if (s.token.kind == as_u32(5)) == false { s.error = expected(s.token) return s }
+    s.current = signatures.Function { name, params: seq.len(s.params), count: as_u32(0), returns: ast.UNIT, open: as_u32(0), close: as_u32(0) }
+    s.phase = 1
+    s.token = lexer.next(source, s.token.end)
+    s
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
+    let mut s = input
+    for turn in 0..16 {
+        s = step(source, s, cap)
+        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s
+}
+
+// Braces are tokens; braces inside comments never delimit bodies.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn parse(source: bytes.Bytes, start: U32, cap: U32) -> header_state.State {
+    let mut s = header_state.initial(lexer.next(source, start))
+    for turn in 0..512 {
+        s = chunk(source, s, cap)
+        if (s.error.code == as_u32(0)) == false { return s }
+        if s.done {
+            if s.entry == signatures.NONE { s.error = syntax.error(3, s.token.start, s.token.end) return s }
+            let entry = signatures.read(seq.get(s.functions, s.entry))
+            if syntax.either((entry.count == as_u32(0)) == false, (entry.returns == ast.FIELD) == false) {
+                s.error = syntax.error(3, entry.name.start, entry.name.end)
+            }
+            return s
+        }
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}

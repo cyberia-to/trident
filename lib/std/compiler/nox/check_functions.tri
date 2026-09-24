@@ -1,0 +1,46 @@
+module std.compiler.nox.check_functions
+
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.body
+use std.compiler.nox.body_store
+use std.compiler.nox.coverage
+
+pub struct Checked { pub bodies: seq.Seq, pub next: U32, pub error: syntax.Error }
+
+#[pure]
+fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, input: Checked, cap: U32) -> Checked {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(functions) { return s }
+        let signature = signatures.read(seq.get(functions, s.next))
+        let parsed = body.function(source, signature, functions, params, cap)
+        s.error = parsed.error
+        if (s.error.code == as_u32(0)) == false { return s }
+        let checked = coverage.check(parsed)
+        s.error = checked.error
+        if (s.error.code == as_u32(0)) == false { return s }
+        if seq.len(s.bodies) == cap { s.error = syntax.error(7, signature.name.start, signature.name.end) return s }
+        s.bodies = seq.push(s.bodies, body_store.pack(parsed, checked.flags), cap)
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+// Every declaration is checked, even if its callable binding is replaced later.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, cap: U32) -> Checked {
+    let zero = as_u32(0)
+    let mut s = Checked { bodies: seq.empty(), next: zero, error: syntax.error(0, zero, zero) }
+    for turn in 0..512 {
+        s = chunk(source, functions, params, s, cap)
+        if syntax.either(s.next == seq.len(functions), (s.error.code == zero) == false) { return s }
+    }
+    s.error = syntax.error(7, zero, zero)
+    s
+}

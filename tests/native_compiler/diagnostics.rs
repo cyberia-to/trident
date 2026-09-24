@@ -18,7 +18,6 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
             "module sample",
             "program sample use dependency fn main() -> Field { 1 }",
             "program sample fn main() -> Field { 1; }",
-            "program sample fn main() -> Field { 1 } fn other() -> Field { 2 }",
             "#[pure] program sample fn main() -> Field { 1 }",
         ] {
             support::error(text.as_bytes(), 6);

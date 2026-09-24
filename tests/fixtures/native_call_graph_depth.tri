@@ -1,0 +1,43 @@
+program native_call_graph_depth
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.body_state
+use std.compiler.nox.body_store
+use std.compiler.nox.call_graph
+
+// A prepared compiler-owned DAG isolates the graph ceiling from source/AST
+// allocation. Probe input tail chooses length, plus1000 reverses shortcut order.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let mut count = as_u32(noun.as_field(noun.tail(input)))
+    let reverse = as_u32(1000) < count
+    if reverse { count = as_u32(field.sub(as_field(count), 1000)) }
+    let mut functions = seq.empty()
+    let mut bodies = seq.empty()
+    let mut roots = seq.empty()
+    for i in 0..129 {
+        if i < count {
+            let name = syntax.token(1, i, syntax.inc(i), 0)
+            let f = signatures.Function { name, params: as_u32(0), count: as_u32(0), returns: 0, open: i, close: i }
+            functions = seq.push(functions, signatures.pack(f), as_u32(129))
+            let mut s = body_state.initial(name)
+            if syntax.inc(i) < count { s.edges = noun.pair(noun.atom(as_field(i) + 1), noun.atom(0)) }
+            if i == as_u32(0) {
+                s.edges = noun.pair(noun.atom(2), noun.pair(noun.atom(1), noun.atom(0)))
+                if reverse { s.edges = noun.pair(noun.atom(1), noun.pair(noun.atom(2), noun.atom(0))) }
+            }
+            bodies = seq.push(bodies, body_store.pack(s, noun.atom(0)), as_u32(129))
+            // Final-name traversal first memoizes the suffix, then sees root0.
+            if (i == as_u32(0)) == false { roots = seq.push(roots, noun.atom(as_field(i)), as_u32(129)) }
+        }
+    }
+    roots = seq.push(roots, noun.atom(0), as_u32(129))
+    let walked = call_graph.walk(functions, bodies, roots, as_u32(4096))
+    noun.pair(noun.atom(as_field(walked.error.code)), tree.get(walked.heights, count, as_u32(0)))
+}

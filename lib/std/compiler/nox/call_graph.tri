@@ -1,0 +1,115 @@
+module std.compiler.nox.call_graph
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.body_store
+
+pub const DEPTH_CAP: U32 = 128
+pub struct Walked {
+    pub colors: Noun, pub heights: Noun, pub frames: Noun, pub depth: U32, pub next: U32,
+    pub done: Bool, pub error: syntax.Error
+}
+
+#[pure]
+fn push(functions: seq.Seq, bodies: seq.Seq, input: Walked, id: U32, cap: U32) -> Walked {
+    let mut s = input
+    let mut limit = cap
+    if DEPTH_CAP < limit { limit = DEPTH_CAP }
+    if s.depth == limit {
+        let declaration = signatures.read(seq.get(functions, id))
+        s.error = syntax.error(7, declaration.name.start, declaration.name.end)
+        return s
+    }
+    s.colors = tree.set(s.colors, seq.len(functions), id, noun.atom(1))
+    let frame = noun.pair(noun.atom(as_field(id)), noun.pair(body_store.edges(seq.get(bodies, id)), noun.atom(0)))
+    s.frames = noun.pair(frame, s.frames)
+    s.depth = syntax.inc(s.depth)
+    s
+}
+
+// Remember the longest completed child, including memoized shared suffixes.
+#[pure]
+fn remember(input: Walked, height: U32) -> Walked {
+    let mut s = input
+    if noun.eq(s.frames, noun.atom(0)) { return s }
+    let frame = noun.head(s.frames)
+    let rest = noun.tail(frame)
+    let old = as_u32(noun.as_field(noun.tail(rest)))
+    if old < height {
+        let changed = noun.pair(noun.head(frame), noun.pair(noun.head(rest), noun.atom(as_field(height))))
+        s.frames = noun.pair(changed, noun.tail(s.frames))
+    }
+    s
+}
+
+#[pure]
+fn step(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap: U32) -> Walked {
+    let mut s = input
+    if noun.eq(s.frames, noun.atom(0)) {
+        if s.next == seq.len(roots) { s.done = true return s }
+        let id = as_u32(noun.as_field(seq.get(roots, s.next)))
+        s.next = syntax.inc(s.next)
+        if noun.as_field(tree.get(s.colors, seq.len(functions), id)) == 0 { return push(functions, bodies, s, id, cap) }
+        return s
+    }
+    let frame = noun.head(s.frames)
+    let id = as_u32(noun.as_field(noun.head(frame)))
+    let edges = noun.head(noun.tail(frame))
+    let longest = as_u32(noun.as_field(noun.tail(noun.tail(frame))))
+    if noun.eq(edges, noun.atom(0)) {
+        s.colors = tree.set(s.colors, seq.len(functions), id, noun.atom(2))
+        let height = syntax.inc(longest)
+        s.heights = tree.set(s.heights, seq.len(functions), id, noun.atom(as_field(height)))
+        s.frames = noun.tail(s.frames)
+        s.depth = syntax.dec(s.depth)
+        return remember(s, height)
+    }
+    let callee = as_u32(noun.as_field(noun.head(edges)))
+    s.frames = noun.pair(noun.pair(noun.atom(as_field(id)), noun.pair(noun.tail(edges), noun.atom(as_field(longest)))), noun.tail(s.frames))
+    let color = noun.as_field(tree.get(s.colors, seq.len(functions), callee))
+    if color == 1 {
+        let declaration = signatures.read(seq.get(functions, callee))
+        s.error = syntax.error(5, declaration.name.start, declaration.name.end)
+        return s
+    }
+    if color == 0 { return push(functions, bodies, s, callee, cap) }
+    let height = as_u32(noun.as_field(tree.get(s.heights, seq.len(functions), callee)))
+    let mut limit = cap
+    if DEPTH_CAP < limit { limit = DEPTH_CAP }
+    if limit < as_u32(as_field(s.depth) + as_field(height)) {
+        let declaration = signatures.read(seq.get(functions, callee))
+        s.error = syntax.error(7, declaration.name.start, declaration.name.end)
+        return s
+    }
+    remember(s, height)
+}
+
+#[pure]
+fn chunk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap: U32) -> Walked {
+    let mut s = input
+    for turn in 0..16 {
+        s = step(functions, bodies, roots, s, cap)
+        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+    }
+    s
+}
+
+// Source-built graphs have at most SOURCE_CAP calls and declarations in total.
+// Reuse this traversal for all final definitions, then for reachability from main.
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+pub fn walk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, cap: U32) -> Walked {
+    let zero = as_u32(0)
+    let mut s = Walked { colors: tree.empty(tree.shape(seq.len(functions)).height), heights: tree.empty(tree.shape(seq.len(functions)).height), frames: noun.atom(0),
+        depth: zero, next: zero, done: false, error: syntax.error(0, zero, zero) }
+    for turn in 0..1024 {
+        s = chunk(functions, bodies, roots, s, cap)
+        if syntax.either(s.done, (s.error.code == zero) == false) { return s }
+    }
+    s.error = syntax.error(7, zero, zero)
+    s
+}

@@ -202,16 +202,20 @@ profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
 requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
-program := "program" identifier "fn" "main" "(" ")" "->" "Field" block EOF
+program := "program" identifier function+ EOF
+function := "fn" identifier "(" parameters? ")" ("->" scalar_type)? block
+parameters := identifier ":" scalar_type ("," identifier ":" scalar_type)* ","?
+scalar_type := "Field" | "Bool"
 block := "{" statement* expression? "}"
 statement := "let" "mut"? identifier (":" ("Field" | "Bool"))? "=" expression
-           | identifier "=" expression | "return" expression
+           | identifier "=" expression | "return" expression?
            | if_statement | expression
 if_statement := "if" expression block ("else" (block | if_statement))?
 expression := sum ("==" sum)*
 sum := term ("+" term)*
 term := primary ("*" primary)*
-primary := decimal | "true" | "false" | identifier | "(" expression ")"
+primary := decimal | "true" | "false" | identifier | call | "(" expression ")"
+call := identifier "(" (expression ("," expression)* ","?)? ")"
 ```
 
 Identifiers use the seed's ASCII identifier spelling; keywords, type words,
@@ -231,21 +235,22 @@ Generation preserves the expression tree: literal `[1 value]`, addition
 needed. The result is `ART1(0,0,0,formula)`, independent of job limits,
 compiler identity, source paths and execution counters.
 
-Local declarations infer Field/Bool or state the type explicitly. A `let mut` binding
+Local declarations infer Field/Bool/Unit or state a scalar type explicitly. A `let mut` binding
 permits assignment; other bindings reject writes. Initializers resolve names
 before installing the new binding, so `let x = x + 1` reads the previous `x`
 and rejects when no previous binding exists. Same-scope shadowing creates a
 fresh slot. Each assignment evaluates its right-hand side once against the
 previous environment, then replaces only its selected slot. Identifier lookup
 compares every source byte, including names longer than seven bytes. An identifier
-followed by `(` on the same physical line is an unsupported call. LF between them
+followed by `(` on the same physical line is a call. LF between them
 permits a following parenthesized expression where a statement boundary is valid;
 CR alone keeps the same line, matching the seed parser.
 
 The guest builds a postorder expression sequence and ordered statement sequence.
-Expression records carry their Field/Bool type and source span. Addition and
+Expression records carry their Field/Bool/Unit type and source span. Addition and
 multiplication require Field operands; equality requires two operands of the same
-type and returns Bool. Equality binds below addition and multiplication. Native
+type and returns Bool, including equality between two Unit results. Equality
+binds below addition and multiplication. Native
 Bool literals/results encode true as zero and false as one. Assignments and
 explicit annotations preserve the binding's type; the entry returns Field.
 Child references precede their parent; declarations own stable slots. Code generation uses the
@@ -281,13 +286,56 @@ collection and parser continuation is charged to the requested sequence limit.
 The block nesting ceiling is 64, further restricted by that limit. Exceeding
 known capacity returns diagnostic7 before the corresponding append.
 
+Functions are ordinary module-local declarations. A header pass gathers complete
+names, typed positional parameters, result types and token-delimited body spans
+before any body is checked. This permits forward calls. The last declaration of
+a function name supplies its callable binding, matching the seed; every declared
+body is still checked against its own signature. Calls resolve in the function
+namespace, so a local with the same name does not replace the callable binding.
+Parameters are immutable and occupy distinct positional slots. Repeated parameter
+names retain their arity and select the last parameter during name lookup.
+The selected last `main` must have no parameters and return Field.
+
+An omitted result annotation means Unit; Unit has no explicit type spelling in
+this subset. Unit functions may fall through and produce native atom zero.
+Bare return is accepted only for Unit. Explicit and terminal return values must
+match the declared result. Local inference can retain Unit values; assignment
+preserves that type. Conditions still require Field or Bool. Imports, attributes,
+generic declarations and intrinsics remain outside this delivery's subset.
+
+The expression parser tracks call delimiters and argument ownership explicitly.
+Nested calls own separate argument lists; argument records need not be contiguous
+in the expression arena. Arity and each positional type are checked. The function
+call graph includes calls in unselected branches; direct and mutual cycles among
+final callable bindings are rejected, including unused functions. Shadowed bodies
+are checked, while only the final binding contributes to the seed's cycle graph.
+Cycles, unknown calls and wrong arity/type use semantic code5; code4 remains
+reserved for import cycles by JOB1.
+
+Only functions reachable from main enter the runtime code table, ordered by their
+complete ASCII name within the selected module. A sorted table and body/slot plans
+make generated bytes independent of declaration discovery order for the same
+final callable definitions, and of unused well-typed bodies. A declaration's
+locals are planned before any call is emitted.
+The [runtime contract](self-hosting-runtime.md#source-execution) defines one body
+per reachable function, immutable balanced code tables, and a fresh balanced
+frame per call. Arguments evaluate once from left to right. Native dynamic apply
+is `[2 new_subject code_producer]`; quoting the code producer would change its
+meaning. A callee return unwraps at its function boundary and resumes its caller.
+Existing single-main programs without calls retain their accepted artifact bytes.
+Function headers, parameters, argument links, stored body arenas, graph states
+and traversal frames obey explicit sequence capacities before growth. The call
+graph traversal has a 128-function depth ceiling, further restricted by the
+requested sequence limit; the root occupies one level. Source
+ceilings remain independent of the lifetime arena; complete scale is SH4 work.
+
 The compiler reports the first deterministic diagnostic: code 1 for encoding or
-tokens, 2 for malformed syntax, 3 for an entry mismatch, 5 for an unknown
-expression name, immutable assignment or type/return error, 6 for an unsupported
-construct/request and 7 for a known
-compiler work-capacity limit. A single diagnostic respects every admitted
+tokens, 2 for malformed syntax, 3 for an entry mismatch, 5 for a recursive call
+cycle, unknown expression name, immutable assignment or type/return error,
+6 for an unsupported construct/request and 7 for a known compiler work-capacity
+limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
-imports, other declarations and attributes are rejected, including trailing items.
+imports, non-function declarations and attributes are rejected, including trailing items.
 Exhaustion of a VM or collection-validation allowance remains an execution
 failure outside RES1, as specified by the job contract.
 

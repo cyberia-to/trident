@@ -1,0 +1,71 @@
+module std.compiler.nox.function_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.codegen
+use std.compiler.nox.control_gen
+use std.compiler.nox.body_store
+use std.compiler.nox.function_plan
+use std.compiler.nox.call_codegen
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+struct Emitted { table: Noun, depth: U32, next: U32, failed: Bool }
+
+#[pure]
+fn chunk(bodies: seq.Seq, plan: function_plan.Plan, input: Emitted, cap: U32, depth_cap: U32) -> Emitted {
+    let mut s = input
+    for turn in 0..8 {
+        if s.next == seq.len(plan.order) { return s }
+        let id = as_u32(noun.as_field(seq.get(plan.order, s.next)))
+        let stored = seq.get(bodies, id)
+        let body = body_store.read(stored, cap)
+        let context = call_codegen.Context { arguments: body.arguments, bodies, slots: plan.slots,
+            functions: seq.len(bodies), table: tree.shape(seq.len(plan.order)), capacity: cap }
+        let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), context, depth_cap)
+        if built.failed { s.failed = true return s }
+        s.table = tree.set(s.table, seq.len(plan.order), s.next, built.output.formula)
+        s.depth = formula.maximum(s.depth, built.output.depth)
+        s.next = syntax.inc(s.next)
+    }
+    s
+}
+
+#[pure]
+#[requires(entry < seq.len(bodies))]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32, depth_cap: U32) -> codegen.Compiled {
+    let zero = as_u32(0)
+    let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
+    let stored = seq.get(bodies, entry)
+    // An acyclic one-body closure contains no calls. Preserve the existing
+    // arithmetic, locals and control artifact identities, even with unused defs.
+    if seq.len(plan.order) == as_u32(1) {
+        let body = body_store.read(stored, cap)
+        let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), call_codegen.empty(), depth_cap)
+        return control_gen.standalone(built, body_store.locals(stored), depth_cap)
+    }
+    let shape = tree.shape(seq.len(plan.order))
+    let mut s = Emitted { table: tree.empty(shape.height), depth: zero, next: zero, failed: false }
+    for turn in 0..512 {
+        s = chunk(bodies, plan, s, cap, depth_cap)
+        if s.failed { return failure }
+        if s.next == seq.len(plan.order) {
+            let frame = tree.shape(body_store.locals(stored))
+            let subject = noun.pair(s.table, noun.pair(noun.atom(0), tree.empty(frame.height)))
+            let table_depth = as_u32(as_field(s.depth) + as_field(shape.height))
+            let subject_depth = syntax.inc(formula.maximum(table_depth, syntax.inc(frame.height)))
+            let initial = formula.Value { formula: noun.pair(noun.atom(1), subject), depth: syntax.inc(subject_depth) }
+            let occupied = noun.as_field(tree.get(plan.slots, seq.len(bodies), entry))
+            let slot = syntax.dec(as_u32(occupied))
+            let dispatch = formula.apply(flow.axis(1), flow.axis(2 * shape.capacity + as_field(slot)))
+            let output = flow.compose(initial, dispatch)
+            if depth_cap < as_u32(as_field(output.depth) + 9) { return failure }
+            return codegen.Compiled { formula: output.formula, error: syntax.error(0, zero, zero) }
+        }
+    }
+    failure
+}
