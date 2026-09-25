@@ -133,6 +133,9 @@ mod scalars;
 #[path = "native_compiler/assertions.rs"]
 mod assertions;
 
+#[path = "native_compiler/attributes.rs"]
+mod attributes;
+
 #[path = "native_compiler/loops.rs"]
 mod loops;
 

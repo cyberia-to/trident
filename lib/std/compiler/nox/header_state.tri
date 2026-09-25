@@ -13,7 +13,8 @@ pub struct State {
     pub token: syntax.Token, pub error: syntax.Error,
     pub types: type_registry.Scope, pub functions: seq.Seq, pub params: seq.Seq, pub entry: U32,
     pub structured: Bool, pub current: signatures.Function,
-    pub phase: Field, pub nesting: U32, pub done: Bool, pub constants: constants.Scope
+    pub phase: Field, pub nesting: U32, pub done: Bool, pub constants: constants.Scope,
+    pub current_pure: Bool, pub pure_functions: seq.Seq
 }
 
 #[pure]
@@ -21,5 +22,6 @@ pub fn initial(token: syntax.Token) -> State {
     let zero = syntax.ZERO
     State { types: type_registry.empty(), functions: seq.empty(), params: seq.empty(), entry: signatures.NONE, token,
         current: signatures.Function { name: token, params: zero, count: zero, returns: noun.atom(types.UNIT), open: zero, close: zero },
-        structured: false, phase: 0, nesting: zero, error: syntax.error(0, zero, zero), done: false, constants: constants.empty() }
+        structured: false, phase: 0, nesting: zero, error: syntax.error(0, zero, zero), done: false, constants: constants.empty(),
+        current_pure: false, pure_functions: seq.empty() }
 }

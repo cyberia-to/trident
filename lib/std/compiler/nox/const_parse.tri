@@ -32,6 +32,7 @@ fn uint32(source: bytes.Bytes, token: syntax.Token) -> syntax.Error {
 
 #[pure]
 fn boundary(kind: U32) -> Bool {
+    if kind == as_u32(46) { return true }
     syntax.either(syntax.either(kind == syntax.ZERO, kind == as_u32(45)), syntax.either(kind == as_u32(11), syntax.either(kind == as_u32(39), kind == as_u32(40))))
 }
 

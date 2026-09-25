@@ -1,0 +1,18 @@
+module std.compiler.nox.check_scope
+
+use std.nox.seq
+use std.compiler.nox.type_registry
+use std.compiler.nox.constants
+
+// One immutable scope per checked function. Expressions share it while their
+// lexical bindings change, without rebuilding the cold module metadata.
+pub struct Scope {
+    pub pure: Bool, pub types: type_registry.Scope,
+    pub functions: seq.Seq, pub params: seq.Seq, pub constants: constants.Scope
+}
+
+#[pure]
+pub fn empty() -> Scope {
+    Scope { pure: false, types: type_registry.empty(), functions: seq.empty(),
+        params: seq.empty(), constants: constants.empty() }
+}

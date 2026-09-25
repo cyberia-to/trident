@@ -1,0 +1,91 @@
+module std.compiler.nox.attributes
+
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+
+pub const HASH: U32 = 46
+pub struct Parsed { pub token: syntax.Token, pub error: syntax.Error, pub pure: Bool }
+struct Payload { token: syntax.Token, depth: U32, error: syntax.Error }
+
+#[pure]
+fn expected(token: syntax.Token) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    syntax.error(2, token.start, token.end)
+}
+
+#[pure]
+fn kind(source: bytes.Bytes, name: syntax.Token) -> Field {
+    if name.value == 1886745189 { return 1 } // pure
+    if name.value == 28550414818502003 { return 2 } // ensures
+    if (field.sub(as_field(name.end), as_field(name.start)) == 8) == false { return 0 }
+    let spelling = [114,101,113,117,105,114,101,115] // requires
+    for i in 0..8 {
+        if (as_field(bytes.get(source, as_u32(as_field(name.start) + as_field(i)))) == spelling[i]) == false { return 0 }
+    }
+    2
+}
+
+// The seed collects lexical metadata, balancing parentheses alone. No source
+// expression is checked or executed here; its delimiter stack is independent.
+#[pure]
+fn payload(source: bytes.Bytes, opening: syntax.Token) -> Payload {
+    let mut s = Payload { token: lexer.next(source, opening.end), depth: as_u32(1), error: syntax.error(0, opening.start, opening.end) }
+    for turn in 0..4096 {
+        if syntax.either(s.token.kind == syntax.ZERO, s.token.kind == as_u32(14)) { s.error = expected(s.token) return s }
+        // asm has a special lexer in the seed, including inside attributes.
+        if syntax.both(s.token.kind == as_u32(13), s.token.value == 6386541) { s.error = syntax.error(6, s.token.start, s.token.end) return s }
+        if s.token.kind == as_u32(5) { s.depth = syntax.inc(s.depth) }
+        if s.token.kind == as_u32(6) {
+            s.depth = syntax.dec(s.depth)
+            if s.depth == syntax.ZERO { s.token = lexer.next(source, s.token.end) return s }
+        }
+        s.token = lexer.next(source, s.token.end)
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}
+
+#[pure]
+fn one(source: bytes.Bytes, input: Parsed) -> Parsed {
+    let mut s = input
+    s.token = lexer.next(source, s.token.end)
+    if (s.token.kind == as_u32(36)) == false { s.error = expected(s.token) return s }
+    let name = lexer.next(source, s.token.end)
+    if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
+    let attribute = kind(source, name)
+    if attribute == 0 { s.error = syntax.error(6, name.start, name.end) return s }
+    s.token = lexer.next(source, name.end)
+    if attribute == 1 {
+        if s.token.kind == as_u32(5) { s.error = syntax.error(6, name.start, s.token.end) return s }
+        s.pure = true
+    } else {
+        if (s.token.kind == as_u32(5)) == false {
+            if s.token.kind == as_u32(37) { s.error = syntax.error(6, name.start, s.token.end) }
+            else { s.error = expected(s.token) }
+            return s
+        }
+        let collected = payload(source, s.token)
+        s.token = collected.token
+        s.error = collected.error
+        if (s.error.code == syntax.ZERO) == false { return s }
+    }
+    if (s.token.kind == as_u32(37)) == false { s.error = expected(s.token) return s }
+    s.token = lexer.next(source, s.token.end)
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn parse(source: bytes.Bytes, start: syntax.Token) -> Parsed {
+    let mut s = Parsed { token: start, error: syntax.error(0, start.start, start.end), pure: false }
+    for turn in 0..4096 {
+        if (s.token.kind == HASH) == false { return s }
+        s = one(source, s)
+        if (s.error.code == syntax.ZERO) == false { return s }
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}

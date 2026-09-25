@@ -36,7 +36,7 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32, following: 
         s.token = lexer.next(source, name.end)
         if s.token.kind == as_u32(17) {
             s.token = lexer.next(source, s.token.end)
-            let parsed = type_parse.parse(source, s.token, s.types, cap)
+            let parsed = type_parse.parse(source, s.token, s.scope.types, cap)
             s.error = parsed.error
             if (s.error.code == syntax.ZERO) == false { return s }
             expected_type = parsed.ty
@@ -60,7 +60,7 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32, following: 
         s.error = syntax.error(7, name.start, name.end)
         return s
     }
-    let rhs = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types, s.constants), s.nodes, s.arguments, s.edges, cap, false)
+    let rhs = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.scope), s.nodes, s.arguments, s.edges, cap, false)
     s.error = rhs.error
     if (s.error.code == syntax.ZERO) == false { return s }
     let value = seq.get(rhs.nodes, rhs.value)

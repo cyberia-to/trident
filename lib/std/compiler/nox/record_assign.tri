@@ -44,7 +44,7 @@ pub fn assign(source: bytes.Bytes, input: body_state.State, lhs: U32, cap: U32) 
     s.error = selected.error
     if (s.error.code == syntax.ZERO) == false { return s }
     if seq.len(s.statements) == cap { s.error = ast.issue(7, target) return s }
-    let rhs = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types, s.constants), s.nodes, s.arguments, s.edges, cap, false)
+    let rhs = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.scope), s.nodes, s.arguments, s.edges, cap, false)
     s.error = rhs.error
     if (s.error.code == syntax.ZERO) == false { return s }
     let value = seq.get(rhs.nodes, rhs.value)

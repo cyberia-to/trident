@@ -1,0 +1,62 @@
+module std.compiler.nox.purity
+
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.compiler.nox.syntax
+
+// Every identifier byte is ASCII. Eight bytes fit below 2^63, so comparison
+// uses exact packed words without a hash or modular wraparound.
+#[pure]
+#[requires((as_u32(8) < count) == false)]
+#[requires((as_field(bytes.len(source)) < as_field(start) + as_field(count)) == false)]
+fn word(source: bytes.Bytes, start: U32, count: U32) -> Field {
+    let mut result: Field = 0
+    for i in 0..8 {
+        if i == count { return result }
+        result = result * 256 + as_field(bytes.get(source, as_u32(as_field(start) + as_field(i))))
+    }
+    result
+}
+
+// Matches the seed's is_io_builtin, including ordinary source functions.
+// Prefix rules are limited to pub_read*, pub_write*, divine*.
+#[pure]
+#[requires(name.start < name.end)]
+#[requires((bytes.len(source) < name.end) == false)]
+pub fn is_io(source: bytes.Bytes, name: syntax.Token) -> Bool {
+    let length = as_u32(field.sub(as_field(name.end), as_field(name.start)))
+    if length < as_u32(6) { return false }
+    let first = bytes.get(source, name.start)
+    if first == as_u32(100) { return word(source, name.start, as_u32(6)) == 110404120964709 } // divine
+    if length < as_u32(8) { return false }
+    if first == as_u32(112) {
+        let head = word(source, name.start, as_u32(8))
+        if head == 8103491266603737444 { return true } // pub_read
+        if length < as_u32(9) { return false }
+        if head == 8103491266688477556 { return bytes.get(source, as_u32(as_field(name.start) + 8)) == as_u32(101) } // pub_write
+        return false
+    }
+    if syntax.either(first == as_u32(115), syntax.either(first == as_u32(114), first == as_u32(109))) == false { return false }
+    if as_u32(17) < length { return false }
+    let head = word(source, name.start, as_u32(8))
+    let mut count = as_u32(field.sub(as_field(length), 8))
+    if as_u32(8) < count { count = as_u32(8) }
+    let tail = word(source, as_u32(as_field(name.start) + 8), count)
+    if length == as_u32(17) {
+        if (bytes.get(source, as_u32(as_field(name.start) + 16)) == as_u32(109)) == false { return false }
+    }
+    // sec_read; sponge_init/absorb/squeeze/absorb_mem;
+    // ram_read/write/read_block/write_block; merkle_step/step_mem.
+    let lengths = [8,11,13,14,17,8,9,14,15,11,15]
+    let heads = [8315161548601778532,8318271031725088617,8318271031725088609,8318271031725088627,8318271031725088609,8241989049773285732,8241989049858025844,8241989049773285732,8241989049858025844,7882832528487571315,7882832528487571315]
+    let tails = [0,7235956,422843478626,124749026261605,7094136375106039141,0,101,104876330673003,28533848978449259,7628144,32762630610183533]
+    for i in 0..11 {
+        if as_field(length) == lengths[i] {
+            if head == heads[i] {
+                if tail == tails[i] { return true }
+            }
+        }
+    }
+    false
+}
