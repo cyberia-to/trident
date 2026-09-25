@@ -139,6 +139,8 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [cross-backend and installed evidence](self-hosting/explicit-imports.md).
 - [x] SH3 guest package handles, bounded lookup and cached validated sources;
   [component and complete installed corpus](self-hosting/guest-package.md).
+- [x] SH3 seed complete qualified paths and visible check diagnostics;
+  [cross-warrior rejection and execution](self-hosting/strict-module-paths.md).
 - [ ] SH3 true guest imports and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte

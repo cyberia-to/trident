@@ -8,7 +8,7 @@
 (* Top-level *)
 file          = program_decl | module_decl ;
 program_decl  = "program" IDENT use_stmt* declaration* item* ;
-module_decl   = "module" IDENT use_stmt* item* ;
+module_decl   = "module" module_path use_stmt* item* ;
 
 (* Imports *)
 use_stmt      = "use" module_path ;

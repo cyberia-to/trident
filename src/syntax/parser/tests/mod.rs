@@ -6,6 +6,7 @@
 mod advanced;
 mod basics;
 mod block_boundary;
+mod module_paths;
 
 use crate::ast::File;
 use crate::lexer::Lexer;
