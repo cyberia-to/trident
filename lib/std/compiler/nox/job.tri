@@ -8,12 +8,25 @@ use std.nox.seq
 use std.nox.tree
 use std.compiler.nox.syntax
 
+const INV2: Field = 9223372034707292161
+const INV4: Field = 13835058052060938241
+
+// All handles have already crossed their structural admission boundary.
+// The remaining allowance follows every later lookup/open, never each record.
+pub struct Package {
+    pub modules: seq.Seq, pub read_cost: U32, pub remaining: U32,
+    pub source_limit: U32, pub options: Noun
+}
 // Joy validates the complete JOB1 and compiler identity before this guest runs.
 // This view validates the records/collections it consumes; it does no I/O.
 pub struct View {
     pub source: bytes.Bytes, pub name: bytes.Bytes, pub index: U32,
-    pub sequence_limit: U32, pub depth_limit: U32, pub error: syntax.Error
+    pub sequence_limit: U32, pub depth_limit: U32, pub error: syntax.Error,
+    pub package: Package
 }
+
+pub struct Found { pub exists: Bool, pub index: U32, pub remaining: U32 }
+pub struct Source { pub content: bytes.Bytes, pub remaining: U32, pub error: syntax.Error }
 
 #[pure]
 #[requires((remaining < cost) == false)]
@@ -57,7 +70,82 @@ fn record(value: Noun, tag: Field, arity: U32, remaining: U32) -> (Noun, U32) {
 fn reject(name: bytes.Bytes, index: U32, code: Field) -> View {
     let zero = syntax.ZERO
     View { source: bytes.empty(), name, index, sequence_limit: zero,
-        depth_limit: zero, error: syntax.error(code, zero, zero) }
+        depth_limit: zero, error: syntax.error(code, zero, zero),
+        package: Package { modules: seq.empty(), read_cost: zero, remaining: zero,
+            source_limit: zero, options: noun.atom(0) } }
+}
+
+#[pure]
+fn byte_cost(value: bytes.Bytes) -> U32 {
+    let length = bytes.len(value)
+    let rest = length & as_u32(3)
+    let mut words = as_u32(field.sub(as_field(length), as_field(rest)) * INV4)
+    if (rest == syntax.ZERO) == false { words = as_u32(as_field(words) + 1) }
+    as_u32(as_field(tree.shape(words).height) + 1)
+}
+
+// Both paths are validated; repeated comparison reads still spend admission work.
+#[pure]
+fn before(left: bytes.Bytes, right: bytes.Bytes, allowance: U32) -> (Bool, U32) {
+    let mut remaining = allowance
+    let cost = as_u32(as_field(byte_cost(left)) + as_field(byte_cost(right)))
+    for index in 0..255 {
+        if index == bytes.len(left) { return (index < bytes.len(right), remaining) }
+        if index == bytes.len(right) { return (false, remaining) }
+        remaining = charge(remaining, cost)
+        let a = bytes.get(left, index)
+        let b = bytes.get(right, index)
+        if a < b { return (true, remaining) }
+        if b < a { return (false, remaining) }
+    }
+    (false, remaining)
+}
+
+// Binary search the admitted ASCII-sorted table: at most seventeen probes for
+// 65536 records. Package indices never use the source/AST capacity sentinel.
+#[pure]
+#[requires((as_u32(65536) < seq.len(package.modules)) == false)]
+#[requires((as_u32(255) < bytes.len(name)) == false)]
+pub fn find(package: Package, name: bytes.Bytes) -> Found {
+    assert((as_u32(65536) < seq.len(package.modules)) == false)
+    assert((as_u32(255) < bytes.len(name)) == false)
+    let wanted = bytes.to_noun(name)
+    let mut remaining = package.remaining
+    let mut low = syntax.ZERO
+    let mut high = seq.len(package.modules)
+    for turn in 0..17 {
+        if low == high { return Found { exists: false, index: seq.len(package.modules), remaining } }
+        let sum = as_u32(as_field(low) + as_field(high))
+        let index = as_u32(field.sub(as_field(sum), as_field(sum & as_u32(1))) * INV2)
+        remaining = charge(remaining, package.read_cost)
+        let (body, left) = record(seq.get(package.modules, index), 1297040433, as_u32(4), remaining)
+        remaining = charge(left, as_u32(1))
+        let path = slot(body, syntax.ZERO)
+        if noun.eq(path, wanted) { return Found { exists: true, index, remaining } }
+        let (candidate, left) = bytes.from_noun_budget(path, as_u32(255), remaining)
+        let (earlier, left) = before(candidate, name, left)
+        remaining = left
+        if earlier { low = as_u32(as_field(index) + 1) }
+        else { high = index }
+    }
+    Found { exists: false, index: seq.len(package.modules), remaining }
+}
+
+// The resolver calls this once per newly reached source, after lookup.
+#[pure]
+#[requires(index < seq.len(package.modules))]
+pub fn open(package: Package, index: U32, source_capacity: U32) -> Source {
+    assert(index < seq.len(package.modules))
+    let remaining = charge(package.remaining, package.read_cost)
+    let (body, left) = record(seq.get(package.modules, index), 1297040433, as_u32(4), remaining)
+    let remaining = charge(left, as_u32(7))
+    let source = slot(body, as_u32(3))
+    let length = as_u32(noun.as_field(noun.head(noun.tail(source))))
+    if source_capacity < length {
+        return Source { content: bytes.empty(), remaining, error: syntax.error(7, syntax.ZERO, syntax.ZERO) }
+    }
+    let (content, remaining) = bytes.from_noun_budget(source, package.source_limit, remaining)
+    Source { content, remaining, error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
 }
 
 #[pure]
@@ -90,6 +178,8 @@ pub fn read(input: Noun) -> View {
     remaining = charge(r5, as_u32(1))
     let (modules, r6) = seq.from_noun_budget(slot(pkg, syntax.ZERO), sequence_limit, remaining)
     remaining = r6
+    let geometry = tree.shape(seq.len(modules))
+    let read_cost = as_u32(as_field(geometry.height) + 1)
     for index in 0..65536 {
         if index == seq.len(modules) {
             assert_eq(0, 1)
@@ -97,8 +187,7 @@ pub fn read(input: Noun) -> View {
         }
         // Indexed reads charge their complete path (height+1).
         // Bound is computed from the canonical occupied-leaf length.
-        let geometry = tree.shape(seq.len(modules))
-        remaining = charge(remaining, as_u32(as_field(geometry.height) + 1))
+        remaining = charge(remaining, read_cost)
         let (entry_record, left) = record(seq.get(modules, index), 1297040433, as_u32(4), remaining)
         remaining = charge(left, as_u32(1))
         if noun.eq(slot(entry_record, syntax.ZERO), entry) {
@@ -114,7 +203,8 @@ pub fn read(input: Noun) -> View {
             if syntax.SOURCE_CAP < source_length { return reject(name, index, 7) }
             let (content, left) = bytes.from_noun_budget(source, source_limit, remaining)
             return View { source: content, name, index, sequence_limit, depth_limit,
-                error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
+                error: syntax.error(0, syntax.ZERO, syntax.ZERO),
+                package: Package { modules, read_cost, remaining: left, source_limit, options: opts } }
         }
     }
     // The host contract guarantees a matching entry module.

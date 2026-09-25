@@ -66,13 +66,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--joy", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--time-ms", type=int, default=30000,
+                        help="explicit host deadline per compiler job; deterministic work limits stay fixed")
     args = parser.parse_args()
     binary = args.joy.resolve()
     repo = Path(__file__).resolve().parents[2]
     commands, observations = [], []
     accepted = json.loads((repo / "audit/self-hosting/native-control-cli.json").read_text())
     prior_cases = {item["case"]: item for item in accepted["observations"] if "case" in item and "expected" in item}
-    host = ["--budget", "100000000", "--frames", "65536"]
+    host = ["--budget", "100000000", "--frames", "65536", "--time-ms", str(args.time_ms)]
     with tempfile.TemporaryDirectory(prefix="trident-sh2-") as temporary:
         root = Path(temporary)
 
@@ -449,6 +451,7 @@ def main():
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
+        "compiler_host_time_ms": args.time_ms,
         "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun, Digest, tuple, nominal and fixed Field-array values with typed constants and resolved assertions; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 

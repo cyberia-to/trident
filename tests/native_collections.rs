@@ -1,4 +1,6 @@
 //! Execute source collections on nox and compare against the independent model.
+#[path = "native_collections/bytes_table.rs"]
+mod bytes_table;
 #[allow(dead_code)]
 #[path = "../examples/selfhost_data/model.rs"]
 mod model;

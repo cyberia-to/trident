@@ -126,6 +126,10 @@ cannot validate even an empty tree. Exhaustion fails before the next visit.
 Compare a wholly unused subtree to `E(h)` without expanding `2^h` zero leaves.
 Occupied leaves are arbitrary Nouns and need no recursive value validation once
 the transported DAG has been validated. SH0.3 handles complete DAG validation.
+A terminal branch may charge and validate its two leaf positions together,
+retaining one visit for each position and checking any unused padding. Occupied
+pair-shaped leaves remain opaque values. This avoids allocating traversal tasks
+for leaf positions while preserving the exact successful visit allowance.
 
 ## Exact byte strings
 
@@ -199,6 +203,19 @@ constant-memory promise or evidence that a complete compiler workload fits.
 | Encode | `to_noun(s: Seq) -> Noun` | `to_noun(b: Bytes) -> Noun` |
 | Validate/decode | `from_noun(n: Noun, max_len: U32, max_visits: U32) -> Seq` | `from_noun(n: Noun, max_len: U32, max_visits: U32) -> Bytes` |
 | Shared allowance | `from_noun_budget(n: Noun, max_len: U32, remaining: U32) -> (Seq, U32)` | `from_noun_budget(n: Noun, max_len: U32, remaining: U32) -> (Bytes, U32)` |
+
+`std.nox.bytes.BytesTable` retains already validated byte handles across compiler
+stages. It is an opaque, persistent, append-only table: `table_empty()` constructs
+it, `table_len(table)` returns its length, `table_push(table, value: Bytes,
+max_len: U32)` appends within an explicit cap, and `table_get(table, index: U32)`
+returns the stored `Bytes` after checking the index. Old table and byte values
+remain unchanged by later appends or byte updates. Each entry stores the private
+length/root representation inside the owning library; callers cannot construct,
+project or mutate its backing sequence. There is no raw-Noun table constructor or
+serialization API. External bytes still cross `from_noun_budget` exactly once;
+table reads spend runtime reductions/nodes without repeating admission work or
+granting a fresh validation allowance. The module graph keeps these typed tables
+in its state and uses bounded indices in its traversal records.
 
 Lengths must fit caller/job caps; push checks before incrementing, never wraps.
 Validators consume a visit allowance and trap on exhaustion. Exact global
