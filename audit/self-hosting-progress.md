@@ -143,6 +143,8 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [cross-warrior rejection and execution](self-hosting/strict-module-paths.md).
 - [x] SH3 guest graph components: cached reached sources, repeated direct uses,
   bounded discovery and seed ordering; [component evidence](self-hosting/guest-module-graph.md).
+- [x] SH3 qualified-name and frozen constant-binding components;
+  [owner/provenance and installed component evidence](self-hosting/constant-bindings.md).
 - [ ] SH3 true guest imports and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
