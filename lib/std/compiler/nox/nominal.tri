@@ -48,7 +48,7 @@ fn repeated(fields: seq.Seq, index: U32, name: Noun) -> Bool {
 #[requires((syntax.SOURCE_CAP < node_cap) == false)]
 #[requires((syntax.STACK_CAP < depth_cap) == false)]
 pub fn build(owner: bytes.Bytes, name: bytes.Bytes, fields: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     if syntax.either(bytes.len(owner) == zero, bytes.len(name) == zero) { return failure(5, zero) }
     let count = seq.len(fields)
     if syntax.either((MAX_FIELDS < count), node_cap == zero) { return failure(7, zero) }
@@ -90,9 +90,9 @@ pub fn fields(ty: Noun) -> seq.Seq {
 
 #[pure]
 pub fn lookup(ty: Noun, current_owner: bytes.Bytes, member_name: bytes.Bytes) -> Selected {
-    let absent = Selected { ty: noun.atom(types.INVALID), index: as_u32(0), exists: false, visible: false }
+    let absent = Selected { ty: noun.atom(types.INVALID), index: syntax.ZERO, exists: false, visible: false }
     let description = types.info(ty)
-    if syntax.either(description.valid == false, description.depth == as_u32(0)) { return absent }
+    if syntax.either(description.valid == false, description.depth == syntax.ZERO) { return absent }
     if (noun.as_field(noun.head(ty)) == types.NOMINAL) == false { return absent }
     let members = fields(ty)
     let wanted = bytes.to_noun(member_name)

@@ -18,7 +18,7 @@ fn main(input: Noun) -> Noun {
     let name = lexer.next(source, declaration.end)
     let parsed = headers.parse(source, name.end, type_registry.name(source, name), capacity)
     if (parsed.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(parsed.error.code)), noun.atom(0)) }
-    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, capacity)
+    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, parsed.constants, capacity)
     if (checked.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(checked.error.code)), noun.atom(0)) }
     let plan = function_plan.plan(source, parsed.functions, checked.bodies, parsed.entry, capacity)
     noun.pair(noun.atom(as_field(plan.error.code)), noun.pair(seq.to_noun(plan.order), plan.slots))

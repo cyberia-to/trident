@@ -16,6 +16,6 @@ fn main(input: Noun) -> Noun {
     let name = lexer.next(source, declaration.end)
     let parsed = headers.parse(source, name.end, type_registry.name(source, name), capacity)
     if (parsed.error.code == as_u32(0)) == false { return noun.atom(as_field(parsed.error.code)) }
-    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, capacity)
+    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, parsed.constants, capacity)
     noun.atom(as_field(checked.error.code))
 }

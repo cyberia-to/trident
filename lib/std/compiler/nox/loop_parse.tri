@@ -54,7 +54,7 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     let mut s = input
     let mut nesting = cap
     if syntax.STACK_CAP < nesting { nesting = syntax.STACK_CAP }
-    if syntax.either(nesting == as_u32(0), syntax.inc(s.depth) == nesting) {
+    if syntax.either(nesting == syntax.ZERO, syntax.inc(s.depth) == nesting) {
         s.error = syntax.error(7, s.token.start, s.token.end)
         return s
     }
@@ -65,13 +65,13 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     s.token = lexer.next(source, s.token.end)
     let first = bound(source, s.token, as_u32(5))
     s.error = first.error
-    if (s.error.code == as_u32(0)) == false { return s }
+    if (s.error.code == syntax.ZERO) == false { return s }
     s.token = lexer.next(source, s.token.end)
     if (s.token.kind == as_u32(33)) == false { s.error = ast.failed(s.token, 2) return s }
     s.token = lexer.next(source, s.token.end)
     let end = bound(source, s.token, as_u32(6))
     s.error = end.error
-    if (s.error.code == as_u32(0)) == false { return s }
+    if (s.error.code == syntax.ZERO) == false { return s }
     s.token = lexer.next(source, s.token.end)
     if (s.token.kind == as_u32(7)) == false { s.error = ast.failed(s.token, 2) return s }
     if syntax.either(seq.len(s.loops) == cap, cap < as_u32(as_field(seq.len(s.bindings)) + 2)) {

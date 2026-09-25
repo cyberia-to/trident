@@ -1,5 +1,6 @@
 module std.compiler.nox.body
 
+use std.compiler.nox.constants
 use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
@@ -44,14 +45,14 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
             if seq.len(s.nodes) == cap { s.error = syntax.error(7, s.token.start, s.token.end) return s }
             let id = seq.len(s.nodes)
             s.nodes = seq.push(s.nodes, ast.typed(ast.UNIT_VALUE, 0, 0, noun.atom(types.UNIT), s.token.start, s.token.start), cap)
-            s = body_state.append(s, blocks.statement(blocks.RETURN, id, as_u32(0), as_u32(0)), cap)
+            s = body_state.append(s, blocks.statement(blocks.RETURN, id, syntax.ZERO, syntax.ZERO), cap)
             s.returned = true
             return s
         }
     }
-    let value = expression.parse(source, s.token, expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types), s.nodes, s.arguments, s.edges, cap, false)
+    let value = expression.parse(source, s.token, expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types, s.constants), s.nodes, s.arguments, s.edges, cap, false)
     s.error = value.error
-    if (s.error.code == as_u32(0)) == false { return s }
+    if (s.error.code == syntax.ZERO) == false { return s }
     s.nodes = value.nodes
     s.arguments = value.arguments
     s.edges = value.edges
@@ -60,7 +61,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
     if returning {
         let node = seq.get(s.nodes, value.value)
         if (noun.eq(ast.ty(node), s.returns)) == false { s.error = ast.issue(5, node) return s }
-        s = body_state.append(s, blocks.statement(blocks.RETURN, value.value, as_u32(0), as_u32(0)), cap)
+        s = body_state.append(s, blocks.statement(blocks.RETURN, value.value, syntax.ZERO, syntax.ZERO), cap)
         s.returned = true
         return s
     }
@@ -73,7 +74,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
         s.tail = value.value
         return control_parse.close(source, s, cap, true)
     }
-    body_state.append(s, blocks.statement(blocks.EVAL, value.value, as_u32(0), as_u32(0)), cap)
+    body_state.append(s, blocks.statement(blocks.EVAL, value.value, syntax.ZERO, syntax.ZERO), cap)
 }
 
 #[pure]
@@ -81,7 +82,7 @@ fn chunk(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.S
     let mut s = input
     for turn in 0..8 {
         s = step(source, s, cap)
-        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+        if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s
 }
@@ -89,10 +90,10 @@ fn chunk(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.S
 #[pure]
 fn drive(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
     let mut s = input
-    if cap == as_u32(0) { s.error = syntax.error(7, s.token.start, s.token.end) return s }
+    if cap == syntax.ZERO { s.error = syntax.error(7, s.token.start, s.token.end) return s }
     for turn in 0..512 {
         s = chunk(source, s, cap)
-        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+        if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s.error = syntax.error(7, s.token.start, s.token.end)
     s
@@ -104,7 +105,7 @@ pub fn parse(source: bytes.Bytes, start: U32, cap: U32) -> body_state.State {
     let mut s = body_state.initial(lexer.next(source, start))
     s.start = syntax.dec(start)
     s = drive(source, s, cap)
-    if syntax.both(s.error.code == as_u32(0), (s.token.kind == as_u32(0)) == false) { s.error = ast.failed(s.token, 2) }
+    if syntax.both(s.error.code == syntax.ZERO, (s.token.kind == syntax.ZERO) == false) { s.error = ast.failed(s.token, 2) }
     s
 }
 
@@ -126,19 +127,20 @@ fn parameter_chunk(input: Parameters, signature: signatures.Function, cap: U32) 
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-pub fn function(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, cap: U32) -> body_state.State {
-    let mut s = Parameters { body: body_state.initial(lexer.next(source, signature.open)), next: as_u32(0) }
+pub fn function(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32) -> body_state.State {
+    let mut s = Parameters { body: body_state.initial(lexer.next(source, signature.open)), next: syntax.ZERO }
     s.body.start = syntax.dec(signature.open)
     s.body.returns = signature.returns
     s.body.types = scope
+    s.body.constants = consts
     s.body.functions = functions
     s.body.params = params
     for turn in 0..512 {
         s = parameter_chunk(s, signature, cap)
-        if (s.body.error.code == as_u32(0)) == false { return s.body }
+        if (s.body.error.code == syntax.ZERO) == false { return s.body }
         if s.next == signature.count {
             s.body = drive(source, s.body, cap)
-            if syntax.both(s.body.error.code == as_u32(0), (s.body.end == signature.close) == false) {
+            if syntax.both(s.body.error.code == syntax.ZERO, (s.body.end == signature.close) == false) {
                 s.body.error = syntax.error(2, s.body.start, s.body.end)
             }
             return s.body

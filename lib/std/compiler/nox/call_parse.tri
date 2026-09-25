@@ -23,7 +23,7 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
     }
     if s.ops == s.capacity { s.error = syntax.error(7, opening.start, opening.end) return s }
     let frame = call_frames.Frame { callee, start: s.token.start, ops: s.ops, vals: s.vals,
-        count: as_u32(0), head: signatures.NONE, builtin }
+        count: syntax.ZERO, head: signatures.NONE, builtin }
     s.frames = noun.pair(call_frames.pack(frame), s.frames)
     s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.CALL_MARKER)), s.capacity)
     s.ops = syntax.inc(s.ops)
@@ -39,7 +39,7 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
     let mut frame = call_frames.read(noun.head(s.frames))
     let mut count = builtins.arity(frame.builtin)
     let mut returns = builtins.returns(frame.builtin)
-    let mut params = as_u32(0)
+    let mut params = syntax.ZERO
     if frame.builtin == builtins.NONE {
         let function = signatures.read(seq.get(s.context.functions, frame.callee))
         count = function.count

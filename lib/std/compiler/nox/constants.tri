@@ -1,0 +1,133 @@
+module std.compiler.nox.constants
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.symbols
+use std.compiler.nox.types
+
+// One logical owner, source-relative names and original initializer spans.
+// Imported aliases will need their own owner/name, separate from literal origin.
+pub struct Scope { pub owner: bytes.Bytes, pub declarations: seq.Seq, pub memo: Noun }
+pub struct Declaration { pub name: syntax.Token, pub ty: Field, pub public: Bool, pub initializer: syntax.Token }
+pub struct Found { pub exists: Bool, pub index: U32 }
+pub struct Value { pub exists: Bool, pub ty: Noun, pub value: Field, pub public: Bool }
+pub struct Resolved { pub scope: Scope, pub error: syntax.Error }
+struct State { scope: Scope, next: U32, cursor: U32, trail: Noun, error: syntax.Error }
+
+#[pure]
+pub fn empty() -> Scope { Scope { owner: bytes.empty(), declarations: seq.empty(), memo: noun.atom(0) } }
+
+#[pure]
+fn span(token: syntax.Token) -> Noun { noun.pair(noun.atom(as_field(token.start)), noun.atom(as_field(token.end))) }
+
+// Name is first so symbols.same compares every byte, including long prefixes.
+#[pure]
+pub fn pack(item: Declaration) -> Noun {
+    let mut public: Field = 0
+    if item.public { public = 1 }
+    let init = item.initializer
+    let value = noun.pair(noun.atom(as_field(init.kind)), noun.pair(noun.atom(init.value), span(init)))
+    noun.pair(span(item.name), noun.pair(noun.atom(item.ty), noun.pair(noun.atom(public), value)))
+}
+
+#[pure]
+pub fn read(value: Noun) -> Declaration {
+    let name = noun.head(value)
+    let metadata = noun.tail(value)
+    let flags = noun.tail(metadata)
+    let init = noun.tail(flags)
+    let payload = noun.tail(init)
+    let location = noun.tail(payload)
+    Declaration {
+        name: syntax.token(1, as_u32(noun.as_field(noun.head(name))), as_u32(noun.as_field(noun.tail(name))), 0),
+        ty: noun.as_field(noun.head(metadata)), public: noun.as_field(noun.head(flags)) == 1,
+        initializer: syntax.token(noun.as_field(noun.head(init)), as_u32(noun.as_field(noun.head(location))), as_u32(noun.as_field(noun.tail(location))), noun.as_field(noun.head(payload))) }
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(scope.declarations)) == false)]
+pub fn find(source: bytes.Bytes, name: syntax.Token, scope: Scope) -> Found {
+    let mut remaining = seq.len(scope.declarations)
+    for turn in 0..4096 {
+        if remaining == syntax.ZERO { return Found { exists: false, index: remaining } }
+        remaining = syntax.dec(remaining)
+        if symbols.same(source, name, seq.get(scope.declarations, remaining)) { return Found { exists: true, index: remaining } }
+    }
+    Found { exists: false, index: syntax.ZERO }
+}
+
+// Only resolved scopes enter expression checking. Memo: 0 unseen, 1 visiting,
+// terminal literal declaration ID + 2 resolved. Aliases share that provenance.
+#[pure]
+pub fn lookup(source: bytes.Bytes, name: syntax.Token, scope: Scope) -> Value {
+    let found = find(source, name, scope)
+    if found.exists == false { return Value { exists: false, ty: noun.atom(types.INVALID), value: 0, public: false } }
+    let item = read(seq.get(scope.declarations, found.index))
+    let resolved = noun.as_field(tree.get(scope.memo, seq.len(scope.declarations), found.index))
+    assert(as_u32(1) < as_u32(resolved))
+    let literal = read(seq.get(scope.declarations, syntax.dec(syntax.dec(as_u32(resolved)))))
+    Value { exists: true, ty: noun.atom(item.ty), value: literal.initializer.value, public: item.public }
+}
+
+#[pure]
+fn step(source: bytes.Bytes, input: State) -> State {
+    let mut s = input
+    let count = seq.len(s.scope.declarations)
+    let status = noun.as_field(tree.get(s.scope.memo, count, s.cursor))
+    if as_u32(1) < as_u32(status) {
+        if noun.eq(s.trail, noun.atom(0)) {
+            s.next = syntax.inc(s.next)
+            s.cursor = s.next
+        } else {
+            s.cursor = as_u32(noun.as_field(noun.head(s.trail)))
+            s.trail = noun.tail(s.trail)
+            s.scope.memo = tree.set(s.scope.memo, count, s.cursor, noun.atom(status))
+        }
+        return s
+    }
+    let item = read(seq.get(s.scope.declarations, s.cursor))
+    let init = item.initializer
+    if status == 1 { s.error = syntax.error(5, init.start, init.end) return s }
+    if init.kind == as_u32(2) {
+        s.scope.memo = tree.set(s.scope.memo, count, s.cursor, noun.atom(as_field(s.cursor) + 2))
+        return s
+    }
+    let found = find(source, init, s.scope)
+    if found.exists == false { s.error = syntax.error(5, init.start, init.end) return s }
+    let target = read(seq.get(s.scope.declarations, found.index))
+    if (item.ty == target.ty) == false { s.error = syntax.error(5, init.start, init.end) return s }
+    s.scope.memo = tree.set(s.scope.memo, count, s.cursor, noun.atom(1))
+    s.trail = noun.pair(noun.atom(as_field(s.cursor)), s.trail)
+    s.cursor = found.index
+    s
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: State) -> State {
+    let mut s = input
+    for turn in 0..32 {
+        s = step(source, s)
+        if syntax.either(s.next == seq.len(s.scope.declarations), (s.error.code == syntax.ZERO) == false) { return s }
+    }
+    s
+}
+
+// Each declaration expands once, unwinds at most once and finishes once.
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(scope.declarations)) == false)]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn resolve(source: bytes.Bytes, scope: Scope) -> Resolved {
+    let zero = syntax.ZERO
+    let mut s = State { scope, next: zero, cursor: zero, trail: noun.atom(0), error: syntax.error(0, zero, zero) }
+    if seq.len(scope.declarations) == zero { return Resolved { scope, error: s.error } }
+    s.scope.memo = tree.empty(tree.shape(seq.len(scope.declarations)).height)
+    for turn in 0..512 {
+        s = chunk(source, s)
+        if syntax.either(s.next == seq.len(scope.declarations), (s.error.code == zero) == false) { return Resolved { scope: s.scope, error: s.error } }
+    }
+    Resolved { scope: s.scope, error: syntax.error(7, zero, zero) }
+}

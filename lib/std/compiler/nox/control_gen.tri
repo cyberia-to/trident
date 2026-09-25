@@ -35,7 +35,7 @@ fn linear_chunk(statements: seq.Seq, input: Linear) -> Linear {
 // Keep the canonical formula of the already accepted straight-line subset.
 #[pure]
 fn linear(statements: seq.Seq) -> Linear {
-    let mut s = Linear { writes: seq.empty(), next: as_u32(0), eligible: true }
+    let mut s = Linear { writes: seq.empty(), next: syntax.ZERO, eligible: true }
     for turn in 0..512 {
         s = linear_chunk(statements, s)
         if syntax.either(s.eligible == false, s.next == seq.len(statements)) { return s }
@@ -73,7 +73,7 @@ pub fn reusable(s: body_store.Body, flags: Noun, locals: U32, context: call_code
 
 #[pure]
 pub fn standalone(built: Built, locals: U32, depth_cap: U32, structured: Bool) -> codegen.Compiled {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
     if syntax.either(built.failed, (seq.len(built.loops) == zero) == false) { return failure }
     let mut output = built.output
@@ -92,7 +92,7 @@ pub fn standalone(built: Built, locals: U32, depth_cap: U32, structured: Bool) -
 #[requires(s.root < seq.len(s.blocks))]
 pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
     let marked = coverage.check(s)
-    if (marked.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: marked.error } }
+    if (marked.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: marked.error } }
     let locals = seq.len(s.bindings)
     let mut context = call_codegen.empty()
     context.arguments = s.arguments

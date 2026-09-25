@@ -14,7 +14,7 @@ struct Values { output: formula.Value, head: U32, remaining: U32 }
 fn chunk(values: seq.Seq, arguments: seq.Seq, input: Values) -> Values {
     let mut s = input
     for turn in 0..8 {
-        if s.remaining == as_u32(0) { return s }
+        if s.remaining == syntax.ZERO { return s }
         let link = seq.get(arguments, s.head)
         s.output = flow.cons(formula.value(values, as_u32(noun.as_field(noun.head(link)))), s.output)
         s.head = as_u32(noun.as_field(noun.tail(link)))
@@ -30,7 +30,7 @@ pub fn values(values: seq.Seq, arguments: seq.Seq, head: U32, count: U32) -> for
     let mut s = Values { output: flow.literal(0), head, remaining: count }
     for block in 0..512 {
         s = chunk(values, arguments, s)
-        if s.remaining == as_u32(0) { return s.output }
+        if s.remaining == syntax.ZERO { return s.output }
     }
     s.output
 }

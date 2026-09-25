@@ -64,7 +64,7 @@ fn chunk(loops: seq.Seq, blocks: seq.Seq, shape: tree.Shape, context: call_codeg
 #[pure]
 #[requires((syntax.SOURCE_CAP < seq.len(loops)) == false)]
 pub fn generate(loops: seq.Seq, blocks: seq.Seq, shape: tree.Shape, context: call_codegen.Context, depth_cap: U32) -> Emitted {
-    let mut s = Emitted { values: seq.empty(), next: as_u32(0), failed: false }
+    let mut s = Emitted { values: seq.empty(), next: syntax.ZERO, failed: false }
     for turn in 0..512 {
         s = chunk(loops, blocks, shape, context, s, depth_cap)
         if syntax.either(s.failed, s.next == seq.len(loops)) { return s }

@@ -1,5 +1,6 @@
 module std.compiler.nox.expression
 
+use std.compiler.nox.constants
 use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
@@ -29,7 +30,7 @@ fn precedence(kind: U32) -> U32 {
     if kind == as_u32(3) { return as_u32(3) }
     if kind == as_u32(29) { return as_u32(2) }
     if kind == as_u32(19) { return as_u32(1) }
-    as_u32(0)
+    syntax.ZERO
 }
 
 #[pure]
@@ -109,7 +110,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
         return reduce(s)
     }
     if kind == as_u32(37) {
-        if s.ops == as_u32(0) { s.error = ast.failed(s.token, 2) return s }
+        if s.ops == syntax.ZERO { s.error = ast.failed(s.token, 2) return s }
         let top = operator(s)
         if top == expression_state.ARRAY_MARKER { return array_parse.finish(source, s, true) }
         if s.operand { s.error = ast.failed(s.token, 2) return s }
@@ -119,7 +120,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
         return reduce(s)
     }
     if syntax.either(kind == as_u32(6), kind == as_u32(26)) {
-        if s.ops == as_u32(0) { s.error = ast.failed(s.token, 2) return s }
+        if s.ops == syntax.ZERO { s.error = ast.failed(s.token, 2) return s }
         let top = operator(s)
         if top == expression_state.ARRAY_MARKER {
             if kind == as_u32(26) { return array_parse.finish(source, s, false) }
@@ -172,11 +173,13 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
                     }
                 }
                 let binding = symbols.lookup(source, s.token, s.context.bindings, s.context.visible)
-                if binding.exists == false {
-                    s.error = syntax.error(5, s.token.start, s.token.end)
-                    return s
+                if binding.exists {
+                    node = ast.typed(ast.LOCAL, as_field(binding.slot), 0, binding.ty, s.token.start, s.token.end)
+                } else {
+                    let value = constants.lookup(source, s.token, s.context.constants)
+                    if value.exists == false { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+                    node = ast.typed(ast.CONSTANT, value.value, 0, value.ty, s.token.start, s.token.end)
                 }
-                node = ast.typed(ast.LOCAL, as_field(binding.slot), 0, binding.ty, s.token.start, s.token.end)
                 // Constructor/call lookahead already owns the following token.
                 s.token = following
             }
@@ -188,7 +191,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
             if kind == as_u32(1) { return s }
         } else if kind == as_u32(5) {
             s = push_operator(s)
-            if s.error.code == as_u32(0) {
+            if s.error.code == syntax.ZERO {
                 let position = noun.pair(noun.atom(as_field(s.token.start)), noun.atom(as_field(s.vals)))
                 s.frames = noun.pair(position, s.frames)
             }
@@ -200,15 +203,15 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
         }
     } else if kind == as_u32(41) { return record_parse.project(source, s) }
     else if kind == as_u32(36) { return index_parse.enter(source, s) }
-    else if as_u32(0) < precedence(kind) {
-        if (s.ops == as_u32(0)) == false {
+    else if syntax.ZERO < precedence(kind) {
+        if (s.ops == syntax.ZERO) == false {
             let top = operator(s)
             if syntax.both((top == as_u32(5)) == false, (precedence(top) < precedence(kind)) == false) { return reduce(s) }
         }
         s = push_operator(s)
         s.operand = true
     } else if boundary(kind, s.before_block) {
-        if (s.ops == as_u32(0)) == false {
+        if (s.ops == syntax.ZERO) == false {
             let top = operator(s)
             if top == expression_state.ARRAY_MARKER { s.error = ast.failed(s.token, 2) return s }
             if syntax.either(top == expression_state.RECORD_MARKER, syntax.either(top == as_u32(36), syntax.either(top == expression_state.TUPLE_MARKER, syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER)))) {
@@ -223,7 +226,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
         s.error = ast.failed(s.token, 2)
         return s
     }
-    if s.error.code == as_u32(0) { s.token = lexer.next(source, s.token.end) }
+    if s.error.code == syntax.ZERO { s.token = lexer.next(source, s.token.end) }
     s
 }
 
@@ -232,7 +235,7 @@ fn chunk(source: bytes.Bytes, input: expression_state.State) -> expression_state
     let mut s = input
     for turn in 0..32 {
         s = step(source, s)
-        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+        if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s
 }
@@ -240,7 +243,7 @@ fn chunk(source: bytes.Bytes, input: expression_state.State) -> expression_state
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn parse(source: bytes.Bytes, token: syntax.Token, context: expression_state.Context, nodes: seq.Seq, arguments: seq.Seq, edges: Noun, cap: U32, before_block: Bool) -> expression_state.Parsed {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let mut capacity = cap
     if syntax.STACK_CAP < capacity { capacity = syntax.STACK_CAP }
     let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,

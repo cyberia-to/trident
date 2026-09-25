@@ -19,7 +19,7 @@ fn chunk(ordered: seq.Seq, reachable: Noun, functions: U32, input: Plan, cap: U3
         let value = seq.get(ordered, s.next)
         let id = as_u32(noun.as_field(value))
         if noun.as_field(tree.get(reachable, functions, id)) == 2 {
-            if seq.len(s.order) == cap { s.error = syntax.error(7, as_u32(0), as_u32(0)) return s }
+            if seq.len(s.order) == cap { s.error = syntax.error(7, syntax.ZERO, syntax.ZERO) return s }
             // Zero is absent. Occupied table indices are stored plus one.
             s.slots = tree.set(s.slots, functions, id, noun.atom(as_field(seq.len(s.order)) + 1))
             s.order = seq.push(s.order, value, cap)
@@ -32,7 +32,7 @@ fn chunk(ordered: seq.Seq, reachable: Noun, functions: U32, input: Plan, cap: U3
 #[pure]
 #[requires(entry < seq.len(functions))]
 pub fn plan(source: bytes.Bytes, functions: seq.Seq, bodies: seq.Seq, entry: U32, cap: U32) -> Plan {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let mut s = Plan { order: seq.empty(), slots: tree.empty(tree.shape(seq.len(functions)).height),
         next: zero, error: syntax.error(0, zero, zero) }
     if cap == zero { s.error = syntax.error(7, zero, zero) return s }

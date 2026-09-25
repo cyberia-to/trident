@@ -31,7 +31,7 @@ fn before(source: bytes.Bytes, left: syntax.Token, right: syntax.Token) -> Bool 
 fn insert_chunk(source: bytes.Bytes, functions: seq.Seq, name: syntax.Token, input: Insert) -> Insert {
     let mut s = input
     for turn in 0..8 {
-        if s.gap == as_u32(0) { s.done = true return s }
+        if s.gap == syntax.ZERO { s.done = true return s }
         let previous = seq.get(s.ids, syntax.dec(s.gap))
         let declaration = signatures.read(seq.get(functions, as_u32(noun.as_field(previous))))
         if before(source, name, declaration.name) == false { s.done = true return s }
@@ -72,7 +72,7 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, input: Ordered, cap: U32) -> O
 #[pure]
 #[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
 pub fn sort(source: bytes.Bytes, functions: seq.Seq, cap: U32) -> Ordered {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let mut s = Ordered { ids: seq.empty(), next: zero, error: syntax.error(0, zero, zero) }
     for turn in 0..512 {
         s = chunk(source, functions, s, cap)

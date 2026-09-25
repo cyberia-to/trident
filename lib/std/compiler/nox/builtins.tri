@@ -62,7 +62,7 @@ pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
 #[requires(kind < COUNT)]
 #[ensures(result < as_u32(3))]
 pub fn arity(kind: U32) -> U32 {
-    if kind == NONE { return as_u32(0) }
+    if kind == NONE { return syntax.ZERO }
     if syntax.either(kind == SUBTRACT, syntax.either(kind == NOUN_PAIR, kind == NOUN_EQ)) { return as_u32(2) }
     as_u32(1)
 }

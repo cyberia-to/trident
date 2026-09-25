@@ -32,7 +32,7 @@ fn read(value: Noun) -> Frame {
 pub fn enter(source: bytes.Bytes, input: expression_state.State) -> expression_state.State {
     let mut s = input
     if s.ops == s.capacity { s.error = ast.failed(s.token, 7) return s }
-    let frame = Frame { start: s.token.start, base: s.vals, count: as_u32(0), head: signatures.NONE }
+    let frame = Frame { start: s.token.start, base: s.vals, count: syntax.ZERO, head: signatures.NONE }
     s.frames = noun.pair(pack(frame), s.frames)
     s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.ARRAY_MARKER)), s.capacity)
     s.ops = syntax.inc(s.ops)

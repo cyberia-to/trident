@@ -122,7 +122,7 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, conte
             code = called.output.formula
             depth = called.output.depth
         }
-        else if syntax.either(syntax.either(kind == ast.LITERAL, kind == ast.BOOLEAN), kind == ast.UNIT_VALUE) == false {
+        else if syntax.either(syntax.either(kind == ast.LITERAL, kind == ast.BOOLEAN), syntax.either(kind == ast.UNIT_VALUE, kind == ast.CONSTANT)) == false {
             let left = formula.value(s.values, as_u32(ast.left(node)))
             let right = formula.value(s.values, as_u32(ast.right(node)))
             code = emit.binary(as_u32(kind), left.formula, right.formula)
@@ -138,7 +138,7 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, conte
 
 #[pure]
 pub fn with_calls(nodes: seq.Seq, shape: tree.Shape, context: call_codegen.Context, depth_cap: U32) -> Expressions {
-    let mut s = Expressions { values: seq.empty(), next: as_u32(0), failed: false }
+    let mut s = Expressions { values: seq.empty(), next: syntax.ZERO, failed: false }
     for block in 0..512 {
         s = expression_chunk(nodes, shape, s, context, depth_cap)
         if syntax.either(s.failed, s.next == seq.len(nodes)) { return s }
@@ -158,7 +158,7 @@ pub struct Statements { pub output: formula.Value, pub remaining: U32, pub faile
 fn statement_chunk(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, input: Statements, depth_cap: U32) -> Statements {
     let mut s = input
     for turn in 0..8 {
-        if s.remaining == as_u32(0) { return s }
+        if s.remaining == syntax.ZERO { return s }
         s.remaining = syntax.dec(s.remaining)
         let statement = seq.get(statements, s.remaining)
         let transformer = edit(as_u32(noun.as_field(noun.head(statement))), shape,
@@ -175,7 +175,7 @@ pub fn statements(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, resul
     let mut s = Statements { output: formula.value(values, result), remaining: seq.len(statements), failed: false }
     for block in 0..512 {
         s = statement_chunk(statements, values, shape, s, depth_cap)
-        if syntax.either(s.failed, s.remaining == as_u32(0)) { return s }
+        if syntax.either(s.failed, s.remaining == syntax.ZERO) { return s }
     }
     s.failed = true
     s
@@ -185,7 +185,7 @@ pub fn statements(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, resul
 #[requires((syntax.SOURCE_CAP < seq.len(nodes)) == false)]
 #[requires((syntax.SOURCE_CAP < locals) == false)]
 pub fn generate(nodes: seq.Seq, writes: seq.Seq, result: U32, locals: U32, depth_cap: U32) -> Compiled {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let failure = Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
     let shape = tree.shape(locals)
     let emitted = expressions(nodes, shape, depth_cap)

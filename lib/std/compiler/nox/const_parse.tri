@@ -1,0 +1,119 @@
+module std.compiler.nox.const_parse
+
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.constants
+use std.compiler.nox.types
+
+pub struct Parsed { pub scope: constants.Scope, pub token: syntax.Token, pub error: syntax.Error }
+
+// The lexer has already checked u64, but its value is reduced in Goldilocks.
+// Reject before multiplying so narrowing can never hide a raw U32 overflow.
+#[pure]
+fn uint32(source: bytes.Bytes, token: syntax.Token) -> syntax.Error {
+    let mut pos = token.start
+    let mut value = syntax.ZERO
+    for turn in 0..4096 {
+        if pos == token.end { return syntax.error(0, token.start, token.end) }
+        let digit = as_u32(field.sub(as_field(bytes.get(source, pos)), 48))
+        if syntax.either(as_u32(429496729) < value, syntax.both(value == as_u32(429496729), as_u32(5) < digit)) {
+            return syntax.error(5, token.start, token.end)
+        }
+        value = as_u32(as_field(value) * 10 + as_field(digit))
+        pos = syntax.inc(pos)
+    }
+    syntax.error(7, token.start, token.end)
+}
+
+#[pure]
+fn boundary(kind: U32) -> Bool {
+    syntax.either(syntax.either(kind == syntax.ZERO, kind == as_u32(45)), syntax.either(kind == as_u32(11), syntax.either(kind == as_u32(39), kind == as_u32(40))))
+}
+
+#[pure]
+fn expected(token: syntax.Token) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    if syntax.either(token.kind == as_u32(13), syntax.either(token.kind == as_u32(41), token.kind == as_u32(43))) { return syntax.error(6, token.start, token.end) }
+    syntax.error(2, token.start, token.end)
+}
+
+#[pure]
+fn unexpected(token: syntax.Token) -> syntax.Error {
+    // Complete arithmetic/call initializers are semantic errors in the seed.
+    if syntax.either(token.kind == as_u32(3), syntax.either(token.kind == as_u32(4), token.kind == as_u32(5))) {
+        return syntax.error(5, token.start, token.end)
+    }
+    if syntax.either(token.kind == as_u32(19), syntax.either(token.kind == as_u32(29), token.kind == as_u32(30))) { return syntax.error(5, token.start, token.end) }
+    expected(token)
+}
+
+struct Groups { token: syntax.Token, count: U32, error: syntax.Error }
+
+#[pure]
+fn groups(source: bytes.Bytes, token: syntax.Token, cap: U32) -> Groups {
+    let mut s = Groups { token, count: syntax.ZERO, error: syntax.error(0, token.start, token.end) }
+    let mut nesting = cap
+    if syntax.STACK_CAP < nesting { nesting = syntax.STACK_CAP }
+    for turn in 0..65 {
+        if (s.token.kind == as_u32(5)) == false { return s }
+        if s.count == nesting { s.error = syntax.error(7, s.token.start, s.token.end) return s }
+        s.count = syntax.inc(s.count)
+        s.token = lexer.next(source, s.token.end)
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}
+
+#[pure]
+fn close(source: bytes.Bytes, input: Parsed, groups: U32, item: constants.Declaration, cap: U32) -> Parsed {
+    let mut s = input
+    let mut remaining = groups
+    for turn in 0..65 {
+        if remaining == syntax.ZERO {
+            if boundary(s.token.kind) == false { s.error = unexpected(s.token) return s }
+            s.scope.declarations = seq.push(s.scope.declarations, constants.pack(item), cap)
+            return s
+        }
+        if (s.token.kind == as_u32(6)) == false { s.error = unexpected(s.token) return s }
+        remaining = syntax.dec(remaining)
+        s.token = lexer.next(source, s.token.end)
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn parse(source: bytes.Bytes, token: syntax.Token, scope: constants.Scope, public: Bool, cap: U32) -> Parsed {
+    let mut s = Parsed { scope, token, error: syntax.error(0, token.start, token.end) }
+    if seq.len(scope.declarations) == cap { s.error = syntax.error(7, token.start, token.end) return s }
+    let name = lexer.next(source, token.end)
+    if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
+    s.token = lexer.next(source, name.end)
+    if (s.token.kind == as_u32(17)) == false { s.error = expected(s.token) return s }
+    s.token = lexer.next(source, s.token.end)
+    let mut ty = types.FIELD
+    if s.token.kind == as_u32(28) { ty = types.UINT32 }
+    else if (s.token.kind == as_u32(12)) == false { s.error = ast.failed(s.token, 5) return s }
+    s.token = lexer.next(source, s.token.end)
+    if (s.token.kind == as_u32(18)) == false { s.error = expected(s.token) return s }
+    s.token = lexer.next(source, s.token.end)
+    let grouped = groups(source, s.token, cap)
+    s.error = grouped.error
+    if (s.error.code == syntax.ZERO) == false { return s }
+    s.token = grouped.token
+    let initializer = s.token
+    if syntax.either(initializer.kind == as_u32(1), initializer.kind == as_u32(2)) == false { s.error = ast.failed(initializer, 5) return s }
+    if syntax.both(initializer.kind == as_u32(2), ty == types.UINT32) {
+        s.error = uint32(source, initializer)
+        if (s.error.code == syntax.ZERO) == false { return s }
+    }
+    s.token = lexer.next(source, initializer.end)
+    close(source, s, grouped.count, constants.Declaration { name, ty, public, initializer }, cap)
+}

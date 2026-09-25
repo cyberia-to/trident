@@ -17,7 +17,7 @@ use std.compiler.nox.function_gen
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn compile(source: bytes.Bytes, name: bytes.Bytes, cap: U32, depth_cap: U32) -> codegen.Compiled {
     let expected = [10,1]
-    let mut pos = as_u32(0)
+    let mut pos = syntax.ZERO
     for i in 0..2 {
         let token = lexer.next(source, pos)
         if (as_field(token.kind) == expected[i]) == false {
@@ -31,10 +31,10 @@ pub fn compile(source: bytes.Bytes, name: bytes.Bytes, cap: U32, depth_cap: U32)
     let mut capacity = cap
     if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
     let parsed = headers.parse(source, pos, name, capacity)
-    if (parsed.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: parsed.error } }
-    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, capacity)
-    if (checked.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: checked.error } }
+    if (parsed.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: parsed.error } }
+    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.types, parsed.constants, capacity)
+    if (checked.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: checked.error } }
     let plan = function_plan.plan(source, parsed.functions, checked.bodies, parsed.entry, capacity)
-    if (plan.error.code == as_u32(0)) == false { return codegen.Compiled { formula: noun.atom(0), error: plan.error } }
+    if (plan.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: plan.error } }
     function_gen.generate(checked.bodies, plan, parsed.entry, capacity, depth_cap, parsed.structured)
 }

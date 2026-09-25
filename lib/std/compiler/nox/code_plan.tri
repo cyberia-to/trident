@@ -45,7 +45,7 @@ fn finish(input: Plan, cap: U32) -> Plan {
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 pub fn extend(bodies: seq.Seq, functions: function_plan.Plan, cap: U32) -> Plan {
     let mut s = Plan { count: seq.len(functions.order), bases: tree.empty(tree.shape(seq.len(bodies)).height),
-        next: as_u32(0), failed: cap < seq.len(functions.order), needs_get: false, get_slot: signatures.NONE }
+        next: syntax.ZERO, failed: cap < seq.len(functions.order), needs_get: false, get_slot: signatures.NONE }
     for turn in 0..512 {
         if s.failed { return s }
         if s.next == seq.len(functions.order) { return finish(s, cap) }

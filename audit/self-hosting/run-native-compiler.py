@@ -12,6 +12,7 @@ import native_tuple_cases
 import native_record_cases
 import native_record_write_cases
 import native_array_cases
+import native_constant_cases
 
 P = 18446744069414584321
 
@@ -335,6 +336,7 @@ def main():
         native_record_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
         native_record_write_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
         native_array_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
+        native_constant_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
 
         local_bytes = None
         for cap in [7, 8, 16]:
@@ -443,7 +445,7 @@ def main():
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
         "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun, Digest, tuple and nominal values; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun, Digest, tuple, nominal and fixed Field-array values with typed constants; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 
