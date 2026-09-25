@@ -38,7 +38,7 @@ fn main(input: Noun) -> Noun {
     }
     let encoded = noun.pair(noun.atom(1397051697), noun.pair(noun.atom(as_field(count)), root))
     let bodies = seq.from_noun(encoded, as_u32(4096), as_u32(16385))
-    let functions = function_plan.Plan { order, slots: noun.atom(0), next: count, error: syntax.error(0, zero, zero) }
+    let functions = function_plan.Plan { order, slots: noun.atom(0), next: count, error: syntax.error(0, zero, zero), error_function: as_u32(4096) }
     let plan = code_plan.extend(bodies, functions, cap)
     noun.pair(blocks.flag(plan.failed), noun.pair(noun.atom(as_field(plan.count)), noun.atom(as_field(plan.get_slot))))
 }

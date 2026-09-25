@@ -2,6 +2,7 @@ module std.compiler.nox.body
 
 use std.compiler.nox.constants
 use std.compiler.nox.check_scope
+use std.compiler.nox.function_imports
 use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
@@ -133,7 +134,17 @@ fn parameter_chunk(input: Parameters, signature: signatures.Function, cap: U32) 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn function(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, pure: Bool, cap: U32) -> body_state.State {
-    let context = check_scope.Scope { pure, types: scope, functions, params, constants: consts }
+    function_in(source, signature, functions, params, scope, consts, pure, cap,
+        syntax.ZERO, seq.len(functions), function_imports.empty())
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((end < start) == false)]
+#[requires((seq.len(functions) < end) == false)]
+pub fn function_in(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, pure: Bool, cap: U32, start: U32, end: U32, imports: function_imports.View) -> body_state.State {
+    let context = check_scope.Scope { pure, types: scope, functions, params, constants: consts,
+        function_start: start, function_end: end, imported_functions: imports }
     let initial = body_state.scoped(lexer.next(source, signature.open), syntax.dec(signature.open), signature.returns, context)
     let mut s = Parameters { body: initial, next: syntax.ZERO }
     for turn in 0..512 {

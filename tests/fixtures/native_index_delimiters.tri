@@ -20,7 +20,7 @@ fn main(input: Noun) -> Noun {
     let zero = as_u32(0)
     let one = as_u32(1)
     let token = syntax.token(36, zero, one, 0)
-    let context = expression_state.context(seq.empty(), noun.atom(0), check_scope.Scope { functions: seq.empty(), params: seq.empty(), types: type_registry.empty(), constants: constants.empty(), pure: false })
+    let context = expression_state.context(seq.empty(), noun.atom(0), check_scope.local(false, type_registry.empty(), seq.empty(), seq.empty(), constants.empty()))
     let nodes = seq.push(seq.empty(), ast.typed(ast.LOCAL, 0, 0, noun.atom(types.DIGEST), zero, one), one)
     let values = seq.push(seq.empty(), noun.atom(0), one)
     let mut s = expression_state.State { operators: seq.empty(), values, ops: depth, vals: one,

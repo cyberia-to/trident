@@ -8,10 +8,13 @@ use std.compiler.nox.job
 use std.compiler.nox.module_graph
 use std.compiler.nox.module_order
 use std.compiler.nox.module_store
-use std.compiler.nox.constant_exports
 use std.compiler.nox.constant_imports
-use std.compiler.nox.const_module
 use std.compiler.nox.parser
+use std.compiler.nox.module_functions
+use std.compiler.nox.module_function_order
+use std.compiler.nox.function_plan
+use std.compiler.nox.function_gen
+use std.compiler.nox.signatures
 
 pub struct Compiled { pub formula: Noun, pub index: U32, pub error: syntax.Error }
 
@@ -35,23 +38,30 @@ pub fn compile(view: job.View) -> Compiled {
     if (graph.error.code == syntax.ZERO) == false { return failed(graph.error_index, graph.error) }
     let ordered = module_order.sort(graph)
     if (ordered.error.code == syntax.ZERO) == false { return failed(ordered.error_index, ordered.error) }
-    let mut exports = constant_exports.empty(seq.len(graph.modules))
+    let mut bank = module_functions.empty(seq.len(graph.modules))
     for position in 0..4096 {
-        if position == seq.len(ordered.modules) { return failed(view.index, syntax.error(7, syntax.ZERO, syntax.ZERO)) }
-        let id = as_u32(noun.as_field(seq.get(ordered.modules, position)))
-        let unit = module_store.read(graph.modules, id)
-        let source = bytes.table_get(graph.sources, id)
-        let name = bytes.table_get(graph.names, id)
-        let imports = constant_imports.View { sources: graph.sources, names: graph.names, exports, uses: unit.uses }
-        if unit.index == view.index {
-            let compiled = parser.compile_at(source, name, unit.offset, imports, graph.capacity, view.depth_limit)
-            return Compiled { formula: compiled.formula, index: unit.index, error: compiled.error }
+        if position == seq.len(ordered.modules) {
+            if bank.entry == signatures.NONE { return failed(view.index, syntax.error(3, syntax.ZERO, syntax.ZERO)) }
+            let sorted = module_function_order.sort(bank.functions, bank.owners,
+                graph.names, graph.sources, bank.roots, graph.capacity)
+            let plan = function_plan.ordered(bank.functions, bank.bodies, sorted, bank.entry, graph.capacity)
+            if (plan.error.code == syntax.ZERO) == false {
+                let mut index = view.index
+                if plan.error_function < seq.len(bank.owners) {
+                    let owner = as_u32(noun.as_field(seq.get(bank.owners, plan.error_function)))
+                    index = module_store.read(graph.modules, owner).index
+                }
+                return failed(index, plan.error)
+            }
+            let compiled = function_gen.generate(bank.bodies, plan, bank.entry,
+                graph.capacity, view.depth_limit, bank.structured)
+            return Compiled { formula: compiled.formula, index: view.index, error: compiled.error }
         }
-        let resolved = const_module.parse(source, unit.offset, name, imports, graph.capacity)
-        if (resolved.error.code == syntax.ZERO) == false { return failed(unit.index, resolved.error) }
-        let published = const_module.publish(source, resolved.scope, id, exports, graph.capacity)
-        if (published.error.code == syntax.ZERO) == false { return failed(unit.index, published.error) }
-        exports = published.exports
+        let owner = as_u32(noun.as_field(seq.get(ordered.modules, position)))
+        bank = module_functions.check(graph, owner, view.index, bank)
+        if (bank.error.code == syntax.ZERO) == false {
+            return failed(module_store.read(graph.modules, owner).index, bank.error)
+        }
     }
     failed(view.index, syntax.error(7, syntax.ZERO, syntax.ZERO))
 }

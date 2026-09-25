@@ -208,7 +208,7 @@ fn guest_imports_validate_private_and_replaced_declarations_before_exporting() {
             &deps,
             "sample",
             "dep.X",
-            6,
+            5,
         );
         rejected(
             "program sample use dep fn main()->Field{dep.X{}}",
@@ -244,12 +244,10 @@ fn guest_import_errors_keep_original_package_indices_and_caller_byte_spans() {
             "b",
             3,
         );
-        rejected(
+        agrees(
             "program sample use a fn main()->Field{7}",
             &[("a", "module a fn f()->Field{7}")],
-            "a",
-            "fn",
-            6,
+            7,
         );
         let name = "member_".to_string() + &"a".repeat(280);
         let dep = format!("// a different byte offset\nmodule a pub const {name}:Field=9");

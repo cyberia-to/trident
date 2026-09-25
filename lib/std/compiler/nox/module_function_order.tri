@@ -1,0 +1,85 @@
+module std.compiler.nox.module_function_order
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.function_order
+
+struct Sources { functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable }
+struct Insert { ids: seq.Seq, gap: U32, done: Bool }
+
+#[pure]
+fn before_span(left: bytes.Bytes, a: syntax.Token, right: bytes.Bytes, b: syntax.Token) -> Bool {
+    let mut x = a.start
+    let mut y = b.start
+    for step in 0..4096 {
+        if x == a.end { return (y == b.end) == false }
+        if y == b.end { return false }
+        let first = bytes.get(left, x)
+        let second = bytes.get(right, y)
+        if first < second { return true }
+        if second < first { return false }
+        x = syntax.inc(x)
+        y = syntax.inc(y)
+    }
+    false
+}
+
+// Compare the pair (owner, member), not their dotted concatenation. In
+// particular, owner a precedes a.b independently of their member names.
+#[pure]
+fn before(scope: Sources, left: U32, right: U32) -> Bool {
+    let a = as_u32(noun.as_field(seq.get(scope.owners, left)))
+    let b = as_u32(noun.as_field(seq.get(scope.owners, right)))
+    if (a == b) == false {
+        let first = bytes.table_get(scope.names, a)
+        let second = bytes.table_get(scope.names, b)
+        return before_span(first, syntax.token(1, syntax.ZERO, bytes.len(first), 0),
+            second, syntax.token(1, syntax.ZERO, bytes.len(second), 0))
+    }
+    let source = bytes.table_get(scope.sources, a)
+    before_span(source, signatures.read(seq.get(scope.functions, left)).name,
+        source, signatures.read(seq.get(scope.functions, right)).name)
+}
+
+#[pure]
+fn insert_chunk(scope: Sources, id: U32, input: Insert) -> Insert {
+    let mut s = input
+    for step in 0..8 {
+        if s.gap == syntax.ZERO { s.done = true return s }
+        let previous = seq.get(s.ids, syntax.dec(s.gap))
+        if before(scope, id, as_u32(noun.as_field(previous))) == false { s.done = true return s }
+        s.ids = seq.set(s.ids, s.gap, previous)
+        s.gap = syntax.dec(s.gap)
+    }
+    s
+}
+
+#[pure]
+fn insert(scope: Sources, roots: seq.Seq, id: U32, cap: U32) -> seq.Seq {
+    let value = noun.atom(as_field(id))
+    let mut s = Insert { ids: seq.push(roots, value, cap), gap: seq.len(roots), done: false }
+    for block in 0..512 {
+        s = insert_chunk(scope, id, s)
+        if s.done { return seq.set(s.ids, s.gap, value) }
+    }
+    seq.set(s.ids, s.gap, value)
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((cap < seq.len(roots)) == false)]
+pub fn sort(functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable, roots: seq.Seq, cap: U32) -> function_order.Ordered {
+    let scope = Sources { functions, owners, names, sources }
+    let mut result = function_order.Ordered { ids: seq.empty(), next: syntax.ZERO,
+        error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
+    for next in 0..4096 {
+        if next == seq.len(roots) { return result }
+        if seq.len(result.ids) == cap { result.error = syntax.error(7, syntax.ZERO, syntax.ZERO) return result }
+        result.ids = insert(scope, result.ids, as_u32(noun.as_field(seq.get(roots, next))), cap)
+        result.next = syntax.inc(next)
+    }
+    result
+}

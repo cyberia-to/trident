@@ -39,10 +39,10 @@ pub fn read(value: Noun) -> Function {
 struct Search { remaining: U32, found: U32 }
 
 #[pure]
-fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, input: Search) -> Search {
+fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, start: U32, input: Search) -> Search {
     let mut s = input
     for turn in 0..8 {
-        if s.remaining == syntax.ZERO { return s }
+        if s.remaining == start { return s }
         s.remaining = syntax.dec(s.remaining)
         // Packed signatures already begin with the full name span. Name lookup
         // needs no return/body decoding or temporary binding reconstruction.
@@ -59,10 +59,20 @@ fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, input: Sea
 #[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn lookup(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq) -> U32 {
-    let mut s = Search { remaining: seq.len(functions), found: NONE }
+    lookup_range(source, name, functions, syntax.ZERO, seq.len(functions))
+}
+
+// Only the current owner's declaration range supplies bare callable names.
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((end < start) == false)]
+#[requires((seq.len(functions) < end) == false)]
+pub fn lookup_range(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, start: U32, end: U32) -> U32 {
+    let mut s = Search { remaining: end, found: NONE }
     for turn in 0..512 {
-        s = chunk(source, name, functions, s)
-        if syntax.either((s.found == NONE) == false, s.remaining == syntax.ZERO) { return s.found }
+        s = chunk(source, name, functions, start, s)
+        if syntax.either((s.found == NONE) == false, s.remaining == start) { return s.found }
     }
     NONE
 }

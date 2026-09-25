@@ -1,0 +1,59 @@
+module std.compiler.nox.function_imports
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.ascii
+use std.compiler.nox.qualified_name
+use std.compiler.nox.function_exports
+
+// The graph owns validated source/name handles. Each dependency publishes its
+// final public callable IDs before this immutable direct-use view is checked.
+pub struct View {
+    pub sources: bytes.BytesTable, pub names: bytes.BytesTable,
+    pub exports: function_exports.Bank, pub uses: Noun
+}
+
+#[pure]
+pub fn empty() -> View {
+    View { sources: bytes.table_empty(), names: bytes.table_empty(),
+        exports: function_exports.empty(syntax.ZERO), uses: noun.atom(0) }
+}
+
+#[pure]
+fn alias(prefix: bytes.Bytes, owner: bytes.Bytes) -> Bool {
+    if noun.eq(bytes.to_noun(prefix), bytes.to_noun(owner)) { return true }
+    let mut start = syntax.ZERO
+    let mut pos = syntax.ZERO
+    for letter in 0..255 {
+        if pos == bytes.len(owner) { return ascii.same(owner, start, pos, prefix) }
+        if bytes.get(owner, pos) == as_u32(46) { start = syntax.inc(pos) }
+        pos = syntax.inc(pos)
+    }
+    ascii.same(owner, start, pos, prefix)
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn lookup(source: bytes.Bytes, name: qualified_name.Name, view: View) -> function_exports.Found {
+    let mut found = function_exports.Found { exists: false, target: syntax.ZERO }
+    if bytes.len(name.prefix) == syntax.ZERO { return found }
+    let mut rest = view.uses
+    for step in 0..4096 {
+        if noun.eq(rest, noun.atom(0)) { return found }
+        // module_store.Use starts with the compact target module ID. The
+        // complete record and source-order list remain owned by the graph.
+        let target = as_u32(noun.as_field(noun.head(noun.head(rest))))
+        let owner = bytes.table_get(view.names, target)
+        if alias(name.prefix, owner) {
+            let candidate = function_exports.find(view.exports, target,
+                bytes.table_get(view.sources, target), source, name.member)
+            // A missing/private member of a later same-basename owner leaves
+            // an earlier public binding visible. Repeated uses retain order.
+            if candidate.exists { found = candidate }
+        }
+        rest = noun.tail(rest)
+    }
+    assert(noun.eq(rest, noun.atom(0)))
+    found
+}

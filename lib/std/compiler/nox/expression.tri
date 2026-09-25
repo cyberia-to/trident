@@ -2,6 +2,7 @@ module std.compiler.nox.expression
 
 use std.compiler.nox.constants
 use std.compiler.nox.qualified_name
+use std.compiler.nox.qualified_call
 use vm.nox.noun
 use vm.core.convert
 use std.nox.bytes
@@ -174,13 +175,23 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
                     }
                 }
                 let binding = symbols.lookup(source, s.token, s.context.bindings, s.context.visible)
+                if following.kind == as_u32(41) {
+                    if binding.exists {
+                        if qualified_call.follows(source, following) {
+                            let name = qualified_name.parse(source, s.token)
+                            s.error = name.error
+                            if (s.error.code == syntax.ZERO) == false { return s }
+                            return call_parse.enter_qualified(source, name, s)
+                        }
+                    }
+                }
                 if syntax.both(following.kind == as_u32(41), binding.exists == false) {
                     let name = qualified_name.parse(source, s.token)
                     s.error = name.error
                     if (s.error.code == syntax.ZERO) == false { return s }
                     if name.token.kind == as_u32(5) {
                         if ascii.same_line(source, name.end, name.token.start) {
-                            s.error = syntax.error(6, name.start, name.end) return s
+                            return call_parse.enter_qualified(source, name, s)
                         }
                     }
                     if name.token.kind == as_u32(7) {
