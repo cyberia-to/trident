@@ -182,16 +182,6 @@ impl Parser {
         }
     }
 
-    fn try_ident(&mut self) -> Option<Spanned<String>> {
-        if let Lexeme::Ident(name) = self.peek().clone() {
-            let span = self.current_span();
-            self.advance();
-            Some(Spanned::new(name, span))
-        } else {
-            None
-        }
-    }
-
     fn expect_integer(&mut self) -> u64 {
         if let Lexeme::Integer(n) = self.peek() {
             let n = *n;
@@ -221,11 +211,7 @@ impl Parser {
         let first = self.expect_ident();
         let mut parts = vec![first.node];
         while self.eat(&Lexeme::Dot) {
-            if let Some(ident) = self.try_ident() {
-                parts.push(ident.node);
-            } else {
-                break;
-            }
+            parts.push(self.expect_ident().node);
         }
         ModulePath(parts)
     }
