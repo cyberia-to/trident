@@ -18,7 +18,9 @@ pub const NOUN_TAIL: U32 = 7
 pub const NOUN_FIELD: U32 = 8
 pub const NOUN_EQ: U32 = 9
 pub const NOUN_IDENTITY: U32 = 10
-pub const COUNT: U32 = 11
+pub const ASSERT: U32 = 11
+pub const ASSERT_EQ: U32 = 12
+pub const COUNT: U32 = 13
 
 // Called only after lookup in the final user function namespace fails.
 #[pure]
@@ -27,6 +29,14 @@ pub const COUNT: U32 = 11
 #[ensures(result < COUNT)]
 pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
     let length = as_u32(field.sub(as_field(token.end), as_field(token.start)))
+    if syntax.both(length == as_u32(6), token.value == 107148485161588) { return ASSERT }
+    if length == as_u32(9) {
+        let spelling = [97,115,115,101,114,116,95,101,113]
+        for i in 0..9 {
+            if (as_field(bytes.get(source, as_u32(as_field(token.start) + as_field(i)))) == spelling[i]) == false { return NONE }
+        }
+        return ASSERT_EQ
+    }
     if syntax.both(length == as_u32(6), token.value == 107148150649650) { return TO_U32 }
     if syntax.both(length == as_u32(3), token.value == 7566690) { return SUBTRACT }
     // The lexer retains a packed identifier only through seven bytes.
@@ -63,13 +73,15 @@ pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
 #[ensures(result < as_u32(3))]
 pub fn arity(kind: U32) -> U32 {
     if kind == NONE { return syntax.ZERO }
-    if syntax.either(kind == SUBTRACT, syntax.either(kind == NOUN_PAIR, kind == NOUN_EQ)) { return as_u32(2) }
+    if syntax.either(kind == ASSERT_EQ, syntax.either(kind == SUBTRACT, syntax.either(kind == NOUN_PAIR, kind == NOUN_EQ))) { return as_u32(2) }
     as_u32(1)
 }
 
 #[pure]
 #[requires(kind < COUNT)]
 pub fn parameter(kind: U32) -> Noun {
+    if kind == ASSERT { return noun.atom(types.BOOL) }
+    if kind == ASSERT_EQ { return noun.atom(types.FIELD) }
     if NOUN_ATOM < kind { return noun.atom(types.NOUN) }
     if kind == TO_FIELD { return noun.atom(types.UINT32) }
     noun.atom(types.FIELD)
@@ -78,6 +90,7 @@ pub fn parameter(kind: U32) -> Noun {
 #[pure]
 #[requires(kind < COUNT)]
 pub fn returns(kind: U32) -> Noun {
+    if syntax.either(kind == ASSERT, kind == ASSERT_EQ) { return noun.atom(types.UNIT) }
     if kind == NOUN_EQ { return noun.atom(types.BOOL) }
     if kind == NOUN_IDENTITY { return noun.atom(types.DIGEST) }
     if syntax.both((kind < NOUN_ATOM) == false, (kind == NOUN_FIELD) == false) { return noun.atom(types.NOUN) }

@@ -14,6 +14,13 @@ fn binary(opcode: Field, left: formula.Value, right: formula.Value) -> formula.V
         depth: as_u32(as_field(formula.maximum(left.depth, right.depth)) + 2) }
 }
 
+#[pure]
+fn assertion(condition: formula.Value) -> formula.Value {
+    let zero = flow.literal(0)
+    let crash = formula.Value { formula: noun.pair(noun.atom(8), zero.formula), depth: as_u32(2) }
+    flow.branch(condition, zero, crash)
+}
+
 // The checker owns arity and linked arguments. Links are reversed; a binary
 // builtin reconstructs left/right explicitly to preserve evaluation order.
 #[pure]
@@ -26,10 +33,12 @@ pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> fo
     if builtins.arity(kind) == as_u32(2) {
         let first = seq.get(arguments, as_u32(noun.as_field(noun.tail(link))))
         let left = formula.value(values, as_u32(noun.as_field(noun.head(first))))
+        if kind == builtins.ASSERT_EQ { return assertion(binary(9, left, right)) }
         if kind == builtins.NOUN_PAIR { return formula.pair(left, right) }
         if kind == builtins.NOUN_EQ { return binary(9, left, right) }
         return binary(6, left, right)
     }
+    if kind == builtins.ASSERT { return assertion(right) }
     if kind == builtins.NOUN_IDENTITY { return flow.compose(right, flow.axis(0)) }
     if kind == builtins.NOUN_HEAD { return flow.compose(right, flow.axis(2)) }
     if kind == builtins.NOUN_TAIL { return flow.compose(right, flow.axis(3)) }

@@ -1,0 +1,19 @@
+module std.compiler.nox.halting
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.ast
+use std.compiler.nox.builtins
+
+// Checked calls own their arity and argument links. Callable resolution has
+// already distinguished an ordinary function named assert from the builtin.
+#[pure]
+pub fn is_false_assert(node: Noun, nodes: seq.Seq, arguments: seq.Seq) -> Bool {
+    if (ast.kind(node) == ast.BUILTIN) == false { return false }
+    if (ast.left(node) == as_field(builtins.ASSERT)) == false { return false }
+    let link = seq.get(arguments, as_u32(ast.right(node)))
+    let value = seq.get(nodes, as_u32(noun.as_field(noun.head(link))))
+    if (ast.kind(value) == ast.BOOLEAN) == false { return false }
+    ast.left(value) == 1
+}
