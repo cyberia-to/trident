@@ -236,7 +236,7 @@ bitwise := postfix ("&" postfix)*
 postfix := primary ("[" expression "]")*
 primary := decimal | "true" | "false" | identifier | call | "(" expression ")" | tuple
 tuple := "(" expression "," expression ("," expression)* ","? ")"
-call := identifier "(" (expression ("," expression)* ","?)? ")"
+call := logical_path "(" (expression ("," expression)* ","?)? ")"
 ```
 
 Identifiers use the seed's ASCII identifier spelling; keywords, type words,
@@ -326,8 +326,9 @@ this subset. Unit functions may fall through and produce native atom zero.
 Bare return is accepted only for Unit. Explicit and terminal return values must
 match the declared result, except a resolved builtin `assert(false)` which
 halts before producing a value. Local inference can retain Unit values; assignment
-preserves that type. Conditions still require Field or Bool. Imports,
-generic declarations and intrinsic declarations remain outside this subset.
+preserves that type. Conditions still require Field or Bool. Generic and
+intrinsic declarations remain outside this subset. Direct ordinary imports
+follow the module rules below.
 
 The scalar unqualified builtins are: `as_u32(Field) -> U32`,
 `as_field(U32) -> Field` and `sub(Field, Field) -> Field`. Final user function

@@ -148,7 +148,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [owner/provenance and installed component evidence](self-hosting/constant-bindings.md).
 - [x] SH3 guest constant imports through real C1: final public values, direct
   aliases and original owner diagnostics; [execution evidence](self-hosting/guest-constant-linking.md).
-- [ ] SH3 true guest imports and complete compiler closure coverage;
+- [x] SH3 direct ordinary function imports through C1, with private helpers,
+  final visibility and owner-specific diagnostics; [execution evidence](self-hosting/guest-function-imports.md).
+- [ ] SH3 guest nominal types/intrinsics and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
   786432-node arena; all prior successful ART1 identities are preserved.
@@ -445,3 +447,17 @@ C1 and the graph component. Whole language coverage, generated compiler profiles
 compiler-scale memory, C2/C3, six platforms and native Zheng proof gates stay open.
 Imported types also require the seed nominal-layout coherence repair recorded in
 the active import plan. Noun stays 128K.
+
+2026-09-25 continuation: ordinary direct function imports accepted from compiler
+source `4acc73021497950154ec6b2e68e1e6f2536a2ba3`.
+[Receipt](self-hosting/guest-function-imports-validation.json): 1154 / 122 / 380
+CPU tests, zero warnings, 133 unchanged baseline rows, 111 formal UNKNOWN.
+The complete 1195-command corpus preserves all 235 successful observations
+and 203 distinct ART1 identities, including module-source identities and all
+227 recorded source_hex values. Imported calls add 32 observations across
+140 commands; constants retain 31 observations across 139 commands and the
+39-command graph corpus retains all 12 outputs/allowances. The unchanged
+64-bit record write uses 771882 nodes and the long-name record uses 781466,
+both under the original 786432 ceiling. Nominal signatures, exact intrinsics,
+generated compiler profiles, source/runtime scale, C2/C3, six platforms and
+native Zheng remain open. Noun stays 128K.
