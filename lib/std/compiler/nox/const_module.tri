@@ -1,0 +1,84 @@
+module std.compiler.nox.const_module
+
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.constants
+use std.compiler.nox.const_parse
+use std.compiler.nox.constant_imports
+use std.compiler.nox.constant_exports
+
+pub struct Published { pub exports: constant_exports.Bank, pub error: syntax.Error }
+struct Scan { scope: constants.Scope, token: syntax.Token, error: syntax.Error, done: Bool }
+
+#[pure]
+fn step(source: bytes.Bytes, input: Scan, cap: U32) -> Scan {
+    let mut s = input
+    if s.token.kind == syntax.ZERO { s.done = true return s }
+    let mut public = false
+    if s.token.kind == as_u32(40) { public = true s.token = lexer.next(source, s.token.end) }
+    if (s.token.kind == as_u32(45)) == false {
+        let mut code: Field = 6
+        if s.token.kind == as_u32(14) { code = 1 }
+        if s.token.kind == syntax.ZERO { code = 2 }
+        s.error = syntax.error(code, s.token.start, s.token.end)
+        return s
+    }
+    let parsed = const_parse.parse(source, s.token, s.scope, public, cap)
+    s.scope = parsed.scope
+    s.token = parsed.token
+    s.error = parsed.error
+    s
+}
+
+#[pure]
+fn chunk(source: bytes.Bytes, input: Scan, cap: U32) -> Scan {
+    let mut s = input
+    for turn in 0..16 {
+        s = step(source, s, cap)
+        if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
+    }
+    s
+}
+
+// Resolve every declaration before selecting final public exports. Replaced
+// and private declarations retain the seed's validation obligations.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View, cap: U32) -> constants.Resolved {
+    let mut scope = constants.empty()
+    scope.owner = owner
+    scope.imports = imports
+    let mut s = Scan { scope, token: lexer.next(source, start), error: syntax.error(0, start, start), done: false }
+    for block in 0..257 {
+        s = chunk(source, s, cap)
+        if (s.error.code == syntax.ZERO) == false { return constants.Resolved { scope: s.scope, error: s.error } }
+        if s.done { return constants.resolve(source, s.scope) }
+    }
+    constants.Resolved { scope: s.scope, error: syntax.error(7, s.token.start, s.token.end) }
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(scope.declarations)) == false)]
+pub fn publish(source: bytes.Bytes, scope: constants.Scope, owner: U32, bank: constant_exports.Bank, cap: U32) -> Published {
+    let mut s = Published { exports: bank, error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
+    for id in 0..4096 {
+        if id == seq.len(scope.declarations) { return s }
+        let item = constants.read(seq.get(scope.declarations, id))
+        if item.public {
+            let final = constants.find(source, item.name, scope)
+            if final.index == id {
+                if constant_exports.len(s.exports) == cap {
+                    s.error = syntax.error(7, item.name.start, item.name.end) return s
+                }
+                let origin = constants.terminal(scope, id, owner)
+                let binding = constant_exports.Binding { owner, name: item.name, ty: item.ty,
+                    value: origin.literal.value, literal_owner: origin.owner, literal: origin.literal }
+                s.exports = constant_exports.push(s.exports, binding, cap)
+            }
+        }
+    }
+    s
+}

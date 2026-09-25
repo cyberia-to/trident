@@ -165,7 +165,7 @@ fn byte_word_arithmetic_handles_the_last_u32_index() {
             "program byte_boundary",
             1,
         );
-        let source = format!("{source}\nfn main(input:Noun)->Noun {{ let b=Bytes {{ length:as_u32(4294967295),root:input }}\nlet changed=set(b,as_u32(4294967294),as_u32(255))\nassert_eq(convert.as_field(get(changed,as_u32(4294967294))),255)\nassert_eq(convert.as_field(get(changed,as_u32(4294967293))),0)\nassert_eq(convert.as_field(get(b,as_u32(4294967294))),0)\nto_noun(changed) }}");
+        let source = format!("{source}\nfn main(input:Noun)->Noun {{ let b=Bytes {{ length:as_u32(4294967295),root:input,words:as_u32(1073741824) }}\nlet changed=set(b,as_u32(4294967294),as_u32(255))\nassert_eq(convert.as_field(get(changed,as_u32(4294967294))),255)\nassert_eq(convert.as_field(get(changed,as_u32(4294967293))),0)\nassert_eq(convert.as_field(get(b,as_u32(4294967294))),0)\nto_noun(changed) }}");
         let program = compile_source(&source);
         let mut ar = Arena::new();
         let input = empty_tree(&mut ar, 30);
@@ -181,6 +181,44 @@ fn byte_word_arithmetic_handles_the_last_u32_index() {
 }
 
 #[test]
+fn sparse_bytes_append_to_the_last_u32_length_without_word_count_overflow() {
+    support::worker(|| {
+        let source = include_str!("../lib/std/nox/bytes.tri").replacen(
+            "module std.nox.bytes",
+            "program byte_growth",
+            1,
+        );
+        let body = "let b=Bytes{length:as_u32(4294967292),root:input,words:as_u32(1073741823)}
+            let a=push(b,as_u32(11),as_u32(4294967295))
+            let c=push(a,as_u32(22),as_u32(4294967295))
+            let d=push(c,as_u32(33),as_u32(4294967295))
+            assert_eq(convert.as_field(len(d)),4294967295)
+            assert_eq(convert.as_field(get(a,as_u32(4294967292))),11)
+            assert_eq(convert.as_field(get(c,as_u32(4294967293))),22)
+            assert_eq(convert.as_field(get(d,as_u32(4294967294))),33)";
+        let program = compile_source(&format!(
+            "{source}\nfn main(input:Noun)->Noun{{{body} to_noun(d)}}"
+        ));
+        let mut arena = Arena::new();
+        let input = empty_tree(&mut arena, 30);
+        let mut expected = atom(&mut arena, 11 + (22 << 8) + (33 << 16)).unwrap();
+        for height in 0..30 {
+            let left = empty_tree(&mut arena, height);
+            expected = pair(&mut arena, left, expected).unwrap();
+        }
+        let expected = wrap(&mut arena, model::BYTES, u64::from(u32::MAX), expected);
+        let output = run(&mut arena, &program, input).unwrap();
+        equal(&arena, output, expected);
+        let reject=compile_source(&format!("{source}\nfn main(input:Noun)->Noun{{{body} to_noun(push(d,as_u32(44),as_u32(4294967295)))}}"));
+        let mut rejection_arena = Arena::new();
+        let input = empty_tree(&mut rejection_arena, 30);
+        assert!(run(&mut rejection_arena, &reject, input)
+            .unwrap_err()
+            .contains("InvZero"));
+    });
+}
+
+#[test]
 fn only_the_library_can_construct_validated_collection_handles() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("main.tri");
@@ -190,10 +228,15 @@ fn only_the_library_can_construct_validated_collection_handles() {
             "is private",
         ),
         (
-            "bytes.to_noun(bytes.Bytes { length:as_u32(0),root:input })",
+            "bytes.to_noun(bytes.Bytes { length:as_u32(0),root:input,words:as_u32(0) })",
             "is private",
         ),
         ("seq.empty().root", "is private"),
+        ("noun.atom(as_field(bytes.empty().words))", "is private"),
+        (
+            "let mut b=bytes.empty() b.words=as_u32(9) bytes.to_noun(b)",
+            "is private",
+        ),
         (
             "let mut b=bytes.empty()\nb.length=as_u32(5)\nbytes.to_noun(b)",
             "is private",

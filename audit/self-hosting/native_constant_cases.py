@@ -53,7 +53,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         ('constant-initializer-call', source('const A:Field=f() fn f()->Field{7}', 'input'), 5),
         ('constant-missing-close', source('const A:Field=(7', 'input'), 2),
         ('constant-missing-colon', source('const A Field=7', 'input'), 2),
-        ('constant-qualified', source('const A:Field=other.A', 'input'), 6),
+        ('constant-qualified', source('const A:Field=other.A', 'input'), 5),
         ('constant-assignment', source('const A:Field=7', 'A=9 input'), 5),
         ('constant-shadow-coverage', source('const A:Field=0', 'let A=1 if A{return input}'), 5),
         ('constant-unselected-type', source('const A:Field=0', 'if A{return input}else{false}'), 5),

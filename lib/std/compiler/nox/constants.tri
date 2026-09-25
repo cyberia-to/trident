@@ -2,24 +2,33 @@ module std.compiler.nox.constants
 
 use vm.nox.noun
 use vm.core.convert
+use vm.core.field
 use std.nox.bytes
 use std.nox.seq
 use std.nox.tree
 use std.compiler.nox.syntax
 use std.compiler.nox.symbols
 use std.compiler.nox.types
+use std.compiler.nox.lexer
+use std.compiler.nox.qualified_name
+use std.compiler.nox.constant_exports
+use std.compiler.nox.constant_imports
 
-// One logical owner, source-relative names and original initializer spans.
-// Imported aliases will need their own owner/name, separate from literal origin.
-pub struct Scope { pub owner: bytes.Bytes, pub declarations: seq.Seq, pub memo: Noun }
+// Declaration names remain local to source; imported terminal IDs address an
+// immutable export bank whose records retain their own source provenance.
+pub struct Scope { pub owner: bytes.Bytes, pub declarations: seq.Seq, pub memo: Noun, pub imports: constant_imports.View }
 pub struct Declaration { pub name: syntax.Token, pub ty: Field, pub public: Bool, pub initializer: syntax.Token }
 pub struct Found { pub exists: Bool, pub index: U32 }
 pub struct Value { pub exists: Bool, pub ty: Noun, pub value: Field, pub public: Bool }
 pub struct Resolved { pub scope: Scope, pub error: syntax.Error }
+pub struct Origin { pub owner: U32, pub literal: syntax.Token }
+pub const QUALIFIED: U32 = 48
 struct State { scope: Scope, next: U32, cursor: U32, trail: Noun, error: syntax.Error }
 
 #[pure]
-pub fn empty() -> Scope { Scope { owner: bytes.empty(), declarations: seq.empty(), memo: noun.atom(0) } }
+pub fn empty() -> Scope {
+    Scope { owner: bytes.empty(), declarations: seq.empty(), memo: noun.atom(0), imports: constant_imports.empty() }
+}
 
 #[pure]
 fn span(token: syntax.Token) -> Noun { noun.pair(noun.atom(as_field(token.start)), noun.atom(as_field(token.end))) }
@@ -60,17 +69,34 @@ pub fn find(source: bytes.Bytes, name: syntax.Token, scope: Scope) -> Found {
     Found { exists: false, index: syntax.ZERO }
 }
 
-// Only resolved scopes enter expression checking. Memo: 0 unseen, 1 visiting,
-// terminal literal declaration ID + 2 resolved. Aliases share that provenance.
+// Memo: 0 unseen, 1 visiting, local literal ID+2, or count+2+export ID.
+// Only resolved scopes enter expression checking; aliases share the terminal.
+#[pure]
+pub fn terminal(scope: Scope, declaration: U32, owner: U32) -> Origin {
+    let count = seq.len(scope.declarations)
+    let status = as_u32(noun.as_field(tree.get(scope.memo, count, declaration)))
+    assert(as_u32(1) < status)
+    let id = syntax.dec(syntax.dec(status))
+    if id < count { return Origin { owner, literal: read(seq.get(scope.declarations, id)).initializer } }
+    let imported = constant_exports.read(scope.imports.exports, as_u32(field.sub(as_field(id), as_field(count))))
+    Origin { owner: imported.literal_owner, literal: imported.literal }
+}
+
 #[pure]
 pub fn lookup(source: bytes.Bytes, name: syntax.Token, scope: Scope) -> Value {
     let found = find(source, name, scope)
     if found.exists == false { return Value { exists: false, ty: noun.atom(types.INVALID), value: 0, public: false } }
     let item = read(seq.get(scope.declarations, found.index))
-    let resolved = noun.as_field(tree.get(scope.memo, seq.len(scope.declarations), found.index))
-    assert(as_u32(1) < as_u32(resolved))
-    let literal = read(seq.get(scope.declarations, syntax.dec(syntax.dec(as_u32(resolved)))))
-    Value { exists: true, ty: noun.atom(item.ty), value: literal.initializer.value, public: item.public }
+    let origin = terminal(scope, found.index, syntax.ZERO)
+    Value { exists: true, ty: noun.atom(item.ty), value: origin.literal.value, public: item.public }
+}
+
+#[pure]
+pub fn imported(source: bytes.Bytes, name: qualified_name.Name, scope: Scope) -> Value {
+    let found = constant_imports.lookup(source, name, scope.imports)
+    if found.exists == false { return Value { exists: false, ty: noun.atom(types.INVALID), value: 0, public: false } }
+    let item = constant_exports.read(scope.imports.exports, found.id)
+    Value { exists: true, ty: noun.atom(item.ty), value: item.value, public: true }
 }
 
 #[pure]
@@ -94,6 +120,16 @@ fn step(source: bytes.Bytes, input: State) -> State {
     if status == 1 { s.error = syntax.error(5, init.start, init.end) return s }
     if init.kind == as_u32(2) {
         s.scope.memo = tree.set(s.scope.memo, count, s.cursor, noun.atom(as_field(s.cursor) + 2))
+        return s
+    }
+    if init.kind == QUALIFIED {
+        let name = qualified_name.parse(source, lexer.next(source, init.start))
+        if (name.error.code == syntax.ZERO) == false { s.error = name.error return s }
+        let found = constant_imports.lookup(source, name, s.scope.imports)
+        if found.exists == false { s.error = syntax.error(5, init.start, init.end) return s }
+        let target = constant_exports.read(s.scope.imports.exports, found.id)
+        if (item.ty == target.ty) == false { s.error = syntax.error(5, init.start, init.end) return s }
+        s.scope.memo = tree.set(s.scope.memo, count, s.cursor, noun.atom(as_field(count) + as_field(found.id) + 2))
         return s
     }
     let found = find(source, init, s.scope)

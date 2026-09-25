@@ -61,6 +61,16 @@ pub fn get(root: Noun, length: U32, index: U32) -> Noun {
     let mut offset = index
     let mut capacity = shape(length).capacity
     for level in 0..32 {
+        // Resolve the final two levels without allocating their continuation.
+        // Both low bits select branches; the returned leaf stays opaque.
+        if capacity == 4 {
+            if offset < convert.as_u32(2) {
+                if offset == ZERO { return noun.head(noun.head(cursor)) }
+                return noun.tail(noun.head(cursor))
+            }
+            if offset == convert.as_u32(2) { return noun.head(noun.tail(cursor)) }
+            return noun.tail(noun.tail(cursor))
+        }
         // The final branch selects an opaque leaf directly. Returning here
         // avoids rebuilding loop state only to return on the next iteration.
         if capacity == 2 {

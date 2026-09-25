@@ -96,13 +96,18 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         observations.append({"case": name, "source_hex": content.hex(), "compiler_execution": compiled,
                              "program_execution_error": commands[-1]["stderr"], "previous_output_preserved": True})
 
-    # Keep the valid combined long-name workload visible as a resource boundary.
+    # The original combined long-name source now fits the unchanged arena.
     content = source(f"struct {long_type}{{{long_field}a:Field,{long_field}b:Field}}", f"let p={long_type}{{{long_field}b:9,{long_field}a:7}} nox_noun_atom(p.{long_field}a*10+p.{long_field}b)")
     directory, job = package("record-long-arena", content, {"arena_nodes": 786432})
-    protected = directory / "program.dag"
-    protected.write_bytes(prior_program)
-    failure = execute(job, protected, expected=1, force=True)
-    assert "Unavailable" in commands[-1]["stderr"], commands[-1]
-    assert protected.read_bytes() == prior_program
-    observations.append({"case": "record-long-arena", "source_hex": content.hex(), "result": "valid source exceeds786432-node execution arena; SH4 open",
-                         "compiler_execution": failure, "previous_program_preserved": True})
+    program = directory / "program.dag"
+    compiled = execute(job, program)
+    assert compiled["execution"]["compiler_job"]["status"] == "success"
+    artifact = decode(program)
+    assert artifact == record(0x41525431, 0, 0, 0, artifact[1][1][1][1][0])
+    output = directory / "output.dag"
+    executed = run(["run-artifact", program, "--input", input_file, "-o", output])
+    assert decode(output) == 79
+    assert executed["execution"]["program_particle"] == compiled["published_particle"]
+    observations.append({"case": "record-long-arena", "source_hex": content.hex(), "expected": 79,
+                         "compiler_execution": compiled, "program_execution": executed,
+                         "program_bytes": len(program.read_bytes()), "complete_output_checked": True})

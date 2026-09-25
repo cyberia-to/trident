@@ -1,0 +1,78 @@
+program native_constant_publish
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.constants
+use std.compiler.nox.constant_exports
+use std.compiler.nox.constant_imports
+use std.compiler.nox.const_module
+
+const CAP: U32 = 4096
+const VISITS: U32 = 1000000
+
+#[pure]
+fn declaration_rows(input: seq.Seq, scope: constants.Scope, owner: U32) -> seq.Seq {
+    let mut rows = input
+    for id in 0..4096 {
+        if id == seq.len(scope.declarations) { return rows }
+        let item = constants.read(seq.get(scope.declarations, id))
+        let origin = constants.terminal(scope, id, owner)
+        let mut public: Field = 0
+        if item.public { public = 1 }
+        let location = noun.pair(noun.atom(as_field(origin.literal.start)), noun.atom(as_field(origin.literal.end)))
+        let terminal = noun.pair(noun.atom(as_field(origin.owner)), location)
+        let value = noun.pair(noun.atom(origin.literal.value), terminal)
+        let metadata = noun.pair(noun.atom(item.ty), noun.pair(noun.atom(public), value))
+        let name = noun.pair(noun.atom(as_field(item.name.start)), noun.pair(noun.atom(as_field(item.name.end)), metadata))
+        rows = seq.push(rows, noun.pair(noun.atom(as_field(owner)), noun.pair(noun.atom(as_field(id)), name)), CAP)
+    }
+    rows
+}
+
+#[pure]
+fn export_rows(bank: constant_exports.Bank) -> seq.Seq {
+    let mut rows = seq.empty()
+    for id in 0..4096 {
+        if id == constant_exports.len(bank) { return rows }
+        let item = constant_exports.read(bank, id)
+        let location = noun.pair(noun.atom(as_field(item.literal.start)), noun.atom(as_field(item.literal.end)))
+        let terminal = noun.pair(noun.atom(as_field(item.literal_owner)), location)
+        let metadata = noun.pair(noun.atom(item.ty), noun.pair(noun.atom(item.value), terminal))
+        let name = noun.pair(noun.atom(as_field(item.name.start)), noun.pair(noun.atom(as_field(item.name.end)), metadata))
+        rows = seq.push(rows, noun.pair(noun.atom(as_field(item.owner)), name), CAP)
+    }
+    rows
+}
+
+// Input: Seq of [owner Bytes [body Bytes raw ordered module_store.Use list]].
+// Success: [0 [declaration metadata Seq published metadata Seq]].
+// Sources contain declaration bodies only: graph/header behavior has its own tests.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let modules = seq.from_noun(input, CAP, VISITS)
+    let mut imports = constant_imports.empty()
+    imports.exports = constant_exports.empty(seq.len(modules))
+    let mut declarations = seq.empty()
+    for owner in 0..4096 {
+        if owner == seq.len(modules) {
+            let exports = export_rows(imports.exports)
+            return noun.pair(noun.atom(0), noun.pair(seq.to_noun(declarations), seq.to_noun(exports)))
+        }
+        let row = seq.get(modules, owner)
+        let rest = noun.tail(row)
+        let name = bytes.from_noun(noun.head(row), as_u32(255), VISITS)
+        let source = bytes.from_noun(noun.head(rest), CAP, VISITS)
+        imports.names = bytes.table_push(imports.names, name, CAP)
+        imports.sources = bytes.table_push(imports.sources, source, CAP)
+        imports.uses = noun.tail(rest)
+        let parsed = const_module.parse(source, syntax.ZERO, name, imports, CAP)
+        if (parsed.error.code == syntax.ZERO) == false { return noun.pair(noun.atom(as_field(parsed.error.code)), noun.atom(as_field(owner))) }
+        declarations = declaration_rows(declarations, parsed.scope, owner)
+        let published = const_module.publish(source, parsed.scope, owner, imports.exports, CAP)
+        if (published.error.code == syntax.ZERO) == false { return noun.pair(noun.atom(as_field(published.error.code)), noun.atom(as_field(owner))) }
+        imports.exports = published.exports
+    }
+    noun.pair(noun.atom(7), noun.atom(0))
+}

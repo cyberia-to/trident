@@ -210,7 +210,12 @@ it, `table_len(table)` returns its length, `table_push(table, value: Bytes,
 max_len: U32)` appends within an explicit cap, and `table_get(table, index: U32)`
 returns the stored `Bytes` after checking the index. Old table and byte values
 remain unchanged by later appends or byte updates. Each entry stores the private
-length/root representation inside the owning library; callers cannot construct,
+length/root representation and a derived packed-word count inside the owning
+library. The private count equals ceil(length / 4), is derived by trusted
+constructors and preserved by set/table snapshots. External decoding initializes
+it only after validation; push updates it
+only when crossing a packed-word boundary. BYT1 serialization and admission
+visit charges stay unchanged. Callers cannot construct,
 project or mutate its backing sequence. There is no raw-Noun table constructor or
 serialization API. External bytes still cross `from_noun_budget` exactly once;
 table reads spend runtime reductions/nodes without repeating admission work or

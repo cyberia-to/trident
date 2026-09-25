@@ -36,6 +36,12 @@ fn register(input: Graph, index: U32, source: bytes.Bytes, name: bytes.Bytes, en
     if (encoding.code == syntax.ZERO) == false { return fail(graph, index, encoding) }
     let header = module_header.open(source, name, entry)
     if (header.error.code == syntax.ZERO) == false { return fail(graph, index, header.error) }
+    register_open(graph, index, source, name, header)
+}
+
+#[pure]
+fn register_open(input: Graph, index: U32, source: bytes.Bytes, name: bytes.Bytes, header: module_header.Header) -> Graph {
+    let mut graph = input
     let id = seq.len(graph.modules)
     let unit = module_store.Module { index, offset: header.token.start,
         status: as_u32(1), count: syntax.ZERO, uses: noun.atom(0) }
@@ -117,6 +123,23 @@ fn chunk(input: Walk) -> Walk {
 // The admitted entry handle is reused. Unreachable source payloads stay opaque.
 #[pure]
 pub fn discover(view: job.View) -> Graph {
+    discover_open(view, entry_header(view))
+}
+
+// Entry validation is shared by the direct no-import path and graph discovery.
+#[pure]
+pub fn entry_header(view: job.View) -> module_header.Header {
+    let zero = syntax.ZERO
+    let token = syntax.token(0, zero, zero, 0)
+    if (view.error.code == zero) == false { return module_header.Header { token, error: view.error } }
+    if view.sequence_limit == zero { return module_header.Header { token, error: syntax.error(7, zero, zero) } }
+    let encoding = utf8.validate(view.source)
+    if (encoding.code == zero) == false { return module_header.Header { token, error: encoding } }
+    module_header.open(view.source, view.name, true)
+}
+
+#[pure]
+pub fn discover_open(view: job.View, header: module_header.Header) -> Graph {
     let zero = syntax.ZERO
     let mut capacity = view.sequence_limit
     if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
@@ -125,7 +148,8 @@ pub fn discover(view: job.View) -> Graph {
         modules: seq.empty(), indexes: empty, capacity, total_bytes: zero, total_uses: zero,
         error_index: view.index, error: view.error }
     if (view.error.code == zero) == false { return graph }
-    let graph = register(graph, view.index, view.source, view.name, true)
+    if (header.error.code == zero) == false { return fail(graph, view.index, header.error) }
+    let graph = register_open(graph, view.index, view.source, view.name, header)
     if (graph.error.code == zero) == false { return graph }
     let mut s = Walk { graph, current: zero, parents: noun.atom(0), depth: as_u32(1), done: false }
     // Each source is completed once and each use consumed once, both <=4096.

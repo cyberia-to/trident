@@ -196,17 +196,21 @@ The pilot selects the JOB1 entry module by its complete logical-path Bytes.
 Joy admits the complete JOB1 and binds the compiler identity before execution;
 the guest validates the collections it consumes with one threaded allowance.
 Unused modules remain identity-bound and structurally admitted without lexical
-analysis. The selected source is the complete reachable closure for this
-import-free subset. The requested entry function is `main` and generated
+analysis. The guest discovers the direct-use closure from the selected entry
+and checks each reached source in its own module scope. The requested entry
+function is `main` and generated
 profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
 requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
-program := "program" identifier declaration+ EOF
+program := "program" logical_path use* declaration+ EOF
+module := "module" logical_path use* ("pub"? constant)* EOF
+use := "use" logical_path
+logical_path := identifier ("." identifier)*
 declaration := function_attribute* "pub"? function | "pub"? (constant | record_declaration)
 function_attribute := "#[" ("pure" | ("requires" | "ensures") "(" contract_tokens ")") "]"
 constant := "const" identifier ":" ("Field" | "U32") "=" constant_initializer
-constant_initializer := decimal | identifier | "(" constant_initializer ")"
+constant_initializer := decimal | logical_path | "(" constant_initializer ")"
 record_declaration := "struct" identifier "{" (record_field ("," record_field)* ","?)? "}"
 record_field := "pub"? identifier ":" type
 function := "fn" identifier "(" parameters? ")" ("->" type)? block
@@ -505,8 +509,8 @@ their actual formula depth is checked independently. The bounded walk admits
 up to64 field selections, additionally constrained by nominal type depth.
 
 Module constants admit `const name: Field = initializer` and `U32`, with optional
-`pub`. Initializers are integer literals or bare, exact-type constant references;
-parentheses may group either. The final declaration of each full name is frozen
+`pub`. Initializers are integer literals or exact-type local/imported constant
+references; parentheses may group either. The final declaration of each full name is frozen
 before checking function bodies. Forward references are valid; unknown names,
 cycles, type mismatches and invalid initializers fail even in replaced or unused
 declarations. Final visibility belongs to the final declaration. U32 literals are
@@ -520,9 +524,29 @@ constants cannot be assignment targets. Emission quotes their typed values.
 Their expression nodes remain distinct from literal nodes: `[7][I]` with
 `const I: Field = 18446744069414584321` reads element0, whereas the same raw
 literal index rejects. Known constant Field conditions use zero-as-true coverage.
-Constants in array extents and loop bounds, qualified references and imports
-remain outside this increment. Scalar signatures therefore require no additional
-source pass before final constant resolution.
+Constants in array extents and loop bounds remain outside this increment.
+Scalar signatures therefore require no additional source pass before final
+constant resolution.
+
+The first guest import slice compiles a reachable package of Field/U32 constant
+modules. C1 validates each reached source/header once, discovers direct uses,
+rejects missing owners/cycles, and publishes dependencies in deterministic seed
+order before checking the entry. All dependency declarations are checked,
+including replaced/private ones; only final public bindings enter import views.
+Full paths and short module basenames retain per-symbol source order, including
+repeated uses. Local variables shadow a module root; module-level constants do
+not. A module sees only its direct imports. Foreign definitions retain their
+own source coordinates; terminal literal provenance follows every alias while
+expression nodes retain the caller's full qualified span and normalized value.
+
+A checked entry without uses compiles directly without allocating a graph. A
+self-use still enters discovery and reports a cycle. Dependencies currently
+admit constant declarations and imports; functions, structs and attributes in
+dependencies report unsupported6. Qualified calls, constructors and types,
+legacy path remaps, and generated compiler-job profiles remain subsequent work.
+All reached sources share the existing4096-byte ceiling; import support does
+not imply compiler-scale memory or a complete self-build. The detailed contract
+is [native compiler jobs](self-hosting-jobs.md).
 
 Fixed Field arrays use `[Field; N]` annotations with a raw decimal extent.
 Empty `[]`, singleton and trailing-comma literals produce zero-ended lists of

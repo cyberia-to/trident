@@ -13,7 +13,7 @@ const BYTE_LIMIT: U32 = 256
 const INV4: Field = 13835058052060938241
 
 // The root contains packed U32 words, with no embedded Seq wrapper.
-pub struct Bytes { length: U32, root: Noun }
+pub struct Bytes { length: U32, root: Noun, words: U32 }
 
 // Only validated Bytes enter this table. Its private storage cannot be replaced
 // by untrusted Nouns between compiler stages.
@@ -32,7 +32,7 @@ pub fn table_len(table: BytesTable) -> U32 { seq.len(table.values) }
 #[ensures(convert.as_field(table_len(result)) == convert.as_field(table_len(table)) + 1)]
 pub fn table_push(table: BytesTable, value: Bytes, max_length: U32) -> BytesTable {
     assert(table_len(table) < max_length)
-    let stored = noun.pair(noun.atom(convert.as_field(value.length)), value.root)
+    let stored = noun.pair(noun.atom(convert.as_field(value.length)), noun.pair(value.root, noun.atom(convert.as_field(value.words))))
     BytesTable { values: seq.push(table.values, stored, max_length) }
 }
 
@@ -40,12 +40,13 @@ pub fn table_push(table: BytesTable, value: Bytes, max_length: U32) -> BytesTabl
 #[requires(index < table_len(table))]
 pub fn table_get(table: BytesTable, index: U32) -> Bytes {
     let stored = seq.get(table.values, index)
-    Bytes { length: convert.as_u32(noun.as_field(noun.head(stored))), root: noun.tail(stored) }
+    let payload = noun.tail(stored)
+    Bytes { length: convert.as_u32(noun.as_field(noun.head(stored))), root: noun.head(payload), words: convert.as_u32(noun.as_field(noun.tail(payload))) }
 }
 
 #[pure]
 #[ensures(len(result) == ZERO)]
-pub fn empty() -> Bytes { Bytes { length: ZERO, root: noun.atom(0) } }
+pub fn empty() -> Bytes { Bytes { length: ZERO, root: noun.atom(0), words: ZERO } }
 
 #[pure]
 #[ensures(result == b.length)]
@@ -83,7 +84,7 @@ fn inverse_scale(position: U32) -> Field {
 #[ensures(result < BYTE_LIMIT)]
 pub fn get(b: Bytes, index: U32) -> U32 {
     assert(index < b.length)
-    let word = convert.as_u32(noun.as_field(tree.get(b.root, word_count(b.length), quotient(index))))
+    let word = convert.as_u32(noun.as_field(tree.get(b.root, b.words, quotient(index))))
     let position = index & THREE
     let mask = convert.as_u32(255 * scale(position))
     convert.as_u32(convert.as_field(word & mask) * inverse_scale(position))
@@ -97,13 +98,13 @@ pub fn get(b: Bytes, index: U32) -> U32 {
 pub fn set(b: Bytes, index: U32, value: U32) -> Bytes {
     assert(index < b.length)
     assert(value < BYTE_LIMIT)
-    let words = word_count(b.length)
+    let words = b.words
     let at = quotient(index)
     let word = convert.as_u32(noun.as_field(tree.get(b.root, words, at)))
     let factor = scale(index & THREE)
     let mask = convert.as_u32(255 * factor)
     let next = field.sub(convert.as_field(word), convert.as_field(word & mask)) + convert.as_field(value) * factor
-    Bytes { length: b.length, root: tree.set(b.root, words, at, noun.atom(next)) }
+    Bytes { length: b.length, root: tree.set(b.root, words, at, noun.atom(next)), words }
 }
 
 #[pure]
@@ -115,11 +116,11 @@ pub fn push(b: Bytes, value: U32, max_length: U32) -> Bytes {
     assert(value < BYTE_LIMIT)
     let length = convert.as_u32(convert.as_field(b.length) + 1)
     if (b.length & THREE) == ZERO {
-        let root = tree.push(b.root, word_count(b.length), noun.atom(convert.as_field(value)), word_count(max_length))
-        return Bytes { length, root }
+        let root = tree.push(b.root, b.words, noun.atom(convert.as_field(value)), word_count(max_length))
+        return Bytes { length, root, words: convert.as_u32(convert.as_field(b.words) + 1) }
     }
     // Existing high bytes are zero; exposing the next one preserves validity.
-    set(Bytes { length, root: b.root }, b.length, value)
+    set(Bytes { length, root: b.root, words: b.words }, b.length, value)
 }
 
 #[pure]
@@ -174,7 +175,7 @@ pub fn from_noun_budget(value: Noun, max_length: U32, max_visits: U32) -> (Bytes
     // At most 2^30 packed words; chunks release the evaluator's loop frames.
     for chunk in 0..8388608 {
         (index, remaining) = validate_words_chunk(root, length, words, index, remaining, cost)
-        if index == words { return (Bytes { length, root }, remaining) }
+        if index == words { return (Bytes { length, root, words }, remaining) }
     }
     assert_eq(0, 1)
     (empty(), ZERO)

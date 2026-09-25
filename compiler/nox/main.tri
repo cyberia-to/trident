@@ -3,17 +3,14 @@ program native_compiler
 use vm.core.convert
 use std.compiler.nox.job
 use std.compiler.nox.syntax
-use std.compiler.nox.utf8
-use std.compiler.nox.parser
+use std.compiler.nox.package_compile
 use std.compiler.nox.emit
 
 #[pure]
 fn main(input: Noun) -> Noun {
     let request = job.read(input)
     if (request.error.code == as_u32(0)) == false { return emit.failure(input, request.index, request.error) }
-    let encoding = utf8.validate(request.source)
-    if (encoding.code == as_u32(0)) == false { return emit.failure(input, request.index, encoding) }
-    let compiled = parser.compile(request.source, request.name, request.sequence_limit, request.depth_limit)
-    if (compiled.error.code == as_u32(0)) == false { return emit.failure(input, request.index, compiled.error) }
+    let compiled = package_compile.compile(request)
+    if (compiled.error.code == as_u32(0)) == false { return emit.failure(input, compiled.index, compiled.error) }
     emit.success(input, compiled.formula)
 }
