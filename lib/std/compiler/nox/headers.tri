@@ -2,6 +2,7 @@ module std.compiler.nox.headers
 
 use std.compiler.nox.const_parse
 use std.compiler.nox.constants
+use std.compiler.nox.constant_imports
 use std.compiler.nox.attributes
 use vm.core.convert
 use vm.nox.noun
@@ -156,8 +157,16 @@ fn chunk(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_sta
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, cap: U32) -> header_state.State {
+    parse_imports(source, start, owner, constant_imports.empty(), cap)
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn parse_imports(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View, cap: U32) -> header_state.State {
     let mut s = header_state.initial(lexer.next(source, start))
     s.types.owner = owner
+    s.constants.imports = imports
     for turn in 0..512 {
         s = chunk(source, s, cap)
         if (s.error.code == syntax.ZERO) == false { return s }

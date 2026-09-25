@@ -70,6 +70,7 @@ def main():
                         help="explicit host deadline per compiler job; deterministic work limits stay fixed")
     args = parser.parse_args()
     binary = args.joy.resolve()
+    binary_sha = hashlib.sha256(binary.read_bytes()).hexdigest()
     repo = Path(__file__).resolve().parents[2]
     commands, observations = [], []
     accepted = json.loads((repo / "audit/self-hosting/native-control-cli.json").read_text())
@@ -288,7 +289,7 @@ def main():
             ("scalar-comparison-type", source("if 1<2{7}else{9}"), 5),
             ("scalar-equality-type", source("if as_u32(7)==7{7}else{9}"), 5),
             ("scalar-unknown-spelling", source("as_fiele(as_u32(7))"), 5),
-            ("scalar-qualified-unbound", source("convert.as_u32(7)"), 5),
+            ("scalar-qualified-unbound", source("convert.as_u32(7)"), 6),
             ("scalar-qualified-name", source("let convert=7 convert.as_u32(7)"), 5),
         ])
         negatives.extend([
@@ -447,9 +448,11 @@ def main():
                              "compiler_execution": failure, "previous_program_preserved": True})
         assert hashlib.sha256(compiler.read_bytes()).hexdigest() == compiler_sha
 
+    # A rebuild during this long corpus would mix distinct installed inputs.
+    assert hashlib.sha256(binary.read_bytes()).hexdigest() == binary_sha, "installed Joy changed during acceptance"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
-        "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "compiler_sha256": compiler_sha,
+        "binary_sha256": binary_sha, "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
         "compiler_host_time_ms": args.time_ms,
         "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun, Digest, tuple, nominal and fixed Field-array values with typed constants and resolved assertions; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")

@@ -9,6 +9,7 @@ use std.compiler.nox.lexer
 use std.compiler.nox.ast
 use std.compiler.nox.constants
 use std.compiler.nox.types
+use std.compiler.nox.qualified_name
 
 pub struct Parsed { pub scope: constants.Scope, pub token: syntax.Token, pub error: syntax.Error }
 
@@ -109,12 +110,20 @@ pub fn parse(source: bytes.Bytes, token: syntax.Token, scope: constants.Scope, p
     s.error = grouped.error
     if (s.error.code == syntax.ZERO) == false { return s }
     s.token = grouped.token
-    let initializer = s.token
+    let mut initializer = s.token
     if syntax.either(initializer.kind == as_u32(1), initializer.kind == as_u32(2)) == false { s.error = ast.failed(initializer, 5) return s }
     if syntax.both(initializer.kind == as_u32(2), ty == types.UINT32) {
         s.error = uint32(source, initializer)
         if (s.error.code == syntax.ZERO) == false { return s }
     }
-    s.token = lexer.next(source, initializer.end)
+    if initializer.kind == as_u32(1) {
+        let name = qualified_name.parse(source, initializer)
+        s.error = name.error
+        if (s.error.code == syntax.ZERO) == false { return s }
+        if (bytes.len(name.prefix) == syntax.ZERO) == false {
+            initializer = syntax.token(as_field(constants.QUALIFIED), name.start, name.end, 0)
+        }
+        s.token = name.token
+    } else { s.token = lexer.next(source, initializer.end) }
     close(source, s, grouped.count, constants.Declaration { name, ty, public, initializer }, cap)
 }

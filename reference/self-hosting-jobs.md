@@ -146,6 +146,19 @@ the calling expression's span, and retains literal provenance independently of
 the canonical Field value. Direct-use order determines each exported binding;
 only final public declarations enter an importing scope.
 
+The initial C1 import slice checks dependency modules containing imports and
+Field/U32 constant declarations. Other dependency declarations report unsupported
+construct (code 6). Every declaration is checked, including private declarations
+and declarations replaced by a later binding. After checking a module, only its
+final public bindings are published to its direct importers. A published alias
+keeps its own defining name and the terminal literal's original owner/span.
+Entry expressions and constant initializers can reference full or short direct
+module aliases. Lexical variables shadow a module root; a local constant with
+that name does not hide the module alias. Imported calls, constructors and types
+remain unsupported in this slice. Symbolic array extents and loop bounds retain
+their existing unsupported diagnostics; ordinary constant expressions use the
+normalized runtime value, including checked runtime indexing.
+
 ## Result and failures
 
 Status Field0 = success, with exactly one ART1 payload. Field1 = compile error,

@@ -12,6 +12,7 @@ use std.compiler.nox.headers
 use std.compiler.nox.check_functions
 use std.compiler.nox.function_plan
 use std.compiler.nox.function_gen
+use std.compiler.nox.constant_imports
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
@@ -28,9 +29,15 @@ pub fn compile(source: bytes.Bytes, name: bytes.Bytes, cap: U32, depth_cap: U32)
         }
         pos = token.end
     }
+    compile_at(source, name, pos, constant_imports.empty(), cap, depth_cap)
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn compile_at(source: bytes.Bytes, name: bytes.Bytes, start: U32, imports: constant_imports.View, cap: U32, depth_cap: U32) -> codegen.Compiled {
     let mut capacity = cap
     if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
-    let parsed = headers.parse(source, pos, name, capacity)
+    let parsed = headers.parse_imports(source, start, name, imports, capacity)
     if (parsed.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: parsed.error } }
     let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.pure_functions, parsed.types, parsed.constants, capacity)
     if (checked.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: checked.error } }

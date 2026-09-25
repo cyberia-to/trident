@@ -505,8 +505,8 @@ their actual formula depth is checked independently. The bounded walk admits
 up to64 field selections, additionally constrained by nominal type depth.
 
 Module constants admit `const name: Field = initializer` and `U32`, with optional
-`pub`. Initializers are integer literals or bare, exact-type constant references;
-parentheses may group either. The final declaration of each full name is frozen
+`pub`. Initializers are integer literals or exact-type local/imported constant
+references; parentheses may group either. The final declaration of each full name is frozen
 before checking function bodies. Forward references are valid; unknown names,
 cycles, type mismatches and invalid initializers fail even in replaced or unused
 declarations. Final visibility belongs to the final declaration. U32 literals are
@@ -520,9 +520,29 @@ constants cannot be assignment targets. Emission quotes their typed values.
 Their expression nodes remain distinct from literal nodes: `[7][I]` with
 `const I: Field = 18446744069414584321` reads element0, whereas the same raw
 literal index rejects. Known constant Field conditions use zero-as-true coverage.
-Constants in array extents and loop bounds, qualified references and imports
-remain outside this increment. Scalar signatures therefore require no additional
-source pass before final constant resolution.
+Constants in array extents and loop bounds remain outside this increment.
+Scalar signatures therefore require no additional source pass before final
+constant resolution.
+
+The first guest import slice compiles a reachable package of Field/U32 constant
+modules. C1 validates each reached source/header once, discovers direct uses,
+rejects missing owners/cycles, and publishes dependencies in deterministic seed
+order before checking the entry. All dependency declarations are checked,
+including replaced/private ones; only final public bindings enter import views.
+Full paths and short module basenames retain per-symbol source order, including
+repeated uses. Local variables shadow a module root; module-level constants do
+not. A module sees only its direct imports. Foreign definitions retain their
+own source coordinates; terminal literal provenance follows every alias while
+expression nodes retain the caller's full qualified span and normalized value.
+
+A checked entry without uses compiles directly without allocating a graph. A
+self-use still enters discovery and reports a cycle. Dependencies currently
+admit constant declarations and imports; functions, structs and attributes in
+dependencies report unsupported6. Qualified calls, constructors and types,
+legacy path remaps, and generated compiler-job profiles remain subsequent work.
+All reached sources share the existing4096-byte ceiling; import support does
+not imply compiler-scale memory or a complete self-build. The detailed contract
+is [native compiler jobs](self-hosting-jobs.md).
 
 Fixed Field arrays use `[Field; N]` annotations with a raw decimal extent.
 Empty `[]`, singleton and trailing-comma literals produce zero-ended lists of

@@ -4,6 +4,7 @@ use vm.nox.noun
 use std.nox.bytes
 use std.compiler.nox.syntax
 use std.compiler.nox.lexer
+use std.compiler.nox.ast
 
 const NAME_CAP: U32 = 255
 const MODULE: Field = 120325194214501
@@ -84,7 +85,7 @@ pub fn open(source: bytes.Bytes, expected: bytes.Bytes, is_entry: Bool) -> Heade
     let is_program = first.kind == as_u32(10)
     let is_module = keyword(first, MODULE)
     if syntax.either(is_program, is_module) == false {
-        return Header { token: first, error: wrong(first) }
+        return Header { token: first, error: ast.failed(first, 2) }
     }
     if (is_program == is_entry) == false {
         return Header { token: first, error: syntax.error(3, first.start, first.end) }

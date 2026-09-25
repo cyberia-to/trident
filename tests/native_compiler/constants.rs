@@ -105,7 +105,7 @@ fn native_constants_validate_replaced_and_unused_initializers_without_partial_ac
             ("const A Field=7", 2),
             ("const A:Field 7", 2),
             ("const A:Field=7 8", 2),
-            ("const A:Field=other.A", 6),
+            ("const A:Field=other.A", 5),
         ] {
             let source = format!("program sample {decl} fn main()->Field{{7}}");
             match support::compile_only(source.as_bytes(), data::caps()) {

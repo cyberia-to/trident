@@ -15,14 +15,14 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
             support::error(text.as_bytes(), 2);
         }
         for text in [
-            "module sample",
-            "program sample use dependency fn main() -> Field { 1 }",
             "program sample fn main() -> Field { 1; }",
             "#[pure] program sample fn main() -> Field { 1 }",
         ] {
             support::error(text.as_bytes(), 6);
         }
         for text in [
+            "module sample",
+            "program sample use dependency fn main() -> Field { 1 }",
             "program different fn main() -> Field { 1 }",
             "program sample fn other() -> Field { 1 }",
         ] {
@@ -43,8 +43,8 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
         for expression in ["1&2", "1<2"] {
             support::error(&support::source(expression), 5);
         }
-        // Name lookup precedes field selection; primitive values have no fields.
-        support::error(&support::source("convert.as_u32(7)"), 5);
+        // Qualified calls await callable imports; lexical primitives have no fields.
+        support::error(&support::source("convert.as_u32(7)"), 6);
         support::error(&support::source("let convert=7 convert.as_u32(7)"), 5);
         for word in [
             "program", "module", "use", "fn", "pub", "sec", "let", "mut", "const", "struct", "if",

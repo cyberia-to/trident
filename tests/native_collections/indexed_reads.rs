@@ -13,9 +13,16 @@ fn indexed_reads_preserve_pair_leaves_at_every_u32_height_and_reject_the_end() {
         lengths.insert(u32::MAX);
         for length in lengths {
             let height = 32 - (length - 1).leading_zeros();
-            let positions: BTreeSet<_> = [0, (length - 1).min(1), length / 2, length - 1]
-                .into_iter()
-                .collect();
+            let positions: BTreeSet<_> = [
+                0,
+                (length - 1).min(1),
+                (length - 1).min(2),
+                (length - 1).min(3),
+                length / 2,
+                length - 1,
+            ]
+            .into_iter()
+            .collect();
             for index in positions {
                 let mut arena = Arena::new();
                 let marker = atom(&mut arena, 77).unwrap();

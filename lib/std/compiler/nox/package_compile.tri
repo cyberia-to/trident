@@ -1,0 +1,57 @@
+module std.compiler.nox.package_compile
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.job
+use std.compiler.nox.module_graph
+use std.compiler.nox.module_order
+use std.compiler.nox.module_store
+use std.compiler.nox.constant_exports
+use std.compiler.nox.constant_imports
+use std.compiler.nox.const_module
+use std.compiler.nox.parser
+
+pub struct Compiled { pub formula: Noun, pub index: U32, pub error: syntax.Error }
+
+#[pure]
+fn failed(index: U32, error: syntax.Error) -> Compiled {
+    Compiled { formula: noun.atom(0), index, error }
+}
+
+#[pure]
+pub fn compile(view: job.View) -> Compiled {
+    let header = module_graph.entry_header(view)
+    if (header.error.code == syntax.ZERO) == false { return failed(view.index, header.error) }
+    // No graph storage is needed when the checked header has no direct uses.
+    // A one-module package can still contain a self-use and must discover it.
+    if syntax.both(header.token.kind == as_u32(13), header.token.value == 7697253) == false {
+        let compiled = parser.compile_at(view.source, view.name, header.token.start,
+            constant_imports.empty(), view.sequence_limit, view.depth_limit)
+        return Compiled { formula: compiled.formula, index: view.index, error: compiled.error }
+    }
+    let graph = module_graph.discover_open(view, header)
+    if (graph.error.code == syntax.ZERO) == false { return failed(graph.error_index, graph.error) }
+    let ordered = module_order.sort(graph)
+    if (ordered.error.code == syntax.ZERO) == false { return failed(ordered.error_index, ordered.error) }
+    let mut exports = constant_exports.empty(seq.len(graph.modules))
+    for position in 0..4096 {
+        if position == seq.len(ordered.modules) { return failed(view.index, syntax.error(7, syntax.ZERO, syntax.ZERO)) }
+        let id = as_u32(noun.as_field(seq.get(ordered.modules, position)))
+        let unit = module_store.read(graph.modules, id)
+        let source = bytes.table_get(graph.sources, id)
+        let name = bytes.table_get(graph.names, id)
+        let imports = constant_imports.View { sources: graph.sources, names: graph.names, exports, uses: unit.uses }
+        if unit.index == view.index {
+            let compiled = parser.compile_at(source, name, unit.offset, imports, graph.capacity, view.depth_limit)
+            return Compiled { formula: compiled.formula, index: unit.index, error: compiled.error }
+        }
+        let resolved = const_module.parse(source, unit.offset, name, imports, graph.capacity)
+        if (resolved.error.code == syntax.ZERO) == false { return failed(unit.index, resolved.error) }
+        let published = const_module.publish(source, resolved.scope, id, exports, graph.capacity)
+        if (published.error.code == syntax.ZERO) == false { return failed(unit.index, published.error) }
+        exports = published.exports
+    }
+    failed(view.index, syntax.error(7, syntax.ZERO, syntax.ZERO))
+}
