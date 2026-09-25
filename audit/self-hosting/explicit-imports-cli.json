@@ -1,0 +1,1654 @@
+{
+  "schema": "trident/explicit-imports-cli/v1",
+  "kind": "local-development",
+  "binary_sha256": {
+    "joy": "f4ec7af433cb4add3e8560e531c21b4aba8975dee3463dd9c0a1a725ced1db79",
+    "trisha": "26066e1371b183db595f1e736ae5a591b19eccc92b7f391c39968a38c253ebe0",
+    "trident": "122a6f0eaa0afa508793f065dba8f6bf84151f5d8b6ce47222037fa6fa921d14"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/output.dag\",\"execution\":{\"allocated_nodes\":126,\"arena_reserved_bytes\":26214416,\"charged_reductions\":131,\"elapsed_micros\":1543,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"4df7773bc38a1a651a0a07ca1d57f8957887f01c108614a0c7fa0b941176b3c9\",\"peak_frames\":16,\"program_particle\":\"0344d5f733e9061238349d1883c854978855b287b38eaea173569cd0b9bf740e\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"4df7773bc38a1a651a0a07ca1d57f8957887f01c108614a0c7fa0b941176b3c9\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/direct-full-short/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "16\n",
+      "stderr": "Backend: cpu\nExecuting program (15 ops)...\nExecuted in 13 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/output.dag\",\"execution\":{\"allocated_nodes\":268,\"arena_reserved_bytes\":26214416,\"charged_reductions\":450,\"elapsed_micros\":2815,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"e280861ee016ffd7e3b3df0971f7c5088117c8055cb5031721f415177b5755cb\",\"peak_frames\":28,\"program_particle\":\"c55bc0e239eb34e3f329bfb37ea932c30164faa4eb6a5a71550a321f295fe909\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"e280861ee016ffd7e3b3df0971f7c5088117c8055cb5031721f415177b5755cb\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-return/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "21\n",
+      "stderr": "Backend: cpu\nExecuting program (63 ops)...\nExecuted in 52 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/output.dag\",\"execution\":{\"allocated_nodes\":175,\"arena_reserved_bytes\":26214416,\"charged_reductions\":187,\"elapsed_micros\":1917,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":21,\"program_particle\":\"e432409c08d00c4090544bcdcff2ad49f1fe32ec30180e41d542add25fd473c2\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/opaque-nested-return/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "9\n",
+      "stderr": "Backend: cpu\nExecuting program (26 ops)...\nExecuted in 22 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/output.dag\",\"execution\":{\"allocated_nodes\":167,\"arena_reserved_bytes\":26214416,\"charged_reductions\":183,\"elapsed_micros\":1859,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":20,\"program_particle\":\"c69c533e5aeaa160e8157df2c7a6c5b3880dc1abefff3b5d8a8872bc1f18b8ec\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'other.b'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/trisha.tri:2:12\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mo\u001b[0m\u001b[33mt\u001b[0m\u001b[33mh\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33m.\u001b[0m\u001b[33mb\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m            \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                 \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'other.b'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nCompiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-collision/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "9\n",
+      "stderr": "Backend: cpu\nExecuting program (24 ops)...\nExecuted in 21 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/output.dag\",\"execution\":{\"allocated_nodes\":410,\"arena_reserved_bytes\":26214416,\"charged_reductions\":469,\"elapsed_micros\":3958,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":41,\"program_particle\":\"929f0ffedda6b79fb18a2604c66e30094d877d8c126e2f7c08190fb17d8fc1ba\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'other.b'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/trisha.tri:2:12\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mo\u001b[0m\u001b[33mt\u001b[0m\u001b[33mh\u001b[0m\u001b[33me\u001b[0m\u001b[33mr\u001b[0m\u001b[33m.\u001b[0m\u001b[33mb\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m            \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                 \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'other.b'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nCompiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-return-store/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "13\n",
+      "stderr": "Backend: cpu\nExecuting program (52 ops)...\nExecuted in 39 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/output.dag\",\"execution\":{\"allocated_nodes\":205,\"arena_reserved_bytes\":26214416,\"charged_reductions\":212,\"elapsed_micros\":2212,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"32c66ad5b2f078639317347c2755d15b03a4ce04b0a472122561fc7a1cc82a54\",\"peak_frames\":23,\"program_particle\":\"c4e8a569674d7db9d8cae34161a9388dfe7abfe5f15b26336fb0d2b073dd28ea\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"32c66ad5b2f078639317347c2755d15b03a4ce04b0a472122561fc7a1cc82a54\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ab/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "58\n",
+      "stderr": "Backend: cpu\nExecuting program (39 ops)...\nExecuted in 33 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/output.dag\",\"execution\":{\"allocated_nodes\":204,\"arena_reserved_bytes\":26214416,\"charged_reductions\":212,\"elapsed_micros\":2245,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"3f90c7c31ee4a5e440915512e0f1221bdd5e5815cd95d8eadbc11e389ff2ac5f\",\"peak_frames\":23,\"program_particle\":\"0ad812b6e031538e6c69fe8ddf9b14ff18850e22d00203a839f6a8cbfd15382f\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"3f90c7c31ee4a5e440915512e0f1221bdd5e5815cd95d8eadbc11e389ff2ac5f\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-ba/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "48\n",
+      "stderr": "Backend: cpu\nExecuting program (39 ops)...\nExecuted in 33 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/output.dag\",\"execution\":{\"allocated_nodes\":204,\"arena_reserved_bytes\":26214416,\"charged_reductions\":212,\"elapsed_micros\":2246,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"3f90c7c31ee4a5e440915512e0f1221bdd5e5815cd95d8eadbc11e389ff2ac5f\",\"peak_frames\":23,\"program_particle\":\"0ad812b6e031538e6c69fe8ddf9b14ff18850e22d00203a839f6a8cbfd15382f\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"3f90c7c31ee4a5e440915512e0f1221bdd5e5815cd95d8eadbc11e389ff2ac5f\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/retained-symbols-aba/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "48\n",
+      "stderr": "Backend: cpu\nExecuting program (39 ops)...\nExecuted in 33 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/output.dag\",\"execution\":{\"allocated_nodes\":62,\"arena_reserved_bytes\":26214416,\"charged_reductions\":163,\"elapsed_micros\":1048,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"04a2a87d72dcf3915b50b83d174441405be558712c7105c3e93f2efc6e5b8a0b\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/canonical-legacy-once/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (16 ops)...\nExecuted in 15 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/output.dag\",\"execution\":{\"allocated_nodes\":82,\"arena_reserved_bytes\":26214416,\"charged_reductions\":43,\"elapsed_micros\":1125,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"a84e2471013c0360b14db676374527089cccb54a96987c870ebde3ed8e8f9259\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/final-public-struct/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (8 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/output.dag\",\"execution\":{\"allocated_nodes\":82,\"arena_reserved_bytes\":26214416,\"charged_reductions\":43,\"elapsed_micros\":1134,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"a84e2471013c0360b14db676374527089cccb54a96987c870ebde3ed8e8f9259\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/inactive-private-struct/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (8 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/output.dag\",\"execution\":{\"allocated_nodes\":147,\"arena_reserved_bytes\":26214416,\"charged_reductions\":167,\"elapsed_micros\":1669,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"12385a54fc8ead64b308340d6d58dce9184bfe3b48621d180ad528aac7152d2a\",\"peak_frames\":24,\"program_particle\":\"6ddc0d92c926a0e4a9f19038200dcd3fa31eeaa88c4b8c24cc677cf0459638fe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"12385a54fc8ead64b308340d6d58dce9184bfe3b48621d180ad528aac7152d2a\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/constant-owner/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "38\n",
+      "stderr": "Backend: cpu\nExecuting program (20 ops)...\nExecuted in 18 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'bank.vault.make'; undefined function 'bank.vault.read'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'bank.vault.make'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/trisha.tri:2:34\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mb\u001b[0m\u001b[31ma\u001b[0m\u001b[31mn\u001b[0m\u001b[31mk\u001b[0m\u001b[31m.\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31mm\u001b[0m\u001b[31ma\u001b[0m\u001b[31mk\u001b[0m\u001b[31me\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                          \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'bank.vault.make'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[31mError:\u001b[0m undefined function 'bank.vault.read'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/trisha.tri:2:52\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[31mb\u001b[0m\u001b[31ma\u001b[0m\u001b[31mn\u001b[0m\u001b[31mk\u001b[0m\u001b[31m.\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31mr\u001b[0m\u001b[31me\u001b[0m\u001b[31ma\u001b[0m\u001b[31md\u001b[0m\u001b[31m(\u001b[0m\u001b[31mp\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                                    \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                                             \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'bank.vault.read'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-0/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'bank.vault.make'; undefined function 'bank.vault.read'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'vault.make'; undefined function 'vault.read'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'vault.make'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/trisha.tri:2:34\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31mm\u001b[0m\u001b[31ma\u001b[0m\u001b[31mk\u001b[0m\u001b[31me\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                        \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'vault.make'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[31mError:\u001b[0m undefined function 'vault.read'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/trisha.tri:2:47\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31mr\u001b[0m\u001b[31me\u001b[0m\u001b[31ma\u001b[0m\u001b[31md\u001b[0m\u001b[31m(\u001b[0m\u001b[31mp\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                                     \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'vault.read'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-1/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'vault.make'; undefined function 'vault.read'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-2/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-2/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined variable 'bank.vault.VALUE'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-2/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-2/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined variable 'bank.vault.VALUE'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-2/trisha.tri:2:28\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mb\u001b[0m\u001b[31ma\u001b[0m\u001b[31mn\u001b[0m\u001b[31mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mV\u001b[0m\u001b[38;5;249mA\u001b[0m\u001b[38;5;249mL\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249mE\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                            \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                              \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined variable 'bank.vault.VALUE'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check that the variable is declared with `let` before use\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-2/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mV\u001b[0m\u001b[38;5;249mA\u001b[0m\u001b[38;5;249mL\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249mE\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined variable 'bank.vault.VALUE'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-3/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-3/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined variable 'vault.VALUE'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-3/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-3/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined variable 'vault.VALUE'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-3/trisha.tri:2:28\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mV\u001b[0m\u001b[38;5;249mA\u001b[0m\u001b[38;5;249mL\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249mE\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                            \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                              \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined variable 'vault.VALUE'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check that the variable is declared with `let` before use\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-3/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mV\u001b[0m\u001b[38;5;249mA\u001b[0m\u001b[38;5;249mL\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249mE\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined variable 'vault.VALUE'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-4/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-4/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: unknown type 'bank.vault.Seal'; type mismatch: declared Field but expression has type bank.vault.Seal\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-4/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-4/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m unknown type 'bank.vault.Seal'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-4/trisha.tri:1:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m1 \u2502\u001b[0m \u001b[38;5;249mp\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mg\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249ms\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[31m\u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m unknown type 'bank.vault.Seal'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[31mError:\u001b[0m type mismatch: declared Field but expression has type bank.vault.Seal\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-4/trisha.tri:2:50\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mS\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mf\u001b[0m\u001b[31ma\u001b[0m\u001b[31mc\u001b[0m\u001b[31ma\u001b[0m\u001b[31md\u001b[0m\u001b[31me\u001b[0m\u001b[31m.\u001b[0m\u001b[31mm\u001b[0m\u001b[31ma\u001b[0m\u001b[31mk\u001b[0m\u001b[31me\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                                        \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m type mismatch: declared Field but expression has type bank.vault.Seal\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: unknown type 'bank.vault.Seal'; type mismatch: declared Field but expression has type bank.vault.Seal\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-5/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-5/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: unknown type 'vault.Seal'; type mismatch: declared Field but expression has type bank.vault.Seal\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-5/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-5/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m unknown type 'vault.Seal'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-5/trisha.tri:1:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m1 \u2502\u001b[0m \u001b[38;5;249mp\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mg\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249ms\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[31m\u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m unknown type 'vault.Seal'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[31mError:\u001b[0m type mismatch: declared Field but expression has type bank.vault.Seal\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-5/trisha.tri:2:45\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mS\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mf\u001b[0m\u001b[31ma\u001b[0m\u001b[31mc\u001b[0m\u001b[31ma\u001b[0m\u001b[31md\u001b[0m\u001b[31me\u001b[0m\u001b[31m.\u001b[0m\u001b[31mm\u001b[0m\u001b[31ma\u001b[0m\u001b[31mk\u001b[0m\u001b[31me\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                             \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                                   \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m type mismatch: declared Field but expression has type bank.vault.Seal\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: unknown type 'vault.Seal'; type mismatch: declared Field but expression has type bank.vault.Seal\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-6/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-6/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'bank.vault.first'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-6/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-6/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'bank.vault.first'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-6/trisha.tri:2:28\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mb\u001b[0m\u001b[31ma\u001b[0m\u001b[31mn\u001b[0m\u001b[31mk\u001b[0m\u001b[31m.\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31mf\u001b[0m\u001b[31mi\u001b[0m\u001b[31mr\u001b[0m\u001b[31ms\u001b[0m\u001b[31mt\u001b[0m\u001b[31m(\u001b[0m\u001b[31m[\u001b[0m\u001b[31m7\u001b[0m\u001b[31m,\u001b[0m\u001b[31m9\u001b[0m\u001b[31m]\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                            \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                       \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'bank.vault.first'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-6/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m[\u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m,\u001b[0m\u001b[38;5;249m9\u001b[0m\u001b[38;5;249m]\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'bank.vault.first'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-7/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-7/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'vault.first'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-7/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-7/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'vault.first'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-7/trisha.tri:2:28\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31mu\u001b[0m\u001b[31ml\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31mf\u001b[0m\u001b[31mi\u001b[0m\u001b[31mr\u001b[0m\u001b[31ms\u001b[0m\u001b[31mt\u001b[0m\u001b[31m(\u001b[0m\u001b[31m[\u001b[0m\u001b[31m7\u001b[0m\u001b[31m,\u001b[0m\u001b[31m9\u001b[0m\u001b[31m]\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                            \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                     \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'vault.first'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-7/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m[\u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m,\u001b[0m\u001b[38;5;249m9\u001b[0m\u001b[38;5;249m]\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'vault.first'; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-8/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-8/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: field 'bank.vault.Seal.secret' is private to module 'bank.vault'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-8/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-8/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m field 'bank.vault.Seal.secret' is private to module 'bank.vault'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/hidden-8/trisha.tri:2:48\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mm\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[31mp\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                                \u001b[31m\u252c\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                                \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m field 'bank.vault.Seal.secret' is private to module 'bank.vault'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: field 'bank.vault.Seal.secret' is private to module 'bank.vault'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-9/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-9/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'a.value'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-9/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-9/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'a.value'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-9/z.tri:1:31\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m1 \u2502\u001b[0m \u001b[38;5;249mm\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mz\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31ma\u001b[0m\u001b[31m.\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                   \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'a.value'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'a.value'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-10/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-10/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'a.value'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-10/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-10/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'a.value'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/sibling-10/z.tri:1:31\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m1 \u2502\u001b[0m \u001b[38;5;249mm\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mz\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mk\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31ma\u001b[0m\u001b[31m.\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                   \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'a.value'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'a.value'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/owner-mismatch/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/owner-mismatch/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: import 'value' requires module 'value', found Module 'other'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/owner-mismatch/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/owner-mismatch/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: import 'value' requires module 'value', found Module 'other'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/imported-program/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/imported-program/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: import 'value' requires module 'value', found Program 'value'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/imported-program/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/imported-program/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: import 'value' requires module 'value', found Program 'value'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/private-final-struct/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/private-final-struct/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined struct 'value.S'; field access '.x' on non-struct type Field\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/private-final-struct/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/private-final-struct/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined struct 'value.S'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/private-final-struct/trisha.tri:2:33\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31m.\u001b[0m\u001b[31mS\u001b[0m\u001b[31m{\u001b[0m\u001b[31mx\u001b[0m\u001b[31m:\u001b[0m\u001b[31m7\u001b[0m\u001b[31m}\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mx\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                 \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                       \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined struct 'value.S'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the struct name spelling, or import the module that defines it\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[31mError:\u001b[0m field access '.x' on non-struct type Field\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/private-final-struct/trisha.tri:2:46\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[38;5;249mv\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mS\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249mx\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m}\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[31ms\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mx\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                                              \u001b[31m\u252c\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                              \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m field access '.x' on non-struct type Field\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined struct 'value.S'; field access '.x' on non-struct type Field\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'ext.leaf.stop'; return type mismatch: expected () but got Field; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'ext.leaf.stop'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/trisha.tri:2:21\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31me\u001b[0m\u001b[31mx\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31ml\u001b[0m\u001b[31me\u001b[0m\u001b[31ma\u001b[0m\u001b[31mf\u001b[0m\u001b[31m.\u001b[0m\u001b[31ms\u001b[0m\u001b[31mt\u001b[0m\u001b[31mo\u001b[0m\u001b[31mp\u001b[0m\u001b[31m(\u001b[0m\u001b[31mt\u001b[0m\u001b[31mr\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                     \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                              \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'ext.leaf.stop'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[31mError:\u001b[0m return type mismatch: expected () but got Field\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/trisha.tri:2:21\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mu\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31me\u001b[0m\u001b[31mx\u001b[0m\u001b[31mt\u001b[0m\u001b[31m.\u001b[0m\u001b[31ml\u001b[0m\u001b[31me\u001b[0m\u001b[31ma\u001b[0m\u001b[31mf\u001b[0m\u001b[31m.\u001b[0m\u001b[31ms\u001b[0m\u001b[31mt\u001b[0m\u001b[31mo\u001b[0m\u001b[31mp\u001b[0m\u001b[31m(\u001b[0m\u001b[31mt\u001b[0m\u001b[31mr\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                     \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                              \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m return type mismatch: expected () but got Field\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'facade'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/transitive-intrinsic/trisha.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33mf\u001b[0m\u001b[33ma\u001b[0m\u001b[33mc\u001b[0m\u001b[33ma\u001b[0m\u001b[33md\u001b[0m\u001b[33me\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249mx\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m      \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'facade'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'ext.leaf.stop'; return type mismatch: expected () but got Field; unused import 'facade'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/trident/compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/compiler.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-explicit-imports-7lq23ej4/compiler.dag\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [
+    {
+      "case": "direct-full-short",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "profile": "debug",
+      "expected": 16,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse bank.vault\nfn main(input:Noun)->Noun{ nox_noun_atom(bank.vault.VALUE+vault.first([7,9]))}\n",
+          "program_sha256": "2e14f46e9c08c305150ebe0bddb7c57c0f372d98feaafea8d229c648ab75cad1",
+          "executed": 16
+        },
+        "trisha": {
+          "source": "program imports\nuse bank.vault\nfn main(){ pub_write(bank.vault.VALUE+vault.first([7,9]))}\n",
+          "program_sha256": "6b26ddeb2a061c88a2a796b390d38faac9a08e4162b1dc8615481a7d87ba7c8e",
+          "executed": 16
+        }
+      }
+    },
+    {
+      "case": "opaque-return",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "profile": "debug",
+      "expected": 21,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade\nfn main(input:Noun)->Noun{let p=facade.make() nox_noun_atom(p.words[1]+facade.read(p)+facade.first([3,5]))}\n",
+          "program_sha256": "7cd093f142b130f6ec40e5f5e517f46bde6eda286e030a5968543bb6dca4a5e5",
+          "executed": 21
+        },
+        "trisha": {
+          "source": "program imports\nuse facade\nfn main(){let p=facade.make() pub_write(p.words[1]+facade.read(p)+facade.first([3,5]))}\n",
+          "program_sha256": "ed610766bdd6b3fb37d144cdbc7d2b5c14de68643b9f342c9a1925fb9e15f96e",
+          "executed": 21
+        }
+      }
+    },
+    {
+      "case": "opaque-nested-return",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "profile": "debug",
+      "expected": 9,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade\nfn main(input:Noun)->Noun{let p=facade.wrap() nox_noun_atom(p.inner.words[1])}\n",
+          "program_sha256": "fc43b9a6ea3b124075b28abb378e0b7e9e66d8f3ba9220e6cb56a58fd80f5052",
+          "executed": 9
+        },
+        "trisha": {
+          "source": "program imports\nuse facade\nfn main(){let p=facade.wrap() pub_write(p.inner.words[1])}\n",
+          "program_sha256": "c57c09b78fd8b9ad04f732dc825134c8b8b652a7c7fdb2e5bb8646539a962dd7",
+          "executed": 9
+        }
+      }
+    },
+    {
+      "case": "canonical-return-collision",
+      "modules": {
+        "b.tri": "module b pub struct Box{pub words:[Field;2]} pub fn make()->Box{Box{words:[7,9]}}",
+        "facade.tri": "module facade use b pub fn make()->b.Box{b.make()}",
+        "other/b.tri": "module other.b pub struct Box{pub words:[Field;3]} pub fn unrelated()->Field{11}"
+      },
+      "profile": "debug",
+      "expected": 9,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade use other.b\nfn main(input:Noun)->Noun{let p=facade.make() nox_noun_atom(p.words[1])}\n",
+          "program_sha256": "c89c5146c8d97eef99d9b2ca0cc6a94d4dc309ed68c652759e97e32741d0a26a",
+          "executed": 9
+        },
+        "trisha": {
+          "source": "program imports\nuse facade use other.b\nfn main(){let p=facade.make() pub_write(p.words[1])}\n",
+          "program_sha256": "56aaa7ac93579dc4e644ab774af53325d3108a9dc8a3f05beb0bb648df8b9ccc",
+          "executed": 9
+        }
+      }
+    },
+    {
+      "case": "canonical-return-store",
+      "modules": {
+        "b.tri": "module b pub struct Box{pub words:[Field;2]} pub fn make()->Box{Box{words:[7,9]}}",
+        "facade.tri": "module facade use b pub fn make()->b.Box{b.make()}",
+        "other/b.tri": "module other.b pub struct Box{pub words:[Field;3]} pub fn unrelated()->Field{11}"
+      },
+      "profile": "debug",
+      "expected": 13,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade use other.b\nfn main(input:Noun)->Noun{let mut p=facade.make() p.words[1]=13 nox_noun_atom(p.words[1])}\n",
+          "program_sha256": "b510ea0d90c3551666e8010ebb77bd1c6e2de809a10c386ef128754ba69448ee",
+          "executed": 13
+        },
+        "trisha": {
+          "source": "program imports\nuse facade use other.b\nfn main(){let mut p=facade.make() p.words[1]=13 pub_write(p.words[1])}\n",
+          "program_sha256": "794817b3ed9a16126ef84fab9c14fcb06e4a74674119228fee16f535d48a8d5c",
+          "executed": 13
+        }
+      }
+    },
+    {
+      "case": "retained-symbols-ab",
+      "modules": {
+        "a/common.tri": "module a.common pub struct X{pub words:[Field;2]} pub const A:Field=3 pub fn first()->Field{5} pub fn shared()->Field{7}",
+        "b/common.tri": "module b.common pub struct Y{pub words:[Field;3]} pub const B:Field=11 pub fn second()->Field{13} pub fn shared()->Field{17}"
+      },
+      "profile": "debug",
+      "expected": 58,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse a.common use b.common\nfn main(input:Noun)->Noun{let p:common.X=common.X{words:[7,9]} nox_noun_atom(p.words[1]+common.A+common.B+common.first()+common.second()+common.shared())}\n",
+          "program_sha256": "626d7dff0f897722cd5ec21acd723212800b75f374bb3e3c54715b39531eb091",
+          "executed": 58
+        },
+        "trisha": {
+          "source": "program imports\nuse a.common use b.common\nfn main(){let p:common.X=common.X{words:[7,9]} pub_write(p.words[1]+common.A+common.B+common.first()+common.second()+common.shared())}\n",
+          "program_sha256": "2cae3857cd935d443b7f8318cc6d1bbaf2afe635741e138f7ad8fc55a989ef18",
+          "executed": 58
+        }
+      }
+    },
+    {
+      "case": "retained-symbols-ba",
+      "modules": {
+        "a/common.tri": "module a.common pub struct X{pub words:[Field;2]} pub const A:Field=3 pub fn first()->Field{5} pub fn shared()->Field{7}",
+        "b/common.tri": "module b.common pub struct Y{pub words:[Field;3]} pub const B:Field=11 pub fn second()->Field{13} pub fn shared()->Field{17}"
+      },
+      "profile": "debug",
+      "expected": 48,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse b.common use a.common\nfn main(input:Noun)->Noun{let p:common.X=common.X{words:[7,9]} nox_noun_atom(p.words[1]+common.A+common.B+common.first()+common.second()+common.shared())}\n",
+          "program_sha256": "4da47137e4d8bbbd0e8766069bd4c2d3e712e44444cd5b05358ac38aa7557f58",
+          "executed": 48
+        },
+        "trisha": {
+          "source": "program imports\nuse b.common use a.common\nfn main(){let p:common.X=common.X{words:[7,9]} pub_write(p.words[1]+common.A+common.B+common.first()+common.second()+common.shared())}\n",
+          "program_sha256": "5b0eb93268b44f2f23cdb07d37dc36e50106297bc0f334e231be577507b46ab7",
+          "executed": 48
+        }
+      }
+    },
+    {
+      "case": "retained-symbols-aba",
+      "modules": {
+        "a/common.tri": "module a.common pub struct X{pub words:[Field;2]} pub const A:Field=3 pub fn first()->Field{5} pub fn shared()->Field{7}",
+        "b/common.tri": "module b.common pub struct Y{pub words:[Field;3]} pub const B:Field=11 pub fn second()->Field{13} pub fn shared()->Field{17}"
+      },
+      "profile": "debug",
+      "expected": 48,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse a.common use b.common use a.common\nfn main(input:Noun)->Noun{let p:common.X=common.X{words:[7,9]} nox_noun_atom(p.words[1]+common.A+common.B+common.first()+common.second()+common.shared())}\n",
+          "program_sha256": "4da47137e4d8bbbd0e8766069bd4c2d3e712e44444cd5b05358ac38aa7557f58",
+          "executed": 48
+        },
+        "trisha": {
+          "source": "program imports\nuse a.common use b.common use a.common\nfn main(){let p:common.X=common.X{words:[7,9]} pub_write(p.words[1]+common.A+common.B+common.first()+common.second()+common.shared())}\n",
+          "program_sha256": "5b0eb93268b44f2f23cdb07d37dc36e50106297bc0f334e231be577507b46ab7",
+          "executed": 48
+        }
+      }
+    },
+    {
+      "case": "canonical-legacy-once",
+      "modules": {},
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse std.convert use vm.core.convert\nfn main(input:Noun)->Noun{ nox_noun_atom(std.convert.as_field(convert.as_u32(vm.core.convert.as_field(as_u32(7)))))}\n",
+          "program_sha256": "2b1cd300311fe7e8122469f318688e355c8e94a95101485ea21f6b750a62b428",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program imports\nuse std.convert use vm.core.convert\nfn main(){ pub_write(std.convert.as_field(convert.as_u32(vm.core.convert.as_field(as_u32(7)))))}\n",
+          "program_sha256": "20c941aa1bdb7c50f3ae1ae987a1289961816b2aae9993832506430c311eadab",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "final-public-struct",
+      "modules": {
+        "value.tri": "module value struct S{pub x:Field} pub struct S{pub x:Field}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse value\nfn main(input:Noun)->Noun{let s=value.S{x:7} nox_noun_atom(s.x)}\n",
+          "program_sha256": "b4eaf310af8fdb4aa8a7351e10c3132005c1f39d85de196a778924b2b54339c0",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program imports\nuse value\nfn main(){let s=value.S{x:7} pub_write(s.x)}\n",
+          "program_sha256": "9b343c6b764cd1b07b9a1ad82f11f9aaf95d088189c802d70f94916704b51ad5",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "inactive-private-struct",
+      "modules": {
+        "value.tri": "module value pub struct S{pub x:Field} #[cfg(absent)] struct S{pub x:Field}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse value\nfn main(input:Noun)->Noun{let s=value.S{x:7} nox_noun_atom(s.x)}\n",
+          "program_sha256": "b4eaf310af8fdb4aa8a7351e10c3132005c1f39d85de196a778924b2b54339c0",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program imports\nuse value\nfn main(){let s=value.S{x:7} pub_write(s.x)}\n",
+          "program_sha256": "9b343c6b764cd1b07b9a1ad82f11f9aaf95d088189c802d70f94916704b51ad5",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "constant-owner",
+      "modules": {
+        "a/same.tri": "module a.same pub const VALUE:Field=7 pub const SIZE:U32=2",
+        "helper.tri": "module helper use a.same pub const VALUE:Field=same.VALUE const K:U32=same.SIZE pub fn f<N>(a:[Field;N+K])->Field{a[2]+VALUE}",
+        "b/same.tri": "module b.same pub const VALUE:Field=13 const SIZE:U32=99"
+      },
+      "profile": "debug",
+      "expected": 38,
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse helper use b.same\nfn main(input:Noun)->Noun{ nox_noun_atom(helper.f<1>([3,5,11])+helper.VALUE+same.VALUE)}\n",
+          "program_sha256": "232665fb0a9f919bc648b2f4b8dd5361c2d50d8d13bc23bd83707d9161fe1ebf",
+          "executed": 38
+        },
+        "trisha": {
+          "source": "program imports\nuse helper use b.same\nfn main(){ pub_write(helper.f<1>([3,5,11])+helper.VALUE+same.VALUE)}\n",
+          "program_sha256": "8352467c3a52ab7330995d80b67ba2d2968109f813416a0414e59f9c43d68a6c",
+          "executed": 38
+        }
+      }
+    },
+    {
+      "case": "hidden-0",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{let p=bank.vault.make() bank.vault.read(p)}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{let p=bank.vault.make() bank.vault.read(p)}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-1",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{let p=vault.make() vault.read(p)}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{let p=vault.make() vault.read(p)}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-2",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{bank.vault.VALUE}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{bank.vault.VALUE}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-3",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{vault.VALUE}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{vault.VALUE}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-4",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{let p:bank.vault.Seal=facade.make() 7}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{let p:bank.vault.Seal=facade.make() 7}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-5",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{let p:vault.Seal=facade.make() 7}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{let p:vault.Seal=facade.make() 7}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-6",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{bank.vault.first([7,9])}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{bank.vault.first([7,9])}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-7",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{vault.first([7,9])}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{vault.first([7,9])}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "hidden-8",
+      "modules": {
+        "bank/vault.tri": "module bank.vault pub const VALUE:Field=9 pub struct Seal{pub words:[Field;2],secret:Field} pub fn make()->Seal{Seal{words:[7,9],secret:11}} pub fn read(s:Seal)->Field{s.words[1]} pub fn first<N>(x:[Field;N])->Field{x[0]}",
+        "facade.tri": "module facade use bank.vault pub fn make()->vault.Seal{vault.make()} pub fn read(s:vault.Seal)->Field{vault.read(s)} pub fn first<N>(x:[Field;N])->Field{vault.first(x)} pub struct Wrapped{pub inner:vault.Seal} pub fn wrap()->Wrapped{Wrapped{inner:vault.make()}}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad()->Field{let p=facade.make() p.secret}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad()->Field{let p=facade.make() p.secret}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "sibling-9",
+      "modules": {
+        "a.tri": "module a pub fn value()->Field{7}",
+        "z.tri": "module z pub fn leak()->Field{a.value()}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse a use z\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse a use z\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "sibling-10",
+      "modules": {
+        "a.tri": "module a pub fn value()->Field{7}",
+        "z.tri": "module z pub fn leak()->Field{a.value()}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse z use a\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse z use a\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "owner-mismatch",
+      "modules": {
+        "value.tri": "module other"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse value\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse value\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "imported-program",
+      "modules": {
+        "value.tri": "program value fn main(){}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse value\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse value\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "private-final-struct",
+      "modules": {
+        "value.tri": "module value pub struct S{pub x:Field} struct S{pub x:Field}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse value fn bad()->Field{let s=value.S{x:7} s.x}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse value fn bad()->Field{let s=value.S{x:7} s.x}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "transitive-intrinsic",
+      "modules": {
+        "ext/leaf.tri": "module ext.leaf #[intrinsic(assert)] pub fn stop(c:Bool)",
+        "facade.tri": "module facade use ext.leaf pub fn value()->Field{leaf.stop(true) 7}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program imports\nuse facade fn bad(){ext.leaf.stop(true)}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program imports\nuse facade fn bad(){ext.leaf.stop(true)}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    }
+  ],
+  "compiler_sha256": "430c7bdcece5a59e90f0206d2772411a4fe1859c7bc38a6157b5d5ddf0f2ada6",
+  "compiler_particle": "6ee70c5d760a2c01844ac738b08e3ce6977f5ca525d14f9b20829cf26e1e0048",
+  "entire_c1_artifact_unchanged": true,
+  "c1_baseline": "audit/self-hosting/native-attributes-cli.json"
+}
