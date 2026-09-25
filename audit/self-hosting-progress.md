@@ -145,6 +145,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   bounded discovery and seed ordering; [component evidence](self-hosting/guest-module-graph.md).
 - [ ] SH3 true guest imports and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
+- [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
+  786432-node arena; all prior successful ART1 identities are preserved.
+  [Stable installed acceptance](self-hosting/native-indexed-reads.md).
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
   whitespace workload's lifetime arena boundary and measure full compiler closure.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
