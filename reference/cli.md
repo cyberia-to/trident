@@ -153,6 +153,10 @@ trident generate <spec.tri>             # Generate scaffold from spec
 trident lsp                             # Start LSP server
 ```
 
+`trident check` prints compiler diagnostics to stderr and exits with status1
+when source discovery, parsing or type checking fails. Successful checks print
+`OK: <input>` and exit with status0.
+
 ---
 
 ## Three-Register Flags
