@@ -83,13 +83,43 @@ never enter the package.
 
 The guest resolves each `use` against this exact module table, checks declared
 module names, rejects missing modules/cycles and links in deterministic dependency
-order (lexical tie-breaks). The selected entry module must be present and declare
+order. To match the seed, visit reachable roots in lexical logical-path order,
+walk each root's dependencies in first-use source order, and append a module
+after its dependencies. Traversal deduplicates modules; binding retains every
+original `use` occurrence, including repetitions. This order is distinct from
+choosing the lexically smallest currently dependency-free module.
+The selected entry module must be present and declare
 the matching program name; dependencies declare modules. Imported aliases and
 function/private-name rules retain the language contract. No fallback to host
 files, embedded host stdlib, registry, witness callback or network is permitted
 during the native compilation. Structurally valid packages may contain unused
 modules; they remain identity-bound. Only the transitive entry closure is compiled;
 unreachable source bytes cannot supply missing imports or override a module.
+
+Header paths consist of identifier tokens separated by dots; each consumed dot
+requires another identifier. Whitespace and line comments between tokens remain
+part of original byte spans but never become logical-path bytes. Program names
+contain one identifier; module owners and use paths may be dotted. The header
+reader retains the full use span and the path span separately, then stops at the
+first non-use token for the body parser. A lexical error encountered while reading
+that boundary still fails the header. A wrong program/module kind or declared owner reports
+code3 at that declaration; malformed path syntax reports code2 at the unexpected
+token (including an empty EOF span), invalid lexical tokens report code1, and an
+overlong normalized path reports code7. Complete body syntax and semantics remain
+the responsibility of the later compiler stages.
+
+The first guest graph component shares a 4096-byte budget across all reached
+sources, including the entry. Each source is opened and UTF-8-checked once;
+repeated uses retain separate spans and still charge package lookup work. Reached
+module and use counts and traversal frames are each bounded by the smaller of
+the job sequence limit and4096, checked before append. Original package indices
+and compact reached-module IDs are distinct. A missing import or cycle points
+to the caller's full use span; a reached encoding/name error points into the
+reached source. A source-capacity error identifies the target package index with
+an empty span. Unused sources receive no guest header or UTF-8 inspection.
+This component currently resolves canonical import spellings exactly. Applying
+the seed's documented legacy remaps before lookup remains part of complete guest
+resolution acceptance; this component alone does not close that gate.
 
 The host may collect and sort exact files into a package; it may not run compiler
 stages to finish the emitted program. Module graph discovery/name checking and

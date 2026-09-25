@@ -1,0 +1,50 @@
+program native_module_graph
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.job
+use std.compiler.nox.module_store
+use std.compiler.nox.module_graph
+use std.compiler.nox.module_order
+
+#[pure]
+fn scalar(value: U32, rest: Noun) -> Noun { noun.pair(noun.atom(as_field(value)), rest) }
+
+#[pure]
+fn records(graph: module_graph.Graph, input: seq.Seq) -> seq.Seq {
+    let mut output = input
+    for step in 0..32 {
+        let id = seq.len(output)
+        if id == seq.len(graph.modules) { return output }
+        let unit = module_store.read(graph.modules, id)
+        let metadata = scalar(unit.offset, scalar(unit.status, scalar(unit.count, unit.uses)))
+        let content = noun.pair(bytes.to_noun(bytes.table_get(graph.sources, id)), metadata)
+        let name = noun.pair(bytes.to_noun(bytes.table_get(graph.names, id)), content)
+        output = seq.push(output, scalar(unit.index, name), graph.capacity)
+    }
+    output
+}
+
+// [JOB1 allowance override], with zero preserving job.read's allowance.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let mut view = job.read(noun.head(input))
+    let admitted = view.package.remaining
+    let allowance = as_u32(noun.as_field(noun.tail(input)))
+    if (allowance == syntax.ZERO) == false { view.package.remaining = allowance }
+    let graph = module_graph.discover(view)
+    let order = module_order.sort(graph)
+    let mut modules = seq.empty()
+    for block in 0..128 {
+        modules = records(graph, modules)
+        if seq.len(modules) == seq.len(graph.modules) {
+            let output = noun.pair(seq.to_noun(modules), noun.pair(seq.to_noun(order.modules), graph.package.options))
+            let work = scalar(admitted, scalar(graph.package.remaining, scalar(graph.total_bytes, scalar(graph.total_uses, output))))
+            return scalar(order.error_index, scalar(order.error.code, scalar(order.error.start, scalar(order.error.end, work))))
+        }
+    }
+    assert_eq(0, 1)
+    noun.atom(0)
+}
