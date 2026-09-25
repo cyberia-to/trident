@@ -69,7 +69,7 @@ fn wide_record_sources_execute_when_the_unchanged_compiler_arena_fits_them() {
             }
             assert_eq!(support::rust_value(&source), 3199, "seed bits={bits}");
         }
-        assert_eq!(accepted, [61, 62]);
+        assert_eq!(accepted, [61, 62, 63, 64]);
     });
 }
 

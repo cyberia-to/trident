@@ -57,12 +57,16 @@ pub fn shape(length: U32) -> Shape {
 pub fn get(root: Noun, length: U32, index: U32) -> Noun {
     assert(index < length)
     if length == convert.as_u32(1) { return root }
-    let geometry = shape(length)
     let mut cursor = root
     let mut offset = index
-    let mut capacity = geometry.capacity
+    let mut capacity = shape(length).capacity
     for level in 0..32 {
-        if level == geometry.height { return cursor }
+        // The final branch selects an opaque leaf directly. Returning here
+        // avoids rebuilding loop state only to return on the next iteration.
+        if capacity == 2 {
+            if offset == ZERO { return noun.head(cursor) }
+            return noun.tail(cursor)
+        }
         capacity = capacity * HALF
         let half = convert.as_u32(capacity)
         if offset < half {
@@ -72,6 +76,7 @@ pub fn get(root: Noun, length: U32, index: U32) -> Noun {
             offset = convert.as_u32(field.sub(convert.as_field(offset), capacity))
         }
     }
+    assert_eq(0, 1)
     cursor
 }
 
