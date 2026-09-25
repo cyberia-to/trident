@@ -5,6 +5,7 @@
 // ---
 mod advanced;
 mod basics;
+mod constants;
 mod halting;
 
 use crate::diagnostic::Diagnostic;

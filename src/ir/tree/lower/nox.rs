@@ -353,6 +353,7 @@ pub struct NoxCompiler {
     constant_aliases: BTreeMap<String, BTreeMap<String, String>>,
     /// Resolved constants: name → value.
     constants: BTreeMap<String, u64>,
+    constant_types: BTreeMap<String, crate::types::Ty>,
     /// All function definitions in the module, keyed by name (for inlining).
     fns: BTreeMap<String, FnDef>,
     /// Struct field layouts: struct name → ordered (field, type) pairs.
@@ -377,6 +378,7 @@ impl NoxCompiler {
             function_aliases: BTreeMap::new(),
             constant_aliases: BTreeMap::new(),
             constants: BTreeMap::new(),
+            constant_types: BTreeMap::new(),
             fns: BTreeMap::new(),
             structs: BTreeMap::new(),
             call_stack: Vec::new(),

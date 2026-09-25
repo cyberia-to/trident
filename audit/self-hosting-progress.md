@@ -371,3 +371,16 @@ larger allowance. Post-commit installs reproduce the executed binaries and C1.
 All 79 formal audits are UNKNOWN. Next: unify seed typed constant resolution,
 then guest constants/attributes/asserts and real imports. Full SH3/SH4, generated
 profiles, C2/C3, six platforms and native proofs remain open. Noun stays 128K.
+
+
+2026-09-25 continuation: shared typed Rust seed constants accepted at `2f6b0ef`.
+[Pinned evidence](self-hosting/typed-constants-validation.json) records
+1058 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43 baselines,
+61 installed commands and 20 cases exercised on nox and Triton. Final active
+value/type/visibility now agree across checking, generic specialization and
+lowering; aliases preserve lexical ownership and raw integer dimensions.
+Rejected sources preserve existing artifacts. Rebuilds reproduce all three
+binaries; entire C1 matches the array delivery, whose 851-command guest corpus
+was not rerun for this seed-only change. All 79 formal audits remain UNKNOWN.
+Next: guest constants, attributes/asserts, then imports. Full SH3/SH4, generated
+profiles, C2/C3, six platforms and native proofs stay open. Noun stays 128K.

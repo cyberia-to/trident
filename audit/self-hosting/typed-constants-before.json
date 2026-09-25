@@ -1,0 +1,587 @@
+{
+  "root": "/tmp/trident-seed-constants-t0glnd73",
+  "joy_sha256_start": "210dff75c23a07eaf2e117f38fc458e1810f44240bbbe90e3006ff184be45836",
+  "cases": [
+    {
+      "case": "alias_import",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/alias_import/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/alias_import/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 1,
+      "build_stdout": "{\"command\":\"build\",\"error\":{\"code\":\"compile_failed\",\"message\":\"compile error: undefined variable 'Y'; unused import 'a'\",\"retryable\":false},\"ok\":false,\"result\":null,\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "sources": {
+        "a.tri": "module a\npub const X:Field=7\n",
+        "b.tri": "module b\nuse a\npub const Y:Field=a.X\npub fn value()->Field {Y}\n",
+        "entry.tri": "program probe\nuse b\nfn main(input:Noun)->Noun {nox_noun_atom(b.value())}\n"
+      }
+    },
+    {
+      "case": "alias_local",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/alias_local/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/alias_local/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 1,
+      "build_stdout": "{\"command\":\"build\",\"error\":{\"code\":\"compile_failed\",\"message\":\"compile error: undefined variable 'Y'\",\"retryable\":false},\"ok\":false,\"result\":null,\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "sources": {
+        "entry.tri": "program probe\nconst X:Field=7\nconst Y:Field=X\nfn main(input:Noun)->Noun {nox_noun_atom(Y)}\n"
+      }
+    },
+    {
+      "case": "alias_unused",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/alias_unused/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/alias_unused/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/alias_unused/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/alias_unused/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/alias_unused/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/alias_unused/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":887,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":6,\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 9
+        }
+      ],
+      "sources": {
+        "entry.tri": "program probe\nconst Y:Field=undefined\nfn main(input:Noun)->Noun {nox_noun_atom(9)}\n"
+      }
+    },
+    {
+      "case": "bool_unused",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/bool_unused/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/bool_unused/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/bool_unused/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/bool_unused/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/bool_unused/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/bool_unused/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":881,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":6,\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 9
+        }
+      ],
+      "sources": {
+        "entry.tri": "program probe\nconst Y:Bool=true\nfn main(input:Noun)->Noun {nox_noun_atom(9)}\n"
+      }
+    },
+    {
+      "case": "call_unused",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/call_unused/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/call_unused/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/call_unused/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/call_unused/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/call_unused/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/call_unused/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":903,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":6,\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 9
+        }
+      ],
+      "sources": {
+        "entry.tri": "program probe\nconst Y:Field=missing_call()\nfn main(input:Noun)->Noun {nox_noun_atom(9)}\n"
+      }
+    },
+    {
+      "case": "alias_replacement",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/alias_replacement/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/alias_replacement/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/alias_replacement/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/alias_replacement/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/alias_replacement/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/alias_replacement/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":876,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":6,\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 7
+        }
+      ],
+      "sources": {
+        "entry.tri": "program probe\nconst X:Field=7\nconst X:Field=undefined\nfn main(input:Noun)->Noun {nox_noun_atom(X)}\n"
+      }
+    },
+    {
+      "case": "alias_forward",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/alias_forward/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/alias_forward/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 1,
+      "build_stdout": "{\"command\":\"build\",\"error\":{\"code\":\"compile_failed\",\"message\":\"compile error: undefined variable 'X'\",\"retryable\":false},\"ok\":false,\"result\":null,\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "sources": {
+        "entry.tri": "program probe\nconst X:Field=Y\nconst Y:Field=7\nfn main(input:Noun)->Noun {nox_noun_atom(X)}\n"
+      }
+    },
+    {
+      "case": "literal_control",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/literal_control/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/literal_control/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/literal_control/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/literal_control/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/literal_control/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/literal_control/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":873,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":6,\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 7
+        }
+      ],
+      "sources": {
+        "entry.tri": "program probe\nconst X:Field=7\nfn main(input:Noun)->Noun {nox_noun_atom(X)}\n"
+      }
+    },
+    {
+      "case": "shadow_Field",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/shadow_Field/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/shadow_Field/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/shadow_Field/program.dag\",\"artifact_bytes\":9266,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"shadow\",\"program_particle\":\"5a76b2bdfd9ef6a9065710aa9b27024ebfccde2cb65a1693d5267ecba99df916\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Field/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Field/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/shadow_Field/output_0.dag\",\"execution\":{\"allocated_nodes\":109,\"arena_reserved_bytes\":26214416,\"charged_reductions\":71,\"elapsed_micros\":1443,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":15,\"program_particle\":\"5a76b2bdfd9ef6a9065710aa9b27024ebfccde2cb65a1693d5267ecba99df916\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 7
+        },
+        {
+          "input": 1,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Field/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_1.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Field/output_1.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/shadow_Field/output_1.dag\",\"execution\":{\"allocated_nodes\":109,\"arena_reserved_bytes\":26214416,\"charged_reductions\":71,\"elapsed_micros\":1457,\"frame_buffer_bytes\":2883584,\"input_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"output_particle\":\"d4f0532c688a5a9753f2048de849c8a2ee0dacf100d3217db6ff59e0c3ed401f\",\"peak_frames\":15,\"program_particle\":\"5a76b2bdfd9ef6a9065710aa9b27024ebfccde2cb65a1693d5267ecba99df916\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"d4f0532c688a5a9753f2048de849c8a2ee0dacf100d3217db6ff59e0c3ed401f\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 11
+        }
+      ],
+      "sources": {
+        "constants.tri": "module constants\npub const FLAG:Field=0\n",
+        "entry.tri": "program shadow\nuse constants\nstruct Dynamic {FLAG:Field}\nfn choose(n:Field)->Field {let constants=Dynamic{FLAG:n} if constants.FLAG {7} else {11}}\nfn main(input:Noun)->Noun {nox_noun_atom(choose(nox_noun_as_field(input)))}\n"
+      }
+    },
+    {
+      "case": "shadow_Bool",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/shadow_Bool/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/shadow_Bool/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/shadow_Bool/program.dag\",\"artifact_bytes\":10374,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"shadow\",\"program_particle\":\"869ffb24446ef9ac121fda9bc1ffbfb1ca03670c24af5ce71419e9d015584318\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Bool/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Bool/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/shadow_Bool/output_0.dag\",\"execution\":{\"allocated_nodes\":121,\"arena_reserved_bytes\":26214416,\"charged_reductions\":83,\"elapsed_micros\":1579,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":16,\"program_particle\":\"869ffb24446ef9ac121fda9bc1ffbfb1ca03670c24af5ce71419e9d015584318\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 7
+        },
+        {
+          "input": 1,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Bool/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_1.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/shadow_Bool/output_1.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 1,
+          "stdout": "",
+          "stderr": "error: execution failed: InvZero\n"
+        }
+      ],
+      "sources": {
+        "constants.tri": "module constants\npub const FLAG:Field=0\n",
+        "entry.tri": "program shadow\nuse constants\nstruct Dynamic {FLAG:Bool}\nfn choose(n:Field)->Field {let constants=Dynamic{FLAG:n==0} assert(constants.FLAG) 7}\nfn main(input:Noun)->Noun {nox_noun_atom(choose(nox_noun_as_field(input)))}\n"
+      }
+    },
+    {
+      "case": "duplicate_private_type",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/duplicate_private_type/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/duplicate_private_type/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/duplicate_private_type/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"7b8211b7df911c03e66c2172999ae5137ca5d87654757e3bcedc110142b319e6\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/duplicate_private_type/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/duplicate_private_type/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/duplicate_private_type/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":1760,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"f86657eff4f0a031a72b727e359feb6e97f4c0b22edc29bbac536aab4cf0d493\",\"peak_frames\":6,\"program_particle\":\"7b8211b7df911c03e66c2172999ae5137ca5d87654757e3bcedc110142b319e6\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"f86657eff4f0a031a72b727e359feb6e97f4c0b22edc29bbac536aab4cf0d493\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 4294967296
+        }
+      ],
+      "sources": {
+        "a.tri": "module a\npub const X:U32=7\nconst X:Field=4294967296\n",
+        "entry.tri": "program probe\nuse a\nfn main(input:Noun)->Noun {nox_noun_atom(as_field(a.X))}\n"
+      }
+    },
+    {
+      "case": "duplicate_pub_type",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/duplicate_pub_type/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/duplicate_pub_type/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 1,
+      "build_stdout": "{\"command\":\"build\",\"error\":{\"code\":\"compile_failed\",\"message\":\"compile error: argument 1 of 'as_field': expected U32 but got Field\",\"retryable\":false},\"ok\":false,\"result\":null,\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "sources": {
+        "a.tri": "module a\npub const X:U32=7\npub const X:Field=4294967296\n",
+        "entry.tri": "program probe\nuse a\nfn main(input:Noun)->Noun {nox_noun_atom(as_field(a.X))}\n"
+      }
+    },
+    {
+      "case": "duplicate_private_value",
+      "build_command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+        "build",
+        "/tmp/trident-seed-constants-t0glnd73/duplicate_private_value/entry.tri",
+        "--target",
+        "nox",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/tmp/trident-seed-constants-t0glnd73/duplicate_private_value/program.dag",
+        "--format",
+        "json-v1"
+      ],
+      "build_rc": 0,
+      "build_stdout": "{\"command\":\"build\",\"error\":null,\"ok\":true,\"result\":{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/duplicate_private_value/program.dag\",\"artifact_bytes\":4017,\"compiler\":{\"api\":3,\"name\":\"trident\",\"version\":\"0.3.0\"},\"entry_point\":\"main\",\"format\":\"artifact\",\"input_profile\":0,\"kind\":\"build\",\"output_profile\":0,\"profile\":\"debug\",\"program\":\"probe\",\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"reads_state\":false,\"target\":\"nox\",\"target_os\":null,\"target_package\":{\"compilation_hash\":\"8330a1d99c117a6294aced1ba8c9a665a0bd3e70fa643929393e1f6166cce6a2\",\"owner\":\"joy\",\"version\":\"0.5.0\"},\"target_vm\":\"nox\"},\"schema\":\"joy/cli/v1\"}\n",
+      "build_stderr": "",
+      "runs": [
+        {
+          "input": 0,
+          "command": [
+            "/Users/master/cyber/.worktrees/selfhost-0.4-clean/install/bin/joy",
+            "run-artifact",
+            "/tmp/trident-seed-constants-t0glnd73/duplicate_private_value/program.dag",
+            "--input",
+            "/tmp/trident-04-control-cli/input_0.dag",
+            "--output",
+            "/tmp/trident-seed-constants-t0glnd73/duplicate_private_value/output_0.dag",
+            "--budget",
+            "1000000",
+            "--arena-nodes",
+            "196608",
+            "--frames",
+            "16384"
+          ],
+          "rc": 0,
+          "stdout": "{\"artifact\":\"/tmp/trident-seed-constants-t0glnd73/duplicate_private_value/output_0.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":1854,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":6,\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+          "stderr": "",
+          "atom": 9
+        }
+      ],
+      "sources": {
+        "a.tri": "module a\npub const X:Field=7\nconst X:Field=9\n",
+        "entry.tri": "program probe\nuse a\nfn main(input:Noun)->Noun {nox_noun_atom(a.X)}\n"
+      }
+    }
+  ],
+  "joy_sha256_end": "d9d12d62721c33f8a259b775d8f458c112d34b0ed8c92dead7e0fbf280589a85",
+  "rust_seed_revision": "17f912bf84a8cce43bfb152aaaeee120d4295e2f",
+  "source_note": "Prior probe used unchanged Rust seed at17f912b; its installed stdlib also contained in-progress Field-array guest files. Rust constant resolution was unchanged. Binary hashes and original commands identify that probe separately from accepted array evidence."
+}

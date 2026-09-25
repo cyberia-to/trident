@@ -291,6 +291,21 @@ const MAX_DEPTH: U32 = 32
 pub const ZERO: Field = 0
 ```
 
+Initializers are an integer literal or a reference to another Field/U32 constant,
+including a qualified imported name. A reference must have the declared type;
+it does not perform a Field/U32 conversion. Forward references are allowed.
+The final active declaration of a name supplies its value, type and visibility
+throughout its defining module, including signatures and size-generic bodies.
+Only a final public declaration is exported. Every active initializer is checked,
+including declarations replaced by a later declaration. Unknown names, cycles,
+out-of-range U32 literals and other initializer expressions are errors.
+Inactive conditional declarations do not participate in resolution.
+
+Constants retain their original checked integer value for array dimensions.
+Field reduction happens when emitting a runtime value, including through aliases.
+Each module retains the imported constant bindings visible when it was checked;
+a later same-basename module does not redirect those references.
+
 Inlined at compile time. No runtime cost.
 
 ### I/O Declarations (program modules only)

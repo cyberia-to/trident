@@ -259,35 +259,7 @@ impl PreparedProject {
                             }
                             serial += 1;
                         };
-                        let mut constants = BTreeMap::new();
-                        for export in &exports[..owner] {
-                            for (constant, _, value) in &export.constants {
-                                constants
-                                    .insert(format!("{}.{}", export.module_name, constant), *value);
-                                constants.insert(
-                                    format!(
-                                        "{}.{}",
-                                        export.module_name.rsplit('.').next().unwrap(),
-                                        constant
-                                    ),
-                                    *value,
-                                );
-                            }
-                        }
-                        for item in &modules[owner].file.items {
-                            if let Item::Const(c) = &item.node {
-                                if c.cfg
-                                    .as_ref()
-                                    .is_none_or(|cfg| options.cfg_flags.contains(&cfg.node))
-                                {
-                                    if let ast::Expr::Literal(ast::Literal::Integer(value)) =
-                                        c.value.node
-                                    {
-                                        constants.insert(c.name.node.clone(), value);
-                                    }
-                                }
-                            }
-                        }
+                        let constants = exports[owner].resolved_constants.raw_values();
                         let function = crate::typecheck::specialize::concrete_function(
                             &definition,
                             &instance.size_args,
@@ -446,24 +418,5 @@ impl PreparedProject {
             }
         }
         aliases
-    }
-
-    /// Build external constants map from all module exports.
-    pub fn external_constants(&self, before: usize) -> BTreeMap<String, u64> {
-        let mut constants = BTreeMap::new();
-        for exp in self.exports.iter().take(before) {
-            let full = &exp.module_name;
-            let short = full.rsplit('.').next().unwrap_or(full);
-            let has_short = short != full;
-            for (const_name, _ty, value) in &exp.constants {
-                let qualified = format!("{}.{}", full, const_name);
-                constants.insert(qualified, *value);
-                if has_short {
-                    let short_qualified = format!("{}.{}", short, const_name);
-                    constants.insert(short_qualified, *value);
-                }
-            }
-        }
-        constants
     }
 }

@@ -69,6 +69,8 @@ pub struct TIRBuilder {
     pub(crate) struct_types: BTreeMap<String, StructDef>,
     /// Constants: qualified or short name -> integer value.
     pub(crate) constants: BTreeMap<String, u64>,
+    pub(crate) constant_bindings: BTreeMap<String, crate::typecheck::constants::Binding>,
+    pub(crate) module_type_files: Vec<File>,
     /// Intrinsic map: function name -> intrinsic TASM name.
     pub(crate) intrinsic_map: BTreeMap<String, String>,
     pub(crate) target_intrinsics: BTreeMap<String, (u32, u32)>,
@@ -116,6 +118,8 @@ impl TIRBuilder {
             event_defs: BTreeMap::new(),
             struct_types: BTreeMap::new(),
             constants: BTreeMap::new(),
+            constant_bindings: BTreeMap::new(),
+            module_type_files: Vec::new(),
             intrinsic_map: BTreeMap::new(),
             target_intrinsics: BTreeMap::new(),
             module_aliases: BTreeMap::new(),
@@ -153,7 +157,21 @@ impl TIRBuilder {
     }
 
     pub fn with_constants(mut self, constants: BTreeMap<String, u64>) -> Self {
-        self.constants.extend(constants);
+        // Compatibility input carries values only; source/project bindings replace
+        // this Field default with their checked declared type before emission.
+        for (name, raw) in constants {
+            let (owner, member) = name.rsplit_once('.').unwrap_or(("", &name));
+            self.constant_bindings.insert(
+                name.clone(),
+                crate::typecheck::constants::Binding {
+                    owner: owner.into(),
+                    name: member.into(),
+                    ty: crate::types::Ty::Field,
+                    raw,
+                    public: true,
+                },
+            );
+        }
         self
     }
 
@@ -175,6 +193,11 @@ impl TIRBuilder {
         mut self,
         file: &File,
     ) -> Result<Vec<TIROp>, Vec<crate::diagnostic::Diagnostic>> {
+        self.prepare_module_types(&file.name.node)?;
+        let resolved =
+            crate::typecheck::constants::resolve(file, &self.constant_bindings, &self.cfg_flags)?;
+        self.constants = resolved.raw_values();
+        self.constant_bindings = resolved.visible;
         for item in &file.items {
             if !self.is_item_cfg_active(&item.node) {
                 continue;
@@ -193,18 +216,6 @@ impl TIRBuilder {
                     }
                 }
                 _ => {}
-            }
-        }
-
-        // ── Pre-scan: collect constant values ──
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Const(cdef) = &item.node {
-                if let Expr::Literal(Literal::Integer(val)) = &cdef.value.node {
-                    self.constants.insert(cdef.name.node.clone(), *val);
-                }
             }
         }
 

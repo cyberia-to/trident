@@ -1,0 +1,1223 @@
+{
+  "schema": "trident/typed-constants-cli/v1",
+  "kind": "local-development",
+  "binary_sha256": {
+    "joy": "f6a2ef512dd0663b1fe89e1e066629b907736b2f4dcde9ff2347a88c5728b827",
+    "trisha": "6f38502e294a75bc424e45fc5a8e035c22cd5c18d3cf2374bde2ddba7cc294c8"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/output.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":795,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":6,\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/local-forward/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/output.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":787,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"fbbaf84eee6bcac3c555e3396a887b7f00086b2983ed902cd8fb322dda8e9c92\",\"peak_frames\":6,\"program_particle\":\"4d4fc7c88b29647b918ecef9d5c0cb2b31ee97c65bf66deaf4951e0345477bdb\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"fbbaf84eee6bcac3c555e3396a887b7f00086b2983ed902cd8fb322dda8e9c92\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/typed-u32/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "4294967295\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/output.dag\",\"execution\":{\"allocated_nodes\":45,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":757,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"peak_frames\":6,\"program_particle\":\"3d5e3b6c9775f41ab09a26b19851936eec3b2302f64c064573acee15a10ad601\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/field-normalization/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/output.dag\",\"execution\":{\"allocated_nodes\":124,\"arena_reserved_bytes\":26214416,\"charged_reductions\":144,\"elapsed_micros\":1366,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":19,\"program_particle\":\"35e01f8c5684a7edaee9837c38698aaa7f07f143398b4eabd58379eb0811d731\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-signature-size/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (14 ops)...\nExecuted in 11 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/output.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":774,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"f86657eff4f0a031a72b727e359feb6e97f4c0b22edc29bbac536aab4cf0d493\",\"peak_frames\":6,\"program_particle\":\"7b8211b7df911c03e66c2172999ae5137ca5d87654757e3bcedc110142b319e6\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"f86657eff4f0a031a72b727e359feb6e97f4c0b22edc29bbac536aab4cf0d493\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/final-local-type/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "4294967296\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/output.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":765,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":6,\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/import-alias/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/output.dag\",\"execution\":{\"allocated_nodes\":299,\"arena_reserved_bytes\":26214416,\"charged_reductions\":455,\"elapsed_micros\":2660,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"f44712a9ef8eddda7666eef5b2e477abdb64f1d32858f8eb3a7101a211edf7b7\",\"peak_frames\":28,\"program_particle\":\"7d50f1d0f7e061124ad6f8bcb4d4efc626d96efe33256b87244a79e581d2ded8\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"f44712a9ef8eddda7666eef5b2e477abdb64f1d32858f8eb3a7101a211edf7b7\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/owner-layouts/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "54\n",
+      "stderr": "Backend: cpu\nExecuting program (43 ops)...\nExecuted in 37 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/output.dag\",\"execution\":{\"allocated_nodes\":147,\"arena_reserved_bytes\":26214416,\"charged_reductions\":167,\"elapsed_micros\":1517,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"12385a54fc8ead64b308340d6d58dce9184bfe3b48621d180ad528aac7152d2a\",\"peak_frames\":24,\"program_particle\":\"c14712336636d6c59238f186365bb914814a3bf5a18209e5ab8e530638358085\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"12385a54fc8ead64b308340d6d58dce9184bfe3b48621d180ad528aac7152d2a\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "\u001b[33mWarning:\u001b[0m unused import 'early'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/helper.tri:2:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33me\u001b[0m\u001b[33ma\u001b[0m\u001b[33mr\u001b[0m\u001b[33ml\u001b[0m\u001b[33my\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m     \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'early'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\n\u001b[33mWarning:\u001b[0m unused import 'late'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/trisha.tri:3:1\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[33mu\u001b[0m\u001b[33ms\u001b[0m\u001b[33me\u001b[0m\u001b[33m \u001b[0m\u001b[33ml\u001b[0m\u001b[33ma\u001b[0m\u001b[33mt\u001b[0m\u001b[33me\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m \u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u252c\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m     \u001b[33m\u2570\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m\u001b[33m\u2500\u001b[0m unused import 'late'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nCompiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/lexical-alias-owners/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "38\n",
+      "stderr": "Backend: cpu\nExecuting program (20 ops)...\nExecuted in 18 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/output.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":812,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":6,\"program_particle\":\"b2981976055be4a62b55be1cfa53f0eb186a9debe8659de0406014278ff68d1a\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-debug/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/joy.tri",
+        "--profile",
+        "release",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/output.dag\",\"execution\":{\"allocated_nodes\":47,\"arena_reserved_bytes\":26214416,\"charged_reductions\":23,\"elapsed_micros\":786,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":6,\"program_particle\":\"c8baea301c5cbcab511db3c97124e5377c50d00dda6df047300e9428c6e7a303\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/trisha.tri",
+        "--profile",
+        "release",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cfg-release/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "9\n",
+      "stderr": "Backend: cpu\nExecuting program (6 ops)...\nExecuted in 5 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-unknown/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-unknown/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: unknown constant 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-unknown/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-unknown/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m unknown constant 'missing'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-unknown/trisha.tri:2:15\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mX\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mm\u001b[0m\u001b[31mi\u001b[0m\u001b[31ms\u001b[0m\u001b[31ms\u001b[0m\u001b[31mi\u001b[0m\u001b[31mn\u001b[0m\u001b[31mg\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m unknown constant 'missing'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: unknown constant 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-call/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-call/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: constant initializer requires an integer literal or constant reference\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-call/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-call/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m constant initializer requires an integer literal or constant reference\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-call/trisha.tri:2:15\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mX\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mm\u001b[0m\u001b[31mi\u001b[0m\u001b[31ms\u001b[0m\u001b[31ms\u001b[0m\u001b[31mi\u001b[0m\u001b[31mn\u001b[0m\u001b[31mg\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                   \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m constant initializer requires an integer literal or constant reference\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: constant initializer requires an integer literal or constant reference\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-expression/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-expression/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: constant initializer requires an integer literal or constant reference\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-expression/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-expression/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m constant initializer requires an integer literal or constant reference\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/unused-expression/trisha.tri:2:15\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mX\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31m1\u001b[0m\u001b[31m+\u001b[0m\u001b[31m2\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m constant initializer requires an integer literal or constant reference\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: constant initializer requires an integer literal or constant reference\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cycle/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cycle/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: cyclic constant reference 'X'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cycle/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cycle/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m cyclic constant reference 'X'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/cycle/trisha.tri:3:15\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mY\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mX\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u252c\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m cyclic constant reference 'X'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: cyclic constant reference 'X'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/wrong-alias-type/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/wrong-alias-type/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: constant type mismatch: expected U32 but got Field\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/wrong-alias-type/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/wrong-alias-type/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m constant type mismatch: expected U32 but got Field\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/wrong-alias-type/trisha.tri:3:13\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mY\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249m3\u001b[0m\u001b[38;5;249m2\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mX\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m             \u001b[31m\u252c\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m             \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m constant type mismatch: expected U32 but got Field\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: constant type mismatch: expected U32 but got Field\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-u32-overflow/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-u32-overflow/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: U32 constant is out of range\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-u32-overflow/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-u32-overflow/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m U32 constant is out of range\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-u32-overflow/trisha.tri:2:13\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mX\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249m3\u001b[0m\u001b[38;5;249m2\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31m1\u001b[0m\u001b[31m8\u001b[0m\u001b[31m4\u001b[0m\u001b[31m4\u001b[0m\u001b[31m6\u001b[0m\u001b[31m7\u001b[0m\u001b[31m4\u001b[0m\u001b[31m4\u001b[0m\u001b[31m0\u001b[0m\u001b[31m6\u001b[0m\u001b[31m9\u001b[0m\u001b[31m4\u001b[0m\u001b[31m1\u001b[0m\u001b[31m4\u001b[0m\u001b[31m5\u001b[0m\u001b[31m8\u001b[0m\u001b[31m4\u001b[0m\u001b[31m3\u001b[0m\u001b[31m2\u001b[0m\u001b[31m2\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m             \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                       \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m U32 constant is out of range\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: U32 constant is out of range\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replaced-invalid/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replaced-invalid/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: unknown constant 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replaced-invalid/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replaced-invalid/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m unknown constant 'missing'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replaced-invalid/trisha.tri:2:15\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mX\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mm\u001b[0m\u001b[31mi\u001b[0m\u001b[31ms\u001b[0m\u001b[31ms\u001b[0m\u001b[31mi\u001b[0m\u001b[31mn\u001b[0m\u001b[31mg\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m unknown constant 'missing'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: unknown constant 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replacement-invalid/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replacement-invalid/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: unknown constant 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replacement-invalid/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replacement-invalid/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m unknown constant 'missing'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/replacement-invalid/trisha.tri:3:15\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mX\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mm\u001b[0m\u001b[31mi\u001b[0m\u001b[31ms\u001b[0m\u001b[31ms\u001b[0m\u001b[31mi\u001b[0m\u001b[31mn\u001b[0m\u001b[31mg\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m               \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m unknown constant 'missing'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: unknown constant 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/private-final/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/private-final/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: unknown constant 'values.X'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/private-final/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/private-final/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m unknown constant 'values.X'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/private-final/trisha.tri:3:13\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mc\u001b[0m\u001b[38;5;249mo\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249ms\u001b[0m\u001b[38;5;249mt\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mY\u001b[0m\u001b[38;5;249m:\u001b[0m\u001b[38;5;249mU\u001b[0m\u001b[38;5;249m3\u001b[0m\u001b[38;5;249m2\u001b[0m\u001b[38;5;249m=\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31ms\u001b[0m\u001b[38;5;249m.\u001b[0m\u001b[38;5;249mX\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m             \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m unknown constant 'values.X'\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: unknown constant 'values.X'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-dimension/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-dimension/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: argument 1 of 'f': expected [Field; 18446744069414584322] but got [Field; 1]\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-dimension/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-dimension/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m argument 1 of 'f': expected [Field; 18446744069414584322] but got [Field; 1]\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/raw-dimension/trisha.tri:5:17\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m5 \u2502\u001b[0m \u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mg\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[31m[\u001b[0m\u001b[31m7\u001b[0m\u001b[31m]\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                 \u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m argument 1 of 'f': expected [Field; 18446744069414584322] but got [Field; 1]\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: argument 1 of 'f': expected [Field; 18446744069414584322] but got [Field; 1]\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-constants/trident/compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/compiler.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-typed-constants-e8o6de50/compiler.dag\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [
+    {
+      "case": "local-forward",
+      "modules": {},
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=Y\nconst Y:Field=7\nfn main(input:Noun)->Noun{ nox_noun_atom(X)}\n",
+          "program_sha256": "c8af98a6e62e7a979108cc08ad9c5b748f02da7b44745c85a9b071ce29c046a9",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=Y\nconst Y:Field=7\nfn main(){ pub_write(X)}\n",
+          "program_sha256": "fc34f0473eb14ed8f0a7470152b8aea92360d2fd7a400b46c38da1a716a6991c",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "typed-u32",
+      "modules": {},
+      "profile": "debug",
+      "expected": 4294967295,
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:U32=Y\nconst Y:U32=4294967295\nfn main(input:Noun)->Noun{ nox_noun_atom(as_field(X))}\n",
+          "program_sha256": "26dce1e61a19231c94c630c51797c7f6687be31ed3b7b6ab35ef38b2bf3bd65f",
+          "executed": 4294967295
+        },
+        "trisha": {
+          "source": "program constants\nconst X:U32=Y\nconst Y:U32=4294967295\nfn main(){ pub_write(as_field(X))}\n",
+          "program_sha256": "14fff34fd8b5323934df302cc3e3ae9758ad012b125ca9975f13c6fe7926f695",
+          "executed": 4294967295
+        }
+      }
+    },
+    {
+      "case": "field-normalization",
+      "modules": {},
+      "profile": "debug",
+      "expected": 1,
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=Y\nconst Y:Field=18446744069414584322\nfn main(input:Noun)->Noun{ nox_noun_atom(X)}\n",
+          "program_sha256": "09daec36ff08c080fa9bf68e5ffe3282b9498f7abc54bb51090cf953d60bab3d",
+          "executed": 1
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=Y\nconst Y:Field=18446744069414584322\nfn main(){ pub_write(X)}\n",
+          "program_sha256": "7d3e79ac7e1bd61e06887182acea27f59dafa123b71edbdd671512ca6bb4ff0c",
+          "executed": 1
+        }
+      }
+    },
+    {
+      "case": "final-signature-size",
+      "modules": {},
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst N:U32=1\nfn f(a:[Field;N])->Field{a[1]}\nconst N:U32=2\nfn main(input:Noun)->Noun{ nox_noun_atom(f([3,7]))}\n",
+          "program_sha256": "82f00dc04097144f09ea9223bc0411506858ea4d0cc03307958e3628821d500a",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program constants\nconst N:U32=1\nfn f(a:[Field;N])->Field{a[1]}\nconst N:U32=2\nfn main(){ pub_write(f([3,7]))}\n",
+          "program_sha256": "dd0799249da24f3cb37a0b9d3a79fcec0054ef8d8dfc60daac5885a5f1d47827",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "final-local-type",
+      "modules": {},
+      "profile": "debug",
+      "expected": 4294967296,
+      "owners": {
+        "joy": {
+          "source": "program constants\npub const X:U32=7\nconst X:Field=4294967296\nfn main(input:Noun)->Noun{ nox_noun_atom(X)}\n",
+          "program_sha256": "a26d299ed7a6500dd8448cef6b26acc6bab93b201982097ee36d2517b4f26d65",
+          "executed": 4294967296
+        },
+        "trisha": {
+          "source": "program constants\npub const X:U32=7\nconst X:Field=4294967296\nfn main(){ pub_write(X)}\n",
+          "program_sha256": "61a82eb4af3dac7e338b44a1d6a571a86c3006c9ac927660aba38a3c9750bcea",
+          "executed": 4294967296
+        }
+      }
+    },
+    {
+      "case": "import-alias",
+      "modules": {
+        "values.tri": "module values\npub const X:U32=7\npub const Y:U32=X"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program constants\nuse values\nconst Z:U32=values.Y\nfn main(input:Noun)->Noun{ nox_noun_atom(as_field(Z))}\n",
+          "program_sha256": "c8af98a6e62e7a979108cc08ad9c5b748f02da7b44745c85a9b071ce29c046a9",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program constants\nuse values\nconst Z:U32=values.Y\nfn main(){ pub_write(as_field(Z))}\n",
+          "program_sha256": "fc34f0473eb14ed8f0a7470152b8aea92360d2fd7a400b46c38da1a716a6991c",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "owner-layouts",
+      "modules": {
+        "sizes.tri": "module sizes\npub const BASE:U32=2\npub const N:U32=BASE",
+        "shapes.tri": "module shapes\nuse sizes\nconst K:U32=sizes.N\npub struct Pair{pub a:[Field;K],pub b:Field}\npub fn make()->Pair{Pair{a:[3,7],b:11}}\npub fn out()->[Field;K]{[5,13]}\npub fn f<N>(a:[Field;N+K])->Field{a[2]}"
+      },
+      "profile": "debug",
+      "expected": 54,
+      "owners": {
+        "joy": {
+          "source": "program constants\nuse shapes\nconst K:U32=99\nfn main(input:Noun)->Noun{let p=shapes.make() let a=shapes.out() nox_noun_atom(p.a[1]+p.b+a[1]+shapes.f<1>([17,19,23]))}\n",
+          "program_sha256": "6161aeeab420c33994bfac70f4eb3f1c6cd539695663e2942fa4895ad3f58c61",
+          "executed": 54
+        },
+        "trisha": {
+          "source": "program constants\nuse shapes\nconst K:U32=99\nfn main(){let p=shapes.make() let a=shapes.out() pub_write(p.a[1]+p.b+a[1]+shapes.f<1>([17,19,23]))}\n",
+          "program_sha256": "4bc522e2379ba2b8195920d3ce9e9cac3231ad93831bab18230d471d8fd4f8a0",
+          "executed": 54
+        }
+      }
+    },
+    {
+      "case": "lexical-alias-owners",
+      "modules": {
+        "early.tri": "module std.same\npub const VALUE:Field=7\npub const SIZE:U32=2",
+        "helper.tri": "module helper\nuse early\npub const VALUE:Field=same.VALUE\nconst K:U32=same.SIZE\npub fn f<N>(a:[Field;N+K])->Field{a[2]+VALUE}",
+        "late.tri": "module os.same\npub const VALUE:Field=13\nconst SIZE:U32=99"
+      },
+      "profile": "debug",
+      "expected": 38,
+      "owners": {
+        "joy": {
+          "source": "program constants\nuse helper\nuse late\nconst K:U32=99\nconst V:Field=helper.VALUE\nfn main(input:Noun)->Noun{ nox_noun_atom(helper.f<1>([3,5,11])+V+same.VALUE)}\n",
+          "program_sha256": "5ad539df8484adbd4a082b3d924934680ab695f9be3cfa18b1c5edd3234fc60a",
+          "executed": 38
+        },
+        "trisha": {
+          "source": "program constants\nuse helper\nuse late\nconst K:U32=99\nconst V:Field=helper.VALUE\nfn main(){ pub_write(helper.f<1>([3,5,11])+V+same.VALUE)}\n",
+          "program_sha256": "4985b8b127f9ee3b866dbd48e0fb2ffb42f1c2db5ea5d9957bb388ebd3d0e29d",
+          "executed": 38
+        }
+      }
+    },
+    {
+      "case": "cfg-debug",
+      "modules": {},
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program constants\n#[cfg(debug)] const X:Field=7\n#[cfg(release)] const X:Field=9\n#[cfg(absent)] const X:Noun=missing()\nfn main(input:Noun)->Noun{ nox_noun_atom(X)}\n",
+          "program_sha256": "c8af98a6e62e7a979108cc08ad9c5b748f02da7b44745c85a9b071ce29c046a9",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program constants\n#[cfg(debug)] const X:Field=7\n#[cfg(release)] const X:Field=9\n#[cfg(absent)] const X:Noun=missing()\nfn main(){ pub_write(X)}\n",
+          "program_sha256": "fc34f0473eb14ed8f0a7470152b8aea92360d2fd7a400b46c38da1a716a6991c",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "cfg-release",
+      "modules": {},
+      "profile": "release",
+      "expected": 9,
+      "owners": {
+        "joy": {
+          "source": "program constants\n#[cfg(debug)] const X:Field=7\n#[cfg(release)] const X:Field=9\n#[cfg(absent)] const X:Noun=missing()\nfn main(input:Noun)->Noun{ nox_noun_atom(X)}\n",
+          "program_sha256": "eefaa281e1beda4e080ec2ae86c1bb73726e3c001091e74b99f97606979a979b",
+          "executed": 9
+        },
+        "trisha": {
+          "source": "program constants\n#[cfg(debug)] const X:Field=7\n#[cfg(release)] const X:Field=9\n#[cfg(absent)] const X:Noun=missing()\nfn main(){ pub_write(X)}\n",
+          "program_sha256": "f42fee1dd745a56b08e271d94a9d8ed958415ffe1135592744fd3d7b5fb37fc0",
+          "executed": 9
+        }
+      }
+    },
+    {
+      "case": "unused-unknown",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=missing\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=missing\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "unused-call",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=missing()\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=missing()\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "unused-expression",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=1+2\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=1+2\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "cycle",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=Y\nconst Y:Field=X\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=Y\nconst Y:Field=X\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "wrong-alias-type",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=7\nconst Y:U32=X\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=7\nconst Y:U32=X\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "raw-u32-overflow",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:U32=18446744069414584322\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:U32=18446744069414584322\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "replaced-invalid",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=missing\nconst X:Field=7\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=missing\nconst X:Field=7\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "replacement-invalid",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=7\nconst X:Field=missing\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=7\nconst X:Field=missing\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "private-final",
+      "modules": {
+        "values.tri": "module values\npub const X:U32=7\nconst X:Field=4294967296"
+      },
+      "owners": {
+        "joy": {
+          "source": "program constants\nuse values\nconst Y:U32=values.X\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nuse values\nconst Y:U32=values.X\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "raw-dimension",
+      "modules": {},
+      "owners": {
+        "joy": {
+          "source": "program constants\nconst X:Field=18446744069414584322\nconst N:Field=X\nfn f(a:[Field;N])->Field{a[0]}\nfn g()->Field{f([7])}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program constants\nconst X:Field=18446744069414584322\nconst N:Field=X\nfn f(a:[Field;N])->Field{a[0]}\nfn g()->Field{f([7])}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    }
+  ],
+  "compiler_sha256": "8816bc35d60047639e806e2f214482fd4eeda01e3a4f6300514eb981b118e81e",
+  "compiler_particle": "d9c86de1d644e7826a75ccbf264c4df4dba36306c3173f18935798a523f8428e",
+  "entire_c1_artifact_unchanged": true,
+  "c1_baseline": "audit/self-hosting/native-arrays-cli.json"
+}

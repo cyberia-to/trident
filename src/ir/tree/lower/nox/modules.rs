@@ -52,25 +52,33 @@ impl NoxCompiler {
         }
         let mut aliases = BTreeMap::new();
         let mut functions = BTreeMap::new();
-        let mut constants = BTreeMap::new();
-        for file in files {
+        let resolved = crate::typecheck::constants::resolve_modules(files, flags, &BTreeMap::new())
+            .map_err(|errors| {
+                errors
+                    .iter()
+                    .map(|e| e.message.as_str())
+                    .collect::<Vec<_>>()
+                    .join("; ")
+            })?;
+        for (file, constants) in files.iter().zip(&resolved) {
             self.current_module = file.name.node.clone();
             self.function_aliases
                 .insert(self.current_module.clone(), functions.clone());
-            self.constant_aliases
-                .insert(self.current_module.clone(), constants.clone());
+            self.constant_aliases.insert(
+                self.current_module.clone(),
+                constants
+                    .visible
+                    .iter()
+                    .map(|(name, binding)| (name.clone(), binding.canonical_name()))
+                    .collect(),
+            );
+            for binding in constants.locals.values() {
+                self.constants.insert(binding.canonical_name(), binding.raw);
+                self.constant_types
+                    .insert(binding.canonical_name(), binding.ty.clone());
+            }
             self.module_aliases
                 .insert(self.current_module.clone(), aliases.clone());
-            // Resolve lexical size constants independently of declaration order.
-            for item in &file.items {
-                if active(&item.node, flags) {
-                    if let Item::Const(c) = &item.node {
-                        if let Expr::Literal(Literal::Integer(v)) = &c.value.node {
-                            self.constants.insert(self.symbol(&c.name.node), *v);
-                        }
-                    }
-                }
-            }
             for item in &file.items {
                 if !active(&item.node, flags) {
                     continue;
@@ -112,22 +120,6 @@ impl NoxCompiler {
                         functions.insert(canonical.clone(), canonical.clone());
                         if short != full {
                             functions.insert(format!("{short}.{}", f.name.node), canonical);
-                        }
-                    }
-                }
-            }
-            for item in &file.items {
-                if !active(&item.node, flags) {
-                    continue;
-                }
-                if let Item::Const(c) = &item.node {
-                    if c.is_pub {
-                        let full = &file.name.node;
-                        let short = full.rsplit('.').next().unwrap_or(full);
-                        let canonical = format!("{full}.{}", c.name.node);
-                        constants.insert(canonical.clone(), canonical.clone());
-                        if short != full {
-                            constants.insert(format!("{short}.{}", c.name.node), canonical);
                         }
                     }
                 }

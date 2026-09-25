@@ -6,11 +6,18 @@ impl Compiler<'_> {
         Some(match e {
             Expr::Literal(Literal::Integer(_)) => Type::Field,
             Expr::Literal(Literal::Bool(_)) => Type::Bool,
-            Expr::Var(n) => self
-                .dotted(n)
-                .ok()
-                .map(|p| p.1)
-                .or_else(|| self.constant(e).map(|_| Type::Field))?,
+            Expr::Var(n) => self.dotted(n).ok().map(|p| p.1).or_else(|| {
+                self.constant(e)?;
+                match self
+                    .owner
+                    .constant_types
+                    .get(&self.owner.constant_symbol(n))?
+                {
+                    crate::types::Ty::Field => Some(Type::Field),
+                    crate::types::Ty::U32 => Some(Type::U32),
+                    _ => None,
+                }
+            })?,
             Expr::StructInit { path, .. } => {
                 self.owner.qualified_type(&Type::Named(path.node.clone()))
             }
