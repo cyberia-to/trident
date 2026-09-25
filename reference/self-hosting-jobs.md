@@ -146,18 +146,33 @@ the calling expression's span, and retains literal provenance independently of
 the canonical Field value. Direct-use order determines each exported binding;
 only final public declarations enter an importing scope.
 
-The initial C1 import slice checks dependency modules containing imports and
-Field/U32 constant declarations. Other dependency declarations report unsupported
-construct (code 6). Every declaration is checked, including private declarations
+The C1 import slice checks dependency modules containing imports, Field/U32
+constant declarations and ordinary functions with Field/Bool/U32 parameters and
+Field/Bool/U32/Unit results. Other dependency declarations and signatures report
+unsupported construct (code 6). Every declaration is checked, including private declarations
 and declarations replaced by a later binding. After checking a module, only its
 final public bindings are published to its direct importers. A published alias
 keeps its own defining name and the terminal literal's original owner/span.
 Entry expressions and constant initializers can reference full or short direct
 module aliases. Lexical variables shadow a module root; a local constant with
-that name does not hide the module alias. Imported calls, constructors and types
-remain unsupported in this slice. Symbolic array extents and loop bounds retain
+that name does not hide the module alias. Qualified calls resolve final public functions through the same ordered direct
+module aliases. Callable resolution is independent of lexical variables;
+qualified constant reads and field projections keep lexical shadowing. Imported
+constructors, nominal signatures and intrinsic declarations remain unsupported
+in this slice. Symbolic array extents and loop bounds retain
 their existing unsupported diagnostics; ordinary constant expressions use the
 normalized runtime value, including checked runtime indexing.
+
+
+Module checking assigns global declaration IDs before checking bodies. Each body
+retains its own source, constants, type scope and owner-local callable range;
+qualified calls carry global targets without signature copying or AST remapping.
+All private, replaced and unused bodies are checked. Only final definitions are
+call-graph roots; reachable definitions occupy runtime slots sorted by the pair
+(module name, function name). Unused valid definitions and declaration order do
+not affect executable identities. A graph error retains the declaration owner's
+original package index and source span. Source-work and runtime limits are shared
+across the complete reached package; this slice does not raise them.
 
 ## Result and failures
 

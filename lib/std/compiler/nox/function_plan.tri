@@ -5,11 +5,12 @@ use vm.core.convert
 use std.nox.seq
 use std.nox.tree
 use std.nox.bytes
+use std.compiler.nox.signatures
 use std.compiler.nox.syntax
 use std.compiler.nox.function_order
 use std.compiler.nox.call_graph
 
-pub struct Plan { pub order: seq.Seq, pub slots: Noun, pub next: U32, pub error: syntax.Error }
+pub struct Plan { pub order: seq.Seq, pub slots: Noun, pub next: U32, pub error: syntax.Error, pub error_function: U32 }
 
 #[pure]
 fn chunk(ordered: seq.Seq, reachable: Noun, functions: U32, input: Plan, cap: U32) -> Plan {
@@ -32,23 +33,30 @@ fn chunk(ordered: seq.Seq, reachable: Noun, functions: U32, input: Plan, cap: U3
 #[pure]
 #[requires(entry < seq.len(functions))]
 pub fn plan(source: bytes.Bytes, functions: seq.Seq, bodies: seq.Seq, entry: U32, cap: U32) -> Plan {
+    ordered(functions, bodies, function_order.sort(source, functions, cap), entry, cap)
+}
+
+#[pure]
+#[requires(entry < seq.len(functions))]
+pub fn ordered(functions: seq.Seq, bodies: seq.Seq, sorted: function_order.Ordered, entry: U32, cap: U32) -> Plan {
     let zero = syntax.ZERO
     let mut s = Plan { order: seq.empty(), slots: tree.empty(tree.shape(seq.len(functions)).height),
-        next: zero, error: syntax.error(0, zero, zero) }
+        next: zero, error: syntax.error(0, zero, zero), error_function: signatures.NONE }
     if cap == zero { s.error = syntax.error(7, zero, zero) return s }
-    let ordered = function_order.sort(source, functions, cap)
-    s.error = ordered.error
+    s.error = sorted.error
     if (s.error.code == zero) == false { return s }
-    let checked = call_graph.walk(functions, bodies, ordered.ids, cap)
+    let checked = call_graph.walk(functions, bodies, sorted.ids, cap)
     s.error = checked.error
+    s.error_function = checked.error_function
     if (s.error.code == zero) == false { return s }
     let roots = seq.push(seq.empty(), noun.atom(as_field(entry)), cap)
     let reachable = call_graph.walk(functions, bodies, roots, cap)
     s.error = reachable.error
+    s.error_function = reachable.error_function
     if (s.error.code == zero) == false { return s }
     for turn in 0..512 {
-        s = chunk(ordered.ids, reachable.colors, seq.len(functions), s, cap)
-        if syntax.either(s.next == seq.len(ordered.ids), (s.error.code == zero) == false) { return s }
+        s = chunk(sorted.ids, reachable.colors, seq.len(functions), s, cap)
+        if syntax.either(s.next == seq.len(sorted.ids), (s.error.code == zero) == false) { return s }
     }
     s.error = syntax.error(7, zero, zero)
     s

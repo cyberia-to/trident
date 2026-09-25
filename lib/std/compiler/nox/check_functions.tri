@@ -11,14 +11,15 @@ use std.compiler.nox.signatures
 use std.compiler.nox.body
 use std.compiler.nox.body_store
 use std.compiler.nox.coverage
+use std.compiler.nox.function_imports
 
 pub struct Checked { pub bodies: seq.Seq, pub next: U32, pub error: syntax.Error, pub pure_next: U32 }
 
 #[pure]
-fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, input: Checked, cap: U32) -> Checked {
+fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, input: Checked, cap: U32, start: U32, end: U32, imports: function_imports.View) -> Checked {
     let mut s = input
     for turn in 0..8 {
-        if s.next == seq.len(functions) { return s }
+        if s.next == end { return s }
         let signature = signatures.read(seq.get(functions, s.next))
         let mut pure = false
         if s.pure_next < seq.len(pure_functions) {
@@ -27,7 +28,7 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_function
                 s.pure_next = syntax.inc(s.pure_next)
             }
         }
-        let parsed = body.function(source, signature, functions, params, scope, consts, pure, cap)
+        let parsed = body.function_in(source, signature, functions, params, scope, consts, pure, cap, start, end, imports)
         s.error = parsed.error
         if (s.error.code == syntax.ZERO) == false { return s }
         let checked = coverage.check(parsed)
@@ -45,11 +46,27 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_function
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32) -> Checked {
+    check_range(source, functions, params, pure_functions, scope, consts, cap,
+        syntax.ZERO, seq.len(functions), function_imports.empty(), seq.empty())
+}
+
+// Pure IDs belong to this owner's range and retain declaration order. Every
+// appended body occupies its global declaration ID, including replaced bodies.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((end < start) == false)]
+#[requires((seq.len(functions) < end) == false)]
+#[requires(seq.len(bodies) == start)]
+pub fn check_range(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32, start: U32, end: U32, imports: function_imports.View, bodies: seq.Seq) -> Checked {
     let zero = syntax.ZERO
-    let mut s = Checked { bodies: seq.empty(), next: zero, error: syntax.error(0, zero, zero), pure_next: zero }
+    let mut s = Checked { bodies, next: start, error: syntax.error(0, zero, zero), pure_next: zero }
+    if syntax.either(syntax.either((end < start), (seq.len(functions) < end)), (seq.len(bodies) == start) == false) {
+        s.error = syntax.error(7, zero, zero) return s
+    }
     for turn in 0..512 {
-        s = chunk(source, functions, params, pure_functions, scope, consts, s, cap)
-        if syntax.either(s.next == seq.len(functions), (s.error.code == zero) == false) { return s }
+        s = chunk(source, functions, params, pure_functions, scope, consts, s, cap, start, end, imports)
+        if syntax.either(s.next == end, (s.error.code == zero) == false) { return s }
     }
     s.error = syntax.error(7, zero, zero)
     s

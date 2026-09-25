@@ -11,7 +11,7 @@ use std.compiler.nox.body_store
 pub const DEPTH_CAP: U32 = 128
 pub struct Walked {
     pub colors: Noun, pub heights: Noun, pub frames: Noun, pub depth: U32, pub next: U32,
-    pub done: Bool, pub error: syntax.Error
+    pub done: Bool, pub error: syntax.Error, pub error_function: U32
 }
 
 #[pure]
@@ -22,6 +22,7 @@ fn push(functions: seq.Seq, bodies: seq.Seq, input: Walked, id: U32, cap: U32) -
     if s.depth == limit {
         let declaration = signatures.read(seq.get(functions, id))
         s.error = syntax.error(7, declaration.name.start, declaration.name.end)
+        s.error_function = id
         return s
     }
     s.colors = tree.set(s.colors, seq.len(functions), id, noun.atom(1))
@@ -74,6 +75,7 @@ fn step(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap:
     if color == 1 {
         let declaration = signatures.read(seq.get(functions, callee))
         s.error = syntax.error(5, declaration.name.start, declaration.name.end)
+        s.error_function = callee
         return s
     }
     if color == 0 { return push(functions, bodies, s, callee, cap) }
@@ -83,6 +85,7 @@ fn step(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap:
     if limit < as_u32(as_field(s.depth) + as_field(height)) {
         let declaration = signatures.read(seq.get(functions, callee))
         s.error = syntax.error(7, declaration.name.start, declaration.name.end)
+        s.error_function = callee
         return s
     }
     remember(s, height)
@@ -105,7 +108,7 @@ fn chunk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap
 pub fn walk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, cap: U32) -> Walked {
     let zero = syntax.ZERO
     let mut s = Walked { colors: tree.empty(tree.shape(seq.len(functions)).height), heights: tree.empty(tree.shape(seq.len(functions)).height), frames: noun.atom(0),
-        depth: zero, next: zero, done: false, error: syntax.error(0, zero, zero) }
+        depth: zero, next: zero, done: false, error: syntax.error(0, zero, zero), error_function: signatures.NONE }
     for turn in 0..1024 {
         s = chunk(functions, bodies, roots, s, cap)
         if syntax.either(s.done, (s.error.code == zero) == false) { return s }

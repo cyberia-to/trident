@@ -236,7 +236,7 @@ bitwise := postfix ("&" postfix)*
 postfix := primary ("[" expression "]")*
 primary := decimal | "true" | "false" | identifier | call | "(" expression ")" | tuple
 tuple := "(" expression "," expression ("," expression)* ","? ")"
-call := identifier "(" (expression ("," expression)* ","?)? ")"
+call := logical_path "(" (expression ("," expression)* ","?)? ")"
 ```
 
 Identifiers use the seed's ASCII identifier spelling; keywords, type words,
@@ -326,8 +326,9 @@ this subset. Unit functions may fall through and produce native atom zero.
 Bare return is accepted only for Unit. Explicit and terminal return values must
 match the declared result, except a resolved builtin `assert(false)` which
 halts before producing a value. Local inference can retain Unit values; assignment
-preserves that type. Conditions still require Field or Bool. Imports,
-generic declarations and intrinsic declarations remain outside this subset.
+preserves that type. Conditions still require Field or Bool. Generic and
+intrinsic declarations remain outside this subset. Direct ordinary imports
+follow the module rules below.
 
 The scalar unqualified builtins are: `as_u32(Field) -> U32`,
 `as_field(U32) -> Field` and `sub(Field, Field) -> Field`. Final user function
@@ -468,7 +469,7 @@ constructors while rejecting forward/self-recursive layouts and earlier
 signatures referring to later types. Unknown named types produce diagnostic5.
 `Unit` remains available as a nominal declaration name; primitive Unit still
 has no explicit source spelling. Public local functions retain normal callable
-binding behavior. Actual cross-module exports/imports remain a later gate.
+binding behavior. Cross-module nominal exports/imports remain a later gate.
 
 Constructor recognition follows uppercase final names and named-field syntax.
 Each required field appears once, in explicit `name: expression` or shorthand
@@ -541,9 +542,12 @@ expression nodes retain the caller's full qualified span and normalized value.
 
 A checked entry without uses compiles directly without allocating a graph. A
 self-use still enters discovery and reports a cycle. Dependencies currently
-admit constant declarations and imports; functions, structs and attributes in
-dependencies report unsupported6. Qualified calls, constructors and types,
-legacy path remaps, and generated compiler-job profiles remain subsequent work.
+admit constants and ordinary functions with scalar Field/Bool/U32 parameters
+and scalar or Unit results. Qualified calls resolve direct public imports;
+private helpers retain their own module scope. All bodies are checked, including
+replaced declarations. Dependency structs, nominal signatures and intrinsics,
+qualified constructors/types, legacy path remaps and generated compiler-job
+profiles remain subsequent work.
 All reached sources share the existing4096-byte ceiling; import support does
 not imply compiler-scale memory or a complete self-build. The detailed contract
 is [native compiler jobs](self-hosting-jobs.md).
@@ -680,7 +684,7 @@ cycle, unknown expression name, immutable assignment or type/return error,
 6 for an unsupported construct/request and 7 for a known compiler work-capacity
 limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
-imports, declarations other than functions/structs/constants, and other attributes are rejected,
+import forms, declarations other than functions/structs/constants, and other attributes are rejected,
 including trailing items.
 Exhaustion of a VM or collection-validation allowance remains an execution
 failure outside RES1, as specified by the job contract.

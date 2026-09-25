@@ -53,23 +53,31 @@ def cases():
             {'dep': f'module dep {declaration}'}, 'sample', 'dep.X', 5)
     yield negative('type-mismatch', 'program sample use z.bridge const X:U32=bridge.X fn main()->Field{7}', base, 'sample', 'bridge.X', 5)
     for name, body in [('call', 'bridge.X()'), ('constructor', 'bridge.X{}')]:
-        yield negative(name, f'program sample use z.bridge fn main()->Field{{{body}}}', base, 'sample', 'bridge.X', 6)
+        yield negative(name, f'program sample use z.bridge fn main()->Field{{{body}}}', base, 'sample', 'bridge.X', 5 if name == 'call' else 6)
     yield negative('cycle', 'program sample use a fn main()->Field{7}', {'a': 'module a use z', 'z': 'module z use a'}, 'z', 'use a', 4)
     yield negative('self-cycle', 'program sample use sample fn main()->Field{7}', {}, 'sample', 'use sample', 4)
     yield negative('missing', 'program sample use a fn main()->Field{7}', {'a': 'module a use z'}, 'a', 'use z', 3)
     yield negative('wrong-owner', 'program sample use a fn main()->Field{7}', {'a': 'module wrong'}, 'a', 'wrong', 3)
     yield negative('wrong-kind', 'program sample use a fn main()->Field{7}', {'a': 'program a fn main()->Field{7}'}, 'a', 'program', 3)
     yield negative('dependency-utf8', 'program sample use a fn main()->Field{7}', {'a': b'module a\xff'}, 'a', b'\xff', 1)
-    for name, declaration, span in [('function', 'fn f()->Field{7}', 'fn'),
-            ('struct', 'struct S{x:Field}', 'struct'), ('attribute', '#[pure] fn f()->Field{7}', '#')]:
+    for name, declaration in [('function', 'fn f()->Field{7}'),
+            ('attribute', '#[pure] fn f()->Field{7}')]:
+        yield positive(name, 'program sample use a fn main()->Field{7}', {'a': f'module a {declaration}'}, 7)
+    for name, declaration, span in [('struct', 'struct S{x:Field}', 'struct')]:
         yield negative(name, 'program sample use a fn main()->Field{7}', {'a': f'module a {declaration}'}, 'a', span, 6, False)
 
 
-def main():
+def main(case_provider=cases):
     parser = argparse.ArgumentParser()
     parser.add_argument('--joy', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--case', action='append', help='run only the named acceptance case (repeatable)')
     args = parser.parse_args()
+    selected = list(case_provider())
+    if args.case:
+        requested = set(args.case)
+        assert requested <= {case['case'] for case in selected}, requested
+        selected = [case for case in selected if case['case'] in requested]
     repo = Path(__file__).resolve().parents[2]
     binary = args.joy.resolve()
     sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
@@ -78,6 +86,7 @@ def main():
     native = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(native)
     commands, observations = [], []
+    identities = {}
     host = ['--budget', '100000000', '--frames', '65536', '--time-ms', '60000', '--arena-nodes', '786432']
 
     def run(arguments, expected=0):
@@ -95,7 +104,7 @@ def main():
         compiler = root / 'compiler.dag'
         run(['build', repo / 'compiler/nox/main.tri', '--emit', 'artifact', '--artifact-profile', 'compiler-job', '-o', compiler])
         compiler_info = dict(sha256=sha(compiler), particle=compiler.read_bytes()[8:40].hex(), dag_entries=int.from_bytes(compiler.read_bytes()[40:44], 'little'))
-        for case in cases():
+        for case in selected:
             directory = root / case['case']
             directory.mkdir()
             sources = dict(sorted((k, v.encode() if isinstance(v, str) else v) for k, v in case['sources'].items()))
@@ -136,6 +145,9 @@ def main():
                 expected = directory / 'seed-value.dag'
                 run(['run-artifact', oracle, '--input', zero, '-o', expected, *host])
                 assert output.read_bytes() == expected.read_bytes(), case['case']
+                if 'identity' in case:
+                    previous = identities.setdefault(case['identity'], program.read_bytes())
+                    assert previous == program.read_bytes(), (case['case'], 'artifact identity drift')
                 observation.update(expected=case['value'], program_sha256=sha(program), runtime_execution=execution, complete_seed_output_equal=True)
             else:
                 assert result['status'] == 'compile_error' and len(result['diagnostics']) == 1, (case['case'], result)

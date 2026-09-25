@@ -113,6 +113,12 @@ mod qualified_name;
 #[path = "native_compiler/constant_imports.rs"]
 mod constant_imports;
 
+#[path = "native_compiler/function_import_bounds.rs"]
+mod function_import_bounds;
+
+#[path = "native_compiler/function_imports.rs"]
+mod function_imports;
+
 #[path = "native_compiler/constant_linking.rs"]
 mod constant_linking;
 

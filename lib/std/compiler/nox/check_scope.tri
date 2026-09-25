@@ -3,16 +3,25 @@ module std.compiler.nox.check_scope
 use std.nox.seq
 use std.compiler.nox.type_registry
 use std.compiler.nox.constants
+use std.compiler.nox.function_imports
+use std.compiler.nox.syntax
 
 // One immutable scope per checked function. Expressions share it while their
 // lexical bindings change, without rebuilding the cold module metadata.
 pub struct Scope {
     pub pure: Bool, pub types: type_registry.Scope,
-    pub functions: seq.Seq, pub params: seq.Seq, pub constants: constants.Scope
+    pub functions: seq.Seq, pub params: seq.Seq, pub constants: constants.Scope,
+    pub function_start: U32, pub function_end: U32, pub imported_functions: function_imports.View
 }
 
 #[pure]
 pub fn empty() -> Scope {
-    Scope { pure: false, types: type_registry.empty(), functions: seq.empty(),
-        params: seq.empty(), constants: constants.empty() }
+    local(false, type_registry.empty(), seq.empty(), seq.empty(), constants.empty())
+}
+
+// Whole-bank scope for the existing single-source and component entrypoints.
+#[pure]
+pub fn local(pure: Bool, types: type_registry.Scope, functions: seq.Seq, params: seq.Seq, constants: constants.Scope) -> Scope {
+    Scope { pure, types, functions, params, constants, function_start: syntax.ZERO,
+        function_end: seq.len(functions), imported_functions: function_imports.empty() }
 }

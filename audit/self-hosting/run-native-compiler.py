@@ -289,7 +289,7 @@ def main():
             ("scalar-comparison-type", source("if 1<2{7}else{9}"), 5),
             ("scalar-equality-type", source("if as_u32(7)==7{7}else{9}"), 5),
             ("scalar-unknown-spelling", source("as_fiele(as_u32(7))"), 5),
-            ("scalar-qualified-unbound", source("convert.as_u32(7)"), 6),
+            ("scalar-qualified-unbound", source("convert.as_u32(7)"), 5),
             ("scalar-qualified-name", source("let convert=7 convert.as_u32(7)"), 5),
         ])
         negatives.extend([
