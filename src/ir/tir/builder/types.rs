@@ -5,25 +5,32 @@ use std::collections::{BTreeMap, BTreeSet};
 
 impl TIRBuilder {
     pub fn with_module_types(mut self, modules: &[&File]) -> Self {
-        for module in modules {
-            let constants: BTreeMap<_, _> = module
-                .items
-                .iter()
-                .filter_map(|item| {
-                    if !self.is_item_cfg_active(&item.node) {
-                        return None;
-                    }
-                    if let Item::Const(def) = &item.node {
-                        if let Expr::Literal(Literal::Integer(value)) = def.value.node {
-                            return Some((def.name.node.clone(), value));
-                        }
-                    }
-                    None
-                })
-                .collect();
-            for (name, value) in &constants {
-                self.constants
-                    .insert(format!("{}.{}", module.name.node, name), *value);
+        // Resolve when build_file runs, after the builder's final cfg flags.
+        self.module_type_files = modules.iter().map(|file| (*file).clone()).collect();
+        self
+    }
+
+    pub(super) fn prepare_module_types(
+        &mut self,
+        entry: &str,
+    ) -> Result<(), Vec<crate::diagnostic::Diagnostic>> {
+        let files = std::mem::take(&mut self.module_type_files);
+        let resolved = crate::typecheck::constants::resolve_modules(
+            &files.iter().collect::<Vec<_>>(),
+            &self.cfg_flags,
+            &self.constant_bindings,
+        )?;
+        for (module, bindings) in files.iter().zip(&resolved) {
+            let constants = bindings.raw_values();
+            if module.name.node == entry {
+                // Layout owners' private names never enter the caller's scope.
+                self.constant_bindings.extend(
+                    bindings
+                        .visible
+                        .iter()
+                        .filter(|(name, _)| !bindings.locals.contains_key(*name))
+                        .map(|(name, binding)| (name.clone(), binding.clone())),
+                );
             }
             for item in &module.items {
                 if !self.is_item_cfg_active(&item.node) {
@@ -62,7 +69,12 @@ impl TIRBuilder {
                 }
             }
         }
-        self
+        if !files.iter().any(|file| file.name.node == entry) {
+            for bindings in &resolved {
+                bindings.import_into(&mut self.constant_bindings);
+            }
+        }
+        Ok(())
     }
 
     pub(crate) fn qualified_function(&self, name: &str) -> String {
@@ -134,7 +146,13 @@ impl TIRBuilder {
                 let mut parts = name.split('.');
                 let mut ty = match self.var_types.get(parts.next()?) {
                     Some(ty) => ty.clone(),
-                    None if self.constant_value(name).is_some() => return Some(Type::Field),
+                    None if self.constant_value(name).is_some() => {
+                        return match self.constant_bindings.get(name)?.ty {
+                            crate::types::Ty::Field => Some(Type::Field),
+                            crate::types::Ty::U32 => Some(Type::U32),
+                            _ => None,
+                        };
+                    }
                     None => return None,
                 };
                 for field in parts {
@@ -184,7 +202,7 @@ fn qualify(
         }
         Type::Array(inner, size) => {
             qualify(inner, module, constants, parameters);
-            qualify_size(size, module, constants, parameters);
+            qualify_size(size, constants, parameters);
         }
         Type::Tuple(parts) => {
             for part in parts {
@@ -197,17 +215,16 @@ fn qualify(
 
 fn qualify_size(
     size: &mut ArraySize,
-    module: &str,
     constants: &BTreeMap<String, u64>,
     parameters: &BTreeSet<String>,
 ) {
     match size {
         ArraySize::Param(name) if constants.contains_key(name) && !parameters.contains(name) => {
-            *name = format!("{module}.{name}");
+            *size = ArraySize::Literal(constants[name]);
         }
         ArraySize::Add(left, right) | ArraySize::Mul(left, right) => {
-            qualify_size(left, module, constants, parameters);
-            qualify_size(right, module, constants, parameters);
+            qualify_size(left, constants, parameters);
+            qualify_size(right, constants, parameters);
         }
         _ => {}
     }

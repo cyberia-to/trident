@@ -7,6 +7,7 @@ mod analysis;
 mod block;
 mod builtins;
 mod capabilities;
+pub(crate) mod constants;
 mod expr;
 mod file;
 mod flow;
@@ -79,6 +80,7 @@ pub type FnExport = (String, Vec<(String, Ty)>, Ty);
 /// Exported signatures from a type-checked module.
 #[derive(Clone, Debug)]
 pub struct ModuleExports {
+    pub(crate) resolved_constants: constants::Resolved,
     pub module_name: String,
     pub functions: Vec<FnExport>,
     /// Direct declared intrinsic ownership, separate from transitive requirements.
@@ -109,6 +111,7 @@ pub(crate) struct TypeChecker {
     /// Known constants (name -> value).
     pub(super) constants: BTreeMap<String, u64>,
     pub(super) constant_types: BTreeMap<String, Ty>,
+    pub(super) constant_bindings: BTreeMap<String, constants::Binding>,
     /// Known struct types (name or module.name -> StructTy).
     pub(super) structs: BTreeMap<String, StructTy>,
     pub(super) current_module: String,
@@ -161,6 +164,7 @@ impl TypeChecker {
             scopes: Vec::new(),
             constants: BTreeMap::new(),
             constant_types: BTreeMap::new(),
+            constant_bindings: BTreeMap::new(),
             structs: BTreeMap::new(),
             current_module: String::new(),
             events: BTreeMap::new(),
@@ -277,6 +281,9 @@ impl TypeChecker {
                     .insert(format!("{}.{}", short_prefix, name), definition.clone());
             }
         }
+        exports
+            .resolved_constants
+            .import_into(&mut self.constant_bindings);
         for (const_name, ty, value) in &exports.constants {
             let qualified = format!("{}.{}", exports.module_name, const_name);
             self.constant_types.insert(qualified.clone(), ty.clone());

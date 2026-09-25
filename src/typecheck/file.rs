@@ -10,26 +10,14 @@ impl TypeChecker {
             || file.name.node.starts_with("ext.")
             || file.name.node.contains(".ext.");
 
-        // Module constants are visible in signatures regardless of declaration order.
-        // Their initializer/type/range diagnostics are still checked below.
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Const(constant) = &item.node {
-                if let Expr::Literal(Literal::Integer(value)) = constant.value.node {
-                    let ty = match constant.ty.node {
-                        Type::Field => Some(Ty::Field),
-                        Type::U32 => Some(Ty::U32),
-                        _ => None,
-                    };
-                    if let Some(ty) = ty {
-                        self.constants.insert(constant.name.node.clone(), value);
-                        self.constant_types.insert(constant.name.node.clone(), ty);
-                    }
-                }
-            }
-        }
+        let resolved_constants =
+            constants::resolve(file, &self.constant_bindings, &self.cfg_flags)?;
+        self.constants = resolved_constants.raw_values();
+        self.constant_types = resolved_constants
+            .visible
+            .iter()
+            .map(|(name, binding)| (name.clone(), binding.ty.clone()))
+            .collect();
 
         // First pass: register all structs, function signatures, and constants
         for item in &file.items {
@@ -124,25 +112,7 @@ impl TypeChecker {
                         self.generic_fns.insert(func.name.node.clone(), gdef);
                     }
                 }
-                Item::Const(cdef) => {
-                    let ty = self.resolve_type(&cdef.ty.node);
-                    if ty.width().is_none() {
-                        self.error("Noun constants are not supported".into(), cdef.ty.span);
-                    }
-                    if let Expr::Literal(Literal::Integer(v)) = &cdef.value.node {
-                        if !matches!(ty, Ty::Field | Ty::U32) {
-                            self.error(
-                                "integer constant requires Field or U32 type".into(),
-                                cdef.ty.span,
-                            );
-                        }
-                        if ty == Ty::U32 && *v >= (1u64 << 32) {
-                            self.error("U32 constant is out of range".into(), cdef.value.span);
-                        }
-                        self.constant_types.insert(cdef.name.node.clone(), ty);
-                        self.constants.insert(cdef.name.node.clone(), *v);
-                    }
-                }
+                Item::Const(_) => {}
                 Item::Event(edef) => {
                     let mut names = BTreeSet::new();
                     for field in &edef.fields {
@@ -228,6 +198,9 @@ impl TypeChecker {
                     Self::collect_used_modules_block(&body.node, &mut used_prefixes);
                 }
             }
+            if let Item::Const(constant) = &item.node {
+                Self::collect_used_modules_expr(&constant.value.node, &mut used_prefixes);
+            }
         }
         for use_stmt in &file.uses {
             let module_path = use_stmt.node.as_dotted();
@@ -258,7 +231,12 @@ impl TypeChecker {
         // Collect exports (pub items only)
         let module_name = file.name.node.clone();
         let mut exported_fns = Vec::new();
-        let mut exported_consts = Vec::new();
+        let exported_consts = resolved_constants
+            .locals
+            .values()
+            .filter(|b| b.public)
+            .map(|b| (b.name.clone(), b.ty.clone(), b.raw))
+            .collect();
         let mut exported_structs = Vec::new();
 
         for item in &file.items {
@@ -283,12 +261,6 @@ impl TypeChecker {
                         .unwrap_or(Ty::Unit);
                     exported_fns.push((func.name.node.clone(), params, return_ty));
                 }
-                Item::Const(cdef) if cdef.is_pub => {
-                    let ty = self.resolve_type(&cdef.ty.node);
-                    if let Expr::Literal(Literal::Integer(v)) = &cdef.value.node {
-                        exported_consts.push((cdef.name.node.clone(), ty, *v));
-                    }
-                }
                 Item::Struct(sdef) if sdef.is_pub => {
                     if let Some(sty) = self.structs.get(&sdef.name.node) {
                         exported_structs.push(sty.clone());
@@ -306,6 +278,7 @@ impl TypeChecker {
             Err(self.diagnostics)
         } else {
             Ok(ModuleExports {
+                resolved_constants,
                 module_name,
                 generic_functions: file
                     .items

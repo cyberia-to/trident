@@ -269,7 +269,7 @@ impl TypeChecker {
         }
     }
 
-    fn collect_used_modules_expr(expr: &Expr, used: &mut BTreeSet<String>) {
+    pub(super) fn collect_used_modules_expr(expr: &Expr, used: &mut BTreeSet<String>) {
         match expr {
             Expr::Call { path, args, .. } => {
                 let dotted = path.node.as_dotted();
