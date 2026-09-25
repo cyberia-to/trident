@@ -62,7 +62,12 @@ pub fn cmd_check(args: CheckArgs) {
     });
     match trident::check_project_with_options(&entry, &options) {
         Ok(()) => eprintln!("OK: {}", input.display()),
-        Err(_) => process::exit(1),
+        Err(errors) => {
+            for error in errors {
+                eprintln!("error: {}", error.message);
+            }
+            process::exit(1);
+        }
     }
 
     if costs {

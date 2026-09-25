@@ -137,6 +137,10 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [cross-backend and installed evidence](self-hosting/final-callable-exports.md).
 - [x] SH3 seed explicit imports, canonical owners and opaque nominal layouts;
   [cross-backend and installed evidence](self-hosting/explicit-imports.md).
+- [x] SH3 guest package handles, bounded lookup and cached validated sources;
+  [component and complete installed corpus](self-hosting/guest-package.md).
+- [x] SH3 seed complete qualified paths and visible check diagnostics;
+  [cross-warrior rejection and execution](self-hosting/strict-module-paths.md).
 - [ ] SH3 true guest imports and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
@@ -400,3 +404,16 @@ binaries; entire C1 matches the array delivery, whose 851-command guest corpus
 was not rerun for this seed-only change. All 79 formal audits remain UNKNOWN.
 Next: guest constants, attributes/asserts, then imports. Full SH3/SH4, generated
 profiles, C2/C3, six platforms and native proofs stay open. Noun stays 128K.
+
+2026-09-25 continuation: retained guest packages accepted at `473d20c`.
+[Pinned evidence](self-hosting/guest-package-validation.json) records
+1120 / 122 / 380 passing owner tests, 133 unchanged baseline rows and 43 manual
+programs, 1192 installed commands / 401 observations and all 189 previous
+positive ART1 identities unchanged. The original 61/62-bit record-write vectors
+now compile and execute to 3199 within the same 786432-node arena; 63–65 remain
+explicit allocation failures. The corpus selects the supported 60000ms host
+deadline, with Joy's 30000ms default and deterministic quotas unchanged.
+All 92 formal audits remain UNKNOWN. Package index 4096 is tested separately
+from compact IDs and source capacity. Guest graph/linking, whole compiler scale,
+generated compiler profiles, C2/C3, six platforms and native Zheng proofs remain
+open. Noun stays 128K.
