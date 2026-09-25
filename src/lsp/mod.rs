@@ -9,6 +9,7 @@ mod actions;
 mod builtins;
 mod document;
 mod folding;
+mod imports;
 mod incremental;
 mod indent;
 mod intelligence;

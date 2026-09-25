@@ -78,23 +78,25 @@ fn raw_callable_aliases_preserve_distinct_owners_and_earlier_scopes() {
         let dir = tempfile::tempdir().unwrap();
         let modules = [
             (
-                "early.tri",
-                "module std.same\npub const FLAG:Field=0\npub fn a()->Field {7}\npub fn stop(c:Bool)->Field {11}",
+                "a/same.tri",
+                "module a.same\npub const FLAG:Field=0\npub fn a()->Field {7}\npub fn stop(c:Bool)->Field {11}",
             ),
             (
                 "helper.tri",
-                "module helper\nuse early\npub fn value()->Field {same.stop(false)}",
+                "module helper\nuse a.same\npub fn value()->Field {same.stop(false)}",
             ),
             (
-                "late.tri",
-                "module os.same\n#[intrinsic(assert)] pub fn stop(c:Bool)\nconst FLAG:Field=1\npub fn b()->Field {13}",
+                "ext/same.tri",
+                "module ext.same\n#[intrinsic(assert)] pub fn stop(c:Bool)\nconst FLAG:Field=1\npub fn b()->Field {13}",
             ),
         ];
         for (name, source) in modules {
-            std::fs::write(dir.path().join(name), source).unwrap();
+            let path = dir.path().join(name);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, source).unwrap();
         }
         let path = dir.path().join("entry.tri");
-        std::fs::write(&path,"program aliases\nuse helper\nuse late\nfn main(input:Noun)->Noun {if same.FLAG {nox_noun_atom(same.a()+helper.value()+same.b())} else {assert(false)}}").unwrap();
+        std::fs::write(&path,"program aliases\nuse a.same\nuse helper\nuse ext.same\nfn main(input:Noun)->Noun {if same.FLAG {nox_noun_atom(same.a()+helper.value()+same.b())} else {assert(false)}}").unwrap();
         let artifact = trident::compile_raw_artifact_project(
             &path,
             &trident::CompileOptions::default(),

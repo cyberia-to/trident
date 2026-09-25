@@ -10,8 +10,8 @@ impl Compiler<'_> {
                 self.constant(e)?;
                 match self
                     .owner
-                    .constant_types
-                    .get(&self.owner.constant_symbol(n))?
+                    .constant_symbol(n)
+                    .and_then(|name| self.owner.constant_types.get(&name))?
                 {
                     crate::types::Ty::Field => Some(Type::Field),
                     crate::types::Ty::U32 => Some(Type::U32),
@@ -51,7 +51,7 @@ impl Compiler<'_> {
             },
             Expr::Call { path, .. } => {
                 let source = path.node.as_dotted();
-                if let Some(f) = self.owner.fns.get(&self.owner.function_symbol(&source)) {
+                if let Some(f) = self.owner.function(&source) {
                     return f.return_ty.as_ref().map(|t| t.node.clone());
                 }
                 if let Some(ty) = noun::return_type(&source) {
@@ -113,7 +113,7 @@ impl Compiler<'_> {
                 self.read_index(base, i, &ty)
             }
             Expr::StructInit { path, fields } => {
-                let name = self.owner.symbol(&path.node.as_dotted());
+                let name = self.owner.type_symbol(&path.node.as_dotted());
                 let layout = self
                     .owner
                     .structs

@@ -309,3 +309,18 @@ fn test_find_call_context_space_before_paren() {
     let ctx = find_call_context(src, Position::new(0, 8));
     assert_eq!(ctx, Some(("foo".to_string(), 1)));
 }
+
+#[test]
+fn complete_dotted_module_spellings_are_preserved() {
+    let source = "a.common.call(7)";
+    for column in [0, 3, 10] {
+        assert_eq!(
+            word_at_position(source, Position::new(0, column)),
+            "a.common.call"
+        );
+    }
+    assert_eq!(
+        text_before_dot("a.common.", Position::new(0, 9)),
+        Some("a.common".into())
+    );
+}

@@ -348,7 +348,7 @@ pub struct NoxCompiler {
     /// The module whose body is currently being lowered. Symbols are stored
     /// with their full module name; entering a callee changes this context.
     current_module: String,
-    module_aliases: BTreeMap<String, BTreeMap<String, String>>,
+    type_aliases: BTreeMap<String, BTreeMap<String, String>>,
     function_aliases: BTreeMap<String, BTreeMap<String, String>>,
     constant_aliases: BTreeMap<String, BTreeMap<String, String>>,
     /// Resolved constants: name → value.
@@ -374,7 +374,7 @@ impl NoxCompiler {
         Self {
             scope: Scope::new(),
             current_module: String::new(),
-            module_aliases: BTreeMap::new(),
+            type_aliases: BTreeMap::new(),
             function_aliases: BTreeMap::new(),
             constant_aliases: BTreeMap::new(),
             constants: BTreeMap::new(),
@@ -894,7 +894,7 @@ impl NoxCompiler {
                 {
                     None
                 }
-                None => self.constants.get(&self.constant_symbol(name)).copied(),
+                None => self.constant_value(name),
             },
             _ => None,
         }
@@ -941,8 +941,7 @@ impl NoxCompiler {
             },
             Expr::Call { path, .. } => {
                 let name = path.node.as_dotted();
-                self.fns
-                    .get(&self.function_symbol(&name))
+                self.function(&name)
                     .and_then(|f| f.return_ty.as_ref())
                     .map(|t| t.node.clone())
                     .or_else(|| noun::return_type(&name))
@@ -1150,7 +1149,7 @@ impl NoxCompiler {
                 let source_name = path.node.as_dotted();
                 // Lexically resolved user functions shadow unqualified builtin
                 // names, just as they do during type checking.
-                if let Some(function) = self.fns.get(&self.function_symbol(&source_name)).cloned() {
+                if let Some(function) = self.function(&source_name).cloned() {
                     if function.intrinsic.is_none() && function.body.is_some() {
                         return self.inline_call(&function, args, generic_args);
                     }
@@ -1159,8 +1158,7 @@ impl NoxCompiler {
                 // lowering as a direct call. Their source module path is an
                 // API name, not a machine instruction or an inlinable body.
                 let name = self
-                    .fns
-                    .get(&self.function_symbol(&source_name))
+                    .function(&source_name)
                     .and_then(|f| f.intrinsic.as_ref())
                     .map(|i| {
                         i.node
@@ -1350,7 +1348,7 @@ impl NoxCompiler {
                         name
                     )),
                     _ => {
-                        if let Some(func) = self.fns.get(&self.function_symbol(&name)).cloned() {
+                        if let Some(func) = self.function(&name).cloned() {
                             self.inline_call(&func, args, generic_args)
                         } else {
                             Err(format!(
@@ -1395,7 +1393,7 @@ impl NoxCompiler {
                 elem_access(base_f, k)
             }
             Expr::StructInit { path, fields } => {
-                let sname = self.symbol(&path.node.as_dotted());
+                let sname = self.type_symbol(&path.node.as_dotted());
                 let layout = self
                     .structs
                     .get(&sname)

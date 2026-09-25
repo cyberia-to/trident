@@ -51,12 +51,12 @@ fn imported_constant_aliases_keep_owners_and_private_generic_dimensions() {
     support::worker(|| {
         let dir = tempfile::tempdir().unwrap();
         for (name,source) in [
-            ("early.tri","module std.same\npub const VALUE:Field=7\npub const SIZE:U32=2"),
-            ("helper.tri","module helper\nuse early\npub const VALUE:Field=same.VALUE\nconst K:U32=same.SIZE\npub fn f<N>(a:[Field;N+K])->Field{a[2]+VALUE}"),
-            ("late.tri","module os.same\npub const VALUE:Field=13\nconst SIZE:U32=99"),
-        ] {std::fs::write(dir.path().join(name),source).unwrap();}
+            ("a/same.tri","module a.same\npub const VALUE:Field=7\npub const SIZE:U32=2"),
+            ("helper.tri","module helper\nuse a.same\npub const VALUE:Field=same.VALUE\nconst K:U32=same.SIZE\npub fn f<N>(a:[Field;N+K])->Field{a[2]+VALUE}"),
+            ("b/same.tri","module b.same\npub const VALUE:Field=13\nconst SIZE:U32=99"),
+        ] {let path=dir.path().join(name); std::fs::create_dir_all(path.parent().unwrap()).unwrap(); std::fs::write(path,source).unwrap();}
         let path = dir.path().join("entry.tri");
-        std::fs::write(&path,"program constants\nuse helper\nuse late\nconst K:U32=99\nconst V:Field=helper.VALUE\nfn main(input:Noun)->Noun{nox_noun_atom(helper.f<1>([3,5,11])+V+same.VALUE)}").unwrap();
+        std::fs::write(&path,"program constants\nuse helper\nuse b.same\nconst K:U32=99\nconst V:Field=helper.VALUE\nfn main(input:Noun)->Noun{nox_noun_atom(helper.f<1>([3,5,11])+V+same.VALUE)}").unwrap();
         let artifact = trident::compile_raw_artifact_project(
             &path,
             &CompileOptions::default(),
@@ -64,7 +64,7 @@ fn imported_constant_aliases_keep_owners_and_private_generic_dimensions() {
         )
         .unwrap();
         assert_eq!(run(&artifact.bytes), 38);
-        std::fs::write(&path,"program constants\nuse helper\nuse late\nconst V:Field=helper.VALUE\nfn main()->Field{helper.f<1>([3,5,11])+V+same.VALUE}").unwrap();
+        std::fs::write(&path,"program constants\nuse helper\nuse b.same\nconst V:Field=helper.VALUE\nfn main()->Field{helper.f<1>([3,5,11])+V+same.VALUE}").unwrap();
         let options = CompileOptions::default()
             .with_package(target_support::triton_package())
             .unwrap();

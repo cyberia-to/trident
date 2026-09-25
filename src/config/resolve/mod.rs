@@ -16,14 +16,19 @@ pub(crate) struct ModuleInfo {
     pub(crate) name: String,
     /// Filesystem path to the .tri file.
     pub(crate) file_path: PathBuf,
-    /// Source code.
+    /// Source code and its parser-owned declaration/import metadata.
     pub(crate) source: String,
+    pub(crate) file: crate::ast::File,
     /// Modules this module depends on (from `use` statements).
     pub(crate) dependencies: Vec<String>,
 }
 
 /// Resolve all modules reachable from an entry point.
 /// Returns modules in topological order (dependencies first).
+mod names;
+pub(crate) mod scope;
+mod visibility;
+pub(crate) use names::canonical_module_name;
 mod resolver;
 use resolver::*;
 

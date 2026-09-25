@@ -52,7 +52,7 @@ impl TIRBuilder {
             Type::Array(t, _) => self.contains_noun(t, seen),
             Type::Tuple(ts) => ts.iter().any(|t| self.contains_noun(t, seen)),
             Type::Named(path) => {
-                let name = self.qualified_name(&path.as_dotted());
+                let name = path.as_dotted();
                 if !seen.insert(name.clone()) {
                     return false;
                 }

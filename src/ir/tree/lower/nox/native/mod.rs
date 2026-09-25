@@ -123,11 +123,7 @@ impl Compiler<'_> {
                 {
                     None
                 }
-                None => self
-                    .owner
-                    .constants
-                    .get(&self.owner.constant_symbol(n))
-                    .map(|n| (*n, *n)),
+                None => self.owner.constant_value(n).map(|n| (n, n)),
             },
             _ => None,
         }

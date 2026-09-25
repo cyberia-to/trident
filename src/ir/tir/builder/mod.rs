@@ -28,6 +28,7 @@ mod index;
 mod layout;
 mod match_;
 mod native_guard;
+mod nominal;
 mod stmt;
 mod types;
 #[cfg(test)]
@@ -193,7 +194,8 @@ impl TIRBuilder {
         mut self,
         file: &File,
     ) -> Result<Vec<TIROp>, Vec<crate::diagnostic::Diagnostic>> {
-        self.prepare_module_types(&file.name.node)?;
+        let canonical_file = self.prepare_module_types(file)?;
+        let file = &canonical_file;
         let functions = file.final_functions(&self.cfg_flags);
         let resolved =
             crate::typecheck::constants::resolve(file, &self.constant_bindings, &self.cfg_flags)?;
@@ -349,6 +351,38 @@ impl TIRBuilder {
             }
         }
 
+        // Internal lowering errors must not escape as executable-looking IR.
+        let mut pending = vec![self.ops.as_slice()];
+        let mut errors = Vec::new();
+        while let Some(ops) = pending.pop() {
+            for op in ops {
+                match op {
+                    TIROp::Comment(text) => {
+                        if let Some(message) = text.strip_prefix("ERROR: ") {
+                            errors.push(crate::diagnostic::Diagnostic::error(
+                                message.into(),
+                                file.name.span,
+                            ));
+                        }
+                    }
+                    TIROp::IfElse {
+                        then_body,
+                        else_body,
+                    } => {
+                        pending.push(else_body);
+                        pending.push(then_body);
+                    }
+                    TIROp::IfOnly { then_body }
+                    | TIROp::Loop {
+                        body: then_body, ..
+                    } => pending.push(then_body),
+                    _ => {}
+                }
+            }
+        }
+        if !errors.is_empty() {
+            return Err(errors);
+        }
         Ok(std::mem::take(&mut self.ops))
     }
 

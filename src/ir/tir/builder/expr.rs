@@ -113,7 +113,7 @@ impl TIRBuilder {
             }
 
             Expr::StructInit { path, fields } => {
-                let name = self.qualified_name(&path.node.as_dotted());
+                let name = path.node.as_dotted();
                 let Some(definition) = self.struct_types.get(&name).cloned() else {
                     self.ops
                         .push(TIROp::Comment(format!("ERROR: unresolved struct '{name}'")));

@@ -142,7 +142,7 @@ impl NoxCompiler {
     pub(super) fn entry_size(&self, size: &ast::ArraySize) -> Option<u64> {
         match size {
             ast::ArraySize::Literal(n) => Some(*n),
-            ast::ArraySize::Param(name) => self.constants.get(&self.constant_symbol(name)).copied(),
+            ast::ArraySize::Param(name) => self.constant_value(name),
             ast::ArraySize::Add(a, b) => self.entry_size(a)?.checked_add(self.entry_size(b)?),
             ast::ArraySize::Mul(a, b) => self.entry_size(a)?.checked_mul(self.entry_size(b)?),
         }

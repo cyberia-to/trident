@@ -10,46 +10,37 @@ use crate::span::Spanned;
 use super::Parser;
 
 impl Parser {
-    pub(super) fn parse_program(&mut self) -> File {
-        self.expect(&Lexeme::Program);
-        let name = self.expect_ident();
-
-        let uses = self.parse_uses();
-        let declarations = self.parse_declarations();
-        let items = self.parse_items();
-
-        File {
-            kind: FileKind::Program,
-            name,
-            uses,
-            declarations,
-            items,
+    pub(super) fn file_header(&mut self) -> File {
+        let kind = if self.eat(&Lexeme::Program) {
+            FileKind::Program
+        } else {
+            self.expect(&Lexeme::Module);
+            FileKind::Module
+        };
+        let mut name = self.expect_ident();
+        if kind == FileKind::Module {
+            while self.eat(&Lexeme::Dot) {
+                let part = self.expect_ident();
+                name.node.push('.');
+                name.node.push_str(&part.node);
+                name.span = name.span.merge(part.span);
+            }
         }
-    }
-
-    pub(super) fn parse_module(&mut self) -> File {
-        self.expect(&Lexeme::Module);
-        let name = self.expect_ident();
-
-        // Module name can be dotted: `module std.hash`
-        let mut name_str = name.node.clone();
-        while self.eat(&Lexeme::Dot) {
-            let part = self.expect_ident();
-            name_str.push('.');
-            name_str.push_str(&part.node);
-        }
-        let name = Spanned::new(name_str, name.span);
-
         let uses = self.parse_uses();
-        let items = self.parse_items();
-
         File {
-            kind: FileKind::Module,
+            kind,
             name,
             uses,
             declarations: Vec::new(),
-            items,
+            items: Vec::new(),
         }
+    }
+
+    pub(super) fn file_body(&mut self, file: &mut File) {
+        if file.kind == FileKind::Program {
+            file.declarations = self.parse_declarations();
+        }
+        file.items = self.parse_items();
     }
 
     fn parse_declarations(&mut self) -> Vec<Declaration> {

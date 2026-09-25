@@ -11,6 +11,7 @@ pub(crate) mod constants;
 mod expr;
 mod file;
 mod flow;
+mod imports;
 mod noun;
 mod privacy;
 mod resolve;
@@ -208,96 +209,6 @@ impl TypeChecker {
             Item::Const(c) => self.is_cfg_active(&c.cfg),
             Item::Struct(s) => self.is_cfg_active(&s.cfg),
             Item::Event(e) => self.is_cfg_active(&e.cfg),
-        }
-    }
-
-    /// Import exported signatures from another module.
-    /// Makes them available as `module_name.fn_name`.
-    /// For dotted modules like `std.hash`, also registers under
-    /// the short alias `hash.fn_name` so `hash.tip5()` works.
-    pub(crate) fn import_module(&mut self, exports: &ModuleExports) {
-        // Short alias: last segment of dotted module name
-        let short_prefix = exports
-            .module_name
-            .rsplit('.')
-            .next()
-            .unwrap_or(&exports.module_name);
-        let has_short = short_prefix != exports.module_name;
-
-        for (fn_name, params, return_ty) in &exports.functions {
-            let qualified = format!("{}.{}", exports.module_name, fn_name);
-            let requirements = exports
-                .function_requirements
-                .get(fn_name)
-                .cloned()
-                .unwrap_or_default();
-            self.imported_requirements
-                .insert(qualified.clone(), requirements.clone());
-            if has_short {
-                self.imported_requirements
-                    .insert(format!("{}.{}", short_prefix, fn_name), requirements);
-            }
-            let sig = FnSig {
-                intrinsic: exports.direct_intrinsics.get(fn_name).cloned(),
-                params: params.clone(),
-                return_ty: return_ty.clone(),
-            };
-            self.generic_fns.remove(&qualified);
-            self.functions.insert(qualified, sig.clone());
-            if has_short {
-                let short = format!("{}.{}", short_prefix, fn_name);
-                self.generic_fns.remove(&short);
-                self.functions.insert(short, sig);
-            }
-        }
-        for (name, definition) in &exports.generic_functions {
-            let requirements = exports
-                .function_requirements
-                .get(name)
-                .cloned()
-                .unwrap_or_default();
-            self.imported_requirements.insert(
-                format!("{}.{}", exports.module_name, name),
-                requirements.clone(),
-            );
-            if has_short {
-                self.imported_requirements
-                    .insert(format!("{}.{}", short_prefix, name), requirements);
-            }
-            let mut definition = definition.clone();
-            definition.canonical_name = Some(format!("{}.{}", exports.module_name, name));
-            self.functions
-                .remove(&format!("{}.{}", exports.module_name, name));
-            self.generic_fns.insert(
-                format!("{}.{}", exports.module_name, name),
-                definition.clone(),
-            );
-            if has_short {
-                self.functions.remove(&format!("{}.{}", short_prefix, name));
-                self.generic_fns
-                    .insert(format!("{}.{}", short_prefix, name), definition.clone());
-            }
-        }
-        exports
-            .resolved_constants
-            .import_into(&mut self.constant_bindings);
-        for (const_name, ty, value) in &exports.constants {
-            let qualified = format!("{}.{}", exports.module_name, const_name);
-            self.constant_types.insert(qualified.clone(), ty.clone());
-            self.constants.insert(qualified, *value);
-            if has_short {
-                let short = format!("{}.{}", short_prefix, const_name);
-                self.constant_types.insert(short.clone(), ty.clone());
-                self.constants.insert(short, *value);
-            }
-        }
-        for sty in &exports.structs {
-            let qualified = format!("{}.{}", exports.module_name, sty.name);
-            self.structs.insert(qualified, sty.clone());
-            if has_short {
-                let short = format!("{}.{}", short_prefix, sty.name);
-                self.structs.insert(short, sty.clone());
-            }
         }
     }
 

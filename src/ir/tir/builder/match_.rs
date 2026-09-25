@@ -64,7 +64,7 @@ impl TIRBuilder {
                         FieldPattern::Binding(binding) => {
                             let ty = self
                                 .struct_types
-                                .get(&self.qualified_name(&struct_name.node))
+                                .get(&struct_name.node.clone())
                                 .and_then(|def| {
                                     def.fields
                                         .iter()

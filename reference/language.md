@@ -45,11 +45,31 @@ Rules:
 - No re-exports — if A uses B, C cannot access B through A
 - No circular dependencies — the dependency graph must be a DAG
 
+Each file sees the public bindings of its direct `use` declarations, bound in
+source order. Loading a dependency or sibling confers no additional names.
+A later direct import replaces an earlier binding with the same complete or
+short symbol name; other symbols retain their owners. Opaque values returned
+through a directly imported API retain their defining nominal type and layout.
+
+Module discovery uses the language parser: tabs, comments and multiple header
+clauses on one line have the same meaning as in compilation. A dependency's
+requested name must match its declared module owner after the documented legacy
+namespace remap. Legacy and canonical spellings load one owner once. An entry
+file's basename may differ from its declaration. Arbitrary file-to-owner
+renaming is rejected. Supplied AST module collections follow the same owner,
+kind and direct-import checks. Canonical layout metadata retained for opaque
+values does not grant source-level access to the defining module.
+
 ### Visibility
 
 Two levels only:
 - `pub` — visible to any module that imports this one
 - default — private to this module
+
+For a repeated struct name, the final active declaration controls whether that
+name is exported. A final private struct withdraws an earlier public export;
+an inactive declaration does not change visibility. Active declarations still
+undergo checking in source order.
 
 No `pub(crate)`, no `friend`, no `internal`.
 
