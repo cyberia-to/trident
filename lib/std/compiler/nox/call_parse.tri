@@ -11,11 +11,15 @@ use std.compiler.nox.signatures
 use std.compiler.nox.call_frames
 use std.compiler.nox.expression_state
 use std.compiler.nox.builtins
+use std.compiler.nox.purity
 
 #[pure]
 pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state.State) -> expression_state.State {
     let mut s = input
-    let callee = signatures.lookup(source, s.token, s.context.functions)
+    if s.context.scope.pure {
+        if purity.is_io(source, s.token) { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    }
+    let callee = signatures.lookup(source, s.token, s.context.scope.functions)
     let mut builtin = builtins.NONE
     if callee == signatures.NONE {
         builtin = builtins.lookup(source, s.token)
@@ -41,7 +45,7 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
     let mut returns = builtins.returns(frame.builtin)
     let mut params = syntax.ZERO
     if frame.builtin == builtins.NONE {
-        let function = signatures.read(seq.get(s.context.functions, frame.callee))
+        let function = signatures.read(seq.get(s.context.scope.functions, frame.callee))
         count = function.count
         returns = function.returns
         params = function.params
@@ -53,7 +57,7 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
         let argument = seq.get(s.nodes, value)
         let mut ty = builtins.parameter(frame.builtin)
         if frame.builtin == builtins.NONE {
-            let parameter = seq.get(s.context.params, as_u32(as_field(params) + as_field(frame.count)))
+            let parameter = seq.get(s.context.scope.params, as_u32(as_field(params) + as_field(frame.count)))
             ty = noun.tail(noun.tail(parameter))
         }
         if (noun.eq(ast.ty(argument), ty)) == false { s.error = ast.issue(5, argument) return s }

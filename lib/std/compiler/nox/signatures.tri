@@ -6,7 +6,6 @@ use std.nox.seq
 use std.nox.bytes
 use std.compiler.nox.syntax
 use std.compiler.nox.symbols
-use std.compiler.nox.types
 
 pub const NONE: U32 = 4096
 pub struct Function {
@@ -45,8 +44,9 @@ fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, input: Sea
     for turn in 0..8 {
         if s.remaining == syntax.ZERO { return s }
         s.remaining = syntax.dec(s.remaining)
-        let candidate = read(seq.get(functions, s.remaining))
-        if symbols.same(source, name, symbols.binding(candidate.name, false, noun.atom(types.FIELD))) {
+        // Packed signatures already begin with the full name span. Name lookup
+        // needs no return/body decoding or temporary binding reconstruction.
+        if symbols.same(source, name, seq.get(functions, s.remaining)) {
             s.found = s.remaining
             return s
         }

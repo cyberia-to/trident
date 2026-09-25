@@ -176,7 +176,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
                 if binding.exists {
                     node = ast.typed(ast.LOCAL, as_field(binding.slot), 0, binding.ty, s.token.start, s.token.end)
                 } else {
-                    let value = constants.lookup(source, s.token, s.context.constants)
+                    let value = constants.lookup(source, s.token, s.context.scope.constants)
                     if value.exists == false { s.error = syntax.error(5, s.token.start, s.token.end) return s }
                     node = ast.typed(ast.CONSTANT, value.value, 0, value.ty, s.token.start, s.token.end)
                 }

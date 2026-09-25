@@ -14,6 +14,7 @@ import native_record_write_cases
 import native_array_cases
 import native_constant_cases
 import native_assertion_cases
+import native_attribute_cases
 
 P = 18446744069414584321
 
@@ -339,6 +340,7 @@ def main():
         native_array_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
         native_constant_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
         native_assertion_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
+        native_attribute_cases.check(root, repo, run, package, execute, decode, record, observations, commands, zero, prior_program)
 
         local_bytes = None
         for cap in [7, 8, 16]:

@@ -2,6 +2,7 @@ module std.compiler.nox.headers
 
 use std.compiler.nox.const_parse
 use std.compiler.nox.constants
+use std.compiler.nox.attributes
 use vm.core.convert
 use vm.nox.noun
 use std.nox.bytes
@@ -19,6 +20,7 @@ use std.compiler.nox.type_parse
 #[pure]
 fn expected(token: syntax.Token) -> syntax.Error {
     if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    if token.kind == as_u32(46) { return syntax.error(6, token.start, token.end) }
     if token.kind == as_u32(13) { return syntax.error(6, token.start, token.end) }
     syntax.error(2, token.start, token.end)
 }
@@ -83,6 +85,10 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
                 // Function count is checked before its header/body scan begins.
                 if s.current.name.value == 1835100526 { s.entry = seq.len(s.functions) }
                 s.current.close = s.token.end
+                if s.current_pure {
+                    s.pure_functions = seq.push(s.pure_functions, noun.atom(as_field(seq.len(s.functions))), cap)
+                    s.current_pure = false
+                }
                 s.functions = seq.push(s.functions, signatures.pack(s.current), cap)
                 s.phase = 0
             }
@@ -91,8 +97,23 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
         return s
     }
     if s.token.kind == syntax.ZERO { s.done = true return s }
+    let annotated = s.token.kind == attributes.HASH
+    if annotated {
+        let parsed = attributes.parse(source, s.token)
+        s.token = parsed.token
+        s.error = parsed.error
+        if (s.error.code == syntax.ZERO) == false { return s }
+        if parsed.pure { s.current_pure = true }
+    }
     let mut public = false
     if s.token.kind == as_u32(40) { public = true s.token = lexer.next(source, s.token.end) }
+    if annotated {
+        if (s.token.kind == as_u32(11)) == false {
+            if s.token.kind == as_u32(14) { s.error = syntax.error(1, s.token.start, s.token.end) }
+            else { s.error = syntax.error(2, s.token.start, s.token.end) }
+            return s
+        }
+    }
     if s.token.kind == as_u32(45) {
         s.constants.owner = s.types.owner
         let parsed = const_parse.parse(source, s.token, s.constants, public, cap)

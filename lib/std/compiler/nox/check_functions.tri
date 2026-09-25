@@ -1,5 +1,7 @@
 module std.compiler.nox.check_functions
 
+use vm.nox.noun
+use vm.core.convert
 use std.compiler.nox.constants
 use std.nox.bytes
 use std.nox.seq
@@ -10,15 +12,22 @@ use std.compiler.nox.body
 use std.compiler.nox.body_store
 use std.compiler.nox.coverage
 
-pub struct Checked { pub bodies: seq.Seq, pub next: U32, pub error: syntax.Error }
+pub struct Checked { pub bodies: seq.Seq, pub next: U32, pub error: syntax.Error, pub pure_next: U32 }
 
 #[pure]
-fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, input: Checked, cap: U32) -> Checked {
+fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, input: Checked, cap: U32) -> Checked {
     let mut s = input
     for turn in 0..8 {
         if s.next == seq.len(functions) { return s }
         let signature = signatures.read(seq.get(functions, s.next))
-        let parsed = body.function(source, signature, functions, params, scope, consts, cap)
+        let mut pure = false
+        if s.pure_next < seq.len(pure_functions) {
+            if noun.as_field(seq.get(pure_functions, s.pure_next)) == as_field(s.next) {
+                pure = true
+                s.pure_next = syntax.inc(s.pure_next)
+            }
+        }
+        let parsed = body.function(source, signature, functions, params, scope, consts, pure, cap)
         s.error = parsed.error
         if (s.error.code == syntax.ZERO) == false { return s }
         let checked = coverage.check(parsed)
@@ -35,11 +44,11 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, scope: type_r
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
-pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32) -> Checked {
+pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32) -> Checked {
     let zero = syntax.ZERO
-    let mut s = Checked { bodies: seq.empty(), next: zero, error: syntax.error(0, zero, zero) }
+    let mut s = Checked { bodies: seq.empty(), next: zero, error: syntax.error(0, zero, zero), pure_next: zero }
     for turn in 0..512 {
-        s = chunk(source, functions, params, scope, consts, s, cap)
+        s = chunk(source, functions, params, pure_functions, scope, consts, s, cap)
         if syntax.either(s.next == seq.len(functions), (s.error.code == zero) == false) { return s }
     }
     s.error = syntax.error(7, zero, zero)

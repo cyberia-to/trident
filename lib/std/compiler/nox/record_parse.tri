@@ -58,7 +58,7 @@ fn member(source: bytes.Bytes, input: expression_state.State, input_frame: recor
 #[pure]
 pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state.State) -> expression_state.State {
     let mut s = input
-    let found = type_registry.lookup(s.context.types, type_registry.name(source, s.token))
+    let found = type_registry.lookup(s.context.scope.types, type_registry.name(source, s.token))
     if found.exists == false { s.error = ast.failed(s.token, 5) return s }
     if s.ops == s.capacity { s.error = ast.failed(opening, 7) return s }
     let fields = nominal.fields(found.ty)
@@ -69,7 +69,7 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
         if index < arity {
             let position = as_u32(field.sub(as_field(arity), as_field(index) + 1))
             let field = seq.get(fields, position)
-            if syntax.both(nominal.field_public(field) == false, noun.eq(nominal.owner(found.ty), bytes.to_noun(s.context.types.owner)) == false) {
+            if syntax.both(nominal.field_public(field) == false, noun.eq(nominal.owner(found.ty), bytes.to_noun(s.context.scope.types.owner)) == false) {
                 s.error = ast.failed(s.token, 5) return s
             }
             members = noun.pair(field, members)
@@ -131,7 +131,7 @@ pub fn project(source: bytes.Bytes, input: expression_state.State) -> expression
     if (name.kind == as_u32(1)) == false { s.error = ast.failed(name, 2) return s }
     let base = as_u32(noun.as_field(seq.get(s.values, syntax.dec(s.vals))))
     let value = seq.get(s.nodes, base)
-    let selected = nominal.lookup(ast.ty(value), s.context.types.owner, type_registry.name(source, name))
+    let selected = nominal.lookup(ast.ty(value), s.context.scope.types.owner, type_registry.name(source, name))
     if syntax.either(selected.exists == false, selected.visible == false) { s.error = ast.failed(name, 5) return s }
     if seq.len(s.nodes) == s.node_cap { s.error = ast.failed(name, 7) return s }
     let mut axis: Field = 2

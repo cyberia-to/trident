@@ -1,0 +1,15 @@
+program native_purity
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.lexer
+use std.compiler.nox.purity
+
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let name = lexer.next(source, as_u32(0))
+    if purity.is_io(source, name) { return noun.atom(1) }
+    noun.atom(0)
+}

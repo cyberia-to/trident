@@ -203,7 +203,8 @@ requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
 program := "program" identifier declaration+ EOF
-declaration := "pub"? (function | constant | record_declaration)
+declaration := function_attribute* "pub"? function | "pub"? (constant | record_declaration)
+function_attribute := "#[" ("pure" | ("requires" | "ensures") "(" contract_tokens ")") "]"
 constant := "const" identifier ":" ("Field" | "U32") "=" constant_initializer
 constant_initializer := decimal | identifier | "(" constant_initializer ")"
 record_declaration := "struct" identifier "{" (record_field ("," record_field)* ","?)? "}"
@@ -321,7 +322,7 @@ this subset. Unit functions may fall through and produce native atom zero.
 Bare return is accepted only for Unit. Explicit and terminal return values must
 match the declared result, except a resolved builtin `assert(false)` which
 halts before producing a value. Local inference can retain Unit values; assignment
-preserves that type. Conditions still require Field or Bool. Imports, attributes,
+preserves that type. Conditions still require Field or Bool. Imports,
 generic declarations and intrinsic declarations remain outside this subset.
 
 The scalar unqualified builtins are: `as_u32(Field) -> U32`,
@@ -357,6 +358,31 @@ their defensive continuation remains permitted, as in the seed. Computed false
 conditions, unequal `assert_eq` calls and assertions inside let initializers do
 not establish halting coverage. Ordinary functions named `assert` retain their
 declared result and normal return-coverage rules.
+
+Function prefixes accept `#[pure]`, `#[requires(...)]` and `#[ensures(...)]`
+before optional `pub`, including repeated attributes. Contracts contain raw
+lexer-token metadata with balanced parentheses, as in the seed: empty payloads,
+unknown names and incomplete expressions are accepted. They add no runtime
+assertions or emitted code and are not expression-typechecked. This compiler
+recognizes their source syntax; it does not preserve an audit AST or establish
+their formal truth. Metadata scanning is bounded by source length and uses
+no expression-stack nesting quota. Exact `asm` tokens remain unsupported until
+the guest implements the seed's special assembly lexer.
+
+Each function declaration retains its own `pure` flag, including declarations
+whose callable binding is later replaced. A pure body rejects direct calls whose
+names the seed classifies as I/O: prefixes `pub_read`, `pub_write`, `divine`, and
+exact `sec_read`, `sponge_init`, `sponge_absorb`, `sponge_squeeze`,
+`sponge_absorb_mem`, `ram_read`, `ram_write`, `ram_read_block`, `ram_write_block`,
+`merkle_step`, `merkle_step_mem`. This name check also applies to ordinary source
+functions and does not infer transitive effects through helpers. These flags are
+declaration metadata; the existing packed signature format remains unchanged.
+Attribute prefixes on constants/structs are syntax errors. A `#` outside a
+function prefix, including before `program`, after `pub`, inside parameters,
+bodies or constant initializers, retains its unsupported diagnostic. Unknown
+attributes and unsupported forms such as `pure()`, `cfg`, `test`, `intrinsic`
+diagnose as unsupported. Malformed supported delimiters are syntax errors;
+invalid lexical tokens retain lexical diagnostics.
 
 The native subset admits opaque Noun parameters, results and local bindings.
 A Noun frame slot retains a complete immutable subtree. Two entry signatures
@@ -630,7 +656,7 @@ cycle, unknown expression name, immutable assignment or type/return error,
 6 for an unsupported construct/request and 7 for a known compiler work-capacity
 limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
-imports, declarations other than functions/structs/constants, and attributes are rejected,
+imports, declarations other than functions/structs/constants, and other attributes are rejected,
 including trailing items.
 Exhaustion of a VM or collection-validation allowance remains an execution
 failure outside RES1, as specified by the job contract.

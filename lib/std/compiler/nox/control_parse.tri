@@ -25,7 +25,7 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
         s.error = syntax.error(7, s.token.start, s.token.end)
         return s
     }
-    let condition = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types, s.constants), s.nodes, s.arguments, s.edges, cap, true)
+    let condition = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.scope), s.nodes, s.arguments, s.edges, cap, true)
     s.error = condition.error
     if (s.error.code == syntax.ZERO) == false { return s }
     s.nodes = condition.nodes
