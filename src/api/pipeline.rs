@@ -201,7 +201,7 @@ impl PreparedProject {
             let mut replacements = vec![BTreeMap::new(); modules.len()];
             let mut additions = Vec::new();
             for (caller, export) in exports.iter().enumerate() {
-                for (site, instance) in &export.generic_calls {
+                for (site, instance) in &export.call_resolutions {
                     let (owner, base) = if let Some((prefix, base)) = instance.name.rsplit_once('.')
                     {
                         let owner = modules
@@ -229,20 +229,10 @@ impl PreparedProject {
                         }
                         let definition = modules[owner]
                             .file
-                            .items
-                            .iter()
-                            .find_map(|item| match &item.node {
-                                Item::Fn(f)
-                                    if f.name.node == base
-                                        && !f.type_params.is_empty()
-                                        && f.cfg.as_ref().is_none_or(|cfg| {
-                                            options.cfg_flags.contains(&cfg.node)
-                                        }) =>
-                                {
-                                    Some(f.clone())
-                                }
-                                _ => None,
-                            })
+                            .final_functions(&options.cfg_flags)
+                            .into_iter()
+                            .find(|f| f.name.node == base && !f.type_params.is_empty())
+                            .cloned()
                             .ok_or_else(|| {
                                 vec![Diagnostic::error(
                                     "generic definition not resolved".into(),

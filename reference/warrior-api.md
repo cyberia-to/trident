@@ -281,3 +281,11 @@ private-field checks use this owner without removing fields from the layout.
 `Result<Vec<TIROp>, Vec<Diagnostic>>` and rejects native trees before stack
 layout. Rust callers must propagate that error. The target package wire schema
 and fixed-word external intrinsic ABI are unchanged.
+
+Direct TIR construction binds generic resolutions to `(function, callee byte start,
+callee byte end)` within the checked file. Reordering expression emission or
+selecting final declarations preserves these bindings. Prepared project
+specialization uses the same callee spans before warrior emission.
+Direct construction requires a checked binding and emitted instance for every
+generic call, including explicit size arguments. Missing bindings fail before
+emission; `build_tir` and `build_tir_modules` perform nested specialization.

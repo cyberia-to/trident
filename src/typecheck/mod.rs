@@ -87,7 +87,6 @@ pub struct ModuleExports {
     pub direct_intrinsics: BTreeMap<String, String>,
     /// Unresolved public size-generic signatures; never encoded as zero-sized ordinary functions.
     pub generic_functions: BTreeMap<String, GenericFnDef>,
-    pub(crate) generic_calls: BTreeMap<(String, u32, u32), MonoInstance>,
     /// Transitive intrinsic requirements, including private helpers for entry checks.
     pub function_requirements: BTreeMap<String, BTreeSet<String>>,
     pub constants: Vec<(String, Ty, u64)>, // (name, ty, value)
@@ -95,9 +94,9 @@ pub struct ModuleExports {
     pub warnings: Vec<Diagnostic>,         // non-fatal diagnostics
     /// Unique monomorphized instances of generic functions to emit.
     pub mono_instances: Vec<MonoInstance>,
-    /// Per-call-site resolution: each generic call in AST order maps to a MonoInstance.
-    /// The emitter consumes these in order to know which mangled name to call.
-    pub call_resolutions: Vec<MonoInstance>,
+    /// Checked generic calls keyed by function and callee byte span in this file.
+    /// Includes replaced and test bodies, which still require validation.
+    pub call_resolutions: BTreeMap<(String, u32, u32), MonoInstance>,
 }
 
 pub(crate) struct TypeChecker {
@@ -126,11 +125,10 @@ pub(crate) struct TypeChecker {
     pub(super) generic_fns: BTreeMap<String, GenericFnDef>,
     pub(super) current_function: String,
     pub(super) expected_return: Option<Ty>,
-    pub(super) generic_calls: BTreeMap<(String, u32, u32), MonoInstance>,
     /// Unique monomorphized instances collected during type checking.
     pub(super) mono_instances: Vec<MonoInstance>,
-    /// Per-call-site resolutions in AST walk order.
-    pub(super) call_resolutions: Vec<MonoInstance>,
+    /// Generic calls keyed by function and callee byte span.
+    pub(super) call_resolutions: BTreeMap<(String, u32, u32), MonoInstance>,
     /// Active cfg flags for conditional compilation.
     pub(super) cfg_flags: BTreeSet<String>,
     /// Target VM configuration (digest width, hash rate, field limbs, etc.).
@@ -174,9 +172,8 @@ impl TypeChecker {
             generic_fns: BTreeMap::new(),
             current_function: String::new(),
             expected_return: None,
-            generic_calls: BTreeMap::new(),
             mono_instances: Vec::new(),
-            call_resolutions: Vec::new(),
+            call_resolutions: BTreeMap::new(),
             cfg_flags: BTreeSet::from(["debug".to_string()]),
             target_config: config,
             in_pure_fn: false,

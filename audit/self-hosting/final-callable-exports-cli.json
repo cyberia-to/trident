@@ -1,0 +1,1474 @@
+{
+  "schema": "trident/callable-exports-cli/v1",
+  "kind": "local-development",
+  "binary_sha256": {
+    "joy": "166e9810700d082a1b389645651c07d6a999647a727f38f43071e8c9eb2a716f",
+    "trisha": "12615dbb23725f411230db99741ff18e22f81c853d6b4ad619c9b5b7dfed8bc7",
+    "trident": "e3ae42471e4cb41814eabfb023b0e8bb3c03da4c7da6ed3bb7591b8eb3f08273"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/output.dag\",\"execution\":{\"allocated_nodes\":63,\"arena_reserved_bytes\":26214416,\"charged_reductions\":42,\"elapsed_micros\":1010,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"72c9ca83308012e22ee1d55ee419af9eb89abdead40bb6503bfcf705d26a3681\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-body/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (9 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/output.dag\",\"execution\":{\"allocated_nodes\":78,\"arena_reserved_bytes\":26214416,\"charged_reductions\":46,\"elapsed_micros\":1077,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"4df7773bc38a1a651a0a07ca1d57f8957887f01c108614a0c7fa0b941176b3c9\",\"peak_frames\":11,\"program_particle\":\"ebbd12fff367838ca88b75b30d7072a1e9c305fd8966e88feff7cfd1383d7472\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"4df7773bc38a1a651a0a07ca1d57f8957887f01c108614a0c7fa0b941176b3c9\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-abi/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "16\n",
+      "stderr": "Backend: cpu\nExecuting program (15 ops)...\nExecuted in 13 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/output.dag\",\"execution\":{\"allocated_nodes\":63,\"arena_reserved_bytes\":26214416,\"charged_reductions\":42,\"elapsed_micros\":944,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"72c9ca83308012e22ee1d55ee419af9eb89abdead40bb6503bfcf705d26a3681\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/private-public/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (9 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/output.dag\",\"execution\":{\"allocated_nodes\":124,\"arena_reserved_bytes\":26214416,\"charged_reductions\":144,\"elapsed_micros\":1461,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":19,\"program_particle\":\"2faf57eb4605610e12fb754a323ef77ca113cc45d96bf79e13d4528cf71fa9c4\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-generic/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "9\n",
+      "stderr": "Backend: cpu\nExecuting program (13 ops)...\nExecuted in 11 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/output.dag\",\"execution\":{\"allocated_nodes\":65,\"arena_reserved_bytes\":26214416,\"charged_reductions\":42,\"elapsed_micros\":935,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"35a0ac2b77a4ff6e705d0aa6a97a5264a34f2ecd17795391780aaa4d527c80e0\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-ordinary/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (9 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/output.dag\",\"execution\":{\"allocated_nodes\":124,\"arena_reserved_bytes\":26214416,\"charged_reductions\":144,\"elapsed_micros\":1345,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":19,\"program_particle\":\"2faf57eb4605610e12fb754a323ef77ca113cc45d96bf79e13d4528cf71fa9c4\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-generic-body/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "9\n",
+      "stderr": "Backend: cpu\nExecuting program (13 ops)...\nExecuted in 11 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/output.dag\",\"execution\":{\"allocated_nodes\":135,\"arena_reserved_bytes\":26214416,\"charged_reductions\":148,\"elapsed_micros\":1446,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":19,\"program_particle\":\"86ee9135d1bfbf095d495fcd7965a6ffd1401934d9b0b7e60861d444c569e752\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-call-sites/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (18 ops)...\nExecuted in 13 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/output.dag\",\"execution\":{\"allocated_nodes\":200,\"arena_reserved_bytes\":26214416,\"charged_reductions\":464,\"elapsed_micros\":1950,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"peak_frames\":21,\"program_particle\":\"2bdb02434fded40a87d9f17a8805f72c7ac410c68cb49fa360b8d55d2f12862d\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"8f8df9b8a6c64fe5cfd103c4d8564d92d22e5d62a6edc44301e1aa260d387abe\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/mixed-generic-sites/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "1\n",
+      "stderr": "Backend: cpu\nExecuting program (66 ops)...\nExecuted in 48 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/output.dag\",\"execution\":{\"allocated_nodes\":63,\"arena_reserved_bytes\":26214416,\"charged_reductions\":42,\"elapsed_micros\":884,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"72c9ca83308012e22ee1d55ee419af9eb89abdead40bb6503bfcf705d26a3681\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-debug/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (9 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/joy.tri",
+        "--profile",
+        "release",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/output.dag\",\"execution\":{\"allocated_nodes\":63,\"arena_reserved_bytes\":26214416,\"charged_reductions\":42,\"elapsed_micros\":880,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"peak_frames\":10,\"program_particle\":\"ffc469deb6f6bb7277348cb2a9b2a806a122fbc0495ff1324b6f22a9f4339103\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0534b08f10b865f057f161dbcbf095a17bc2761c8f3bfc7195910aabf2462f85\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/trisha.tri",
+        "--profile",
+        "release",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-cfg-release/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "9\n",
+      "stderr": "Backend: cpu\nExecuting program (9 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/output.dag\",\"execution\":{\"allocated_nodes\":65,\"arena_reserved_bytes\":26214416,\"charged_reductions\":42,\"elapsed_micros\":903,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":10,\"program_particle\":\"35a0ac2b77a4ff6e705d0aa6a97a5264a34f2ecd17795391780aaa4d527c80e0\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/intrinsic-to-ordinary/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (9 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/output.dag\",\"execution\":{\"allocated_nodes\":68,\"arena_reserved_bytes\":26214416,\"charged_reductions\":40,\"elapsed_micros\":919,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":9,\"program_particle\":\"99d5e18e2eb4ac8b13ebcf8e2faeca117d32ddeb5a8efa321512bd9053544c09\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-intrinsic/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (8 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/joy.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/output.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/output.dag\",\"execution\":{\"allocated_nodes\":68,\"arena_reserved_bytes\":26214416,\"charged_reductions\":40,\"elapsed_micros\":920,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"peak_frames\":9,\"program_particle\":\"99d5e18e2eb4ac8b13ebcf8e2faeca117d32ddeb5a8efa321512bd9053544c09\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ba79cd992be027c3d14ceb15f8fdab96fcfa8de50a9483508ea1019b60801291\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/trisha.tri",
+        "--profile",
+        "debug",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-recursion/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "7\n",
+      "stderr": "Backend: cpu\nExecuting program (8 ops)...\nExecuted in 7 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-private/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-private/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-private/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-private/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'values.f'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/final-private/trisha.tri:3:18\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31ms\u001b[0m\u001b[31m.\u001b[0m\u001b[31mf\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                       \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'values.f'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-private/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-private/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-private/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-private/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'values.f'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-private/trisha.tri:3:18\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31ms\u001b[0m\u001b[31m.\u001b[0m\u001b[31mf\u001b[0m\u001b[31m(\u001b[0m\u001b[31m[\u001b[0m\u001b[31m7\u001b[0m\u001b[31m]\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                        \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'values.f'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-private-generic/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-private-generic/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-private-generic/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-private-generic/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'values.f'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/ordinary-to-private-generic/trisha.tri:3:18\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31ms\u001b[0m\u001b[31m.\u001b[0m\u001b[31mf\u001b[0m\u001b[31m(\u001b[0m\u001b[31m[\u001b[0m\u001b[31m7\u001b[0m\u001b[31m]\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                        \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'values.f'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-to-private-ordinary/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-to-private-ordinary/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-to-private-ordinary/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-to-private-ordinary/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'values.f'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/generic-to-private-ordinary/trisha.tri:3:18\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m3 \u2502\u001b[0m \u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mc\u001b[0m\u001b[38;5;249ma\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mv\u001b[0m\u001b[31ma\u001b[0m\u001b[31ml\u001b[0m\u001b[31mu\u001b[0m\u001b[31me\u001b[0m\u001b[31ms\u001b[0m\u001b[31m.\u001b[0m\u001b[31mf\u001b[0m\u001b[31m(\u001b[0m\u001b[31m7\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                  \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                       \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'values.f'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'values.f'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-invalid-body/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-invalid-body/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: undefined function 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-invalid-body/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-invalid-body/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m undefined function 'missing'\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-invalid-body/values.tri:2:19\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mm\u001b[0m\u001b[31mi\u001b[0m\u001b[31ms\u001b[0m\u001b[31ms\u001b[0m\u001b[31mi\u001b[0m\u001b[31mn\u001b[0m\u001b[31mg\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                   \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                       \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m undefined function 'missing'\n \u001b[38;5;240m  \u2502\u001b[0m \n \u001b[38;5;240m  \u2502\u001b[0m \u001b[38;5;115mHelp\u001b[0m: check the function name and ensure the module is imported with `use`\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: undefined function 'missing'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-impure-body/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-impure-body/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: #[pure] function cannot call 'pub_read' (I/O side effect)\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-impure-body/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-impure-body/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\u001b[31mError:\u001b[0m #[pure] function cannot call 'pub_read' (I/O side effect)\n   \u001b[38;5;246m\u256d\u001b[0m\u001b[38;5;246m\u2500\u001b[0m\u001b[38;5;246m[\u001b[0m/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-impure-body/values.tri:2:27\u001b[38;5;246m]\u001b[0m\n   \u001b[38;5;246m\u2502\u001b[0m\n \u001b[38;5;246m2 \u2502\u001b[0m \u001b[38;5;249m#\u001b[0m\u001b[38;5;249m[\u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mr\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249m]\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[31mp\u001b[0m\u001b[31mu\u001b[0m\u001b[31mb\u001b[0m\u001b[31m_\u001b[0m\u001b[31mr\u001b[0m\u001b[31me\u001b[0m\u001b[31ma\u001b[0m\u001b[31md\u001b[0m\u001b[31m(\u001b[0m\u001b[31m)\u001b[0m\u001b[38;5;249m}\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mp\u001b[0m\u001b[38;5;249mu\u001b[0m\u001b[38;5;249mb\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249mn\u001b[0m\u001b[38;5;249m \u001b[0m\u001b[38;5;249mf\u001b[0m\u001b[38;5;249m(\u001b[0m\u001b[38;5;249m)\u001b[0m\u001b[38;5;249m-\u001b[0m\u001b[38;5;249m>\u001b[0m\u001b[38;5;249mF\u001b[0m\u001b[38;5;249mi\u001b[0m\u001b[38;5;249me\u001b[0m\u001b[38;5;249ml\u001b[0m\u001b[38;5;249md\u001b[0m\u001b[38;5;249m{\u001b[0m\u001b[38;5;249m7\u001b[0m\u001b[38;5;249m}\u001b[0m\n \u001b[38;5;240m  \u2502\u001b[0m                           \u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u252c\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m  \n \u001b[38;5;240m  \u2502\u001b[0m                                \u001b[31m\u2570\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m\u001b[31m\u2500\u001b[0m #[pure] function cannot call 'pub_read' (I/O side effect)\n\u001b[38;5;246m\u2500\u2500\u2500\u256f\u001b[0m\nerror: compile error: #[pure] function cannot call 'pub_read' (I/O side effect)\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trident",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/withdrawn-test.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "No active #[test] functions found. 0 skipped.\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/withdrawn-test.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 0 tests on triton\n\ntest result: ok. 0 passed; 0 failed; 0 skipped\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trident",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/added-test.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 1 test on nox\n  test cases.same ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 skipped\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/added-test.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 1 tests on triton\n  test cases.same ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 skipped\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trident",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-test-pass.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 1 test on nox\n  test cases.same ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 skipped\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-test-pass.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 1 tests on triton\n  test cases.same ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 skipped\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trident",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-test-fail.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "running 1 test on nox\n  test cases.same ... FAILED\n    error: nox execution failed: InvZero\n\ntest result: FAILED. 0 passed; 1 failed; 0 skipped\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/replaced-test-fail.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "running 1 tests on triton\n  test cases.same ... FAILED\n    error: Triton execution failed: assertion failed: expected 1, got 0\n\ntest result: FAILED. 0 passed; 1 failed; 0 skipped\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trident",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/inactive-test.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 1 test on nox\n  test cases.same ... ok\n\ntest result: ok. 1 passed; 0 failed; 1 skipped\n\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/trisha",
+        "test",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/inactive-test.tri"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "running 1 tests on triton\n  test cases.same ... ok\n\ntest result: ok. 1 passed; 0 failed; 1 skipped\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-assertions/trident/compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/compiler.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-callable-exports-zxoes585/compiler.dag\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [
+    {
+      "case": "final-body",
+      "modules": {
+        "values.tri": "module values\npub fn f()->Field{3} pub fn f()->Field{7}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f())}\n",
+          "program_sha256": "932c77ccef8ec0aa39b8c2a8b3d59a123cc42802fd3f34df888e101734c04083",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f())}\n",
+          "program_sha256": "fc62d001d305ef0f67742edab874ad50ea2ab8539a4c3382d7b258b04bfd57e8",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "final-abi",
+      "modules": {
+        "values.tri": "module values\npub fn f()->Field{3} pub fn f(x:Field,y:Field)->Field{x+y}"
+      },
+      "profile": "debug",
+      "expected": 16,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f(7,9))}\n",
+          "program_sha256": "da6ba845e344fa230b2454b4eff02fdc61b39027e1ce60a505831a6c481eeaff",
+          "executed": 16
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f(7,9))}\n",
+          "program_sha256": "ad715a612d829a23633767f638938580f13c162a68248f91be2094ea694a8a08",
+          "executed": 16
+        }
+      }
+    },
+    {
+      "case": "private-public",
+      "modules": {
+        "values.tri": "module values\nfn f()->Field{3} pub fn f()->Field{7}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f())}\n",
+          "program_sha256": "932c77ccef8ec0aa39b8c2a8b3d59a123cc42802fd3f34df888e101734c04083",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f())}\n",
+          "program_sha256": "fc62d001d305ef0f67742edab874ad50ea2ab8539a4c3382d7b258b04bfd57e8",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "ordinary-generic",
+      "modules": {
+        "values.tri": "module values\npub fn f(x:Field)->Field{x} pub fn f<N>(x:[Field;N])->Field{x[1]}"
+      },
+      "profile": "debug",
+      "expected": 9,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f([7,9]))}\n",
+          "program_sha256": "f55a05565956835e9b2f335d689727378282941e41037836ca32a9186d14fe0e",
+          "executed": 9
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f([7,9]))}\n",
+          "program_sha256": "0521c0754837f1aa2ebdabcb96c7849e5fa5da69c675cb761d9d2666e55478da",
+          "executed": 9
+        }
+      }
+    },
+    {
+      "case": "generic-ordinary",
+      "modules": {
+        "values.tri": "module values\npub fn f<N>(x:[Field;N])->Field{x[0]} pub fn f(x:Field)->Field{x}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f(7))}\n",
+          "program_sha256": "ee3d7d081243409577e3bbcdb5f201df2be27e8fb44b8dd41505be125610427f",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f(7))}\n",
+          "program_sha256": "540c330ae0e79c954ee7ee0aa56214f1af67f71878fa6392070d23165d42ff3b",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "final-generic-body",
+      "modules": {
+        "values.tri": "module values\npub fn f<N>(x:[Field;N])->Field{x[0]} pub fn f<M>(a:[Field;M])->Field{a[1]}"
+      },
+      "profile": "debug",
+      "expected": 9,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f([7,9]))}\n",
+          "program_sha256": "f55a05565956835e9b2f335d689727378282941e41037836ca32a9186d14fe0e",
+          "executed": 9
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f([7,9]))}\n",
+          "program_sha256": "0521c0754837f1aa2ebdabcb96c7849e5fa5da69c675cb761d9d2666e55478da",
+          "executed": 9
+        }
+      }
+    },
+    {
+      "case": "replaced-call-sites",
+      "modules": {
+        "values.tri": "module values\nfn first<N>(x:[Field;N])->Field{x[0]} fn old()->Field{first([1])} fn old()->Field{7} pub fn f()->Field{first([7,9])}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f())}\n",
+          "program_sha256": "0a77bda123c18778e40475662e8dc06cc7bdfaf270c1e77161439328f2f53f96",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f())}\n",
+          "program_sha256": "0097c0edaa55c46d4e619162f8b08228a0d22491f5709abde0e04c5e918bd30e",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "mixed-generic-sites",
+      "modules": {
+        "values.tri": "module values\nfn first<N>(x:[Field;N])->U32{as_u32(x[0])} pub fn f()->Field{if first([3]) < first<2>([7,9]){return 1} 0}"
+      },
+      "profile": "debug",
+      "expected": 1,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f())}\n",
+          "program_sha256": "efb55e52f5f3b46afa48e350bc7bdd251792b002885407d1bc662ccba0572a27",
+          "executed": 1
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f())}\n",
+          "program_sha256": "83559967bd025226c76dbb1ec0f6809cbd40ce2f4372d774297c7fa6bb2fa8d5",
+          "executed": 1
+        }
+      }
+    },
+    {
+      "case": "final-cfg-debug",
+      "modules": {
+        "values.tri": "module values\npub fn f()->Field{7}\n#[cfg(release)] pub fn f()->Field{9}\n#[cfg(absent)] fn f()->Bool{true}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f())}\n",
+          "program_sha256": "932c77ccef8ec0aa39b8c2a8b3d59a123cc42802fd3f34df888e101734c04083",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f())}\n",
+          "program_sha256": "fc62d001d305ef0f67742edab874ad50ea2ab8539a4c3382d7b258b04bfd57e8",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "final-cfg-release",
+      "modules": {
+        "values.tri": "module values\npub fn f()->Field{7}\n#[cfg(release)] pub fn f()->Field{9}\n#[cfg(absent)] fn f()->Bool{true}"
+      },
+      "profile": "release",
+      "expected": 9,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn main(input:Noun)->Noun{ nox_noun_atom(values.f())}\n",
+          "program_sha256": "7c1560178fa8dbad0d41b730979c9e743d00275601f39c0d2d250ff414b87dac",
+          "executed": 9
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn main(){ pub_write(values.f())}\n",
+          "program_sha256": "eb3ed337758fee7f5042c0f289b32765baa4fbca00c3d7ce5e63f451c6f552bd",
+          "executed": 9
+        }
+      }
+    },
+    {
+      "case": "intrinsic-to-ordinary",
+      "modules": {
+        "ext/failure.tri": "module ext.failure\n#[intrinsic(assert)] pub fn stop(c:Bool) pub fn stop(x:Field)->Field{x}"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse ext.failure\nfn main(input:Noun)->Noun{ nox_noun_atom(failure.stop(7))}\n",
+          "program_sha256": "ee3d7d081243409577e3bbcdb5f201df2be27e8fb44b8dd41505be125610427f",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse ext.failure\nfn main(){ pub_write(failure.stop(7))}\n",
+          "program_sha256": "e3353a1375858f4c4e9ecf4da53426970f62dc250cfcd74e0cc2579bc9fb5c05",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "ordinary-to-intrinsic",
+      "modules": {
+        "ext/failure.tri": "module ext.failure\npub fn stop(x:Field)->Field{x} #[intrinsic(assert)] pub fn stop(c:Bool)"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse ext.failure\nfn main(input:Noun)->Noun{failure.stop(true) nox_noun_atom(7)}\n",
+          "program_sha256": "27631ac6591e85c47d55bcdcf8cd9bd8de203a3314a5ad8f09f01ce328ffa14e",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse ext.failure\nfn main(){failure.stop(true) pub_write(7)}\n",
+          "program_sha256": "146a71d2f5b9ee42eb1715ea5cc6631008b5b96b1e8da12391cd43c54f775892",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "replaced-recursion",
+      "modules": {
+        "ext/failure.tri": "module ext.failure\nfn stop(c:Bool){stop(c)} #[intrinsic(assert)] pub fn stop(c:Bool)"
+      },
+      "profile": "debug",
+      "expected": 7,
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse ext.failure\nfn main(input:Noun)->Noun{failure.stop(true) nox_noun_atom(7)}\n",
+          "program_sha256": "27631ac6591e85c47d55bcdcf8cd9bd8de203a3314a5ad8f09f01ce328ffa14e",
+          "executed": 7
+        },
+        "trisha": {
+          "source": "program callables\nuse ext.failure\nfn main(){failure.stop(true) pub_write(7)}\n",
+          "program_sha256": "146a71d2f5b9ee42eb1715ea5cc6631008b5b96b1e8da12391cd43c54f775892",
+          "executed": 7
+        }
+      }
+    },
+    {
+      "case": "final-private",
+      "modules": {
+        "values.tri": "module values\npub fn f()->Field{7} fn f()->Field{9}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f()}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f()}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "generic-private",
+      "modules": {
+        "values.tri": "module values\npub fn f<N>(x:[Field;N])->Field{x[0]} fn f<N>(x:[Field;N])->Field{x[0]}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f([7])}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f([7])}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "ordinary-to-private-generic",
+      "modules": {
+        "values.tri": "module values\npub fn f(x:Field)->Field{x} fn f<N>(x:[Field;N])->Field{x[0]}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f([7])}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f([7])}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "generic-to-private-ordinary",
+      "modules": {
+        "values.tri": "module values\npub fn f<N>(x:[Field;N])->Field{x[0]} fn f(x:Field)->Field{x}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f(7)}\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program callables\nuse values\nfn call()->Field{values.f(7)}\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "replaced-invalid-body",
+      "modules": {
+        "values.tri": "module values\npub fn f()->Field{missing()} pub fn f()->Field{7}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\n\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program callables\nuse values\n\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "replaced-impure-body",
+      "modules": {
+        "values.tri": "module values\n#[pure] pub fn f()->Field{pub_read()} pub fn f()->Field{7}"
+      },
+      "owners": {
+        "joy": {
+          "source": "program callables\nuse values\n\nfn main(input:Noun)->Noun{input}\n",
+          "previous_program_preserved": true
+        },
+        "trisha": {
+          "source": "program callables\nuse values\n\nfn main(){pub_write(7)}\n",
+          "previous_program_preserved": true
+        }
+      }
+    },
+    {
+      "case": "withdrawn-test",
+      "source": "module cases\n#[test] fn same(){assert(false)} fn same(){assert(true)}",
+      "owners": {
+        "trident": {
+          "exit_code": 0,
+          "expected_summary": "No active #[test] functions"
+        },
+        "trisha": {
+          "exit_code": 0,
+          "expected_summary": "0 passed; 0 failed; 0 skipped"
+        }
+      }
+    },
+    {
+      "case": "added-test",
+      "source": "module cases\nfn same(){assert(false)} #[test] fn same(){assert(true)}",
+      "owners": {
+        "trident": {
+          "exit_code": 0,
+          "expected_summary": "1 passed; 0 failed; 0 skipped"
+        },
+        "trisha": {
+          "exit_code": 0,
+          "expected_summary": "1 passed; 0 failed; 0 skipped"
+        }
+      }
+    },
+    {
+      "case": "replaced-test-pass",
+      "source": "module cases\n#[test] fn same(){assert(false)} #[test] fn same(){assert(true)}",
+      "owners": {
+        "trident": {
+          "exit_code": 0,
+          "expected_summary": "1 passed; 0 failed; 0 skipped"
+        },
+        "trisha": {
+          "exit_code": 0,
+          "expected_summary": "1 passed; 0 failed; 0 skipped"
+        }
+      }
+    },
+    {
+      "case": "replaced-test-fail",
+      "source": "module cases\n#[test] fn same(){assert(true)} #[test] fn same(){assert(false)}",
+      "owners": {
+        "trident": {
+          "exit_code": 1,
+          "expected_summary": "0 passed; 1 failed; 0 skipped"
+        },
+        "trisha": {
+          "exit_code": 1,
+          "expected_summary": "0 passed; 1 failed; 0 skipped"
+        }
+      }
+    },
+    {
+      "case": "inactive-test",
+      "source": "module cases\n#[test] fn same(){assert(true)} #[cfg(release)] #[test] fn same(){assert(false)}",
+      "owners": {
+        "trident": {
+          "exit_code": 0,
+          "expected_summary": "1 passed; 0 failed; 1 skipped"
+        },
+        "trisha": {
+          "exit_code": 0,
+          "expected_summary": "1 passed; 0 failed; 1 skipped"
+        }
+      }
+    }
+  ],
+  "compiler_sha256": "430c7bdcece5a59e90f0206d2772411a4fe1859c7bc38a6157b5d5ddf0f2ada6",
+  "compiler_particle": "6ee70c5d760a2c01844ac738b08e3ce6977f5ca525d14f9b20829cf26e1e0048",
+  "entire_c1_artifact_unchanged": true,
+  "c1_baseline": "audit/self-hosting/native-attributes-cli.json"
+}

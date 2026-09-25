@@ -108,19 +108,14 @@ impl NoxCompiler {
                     Item::Event(_) => {}
                 }
             }
-            for item in &file.items {
-                if !active(&item.node, flags) {
-                    continue;
-                }
-                if let Item::Fn(f) = &item.node {
-                    if f.is_pub {
-                        let full = &file.name.node;
-                        let short = full.rsplit('.').next().unwrap_or(full);
-                        let canonical = format!("{full}.{}", f.name.node);
-                        functions.insert(canonical.clone(), canonical.clone());
-                        if short != full {
-                            functions.insert(format!("{short}.{}", f.name.node), canonical);
-                        }
+            for f in file.final_functions(flags) {
+                if f.is_pub {
+                    let full = &file.name.node;
+                    let short = full.rsplit('.').next().unwrap_or(full);
+                    let canonical = format!("{full}.{}", f.name.node);
+                    functions.insert(canonical.clone(), canonical.clone());
+                    if short != full {
+                        functions.insert(format!("{short}.{}", f.name.node), canonical);
                     }
                 }
             }
@@ -134,20 +129,11 @@ impl NoxCompiler {
         }
         self.scan_state_functions();
         self.current_module = entry.name.node.clone();
-        let candidates = || {
-            entry.items.iter().filter_map(|item| {
-                if !active(&item.node, flags) {
-                    return None;
-                }
-                match &item.node {
-                    Item::Fn(f) => Some(f),
-                    _ => None,
-                }
-            })
-        };
-        let f = candidates()
+        let candidates = entry.final_functions(flags);
+        let f = candidates
+            .iter()
             .find(|f| f.name.node == "main")
-            .or_else(|| candidates().find(|f| f.is_pub && f.body.is_some()))
+            .or_else(|| candidates.iter().find(|f| f.is_pub && f.body.is_some()))
             .ok_or_else(|| "no entry function found".to_string())?;
         let f = self
             .fns

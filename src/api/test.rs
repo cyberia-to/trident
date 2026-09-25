@@ -27,6 +27,27 @@ pub fn discover_tests(file: &ast::File) -> Vec<String> {
         .collect()
 }
 
+// Discovery is syntactic; execution selects each name's final active annotation.
+fn selected_tests<'a>(
+    file: &'a ast::File,
+    flags: &std::collections::BTreeSet<String>,
+) -> (Vec<&'a ast::FnDef>, usize) {
+    let skipped = file
+        .items
+        .iter()
+        .filter(|item| {
+            matches!(&item.node, ast::Item::Fn(f)
+        if f.is_test && f.cfg.as_ref().is_some_and(|flag| !flags.contains(&flag.node)))
+        })
+        .count();
+    let functions = file
+        .final_functions(flags)
+        .into_iter()
+        .filter(|f| f.is_test)
+        .collect();
+    (functions, skipped)
+}
+
 /// A single executed test result.
 #[derive(Clone, Debug)]
 pub struct TestResult {
@@ -55,21 +76,9 @@ pub fn run_tests(entry_path: &Path, options: &CompileOptions) -> Result<String, 
     let mut results = Vec::new();
     let mut skipped = 0;
     for (module_index, module) in project.modules.iter().enumerate() {
-        for item in &module.file.items {
-            let ast::Item::Fn(function) = &item.node else {
-                continue;
-            };
-            if !function.is_test {
-                continue;
-            }
-            if function
-                .cfg
-                .as_ref()
-                .is_some_and(|f| !options.cfg_flags.contains(&f.node))
-            {
-                skipped += 1;
-                continue;
-            }
+        let (functions, excluded) = selected_tests(&module.file, &options.cfg_flags);
+        skipped += excluded;
+        for function in functions {
             let name = format!("{}.{}", module.file.name.node, function.name.node);
             let result = if !function.params.is_empty()
                 || !function.type_params.is_empty()
@@ -83,10 +92,10 @@ pub fn run_tests(entry_path: &Path, options: &CompileOptions) -> Result<String, 
             } else {
                 // Entry selection uses a separate view. All actual module
                 // definitions (including main and private helpers) stay intact.
-                let mut selected = item.clone();
-                if let ast::Item::Fn(f) = &mut selected.node {
-                    f.is_pub = true;
-                }
+                let mut selected = function.clone();
+                selected.is_pub = true;
+                let selected =
+                    crate::span::Spanned::new(ast::Item::Fn(selected), function.name.span);
                 let mut entry = module.file.clone();
                 entry.kind = ast::FileKind::Module;
                 entry.items = vec![selected];
@@ -206,21 +215,9 @@ pub fn prepare_test_programs(
     let mut entries = Vec::new();
     let mut skipped = 0;
     for (index, module) in project.modules.iter().enumerate() {
-        for item in &module.file.items {
-            let ast::Item::Fn(function) = &item.node else {
-                continue;
-            };
-            if !function.is_test {
-                continue;
-            }
-            if function
-                .cfg
-                .as_ref()
-                .is_some_and(|f| !options.cfg_flags.contains(&f.node))
-            {
-                skipped += 1;
-                continue;
-            }
+        let (functions, excluded) = selected_tests(&module.file, &options.cfg_flags);
+        skipped += excluded;
+        for function in functions {
             if !function.params.is_empty()
                 || !function.type_params.is_empty()
                 || function.return_ty.is_some()
@@ -232,10 +229,9 @@ pub fn prepare_test_programs(
                     function.name.span,
                 )]);
             }
-            let mut selected = item.clone();
-            if let ast::Item::Fn(f) = &mut selected.node {
-                f.is_pub = true;
-            }
+            let mut selected = function.clone();
+            selected.is_pub = true;
+            let selected = crate::span::Spanned::new(ast::Item::Fn(selected), function.name.span);
             let mut view = module.file.clone();
             view.kind = ast::FileKind::Module;
             view.items = vec![selected];

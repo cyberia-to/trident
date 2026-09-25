@@ -108,11 +108,7 @@ impl TIRBuilder {
     fn array_extent(&self, size: &ArraySize) -> Option<u64> {
         match size {
             ArraySize::Literal(n) => Some(*n),
-            ArraySize::Param(name) => self
-                .current_subs
-                .get(name)
-                .copied()
-                .or_else(|| self.constant_value(name)),
+            ArraySize::Param(name) => self.constant_value(name),
             ArraySize::Add(left, right) => self
                 .array_extent(left)?
                 .checked_add(self.array_extent(right)?),
@@ -137,10 +133,21 @@ impl TIRBuilder {
 
     pub(crate) fn expr_type(&self, expr: &Expr) -> Option<Type> {
         match expr {
-            Expr::Call { path, .. } => self
-                .fn_return_types
-                .get(&self.qualified_function(&path.node.0.join(".")))
-                .cloned(),
+            Expr::Call { path, .. } => {
+                let name = path.node.as_dotted();
+                let resolved = if self.generic_fn_defs.contains_key(&name) {
+                    self.call_resolutions
+                        .get(&(
+                            self.current_function.clone(),
+                            path.span.start,
+                            path.span.end,
+                        ))
+                        .map(|instance| instance.mangled_name())?
+                } else {
+                    self.qualified_function(&name)
+                };
+                self.fn_return_types.get(&resolved).cloned()
+            }
             Expr::StructInit { path, .. } => Some(Type::Named(path.node.clone())),
             Expr::Var(name) => {
                 let mut parts = name.split('.');

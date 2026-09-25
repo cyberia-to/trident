@@ -17,16 +17,12 @@ impl TypeChecker {
         // Build adjacency list: fn_name -> set of called fn_names
         let mut call_graph: BTreeMap<String, Vec<String>> = BTreeMap::new();
 
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                if let Some(body) = &func.body {
-                    let mut callees = Vec::new();
-                    Self::collect_calls_block(&body.node, &mut callees);
-                    call_graph.insert(func.name.node.clone(), callees);
-                }
+        let functions = file.final_functions(&self.cfg_flags);
+        for func in &functions {
+            if let Some(body) = &func.body {
+                let mut callees = Vec::new();
+                Self::collect_calls_block(&body.node, &mut callees);
+                call_graph.insert(func.name.node.clone(), callees);
             }
         }
 
@@ -44,17 +40,10 @@ impl TypeChecker {
                 if self.dfs_cycle(name, &call_graph, &mut visited, &mut path) {
                     // Find the span for the function that starts the cycle
                     let cycle_fn = &path[0];
-                    let span = file
-                        .items
+                    let span = functions
                         .iter()
-                        .find_map(|item| {
-                            if let Item::Fn(func) = &item.node {
-                                if func.name.node == *cycle_fn {
-                                    return Some(func.name.span);
-                                }
-                            }
-                            None
-                        })
+                        .find(|func| func.name.node == *cycle_fn)
+                        .map(|func| func.name.span)
                         .unwrap_or(file.name.span);
                     self.error_with_help(
                         format!("recursive call cycle detected: {}", path.join(" -> ")),

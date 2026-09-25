@@ -30,28 +30,6 @@ pub(crate) fn resolve_type_width(ty: &Type, tc: &TerrainConfig) -> u32 {
     }
 }
 
-pub(crate) fn resolve_type_width_with_subs(
-    ty: &Type,
-    subs: &BTreeMap<String, u64>,
-    tc: &TerrainConfig,
-) -> u32 {
-    match ty {
-        Type::Noun => unreachable!("Noun rejected by checked TIR boundary"),
-        Type::Field | Type::Bool | Type::U32 => 1,
-        Type::XField => tc.xfield_width,
-        Type::Digest => tc.digest_width,
-        Type::Array(inner, n) => {
-            let size = n.eval(subs);
-            resolve_type_width_with_subs(inner, subs, tc) * (size as u32)
-        }
-        Type::Tuple(elems) => elems
-            .iter()
-            .map(|t| resolve_type_width_with_subs(t, subs, tc))
-            .sum(),
-        Type::Named(_) => 1,
-    }
-}
-
 // ─── TIRBuilder struct layout methods ──────────────────────────────
 
 impl TIRBuilder {

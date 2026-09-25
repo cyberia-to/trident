@@ -6,6 +6,7 @@
 mod advanced;
 mod basics;
 mod constants;
+mod exports;
 mod halting;
 
 use crate::diagnostic::Diagnostic;
@@ -41,3 +42,5 @@ pub(super) fn check_with_flags(
         .with_cfg_flags(flag_set)
         .check_file(&file)
 }
+
+mod callable_execution;
