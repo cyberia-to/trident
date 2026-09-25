@@ -1,0 +1,111 @@
+module std.compiler.nox.module_order
+
+use vm.nox.noun
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.module_store
+use std.compiler.nox.module_graph
+
+const HALF: Field = 9223372034707292161
+pub struct Ordered { pub modules: seq.Seq, pub error_index: U32, pub error: syntax.Error }
+struct Walk {
+    pending: Noun, colors: Noun, frames: Noun, depth: U32, result: Ordered, done: Bool
+}
+
+// A shared zero subtree skips all unused package slots in one comparison.
+#[pure]
+#[requires((as_u32(65536) < length) == false)]
+fn first(root: Noun, length: U32) -> U32 {
+    let shape = tree.shape(length)
+    let mut capacity = shape.capacity
+    let mut padding = tree.empty(shape.height)
+    if noun.eq(root, padding) { return length }
+    let mut cursor = root
+    let mut offset: Field = 0
+    for level in 0..17 {
+        if capacity == 1 { return as_u32(offset) }
+        capacity = capacity * HALF
+        padding = noun.head(padding)
+        let left = noun.head(cursor)
+        if noun.eq(left, padding) { cursor = noun.tail(cursor) offset = offset + capacity }
+        else { cursor = left }
+    }
+    length
+}
+
+#[pure]
+fn push(graph: module_graph.Graph, input: Walk, id: U32) -> Walk {
+    let mut s = input
+    let unit = module_store.read(graph.modules, id)
+    if s.depth == graph.capacity {
+        s.result.error_index = unit.index
+        s.result.error = syntax.error(7, unit.offset, unit.offset)
+        return s
+    }
+    s.colors = tree.set(s.colors, seq.len(graph.modules), id, noun.atom(1))
+    s.frames = noun.pair(noun.pair(noun.atom(as_field(id)), unit.uses), s.frames)
+    s.depth = syntax.inc(s.depth)
+    s
+}
+
+#[pure]
+fn step(graph: module_graph.Graph, input: Walk) -> Walk {
+    let mut s = input
+    if noun.eq(s.frames, noun.atom(0)) {
+        if seq.len(s.result.modules) == seq.len(graph.modules) { s.done = true return s }
+        let index = first(s.pending, seq.len(graph.package.modules))
+        assert(index < seq.len(graph.package.modules))
+        let saved = as_u32(noun.as_field(tree.get(s.pending, seq.len(graph.package.modules), index)))
+        return push(graph, s, syntax.dec(saved))
+    }
+    let frame = noun.head(s.frames)
+    let id = as_u32(noun.as_field(noun.head(frame)))
+    let uses = noun.tail(frame)
+    if noun.eq(uses, noun.atom(0)) {
+        let unit = module_store.read(graph.modules, id)
+        s.colors = tree.set(s.colors, seq.len(graph.modules), id, noun.atom(2))
+        s.pending = tree.set(s.pending, seq.len(graph.package.modules), unit.index, noun.atom(0))
+        s.result.modules = seq.push(s.result.modules, noun.atom(as_field(id)), graph.capacity)
+        s.frames = noun.tail(s.frames)
+        s.depth = syntax.dec(s.depth)
+        return s
+    }
+    let item = module_store.use_read(noun.head(uses))
+    s.frames = noun.pair(noun.pair(noun.atom(as_field(id)), noun.tail(uses)), noun.tail(s.frames))
+    let color = noun.as_field(tree.get(s.colors, seq.len(graph.modules), item.target))
+    if color == 1 {
+        s.result.error_index = module_store.read(graph.modules, id).index
+        s.result.error = syntax.error(4, item.start, item.end)
+        return s
+    }
+    if color == 0 { return push(graph, s, item.target) }
+    s
+}
+
+#[pure]
+fn chunk(graph: module_graph.Graph, input: Walk) -> Walk {
+    let mut s = input
+    for turn in 0..16 {
+        s = step(graph, s)
+        if syntax.either(s.done, (s.result.error.code == syntax.ZERO) == false) { return s }
+    }
+    s
+}
+
+// Lexical roots, source-order dependencies, dependency-first output: seed DFS.
+#[pure]
+pub fn sort(graph: module_graph.Graph) -> Ordered {
+    let zero = syntax.ZERO
+    let result = Ordered { modules: seq.empty(), error_index: graph.error_index, error: graph.error }
+    if (graph.error.code == zero) == false { return result }
+    let mut s = Walk { pending: graph.indexes, colors: tree.empty(tree.shape(seq.len(graph.modules)).height),
+        frames: noun.atom(0), depth: zero, result, done: false }
+    // At most4096 root starts +4096 uses +4096 completions, then one done check.
+    for block in 0..1024 {
+        s = chunk(graph, s)
+        if syntax.either(s.done, (s.result.error.code == zero) == false) { return s.result }
+    }
+    s.result.error = syntax.error(7, zero, zero)
+    s.result
+}

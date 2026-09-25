@@ -1,0 +1,34 @@
+program native_module_header
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.module_header
+
+#[pure]
+fn output(error: syntax.Error, token: syntax.Token, imports: seq.Seq) -> Noun {
+    let rest = noun.pair(noun.atom(as_field(token.kind)), noun.pair(noun.atom(as_field(token.start)), seq.to_noun(imports)))
+    noun.pair(noun.atom(as_field(error.code)), noun.pair(noun.atom(as_field(error.start)), noun.pair(noun.atom(as_field(error.end)), rest)))
+}
+
+// [source Bytes [expected owner Bytes program-flag]].
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let body = noun.tail(input)
+    let name = bytes.from_noun(noun.head(body), as_u32(255), as_u32(1000000))
+    let opened = module_header.open(source, name, noun.as_field(noun.tail(body)) == 1)
+    let mut imports = seq.empty()
+    let mut token = opened.token
+    if (opened.error.code == as_u32(0)) == false { return output(opened.error, token, imports) }
+    for step in 0..1024 {
+        let item = module_header.next_use(source, token)
+        if (item.error.code == as_u32(0)) == false { return output(item.error, item.token, imports) }
+        if item.exists == false { return output(item.error, token, imports) }
+        let span = noun.pair(noun.atom(as_field(item.start)), noun.pair(noun.atom(as_field(item.path_start)), noun.atom(as_field(item.end))))
+        imports = seq.push(imports, noun.pair(bytes.to_noun(item.name), span), as_u32(4096))
+        token = item.token
+    }
+    output(syntax.error(7, token.start, token.end), token, imports)
+}

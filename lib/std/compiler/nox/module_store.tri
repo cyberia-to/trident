@@ -1,0 +1,72 @@
+module std.compiler.nox.module_store
+
+use vm.nox.noun
+use std.nox.seq
+use std.compiler.nox.syntax
+
+// Compiler-owned records only. Uses reverse during discovery and become source
+// ordered on completion. Each occurrence is [target [use_start [path_start end]]].
+pub struct Module {
+    pub index: U32, pub offset: U32, pub status: U32, pub count: U32, pub uses: Noun
+}
+pub struct Use { pub target: U32, pub start: U32, pub path_start: U32, pub end: U32 }
+
+#[pure]
+pub fn pack(value: Module) -> Noun {
+    noun.pair(noun.atom(as_field(value.index)), noun.pair(noun.atom(as_field(value.offset)),
+        noun.pair(noun.atom(as_field(value.status)), noun.pair(noun.atom(as_field(value.count)), value.uses))))
+}
+
+#[pure]
+#[requires(id < seq.len(modules))]
+pub fn read(modules: seq.Seq, id: U32) -> Module {
+    let value = seq.get(modules, id)
+    let offset = noun.tail(value)
+    let status = noun.tail(offset)
+    let count = noun.tail(status)
+    Module { index: as_u32(noun.as_field(noun.head(value))),
+        offset: as_u32(noun.as_field(noun.head(offset))), status: as_u32(noun.as_field(noun.head(status))),
+        count: as_u32(noun.as_field(noun.head(count))), uses: noun.tail(count) }
+}
+
+#[pure]
+pub fn use_record(value: Use) -> Noun {
+    noun.pair(noun.atom(as_field(value.target)), noun.pair(noun.atom(as_field(value.start)),
+        noun.pair(noun.atom(as_field(value.path_start)), noun.atom(as_field(value.end)))))
+}
+
+#[pure]
+pub fn use_read(value: Noun) -> Use {
+    let rest = noun.tail(value)
+    let path = noun.tail(rest)
+    Use { target: as_u32(noun.as_field(noun.head(value))), start: as_u32(noun.as_field(noun.head(rest))),
+        path_start: as_u32(noun.as_field(noun.head(path))), end: as_u32(noun.as_field(noun.tail(path))) }
+}
+
+#[pure]
+fn reverse_chunk(input: Noun, output: Noun) -> (Noun, Noun) {
+    let mut rest = input
+    let mut ordered = output
+    for step in 0..64 {
+        if noun.eq(rest, noun.atom(0)) { return (rest, ordered) }
+        ordered = noun.pair(noun.head(rest), ordered)
+        rest = noun.tail(rest)
+    }
+    (rest, ordered)
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < value.count) == false)]
+pub fn finish(value: Module) -> Module {
+    let mut rest = value.uses
+    let mut ordered = noun.atom(0)
+    for chunk in 0..64 {
+        (rest, ordered) = reverse_chunk(rest, ordered)
+        if noun.eq(rest, noun.atom(0)) {
+            return Module { index: value.index, offset: value.offset, status: as_u32(2),
+                count: value.count, uses: ordered }
+        }
+    }
+    assert_eq(0, 1)
+    value
+}
