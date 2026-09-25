@@ -49,13 +49,20 @@ fn chunk(statements: seq.Seq, values: seq.Seq, emitted: seq.Seq, shape: tree.Sha
 }
 
 #[pure]
-fn block(body: blocks.Block, terminal: Bool, statements: seq.Seq, values: seq.Seq, emitted: seq.Seq, shape: tree.Shape, depth_cap: U32, loops: seq.Seq, context: call_codegen.Context) -> Fold {
-    let mut output = flow.keep(flow.axis(1))
+fn tail(body: blocks.Block, terminal: Bool, values: seq.Seq) -> formula.Value {
     if body.has_tail {
-        output = flow.discard(formula.value(values, body.tail))
-        if terminal { output = flow.returned(formula.value(values, body.tail)) }
+        let value = formula.value(values, body.tail)
+        if terminal { return flow.returned(value) }
+        return flow.discard(value)
     }
-    let mut s = Fold { output, remaining: body.statements, failed: false }
+    flow.keep(flow.axis(1))
+}
+
+#[pure]
+fn block(body: blocks.Block, terminal: Bool, statements: seq.Seq, values: seq.Seq, emitted: seq.Seq, shape: tree.Shape, depth_cap: U32, loops: seq.Seq, context: call_codegen.Context) -> Fold {
+    // Build only the continuation used by this block; discarded alternatives
+    // otherwise consume the compiler's lifetime arena even for a simple tail.
+    let mut s = Fold { output: tail(body, terminal, values), remaining: body.statements, failed: false }
     for turn in 0..512 {
         s = chunk(statements, values, emitted, shape, s, depth_cap, loops, context)
         if syntax.either(s.failed, noun.eq(s.remaining, noun.atom(0))) { return s }

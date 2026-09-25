@@ -11,14 +11,16 @@ use std.compiler.nox.terminal
 use std.compiler.nox.body_state
 use std.compiler.nox.loop_records
 use std.compiler.nox.types
+use std.compiler.nox.halting
 
 pub struct Checked { pub flags: Noun, pub error: syntax.Error }
 struct State { flags: Noun, next: U32 }
 struct Block { covered: Bool, remaining: Noun }
 
 #[pure]
-fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Bool {
+fn statement(s: blocks.Statement, nodes: seq.Seq, arguments: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Bool {
     if s.kind == blocks.RETURN { return true }
+    if s.kind == blocks.EVAL { return halting.is_false_assert(seq.get(nodes, s.a), nodes, arguments) }
     if s.kind == blocks.FOR {
         let record = loop_records.read(seq.get(loops, s.a))
         if record.end == 4294967296 { return false }
@@ -37,22 +39,28 @@ fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32, loops
 }
 
 #[pure]
-fn statement_chunk(input: Block, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Block {
+fn statement_chunk(input: Block, nodes: seq.Seq, statements: seq.Seq, arguments: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Block {
     let mut s = input
     for turn in 0..8 {
         if noun.eq(s.remaining, noun.atom(0)) { return s }
         let id = as_u32(noun.as_field(noun.head(s.remaining)))
-        s.covered = syntax.either(s.covered, statement(blocks.read_statement(seq.get(statements, id)), nodes, flags, count, loops))
+        s.covered = syntax.either(s.covered, statement(blocks.read_statement(seq.get(statements, id)), nodes, arguments, flags, count, loops))
         s.remaining = noun.tail(s.remaining)
     }
     s
 }
 
 #[pure]
-fn block(body: blocks.Block, terminal: Bool, nodes: seq.Seq, statements: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Bool {
+fn block(body: blocks.Block, terminal: Bool, nodes: seq.Seq, statements: seq.Seq, arguments: seq.Seq, flags: Noun, count: U32, loops: seq.Seq) -> Bool {
     let mut s = Block { covered: syntax.both(body.has_tail, terminal), remaining: body.statements }
+    if body.has_tail {
+        if terminal == false { s.covered = halting.is_false_assert(seq.get(nodes, body.tail), nodes, arguments) }
+    }
+    // All statements and terminal tails have already been type checked. Once
+    // the tail covers this block, scanning earlier statements adds no evidence.
+    if s.covered { return true }
     for turn in 0..512 {
-        s = statement_chunk(s, nodes, statements, flags, count, loops)
+        s = statement_chunk(s, nodes, statements, arguments, flags, count, loops)
         if noun.eq(s.remaining, noun.atom(0)) { return s.covered }
     }
     // Source-built lists contain at most SOURCE_CAP statement records.
@@ -66,7 +74,7 @@ fn chunk(input: State, s: body_state.State, terminal: Noun) -> State {
     for turn in 0..8 {
         if state.next == count { return state }
         let tail_returns = noun.as_field(tree.get(terminal, count, state.next)) == 1
-        let covered = block(blocks.read(seq.get(s.blocks, state.next)), tail_returns, s.nodes, s.statements, state.flags, count, s.loops)
+        let covered = block(blocks.read(seq.get(s.blocks, state.next)), tail_returns, s.nodes, s.statements, s.arguments, state.flags, count, s.loops)
         state.flags = tree.set(state.flags, count, state.next, blocks.flag(covered))
         state.next = syntax.inc(state.next)
     }
@@ -78,7 +86,7 @@ fn chunk(input: State, s: body_state.State, terminal: Noun) -> State {
 #[requires(s.root < seq.len(s.blocks))]
 pub fn check(s: body_state.State) -> Checked {
     let zero = syntax.ZERO
-    let marked = terminal.mark(s.nodes, s.statements, s.blocks, s.root, s.returns)
+    let marked = terminal.mark(s.nodes, s.statements, s.blocks, s.arguments, s.root, s.returns)
     if (marked.error.code == zero) == false { return Checked { flags: marked.flags, error: marked.error } }
     let mut state = State { flags: tree.empty(tree.shape(seq.len(s.blocks)).height), next: zero }
     for turn in 0..512 {

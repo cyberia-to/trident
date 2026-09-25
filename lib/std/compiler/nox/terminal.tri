@@ -7,13 +7,14 @@ use std.nox.tree
 use std.compiler.nox.syntax
 use std.compiler.nox.ast
 use std.compiler.nox.blocks
+use std.compiler.nox.halting
 
 pub struct Marked { pub flags: Noun, pub remaining: U32, pub error: syntax.Error }
 
 // Each block has one owner. Parents follow children, so descending propagation
 // visits each terminal block once, including both arms of constant conditions.
 #[pure]
-fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, input: Marked, returns: Noun) -> Marked {
+fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, arguments: seq.Seq, input: Marked, returns: Noun) -> Marked {
     let mut s = input
     for turn in 0..8 {
         if s.remaining == syntax.ZERO { return s }
@@ -22,7 +23,9 @@ fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, input: Marked, re
             let block = blocks.read(seq.get(bodies, s.remaining))
             if block.has_tail {
                 let tail = seq.get(nodes, block.tail)
-                if (noun.eq(ast.ty(tail), returns)) == false { s.error = ast.issue(5, tail) return s }
+                if (noun.eq(ast.ty(tail), returns)) == false {
+                    if halting.is_false_assert(tail, nodes, arguments) == false { s.error = ast.issue(5, tail) return s }
+                }
             } else if noun.eq(block.statements, noun.atom(0)) == false {
                 let last = blocks.read_statement(seq.get(statements, as_u32(noun.as_field(noun.head(block.statements)))))
                 if last.kind == blocks.IF {
@@ -38,11 +41,11 @@ fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, input: Marked, re
 #[pure]
 #[requires(root < seq.len(bodies))]
 #[requires((syntax.SOURCE_CAP < seq.len(bodies)) == false)]
-pub fn mark(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, root: U32, returns: Noun) -> Marked {
+pub fn mark(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, arguments: seq.Seq, root: U32, returns: Noun) -> Marked {
     let flags = tree.set(tree.empty(tree.shape(seq.len(bodies)).height), seq.len(bodies), root, noun.atom(1))
     let mut s = Marked { flags, remaining: seq.len(bodies), error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
     for turn in 0..512 {
-        s = chunk(nodes, statements, bodies, s, returns)
+        s = chunk(nodes, statements, bodies, arguments, s, returns)
         if syntax.either(s.remaining == syntax.ZERO, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s.error = syntax.error(7, syntax.ZERO, syntax.ZERO)

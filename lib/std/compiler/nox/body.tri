@@ -20,6 +20,7 @@ use std.compiler.nox.loop_parse
 use std.compiler.nox.types
 use std.compiler.nox.tuple_declarations
 use std.compiler.nox.record_assign
+use std.compiler.nox.halting
 
 #[pure]
 fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -60,7 +61,9 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
     s.token = value.token
     if returning {
         let node = seq.get(s.nodes, value.value)
-        if (noun.eq(ast.ty(node), s.returns)) == false { s.error = ast.issue(5, node) return s }
+        if (noun.eq(ast.ty(node), s.returns)) == false {
+            if halting.is_false_assert(node, s.nodes, s.arguments) == false { s.error = ast.issue(5, node) return s }
+        }
         s = body_state.append(s, blocks.statement(blocks.RETURN, value.value, syntax.ZERO, syntax.ZERO), cap)
         s.returned = true
         return s
@@ -74,6 +77,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
         s.tail = value.value
         return control_parse.close(source, s, cap, true)
     }
+    s.returned = halting.is_false_assert(seq.get(s.nodes, value.value), s.nodes, s.arguments)
     body_state.append(s, blocks.statement(blocks.EVAL, value.value, syntax.ZERO, syntax.ZERO), cap)
 }
 

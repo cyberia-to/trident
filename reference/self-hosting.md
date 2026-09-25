@@ -319,7 +319,8 @@ The selected last `main` must have the scalar or structured signature below.
 An omitted result annotation means Unit; Unit has no explicit type spelling in
 this subset. Unit functions may fall through and produce native atom zero.
 Bare return is accepted only for Unit. Explicit and terminal return values must
-match the declared result. Local inference can retain Unit values; assignment
+match the declared result, except a resolved builtin `assert(false)` which
+halts before producing a value. Local inference can retain Unit values; assignment
 preserves that type. Conditions still require Field or Bool. Imports, attributes,
 generic declarations and intrinsic declarations remain outside this subset.
 
@@ -338,6 +339,24 @@ unsigned comparison, bitwise AND and subtraction. Conversion evaluates its
 argument once as a new subject, branches on the range check and either retains
 that atom or traps. Formula-depth accounting includes the complete guard and
 continuation. Accepted earlier no-builtin programs retain their artifact bytes.
+
+`assert(Bool) -> Unit` and `assert_eq(Field, Field) -> Unit` evaluate their
+arguments once in source order. Success produces atom zero; failure traps
+through `inv(0)` during execution of the emitted program. Well-typed failing
+assertions compile successfully. Final ordinary functions with these names
+retain callable precedence; local variables cannot replace callable bindings.
+The formulas branch on the evaluated Bool or Field equality, without a helper
+code-table entry. Complete depth includes the failure arm and branch wrappers.
+
+Only a resolved builtin `assert` whose sole argument is the literal `false`
+(possibly grouped) supplies compile-time halting coverage. It may stand alone,
+end a block or appear as an explicit return value of any declared type.
+Direct following statements or a tail expression in that block are unreachable
+errors. Halting coverage propagates through branches and known nonempty loops;
+their defensive continuation remains permitted, as in the seed. Computed false
+conditions, unequal `assert_eq` calls and assertions inside let initializers do
+not establish halting coverage. Ordinary functions named `assert` retain their
+declared result and normal return-coverage rules.
 
 The native subset admits opaque Noun parameters, results and local bindings.
 A Noun frame slot retains a complete immutable subtree. Two entry signatures
