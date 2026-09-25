@@ -196,17 +196,21 @@ The pilot selects the JOB1 entry module by its complete logical-path Bytes.
 Joy admits the complete JOB1 and binds the compiler identity before execution;
 the guest validates the collections it consumes with one threaded allowance.
 Unused modules remain identity-bound and structurally admitted without lexical
-analysis. The selected source is the complete reachable closure for this
-import-free subset. The requested entry function is `main` and generated
+analysis. The guest discovers the direct-use closure from the selected entry
+and checks each reached source in its own module scope. The requested entry
+function is `main` and generated
 profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
 requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
-program := "program" identifier declaration+ EOF
+program := "program" logical_path use* declaration+ EOF
+module := "module" logical_path use* ("pub"? constant)* EOF
+use := "use" logical_path
+logical_path := identifier ("." identifier)*
 declaration := function_attribute* "pub"? function | "pub"? (constant | record_declaration)
 function_attribute := "#[" ("pure" | ("requires" | "ensures") "(" contract_tokens ")") "]"
 constant := "const" identifier ":" ("Field" | "U32") "=" constant_initializer
-constant_initializer := decimal | identifier | "(" constant_initializer ")"
+constant_initializer := decimal | logical_path | "(" constant_initializer ")"
 record_declaration := "struct" identifier "{" (record_field ("," record_field)* ","?)? "}"
 record_field := "pub"? identifier ":" type
 function := "fn" identifier "(" parameters? ")" ("->" type)? block
