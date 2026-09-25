@@ -134,6 +134,18 @@ grammar. Unused source bytes receive structural/size validation but are not
 lexed, header-checked or semantically checked. Every span is `[start_byte,end_byte)`, bounded by the original module's
 byte length. Empty spans at EOF are valid.
 
+The guest's qualified-name reader retains the original full expression span and
+the final member token separately. It normalizes only the module prefix into
+ASCII dotted bytes, skipping source whitespace/comments through the lexer.
+The package's 255-byte logical-name ceiling applies to that prefix; member
+identifiers retain the source-language length bound. An identifier is required
+after every dot. Lexical failures retain code 1, incomplete paths code 2 and
+prefix-capacity failures code 7, all at the original offending token.
+Imported constant lookup compares a member against its defining source, keeps
+the calling expression's span, and retains literal provenance independently of
+the canonical Field value. Direct-use order determines each exported binding;
+only final public declarations enter an importing scope.
+
 ## Result and failures
 
 Status Field0 = success, with exactly one ART1 payload. Field1 = compile error,

@@ -1,0 +1,96 @@
+program native_constant_imports
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.qualified_name
+use std.compiler.nox.constant_exports
+use std.compiler.nox.constant_imports
+
+const CAP: U32 = 4096
+const VISITS: U32 = 1000000
+
+#[pure]
+fn bindings(input: constant_exports.Bank, rows: seq.Seq, owner: U32) -> constant_exports.Bank {
+    let mut bank = input
+    for i in 0..4096 {
+        if i == seq.len(rows) { return bank }
+        let row = seq.get(rows, i)
+        let name_end = noun.tail(row)
+        let ty = noun.tail(name_end)
+        let value = noun.tail(ty)
+        let origin = noun.tail(value)
+        let span = noun.tail(origin)
+        let number = noun.as_field(noun.head(value))
+        bank = constant_exports.push(bank, constant_exports.Binding { owner,
+            name: syntax.token(1, as_u32(noun.as_field(noun.head(row))), as_u32(noun.as_field(noun.head(name_end))), 0),
+            ty: noun.as_field(noun.head(ty)), value: number,
+            literal_owner: as_u32(noun.as_field(noun.head(origin))),
+            literal: syntax.token(2, as_u32(noun.as_field(noun.head(span))), as_u32(noun.as_field(noun.tail(span))), number) }, CAP)
+    }
+    bank
+}
+
+#[pure]
+fn modules(rows: seq.Seq) -> constant_imports.View {
+    let mut view = constant_imports.empty()
+    view.exports = constant_exports.empty(seq.len(rows))
+    for i in 0..4096 {
+        if i == seq.len(rows) { return view }
+        let item = seq.get(rows, i)
+        let body = noun.tail(item)
+        view.names = bytes.table_push(view.names, bytes.from_noun(noun.head(item), as_u32(255), VISITS), CAP)
+        view.sources = bytes.table_push(view.sources, bytes.from_noun(noun.head(body), CAP, VISITS), CAP)
+        view.exports = bindings(view.exports, seq.from_noun(noun.tail(body), CAP, VISITS), i)
+    }
+    view
+}
+
+#[pure]
+fn uses(targets: seq.Seq) -> Noun {
+    let mut remaining = seq.len(targets)
+    let mut result = noun.atom(0)
+    for i in 0..4096 {
+        if remaining == as_u32(0) { return result }
+        remaining = syntax.dec(remaining)
+        result = noun.pair(noun.pair(seq.get(targets, remaining), noun.atom(0)), result)
+    }
+    result
+}
+
+#[pure]
+fn queries(rows: seq.Seq, view: constant_imports.View) -> Noun {
+    let mut output = seq.empty()
+    for i in 0..4096 {
+        if i == seq.len(rows) { return noun.pair(noun.atom(0), seq.to_noun(output)) }
+        let source = bytes.from_noun(seq.get(rows, i), CAP, VISITS)
+        let name = qualified_name.parse(source, lexer.next(source, as_u32(0)))
+        assert_eq(as_field(name.error.code), 0)
+        let found = constant_imports.lookup(source, name, view)
+        let mut value = noun.atom(0)
+        if found.exists {
+            let binding = constant_exports.read(view.exports, found.id)
+            let span = noun.pair(noun.atom(as_field(binding.literal.start)), noun.atom(as_field(binding.literal.end)))
+            let origin = noun.pair(noun.atom(as_field(binding.literal_owner)), span)
+            let body = noun.pair(noun.atom(binding.ty), noun.pair(noun.atom(binding.value), origin))
+            value = noun.pair(noun.atom(as_field(found.id) + 1), noun.pair(noun.atom(as_field(binding.owner)), body))
+        }
+        output = seq.push(output, value, CAP)
+    }
+    noun.pair(noun.atom(0), seq.to_noun(output))
+}
+
+// [modules [ordered target IDs queries]], module = [name [source bindings]].
+// Fixtures supply already resolved bindings; declaration checking is separate.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let rows = seq.from_noun(noun.head(input), CAP, VISITS)
+    let rest = noun.tail(input)
+    let targets = seq.from_noun(noun.head(rest), CAP, VISITS)
+    let requests = seq.from_noun(noun.tail(rest), CAP, VISITS)
+    let mut view = modules(rows)
+    view.uses = uses(targets)
+    queries(requests, view)
+}

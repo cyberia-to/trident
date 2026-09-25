@@ -1,0 +1,20 @@
+program native_qualified_name
+
+use vm.nox.noun
+use vm.core.field
+use std.nox.bytes
+use std.compiler.nox.lexer
+use std.compiler.nox.qualified_name
+
+// Source Bytes -> error/span, full span, member span, following token, prefix.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(input, as_u32(4096), as_u32(1000000))
+    let parsed = qualified_name.parse(source, lexer.next(source, as_u32(0)))
+    let values = [as_field(parsed.error.code), as_field(parsed.error.start), as_field(parsed.error.end),
+        as_field(parsed.start), as_field(parsed.end), as_field(parsed.member.start), as_field(parsed.member.end),
+        as_field(parsed.token.kind), as_field(parsed.token.start)]
+    let mut output = bytes.to_noun(parsed.prefix)
+    for i in 0..9 { output = noun.pair(noun.atom(values[as_u32(field.sub(8, as_field(i)))]), output) }
+    output
+}

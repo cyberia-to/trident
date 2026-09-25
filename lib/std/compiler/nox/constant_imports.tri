@@ -1,0 +1,58 @@
+module std.compiler.nox.constant_imports
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.ascii
+use std.compiler.nox.qualified_name
+use std.compiler.nox.constant_exports
+
+// An immutable direct-use view. The graph owns cached validated sources/names;
+// each dependency publishes its final exports before this view is constructed.
+pub struct View {
+    pub sources: bytes.BytesTable, pub names: bytes.BytesTable,
+    pub exports: constant_exports.Bank, pub uses: Noun
+}
+
+#[pure]
+pub fn empty() -> View {
+    View { sources: bytes.table_empty(), names: bytes.table_empty(),
+        exports: constant_exports.empty(syntax.ZERO), uses: noun.atom(0) }
+}
+
+#[pure]
+fn alias(prefix: bytes.Bytes, owner: bytes.Bytes) -> Bool {
+    if noun.eq(bytes.to_noun(prefix), bytes.to_noun(owner)) { return true }
+    let mut start = syntax.ZERO
+    let mut pos = syntax.ZERO
+    for letter in 0..255 {
+        if pos == bytes.len(owner) { return ascii.same(owner, start, pos, prefix) }
+        if bytes.get(owner, pos) == as_u32(46) { start = syntax.inc(pos) }
+        pos = syntax.inc(pos)
+    }
+    ascii.same(owner, start, pos, prefix)
+}
+
+#[pure]
+pub fn lookup(source: bytes.Bytes, name: qualified_name.Name, view: View) -> constant_exports.Found {
+    let mut found = constant_exports.Found { exists: false, id: syntax.ZERO }
+    if bytes.len(name.prefix) == syntax.ZERO { return found }
+    let mut rest = view.uses
+    for step in 0..4096 {
+        if noun.eq(rest, noun.atom(0)) { return found }
+        // module_store.Use starts with its compact target ID. Lookup retains
+        // the complete record while reading only this field from the graph.
+        let target = as_u32(noun.as_field(noun.head(noun.head(rest))))
+        let owner = bytes.table_get(view.names, target)
+        if alias(name.prefix, owner) {
+            let candidate = constant_exports.find(view.exports, target,
+                bytes.table_get(view.sources, target), source, name.member)
+            // Missing/private members of a later same-basename owner leave the
+            // earlier public symbol visible. Repeated uses retain source order.
+            if candidate.exists { found = candidate }
+        }
+        rest = noun.tail(rest)
+    }
+    assert(noun.eq(rest, noun.atom(0)))
+    found
+}

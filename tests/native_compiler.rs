@@ -107,6 +107,12 @@ mod module_graph;
 #[path = "native_compiler/module_header.rs"]
 mod module_header;
 
+#[path = "native_compiler/qualified_name.rs"]
+mod qualified_name;
+
+#[path = "native_compiler/constant_imports.rs"]
+mod constant_imports;
+
 #[path = "native_compiler/locals.rs"]
 mod locals;
 

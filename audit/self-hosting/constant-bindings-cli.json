@@ -1,0 +1,767 @@
+{
+  "schema": "trident/constant-bindings-cli/v1",
+  "kind": "local-component-development",
+  "binary_sha256": "c2ae4acdda8d3068a860fde9e93f9a63bc2f5175f917ad9873a1f68e8195b588",
+  "artifacts": {
+    "compiler": {
+      "sha256": "3bdb26cd9ab2140c2145222759de00af0fcdecd3b8fe4bfff0fdcee80792f9cd",
+      "particle": "35429c19be900bf8de42e40b33ab5e4a8b697ff94757188bc3a89c44c99e8303"
+    },
+    "name": {
+      "sha256": "01a435ed8b585212e2e458371d3171388b96a6f3f713e29aca54c13e5fd03141",
+      "particle": "61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0"
+    },
+    "imports": {
+      "sha256": "3190cebc622fad76745a54e176d4349fc26a8903c1c8f471ab57b66bd3e23551",
+      "particle": "640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37"
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/trident/compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/compiler.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/compiler.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/trident/tests/fixtures/native_qualified_name.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/name.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/name.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/trident/tests/fixtures/native_constant_imports.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-input.dag\",\"execution\":{\"allocated_nodes\":121,\"arena_reserved_bytes\":104857616,\"charged_reductions\":57,\"elapsed_micros\":5698,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"1ee3e09f6668355e10040fb42361d30438dc0a6bcce1218cec727b50d19b9177\",\"peak_frames\":12,\"program_particle\":\"0723cef62e5b1effb203598cc291f8589eb5f8cc5581e97da79784ab9a546f9b\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"1ee3e09f6668355e10040fb42361d30438dc0a6bcce1218cec727b50d19b9177\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/name.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-output.dag\",\"execution\":{\"allocated_nodes\":17629,\"arena_reserved_bytes\":104857616,\"charged_reductions\":343206,\"elapsed_micros\":263868,\"frame_buffer_bytes\":11534336,\"input_particle\":\"1ee3e09f6668355e10040fb42361d30438dc0a6bcce1218cec727b50d19b9177\",\"output_particle\":\"4694b2ab3a2adbaee44a9d940a88b8cc7d20370f5334d8cc7ad2ecb807bcfb94\",\"peak_frames\":303,\"program_particle\":\"61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"4694b2ab3a2adbaee44a9d940a88b8cc7d20370f5334d8cc7ad2ecb807bcfb94\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-input.dag\",\"execution\":{\"allocated_nodes\":157,\"arena_reserved_bytes\":104857616,\"charged_reductions\":537,\"elapsed_micros\":7951,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"1a70bce9a75335a5a3c171223c032159a3ef62fb8df327b5613a6370729cdf34\",\"peak_frames\":16,\"program_particle\":\"42cf7d16e1a0b6fc6eaa0c6b335a832d6fab0fbf0dbbfd20163ea55c0dd4eba1\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"1a70bce9a75335a5a3c171223c032159a3ef62fb8df327b5613a6370729cdf34\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/name.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-output.dag\",\"execution\":{\"allocated_nodes\":224700,\"arena_reserved_bytes\":104857616,\"charged_reductions\":7257302,\"elapsed_micros\":5516237,\"frame_buffer_bytes\":11534336,\"input_particle\":\"1a70bce9a75335a5a3c171223c032159a3ef62fb8df327b5613a6370729cdf34\",\"output_particle\":\"16ba8f408f43293e5ab1d9d94e9252dab4ee0b8d13398d70bc0cd59f07d77330\",\"peak_frames\":2620,\"program_particle\":\"61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"16ba8f408f43293e5ab1d9d94e9252dab4ee0b8d13398d70bc0cd59f07d77330\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-input.dag\",\"execution\":{\"allocated_nodes\":57,\"arena_reserved_bytes\":104857616,\"charged_reductions\":27,\"elapsed_micros\":5121,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"958e7d7fd4a4e0044f8314eb118adb5ae80521a6b6ddad40765c644fadf4a72f\",\"peak_frames\":8,\"program_particle\":\"b4ada31e3849700041174443bd69f7108cf97d98c3ddf9cd68dbfb354d4c316d\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"958e7d7fd4a4e0044f8314eb118adb5ae80521a6b6ddad40765c644fadf4a72f\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/name.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-output.dag\",\"execution\":{\"allocated_nodes\":9878,\"arena_reserved_bytes\":104857616,\"charged_reductions\":26257,\"elapsed_micros\":92950,\"frame_buffer_bytes\":11534336,\"input_particle\":\"958e7d7fd4a4e0044f8314eb118adb5ae80521a6b6ddad40765c644fadf4a72f\",\"output_particle\":\"984b252083137bb109d210ef00cdd6fd54a04a96971cd215c604703365a0e38b\",\"peak_frames\":188,\"program_particle\":\"61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"984b252083137bb109d210ef00cdd6fd54a04a96971cd215c604703365a0e38b\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-input.dag\",\"execution\":{\"allocated_nodes\":507,\"arena_reserved_bytes\":104857616,\"charged_reductions\":273,\"elapsed_micros\":11609,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"359db95405922aa7718bc6606d4fe924cb95f40061e3ffdb0a2e5b63fce30ccd\",\"peak_frames\":22,\"program_particle\":\"7a5804465881e8ff5d0579c1604185e0f0777c50b3972d50c410bc194df41f63\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"359db95405922aa7718bc6606d4fe924cb95f40061e3ffdb0a2e5b63fce30ccd\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-output.dag\",\"execution\":{\"allocated_nodes\":47792,\"arena_reserved_bytes\":104857616,\"charged_reductions\":1692596,\"elapsed_micros\":1064280,\"frame_buffer_bytes\":11534336,\"input_particle\":\"359db95405922aa7718bc6606d4fe924cb95f40061e3ffdb0a2e5b63fce30ccd\",\"output_particle\":\"98f3bb5a52f4b4f3f324c541f7dd56a5ba71faeb6d7ed5b09df4e2648cc1bdcd\",\"peak_frames\":358,\"program_particle\":\"640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"98f3bb5a52f4b4f3f324c541f7dd56a5ba71faeb6d7ed5b09df4e2648cc1bdcd\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-input.dag\",\"execution\":{\"allocated_nodes\":512,\"arena_reserved_bytes\":104857616,\"charged_reductions\":277,\"elapsed_micros\":11551,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"99ce060b99a365a725a16f8f4d20028bbc461aca3c15889bf19f20c8fe72e04d\",\"peak_frames\":22,\"program_particle\":\"06ec897ffd2c38cba680d53614f26ce602eb90d559803aef6739bf376339f211\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"99ce060b99a365a725a16f8f4d20028bbc461aca3c15889bf19f20c8fe72e04d\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-output.dag\",\"execution\":{\"allocated_nodes\":48317,\"arena_reserved_bytes\":104857616,\"charged_reductions\":2046294,\"elapsed_micros\":1290937,\"frame_buffer_bytes\":11534336,\"input_particle\":\"99ce060b99a365a725a16f8f4d20028bbc461aca3c15889bf19f20c8fe72e04d\",\"output_particle\":\"169acd2838041a10b8ee8cdb3d6bdca93bea4e501da0e88a84d57d35cca3df1b\",\"peak_frames\":361,\"program_particle\":\"640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"169acd2838041a10b8ee8cdb3d6bdca93bea4e501da0e88a84d57d35cca3df1b\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-input.dag\",\"execution\":{\"allocated_nodes\":504,\"arena_reserved_bytes\":104857616,\"charged_reductions\":271,\"elapsed_micros\":10152,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"7f85f22d16e313eb147f4af750b8856bccb0d2711276870df70fbcffa49c85bb\",\"peak_frames\":22,\"program_particle\":\"deec4fa9121ebe124e3bfc81233e48a774c1e626e307ec626532e066ddbbacda\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"7f85f22d16e313eb147f4af750b8856bccb0d2711276870df70fbcffa49c85bb\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-output.dag\",\"execution\":{\"allocated_nodes\":43543,\"arena_reserved_bytes\":104857616,\"charged_reductions\":997234,\"elapsed_micros\":647705,\"frame_buffer_bytes\":11534336,\"input_particle\":\"7f85f22d16e313eb147f4af750b8856bccb0d2711276870df70fbcffa49c85bb\",\"output_particle\":\"3ba0614fa6420168268b5e414d56b315b20785816cd1b5749fa61f224322475e\",\"peak_frames\":358,\"program_particle\":\"640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"3ba0614fa6420168268b5e414d56b315b20785816cd1b5749fa61f224322475e\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-input.dag\",\"execution\":{\"allocated_nodes\":262,\"arena_reserved_bytes\":104857616,\"charged_reductions\":471,\"elapsed_micros\":8348,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ecd2aaebdd7afc4e56aea3e6d6390deff5783d1a4232418c47ae33131f690f67\",\"peak_frames\":21,\"program_particle\":\"88b4d256a8a8d22e9d446f582062eb53b0fe180026b725874457f43d257158d6\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ecd2aaebdd7afc4e56aea3e6d6390deff5783d1a4232418c47ae33131f690f67\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-output.dag\",\"execution\":{\"allocated_nodes\":254308,\"arena_reserved_bytes\":104857616,\"charged_reductions\":10331622,\"elapsed_micros\":7716223,\"frame_buffer_bytes\":11534336,\"input_particle\":\"ecd2aaebdd7afc4e56aea3e6d6390deff5783d1a4232418c47ae33131f690f67\",\"output_particle\":\"dd485eb0c815791d62afa2406b12520794f6159982e94de506ac1b366f59cb52\",\"peak_frames\":2252,\"program_particle\":\"640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"dd485eb0c815791d62afa2406b12520794f6159982e94de506ac1b366f59cb52\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-producer.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-producer.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-producer.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-input.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-input.dag\",\"execution\":{\"allocated_nodes\":406,\"arena_reserved_bytes\":104857616,\"charged_reductions\":925,\"elapsed_micros\":11730,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"2869f775fc851ea1a4bdd2f8e331e624f5df6a6218f8f8019a988fadd9694f6f\",\"peak_frames\":21,\"program_particle\":\"101595abad4ee670631cee210f594ea2a26b0b30ef1751f6003c9b6c8fedd8f5\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"2869f775fc851ea1a4bdd2f8e331e624f5df6a6218f8f8019a988fadd9694f6f\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-imported-constants/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/imports.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-input.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-output.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--arena-nodes",
+        "786432",
+        "--time-ms",
+        "60000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-output.dag\",\"execution\":{\"allocated_nodes\":137218,\"arena_reserved_bytes\":104857616,\"charged_reductions\":10258869,\"elapsed_micros\":7576635,\"frame_buffer_bytes\":11534336,\"input_particle\":\"2869f775fc851ea1a4bdd2f8e331e624f5df6a6218f8f8019a988fadd9694f6f\",\"output_particle\":\"72c4a12521caba2b3f2e0b9442cb9b387a6e3da38214721831690f54709cfc61\",\"peak_frames\":2670,\"program_particle\":\"640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"72c4a12521caba2b3f2e0b9442cb9b387a6e3da38214721831690f54709cfc61\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [
+    {
+      "case": "comments",
+      "component": "name",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "9a3204079f9916f0edb0aa5cb6f41a3cb9142fcf78b3401815c2898fccfee1b3",
+      "output_sha256": "1bec7de4aad8b3c78e03c79769a4dc3e89a02d4ed78f131c113c59fde54afa38",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/comments-output.dag",
+        "execution": {
+          "allocated_nodes": 17629,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 343206,
+          "elapsed_micros": 263868,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "1ee3e09f6668355e10040fb42361d30438dc0a6bcce1218cec727b50d19b9177",
+          "output_particle": "4694b2ab3a2adbaee44a9d940a88b8cc7d20370f5334d8cc7ad2ecb807bcfb94",
+          "peak_frames": 303,
+          "program_particle": "61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "4694b2ab3a2adbaee44a9d940a88b8cc7d20370f5334d8cc7ad2ecb807bcfb94",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "long-member",
+      "component": "name",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "a5442890bbd27b36ddc8c98d8e3e6929a45d046a1182546c45f27e62ec0e1947",
+      "output_sha256": "80383399569b6316ec8b3aa4d75717ea988f0a00206e7c1cd38f905d711c0c10",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/long-member-output.dag",
+        "execution": {
+          "allocated_nodes": 224700,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 7257302,
+          "elapsed_micros": 5516237,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "1a70bce9a75335a5a3c171223c032159a3ef62fb8df327b5613a6370729cdf34",
+          "output_particle": "16ba8f408f43293e5ab1d9d94e9252dab4ee0b8d13398d70bc0cd59f07d77330",
+          "peak_frames": 2620,
+          "program_particle": "61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "16ba8f408f43293e5ab1d9d94e9252dab4ee0b8d13398d70bc0cd59f07d77330",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "incomplete-path",
+      "component": "name",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "5f4c2645af2b183189edff880f286df665258934bca7ff128c7f725c6f3f55a4",
+      "output_sha256": "67bc31d587cfd08e91524ff70b4fdce63ac81a0239e49d4bc4f9db9a5d9c839c",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/incomplete-path-output.dag",
+        "execution": {
+          "allocated_nodes": 9878,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 26257,
+          "elapsed_micros": 92950,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "958e7d7fd4a4e0044f8314eb118adb5ae80521a6b6ddad40765c644fadf4a72f",
+          "output_particle": "984b252083137bb109d210ef00cdd6fd54a04a96971cd215c604703365a0e38b",
+          "peak_frames": 188,
+          "program_particle": "61a7ae8e4343b5c79db2442baf832b71e35412c2a3de46c0b349d3f083523ad0",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "984b252083137bb109d210ef00cdd6fd54a04a96971cd215c604703365a0e38b",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "per-symbol-order",
+      "component": "imports",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "966833c58d7e77958b406e525574389ec442f516ffd6d08956c5078287273d97",
+      "output_sha256": "fffad1885003889bdbd185f37235352d5ec1fb813fa176f56caa1aca283aa4d8",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/per-symbol-order-output.dag",
+        "execution": {
+          "allocated_nodes": 47792,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 1692596,
+          "elapsed_micros": 1064280,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "359db95405922aa7718bc6606d4fe924cb95f40061e3ffdb0a2e5b63fce30ccd",
+          "output_particle": "98f3bb5a52f4b4f3f324c541f7dd56a5ba71faeb6d7ed5b09df4e2648cc1bdcd",
+          "peak_frames": 358,
+          "program_particle": "640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "98f3bb5a52f4b4f3f324c541f7dd56a5ba71faeb6d7ed5b09df4e2648cc1bdcd",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "repeated-uses",
+      "component": "imports",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "b0dd04535af088c5f5b5b2035eb0ba3ee85f7420b7441ebbad1825a1b3ba7901",
+      "output_sha256": "cb87f2c124ca128a0999edc6ee11ffc65df104d899147ac867a413f5663dcf7e",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/repeated-uses-output.dag",
+        "execution": {
+          "allocated_nodes": 48317,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 2046294,
+          "elapsed_micros": 1290937,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "99ce060b99a365a725a16f8f4d20028bbc461aca3c15889bf19f20c8fe72e04d",
+          "output_particle": "169acd2838041a10b8ee8cdb3d6bdca93bea4e501da0e88a84d57d35cca3df1b",
+          "peak_frames": 361,
+          "program_particle": "640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "169acd2838041a10b8ee8cdb3d6bdca93bea4e501da0e88a84d57d35cca3df1b",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "no-ambient-bindings",
+      "component": "imports",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "1e7a5d92bc8387144e1d66e7bd32fe1bec9557a42e3823ba9a0a00ee9fe8b654",
+      "output_sha256": "7a10f496c0fa7e73b08bd5b0d2e61b981152d5abe29197b15cf44c3151acadb2",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/no-ambient-bindings-output.dag",
+        "execution": {
+          "allocated_nodes": 43543,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 997234,
+          "elapsed_micros": 647705,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "7f85f22d16e313eb147f4af750b8856bccb0d2711276870df70fbcffa49c85bb",
+          "output_particle": "3ba0614fa6420168268b5e414d56b315b20785816cd1b5749fa61f224322475e",
+          "peak_frames": 358,
+          "program_particle": "640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "3ba0614fa6420168268b5e414d56b315b20785816cd1b5749fa61f224322475e",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "owner255",
+      "component": "imports",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "e85d91029c32c2ea26aafc08fccf95f9fd067b30b230328e8d52d5123da568e3",
+      "output_sha256": "ffdc172f412a6715103f1bd019d2e50769b9bf58716b87598d1457cd601ddba9",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/owner255-output.dag",
+        "execution": {
+          "allocated_nodes": 254308,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 10331622,
+          "elapsed_micros": 7716223,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "ecd2aaebdd7afc4e56aea3e6d6390deff5783d1a4232418c47ae33131f690f67",
+          "output_particle": "dd485eb0c815791d62afa2406b12520794f6159982e94de506ac1b366f59cb52",
+          "peak_frames": 2252,
+          "program_particle": "640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "dd485eb0c815791d62afa2406b12520794f6159982e94de506ac1b366f59cb52",
+        "schema": "joy/artifact-run/v1"
+      }
+    },
+    {
+      "case": "foreign-literal-origin",
+      "component": "imports",
+      "complete_input_checked": true,
+      "complete_output_checked": true,
+      "input_sha256": "99253d1cd5b85220e5386fab7e286960d612c14b6a45a9cd8a3702c2ae235d38",
+      "output_sha256": "9dd4a43d2ad9b1e6f0bf36c04daad9fb3a827e8b658ea4624c56542c93a60501",
+      "execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/native-constant-bindings-whqqe6mw/foreign-literal-origin-output.dag",
+        "execution": {
+          "allocated_nodes": 137218,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 10258869,
+          "elapsed_micros": 7576635,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "2869f775fc851ea1a4bdd2f8e331e624f5df6a6218f8f8019a988fadd9694f6f",
+          "output_particle": "72c4a12521caba2b3f2e0b9442cb9b387a6e3da38214721831690f54709cfc61",
+          "peak_frames": 2670,
+          "program_particle": "640402dfed09646c6971acb386df90b9a88f0eb356af6497d80c37749f019d37",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "72c4a12521caba2b3f2e0b9442cb9b387a6e3da38214721831690f54709cfc61",
+        "schema": "joy/artifact-run/v1"
+      }
+    }
+  ]
+}
