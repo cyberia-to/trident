@@ -16,7 +16,7 @@ pub struct Marked { pub flags: Noun, pub remaining: U32, pub error: syntax.Error
 fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, input: Marked, returns: Noun) -> Marked {
     let mut s = input
     for turn in 0..8 {
-        if s.remaining == as_u32(0) { return s }
+        if s.remaining == syntax.ZERO { return s }
         s.remaining = syntax.dec(s.remaining)
         if noun.as_field(tree.get(s.flags, seq.len(bodies), s.remaining)) == 1 {
             let block = blocks.read(seq.get(bodies, s.remaining))
@@ -40,11 +40,11 @@ fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, input: Marked, re
 #[requires((syntax.SOURCE_CAP < seq.len(bodies)) == false)]
 pub fn mark(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, root: U32, returns: Noun) -> Marked {
     let flags = tree.set(tree.empty(tree.shape(seq.len(bodies)).height), seq.len(bodies), root, noun.atom(1))
-    let mut s = Marked { flags, remaining: seq.len(bodies), error: syntax.error(0, as_u32(0), as_u32(0)) }
+    let mut s = Marked { flags, remaining: seq.len(bodies), error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
     for turn in 0..512 {
         s = chunk(nodes, statements, bodies, s, returns)
-        if syntax.either(s.remaining == as_u32(0), (s.error.code == as_u32(0)) == false) { return s }
+        if syntax.either(s.remaining == syntax.ZERO, (s.error.code == syntax.ZERO) == false) { return s }
     }
-    s.error = syntax.error(7, as_u32(0), as_u32(0))
+    s.error = syntax.error(7, syntax.ZERO, syntax.ZERO)
     s
 }

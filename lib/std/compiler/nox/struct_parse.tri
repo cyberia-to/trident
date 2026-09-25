@@ -37,7 +37,7 @@ pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Sc
     for index in 0..33 {
         if token.kind == as_u32(8) {
             let built = nominal.build(scope.owner, name, members, cap, syntax.STACK_CAP)
-            if (built.status == as_u32(0)) == false {
+            if (built.status == syntax.ZERO) == false {
                 let mut at = name_token
                 if built.field < seq.len(spans) {
                     let span = seq.get(spans, built.field)
@@ -47,7 +47,7 @@ pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Sc
             }
             let mut result = scope
             result.records = seq.push(result.records, type_registry.record(built.ty, public), cap)
-            return Parsed { scope: result, token: lexer.next(source, token.end), error: syntax.error(0, as_u32(0), as_u32(0)) }
+            return Parsed { scope: result, token: lexer.next(source, token.end), error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
         }
         let mut visible = false
         if token.kind == as_u32(40) { visible = true token = lexer.next(source, token.end) }
@@ -58,7 +58,7 @@ pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Sc
         if (token.kind == as_u32(17)) == false { return failed(scope, token, 2) }
         token = lexer.next(source, token.end)
         let parsed = type_parse.parse(source, token, scope, cap)
-        if (parsed.error.code == as_u32(0)) == false { return Parsed { scope, token: parsed.token, error: parsed.error } }
+        if (parsed.error.code == syntax.ZERO) == false { return Parsed { scope, token: parsed.token, error: parsed.error } }
         members = seq.push(members, nominal.field(type_registry.name(source, field_token), parsed.ty, visible), cap)
         spans = seq.push(spans, noun.pair(noun.atom(as_field(field_token.start)), noun.atom(as_field(field_token.end))), cap)
         token = parsed.token

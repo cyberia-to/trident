@@ -179,3 +179,9 @@ mod array_order;
 
 #[path = "native_compiler/array_bounds.rs"]
 mod array_bounds;
+
+#[path = "native_compiler/constants.rs"]
+mod constants;
+
+#[path = "native_compiler/constant_bounds.rs"]
+mod constant_bounds;

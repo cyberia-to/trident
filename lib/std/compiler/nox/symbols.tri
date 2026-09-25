@@ -43,7 +43,7 @@ pub fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
 pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq, visible: Noun) -> Found {
     let mut cursor = visible
     for step in 0..4096 {
-        if noun.eq(cursor, noun.atom(0)) { return Found { exists: false, slot: as_u32(0), writable: false, ty: noun.atom(types.INVALID) } }
+        if noun.eq(cursor, noun.atom(0)) { return Found { exists: false, slot: syntax.ZERO, writable: false, ty: noun.atom(types.INVALID) } }
         let index = as_u32(noun.as_field(noun.head(cursor)))
         let binding = seq.get(bindings, index)
         if same(source, name, binding) {
@@ -52,5 +52,5 @@ pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq, visibl
         }
         cursor = noun.tail(cursor)
     }
-    Found { exists: false, slot: as_u32(0), writable: false, ty: noun.atom(types.INVALID) }
+    Found { exists: false, slot: syntax.ZERO, writable: false, ty: noun.atom(types.INVALID) }
 }

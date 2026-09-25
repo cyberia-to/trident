@@ -29,7 +29,7 @@ pub struct Built { pub ty: Noun, pub failed: Bool }
 pub fn info(ty: Noun) -> Info {
     for tag in 0..7 {
         if noun.eq(ty, noun.atom(as_field(tag))) {
-            return Info { depth: as_u32(0), nodes: as_u32(1), contains_noun: as_field(tag) == NOUN, valid: (as_field(tag) == INVALID) == false }
+            return Info { depth: syntax.ZERO, nodes: as_u32(1), contains_noun: as_field(tag) == NOUN, valid: (as_field(tag) == INVALID) == false }
         }
     }
     let metadata = noun.tail(noun.tail(ty))
@@ -52,8 +52,8 @@ pub fn contains_noun(ty: Noun) -> Bool { info(ty).contains_noun }
 pub fn tuple(children: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
     let failure = Built { ty: noun.atom(INVALID), failed: true }
     let count = seq.len(children)
-    if syntax.either(count == as_u32(0), MAX_ARITY < count) { return failure }
-    let mut depth = as_u32(0)
+    if syntax.either(count == syntax.ZERO, MAX_ARITY < count) { return failure }
+    let mut depth = syntax.ZERO
     let mut nodes: Field = 1
     let mut flag: Field = 0
     for id in 0..16 {
@@ -78,14 +78,14 @@ pub struct Parts { pub children: seq.Seq, pub count: U32, pub digest: Bool, pub 
 // Known descriptors only. Decode the owned child sequence once per pattern.
 #[pure]
 pub fn parts(ty: Noun) -> Parts {
-    let mut result = Parts { children: seq.empty(), count: as_u32(0), digest: false, valid: false }
+    let mut result = Parts { children: seq.empty(), count: syntax.ZERO, digest: false, valid: false }
     if noun.eq(ty, noun.atom(DIGEST)) {
         result.digest = true
         result.valid = true
         result.count = as_u32(4)
         return result
     }
-    if info(ty).depth == as_u32(0) { return result }
+    if info(ty).depth == syntax.ZERO { return result }
     if (noun.as_field(noun.head(ty)) == TUPLE) == false { return result }
     result.children = seq.from_noun(noun.head(noun.tail(ty)), MAX_ARITY, as_u32(31))
     result.count = seq.len(result.children)
@@ -107,7 +107,7 @@ pub fn component(parts: Parts, index: U32) -> Noun {
 #[requires((syntax.SOURCE_CAP < node_cap) == false)]
 #[requires((syntax.STACK_CAP < depth_cap) == false)]
 pub fn array(length: U32, node_cap: U32, depth_cap: U32) -> Built {
-    if syntax.either(depth_cap == as_u32(0), (length < node_cap) == false) {
+    if syntax.either(depth_cap == syntax.ZERO, (length < node_cap) == false) {
         return Built { ty: noun.atom(INVALID), failed: true }
     }
     let data = noun.pair(noun.atom(FIELD), noun.atom(as_field(length)))
@@ -119,8 +119,8 @@ pub struct Array { pub length: U32, pub valid: Bool }
 
 #[pure]
 pub fn array_info(ty: Noun) -> Array {
-    let absent = Array { length: as_u32(0), valid: false }
-    if info(ty).depth == as_u32(0) { return absent }
+    let absent = Array { length: syntax.ZERO, valid: false }
+    if info(ty).depth == syntax.ZERO { return absent }
     if (noun.as_field(noun.head(ty)) == ARRAY) == false { return absent }
     Array { length: as_u32(noun.as_field(noun.tail(noun.head(noun.tail(ty))))), valid: true }
 }

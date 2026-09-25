@@ -27,7 +27,7 @@ fn identifier(source: bytes.Bytes, start: U32) -> syntax.Token {
 fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
     let max_digits = [1,8,4,4,6,7,4,4,0,7,3,7,0,9,5,5,1,6,1,5]
     let mut pos = start
-    let mut significant = as_u32(0)
+    let mut significant = syntax.ZERO
     let mut comparison: Field = 0
     let mut value: Field = 0
     let mut overflow = false
@@ -43,7 +43,7 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
         }
         let digit = field.sub(as_field(c), 48)
         value = value * 10 + digit
-        if syntax.either((significant == as_u32(0)) == false, (digit == 0) == false) {
+        if syntax.either((significant == syntax.ZERO) == false, (digit == 0) == false) {
             if significant < as_u32(20) {
                 let expected = max_digits[significant]
                 if comparison == 0 {
@@ -64,7 +64,7 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
 // {=7, }=8, ->=9, program=10, fn=11, Field=12, unsupported=13, invalid=14,
 // let=15, mut=16, colon=17, assignment=18, equality=19, Bool=20,
 // true=21, false=22, if=23, else=24, return=25, comma=26;
-// 43 is semicolon; 44 is the internal array marker.
+// 43 is semicolon; 44 is the internal array marker; const=45.
 // 38 is the internal tuple marker; struct=39, pub=40, .=41, internal record marker=42.
 // 27 is the internal call marker; U32=28, less-than=29, &=30, for=31, in=32, ..=33, Noun=34, Digest=35, [=36, ]=37.
 #[pure]

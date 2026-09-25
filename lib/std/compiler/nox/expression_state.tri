@@ -1,5 +1,6 @@
 module std.compiler.nox.expression_state
 
+use std.compiler.nox.constants
 use vm.nox.noun
 use std.nox.seq
 use std.compiler.nox.type_registry
@@ -11,7 +12,7 @@ pub const TUPLE_MARKER: U32 = 38
 pub const RECORD_MARKER: U32 = 42
 pub const ARRAY_MARKER: U32 = 44
 pub struct Context {
-    pub types: type_registry.Scope, pub bindings: seq.Seq, pub visible: Noun, pub functions: seq.Seq, pub params: seq.Seq
+    pub types: type_registry.Scope, pub bindings: seq.Seq, pub visible: Noun, pub functions: seq.Seq, pub params: seq.Seq, pub constants: constants.Scope
 }
 pub struct Parsed {
     pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun,
@@ -21,14 +22,15 @@ pub struct State {
     // Delimiters update this list at every open/close. Keep it at the head of
     // the persistent record so nested groups do not rebuild its whole spine.
     pub frames: Noun, pub token: syntax.Token,
-    pub operators: seq.Seq, pub values: seq.Seq, pub ops: U32, pub vals: U32,
-    pub operand: Bool, pub done: Bool, pub error: syntax.Error,
-    pub capacity: U32, pub node_cap: U32, pub nodes: seq.Seq,
+    pub ops: U32, pub operators: seq.Seq, pub nodes: seq.Seq,
+    pub values: seq.Seq, pub vals: U32, pub operand: Bool,
+    pub done: Bool, pub error: syntax.Error,
+    pub capacity: U32, pub node_cap: U32,
     pub context: Context, pub before_block: Bool,
     pub arguments: seq.Seq, pub edges: Noun, pub needs_get: Bool
 }
 
 #[pure]
-pub fn context(bindings: seq.Seq, visible: Noun, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope) -> Context {
-    Context { types: scope, bindings, visible, functions, params }
+pub fn context(bindings: seq.Seq, visible: Noun, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope) -> Context {
+    Context { types: scope, bindings, visible, functions, params, constants: consts }
 }

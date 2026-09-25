@@ -75,7 +75,7 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
             members = noun.pair(field, members)
         }
     }
-    let f = record_frames.Frame { ty: found.ty, fields: members, values, arity, expected: noun.atom(0), start: s.token.start, base: s.vals, count: as_u32(0), pending: signatures.NONE }
+    let f = record_frames.Frame { ty: found.ty, fields: members, values, arity, expected: noun.atom(0), start: s.token.start, base: s.vals, count: syntax.ZERO, pending: signatures.NONE }
     s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.RECORD_MARKER)), s.capacity)
     s.ops = syntax.inc(s.ops)
     s.frames = noun.pair(noun.atom(0), s.frames)

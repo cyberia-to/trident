@@ -383,3 +383,63 @@ fn successive_collections_share_one_allowance_and_return_exact_remainder() {
         }
     });
 }
+
+#[test]
+fn tree_geometry_matches_integer_bit_length_at_every_u32_power_boundary() {
+    support::worker(|| {
+        let program=compile("let g=tree.shape(as_u32(noun.as_field(input))) noun.pair(noun.atom(as_field(g.height)),noun.atom(g.capacity))");
+        let mut lengths = std::collections::BTreeSet::new();
+        lengths.extend(0..=65u32);
+        for bit in 1..32 {
+            let power = 1u32 << bit;
+            lengths.extend([power - 1, power, power + 1]);
+        }
+        lengths.insert(u32::MAX);
+        let mut arena = Arena::new();
+        for n in lengths {
+            let input = atom(&mut arena, u64::from(n)).unwrap();
+            let output = run(&mut arena, &program, input).unwrap();
+            let height = if n <= 1 {
+                0
+            } else {
+                32 - (n - 1).leading_zeros()
+            };
+            let actual_height = arena
+                .atom_value(arena.head(output).unwrap())
+                .unwrap()
+                .as_u64();
+            let actual_capacity = arena
+                .atom_value(arena.tail(output).unwrap())
+                .unwrap()
+                .as_u64();
+            assert_eq!(actual_height, u64::from(height), "height at length {n}");
+            assert_eq!(actual_capacity, 1u64 << height, "capacity at length {n}");
+        }
+    });
+}
+
+#[test]
+fn singleton_tree_shortcuts_preserve_pair_leaves_snapshots_and_bounds() {
+    support::worker(|| {
+        let program=compile("let s=seq.push(seq.empty(),input,as_u32(1)) let changed=seq.set(s,as_u32(0),noun.pair(input,input)) assert(noun.eq(seq.get(s,as_u32(0)),input)) seq.get(changed,as_u32(0))");
+        let mut arena = Arena::new();
+        let a = atom(&mut arena, 7).unwrap();
+        let b = atom(&mut arena, 11).unwrap();
+        let input = pair(&mut arena, a, b).unwrap();
+        let expected = pair(&mut arena, input, input).unwrap();
+        let actual = run(&mut arena, &program, input).unwrap();
+        equal(&arena, actual, expected);
+        for expression in [
+            "tree.get(input,as_u32(1),as_u32(1))",
+            "tree.set(input,as_u32(1),as_u32(1),input)",
+            "tree.push(input,as_u32(0),input,as_u32(0))",
+        ] {
+            assert!(
+                run(&mut arena, &compile(expression), input)
+                    .unwrap_err()
+                    .contains("InvZero"),
+                "{expression}"
+            );
+        }
+    });
+}

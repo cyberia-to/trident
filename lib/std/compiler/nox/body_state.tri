@@ -1,5 +1,6 @@
 module std.compiler.nox.body_state
 
+use std.compiler.nox.constants
 use vm.nox.noun
 use vm.core.convert
 use std.nox.seq
@@ -18,18 +19,18 @@ pub struct State {
     pub bindings: seq.Seq, pub visible: Noun,
     pub frames: Noun, pub depth: U32, pub start: U32, pub end: U32,
     pub synthetic: Bool, pub returned: Bool, pub has_tail: Bool, pub tail: U32,
-    pub done: Bool, pub root: U32, pub needs_get: Bool
+    pub done: Bool, pub root: U32, pub needs_get: Bool, pub constants: constants.Scope
 }
 
 #[pure]
 pub fn initial(token: syntax.Token) -> State {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     State { nodes: seq.empty(), arguments: seq.empty(), edges: noun.atom(0), loops: seq.empty(),
         types: type_registry.empty(), functions: seq.empty(), params: seq.empty(), returns: noun.atom(types.FIELD), statements: seq.empty(), blocks: seq.empty(),
         bindings: seq.empty(), visible: noun.atom(0), current: noun.atom(0),
         frames: noun.atom(0), depth: zero, start: token.start, end: token.start, synthetic: false,
         returned: false, has_tail: false, tail: zero, token,
-        error: syntax.error(0, zero, zero), done: false, root: zero, needs_get: false }
+        error: syntax.error(0, zero, zero), done: false, root: zero, needs_get: false, constants: constants.empty() }
 }
 
 #[pure]

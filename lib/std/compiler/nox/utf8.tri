@@ -12,7 +12,7 @@ fn chunk(source: bytes.Bytes, input: Scan) -> Scan {
     for step in 0..64 {
         if s.pos == bytes.len(source) { return s }
         let c = bytes.get(source, s.pos)
-        if (s.pending == as_u32(0)) == false {
+        if (s.pending == syntax.ZERO) == false {
             if syntax.either(c < s.low, (c < s.high) == false) {
                 s.error = true
                 s.pos = syntax.inc(s.pos)
@@ -48,7 +48,7 @@ fn chunk(source: bytes.Bytes, input: Scan) -> Scan {
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn validate(source: bytes.Bytes) -> syntax.Error {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let mut s = Scan { pos: zero, pending: zero, lead: zero, low: zero, high: zero, error: false }
     for block in 0..64 {
         s = chunk(source, s)

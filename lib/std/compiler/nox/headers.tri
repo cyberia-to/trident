@@ -1,5 +1,7 @@
 module std.compiler.nox.headers
 
+use std.compiler.nox.const_parse
+use std.compiler.nox.constants
 use vm.core.convert
 use vm.nox.noun
 use std.nox.bytes
@@ -33,7 +35,7 @@ fn open(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
         s.token = lexer.next(source, s.token.end)
         let parsed = type_parse.parse(source, s.token, s.types, cap)
         s.error = parsed.error
-        if (s.error.code == as_u32(0)) == false { return s }
+        if (s.error.code == syntax.ZERO) == false { return s }
         s.current.returns = parsed.ty
         s.token = parsed.token
     }
@@ -56,7 +58,7 @@ fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32) -> header
     s.token = lexer.next(source, s.token.end)
     let parsed = type_parse.parse(source, s.token, s.types, cap)
     s.error = parsed.error
-    if (s.error.code == as_u32(0)) == false { return s }
+    if (s.error.code == syntax.ZERO) == false { return s }
     if seq.len(s.params) == cap { s.error = syntax.error(7, name.start, name.end) return s }
     s.params = seq.push(s.params, symbols.binding(name, false, parsed.ty), cap)
     s.current.count = syntax.inc(s.current.count)
@@ -72,12 +74,12 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
     let mut s = input
     if s.phase == 1 { return parameter(source, s, cap) }
     if s.phase == 2 {
-        if s.token.kind == as_u32(0) { s.error = expected(s.token) return s }
+        if s.token.kind == syntax.ZERO { s.error = expected(s.token) return s }
         if s.token.kind == as_u32(14) { s.error = ast.failed(s.token, 1) return s }
         if s.token.kind == as_u32(7) { s.nesting = syntax.inc(s.nesting) }
         if s.token.kind == as_u32(8) {
             s.nesting = syntax.dec(s.nesting)
-            if s.nesting == as_u32(0) {
+            if s.nesting == syntax.ZERO {
                 // Function count is checked before its header/body scan begins.
                 if s.current.name.value == 1835100526 { s.entry = seq.len(s.functions) }
                 s.current.close = s.token.end
@@ -88,9 +90,17 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
         s.token = lexer.next(source, s.token.end)
         return s
     }
-    if s.token.kind == as_u32(0) { s.done = true return s }
+    if s.token.kind == syntax.ZERO { s.done = true return s }
     let mut public = false
     if s.token.kind == as_u32(40) { public = true s.token = lexer.next(source, s.token.end) }
+    if s.token.kind == as_u32(45) {
+        s.constants.owner = s.types.owner
+        let parsed = const_parse.parse(source, s.token, s.constants, public, cap)
+        s.constants = parsed.scope
+        s.token = parsed.token
+        s.error = parsed.error
+        return s
+    }
     if s.token.kind == as_u32(39) {
         let parsed = struct_parse.parse(source, s.token, s.types, public, cap)
         s.types = parsed.scope
@@ -104,7 +114,7 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
     if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
     s.token = lexer.next(source, name.end)
     if (s.token.kind == as_u32(5)) == false { s.error = expected(s.token) return s }
-    s.current = signatures.Function { name, params: seq.len(s.params), count: as_u32(0), returns: noun.atom(types.UNIT), open: as_u32(0), close: as_u32(0) }
+    s.current = signatures.Function { name, params: seq.len(s.params), count: syntax.ZERO, returns: noun.atom(types.UNIT), open: syntax.ZERO, close: syntax.ZERO }
     s.phase = 1
     s.token = lexer.next(source, s.token.end)
     s
@@ -115,7 +125,7 @@ fn chunk(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_sta
     let mut s = input
     for turn in 0..16 {
         s = step(source, s, cap)
-        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+        if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s
 }
@@ -129,11 +139,15 @@ pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, cap: U32) -> h
     s.types.owner = owner
     for turn in 0..512 {
         s = chunk(source, s, cap)
-        if (s.error.code == as_u32(0)) == false { return s }
+        if (s.error.code == syntax.ZERO) == false { return s }
         if s.done {
+            let resolved = constants.resolve(source, s.constants)
+            s.constants = resolved.scope
+            s.error = resolved.error
+            if (s.error.code == syntax.ZERO) == false { return s }
             if s.entry == signatures.NONE { s.error = syntax.error(3, s.token.start, s.token.end) return s }
             let entry = signatures.read(seq.get(s.functions, s.entry))
-            if syntax.both(entry.count == as_u32(0), noun.eq(entry.returns, noun.atom(types.FIELD))) { return s }
+            if syntax.both(entry.count == syntax.ZERO, noun.eq(entry.returns, noun.atom(types.FIELD))) { return s }
             if syntax.both(entry.count == as_u32(1), noun.eq(entry.returns, noun.atom(types.NOUN))) {
                 let parameter = seq.get(s.params, entry.params)
                 if noun.eq(noun.tail(noun.tail(parameter)), noun.atom(types.NOUN)) { s.structured = true return s }

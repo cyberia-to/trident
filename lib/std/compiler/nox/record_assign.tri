@@ -26,7 +26,7 @@ fn root(nodes: seq.Seq, bindings: seq.Seq, lhs: U32) -> Root {
             if (noun.as_field(noun.head(noun.tail(binding))) == 1) == false {
                 return Root { node: current, error: ast.issue(5, target) }
             }
-            return Root { node: current, error: syntax.error(0, as_u32(0), as_u32(0)) }
+            return Root { node: current, error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
         }
         if (ast.kind(current) == ast.PROJECT) == false { return Root { node: current, error: ast.issue(5, target) } }
         current = seq.get(nodes, as_u32(ast.left(current)))
@@ -42,11 +42,11 @@ pub fn assign(source: bytes.Bytes, input: body_state.State, lhs: U32, cap: U32) 
     let target = seq.get(s.nodes, lhs)
     let selected = root(s.nodes, s.bindings, lhs)
     s.error = selected.error
-    if (s.error.code == as_u32(0)) == false { return s }
+    if (s.error.code == syntax.ZERO) == false { return s }
     if seq.len(s.statements) == cap { s.error = ast.issue(7, target) return s }
-    let rhs = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types), s.nodes, s.arguments, s.edges, cap, false)
+    let rhs = expression.parse(source, lexer.next(source, s.token.end), expression_state.context(s.bindings, s.visible, s.functions, s.params, s.types, s.constants), s.nodes, s.arguments, s.edges, cap, false)
     s.error = rhs.error
-    if (s.error.code == as_u32(0)) == false { return s }
+    if (s.error.code == syntax.ZERO) == false { return s }
     let value = seq.get(rhs.nodes, rhs.value)
     if noun.eq(ast.ty(value), ast.ty(target)) == false { s.error = ast.issue(5, value) return s }
     if seq.len(rhs.nodes) == cap { s.error = ast.issue(7, value) return s }
@@ -56,5 +56,5 @@ pub fn assign(source: bytes.Bytes, input: body_state.State, lhs: U32, cap: U32) 
     s.edges = rhs.edges
     if rhs.needs_get { s.needs_get = true }
     s.token = rhs.token
-    body_state.append(s, blocks.statement(blocks.WRITE, as_u32(ast.left(selected.node)), edit, as_u32(0)), cap)
+    body_state.append(s, blocks.statement(blocks.WRITE, as_u32(ast.left(selected.node)), edit, syntax.ZERO), cap)
 }

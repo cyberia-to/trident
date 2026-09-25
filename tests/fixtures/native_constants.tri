@@ -1,0 +1,37 @@
+program native_constants
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.lexer
+use std.compiler.nox.syntax
+use std.compiler.nox.headers
+use std.compiler.nox.type_registry
+use std.compiler.nox.constants
+
+// [source Bytes cap] -> [error [count [type [public [value literal-span]]]]].
+// Query the first declaration's full name after all replacements are resolved.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let cap = as_u32(noun.as_field(noun.tail(input)))
+    let declaration = lexer.next(source, as_u32(0))
+    let name = lexer.next(source, declaration.end)
+    let parsed = headers.parse(source, name.end, type_registry.name(source, name), cap)
+    if (parsed.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(parsed.error.code)), noun.atom(0)) }
+    let scope = parsed.constants
+    let count = seq.len(scope.declarations)
+    assert(as_u32(0) < count)
+    let first = constants.read(seq.get(scope.declarations, as_u32(0)))
+    let found = constants.find(source, first.name, scope)
+    let value = constants.lookup(source, first.name, scope)
+    assert(value.exists)
+    let origin = as_u32(noun.as_field(tree.get(scope.memo, count, found.index)))
+    let literal = constants.read(seq.get(scope.declarations, syntax.dec(syntax.dec(origin)))).initializer
+    let span = noun.pair(noun.atom(as_field(literal.start)), noun.atom(as_field(literal.end)))
+    let mut public: Field = 0
+    if value.public { public = 1 }
+    noun.pair(noun.atom(0), noun.pair(noun.atom(as_field(count)), noun.pair(value.ty, noun.pair(noun.atom(public), noun.pair(noun.atom(value.value), span)))))
+}

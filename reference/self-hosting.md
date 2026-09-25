@@ -202,7 +202,12 @@ profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
 requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
 
 ```text
-program := "program" identifier function+ EOF
+program := "program" identifier declaration+ EOF
+declaration := "pub"? (function | constant | record_declaration)
+constant := "const" identifier ":" ("Field" | "U32") "=" constant_initializer
+constant_initializer := decimal | identifier | "(" constant_initializer ")"
+record_declaration := "struct" identifier "{" (record_field ("," record_field)* ","?)? "}"
+record_field := "pub"? identifier ":" type
 function := "fn" identifier "(" parameters? ")" ("->" type)? block
 parameters := identifier ":" type ("," identifier ":" type)* ","?
 type := primitive_type | "(" type ("," type)* ")"
@@ -454,6 +459,26 @@ replacement expression and ordinary WRITE consume AST/statement allowances;
 their actual formula depth is checked independently. The bounded walk admits
 up to64 field selections, additionally constrained by nominal type depth.
 
+Module constants admit `const name: Field = initializer` and `U32`, with optional
+`pub`. Initializers are integer literals or bare, exact-type constant references;
+parentheses may group either. The final declaration of each full name is frozen
+before checking function bodies. Forward references are valid; unknown names,
+cycles, type mismatches and invalid initializers fail even in replaced or unused
+declarations. Final visibility belongs to the final declaration. U32 literals are
+checked against their raw decimal value before Field reduction. Alias chains
+share the terminal literal's normalized value and original decimal span.
+
+Constants have an independent declaration allowance within the requested AST
+capacity. Resolution uses bounded iterative memoization; initializer grouping
+uses the expression nesting allowance. Locals and parameters shadow constants;
+constants cannot be assignment targets. Emission quotes their typed values.
+Their expression nodes remain distinct from literal nodes: `[7][I]` with
+`const I: Field = 18446744069414584321` reads element0, whereas the same raw
+literal index rejects. Known constant Field conditions use zero-as-true coverage.
+Constants in array extents and loop bounds, qualified references and imports
+remain outside this increment. Scalar signatures therefore require no additional
+source pass before final constant resolution.
+
 Fixed Field arrays use `[Field; N]` annotations with a raw decimal extent.
 Empty `[]`, singleton and trailing-comma literals produce zero-ended lists of
 complete Field values, evaluated once in source order. Array descriptors use
@@ -586,7 +611,7 @@ cycle, unknown expression name, immutable assignment or type/return error,
 6 for an unsupported construct/request and 7 for a known compiler work-capacity
 limit. A single diagnostic respects every admitted
 positive diagnostic cap. UTF-8 validation precedes parsing. Unsupported
-imports, declarations other than functions/structs, and attributes are rejected,
+imports, declarations other than functions/structs/constants, and attributes are rejected,
 including trailing items.
 Exhaustion of a VM or collection-validation allowance remains an execution
 failure outside RES1, as specified by the job contract.

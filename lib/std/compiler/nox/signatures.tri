@@ -43,7 +43,7 @@ struct Search { remaining: U32, found: U32 }
 fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, input: Search) -> Search {
     let mut s = input
     for turn in 0..8 {
-        if s.remaining == as_u32(0) { return s }
+        if s.remaining == syntax.ZERO { return s }
         s.remaining = syntax.dec(s.remaining)
         let candidate = read(seq.get(functions, s.remaining))
         if symbols.same(source, name, symbols.binding(candidate.name, false, noun.atom(types.FIELD))) {
@@ -62,7 +62,7 @@ pub fn lookup(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq) -> U3
     let mut s = Search { remaining: seq.len(functions), found: NONE }
     for turn in 0..512 {
         s = chunk(source, name, functions, s)
-        if syntax.either((s.found == NONE) == false, s.remaining == as_u32(0)) { return s.found }
+        if syntax.either((s.found == NONE) == false, s.remaining == syntax.ZERO) { return s.found }
     }
     NONE
 }

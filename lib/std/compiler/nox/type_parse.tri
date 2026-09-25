@@ -69,7 +69,7 @@ fn step(source: bytes.Bytes, scope: type_registry.Scope, input: State, cap: U32,
         s.operand = false
         return s
     }
-    if s.depth == as_u32(0) { s.done = true return s }
+    if s.depth == syntax.ZERO { s.done = true return s }
     if syntax.either(seq.len(s.children) == types.MAX_ARITY, seq.len(s.children) == cap) {
         s.error = ast.failed(s.token, 7) return s
     }
@@ -99,7 +99,7 @@ fn step(source: bytes.Bytes, scope: type_registry.Scope, input: State, cap: U32,
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, token: syntax.Token, scope: type_registry.Scope, cap: U32) -> Parsed {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     if cap == zero { return Parsed { ty: noun.atom(types.INVALID), token, error: syntax.error(7, token.start, token.end) } }
     let tag = scalar(token)
     if (tag == types.INVALID) == false {

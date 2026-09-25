@@ -55,7 +55,7 @@ fn chunk(bodies: seq.Seq, plan: function_plan.Plan, codes: code_plan.Plan, input
 #[requires(entry < seq.len(bodies))]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32, depth_cap: U32, structured: Bool) -> codegen.Compiled {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let failure = codegen.Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
     let stored = seq.get(bodies, entry)
     // An acyclic one-body closure contains no user calls. Preserve the existing

@@ -29,12 +29,23 @@ pub fn empty(height: U32) -> Noun {
 #[ensures((MAX_HEIGHT < result.height) == false)]
 pub fn shape(length: U32) -> Shape {
     if length == ZERO { return Shape { height: ZERO, capacity: 1 } }
-    let last = convert.as_u32(field.sub(convert.as_field(length), 1))
-    let mut capacity: Field = 1
-    for height in 0..32 {
-        if last < convert.as_u32(capacity) {
-            return Shape { height, capacity }
+    // Small compiler tables dominate shape queries. Resolve their powers directly
+    // so every get/set does not allocate a loop continuation for each tree level.
+    if length < convert.as_u32(33) {
+        if length < convert.as_u32(3) {
+            if length == convert.as_u32(1) { return Shape { height: ZERO, capacity: 1 } }
+            return Shape { height: convert.as_u32(1), capacity: 2 }
         }
+        if length < convert.as_u32(9) {
+            if length < convert.as_u32(5) { return Shape { height: convert.as_u32(2), capacity: 4 } }
+            return Shape { height: convert.as_u32(3), capacity: 8 }
+        }
+        if length < convert.as_u32(17) { return Shape { height: convert.as_u32(4), capacity: 16 } }
+        return Shape { height: convert.as_u32(5), capacity: 32 }
+    }
+    let mut capacity: Field = 64
+    for height in 6..32 {
+        if (convert.as_u32(capacity) < length) == false { return Shape { height, capacity } }
         capacity = capacity * 2
     }
     Shape { height: MAX_HEIGHT, capacity }
@@ -45,6 +56,7 @@ pub fn shape(length: U32) -> Shape {
 #[requires(index < length)]
 pub fn get(root: Noun, length: U32, index: U32) -> Noun {
     assert(index < length)
+    if length == convert.as_u32(1) { return root }
     let geometry = shape(length)
     let mut cursor = root
     let mut offset = index
@@ -90,6 +102,7 @@ fn zipper(root: Noun, geometry: Shape, index: U32) -> Noun {
 #[requires(index < length)]
 pub fn set(root: Noun, length: U32, index: U32, value: Noun) -> Noun {
     assert(index < length)
+    if length == convert.as_u32(1) { return value }
     let geometry = shape(length)
     let mut path = zipper(root, geometry, index)
     let mut result = value
@@ -110,6 +123,7 @@ pub fn set(root: Noun, length: U32, index: U32, value: Noun) -> Noun {
 #[requires(length < max_length)]
 pub fn push(root: Noun, length: U32, value: Noun, max_length: U32) -> Noun {
     assert(length < max_length)
+    if length == ZERO { return value }
     let next = convert.as_u32(convert.as_field(length) + 1)
     let old_shape = shape(length)
     let next_shape = shape(next)

@@ -1,5 +1,6 @@
 module std.compiler.nox.builtin_gen
 
+use std.compiler.nox.syntax
 use vm.nox.noun
 use vm.core.convert
 use std.nox.seq
@@ -16,7 +17,7 @@ fn binary(opcode: Field, left: formula.Value, right: formula.Value) -> formula.V
 // The checker owns arity and linked arguments. Links are reversed; a binary
 // builtin reconstructs left/right explicitly to preserve evaluation order.
 #[pure]
-#[requires(as_u32(0) < kind)]
+#[requires(syntax.ZERO < kind)]
 #[requires(kind < builtins.COUNT)]
 #[requires(head < seq.len(arguments))]
 pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> formula.Value {

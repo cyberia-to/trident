@@ -36,7 +36,7 @@ pub fn name(record: Noun) -> syntax.Token {
 // and empty pattern syntax; component-count validation belongs to the binder.
 #[pure]
 pub fn parse(source: bytes.Bytes, token: syntax.Token, cap: U32) -> Parsed {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let mut s = Parsed { names: seq.empty(), token, error: syntax.error(0, zero, zero) }
     for i in 0..17 {
         if s.token.kind == as_u32(6) { s.token = lexer.next(source, s.token.end) return s }

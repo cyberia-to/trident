@@ -93,7 +93,7 @@ fn chunk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap
     let mut s = input
     for turn in 0..16 {
         s = step(functions, bodies, roots, s, cap)
-        if syntax.either(s.done, (s.error.code == as_u32(0)) == false) { return s }
+        if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s
 }
@@ -103,7 +103,7 @@ fn chunk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap
 #[pure]
 #[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
 pub fn walk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, cap: U32) -> Walked {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let mut s = Walked { colors: tree.empty(tree.shape(seq.len(functions)).height), heights: tree.empty(tree.shape(seq.len(functions)).height), frames: noun.atom(0),
         depth: zero, next: zero, done: false, error: syntax.error(0, zero, zero) }
     for turn in 0..1024 {

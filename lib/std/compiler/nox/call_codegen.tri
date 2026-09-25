@@ -21,7 +21,7 @@ struct Folded { values: seq.Seq, next: U32 }
 #[pure]
 pub fn empty() -> Context {
     Context { arguments: seq.empty(), bodies: seq.empty(), slots: noun.atom(0),
-        functions: as_u32(0), table: tree.shape(as_u32(0)), capacity: as_u32(0), loop_base: as_u32(0), get_slot: signatures.NONE }
+        functions: syntax.ZERO, table: tree.shape(syntax.ZERO), capacity: syntax.ZERO, loop_base: syntax.ZERO, get_slot: signatures.NONE }
 }
 
 #[pure]
@@ -52,7 +52,7 @@ fn collect(context: Context, values: seq.Seq, head: U32) -> Collected {
 fn reverse_chunk(values: seq.Seq, input: Folded) -> Folded {
     let mut s = input
     for turn in 0..8 {
-        if s.next == as_u32(0) { return s }
+        if s.next == syntax.ZERO { return s }
         s.next = syntax.dec(s.next)
         s.values = seq.push(s.values, seq.get(values, s.next), seq.len(values))
     }
@@ -64,7 +64,7 @@ fn ordered(values: seq.Seq) -> seq.Seq {
     let mut s = Folded { values: seq.empty(), next: seq.len(values) }
     for turn in 0..512 {
         s = reverse_chunk(values, s)
-        if s.next == as_u32(0) { return s.values }
+        if s.next == syntax.ZERO { return s.values }
     }
     s.values
 }
@@ -93,7 +93,7 @@ fn fold_chunk(values: seq.Seq, level: U32, input: Folded) -> Folded {
 
 #[pure]
 fn fold(values: seq.Seq, level: U32) -> seq.Seq {
-    let mut s = Folded { values: seq.empty(), next: as_u32(0) }
+    let mut s = Folded { values: seq.empty(), next: syntax.ZERO }
     for turn in 0..512 {
         s = fold_chunk(values, level, s)
         if s.next == seq.len(values) { return s.values }
@@ -105,13 +105,13 @@ fn fold(values: seq.Seq, level: U32) -> seq.Seq {
 // callee slots are canonical zero padding, independent of the caller's frame.
 #[pure]
 fn frame(arguments: seq.Seq, height: U32) -> formula.Value {
-    if seq.len(arguments) == as_u32(0) { return padding(height) }
+    if seq.len(arguments) == syntax.ZERO { return padding(height) }
     let mut values = ordered(arguments)
     for level in 0..12 {
-        if level == height { return formula.value(values, as_u32(0)) }
+        if level == height { return formula.value(values, syntax.ZERO) }
         values = fold(values, level)
     }
-    formula.value(values, as_u32(0))
+    formula.value(values, syntax.ZERO)
 }
 
 #[pure]

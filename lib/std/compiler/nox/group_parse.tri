@@ -31,7 +31,7 @@ fn read(record: Noun) -> Frame {
 #[pure]
 pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool, tuple: Bool) -> expression_state.State {
     let mut s = input
-    let mut f = Frame { start: as_u32(0), vals: as_u32(0), count: as_u32(0), head: signatures.NONE }
+    let mut f = Frame { start: syntax.ZERO, vals: syntax.ZERO, count: syntax.ZERO, head: signatures.NONE }
     if tuple { f = read(noun.head(s.frames)) }
     else {
         let position = noun.head(s.frames)

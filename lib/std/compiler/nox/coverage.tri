@@ -29,7 +29,7 @@ fn statement(s: blocks.Statement, nodes: seq.Seq, flags: Noun, count: U32, loops
     let mut no = false
     if (s.c == blocks.NONE) == false { no = noun.as_field(tree.get(flags, count, s.c)) == 1 }
     let condition = seq.get(nodes, s.a)
-    if syntax.either(ast.kind(condition) == ast.LITERAL, ast.kind(condition) == ast.BOOLEAN) {
+    if syntax.either(ast.kind(condition) == ast.LITERAL, syntax.either(ast.kind(condition) == ast.BOOLEAN, ast.kind(condition) == ast.CONSTANT)) {
         if ast.left(condition) == 0 { return yes }
         return no
     }
@@ -77,7 +77,7 @@ fn chunk(input: State, s: body_state.State, terminal: Noun) -> State {
 #[pure]
 #[requires(s.root < seq.len(s.blocks))]
 pub fn check(s: body_state.State) -> Checked {
-    let zero = as_u32(0)
+    let zero = syntax.ZERO
     let marked = terminal.mark(s.nodes, s.statements, s.blocks, s.root, s.returns)
     if (marked.error.code == zero) == false { return Checked { flags: marked.flags, error: marked.error } }
     let mut state = State { flags: tree.empty(tree.shape(seq.len(s.blocks)).height), next: zero }

@@ -40,8 +40,8 @@ pub fn bind(source: bytes.Bytes, input: body_state.State, names: seq.Seq, writab
     let hidden = seq.len(s.bindings)
     let name = syntax.token(1, ast.start(rhs), ast.end(rhs), 0)
     s.bindings = seq.push(s.bindings, symbols.binding(name, false, ast.ty(rhs)), cap)
-    s = body_state.append(s, blocks.statement(blocks.WRITE, hidden, value, as_u32(0)), cap)
-    if (s.error.code == as_u32(0)) == false { return s }
+    s = body_state.append(s, blocks.statement(blocks.WRITE, hidden, value, syntax.ZERO), cap)
+    if (s.error.code == syntax.ZERO) == false { return s }
     let base = seq.len(s.nodes)
     s.nodes = seq.push(s.nodes, ast.typed(ast.LOCAL, as_field(hidden), 0, ast.ty(rhs), ast.start(rhs), ast.end(rhs)), cap)
     let mut axis: Field = 2
@@ -57,8 +57,8 @@ pub fn bind(source: bytes.Bytes, input: body_state.State, names: seq.Seq, writab
             if parts.digest { projection = 4 + as_field(i) }
             let projected = seq.len(s.nodes)
             s.nodes = seq.push(s.nodes, ast.typed(ast.PROJECT, as_field(base), projection, ty, name.start, name.end), cap)
-            s = body_state.append(s, blocks.statement(blocks.WRITE, slot, projected, as_u32(0)), cap)
-            if (s.error.code == as_u32(0)) == false { return s }
+            s = body_state.append(s, blocks.statement(blocks.WRITE, slot, projected, syntax.ZERO), cap)
+            if (s.error.code == syntax.ZERO) == false { return s }
             if declaration {
                 s.bindings = seq.push(s.bindings, symbols.binding(name, writable, ty), cap)
                 s.visible = noun.pair(noun.atom(as_field(slot)), s.visible)

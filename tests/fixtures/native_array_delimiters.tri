@@ -5,6 +5,7 @@ use vm.core.convert
 use std.nox.bytes
 use std.nox.seq
 use std.compiler.nox.syntax
+use std.compiler.nox.constants
 use std.compiler.nox.type_registry
 use std.compiler.nox.expression_state
 use std.compiler.nox.array_parse
@@ -16,7 +17,7 @@ fn main(input: Noun) -> Noun {
     let zero = as_u32(0)
     let one = as_u32(1)
     let token = syntax.token(36, zero, one, 0)
-    let context = expression_state.context(seq.empty(), noun.atom(0), seq.empty(), seq.empty(), type_registry.empty())
+    let context = expression_state.context(seq.empty(), noun.atom(0), seq.empty(), seq.empty(), type_registry.empty(), constants.empty())
     let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: depth, vals: zero,
         token, operand: true, done: false, error: syntax.error(0, zero, zero), capacity: as_u32(64),
         node_cap: as_u32(4096), nodes: seq.empty(), context, before_block: false,
