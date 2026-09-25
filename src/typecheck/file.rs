@@ -19,6 +19,18 @@ impl TypeChecker {
             .map(|(name, binding)| (name.clone(), binding.ty.clone()))
             .collect();
 
+        let type_aliases = self
+            .structs
+            .iter()
+            .map(|(visible, layout)| {
+                (
+                    visible.clone(),
+                    format!("{}.{}", layout.module, layout.name),
+                )
+            })
+            .collect();
+        nominal_bindings::validate(file, &self.cfg_flags, &type_aliases, &self.constants)?;
+
         // First pass: register all structs, function signatures, and constants
         for item in &file.items {
             // Skip items excluded by conditional compilation
