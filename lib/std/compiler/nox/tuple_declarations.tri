@@ -23,6 +23,7 @@ fn value(source: bytes.Bytes, input: body_state.State, cap: U32) -> Read {
     s.nodes = parsed.nodes
     s.arguments = parsed.arguments
     s.edges = parsed.edges
+    if parsed.needs_get { s.needs_get = true }
     s.token = parsed.token
     s.error = parsed.error
     Read { body: s, id: parsed.value }

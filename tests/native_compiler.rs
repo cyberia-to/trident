@@ -168,3 +168,14 @@ mod record_writes;
 
 #[path = "native_compiler/record_edit_component.rs"]
 mod record_edit_component;
+
+#[path = "native_compiler/array_errors.rs"]
+mod array_errors;
+#[path = "native_compiler/arrays.rs"]
+mod arrays;
+
+#[path = "native_compiler/array_order.rs"]
+mod array_order;
+
+#[path = "native_compiler/array_bounds.rs"]
+mod array_bounds;

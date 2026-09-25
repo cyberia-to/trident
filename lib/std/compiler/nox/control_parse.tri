@@ -36,6 +36,7 @@ pub fn enter(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     }
     s.arguments = condition.arguments
     s.edges = condition.edges
+    if condition.needs_get { s.needs_get = true }
     s.token = condition.token
     if (s.token.kind == as_u32(7)) == false { s.error = ast.failed(s.token, 2) return s }
     let frame = contexts.Frame { statements: s.current, visible: s.visible, returned: s.returned,

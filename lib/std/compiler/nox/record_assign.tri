@@ -54,6 +54,7 @@ pub fn assign(source: bytes.Bytes, input: body_state.State, lhs: U32, cap: U32) 
     s.nodes = seq.push(rhs.nodes, ast.typed(ast.RECORD_EDIT, as_field(lhs), as_field(rhs.value), ast.ty(selected.node), ast.start(target), ast.end(value)), cap)
     s.arguments = rhs.arguments
     s.edges = rhs.edges
+    if rhs.needs_get { s.needs_get = true }
     s.token = rhs.token
     body_state.append(s, blocks.statement(blocks.WRITE, as_u32(ast.left(selected.node)), edit, as_u32(0)), cap)
 }

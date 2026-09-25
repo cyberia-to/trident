@@ -1,0 +1,63 @@
+module std.compiler.nox.array_size
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ast
+use std.compiler.nox.types
+
+pub struct Size { pub value: U32, pub exceeded: Bool }
+pub struct Parsed { pub ty: Noun, pub token: syntax.Token, pub error: syntax.Error }
+
+// Read known decimal source digits before Field normalization. Values never
+// grow beyond ten times the source allowance, so even raw u64 limits are safe.
+#[pure]
+#[requires((end < start) == false)]
+#[requires((bytes.len(source) < end) == false)]
+#[requires((syntax.SOURCE_CAP < limit) == false)]
+pub fn decimal(source: bytes.Bytes, start: U32, end: U32, limit: U32) -> Size {
+    let mut pos = start
+    let mut value = as_u32(0)
+    for step in 0..4096 {
+        if pos == end { return Size { value, exceeded: false } }
+        let digit = field.sub(as_field(bytes.get(source, pos)), 48)
+        value = as_u32(as_field(value) * 10 + digit)
+        if limit < value { return Size { value: limit, exceeded: true } }
+        pos = syntax.inc(pos)
+    }
+    Size { value, exceeded: (pos == end) == false }
+}
+
+#[pure]
+fn fail(token: syntax.Token, code: Field) -> Parsed {
+    Parsed { ty: noun.atom(types.INVALID), token, error: ast.failed(token, code) }
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.STACK_CAP < stack) == false)]
+pub fn parse(source: bytes.Bytes, opening: syntax.Token, cap: U32, stack: U32) -> Parsed {
+    let element = lexer.next(source, opening.end)
+    if (element.kind == as_u32(12)) == false { return fail(element, 6) }
+    let separator = lexer.next(source, element.end)
+    if (separator.kind == as_u32(43)) == false { return fail(separator, 2) }
+    let size = lexer.next(source, separator.end)
+    if (size.kind == as_u32(2)) == false {
+        if size.kind == as_u32(14) { return fail(size, 1) }
+        if syntax.either(size.kind == as_u32(1), size.kind == as_u32(5)) { return fail(size, 6) }
+        return fail(size, 2)
+    }
+    let closing = lexer.next(source, size.end)
+    if (closing.kind == as_u32(37)) == false {
+        if syntax.either(closing.kind == as_u32(3), closing.kind == as_u32(4)) { return fail(closing, 6) }
+        return fail(closing, 2)
+    }
+    let length = decimal(source, size.start, size.end, cap)
+    if length.exceeded { return fail(size, 7) }
+    let built = types.array(length.value, cap, stack)
+    if built.failed { return fail(size, 7) }
+    Parsed { ty: built.ty, token: lexer.next(source, closing.end), error: syntax.error(0, as_u32(0), as_u32(0)) }
+}

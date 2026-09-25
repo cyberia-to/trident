@@ -10,14 +10,15 @@ use std.compiler.nox.types
 
 pub struct State {
     // Every parsed statement advances the token and propagates a diagnostic.
-    // Keep these writes before the cold context in the persistent record.
+    // Keep these and statement-list writes before the cold persistent context.
     pub token: syntax.Token, pub error: syntax.Error,
-    pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun, pub loops: seq.Seq,
-    pub types: type_registry.Scope, pub functions: seq.Seq, pub params: seq.Seq, pub returns: Noun, pub statements: seq.Seq, pub blocks: seq.Seq,
-    pub bindings: seq.Seq, pub visible: Noun, pub current: Noun,
+    pub nodes: seq.Seq, pub statements: seq.Seq, pub current: Noun,
+    pub arguments: seq.Seq, pub edges: Noun, pub loops: seq.Seq,
+    pub types: type_registry.Scope, pub functions: seq.Seq, pub params: seq.Seq, pub returns: Noun, pub blocks: seq.Seq,
+    pub bindings: seq.Seq, pub visible: Noun,
     pub frames: Noun, pub depth: U32, pub start: U32, pub end: U32,
     pub synthetic: Bool, pub returned: Bool, pub has_tail: Bool, pub tail: U32,
-    pub done: Bool, pub root: U32
+    pub done: Bool, pub root: U32, pub needs_get: Bool
 }
 
 #[pure]
@@ -28,7 +29,7 @@ pub fn initial(token: syntax.Token) -> State {
         bindings: seq.empty(), visible: noun.atom(0), current: noun.atom(0),
         frames: noun.atom(0), depth: zero, start: token.start, end: token.start, synthetic: false,
         returned: false, has_tail: false, tail: zero, token,
-        error: syntax.error(0, zero, zero), done: false, root: zero }
+        error: syntax.error(0, zero, zero), done: false, root: zero, needs_get: false }
 }
 
 #[pure]

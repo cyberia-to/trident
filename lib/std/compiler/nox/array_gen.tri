@@ -1,0 +1,65 @@
+module std.compiler.nox.array_gen
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.formula
+use std.compiler.nox.flow
+
+struct Values { output: formula.Value, head: U32, remaining: U32 }
+
+#[pure]
+fn chunk(values: seq.Seq, arguments: seq.Seq, input: Values) -> Values {
+    let mut s = input
+    for turn in 0..8 {
+        if s.remaining == as_u32(0) { return s }
+        let link = seq.get(arguments, s.head)
+        s.output = flow.cons(formula.value(values, as_u32(noun.as_field(noun.head(link)))), s.output)
+        s.head = as_u32(noun.as_field(noun.tail(link)))
+        s.remaining = syntax.dec(s.remaining)
+    }
+    s
+}
+
+// Reversed owned links become a zero-ended list, evaluated in source order.
+#[pure]
+#[requires((syntax.SOURCE_CAP < count) == false)]
+pub fn values(values: seq.Seq, arguments: seq.Seq, head: U32, count: U32) -> formula.Value {
+    let mut s = Values { output: flow.literal(0), head, remaining: count }
+    for block in 0..512 {
+        s = chunk(values, arguments, s)
+        if s.remaining == as_u32(0) { return s.output }
+    }
+    s.output
+}
+
+#[pure]
+fn binary(opcode: Field, a: formula.Value, b: formula.Value) -> formula.Value {
+    formula.Value { formula: noun.pair(noun.atom(opcode), noun.pair(a.formula, b.formula)),
+        depth: as_u32(as_field(formula.maximum(a.depth, b.depth)) + 2) }
+}
+
+#[pure]
+fn subject(base: formula.Value, index: formula.Value) -> formula.Value {
+    flow.cons(flow.axis(2), flow.cons(flow.literal(0), flow.cons(base, index)))
+}
+
+// Shared private Get subject: [table [0 [list index]]]. Caller checks length;
+// each recursive dispatch consumes one list cell and decrements a positive index.
+#[pure]
+pub fn helper(table: tree.Shape, slot: U32) -> formula.Value {
+    let next = subject(flow.axis(29), binary(6, flow.axis(15), flow.literal(1)))
+    let recur = formula.apply(next, flow.axis(2 * table.capacity + as_field(slot)))
+    flow.branch(binary(9, flow.axis(15), flow.literal(0)), flow.axis(28), recur)
+}
+
+// Source base and index execute exactly once, base first, before the bound.
+#[pure]
+pub fn read(base: formula.Value, index: formula.Value, length: U32, table: tree.Shape, slot: U32) -> formula.Value {
+    let dispatch = formula.apply(flow.axis(1), flow.axis(2 * table.capacity + as_field(slot)))
+    let crash = formula.Value { formula: noun.pair(noun.atom(8), flow.literal(0).formula), depth: as_u32(2) }
+    let checked = flow.branch(binary(10, flow.axis(15), flow.literal(as_field(length))), dispatch, crash)
+    flow.compose(subject(base, index), checked)
+}

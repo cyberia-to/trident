@@ -1,0 +1,82 @@
+module std.compiler.nox.array_parse
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.types
+use std.compiler.nox.lexer
+use std.compiler.nox.signatures
+use std.compiler.nox.expression_state
+
+struct Frame { start: U32, base: U32, count: U32, head: U32 }
+
+#[pure]
+fn pack(f: Frame) -> Noun {
+    let position = noun.pair(noun.atom(as_field(f.start)), noun.atom(as_field(f.base)))
+    let values = noun.pair(noun.atom(as_field(f.count)), noun.atom(as_field(f.head)))
+    noun.pair(position, values)
+}
+
+#[pure]
+fn read(value: Noun) -> Frame {
+    let position = noun.head(value)
+    let values = noun.tail(value)
+    Frame { start: as_u32(noun.as_field(noun.head(position))), base: as_u32(noun.as_field(noun.tail(position))),
+        count: as_u32(noun.as_field(noun.head(values))), head: as_u32(noun.as_field(noun.tail(values))) }
+}
+
+#[pure]
+pub fn enter(source: bytes.Bytes, input: expression_state.State) -> expression_state.State {
+    let mut s = input
+    if s.ops == s.capacity { s.error = ast.failed(s.token, 7) return s }
+    let frame = Frame { start: s.token.start, base: s.vals, count: as_u32(0), head: signatures.NONE }
+    s.frames = noun.pair(pack(frame), s.frames)
+    s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.ARRAY_MARKER)), s.capacity)
+    s.ops = syntax.inc(s.ops)
+    s.token = lexer.next(source, s.token.end)
+    s.operand = true
+    s
+}
+
+#[pure]
+pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool) -> expression_state.State {
+    let mut s = input
+    let mut f = read(noun.head(s.frames))
+    if s.operand {
+        // Both [] and a trailing comma after an element are valid.
+        if closing == false { s.error = ast.failed(s.token, 2) return s }
+    } else {
+        if (s.vals == syntax.inc(f.base)) == false { s.error = ast.failed(s.token, 2) return s }
+        let value = noun.as_field(seq.get(s.values, f.base))
+        let node = seq.get(s.nodes, as_u32(value))
+        if noun.eq(ast.ty(node), noun.atom(types.FIELD)) == false { s.error = ast.issue(6, node) return s }
+        if syntax.either(syntax.inc(f.count) == s.node_cap, seq.len(s.arguments) == s.node_cap) {
+            s.error = ast.failed(s.token, 7) return s
+        }
+        let link = seq.len(s.arguments)
+        s.arguments = seq.push(s.arguments, noun.pair(noun.atom(value), noun.atom(as_field(f.head))), s.node_cap)
+        f.head = link
+        f.count = syntax.inc(f.count)
+        s.vals = f.base
+    }
+    if closing {
+        let built = types.array(f.count, s.node_cap, s.capacity)
+        if built.failed { s.error = ast.failed(s.token, 7) return s }
+        if syntax.either(seq.len(s.nodes) == s.node_cap, s.vals == s.capacity) { s.error = ast.failed(s.token, 7) return s }
+        let id = seq.len(s.nodes)
+        s.nodes = seq.push(s.nodes, ast.typed(ast.ARRAY_VALUE, as_field(f.count), as_field(f.head), built.ty, f.start, s.token.end), s.node_cap)
+        s.values = ast.store(s.values, s.vals, noun.atom(as_field(id)), s.capacity)
+        s.vals = syntax.inc(s.vals)
+        s.ops = syntax.dec(s.ops)
+        s.frames = noun.tail(s.frames)
+        s.operand = false
+    } else {
+        s.frames = noun.pair(pack(f), noun.tail(s.frames))
+        s.operand = true
+    }
+    s.token = lexer.next(source, s.token.end)
+    s
+}

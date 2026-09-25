@@ -5,7 +5,7 @@ use super::{
 };
 use std::sync::OnceLock;
 
-fn parse(text: &str, cap: u64) -> (u64, Vec<u8>) {
+pub(super) fn parse(text: &str, cap: u64) -> (u64, Vec<u8>) {
     static PROBE: OnceLock<Vec<u8>> = OnceLock::new();
     let code = PROBE.get_or_init(|| {
         trident::compile_native_artifact_project(
@@ -92,7 +92,7 @@ fn iterative_type_parser_keeps_ordered_descriptors_and_first_unread_token_spans(
             ("(Field Bool)", 2),
             ("(Field $)", 1),
             ("Unit", 5),
-            ("(Field,[Field;2])", 6),
+            ("(Field,[Bool;2])", 6),
         ] {
             assert_eq!(parse(text, 4096).0, code, "{text}");
         }

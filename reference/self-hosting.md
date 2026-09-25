@@ -355,8 +355,7 @@ well typed, then trap only when the emitted program reaches them.
 Noun arithmetic, ordering, bit operations, indexing and the `==` operator
 remain rejected; `nox_noun_eq` supplies explicit native equality. Conditions
 remain Field/Bool. Qualified calls require actual module/import resolution.
-Fixed arrays and compiler-profile generation remain
-subsequent increments. Earlier scalar-entry programs retain their ART1 bytes.
+Compiler-profile generation remains a subsequent increment. Earlier scalar-entry programs retain their ART1 bytes.
 
 Compiler-owned type descriptors are canonical Noun values. Primitive tags
 Field/Bool/Unit/U32/Noun retain atoms0/1/2/3/4; atom5 marks an invalid type and
@@ -455,6 +454,36 @@ replacement expression and ordinary WRITE consume AST/statement allowances;
 their actual formula depth is checked independently. The bounded walk admits
 up to64 field selections, additionally constrained by nominal type depth.
 
+Fixed Field arrays use `[Field; N]` annotations with a raw decimal extent.
+Empty `[]`, singleton and trailing-comma literals produce zero-ended lists of
+complete Field values, evaluated once in source order. Array descriptors use
+tag18 and the common metadata envelope: `[18 [[Field length] metadata]]`.
+Depth is1 and logical nodes are1+length; the requested type allowance is checked
+before growth. Arrays have their own identity, distinct from tuples and Digest.
+Annotations work in existing local, parameter, return, tuple and record positions.
+Whole-array equality, mutable-local replacement and static record-field
+replacement retain exact type checking and persistent snapshots.
+
+Array reads accept Field/U32 indices. The base executes first, then the index,
+each once. A literal index is checked against the static length using its raw
+u64 spelling before Field normalization: `[7][18446744069414584321]` rejects
+with diagnostic5, while `[7][18446744069414584321+0]` reads element0. Dynamic
+indices check the length at runtime and trap with InvZero outside it. Digest
+index behavior is unchanged. A single reusable Get helper follows source
+functions and loops in the code table, present only when a reachable function
+contains an array read. The helper walks list cells with a decremented index;
+its formula has constant size, while runtime reductions and frames grow with
+the accessed index. Array literals alone require no helper.
+
+Non-Field elements, nested arrays, symbolic/compound extents, repetition syntax
+and element writes remain outside this increment. The expression-first parser
+can report a literal-read error before reaching an assignment token. Owned
+array delimiters, argument links, AST nodes, logical types, code-table entries,
+formula depth and runtime resources each retain their independent allowances.
+Checked-body transport retains source metadata for planning and restores a
+compact emission record. Source parser scopes and continuations end before
+emission; transported public sequences retain full admission checks.
+
 Digest is primitive descriptor6 and occupies one complete native frame slot.
 `nox_noun_identity(Noun)->Digest` evaluates its argument once and returns the
 balanced native identity `[[a b][c d]]` through axis0. Digest equality compares
@@ -468,7 +497,7 @@ values0..3 select the four components, other canonical field values trap with
 InvZero. Decimal Field normalization happens before indexing. Index brackets may
 follow across a newline, and nested call/group/index delimiters own their stacks.
 Invalid types and malformed delimiters fail compilation before publication.
-Digest indexed writes, fixed arrays and actual imports remain outside
+Digest indexed writes and actual imports remain outside
 this increment. Runtime, parser stack, AST and formula-depth bounds are separate.
 
 Tuple source types are ordered canonical descriptors. Type syntax admits

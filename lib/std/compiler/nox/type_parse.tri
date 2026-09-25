@@ -9,6 +9,7 @@ use std.compiler.nox.syntax
 use std.compiler.nox.lexer
 use std.compiler.nox.ast
 use std.compiler.nox.types
+use std.compiler.nox.array_size
 
 pub struct Parsed { pub ty: Noun, pub token: syntax.Token, pub error: syntax.Error }
 struct State {
@@ -30,6 +31,14 @@ pub fn scalar(token: syntax.Token) -> Field {
 fn step(source: bytes.Bytes, scope: type_registry.Scope, input: State, cap: U32, stack: U32) -> State {
     let mut s = input
     if s.operand {
+        if s.token.kind == as_u32(36) {
+            let array = array_size.parse(source, s.token, cap, stack)
+            s.ty = array.ty
+            s.token = array.token
+            s.error = array.error
+            s.operand = false
+            return s
+        }
         if s.token.kind == as_u32(5) {
             if s.depth == stack { s.error = ast.failed(s.token, 7) return s }
             s.frames = noun.pair(seq.to_noun(s.children), s.frames)

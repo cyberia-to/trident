@@ -15,6 +15,7 @@ use std.compiler.nox.types
 use std.compiler.nox.index_parse
 use std.compiler.nox.record_parse
 use std.compiler.nox.group_parse
+use std.compiler.nox.array_parse
 
 #[pure]
 fn operator(s: expression_state.State) -> U32 {
@@ -102,13 +103,16 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
     if syntax.both(kind == as_u32(8), noun.eq(s.frames, noun.atom(0)) == false) {
         let top = operator(s)
         if top == expression_state.RECORD_MARKER { return record_parse.finish(source, s, true) }
+        if top == expression_state.ARRAY_MARKER { s.error = ast.failed(s.token, 2) return s }
         if syntax.either(top == as_u32(36), syntax.either(top == expression_state.TUPLE_MARKER, syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER))) { s.error = ast.failed(s.token, 2) return s }
         if s.operand { s.error = ast.failed(s.token, 2) return s }
         return reduce(s)
     }
     if kind == as_u32(37) {
-        if syntax.either(s.ops == as_u32(0), s.operand) { s.error = ast.failed(s.token, 2) return s }
+        if s.ops == as_u32(0) { s.error = ast.failed(s.token, 2) return s }
         let top = operator(s)
+        if top == expression_state.ARRAY_MARKER { return array_parse.finish(source, s, true) }
+        if s.operand { s.error = ast.failed(s.token, 2) return s }
         if top == as_u32(36) { return index_parse.finish(source, s) }
         if top == expression_state.RECORD_MARKER { s.error = ast.failed(s.token, 2) return s }
         if syntax.either(top == expression_state.TUPLE_MARKER, syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER)) { s.error = ast.failed(s.token, 2) return s }
@@ -117,6 +121,10 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
     if syntax.either(kind == as_u32(6), kind == as_u32(26)) {
         if s.ops == as_u32(0) { s.error = ast.failed(s.token, 2) return s }
         let top = operator(s)
+        if top == expression_state.ARRAY_MARKER {
+            if kind == as_u32(26) { return array_parse.finish(source, s, false) }
+            s.error = ast.failed(s.token, 2) return s
+        }
         if top == expression_state.RECORD_MARKER {
             if kind == as_u32(26) { return record_parse.finish(source, s, false) }
             s.error = ast.failed(s.token, 2) return s
@@ -169,12 +177,15 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
                     return s
                 }
                 node = ast.typed(ast.LOCAL, as_field(binding.slot), 0, binding.ty, s.token.start, s.token.end)
+                // Constructor/call lookahead already owns the following token.
+                s.token = following
             }
             let id = noun.atom(as_field(seq.len(s.nodes)))
             s.nodes = seq.push(s.nodes, node, s.node_cap)
             s.values = ast.store(s.values, s.vals, id, s.capacity)
             s.vals = syntax.inc(s.vals)
             s.operand = false
+            if kind == as_u32(1) { return s }
         } else if kind == as_u32(5) {
             s = push_operator(s)
             if s.error.code == as_u32(0) {
@@ -182,7 +193,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
                 s.frames = noun.pair(position, s.frames)
             }
         }
-        else if kind == as_u32(36) { s.error = syntax.error(6, s.token.start, s.token.end) return s }
+        else if kind == as_u32(36) { return array_parse.enter(source, s) }
         else {
             s.error = ast.failed(s.token, 2)
             return s
@@ -199,6 +210,7 @@ fn step(source: bytes.Bytes, input: expression_state.State) -> expression_state.
     } else if boundary(kind, s.before_block) {
         if (s.ops == as_u32(0)) == false {
             let top = operator(s)
+            if top == expression_state.ARRAY_MARKER { s.error = ast.failed(s.token, 2) return s }
             if syntax.either(top == expression_state.RECORD_MARKER, syntax.either(top == as_u32(36), syntax.either(top == expression_state.TUPLE_MARKER, syntax.either(top == as_u32(5), top == expression_state.CALL_MARKER)))) {
                 s.error = ast.failed(s.token, 2)
                 return s
@@ -233,14 +245,14 @@ pub fn parse(source: bytes.Bytes, token: syntax.Token, context: expression_state
     if syntax.STACK_CAP < capacity { capacity = syntax.STACK_CAP }
     let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: zero, vals: zero,
         token, operand: true, done: false, error: syntax.error(0, zero, zero),
-        capacity, node_cap: cap, nodes, context, before_block, arguments, edges, frames: noun.atom(0) }
+        capacity, node_cap: cap, nodes, context, before_block, arguments, edges, needs_get: false, frames: noun.atom(0) }
     for block in 0..256 {
         s = chunk(source, s)
-        if (s.error.code == zero) == false { return expression_state.Parsed { nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: zero, token: s.token, error: s.error } }
+        if (s.error.code == zero) == false { return expression_state.Parsed { needs_get: s.needs_get, nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: zero, token: s.token, error: s.error } }
         if s.done {
             assert_eq(as_field(s.vals), 1)
-            return expression_state.Parsed { nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: as_u32(noun.as_field(seq.get(s.values, zero))), token: s.token, error: s.error }
+            return expression_state.Parsed { needs_get: s.needs_get, nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: as_u32(noun.as_field(seq.get(s.values, zero))), token: s.token, error: s.error }
         }
     }
-    expression_state.Parsed { nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: zero, token: s.token, error: syntax.error(7, s.token.start, s.token.end) }
+    expression_state.Parsed { needs_get: s.needs_get, nodes: s.nodes, arguments: s.arguments, edges: s.edges, value: zero, token: s.token, error: syntax.error(7, s.token.start, s.token.end) }
 }

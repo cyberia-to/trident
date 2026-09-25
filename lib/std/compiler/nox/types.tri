@@ -14,6 +14,7 @@ pub const INVALID: Field = 5
 pub const DIGEST: Field = 6
 pub const TUPLE: Field = 16
 pub const NOMINAL: Field = 17
+pub const ARRAY: Field = 18
 pub const MAX_ARITY: U32 = 16
 
 pub struct Info { pub depth: U32, pub nodes: U32, pub contains_noun: Bool, pub valid: Bool }
@@ -37,7 +38,7 @@ pub fn info(ty: Noun) -> Info {
     Info { depth: as_u32(noun.as_field(noun.head(metadata))),
         nodes: as_u32(noun.as_field(noun.head(extent))),
         contains_noun: noun.as_field(noun.tail(extent)) == 1,
-        valid: syntax.either(kind == TUPLE, kind == NOMINAL) }
+        valid: syntax.either(kind == ARRAY, syntax.either(kind == TUPLE, kind == NOMINAL)) }
 }
 
 #[pure]
@@ -98,4 +99,28 @@ pub fn parts(ty: Noun) -> Parts {
 pub fn component(parts: Parts, index: U32) -> Noun {
     if parts.digest { return noun.atom(FIELD) }
     seq.get(parts.children, index)
+}
+
+// Fixed Field arrays use [18 [[element length] metadata]]. Logical occurrence
+// count includes every element, even when their canonical type value is shared.
+#[pure]
+#[requires((syntax.SOURCE_CAP < node_cap) == false)]
+#[requires((syntax.STACK_CAP < depth_cap) == false)]
+pub fn array(length: U32, node_cap: U32, depth_cap: U32) -> Built {
+    if syntax.either(depth_cap == as_u32(0), (length < node_cap) == false) {
+        return Built { ty: noun.atom(INVALID), failed: true }
+    }
+    let data = noun.pair(noun.atom(FIELD), noun.atom(as_field(length)))
+    let metadata = noun.pair(noun.atom(1), noun.pair(noun.atom(as_field(length) + 1), noun.atom(0)))
+    Built { ty: noun.pair(noun.atom(ARRAY), noun.pair(data, metadata)), failed: false }
+}
+
+pub struct Array { pub length: U32, pub valid: Bool }
+
+#[pure]
+pub fn array_info(ty: Noun) -> Array {
+    let absent = Array { length: as_u32(0), valid: false }
+    if info(ty).depth == as_u32(0) { return absent }
+    if (noun.as_field(noun.head(ty)) == ARRAY) == false { return absent }
+    Array { length: as_u32(noun.as_field(noun.tail(noun.head(noun.tail(ty))))), valid: true }
 }

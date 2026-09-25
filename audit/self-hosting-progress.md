@@ -358,3 +358,16 @@ exhaust 786432 nodes during generation; direct emitter path tests do not close
 this SH4 boundary. All 74 formal audits are UNKNOWN. Arrays, real imports,
 full SH3/SH4, generated compiler profiles, C2/C3, six platforms and native proof
 gates remain open. Noun temperature stays 128K.
+
+
+2026-09-25 continuation: fixed Field-array values, exact annotations and checked
+reads accepted at `a427531`. [Pinned evidence](self-hosting/native-compiler-arrays-validation.json)
+records 1048 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43
+manual baselines, 851 installed commands / 288 observations and all 127 prior
+positive ART1 identities unchanged. Fourteen new successful JOB1 programs cover
+array transfer, snapshots, typed calls and shared reads. Public source arenas
+remain unchanged; the separate 4096-function planner component uses its own
+larger allowance. Post-commit installs reproduce the executed binaries and C1.
+All 79 formal audits are UNKNOWN. Next: unify seed typed constant resolution,
+then guest constants/attributes/asserts and real imports. Full SH3/SH4, generated
+profiles, C2/C3, six platforms and native proofs remain open. Noun stays 128K.

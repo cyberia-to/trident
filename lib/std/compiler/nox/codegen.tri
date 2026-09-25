@@ -14,6 +14,9 @@ use std.compiler.nox.builtin_gen
 use std.compiler.nox.digest_gen
 use std.compiler.nox.aggregate_gen
 use std.compiler.nox.record_edit_gen
+use std.compiler.nox.array_gen
+use std.compiler.nox.types
+use std.compiler.nox.signatures
 use std.compiler.nox.flow
 
 const HALF: Field = 9223372034707292161
@@ -85,6 +88,18 @@ fn expression_chunk(nodes: seq.Seq, shape: tree.Shape, input: Expressions, conte
             let aggregate = aggregate_gen.generate(s.values, context.arguments, as_u32(ast.right(node)), as_u32(ast.left(node)))
             code = aggregate.formula
             depth = aggregate.depth
+        }
+        else if kind == ast.ARRAY_VALUE {
+            let aggregate = array_gen.values(s.values, context.arguments, as_u32(ast.right(node)), as_u32(ast.left(node)))
+            code = aggregate.formula
+            depth = aggregate.depth
+        }
+        else if kind == ast.ARRAY_INDEX {
+            if context.get_slot == signatures.NONE { s.failed = true return s }
+            let length = types.array_info(ast.ty(seq.get(nodes, as_u32(ast.left(node))))).length
+            let indexed = array_gen.read(formula.value(s.values, as_u32(ast.left(node))), formula.value(s.values, as_u32(ast.right(node))), length, context.table, context.get_slot)
+            code = indexed.formula
+            depth = indexed.depth
         }
         else if kind == ast.RECORD_EDIT {
             let edited = record_edit_gen.generate(nodes, s.values, as_u32(ast.left(node)), as_u32(ast.right(node)))

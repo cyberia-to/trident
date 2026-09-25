@@ -14,6 +14,7 @@ use std.compiler.nox.formula
 use std.compiler.nox.flow
 use std.compiler.nox.code_plan
 use std.compiler.nox.entry_frame
+use std.compiler.nox.array_gen
 
 struct Emitted { table: Noun, depth: U32, next: U32, failed: Bool }
 
@@ -39,7 +40,7 @@ fn chunk(bodies: seq.Seq, plan: function_plan.Plan, codes: code_plan.Plan, input
         let body = body_store.read(stored, cap)
         let base = as_u32(noun.as_field(tree.get(codes.bases, seq.len(bodies), id)))
         let context = call_codegen.Context { arguments: body.arguments, bodies, slots: plan.slots,
-            functions: seq.len(bodies), table: tree.shape(codes.count), capacity: cap, loop_base: base }
+            functions: seq.len(bodies), table: tree.shape(codes.count), capacity: cap, loop_base: base, get_slot: codes.get_slot }
         let built = control_gen.reusable(body, body_store.terminal(stored), body_store.locals(stored), context, depth_cap)
         if built.failed { s.failed = true return s }
         s.table = tree.set(s.table, codes.count, s.next, built.output.formula)
@@ -59,7 +60,7 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
     let stored = seq.get(bodies, entry)
     // An acyclic one-body closure contains no user calls. Preserve the existing
     // arithmetic, locals and control artifact identities, even with unused defs.
-    if syntax.both(seq.len(plan.order) == as_u32(1), body_store.loop_count(stored) == zero) {
+    if syntax.both(syntax.both(seq.len(plan.order) == as_u32(1), body_store.loop_count(stored) == zero), body_store.needs_get(stored) == false) {
         let body = body_store.read(stored, cap)
         let mut context = call_codegen.empty()
         context.arguments = body.arguments
@@ -71,6 +72,11 @@ pub fn generate(bodies: seq.Seq, plan: function_plan.Plan, entry: U32, cap: U32,
     if codes.failed { return failure }
     let shape = tree.shape(codes.count)
     let mut s = Emitted { table: tree.empty(shape.height), depth: zero, next: zero, failed: false }
+    if codes.needs_get {
+        let helper = array_gen.helper(shape, codes.get_slot)
+        s.table = tree.set(s.table, codes.count, codes.get_slot, helper.formula)
+        s.depth = helper.depth
+    }
     for turn in 0..512 {
         s = chunk(bodies, plan, codes, s, cap, depth_cap)
         if s.failed { return failure }
