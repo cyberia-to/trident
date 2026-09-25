@@ -22,7 +22,7 @@ fn main(input: Noun) -> Noun {
     let token = syntax.token(1, zero, as_u32(1), 102)
     let f = signatures.Function { name: token, params: zero, count: as_u32(1), returns: noun.atom(0), open: zero, close: zero }
     let functions = seq.push(seq.empty(), signatures.pack(f), as_u32(1))
-    let context = expression_state.context(seq.empty(), noun.atom(0), check_scope.Scope { functions: functions, params: seq.empty(), types: type_registry.empty(), constants: constants.empty(), pure: false })
+    let context = expression_state.context(seq.empty(), noun.atom(0), check_scope.local(false, type_registry.empty(), functions, seq.empty(), constants.empty()))
     let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: depth, vals: zero,
         token, operand: true, done: false, error: syntax.error(0, zero, zero), capacity: as_u32(64),
         node_cap: as_u32(4096), nodes: seq.empty(), context, before_block: false,

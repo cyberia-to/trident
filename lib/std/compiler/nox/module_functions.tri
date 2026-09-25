@@ -1,0 +1,105 @@
+module std.compiler.nox.module_functions
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.headers
+use std.compiler.nox.check_functions
+use std.compiler.nox.module_graph
+use std.compiler.nox.module_store
+use std.compiler.nox.constant_exports
+use std.compiler.nox.constant_imports
+use std.compiler.nox.const_module
+use std.compiler.nox.function_exports
+use std.compiler.nox.function_imports
+
+// Declaration IDs are shared by signatures, checked bodies and owner records.
+// Final roots retain private helpers, while exports contain only public targets.
+pub struct Bank {
+    pub functions: seq.Seq, pub params: seq.Seq, pub bodies: seq.Seq,
+    pub owners: seq.Seq, pub roots: seq.Seq,
+    pub exports: function_exports.Bank, pub constants: constant_exports.Bank,
+    pub entry: U32, pub structured: Bool, pub error: syntax.Error
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < modules) == false)]
+pub fn empty(modules: U32) -> Bank {
+    Bank { functions: seq.empty(), params: seq.empty(), bodies: seq.empty(),
+        owners: seq.empty(), roots: seq.empty(), exports: function_exports.empty(modules),
+        constants: constant_exports.empty(modules), entry: signatures.NONE, structured: false,
+        error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
+}
+
+#[pure]
+fn publish(source: bytes.Bytes, owner: U32, start: U32, public: seq.Seq, input: Bank, cap: U32) -> Bank {
+    let mut s = input
+    let mut next = start
+    let mut visible = syntax.ZERO
+    let end = seq.len(s.functions)
+    for step in 0..4096 {
+        if next == end { return s }
+        let signature = signatures.read(seq.get(s.functions, next))
+        let mut exported = false
+        if visible < seq.len(public) {
+            if noun.as_field(seq.get(public, visible)) == as_field(next) {
+                exported = true
+                visible = syntax.inc(visible)
+            }
+        }
+        // These banks cannot exceed the already checked global function count.
+        s.owners = seq.push(s.owners, noun.atom(as_field(owner)), cap)
+        if signatures.lookup_range(source, signature.name, s.functions, start, end) == next {
+            s.roots = seq.push(s.roots, noun.atom(as_field(next)), cap)
+            if exported {
+                let binding = function_exports.Binding { owner, name: signature.name, target: next }
+                s.exports = function_exports.push(s.exports, binding, cap)
+            }
+        }
+        next = syntax.inc(next)
+    }
+    s
+}
+
+// Bodies see their declaring module's final local bindings and a frozen view
+// of direct dependencies. No name span is ever interpreted in another source.
+#[pure]
+#[requires(owner < seq.len(graph.modules))]
+pub fn check(graph: module_graph.Graph, owner: U32, entry_index: U32, input: Bank) -> Bank {
+    let mut s = input
+    let unit = module_store.read(graph.modules, owner)
+    let source = bytes.table_get(graph.sources, owner)
+    let name = bytes.table_get(graph.names, owner)
+    let constants = constant_imports.View { sources: graph.sources, names: graph.names,
+        exports: s.constants, uses: unit.uses }
+    let imports = function_imports.View { sources: graph.sources, names: graph.names,
+        exports: s.exports, uses: unit.uses }
+    let start = seq.len(s.functions)
+    let entry = unit.index == entry_index
+    let mut parsed = headers.scan_module(source, unit.offset, name, constants,
+        s.functions, s.params, graph.capacity, entry == false)
+    s.error = parsed.error
+    if (s.error.code == syntax.ZERO) == false { return s }
+    if entry {
+        parsed = headers.validate_entry(parsed)
+        s.error = parsed.error
+        if (s.error.code == syntax.ZERO) == false { return s }
+        s.entry = parsed.entry
+        s.structured = parsed.structured
+    }
+    let checked = check_functions.check_range(source, parsed.functions, parsed.params,
+        parsed.pure_functions, parsed.types, parsed.constants, graph.capacity,
+        start, seq.len(parsed.functions), imports, s.bodies)
+    s.error = checked.error
+    if (s.error.code == syntax.ZERO) == false { return s }
+    s.functions = parsed.functions
+    s.params = parsed.params
+    s.bodies = checked.bodies
+    let constants = const_module.publish(source, parsed.constants, owner, s.constants, graph.capacity)
+    s.error = constants.error
+    if (s.error.code == syntax.ZERO) == false { return s }
+    s.constants = constants.exports
+    publish(source, owner, start, parsed.public_functions, s, graph.capacity)
+}

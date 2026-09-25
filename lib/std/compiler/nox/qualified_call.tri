@@ -1,0 +1,24 @@
+module std.compiler.nox.qualified_call
+
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.ascii
+
+// A lexical local can share an imported module root. Detect a call before
+// choosing field projection, without building a capped module-name buffer.
+// Non-call paths keep their original field parser and source-length allowance.
+#[pure]
+#[requires(dot.kind == as_u32(41))]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn follows(source: bytes.Bytes, dot: syntax.Token) -> Bool {
+    let mut next = dot
+    for part in 0..4096 {
+        let member = lexer.next(source, next.end)
+        if (member.kind == as_u32(1)) == false { return false }
+        next = lexer.next(source, member.end)
+        if next.kind == as_u32(5) { return ascii.same_line(source, member.end, next.start) }
+        if (next.kind == as_u32(41)) == false { return false }
+    }
+    false
+}

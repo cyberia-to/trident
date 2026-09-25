@@ -44,7 +44,7 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
             support::error(&support::source(expression), 5);
         }
         // Qualified calls await callable imports; lexical primitives have no fields.
-        support::error(&support::source("convert.as_u32(7)"), 6);
+        support::error(&support::source("convert.as_u32(7)"), 5);
         support::error(&support::source("let convert=7 convert.as_u32(7)"), 5);
         for word in [
             "program", "module", "use", "fn", "pub", "sec", "let", "mut", "const", "struct", "if",

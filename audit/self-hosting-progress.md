@@ -29,7 +29,8 @@ allocation remains open, including a valid 4096-byte whitespace workload.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
 `360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
-Active isolated checkout: `~/cyber/.worktrees/selfhost-0.4-constants/trident`.
+Accepted checkout: `~/cyber/.worktrees/selfhost-0.4-module-graph/trident`.
+Next callable implementation: `~/cyber/.worktrees/selfhost-0.4-function-imports/trident`.
 Dependencies use clean worktrees at the pinned receipt revisions.
 PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 
@@ -145,8 +146,15 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   bounded discovery and seed ordering; [component evidence](self-hosting/guest-module-graph.md).
 - [x] SH3 qualified-name and frozen constant-binding components;
   [owner/provenance and installed component evidence](self-hosting/constant-bindings.md).
-- [ ] SH3 true guest imports and complete compiler closure coverage;
+- [x] SH3 guest constant imports through real C1: final public values, direct
+  aliases and original owner diagnostics; [execution evidence](self-hosting/guest-constant-linking.md).
+- [x] SH3 direct ordinary function imports through C1, with private helpers,
+  final visibility and owner-specific diagnostics; [execution evidence](self-hosting/guest-function-imports.md).
+- [ ] SH3 guest nominal types/intrinsics and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
+- [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
+  786432-node arena; all prior successful ART1 identities are preserved.
+  [Stable installed acceptance](self-hosting/native-indexed-reads.md).
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
   whitespace workload's lifetime arena boundary and measure full compiler closure.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
@@ -421,3 +429,35 @@ All 92 formal audits remain UNKNOWN. Package index 4096 is tested separately
 from compact IDs and source capacity. Guest graph/linking, whole compiler scale,
 generated compiler profiles, C2/C3, six platforms and native Zheng proofs remain
 open. Noun stays 128K.
+
+
+2026-09-25 continuation: C1 constant imports accepted from compiler source
+`17685e1` and harness/integration `655ac69`.
+[Receipt](self-hosting/guest-constant-linking-validation.json): 1143 / 122 / 380
+passing tests, four existing Trisha cases ignored, zero Rust warnings, 133
+unchanged baseline rows / 43 manual programs and 106 UNKNOWN formal audits.
+The 1195-command / 401-observation full corpus preserves all 234 previous
+successful compilations / 202 distinct ART1 programs; current totals are 235 / 203.
+Import acceptance adds 135 commands / 31 observations; graph acceptance keeps
+all 12 complete outputs and allowance results across 39 commands. The original
+long-name record source now executes to 79 under its unchanged 786432-node cap;
+original wide61–64 writes still execute to 3199, while wide65 remains unavailable.
+Post-commit install commands/logs and byte comparisons pin all three binaries,
+C1 and the graph component. Whole language coverage, generated compiler profiles,
+compiler-scale memory, C2/C3, six platforms and native Zheng proof gates stay open.
+Imported types also require the seed nominal-layout coherence repair recorded in
+the active import plan. Noun stays 128K.
+
+2026-09-25 continuation: ordinary direct function imports accepted from compiler
+source `4acc73021497950154ec6b2e68e1e6f2536a2ba3`.
+[Receipt](self-hosting/guest-function-imports-validation.json): 1154 / 122 / 380
+CPU tests, zero warnings, 133 unchanged baseline rows, 111 formal UNKNOWN.
+The complete 1195-command corpus preserves all 235 successful observations
+and 203 distinct ART1 identities, including module-source identities and all
+227 recorded source_hex values. Imported calls add 32 observations across
+140 commands; constants retain 31 observations across 139 commands and the
+39-command graph corpus retains all 12 outputs/allowances. The unchanged
+64-bit record write uses 771882 nodes and the long-name record uses 781466,
+both under the original 786432 ceiling. Nominal signatures, exact intrinsics,
+generated compiler profiles, source/runtime scale, C2/C3, six platforms and
+native Zheng remain open. Noun stays 128K.

@@ -12,21 +12,14 @@ use std.compiler.nox.call_frames
 use std.compiler.nox.expression_state
 use std.compiler.nox.builtins
 use std.compiler.nox.purity
+use std.compiler.nox.function_imports
+use std.compiler.nox.qualified_name
 
 #[pure]
-pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state.State) -> expression_state.State {
+fn open(source: bytes.Bytes, opening: syntax.Token, callee: U32, builtin: U32, start: U32, input: expression_state.State) -> expression_state.State {
     let mut s = input
-    if s.context.scope.pure {
-        if purity.is_io(source, s.token) { s.error = syntax.error(5, s.token.start, s.token.end) return s }
-    }
-    let callee = signatures.lookup(source, s.token, s.context.scope.functions)
-    let mut builtin = builtins.NONE
-    if callee == signatures.NONE {
-        builtin = builtins.lookup(source, s.token)
-        if builtin == builtins.NONE { s.error = syntax.error(5, s.token.start, s.token.end) return s }
-    }
     if s.ops == s.capacity { s.error = syntax.error(7, opening.start, opening.end) return s }
-    let frame = call_frames.Frame { callee, start: s.token.start, ops: s.ops, vals: s.vals,
+    let frame = call_frames.Frame { callee, start, ops: s.ops, vals: s.vals,
         count: syntax.ZERO, head: signatures.NONE, builtin }
     s.frames = noun.pair(call_frames.pack(frame), s.frames)
     s.operators = ast.store(s.operators, s.ops, noun.atom(as_field(expression_state.CALL_MARKER)), s.capacity)
@@ -34,6 +27,39 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
     s.token = lexer.next(source, opening.end)
     s.operand = true
     s
+}
+
+#[pure]
+pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state.State) -> expression_state.State {
+    let mut s = input
+    if s.context.scope.pure {
+        if purity.is_io(source, s.token) { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    }
+    let callee = signatures.lookup_range(source, s.token, s.context.scope.functions,
+        s.context.scope.function_start, s.context.scope.function_end)
+    let mut builtin = builtins.NONE
+    if callee == signatures.NONE {
+        builtin = builtins.lookup(source, s.token)
+        if builtin == builtins.NONE { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    }
+    open(source, opening, callee, builtin, s.token.start, s)
+}
+
+// A qualified ordinary function retains its exact global target. The final
+// member controls the source purity rule, but never selects a builtin opcode.
+#[pure]
+#[requires(name.token.kind == as_u32(5))]
+pub fn enter_qualified(source: bytes.Bytes, name: qualified_name.Name, input: expression_state.State) -> expression_state.State {
+    let mut s = input
+    if s.context.scope.pure {
+        if purity.is_io(source, name.member) { s.error = syntax.error(5, name.start, name.end) return s }
+    }
+    let found = function_imports.lookup(source, name, s.context.scope.imported_functions)
+    if found.exists == false { s.error = syntax.error(5, name.start, name.end) return s }
+    if (found.target < seq.len(s.context.scope.functions)) == false {
+        s.error = syntax.error(5, name.start, name.end) return s
+    }
+    open(source, name.token, found.target, builtins.NONE, name.start, s)
 }
 
 // Called only when the nearest delimiter is this call's operator marker.

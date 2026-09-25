@@ -23,7 +23,7 @@ fn main(input: Noun) -> Noun {
     let parsed = headers.parse(source, name.end, type_registry.name(source, name), capacity)
     if (parsed.error.code == as_u32(0)) == false { return noun.pair(noun.atom(as_field(parsed.error.code)), noun.atom(0)) }
     let entry = signatures.read(seq.get(parsed.functions, parsed.entry))
-    let scope = expression_state.context(seq.empty(), noun.atom(0), check_scope.Scope { functions: parsed.functions, params: parsed.params, types: parsed.types, constants: parsed.constants, pure: false })
+    let scope = expression_state.context(seq.empty(), noun.atom(0), check_scope.local(false, parsed.types, parsed.functions, parsed.params, parsed.constants))
     let value = expression.parse(source, lexer.next(source, entry.open), scope, seq.empty(), seq.empty(), noun.atom(0), capacity, false)
     let body = noun.pair(seq.to_noun(value.nodes), noun.pair(seq.to_noun(value.arguments), noun.atom(as_field(value.value))))
     noun.pair(noun.atom(as_field(value.error.code)), body)

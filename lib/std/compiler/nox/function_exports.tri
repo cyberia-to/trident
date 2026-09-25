@@ -1,0 +1,89 @@
+module std.compiler.nox.function_exports
+
+use vm.nox.noun
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+
+// The driver publishes only final public bindings. Export record IDs and
+// global callable targets are separate; signatures stay in the function bank.
+pub struct Bank { records: seq.Seq, heads: Noun, modules: U32 }
+pub struct Binding { pub owner: U32, pub name: syntax.Token, pub target: U32 }
+pub struct Found { pub exists: Bool, pub target: U32 }
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < modules) == false)]
+pub fn empty(modules: U32) -> Bank {
+    assert((syntax.SOURCE_CAP < modules) == false)
+    Bank { records: seq.empty(), heads: tree.empty(tree.shape(modules).height), modules }
+}
+
+#[pure]
+pub fn len(bank: Bank) -> U32 { seq.len(bank.records) }
+
+#[pure]
+fn span(token: syntax.Token) -> Noun {
+    noun.pair(noun.atom(as_field(token.start)), noun.atom(as_field(token.end)))
+}
+
+#[pure]
+#[requires(id < len(bank))]
+pub fn read(bank: Bank, id: U32) -> Binding {
+    let row = noun.tail(seq.get(bank.records, id))
+    let rest = noun.tail(row)
+    let name = noun.head(rest)
+    Binding { owner: as_u32(noun.as_field(noun.head(row))),
+        name: syntax.token(1, as_u32(noun.as_field(noun.head(name))), as_u32(noun.as_field(noun.tail(name))), 0),
+        target: as_u32(noun.as_field(noun.tail(rest))) }
+}
+
+// Callers check source-work capacity before publishing. The opaque bank bounds
+// its own storage and has no constructor for externally serialized records.
+#[pure]
+#[requires(len(bank) < cap)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires(item.owner < bank.modules)]
+#[requires(item.target < syntax.SOURCE_CAP)]
+pub fn push(bank: Bank, item: Binding, cap: U32) -> Bank {
+    assert((syntax.SOURCE_CAP < cap) == false)
+    assert(item.owner < bank.modules)
+    assert(item.target < syntax.SOURCE_CAP)
+    let id = len(bank)
+    let next = tree.get(bank.heads, bank.modules, item.owner)
+    let row = noun.pair(noun.atom(as_field(item.owner)), noun.pair(span(item.name), noun.atom(as_field(item.target))))
+    Bank { records: seq.push(bank.records, noun.pair(next, row), cap),
+        heads: tree.set(bank.heads, bank.modules, item.owner, noun.atom(as_field(id) + 1)), modules: bank.modules }
+}
+
+// Name offsets belong to their own source buffers, including long identifiers.
+#[pure]
+fn same(caller: bytes.Bytes, query: syntax.Token, source: bytes.Bytes, name: syntax.Token) -> Bool {
+    if (field.sub(as_field(query.end), as_field(query.start)) == field.sub(as_field(name.end), as_field(name.start))) == false { return false }
+    let mut a = query.start
+    let mut b = name.start
+    for step in 0..4096 {
+        if a == query.end { return true }
+        if (bytes.get(caller, a) == bytes.get(source, b)) == false { return false }
+        a = syntax.inc(a)
+        b = syntax.inc(b)
+    }
+    a == query.end
+}
+
+#[pure]
+#[requires(owner < bank.modules)]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < bytes.len(caller)) == false)]
+pub fn find(bank: Bank, owner: U32, source: bytes.Bytes, caller: bytes.Bytes, query: syntax.Token) -> Found {
+    let mut cursor = as_u32(noun.as_field(tree.get(bank.heads, bank.modules, owner)))
+    for step in 0..4096 {
+        if cursor == syntax.ZERO { return Found { exists: false, target: syntax.ZERO } }
+        let id = syntax.dec(cursor)
+        let binding = read(bank, id)
+        if same(caller, query, source, binding.name) { return Found { exists: true, target: binding.target } }
+        cursor = as_u32(noun.as_field(noun.head(seq.get(bank.records, id))))
+    }
+    Found { exists: false, target: syntax.ZERO }
+}
