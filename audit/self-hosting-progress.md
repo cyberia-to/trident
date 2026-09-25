@@ -150,6 +150,8 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   aliases and original owner diagnostics; [execution evidence](self-hosting/guest-constant-linking.md).
 - [x] SH3 direct ordinary function imports through C1, with private helpers,
   final visibility and owner-specific diagnostics; [execution evidence](self-hosting/guest-function-imports.md).
+- [x] SH3 seed stable nominal layouts across repeated declarations;
+  [isolated and integrated evidence](self-hosting/nominal-bindings-combined.md).
 - [ ] SH3 guest nominal types/intrinsics and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
@@ -461,3 +463,18 @@ and 203 distinct ART1 identities, including module-source identities and all
 both under the original 786432 ceiling. Nominal signatures, exact intrinsics,
 generated compiler profiles, source/runtime scale, C2/C3, six platforms and
 native Zheng remain open. Noun stays 128K.
+
+2026-09-25 continuation: seed nominal layout repair at `5d06645` is integrated
+with the accepted guest function imports at `285681d707a178d9ebd875e5b13753eb3f58f856`.
+[Combined receipt](self-hosting/nominal-bindings-combined-validation.json):
+1165 / 122 / 380 passing tests, four existing Trisha cases ignored, zero warnings,
+133 unchanged baseline rows / 43 manual programs and 111 formal UNKNOWN audits.
+The fresh installed CLI run checks eight cases on both warriors in 28 commands;
+changed field types, privacy or order fail before replacing existing output.
+The isolated seed receipt is preserved. All three combined binaries reproduce
+byte for byte after commit, while C1 and graph bytes match the accepted function
+import artifacts. Their full 1195-command and 39-command execution receipts are
+explicitly reused with unchanged guest/runtime sources and sibling pins; those
+corpora were not rerun for this seed-only integration. Guest nominal imports,
+exact intrinsics, generated compiler profiles, compiler scale, C2/C3, six
+platforms and native Zheng remain open. Noun stays 128K.
