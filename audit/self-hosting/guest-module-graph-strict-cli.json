@@ -1,0 +1,546 @@
+{
+  "schema": "trident/strict-module-paths-cli/v1",
+  "kind": "local-development",
+  "binary_sha256": {
+    "trident": "40dde61ce5ca641437315e1c5a9e5a1f42acc844fa86bad193bd8b821b114a3e",
+    "joy": "43d5c93244c190b9ab5a7cee04dac28d9dcd5f9c0748d7d79a1248af136b2509",
+    "trisha": "a97edff91261a01f17c4602df8decc141e524a305bc0a73716934ac5984b5aef"
+  },
+  "modules": {
+    "a.tri": "module a pub const X:Field=7 pub struct Box{pub x:Field} pub fn seven()->Field{7} pub fn read(b:Box)->Field{b.x}",
+    "a/value.tri": "module a // owner\n . value pub const X:Field=7 pub struct Box{pub x:Field} pub fn seven()->Field{7} pub fn read(b:Box)->Field{b.x}"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/joy.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/program.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/program.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/result.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/result.dag\",\"execution\":{\"allocated_nodes\":141,\"arena_reserved_bytes\":26214416,\"charged_reductions\":88,\"elapsed_micros\":3740,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"0934430c117b91ade2f29fefe8cb8eaa042bd4090f8c1c0f02dadd5fe81409c5\",\"peak_frames\":17,\"program_particle\":\"851eb9eccb944af2df5b458d83c52a5066ca500b5989bde028ef73768c978857\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0934430c117b91ade2f29fefe8cb8eaa042bd4090f8c1c0f02dadd5fe81409c5\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/trisha.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/program.tasm\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "run",
+        "--tasm",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/program.tasm"
+      ],
+      "exit_code": 0,
+      "stdout": "14\n",
+      "stderr": "Backend: cpu\nExecuting program (14 ops)...\nExecuted in 12 cycles\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-eof.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found end of file\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-eof.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found end of file\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-eof.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found end of file\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-function.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found 'fn'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-function.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found 'fn'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-function.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found 'fn'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-public.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found 'pub'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-public.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found 'pub'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-public.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found 'pub'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-use.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found 'use'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-use.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found 'use'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/import-before-use.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found 'use'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/field.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found '}'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/field.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '}'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/field.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '}'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/call.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found '('\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/call.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '('\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/call.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '('\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/local-type.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found '='\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/local-type.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '='\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/local-type.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '='\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/parameter-type.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found ')'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/parameter-type.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found ')'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/parameter-type.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found ')'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/return-type.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found '{'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/return-type.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '{'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/return-type.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '{'\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trident",
+        "check",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/constructor.tri"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: expected identifier, found '{'\nerror: expected expression, found '{'\nerror: expected expression, found ':'\nerror: expected item (fn, struct, event, or const)\nerror: expected item (fn, struct, event, or const)\nerror: expected item (fn, struct, event, or const)\nerror: expected item (fn, struct, event, or const)\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/constructor.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.dag",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "--force"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '{'; expected expression, found '{'; expected expression, found ':'; expected item (fn, struct, event, or const); expected item (fn, struct, event, or const); expected item (fn, struct, event, or const); expected item (fn, struct, event, or const)\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/trisha",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/constructor.tri",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/protected.tasm"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: compile error: expected identifier, found '{'; expected expression, found '{'; expected expression, found ':'; expected item (fn, struct, event, or const); expected item (fn, struct, event, or const); expected item (fn, struct, event, or const); expected item (fn, struct, event, or const)\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-module-graph/trident/compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/compiler.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-strict-paths-jdyps0aw/compiler.dag\n",
+      "stderr": ""
+    }
+  ],
+  "observations": [
+    {
+      "case": "valid-dotted-paths",
+      "owner": "joy",
+      "source": "program entry use a // import\n . value fn main(input:Noun)->Noun{let b:a // type\n . value . Box=a // constructor\n . value . Box{x:7} let got=a // callee\n . value . read(b) nox_noun_atom(got+a . value . X)}",
+      "actual": 14,
+      "expected": 14,
+      "program_sha256": "d9ccd6d2fa2175f0d680acdbcbb1c01e8ff9a4a4b98dad6b1886c1e464e6bd9e"
+    },
+    {
+      "case": "valid-dotted-paths",
+      "owner": "trisha",
+      "source": "program entry use a // import\n . value fn main(){let b:a // type\n . value . Box=a // constructor\n . value . Box{x:7} let got=a // callee\n . value . read(b) pub_write(got+a . value . X)}",
+      "actual": 14,
+      "expected": 14,
+      "program_sha256": "b6f060846a658c50324d1b6cc7db1dbd5cc2d7b5589e6455da64399b151bcc2b"
+    },
+    {
+      "case": "import-eof",
+      "source": "program entry use a.",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "import-before-function",
+      "source": "program entry use a. fn main()->Field{7}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "import-before-public",
+      "source": "program entry use a. pub fn main()->Field{7}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "import-before-use",
+      "source": "program entry use a. use a fn main()->Field{7}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "field",
+      "source": "program entry use a fn main()->Field{a.X.}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "call",
+      "source": "program entry use a fn main()->Field{a.seven.()}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "local-type",
+      "source": "program entry use a fn main()->Field{let b:a.Box.=a.Box{x:7} b.x}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "parameter-type",
+      "source": "program entry use a fn bad(b:a.Box.)->Field{b.x} fn main()->Field{7}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "return-type",
+      "source": "program entry use a fn bad()->a.Box.{a.Box{x:7}} fn main()->Field{7}",
+      "previous_outputs_preserved": true
+    },
+    {
+      "case": "constructor",
+      "source": "program entry use a fn main()->Field{let b=a.Box.{x:7} b.x}",
+      "previous_outputs_preserved": true
+    }
+  ],
+  "compiler_sha256": "fac3347698ba55a9cb05665dd7a6a660e77a2152be6a4a18892372564e6c49a6",
+  "compiler_particle": "681c613b8952777de42675bb03941c0af13d80ce255d23a30b2cff6480a0d260",
+  "c1_baseline": "audit/self-hosting/guest-package-cli.json",
+  "entire_c1_artifact_unchanged": true
+}
