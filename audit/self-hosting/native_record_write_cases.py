@@ -48,7 +48,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
     observations.append({'case':'record-write-rhs-trap','source_hex':content.hex(),'compiler_execution':compiled,'program_execution_error':commands[-1]['stderr'],'previous_output_preserved':True})
 
     # Unchanged full-source vectors and arena ceiling from record_write_bounds.rs.
-    # Terminal-leaf admission batching lets the 61/62-bit paths finish generation;
+    # Terminal tree reads let the original 61–64-bit paths finish generation;
     # wider paths still preserve the previous output on arena exhaustion.
     for bits in [61,62,63,64,65]:
         outer=min(bits,64)-32
@@ -58,7 +58,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         extra,value,path=('struct Wrap{value:Outer}',f'Wrap{{value:{outer_value}}}','w.value.last.last') if bits==65 else ('',outer_value,'w.last.last')
         content=f'program sample struct Inner{{{fields},last:Field}} struct Outer{{{prefix_fields},last:Inner}} {extra} fn main()->Field{{let mut w={value} let old=w {path}=99 {path.replace("w.","old.",1)}*100+{path}}}'.encode()
         name=f'record-write-wide-{bits}-arena';directory,job=package(name,content,{'arena_nodes':786432})
-        if bits <= 62:
+        if bits <= 64:
             program=directory/'program.dag';compiled=execute(job,program)
             assert compiled['execution']['compiler_job']['status']=='success'
             output=directory/'output.dag';executed=run(['run-artifact',program,'--input',zero,'-o',output])
