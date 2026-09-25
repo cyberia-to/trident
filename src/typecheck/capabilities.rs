@@ -181,22 +181,11 @@ pub(super) fn entry_errors(
     flags: &BTreeSet<String>,
     target: &str,
 ) -> Option<Vec<Diagnostic>> {
-    let functions = || {
-        file.items.iter().filter_map(|item| match &item.node {
-            Item::Fn(function)
-                if function
-                    .cfg
-                    .as_ref()
-                    .is_none_or(|cfg| flags.contains(&cfg.node)) =>
-            {
-                Some(function)
-            }
-            _ => None,
-        })
-    };
-    let entry = functions()
+    let functions = file.final_functions(flags);
+    let entry = functions
+        .iter()
         .find(|f| f.name.node == "main")
-        .or_else(|| functions().find(|f| f.is_pub && f.body.is_some()))?;
+        .or_else(|| functions.iter().find(|f| f.is_pub && f.body.is_some()))?;
     let errors: Vec<_> = requirements
         .get(&entry.name.node)?
         .difference(available)

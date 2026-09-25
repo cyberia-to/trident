@@ -168,11 +168,14 @@ impl TypeChecker {
                         self.mono_instances.push(instance.clone());
                     }
                     // Record per-call-site resolution for the emitter.
-                    self.generic_calls.insert(
-                        (self.current_function.clone(), span.start, span.end),
-                        instance.clone(),
+                    self.call_resolutions.insert(
+                        (
+                            self.current_function.clone(),
+                            path.span.start,
+                            path.span.end,
+                        ),
+                        instance,
                     );
-                    self.call_resolutions.push(instance);
 
                     return_ty
                 } else if let Some(sig) = self.functions.get(&fn_name).cloned() {

@@ -1,6 +1,17 @@
 //! Concrete AST instances retain their defining module's lexical environment.
 use super::*;
 
+pub(crate) fn concrete_type(ty: &Type, subs: &BTreeMap<String, u64>) -> Result<Type, String> {
+    let mut copy = ty.clone();
+    Visitor {
+        subs: subs.clone(),
+        calls: None,
+        function: String::new(),
+    }
+    .ty(&mut copy)?;
+    Ok(copy)
+}
+
 pub(crate) fn concrete_function(
     function: &FnDef,
     args: &[u64],
@@ -142,11 +153,7 @@ impl Visitor<'_> {
                     self.size(&mut size.node)?;
                 }
                 if let Some(path_new) = self.calls.and_then(|calls| {
-                    calls.get(&(
-                        self.function.clone(),
-                        expression.span.start,
-                        expression.span.end,
-                    ))
+                    calls.get(&(self.function.clone(), path.span.start, path.span.end))
                 }) {
                     path.node = path_new.clone();
                     generic_args.clear();

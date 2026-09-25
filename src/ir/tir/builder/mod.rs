@@ -22,6 +22,7 @@ mod divergence;
 mod early_return;
 mod expr;
 mod functions;
+mod generic_calls;
 mod helpers;
 mod index;
 mod layout;
@@ -43,7 +44,7 @@ use crate::tir::stack::StackManager;
 use crate::tir::TIROp;
 use crate::typecheck::MonoInstance;
 
-use self::layout::{format_type_name, resolve_type_width, resolve_type_width_with_subs};
+use self::layout::{format_type_name, resolve_type_width};
 
 // ─── TIRBuilder ────────────────────────────────────────────────────
 
@@ -81,12 +82,9 @@ pub struct TIRBuilder {
     pub(crate) mono_instances: Vec<MonoInstance>,
     /// Generic function AST definitions (name -> FnDef).
     pub(crate) generic_fn_defs: BTreeMap<String, FnDef>,
-    /// Current size parameter substitutions during monomorphized emission.
-    pub(crate) current_subs: BTreeMap<String, u64>,
     /// Per-call-site resolutions from the type checker.
-    pub(crate) call_resolutions: Vec<MonoInstance>,
-    /// Index into call_resolutions for the next generic call.
-    pub(crate) call_resolution_idx: usize,
+    pub(crate) call_resolutions: BTreeMap<(String, u32, u32), MonoInstance>,
+    pub(crate) current_function: String,
     /// Active cfg flags for conditional compilation.
     pub(crate) cfg_flags: BTreeSet<String>,
     /// Target VM configuration.
@@ -126,9 +124,8 @@ impl TIRBuilder {
             function_aliases: BTreeMap::new(),
             mono_instances: Vec::new(),
             generic_fn_defs: BTreeMap::new(),
-            current_subs: BTreeMap::new(),
-            call_resolutions: Vec::new(),
-            call_resolution_idx: 0,
+            call_resolutions: BTreeMap::new(),
+            current_function: String::new(),
             cfg_flags: BTreeSet::from(["debug".to_string()]),
             target_config,
         }
@@ -180,7 +177,10 @@ impl TIRBuilder {
         self
     }
 
-    pub fn with_call_resolutions(mut self, resolutions: Vec<MonoInstance>) -> Self {
+    pub fn with_call_resolutions(
+        mut self,
+        resolutions: BTreeMap<(String, u32, u32), MonoInstance>,
+    ) -> Self {
         self.call_resolutions = resolutions;
         self
     }
@@ -194,6 +194,7 @@ impl TIRBuilder {
         file: &File,
     ) -> Result<Vec<TIROp>, Vec<crate::diagnostic::Diagnostic>> {
         self.prepare_module_types(&file.name.node)?;
+        let functions = file.final_functions(&self.cfg_flags);
         let resolved =
             crate::typecheck::constants::resolve(file, &self.constant_bindings, &self.cfg_flags)?;
         self.constants = resolved.raw_values();
@@ -219,63 +220,56 @@ impl TIRBuilder {
             }
         }
 
-        // ── Pre-scan: collect intrinsic mappings ──
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                if let Some(ref intrinsic) = func.intrinsic {
-                    let intr_value = if let Some(start) = intrinsic.node.find('(') {
-                        let end = intrinsic.node.rfind(')').unwrap_or(intrinsic.node.len());
-                        intrinsic.node[start + 1..end].to_string()
-                    } else {
-                        intrinsic.node.clone()
-                    };
-                    self.intrinsic_map
-                        .insert(func.name.node.clone(), intr_value);
-                } else {
-                    // Local functions shadow unqualified names imported from SDKs.
-                    self.intrinsic_map.remove(&func.name.node);
-                }
+        // Final declarations own both intrinsic identity and callable kind.
+        for func in &functions {
+            if let Some(intrinsic) = &func.intrinsic {
+                self.intrinsic_map.insert(
+                    func.name.node.clone(),
+                    crate::ast::intrinsic_name(&intrinsic.node).to_string(),
+                );
+            } else {
+                self.intrinsic_map.remove(&func.name.node);
             }
         }
 
         self.check_fixed_layout(file)?;
 
-        // ── Pre-scan: collect return widths and detect generic functions ──
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                if !func.type_params.is_empty() {
-                    self.generic_fn_defs
-                        .insert(func.name.node.clone(), func.clone());
-                } else {
-                    let width = func
-                        .return_ty
-                        .as_ref()
-                        .map(|t| self.type_width(&t.node))
-                        .unwrap_or(0);
-                    self.fn_return_widths.insert(func.name.node.clone(), width);
-                }
+        for func in &functions {
+            if !func.type_params.is_empty() {
+                self.generic_fn_defs
+                    .insert(func.name.node.clone(), (*func).clone());
+            } else {
+                let width = func
+                    .return_ty
+                    .as_ref()
+                    .map(|t| self.type_width(&t.node))
+                    .unwrap_or(0);
+                self.fn_return_widths.insert(func.name.node.clone(), width);
             }
         }
+
+        self.check_generic_calls(file)?;
 
         // ── Pre-scan: register return widths for monomorphized instances ──
         for inst in &self.mono_instances.clone() {
             if let Some(gdef) = self.generic_fn_defs.get(&inst.name).cloned() {
-                let mut subs = BTreeMap::new();
+                let mut subs = self.constants.clone();
                 for (param, val) in gdef.type_params.iter().zip(inst.size_args.iter()) {
                     subs.insert(param.node.clone(), *val);
                 }
-                let width = gdef
+                let ty = gdef
                     .return_ty
                     .as_ref()
-                    .map(|t| resolve_type_width_with_subs(&t.node, &subs, &self.target_config))
-                    .unwrap_or(0);
+                    .map(|t| {
+                        crate::typecheck::specialize::concrete_type(&t.node, &subs).map_err(
+                            |message| vec![crate::diagnostic::Diagnostic::error(message, t.span)],
+                        )
+                    })
+                    .transpose()?
+                    .unwrap_or_else(|| Type::Tuple(Vec::new()));
+                let width = self.type_width(&ty);
                 let mangled = inst.mangled_name();
+                self.fn_return_types.insert(mangled.clone(), ty);
                 self.fn_return_widths.insert(mangled, width);
             }
         }
@@ -328,14 +322,7 @@ impl TIRBuilder {
 
         // ── Program entry point ──
         if file.kind == FileKind::Program {
-            if let Some(main) = file.items.iter().find_map(|item| match &item.node {
-                Item::Fn(function)
-                    if function.name.node == "main" && self.is_item_cfg_active(&item.node) =>
-                {
-                    Some(function)
-                }
-                _ => None,
-            }) {
+            if let Some(main) = functions.iter().find(|f| f.name.node == "main") {
                 let mut leaves = Vec::new();
                 for parameter in &main.params {
                     self.entry_leaves(&parameter.ty.node, &mut leaves);
@@ -347,15 +334,10 @@ impl TIRBuilder {
             self.ops.push(TIROp::Entry("main".to_string()));
         }
 
-        // ── Emit non-generic, non-test functions ──
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                if func.type_params.is_empty() && !func.is_test {
-                    self.build_fn(func);
-                }
+        // Emit each final callable once; replaced bodies were checked earlier.
+        for func in &functions {
+            if func.type_params.is_empty() && !func.is_test {
+                self.build_fn(func);
             }
         }
 
@@ -363,7 +345,7 @@ impl TIRBuilder {
         let instances = self.mono_instances.clone();
         for inst in &instances {
             if let Some(gdef) = self.generic_fn_defs.get(&inst.name).cloned() {
-                self.build_mono_fn(&gdef, inst);
+                self.build_mono_fn(&gdef, inst)?;
             }
         }
 

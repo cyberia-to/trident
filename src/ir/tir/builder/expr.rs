@@ -64,13 +64,9 @@ impl TIRBuilder {
                 self.flush_stack_effects();
             }
 
-            Expr::Call {
-                path,
-                generic_args,
-                args,
-            } => {
+            Expr::Call { path, args, .. } => {
                 let fn_name = path.node.as_dotted();
-                self.build_call(&fn_name, generic_args, args);
+                self.build_call(&fn_name, path.span, args);
             }
 
             Expr::Tuple(elements) => {

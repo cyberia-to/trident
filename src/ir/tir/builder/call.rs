@@ -6,20 +6,14 @@
 //! Function call dispatch: intrinsic resolution and user-defined calls.
 
 use crate::ast::*;
-use crate::span::Spanned;
+use crate::span::{Span, Spanned};
 use crate::tir::TIROp;
-use crate::typecheck::MonoInstance;
 
 use super::TIRBuilder;
 
 impl TIRBuilder {
     /// Emit a function call (intrinsic or user-defined).
-    pub(crate) fn build_call(
-        &mut self,
-        name: &str,
-        generic_args: &[Spanned<ArraySize>],
-        args: &[Spanned<Expr>],
-    ) {
+    pub(crate) fn build_call(&mut self, name: &str, span: Span, args: &[Spanned<Expr>]) {
         // Evaluate arguments — each pushes a temp.
         for arg in args {
             self.build_expr(&arg.node);
@@ -36,7 +30,7 @@ impl TIRBuilder {
         if resolved_name.is_none()
             && (self.fn_return_widths.contains_key(name) || self.generic_fn_defs.contains_key(name))
         {
-            self.build_user_call(name, generic_args);
+            self.build_user_call(name, span);
             return;
         }
         let effective_name = resolved_name.as_deref().unwrap_or(name);
@@ -191,7 +185,7 @@ impl TIRBuilder {
 
             // ── User-defined function ──
             _ => {
-                self.build_user_call(name, generic_args);
+                self.build_user_call(name, span);
             }
         }
     }
@@ -199,17 +193,12 @@ impl TIRBuilder {
     /// Emit only the call/intrinsic opcode for a pass-through function.
     /// Does NOT evaluate arguments or touch the stack model — the caller's
     /// params are already in place on the real stack.
-    pub(crate) fn emit_call_only(
-        &mut self,
-        name: &str,
-        generic_args: &[Spanned<ArraySize>],
-        _arg_count: usize,
-    ) {
+    pub(crate) fn emit_call_only(&mut self, name: &str, span: Span, _arg_count: usize) {
         let resolved_name = self.intrinsic_map.get(name).cloned();
         if resolved_name.is_none()
             && (self.fn_return_widths.contains_key(name) || self.generic_fn_defs.contains_key(name))
         {
-            let label = self.resolve_call_label(name, generic_args);
+            let label = self.resolve_call_label(name, span);
             self.ops.push(TIROp::Call(label));
             return;
         }
@@ -272,7 +261,7 @@ impl TIRBuilder {
             _ => {
                 // User-defined call — resolve label the same way as
                 // build_user_call but skip stack model updates.
-                let call_label = self.resolve_call_label(name, generic_args);
+                let call_label = self.resolve_call_label(name, span);
                 self.ops.push(TIROp::Call(call_label));
             }
         }
@@ -328,48 +317,14 @@ impl TIRBuilder {
     }
 
     /// Resolve a user-defined call name to its TASM label.
-    /// Returns `(call_label, base_name)` where `base_name` is used for
-    /// return width lookup.
-    fn resolve_call_label(&mut self, name: &str, generic_args: &[Spanned<ArraySize>]) -> String {
+    fn resolve_call_label(&mut self, name: &str, span: Span) -> String {
         let is_generic = self.generic_fn_defs.contains_key(name);
 
         if is_generic {
-            let size_args: Vec<u64> = if !generic_args.is_empty() {
-                generic_args
-                    .iter()
-                    .map(|ga| ga.node.eval(&self.current_subs))
-                    .collect()
-            } else if !self.current_subs.is_empty() {
-                if let Some(gdef) = self.generic_fn_defs.get(name) {
-                    gdef.type_params
-                        .iter()
-                        .map(|p| self.current_subs.get(&p.node).copied().unwrap_or(0))
-                        .collect()
-                } else {
-                    vec![]
-                }
-            } else {
-                let idx = self.call_resolution_idx;
-                if idx < self.call_resolutions.len() && self.call_resolutions[idx].name == name {
-                    self.call_resolution_idx += 1;
-                    self.call_resolutions[idx].size_args.clone()
-                } else {
-                    let mut found = vec![];
-                    for (i, res) in self.call_resolutions.iter().enumerate() {
-                        if i >= self.call_resolution_idx && res.name == name {
-                            self.call_resolution_idx = i + 1;
-                            found = res.size_args.clone();
-                            break;
-                        }
-                    }
-                    found
-                }
-            };
-            let inst = MonoInstance {
-                name: name.to_string(),
-                size_args,
-            };
-            inst.mangled_name()
+            self.call_resolutions
+                .get(&(self.current_function.clone(), span.start, span.end))
+                .expect("generic call sites validated before emission")
+                .mangled_name()
         } else if name.contains('.') {
             let canonical = self.qualified_function(name);
             let (full_module, fn_name) = canonical
@@ -384,8 +339,8 @@ impl TIRBuilder {
     }
 
     /// Emit a call to a user-defined (non-intrinsic) function.
-    fn build_user_call(&mut self, name: &str, generic_args: &[Spanned<ArraySize>]) {
-        let call_label = self.resolve_call_label(name, generic_args);
+    fn build_user_call(&mut self, name: &str, span: Span) {
+        let call_label = self.resolve_call_label(name, span);
 
         // For return width lookup, use the base name (without module prefix).
         let base_name = if name.contains('.') && !self.generic_fn_defs.contains_key(name) {
@@ -394,12 +349,15 @@ impl TIRBuilder {
             call_label.clone()
         };
 
-        let ret_width = self
-            .fn_return_types
-            .get(&self.qualified_function(name))
-            .map(|ty| self.type_width(ty))
-            .or_else(|| self.fn_return_widths.get(&base_name).copied())
-            .unwrap_or(0);
+        let ret_width = if self.generic_fn_defs.contains_key(name) {
+            self.fn_return_widths.get(&call_label).copied().unwrap_or(0)
+        } else {
+            self.fn_return_types
+                .get(&self.qualified_function(name))
+                .map(|ty| self.type_width(ty))
+                .or_else(|| self.fn_return_widths.get(&base_name).copied())
+                .unwrap_or(0)
+        };
         if ret_width > 0 {
             self.emit_and_push(TIROp::Call(call_label), ret_width);
         } else {
@@ -431,7 +389,7 @@ mod abi_tests {
             ] {
                 let signature = &checker.functions[name];
                 let mut builder = TIRBuilder::new(target.clone());
-                builder.build_call(name, &[], &[]);
+                builder.build_call(name, Span::dummy(), &[]);
                 assert_eq!(
                     builder.stack.stack_depth(),
                     signature.return_ty.width().unwrap(),
@@ -444,7 +402,7 @@ mod abi_tests {
                 }
             }
             let mut builder = TIRBuilder::new(target);
-            builder.emit_call_only("assert_digest", &[], 2);
+            builder.emit_call_only("assert_digest", Span::dummy(), 2);
             if digest == 1 {
                 assert!(matches!(
                     builder.ops.as_slice(),
@@ -470,9 +428,9 @@ mod abi_tests {
                 || name.starts_with("divine")
         }) {
             let mut regular = TIRBuilder::new(target.clone());
-            regular.build_call(name, &[], &[]);
+            regular.build_call(name, Span::dummy(), &[]);
             let mut pass_through = TIRBuilder::new(target.clone());
-            pass_through.emit_call_only(name, &[], signature.params.len());
+            pass_through.emit_call_only(name, Span::dummy(), signature.params.len());
             assert_eq!(
                 regular.stack.stack_depth(),
                 signature.return_ty.width().unwrap(),

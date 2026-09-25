@@ -20,30 +20,25 @@ impl TIRBuilder {
         self.build_fn_body(&name, func, &param_widths, ret_width);
     }
 
-    pub(super) fn build_mono_fn(&mut self, func: &FnDef, inst: &MonoInstance) {
-        if func.body.is_none() {
-            return;
-        }
-        // Set up substitution context.
-        self.current_subs.clear();
-        for (param, val) in func.type_params.iter().zip(inst.size_args.iter()) {
-            self.current_subs.insert(param.node.clone(), *val);
-        }
-        let name = inst.mangled_name();
-        let param_widths: Vec<u32> = func
-            .params
-            .iter()
-            .map(|p| {
-                resolve_type_width_with_subs(&p.ty.node, &self.current_subs, &self.target_config)
-            })
-            .collect();
-        let ret_width = func
-            .return_ty
-            .as_ref()
-            .map(|t| resolve_type_width_with_subs(&t.node, &self.current_subs, &self.target_config))
-            .unwrap_or(0);
-        self.build_fn_body(&name, func, &param_widths, ret_width);
-        self.current_subs.clear();
+    pub(super) fn build_mono_fn(
+        &mut self,
+        func: &FnDef,
+        inst: &MonoInstance,
+    ) -> Result<(), Vec<crate::diagnostic::Diagnostic>> {
+        let concrete = crate::typecheck::specialize::concrete_function(
+            func,
+            &inst.size_args,
+            inst.mangled_name(),
+            &self.constants,
+        )
+        .map_err(|message| {
+            vec![crate::diagnostic::Diagnostic::error(
+                message,
+                func.name.span,
+            )]
+        })?;
+        self.build_fn(&concrete);
+        Ok(())
     }
 
     /// Detect a pass-through function: body is a single call with all
@@ -82,6 +77,7 @@ impl TIRBuilder {
     /// Emits FnStart, registers parameters, compiles the body, cleans up
     /// the stack, and emits Return + FnEnd.
     fn build_fn_body(&mut self, name: &str, func: &FnDef, param_widths: &[u32], ret_width: u32) {
+        self.current_function = func.name.node.clone();
         self.ops.push(TIROp::FnStart(name.to_string()));
         self.stack.clear();
         self.var_types.clear();
@@ -93,14 +89,9 @@ impl TIRBuilder {
         if self.detect_pass_through(func, param_widths) {
             let body = func.body.as_ref().unwrap();
             let tail = body.node.tail_expr.as_ref().unwrap();
-            if let Expr::Call {
-                path,
-                generic_args,
-                args,
-            } = &tail.node
-            {
+            if let Expr::Call { path, args, .. } = &tail.node {
                 let call_name = path.node.as_dotted();
-                self.emit_call_only(&call_name, generic_args, args.len());
+                self.emit_call_only(&call_name, path.span, args.len());
             }
             self.ops.push(TIROp::Return);
             self.ops.push(TIROp::FnEnd);

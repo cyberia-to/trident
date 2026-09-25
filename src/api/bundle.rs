@@ -55,50 +55,32 @@ pub fn bundle_with_assembly(
         .or_else(|| project.modules.last());
 
     let (functions, entry_point, _entry_hash) = if let Some(pm) = entry_file {
-        let fn_hashes = crate::hash::hash_file(&pm.file);
-        let fns: Vec<BundleFunction> = pm
-            .file
-            .items
+        let selected = pm.file.final_functions(&options.cfg_flags);
+        // Syntactic hashing remains available separately. Bundle metadata hashes
+        // the same active declarations that supply its signatures and execution.
+        let mut active = pm.file.clone();
+        active.items = selected
             .iter()
-            .filter_map(|item| {
-                if let ast::Item::Fn(func) = &item.node {
-                    if !func.is_test
-                        && func
-                            .cfg
-                            .as_ref()
-                            .is_none_or(|flag| options.cfg_flags.contains(&flag.node))
-                    {
-                        let hash = fn_hashes
-                            .get(&func.name.node)
-                            .map(|h| h.to_hex())
-                            .unwrap_or_default();
-                        return Some(BundleFunction {
-                            name: func.name.node.clone(),
-                            hash,
-                            signature: crate::deploy::format_fn_signature(func),
-                        });
-                    }
-                }
-                None
+            .map(|f| crate::span::Spanned::new(ast::Item::Fn((*f).clone()), f.name.span))
+            .collect();
+        let fn_hashes = crate::hash::hash_file(&active);
+        let fns: Vec<BundleFunction> = selected
+            .iter()
+            .filter(|func| !func.is_test)
+            .map(|func| BundleFunction {
+                name: func.name.node.clone(),
+                hash: fn_hashes
+                    .get(&func.name.node)
+                    .map(|h| h.to_hex())
+                    .unwrap_or_default(),
+                signature: crate::deploy::format_fn_signature(func),
             })
             .collect();
-        let candidates = || {
-            pm.file.items.iter().filter_map(|item| match &item.node {
-                ast::Item::Fn(function)
-                    if function
-                        .cfg
-                        .as_ref()
-                        .is_none_or(|flag| options.cfg_flags.contains(&flag.node)) =>
-                {
-                    Some(function)
-                }
-                _ => None,
-            })
-        };
-        let ep = candidates()
-            .find(|function| function.name.node == "main")
-            .or_else(|| candidates().find(|function| function.is_pub && function.body.is_some()))
-            .map(|function| function.name.node.clone())
+        let ep = selected
+            .iter()
+            .find(|f| f.name.node == "main")
+            .or_else(|| selected.iter().find(|f| f.is_pub && f.body.is_some()))
+            .map(|f| f.name.node.clone())
             .unwrap_or_else(|| "main".into());
         let sh = crate::hash::hash_file_content(&pm.file).to_hex();
         (fns, ep, sh)

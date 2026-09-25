@@ -428,6 +428,19 @@ match p {
 }
 ```
 
+The final active declaration of each function name in its defining module owns
+its signature, visibility, ordinary or generic kind, intrinsic identity, test
+annotation and body.
+Only that declaration may export the name; a final private declaration withdraws
+an earlier public export. Inactive conditional declarations do not replace an
+active binding. Calls and both backends use that same final declaration, and a
+generic instance is created from its final generic body. Earlier active ordinary
+bodies still undergo type and purity checking; generic bodies are checked when
+instantiated. Exported signatures retain their resolved defining-module types. Bundle entry,
+function metadata and executed test selection use the same final active set.
+Syntactic test discovery still lists annotations; skipped test counts describe
+conditional declarations excluded by the selected flags.
+
 ### Return
 
 A direct call to the resolved boolean assertion intrinsic with the literal

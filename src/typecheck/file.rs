@@ -177,13 +177,14 @@ impl TypeChecker {
         // Recursion detection: build call graph and reject cycles
         self.detect_recursion(file);
 
-        // Second pass: type check function bodies
+        // Validate every active ordinary body, including replaced declarations.
+        // Exact call sites remain available for project specialization.
+        let final_functions = file.final_functions(&self.cfg_flags);
         for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            if let Item::Fn(func) = &item.node {
-                self.check_fn(func);
+            if self.is_item_cfg_active(&item.node) {
+                if let Item::Fn(func) = &item.node {
+                    self.check_fn(func);
+                }
             }
         }
 
@@ -230,7 +231,19 @@ impl TypeChecker {
 
         // Collect exports (pub items only)
         let module_name = file.name.node.clone();
-        let mut exported_fns = Vec::new();
+        let exported_fns: Vec<_> = final_functions
+            .iter()
+            .filter(|f| f.is_pub && f.type_params.is_empty())
+            .filter_map(|f| {
+                self.functions.get(&f.name.node).map(|signature| {
+                    (
+                        f.name.node.clone(),
+                        signature.params.clone(),
+                        signature.return_ty.clone(),
+                    )
+                })
+            })
+            .collect();
         let exported_consts = resolved_constants
             .locals
             .values()
@@ -244,23 +257,6 @@ impl TypeChecker {
                 continue;
             }
             match &item.node {
-                Item::Fn(func) if func.is_pub => {
-                    if !func.type_params.is_empty() {
-                        // An unresolved signature is exported separately; never pretend N=0.
-                        continue;
-                    }
-                    let params: Vec<(String, Ty)> = func
-                        .params
-                        .iter()
-                        .map(|p| (p.name.node.clone(), self.resolve_type(&p.ty.node)))
-                        .collect();
-                    let return_ty = func
-                        .return_ty
-                        .as_ref()
-                        .map(|t| self.resolve_type(&t.node))
-                        .unwrap_or(Ty::Unit);
-                    exported_fns.push((func.name.node.clone(), params, return_ty));
-                }
                 Item::Struct(sdef) if sdef.is_pub => {
                     if let Some(sty) = self.structs.get(&sdef.name.node) {
                         exported_structs.push(sty.clone());
@@ -280,24 +276,16 @@ impl TypeChecker {
             Ok(ModuleExports {
                 resolved_constants,
                 module_name,
-                generic_functions: file
-                    .items
+                generic_functions: final_functions
                     .iter()
-                    .filter_map(|item| match &item.node {
-                        Item::Fn(function)
-                            if function.is_pub
-                                && self.is_item_cfg_active(&item.node)
-                                && !function.type_params.is_empty() =>
-                        {
-                            self.generic_fns
-                                .get(&function.name.node)
-                                .cloned()
-                                .map(|definition| (function.name.node.clone(), definition))
-                        }
-                        _ => None,
+                    .filter(|f| f.is_pub && !f.type_params.is_empty())
+                    .filter_map(|f| {
+                        self.generic_fns
+                            .get(&f.name.node)
+                            .cloned()
+                            .map(|definition| (f.name.node.clone(), definition))
                     })
                     .collect(),
-                generic_calls: self.generic_calls,
                 direct_intrinsics: exported_fns
                     .iter()
                     .filter_map(|(name, _, _)| {

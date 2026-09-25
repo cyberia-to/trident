@@ -3,6 +3,7 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
+mod bindings;
 pub mod display;
 mod flow;
 pub(crate) use flow::{
