@@ -95,7 +95,7 @@ impl Plan {
             let callees: Vec<_> = calls
                 .names
                 .iter()
-                .map(|n| owner.function_symbol(n))
+                .filter_map(|n| owner.function_symbol(n))
                 .filter(|n| {
                     owner
                         .fns

@@ -27,6 +27,7 @@ pub(crate) struct ParsedModule {
 pub(crate) struct PreparedProject {
     pub modules: Vec<ParsedModule>,
     pub exports: Vec<ModuleExports>,
+    scopes: Vec<crate::resolve::scope::Scope>,
     pub native_origins: BTreeMap<String, (String, Vec<u64>)>,
 }
 
@@ -101,7 +102,7 @@ impl PreparedProject {
 
         let mut modules = Vec::new();
         for m in &resolved {
-            let file = crate::parse_source(&m.source, &m.file_path.to_string_lossy())?;
+            let file = m.file.clone();
             modules.push(ParsedModule {
                 file_path: m.file_path.clone(),
                 source: m.source.clone(),
@@ -109,6 +110,8 @@ impl PreparedProject {
             });
         }
 
+        let scopes =
+            crate::resolve::scope::scopes(&modules.iter().map(|m| &m.file).collect::<Vec<_>>())?;
         let mut native_origins = BTreeMap::new();
         let exports = Self::specialize_with_origins(
             &mut modules,
@@ -116,6 +119,7 @@ impl PreparedProject {
             render,
             tests,
             &mut native_origins,
+            &scopes,
         )?;
 
         if let Some((entry, exports)) = modules
@@ -132,6 +136,7 @@ impl PreparedProject {
             modules,
             exports,
             native_origins,
+            scopes,
         })
     }
 
@@ -142,7 +147,16 @@ impl PreparedProject {
         render: bool,
         tests: bool,
     ) -> Result<Vec<ModuleExports>, Vec<Diagnostic>> {
-        Self::specialize_with_origins(modules, options, render, tests, &mut BTreeMap::new())
+        let scopes =
+            crate::resolve::scope::scopes(&modules.iter().map(|m| &m.file).collect::<Vec<_>>())?;
+        Self::specialize_with_origins(
+            modules,
+            options,
+            render,
+            tests,
+            &mut BTreeMap::new(),
+            &scopes,
+        )
     }
 
     fn specialize_with_origins(
@@ -151,35 +165,17 @@ impl PreparedProject {
         render: bool,
         tests: bool,
         origins: &mut BTreeMap<String, (String, Vec<u64>)>,
+        scopes: &[crate::resolve::scope::Scope],
     ) -> Result<Vec<ModuleExports>, Vec<Diagnostic>> {
         use crate::ast::{Item, ModulePath};
         use crate::span::{Span, Spanned};
-        // Logical ownership must be unique before imports or generic copies can
-        // confer access. Resolver keys may be legacy aliases or scanned headers;
-        // only parsed module names establish the semantic identity.
-        let mut owners = BTreeMap::new();
-        for module in modules.iter() {
-            if let Some(previous) = owners.insert(&module.file.name.node, &module.file_path) {
-                return Err(vec![Diagnostic::error(
-                    format!(
-                        "duplicate module '{}' declared by '{}' and '{}'",
-                        module.file.name.node,
-                        previous.display(),
-                        module.file_path.display()
-                    ),
-                    module.file.name.span,
-                )]);
-            }
-        }
         type Key = (usize, String, Vec<u64>);
         let mut instances: BTreeMap<Key, String> = BTreeMap::new();
         for _ in 0..128 {
             let mut exports = Vec::new();
-            for pm in modules.iter() {
+            for (pm, scope) in modules.iter().zip(scopes) {
                 let mut tc = options.checker();
-                for e in &exports {
-                    tc.import_module(e);
-                }
+                tc.import_scope(scope, &exports)?;
                 let mut view = pm.file.clone();
                 if tests {
                     view.kind = ast::FileKind::Module;
@@ -344,8 +340,16 @@ impl PreparedProject {
             file,
         }];
         let mut origins = BTreeMap::new();
-        let mut exports =
-            Self::specialize_with_origins(&mut modules, options, false, false, &mut origins)?;
+        let scopes =
+            crate::resolve::scope::scopes(&modules.iter().map(|m| &m.file).collect::<Vec<_>>())?;
+        let mut exports = Self::specialize_with_origins(
+            &mut modules,
+            options,
+            false,
+            false,
+            &mut origins,
+            &scopes,
+        )?;
         Ok((modules.remove(0).file, exports.remove(0), origins))
     }
 
@@ -374,36 +378,19 @@ impl PreparedProject {
         map
     }
 
-    /// Callable bindings mirror TypeChecker::import_module, per owner scope.
-    pub fn function_aliases(&self, before: usize) -> BTreeMap<String, String> {
+    /// Visible callable aliases are per symbol and follow direct use order.
+    pub fn function_aliases(&self, caller: usize) -> BTreeMap<String, String> {
         let mut aliases = BTreeMap::new();
-        for exports in self.exports.iter().take(before) {
-            let full = &exports.module_name;
-            let short = full.rsplit('.').next().unwrap_or(full);
+        for import in &self.scopes[caller].imports {
+            let exports = &self.exports[import.index];
             for name in exports
                 .functions
                 .iter()
                 .map(|(name, _, _)| name)
                 .chain(exports.generic_functions.iter().map(|(name, _)| name))
             {
-                let canonical = format!("{full}.{name}");
-                aliases.insert(canonical.clone(), canonical.clone());
-                if short != full {
-                    aliases.insert(format!("{short}.{name}"), canonical);
-                }
-            }
-        }
-        aliases
-    }
-
-    /// Build module alias map: short name -> full name for dotted modules.
-    pub fn module_aliases(&self, before: usize) -> BTreeMap<String, String> {
-        let mut aliases = BTreeMap::new();
-        for pm in self.modules.iter().take(before) {
-            let full_name = &pm.file.name.node;
-            if let Some(short) = full_name.rsplit('.').next() {
-                if short != full_name.as_str() {
-                    aliases.insert(short.to_string(), full_name.clone());
+                for visible in import.names(name) {
+                    aliases.insert(visible, format!("{}.{}", exports.module_name, name));
                 }
             }
         }

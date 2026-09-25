@@ -6,26 +6,55 @@
 use super::*;
 
 #[test]
-fn test_scan_module_header_program() {
-    let (name, deps) =
-        scan_module_header("program my_app\n\nuse merkle\nuse crypto.sponge\n\nfn main() {}");
-    assert_eq!(name, Some("my_app".to_string()));
-    assert_eq!(deps, vec!["merkle", "crypto.sponge"]);
+fn discovery_uses_parsed_headers_across_whitespace_comments_and_same_line_items() {
+    for source in [
+        "program entry use values fn main()->Field{values.value()}",
+        "program\tentry\nuse\tvalues // library\nfn main()->Field{values.value()}",
+        "// lead\nprogram entry // name\nuse // import\nvalues // body\nfn main()->Field{values.value()}",
+    ] {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("values.tri"), "module values pub fn value()->Field{7}").unwrap();
+        let entry = dir.path().join("different_basename.tri");
+        std::fs::write(&entry, source).unwrap();
+        let modules = resolve_modules(&entry).unwrap();
+        assert_eq!(modules.iter().map(|m| m.name.as_str()).collect::<Vec<_>>(), vec!["values", "entry"]);
+        assert_eq!(modules.last().unwrap().file.uses.len(), 1);
+    }
 }
 
 #[test]
-fn test_scan_module_header_module() {
-    let (name, deps) =
-        scan_module_header("module merkle\n\nuse std.convert\n\npub fn verify() {}");
-    assert_eq!(name, Some("merkle".to_string()));
-    assert_eq!(deps, vec!["std.convert"]);
+fn discovery_rejects_owner_mismatch_imported_programs_and_malformed_headers() {
+    for source in [
+        "module other pub fn value()->Field{7}",
+        "program values fn main(){}",
+        "module values use ....escape fn f(){}",
+    ] {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("values.tri"), source).unwrap();
+        let entry = dir.path().join("main.tri");
+        std::fs::write(&entry, "program entry use values fn main(){}").unwrap();
+        assert!(resolve_modules(&entry).is_err(), "{source}");
+    }
 }
 
 #[test]
-fn test_scan_module_header_no_deps() {
-    let (name, deps) = scan_module_header("program simple\n\nfn main() {}");
-    assert_eq!(name, Some("simple".to_string()));
-    assert!(deps.is_empty());
+fn legacy_and_canonical_imports_discover_one_owner() {
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    std::fs::write(
+        &entry,
+        "program entry use std.convert use vm.core.convert fn main(){}",
+    )
+    .unwrap();
+    let modules = resolve_modules(&entry).unwrap();
+    assert_eq!(
+        modules
+            .iter()
+            .filter(|m| m.name == "vm.core.convert")
+            .count(),
+        1
+    );
+    assert_eq!(modules.last().unwrap().file.uses.len(), 2);
 }
 
 // --- Error path tests ---
@@ -96,15 +125,64 @@ fn test_path_traversal_rejected() {
     let result = resolve_modules(&entry);
     assert!(result.is_err(), "path traversal module should fail");
     let diags = result.unwrap_err();
-    // Should get a "cannot find module" error, NOT actually read outside project
+    // The parser rejects traversal before discovery can read an outside path.
     let has_error = diags
         .iter()
-        .any(|d| d.message.contains("cannot find module"));
+        .any(|d| d.message.contains("expected identifier"));
     assert!(
         has_error,
-        "should report module not found, got: {:?}",
+        "should reject invalid module syntax, got: {:?}",
         diags.iter().map(|d| &d.message).collect::<Vec<_>>()
     );
 
     let _ = std::fs::remove_file(&entry);
+}
+
+#[test]
+fn dependency_overlay_changes_discovery_and_owner_validation() {
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    let dependency = dir.path().join("dep.tri");
+    std::fs::write(&entry, "program app use dep fn main(){}").unwrap();
+    std::fs::write(&dependency, "module dep").unwrap();
+    std::fs::write(dir.path().join("leaf.tri"), "module leaf").unwrap();
+    let resolve = |source| {
+        resolve_modules_with_overlay(&entry, Vec::new(), Default::default(), &dependency, source)
+    };
+    let modules = resolve("module dep use leaf").unwrap();
+    assert_eq!(
+        modules.iter().map(|m| m.name.as_str()).collect::<Vec<_>>(),
+        ["leaf", "dep", "app"]
+    );
+    assert!(resolve("module different use leaf").is_err());
+    assert!(resolve("module dep use missing").is_err());
+}
+
+#[test]
+fn canonical_and_legacy_spellings_share_cycle_detection() {
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    std::fs::write(&entry, "program app use std.convert fn main(){}").unwrap();
+    let sources = std::collections::BTreeMap::from([(
+        "vm.core.convert".into(),
+        "module vm.core.convert use std.convert".into(),
+    )]);
+    let errors = resolve_modules_with_sources(&entry, Vec::new(), sources).unwrap_err();
+    assert!(errors
+        .iter()
+        .any(|e| e.message.contains("circular") || e.message.contains("cycle")));
+}
+
+#[test]
+fn canonical_namespace_paths_do_not_repeat_extension_remapping() {
+    let dir = tempfile::tempdir().unwrap();
+    let entry = dir.path().join("main.tri");
+    std::fs::write(&entry, "program app fn main(){}").unwrap();
+    let mut resolver = ModuleResolver::new(&entry).unwrap();
+    resolver.stdlib_dir = Some(dir.path().join("std"));
+    resolver.os_dir = Some(dir.path().join("os"));
+    assert_eq!(
+        resolver.resolve_path("std.library.ext.helper"),
+        dir.path().join("std/library/ext/helper.tri")
+    );
 }

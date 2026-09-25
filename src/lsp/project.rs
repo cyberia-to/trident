@@ -5,14 +5,12 @@
 // ---
 //! Project-level helpers: symbol index, exports, function costs.
 
-use std::collections::BTreeMap;
 use std::path::Path;
 
 use tower_lsp::lsp_types::*;
 
 use crate::ast::Item;
 use crate::resolve::resolve_modules_with_sources;
-use crate::typecheck::ModuleExports;
 
 use super::document::DocumentData;
 use super::util::{format_fn_signature, span_to_range};
@@ -32,86 +30,6 @@ pub(super) fn project_modules(
 }
 
 impl TridentLsp {
-    /// Build a symbol index mapping names to (uri, range) for go-to-definition.
-    pub(super) fn build_symbol_index(&self, file_path: &Path) -> BTreeMap<String, (Url, Range)> {
-        let mut index = BTreeMap::new();
-        let (_options, modules) = match project_modules(file_path) {
-            Ok(m) => m,
-            Err(_) => return index,
-        };
-
-        for module in &modules {
-            let parsed = match crate::parse_source_silent(
-                &module.source,
-                &module.file_path.to_string_lossy(),
-            ) {
-                Ok(f) => f,
-                Err(_) => continue,
-            };
-
-            let mod_uri = match Url::from_file_path(&module.file_path) {
-                Ok(u) => u,
-                Err(_) => match Url::parse(&format!("file://{}", module.file_path.display())) {
-                    Ok(u) => u,
-                    Err(_) => continue,
-                },
-            };
-            let mod_short = module.name.rsplit('.').next().unwrap_or(&module.name);
-
-            for item in &parsed.items {
-                let (name, name_span) = match &item.node {
-                    Item::Fn(f) => (f.name.node.clone(), f.name.span),
-                    Item::Struct(s) => (s.name.node.clone(), s.name.span),
-                    Item::Const(c) => (c.name.node.clone(), c.name.span),
-                    Item::Event(e) => (e.name.node.clone(), e.name.span),
-                };
-
-                let range = span_to_range(&module.source, name_span);
-                let qualified = format!("{}.{}", mod_short, name);
-                let full_qualified = format!("{}.{}", module.name, name);
-
-                index.insert(name.clone(), (mod_uri.clone(), range));
-                index.insert(qualified, (mod_uri.clone(), range));
-                if full_qualified != format!("{}.{}", mod_short, name) {
-                    index.insert(full_qualified, (mod_uri.clone(), range));
-                }
-            }
-        }
-
-        index
-    }
-
-    /// Collect type-checked exports from all project modules.
-    pub(super) fn collect_project_exports(&self, file_path: &Path) -> Vec<ModuleExports> {
-        let (options, modules) = match project_modules(file_path) {
-            Ok(m) => m,
-            Err(_) => return Vec::new(),
-        };
-
-        let mut all_exports = Vec::new();
-        for module in &modules {
-            let parsed = match crate::parse_source_silent(
-                &module.source,
-                &module.file_path.to_string_lossy(),
-            ) {
-                Ok(f) => f,
-                Err(_) => continue,
-            };
-
-            let mut tc = options.checker();
-            for exports in &all_exports {
-                tc.import_module(exports);
-            }
-
-            match tc.check_file(&parsed) {
-                Ok(exports) => all_exports.push(exports),
-                Err(_) => continue,
-            }
-        }
-
-        all_exports
-    }
-
     /// Collect workspace symbols from all open documents, filtered by query.
     pub(super) fn workspace_symbols(
         &self,

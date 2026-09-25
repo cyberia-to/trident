@@ -89,9 +89,7 @@ impl TIRBuilder {
     }
     pub(super) fn field_type_offset(&self, ty: &Type, name: &str) -> Option<(Type, u32)> {
         let Type::Named(path) = ty else { return None };
-        let def = self
-            .struct_types
-            .get(&self.qualified_name(&path.as_dotted()))?;
+        let def = self.struct_types.get(&path.as_dotted())?;
         let total = self.type_width(ty);
         let mut used = 0;
         for field in &def.fields {

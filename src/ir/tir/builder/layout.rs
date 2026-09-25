@@ -71,7 +71,7 @@ impl TIRBuilder {
                 }
             }
             Type::Named(path) => {
-                let name = self.qualified_name(&path.0.join("."));
+                let name = path.as_dotted();
                 if let Some(definition) = self.struct_types.get(&name) {
                     for field in &definition.fields {
                         self.entry_leaves(&field.ty.node, out);
@@ -86,7 +86,7 @@ impl TIRBuilder {
     /// Register struct field layout from a type annotation.
     pub(crate) fn register_struct_layout_from_type(&mut self, var_name: &str, ty: &Type) {
         if let Type::Named(path) = ty {
-            let struct_name = self.qualified_name(&path.0.join("."));
+            let struct_name = path.as_dotted();
             if let Some(sdef) = self.struct_types.get(&struct_name).cloned() {
                 let mut field_map = BTreeMap::new();
                 let total: u32 = sdef
@@ -150,7 +150,7 @@ impl TIRBuilder {
             let Type::Named(path) = &ty else {
                 return None;
             };
-            let name = self.qualified_name(&path.0.join("."));
+            let name = path.as_dotted();
             let definition = self.struct_types.get(&name)?;
             let position = definition
                 .fields

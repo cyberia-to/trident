@@ -21,6 +21,8 @@ module std.fhe.pbs
 //
 // Pitch parameters: N = 64 (ring dimension), LWE_N = 8, D = 1024.
 // Structurally identical to production TFHE (N = 1024+).
+use vm.core.field
+
 use vm.core.convert
 
 use vm.core.assert

@@ -4,7 +4,10 @@ use super::*;
 impl Compiler<'_> {
     pub(super) fn call(&mut self, source: &str, args: &[Spanned<Expr>]) -> LowerResult {
         let symbol = self.owner.function_symbol(source);
-        if let Some(function) = self.plan.functions.get(&symbol) {
+        if let Some((symbol, function)) = symbol
+            .as_ref()
+            .and_then(|symbol| self.plan.functions.get(symbol).map(|f| (symbol, f)))
+        {
             if args.len() != function.definition.params.len() {
                 return Err("native call arity mismatch".into());
             }
@@ -14,14 +17,14 @@ impl Compiler<'_> {
                 .map(|a| self.expr(&a.node))
                 .collect::<Result<Vec<_>, _>>()?;
             let frame = layout::tree(values, count, true)?;
-            return self
-                .plan
-                .invoke(&Code::Function(symbol), layout::subject(nox_axis(2), frame));
+            return self.plan.invoke(
+                &Code::Function(symbol.clone()),
+                layout::subject(nox_axis(2), frame),
+            );
         }
         let name = self
             .owner
-            .fns
-            .get(&symbol)
+            .function(source)
             .and_then(|f| f.intrinsic.as_ref())
             .map(|i| ast::intrinsic_name(&i.node))
             .unwrap_or(source)

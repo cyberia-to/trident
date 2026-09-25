@@ -400,7 +400,6 @@ pub fn build_tir_modules(
             .with_module_types(&project.modules.iter().map(|m| &m.file).collect::<Vec<_>>())
             .with_intrinsics(project.intrinsic_map(i))
             .with_function_aliases(project.function_aliases(i))
-            .with_module_aliases(project.module_aliases(i))
             .with_mono_instances(mono)
             .with_call_resolutions(call_res)
             .build_file(&pm.file)?;
@@ -445,7 +444,6 @@ pub fn build_tir_project(
             .with_module_types(&project.modules.iter().map(|m| &m.file).collect::<Vec<_>>())
             .with_intrinsics(project.intrinsic_map(i))
             .with_function_aliases(project.function_aliases(i))
-            .with_module_aliases(project.module_aliases(i))
             .with_mono_instances(mono)
             .with_call_resolutions(call_res)
             .build_file(&pm.file)?;

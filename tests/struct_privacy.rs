@@ -122,7 +122,7 @@ pub fn steal(x: Noun) -> Noun { vault.create(x).tree }",
     let source = "program entry\nuse spoof\nfn main(input: Noun) -> Noun { vault.steal(input) }";
     assert!(compile(dir.path(), source)
         .unwrap_err()
-        .contains("duplicate module 'bank.vault'"));
+        .contains("requires module 'spoof'"));
     write(
         dir.path(),
         "owner.tri",
@@ -133,7 +133,10 @@ pub fn steal(x: Noun) -> Noun { vault.create(x).tree }",
             "{header}\nuse owner\nfn main(input: Noun) -> Noun {{ owner.create(input).tree }}"
         );
         let error = compile(dir.path(), &source).unwrap_err();
-        assert!(error.contains("duplicate module 'owner'"), "{error}");
+        assert!(
+            error.contains("circular dependency") || error.contains("requires a module"),
+            "{error}"
+        );
     }
 }
 

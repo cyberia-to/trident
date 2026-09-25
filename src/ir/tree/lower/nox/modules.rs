@@ -50,8 +50,8 @@ impl NoxCompiler {
         if raw && !entry.declarations.is_empty() {
             return Err("raw ART1 entry has no flat I/O declarations".into());
         }
-        let mut aliases = BTreeMap::new();
-        let mut functions = BTreeMap::new();
+        let scopes =
+            crate::resolve::scope::scopes(files).map_err(|errors| errors[0].message.clone())?;
         let resolved = crate::typecheck::constants::resolve_modules(files, flags, &BTreeMap::new())
             .map_err(|errors| {
                 errors
@@ -60,10 +60,18 @@ impl NoxCompiler {
                     .collect::<Vec<_>>()
                     .join("; ")
             })?;
-        for (file, constants) in files.iter().zip(&resolved) {
+        let builtins = crate::typecheck::TypeChecker::builtin_return_types(
+            &crate::target::TerrainConfig::nox(),
+        );
+        for ((file, constants), scope) in files.iter().zip(&resolved).zip(&scopes) {
+            scope
+                .validate_names(file, files, flags, &builtins, constants)
+                .map_err(|errors| errors[0].message.clone())?;
             self.current_module = file.name.node.clone();
-            self.function_aliases
-                .insert(self.current_module.clone(), functions.clone());
+            self.function_aliases.insert(
+                self.current_module.clone(),
+                scope.function_aliases(files, flags),
+            );
             self.constant_aliases.insert(
                 self.current_module.clone(),
                 constants
@@ -77,8 +85,10 @@ impl NoxCompiler {
                 self.constant_types
                     .insert(binding.canonical_name(), binding.ty.clone());
             }
-            self.module_aliases
-                .insert(self.current_module.clone(), aliases.clone());
+            self.type_aliases.insert(
+                self.current_module.clone(),
+                scope.type_aliases(file, files, flags),
+            );
             for item in &file.items {
                 if !active(&item.node, flags) {
                     continue;
@@ -108,24 +118,6 @@ impl NoxCompiler {
                     Item::Event(_) => {}
                 }
             }
-            for f in file.final_functions(flags) {
-                if f.is_pub {
-                    let full = &file.name.node;
-                    let short = full.rsplit('.').next().unwrap_or(full);
-                    let canonical = format!("{full}.{}", f.name.node);
-                    functions.insert(canonical.clone(), canonical.clone());
-                    if short != full {
-                        functions.insert(format!("{short}.{}", f.name.node), canonical);
-                    }
-                }
-            }
-            // This mirrors TypeChecker::import_module: dependent modules see
-            // both the full name and the last-segment alias, in dependency
-            // order. The function body keeps the aliases of its own module.
-            aliases.insert(file.name.node.clone(), file.name.node.clone());
-            if let Some(short) = file.name.node.rsplit('.').next() {
-                aliases.insert(short.to_string(), file.name.node.clone());
-            }
         }
         self.scan_state_functions();
         self.current_module = entry.name.node.clone();
@@ -147,38 +139,48 @@ impl NoxCompiler {
         }
     }
 
-    pub(super) fn function_symbol(&self, name: &str) -> String {
+    pub(super) fn function_symbol(&self, name: &str) -> Option<String> {
         self.function_aliases
             .get(&self.current_module)
             .and_then(|aliases| aliases.get(name))
             .cloned()
-            .unwrap_or_else(|| self.symbol(name))
+            .or_else(|| (!name.contains('.')).then(|| self.symbol(name)))
     }
 
-    pub(super) fn constant_symbol(&self, name: &str) -> String {
+    pub(super) fn constant_symbol(&self, name: &str) -> Option<String> {
         self.constant_aliases
             .get(&self.current_module)
             .and_then(|aliases| aliases.get(name))
             .cloned()
-            .unwrap_or_else(|| self.symbol(name))
+            .or_else(|| (!name.contains('.')).then(|| self.symbol(name)))
     }
 
-    /// Turn a name from the current body into its global identity. Dotted
-    /// names are module-qualified; bare names belong to the current module.
+    pub(super) fn function(&self, name: &str) -> Option<&FnDef> {
+        self.function_symbol(name)
+            .and_then(|symbol| self.fns.get(&symbol))
+    }
+
+    pub(super) fn constant_value(&self, name: &str) -> Option<u64> {
+        self.constant_symbol(name)
+            .and_then(|symbol| self.constants.get(&symbol))
+            .copied()
+    }
+
+    /// Qualify a local source name. Imported names require an explicit alias.
     pub(super) fn symbol(&self, name: &str) -> String {
-        if let Some((prefix, member)) = name.rsplit_once('.') {
-            let module = self
-                .module_aliases
-                .get(&self.current_module)
-                .and_then(|a| a.get(prefix))
-                .map(String::as_str)
-                .unwrap_or(prefix);
-            format!("{module}.{member}")
-        } else if self.current_module.is_empty() {
+        if self.current_module.is_empty() {
             name.to_string()
         } else {
             format!("{}.{name}", self.current_module)
         }
+    }
+
+    pub(super) fn type_symbol(&self, name: &str) -> String {
+        self.type_aliases
+            .get(&self.current_module)
+            .and_then(|aliases| aliases.get(name))
+            .cloned()
+            .unwrap_or_else(|| self.symbol(name))
     }
 
     pub(super) fn qualified_type(&self, ty: &ast::Type) -> ast::Type {
@@ -188,7 +190,7 @@ impl NoxCompiler {
     fn qualified_type_preserving(&self, ty: &ast::Type, generics: &BTreeSet<String>) -> ast::Type {
         match ty {
             ast::Type::Named(path) => ast::Type::Named(ast::ModulePath(
-                self.symbol(&path.as_dotted())
+                self.type_symbol(&path.as_dotted())
                     .split('.')
                     .map(str::to_string)
                     .collect(),
@@ -210,12 +212,13 @@ impl NoxCompiler {
         use ast::ArraySize;
         match size {
             ArraySize::Param(name) if !generics.contains(name) => self
-                .constants
-                .get(&self.constant_symbol(name))
-                .map(|n| ArraySize::Literal(*n))
+                .constant_value(name)
+                .map(ArraySize::Literal)
                 // Keep lexical ownership even if a constant is unresolved;
                 // never capture an equally named entry-module constant.
-                .unwrap_or_else(|| ArraySize::Param(self.constant_symbol(name))),
+                .unwrap_or_else(|| {
+                    ArraySize::Param(self.constant_symbol(name).unwrap_or_else(|| name.clone()))
+                }),
             ArraySize::Add(a, b) | ArraySize::Mul(a, b) => {
                 let a = self.qualified_size(a, generics);
                 let b = self.qualified_size(b, generics);

@@ -135,8 +135,10 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [source/JOB and installed evidence](self-hosting/native-compiler-attributes.md).
 - [x] SH3 seed final-callable ownership, exact generic call sites and shared ABI;
   [cross-backend and installed evidence](self-hosting/final-callable-exports.md).
-- [ ] SH3 explicit-import consistency, then true guest imports and complete
-  compiler closure coverage; [implementation order](../.claude/plans/native-imports.md).
+- [x] SH3 seed explicit imports, canonical owners and opaque nominal layouts;
+  [cross-backend and installed evidence](self-hosting/explicit-imports.md).
+- [ ] SH3 true guest imports and complete compiler closure coverage;
+  [implementation order](../.claude/plans/native-imports.md).
 - [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
   whitespace workload's lifetime arena boundary and measure full compiler closure.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
@@ -156,7 +158,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Explicit heap arena admits larger real compiler jobs; valid 4096-byte whitespace workload and full closure remain open |
-| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; explicit-import consistency and true guest imports remain open |
+| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; [seed explicit imports](self-hosting/explicit-imports.md) are accepted; true guest imports remain open |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |

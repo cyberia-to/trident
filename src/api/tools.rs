@@ -146,7 +146,9 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
         .canonicalize()
         .unwrap_or_else(|_| file_path.to_path_buf());
 
-    for module in &modules {
+    let files: Vec<_> = modules.iter().map(|m| &m.file).collect();
+    let scopes = crate::resolve::scope::scopes(&files)?;
+    for (module, scope) in modules.iter().zip(&scopes) {
         let mod_path_canon = module
             .file_path
             .canonicalize()
@@ -155,7 +157,7 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
 
         // Use live buffer for the file being edited
         let src = if is_target { source } else { &module.source };
-        let parsed = crate::parse_source_silent(src, &module.file_path.to_string_lossy())?;
+        let parsed = module.file.clone();
 
         concrete_modules.push(super::pipeline::ParsedModule {
             file_path: module.file_path.clone(),
@@ -163,9 +165,7 @@ pub fn check_file_in_project(source: &str, file_path: &Path) -> Result<(), Vec<D
             file: parsed.clone(),
         });
         let mut tc = options.checker();
-        for exports in &all_exports {
-            tc.import_module(exports);
-        }
+        tc.import_scope(scope, &all_exports)?;
 
         match tc.check_file(&parsed) {
             Ok(exports) => {
@@ -244,20 +244,16 @@ mod editor_tests {
             "module dep\npub fn value() -> Field { 7 }\n",
         )
         .unwrap();
-        assert!(
-            check_file_in_project(
-                "program editor\nuse dep\nfn main() -> Field { dep.value() }\n",
-                &file
-            )
-            .is_ok()
-        );
-        assert!(
-            check_file_in_project(
-                "program editor\nfn main() -> Digest { pub_read5() }\n",
-                &file
-            )
-            .is_err()
-        );
+        assert!(check_file_in_project(
+            "program editor\nuse dep\nfn main() -> Field { dep.value() }\n",
+            &file
+        )
+        .is_ok());
+        assert!(check_file_in_project(
+            "program editor\nfn main() -> Digest { pub_read5() }\n",
+            &file
+        )
+        .is_err());
         assert!(
             check_file_in_project("program editor\nuse missing_dep\nfn main() {}\n", &file)
                 .is_err()

@@ -35,11 +35,15 @@ impl Resolved {
             .collect()
     }
 
-    pub fn import_into(&self, visible: &mut BTreeMap<String, Binding>) {
+    pub fn import_as(
+        &self,
+        visible: &mut BTreeMap<String, Binding>,
+        import: &crate::resolve::scope::Import,
+    ) {
         for binding in self.locals.values().filter(|binding| binding.public) {
-            visible.insert(binding.canonical_name(), binding.clone());
-            let short = binding.owner.rsplit('.').next().unwrap_or(&binding.owner);
-            visible.insert(format!("{short}.{}", binding.name), binding.clone());
+            for name in import.names(&binding.name) {
+                visible.insert(name, binding.clone());
+            }
         }
     }
 }
@@ -209,12 +213,14 @@ pub(crate) fn resolve_modules(
     flags: &BTreeSet<String>,
     imported: &BTreeMap<String, Binding>,
 ) -> Result<Vec<Resolved>, Vec<Diagnostic>> {
-    let mut visible = imported.clone();
-    let mut modules = Vec::new();
-    for file in files {
-        let resolved = resolve(file, &visible, flags)?;
-        resolved.import_into(&mut visible);
-        modules.push(resolved);
+    let scopes = crate::resolve::scope::scopes(files)?;
+    let mut modules: Vec<Resolved> = Vec::new();
+    for (file, scope) in files.iter().zip(scopes) {
+        let mut visible = imported.clone();
+        for import in &scope.imports {
+            modules[import.index].import_as(&mut visible, import);
+        }
+        modules.push(resolve(file, &visible, flags)?);
     }
     Ok(modules)
 }

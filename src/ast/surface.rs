@@ -93,6 +93,11 @@ fn block(b: &Block, v: &mut impl SurfaceVisitor) {
             Stmt::Match { expr: e, arms } => {
                 expr(&e.node, v);
                 for a in arms {
+                    if let MatchPattern::Struct { name, .. } = &a.pattern.node {
+                        v.ty(&Type::Named(ModulePath(
+                            name.node.split('.').map(str::to_string).collect(),
+                        )));
+                    }
                     block(&a.body.node, v);
                 }
             }

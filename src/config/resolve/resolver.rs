@@ -54,14 +54,15 @@ impl ModuleResolver {
             .with_help("check that the file exists and is readable".to_string())]
         })?;
 
-        // Quick-parse the entry file to get its name and dependencies
-        let (name, deps) = scan_module_header(&source);
-        let entry_name = name.unwrap_or_else(|| "main".to_string());
+        let file = crate::parse_source_silent(&source, &entry_path.to_string_lossy())?;
+        let entry_name = file.name.node.clone();
+        let deps = dependencies(&file);
 
         let info = ModuleInfo {
             name: entry_name.clone(),
             file_path: entry_path.to_path_buf(),
             source,
+            file,
             dependencies: deps.clone(),
         };
 
@@ -94,7 +95,7 @@ impl ModuleResolver {
 
             // Resolve module name to file path
             let file_path = self.resolve_path(&module_name);
-            let canonical = legacy_stdlib_fallback(&module_name).unwrap_or(&module_name);
+            let canonical = module_name.as_str();
             let explicit_dependency = self.dep_dirs.iter().any(|dir| file_path.starts_with(dir));
             let packaged = canonical.starts_with("std.")
                 || canonical.starts_with("vm.")
@@ -141,7 +142,27 @@ impl ModuleResolver {
                 }
             };
 
-            let (_name, deps) = scan_module_header(&source);
+            let file = match crate::parse_source_silent(&source, &file_path.to_string_lossy()) {
+                Ok(file) => file,
+                Err(mut errors) => {
+                    for error in &mut errors {
+                        error.message = format!("module '{}': {}", module_name, error.message);
+                    }
+                    self.diagnostics.extend(errors);
+                    continue;
+                }
+            };
+            if file.kind != crate::ast::FileKind::Module || file.name.node != module_name {
+                self.diagnostics.push(Diagnostic::error(
+                    format!(
+                        "import '{}' requires module '{}', found {:?} '{}'",
+                        module_name, module_name, file.kind, file.name.node
+                    ),
+                    file.name.span,
+                ));
+                continue;
+            }
+            let deps = dependencies(&file);
 
             // Queue newly discovered dependencies
             for dep in &deps {
@@ -156,6 +177,7 @@ impl ModuleResolver {
                     name: module_name,
                     file_path,
                     source,
+                    file,
                     dependencies: deps,
                 },
             );
@@ -182,6 +204,10 @@ impl ModuleResolver {
     /// "std.crypto.hash"     → vm_dir/crypto/hash.tri (intrinsics moved)
     /// "std.hash"            → vm_dir/crypto/hash.tri (flat → layered → vm)
     pub(crate) fn resolve_path(&self, module_name: &str) -> PathBuf {
+        let canonical = canonical_module_name(module_name);
+        if canonical != module_name {
+            return self.resolve_path(&canonical);
+        }
         // Validate: reject path traversal components
         let raw_parts: Vec<&str> = module_name.split('.').collect();
         for part in &raw_parts {
@@ -235,33 +261,6 @@ impl ModuleResolver {
             if let Some(ref vm_dir) = self.find_vm_dir() {
                 let parts: Vec<&str> = rest.split('.').collect();
                 let mut path = vm_dir.clone();
-                for part in &parts {
-                    path = path.join(part);
-                }
-                return path.with_extension("tri");
-            }
-        }
-
-        // Legacy: <os>.ext.<module> → os/<os>/<module>.tri
-        if let Some(ext_pos) = raw_parts.iter().position(|&p| p == "ext") {
-            if ext_pos > 0 && ext_pos + 1 < raw_parts.len() {
-                if let Some(ref os_dir) = self.os_dir {
-                    let os_name = &raw_parts[..ext_pos].join("/");
-                    let rest = &raw_parts[ext_pos + 1..];
-                    let mut path = os_dir.join(os_name);
-                    for part in rest {
-                        path = path.join(part);
-                    }
-                    return path.with_extension("tri");
-                }
-            }
-        }
-
-        // Legacy: ext.<os>.<module> → os/<os>/<module>.tri
-        if let Some(rest) = module_name.strip_prefix("ext.") {
-            if let Some(ref os_dir) = self.os_dir {
-                let parts: Vec<&str> = rest.split('.').collect();
-                let mut path = os_dir.clone();
                 for part in &parts {
                     path = path.join(part);
                 }
@@ -390,41 +389,14 @@ impl ModuleResolver {
     }
 }
 
-/// Quick scan of a source file to extract module name and `use` dependencies.
-/// Does not fully parse — just looks for `program X` / `module X` and `use Y` lines.
-pub(crate) fn scan_module_header(source: &str) -> (Option<String>, Vec<String>) {
-    let mut name = None;
-    let mut deps = Vec::new();
-
-    for line in source.lines() {
-        let trimmed = line.trim();
-
-        // Skip comments and empty lines
-        if trimmed.is_empty() || trimmed.starts_with("//") {
-            continue;
-        }
-
-        if let Some(rest) = trimmed.strip_prefix("program ") {
-            name = Some(rest.trim().to_string());
-        } else if let Some(rest) = trimmed.strip_prefix("module ") {
-            name = Some(rest.trim().to_string());
-        } else if let Some(rest) = trimmed.strip_prefix("use ") {
-            let dep = rest.trim().to_string();
-            deps.push(dep);
-        } else {
-            // Once we hit a non-header line, stop scanning for use statements
-            // (use must come before items per the grammar)
-            if trimmed.starts_with("fn ")
-                || trimmed.starts_with("pub ")
-                || trimmed.starts_with("const ")
-                || trimmed.starts_with("struct ")
-            {
-                break;
-            }
-        }
-    }
-
-    (name, deps)
+/// Preserve direct import order while discovering each canonical owner once.
+fn dependencies(file: &crate::ast::File) -> Vec<String> {
+    let mut seen = BTreeSet::new();
+    file.uses
+        .iter()
+        .map(|u| canonical_module_name(&u.node.as_dotted()))
+        .filter(|name| seen.insert(name.clone()))
+        .collect()
 }
 
 fn normalized(path: &Path) -> PathBuf {

@@ -247,22 +247,11 @@ impl LanguageServer for TridentLsp {
         }
 
         let file_path = PathBuf::from(uri.path());
-        let index = self.build_symbol_index(&file_path);
-
-        if let Some((target_uri, range)) = index.get(&word) {
-            return Ok(Some(GotoDefinitionResponse::Scalar(Location {
-                uri: target_uri.clone(),
-                range: *range,
-            })));
-        }
-
-        for (key, (target_uri, range)) in &index {
-            if key.ends_with(&format!(".{}", word)) {
-                return Ok(Some(GotoDefinitionResponse::Scalar(Location {
-                    uri: target_uri.clone(),
-                    range: *range,
-                })));
-            }
+        let symbols = super::imports::visible_symbols(&file_path, &source);
+        if let Some(symbol) = symbols.get(&word) {
+            return Ok(Some(GotoDefinitionResponse::Scalar(
+                symbol.location.clone(),
+            )));
         }
 
         Ok(None)

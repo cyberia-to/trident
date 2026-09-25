@@ -29,7 +29,7 @@ impl NoxCompiler {
     pub(super) fn function_uses_state(&self, function: &FnDef) -> bool {
         function.body.as_ref().is_some_and(|body| {
             block_calls(&body.node, &|name| {
-                if let Some(callee) = self.fns.get(&self.function_symbol(name)) {
+                if let Some(callee) = self.function(name) {
                     if let Some(intrinsic) = &callee.intrinsic {
                         let intrinsic = intrinsic
                             .node

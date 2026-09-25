@@ -1,7 +1,7 @@
 //! Layout information carried across module boundaries into stack lowering.
 use super::TIRBuilder;
 use crate::ast::{ArraySize, BinOp, Expr, File, Item, Literal, Type};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 impl TIRBuilder {
     pub fn with_module_types(mut self, modules: &[&File]) -> Self {
@@ -12,25 +12,44 @@ impl TIRBuilder {
 
     pub(super) fn prepare_module_types(
         &mut self,
-        entry: &str,
-    ) -> Result<(), Vec<crate::diagnostic::Diagnostic>> {
-        let files = std::mem::take(&mut self.module_type_files);
+        entry: &File,
+    ) -> Result<File, Vec<crate::diagnostic::Diagnostic>> {
+        let mut files = std::mem::take(&mut self.module_type_files);
+        let index = if let Some(index) = files.iter().position(|f| f.name.node == entry.name.node) {
+            files[index] = entry.clone();
+            index
+        } else {
+            files.push(entry.clone());
+            files.len() - 1
+        };
+        let refs: Vec<_> = files.iter().collect();
+        let scopes = crate::resolve::scope::scopes(&refs)?;
+        let builtins = crate::typecheck::TypeChecker::builtin_return_types(&self.target_config);
         let resolved = crate::typecheck::constants::resolve_modules(
-            &files.iter().collect::<Vec<_>>(),
+            &refs,
             &self.cfg_flags,
             &self.constant_bindings,
         )?;
-        for (module, bindings) in files.iter().zip(&resolved) {
-            let constants = bindings.raw_values();
-            if module.name.node == entry {
-                // Layout owners' private names never enter the caller's scope.
-                self.constant_bindings.extend(
-                    bindings
-                        .visible
-                        .iter()
-                        .filter(|(name, _)| !bindings.locals.contains_key(*name))
-                        .map(|(name, binding)| (name.clone(), binding.clone())),
-                );
+        for ((module, scope), constants) in files.iter().zip(&scopes).zip(&resolved) {
+            scope.validate_names(module, &refs, &self.cfg_flags, &builtins, constants)?;
+        }
+        let aliases: Vec<_> = files
+            .iter()
+            .zip(&scopes)
+            .map(|(file, scope)| scope.type_aliases(file, &refs, &self.cfg_flags))
+            .collect();
+        self.function_aliases
+            .extend(scopes[index].function_aliases(&refs, &self.cfg_flags));
+        for (i, module) in files.iter_mut().enumerate() {
+            let constants = resolved[i].raw_values();
+            super::nominal::Nominal {
+                aliases: &aliases[i],
+                constants: &constants,
+                parameters: BTreeSet::new(),
+            }
+            .file(module);
+            if i == index {
+                self.constant_bindings = resolved[i].visible.clone();
             }
             for item in &module.items {
                 if !self.is_item_cfg_active(&item.node) {
@@ -38,30 +57,14 @@ impl TIRBuilder {
                 }
                 match &item.node {
                     Item::Struct(def) => {
-                        let mut def = def.clone();
-                        for field in &mut def.fields {
-                            qualify(
-                                &mut field.ty.node,
-                                &module.name.node,
-                                &constants,
-                                &BTreeSet::new(),
-                            );
-                        }
-                        self.struct_types
-                            .insert(format!("{}.{}", module.name.node, def.name.node), def);
+                        self.struct_types.insert(def.name.node.clone(), def.clone());
                     }
                     Item::Fn(func) => {
-                        let mut ty = func
+                        let ty = func
                             .return_ty
                             .as_ref()
-                            .map(|ty| ty.node.clone())
+                            .map(|t| t.node.clone())
                             .unwrap_or_else(|| Type::Tuple(Vec::new()));
-                        qualify(
-                            &mut ty,
-                            &module.name.node,
-                            &constants,
-                            &func.type_params.iter().map(|p| p.node.clone()).collect(),
-                        );
                         self.fn_return_types
                             .insert(format!("{}.{}", module.name.node, func.name.node), ty);
                     }
@@ -69,12 +72,7 @@ impl TIRBuilder {
                 }
             }
         }
-        if !files.iter().any(|file| file.name.node == entry) {
-            for bindings in &resolved {
-                bindings.import_into(&mut self.constant_bindings);
-            }
-        }
-        Ok(())
+        Ok(files.remove(index))
     }
 
     pub(crate) fn qualified_function(&self, name: &str) -> String {
@@ -94,10 +92,7 @@ impl TIRBuilder {
     }
 
     pub(crate) fn constant_value(&self, name: &str) -> Option<u64> {
-        self.constants
-            .get(name)
-            .or_else(|| self.constants.get(&self.qualified_name(name)))
-            .copied()
+        self.constants.get(name).copied()
     }
 
     /// Checked logical extent, independent of the element's machine width.
@@ -122,7 +117,7 @@ impl TIRBuilder {
         match ty {
             Type::Named(path) => self
                 .struct_types
-                .get(&self.qualified_name(&path.0.join(".")))
+                .get(&path.as_dotted())
                 .map(|s| s.fields.iter().map(|f| self.type_width(&f.ty.node)).sum())
                 .unwrap_or(1),
             Type::Array(inner, n) => self.type_width(inner) * self.array_count(n).unwrap_or(0),
@@ -194,45 +189,5 @@ impl TIRBuilder {
                 .collect::<Option<Vec<_>>>()
                 .map(Type::Tuple),
         }
-    }
-}
-
-fn qualify(
-    ty: &mut Type,
-    module: &str,
-    constants: &BTreeMap<String, u64>,
-    parameters: &BTreeSet<String>,
-) {
-    match ty {
-        Type::Named(path) if path.0.len() == 1 => {
-            path.0.insert(0, module.to_string());
-        }
-        Type::Array(inner, size) => {
-            qualify(inner, module, constants, parameters);
-            qualify_size(size, constants, parameters);
-        }
-        Type::Tuple(parts) => {
-            for part in parts {
-                qualify(part, module, constants, parameters);
-            }
-        }
-        _ => {}
-    }
-}
-
-fn qualify_size(
-    size: &mut ArraySize,
-    constants: &BTreeMap<String, u64>,
-    parameters: &BTreeSet<String>,
-) {
-    match size {
-        ArraySize::Param(name) if constants.contains_key(name) && !parameters.contains(name) => {
-            *size = ArraySize::Literal(constants[name]);
-        }
-        ArraySize::Add(left, right) | ArraySize::Mul(left, right) => {
-            qualify_size(left, constants, parameters);
-            qualify_size(right, constants, parameters);
-        }
-        _ => {}
     }
 }

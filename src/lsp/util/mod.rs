@@ -82,22 +82,20 @@ pub fn word_at_position(source: &str, pos: Position) -> String {
         end += 1;
     }
 
-    // Include dot for qualified names like "hash.tip5"
-    if start > 0 && bytes[start - 1] == b'.' {
-        let mut dot_start = start - 1;
-        while dot_start > 0 && is_ident_char(bytes[dot_start - 1]) {
-            dot_start -= 1;
+    // Include every segment of a qualified module spelling.
+    while start > 0 && bytes[start - 1] == b'.' {
+        start -= 1;
+        while start > 0 && is_ident_char(bytes[start - 1]) {
+            start -= 1;
         }
-        source[dot_start..end].to_string()
-    } else if end < bytes.len() && bytes[end] == b'.' {
-        let mut dot_end = end + 1;
-        while dot_end < bytes.len() && is_ident_char(bytes[dot_end]) {
-            dot_end += 1;
-        }
-        source[start..dot_end].to_string()
-    } else {
-        source[start..end].to_string()
     }
+    while end < bytes.len() && bytes[end] == b'.' {
+        end += 1;
+        while end < bytes.len() && is_ident_char(bytes[end]) {
+            end += 1;
+        }
+    }
+    source[start..end].to_string()
 }
 
 /// Check if there's a dot before the cursor and return the module prefix.
@@ -112,7 +110,7 @@ pub fn text_before_dot(source: &str, pos: Position) -> Option<String> {
     if i > 0 && bytes[i - 1] == b'.' {
         let dot_pos = i - 1;
         let mut start = dot_pos;
-        while start > 0 && is_ident_char(bytes[start - 1]) {
+        while start > 0 && (is_ident_char(bytes[start - 1]) || bytes[start - 1] == b'.') {
             start -= 1;
         }
         if start < dot_pos {

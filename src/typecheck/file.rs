@@ -252,17 +252,13 @@ impl TypeChecker {
             .collect();
         let mut exported_structs = Vec::new();
 
-        for item in &file.items {
-            if !self.is_item_cfg_active(&item.node) {
-                continue;
-            }
-            match &item.node {
-                Item::Struct(sdef) if sdef.is_pub => {
-                    if let Some(sty) = self.structs.get(&sdef.name.node) {
-                        exported_structs.push(sty.clone());
-                    }
-                }
-                _ => {}
+        for sdef in file
+            .final_structs(&self.cfg_flags)
+            .into_iter()
+            .filter(|s| s.is_pub)
+        {
+            if let Some(sty) = self.structs.get(&sdef.name.node) {
+                exported_structs.push(sty.clone());
             }
         }
 

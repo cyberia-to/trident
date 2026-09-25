@@ -63,22 +63,39 @@ impl Parser {
     }
 
     pub(crate) fn parse_file(mut self) -> Result<File, Vec<Diagnostic>> {
-        let file = if self.at(&Lexeme::Program) {
-            self.parse_program()
-        } else if self.at(&Lexeme::Module) {
-            self.parse_module()
-        } else {
+        if !self.at(&Lexeme::Program) && !self.at(&Lexeme::Module) {
             self.error_with_help(
                 "expected 'program' or 'module' declaration at the start of file",
                 "every .tri file must begin with `program <name>` or `module <name>`",
             );
             return Err(self.diagnostics);
-        };
+        }
+        let mut file = self.file_header();
+        self.file_body(&mut file);
 
         if !self.diagnostics.is_empty() {
             return Err(self.diagnostics);
         }
         Ok(file)
+    }
+
+    /// Editor recovery keeps a strict owner/use header and a partial body AST.
+    /// The returned byte boundary lets discovery use exactly that valid header.
+    pub(crate) fn parse_editor_file(mut self) -> Result<(File, usize), Vec<Diagnostic>> {
+        if !self.at(&Lexeme::Program) && !self.at(&Lexeme::Module) {
+            self.error_with_help(
+                "expected 'program' or 'module' declaration at the start of file",
+                "every .tri file must begin with `program <name>` or `module <name>`",
+            );
+            return Err(self.diagnostics);
+        }
+        let mut file = self.file_header();
+        let boundary = self.current_span().start as usize;
+        if !self.diagnostics.is_empty() {
+            return Err(self.diagnostics);
+        }
+        self.file_body(&mut file);
+        Ok((file, boundary))
     }
 
     fn enter_nesting(&mut self) -> bool {
