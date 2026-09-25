@@ -1,0 +1,114 @@
+module std.compiler.nox.module_header
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+
+const NAME_CAP: U32 = 255
+const MODULE: Field = 120325194214501
+const USE: Field = 7697253
+
+pub struct Header { pub token: syntax.Token, pub error: syntax.Error }
+pub struct Import {
+    pub exists: Bool, pub name: bytes.Bytes, pub token: syntax.Token,
+    pub start: U32, pub path_start: U32, pub end: U32, pub error: syntax.Error
+}
+struct Path {
+    name: bytes.Bytes, token: syntax.Token, start: U32, end: U32, error: syntax.Error
+}
+
+#[pure]
+fn wrong(token: syntax.Token) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    syntax.error(2, token.start, token.end)
+}
+
+#[pure]
+fn keyword(token: syntax.Token, value: Field) -> Bool {
+    syntax.both(token.kind == as_u32(13), token.value == value)
+}
+
+#[pure]
+fn append_word(source: bytes.Bytes, input: Path) -> Path {
+    let mut s = input
+    let word = s.token
+    let mut pos = word.start
+    for letter in 0..256 {
+        if pos == word.end { return s }
+        if bytes.len(s.name) == NAME_CAP {
+            s.error = syntax.error(7, word.start, word.end)
+            return s
+        }
+        s.name = bytes.push(s.name, bytes.get(source, pos), NAME_CAP)
+        pos = syntax.inc(pos)
+    }
+    s.error = syntax.error(7, word.start, word.end)
+    s
+}
+
+// Each normalized path fits the JOB1 logical-name cap. A token's complete
+// original span survives even when spaces/comments separate its components.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+fn path(source: bytes.Bytes, first: syntax.Token, dotted: Bool) -> Path {
+    let mut s = Path { name: bytes.empty(), token: first, start: first.start,
+        end: first.end, error: syntax.error(0, first.start, first.end) }
+    for part in 0..256 {
+        if (s.token.kind == as_u32(1)) == false { s.error = wrong(s.token) return s }
+        let word = s.token
+        s = append_word(source, s)
+        if (s.error.code == syntax.ZERO) == false { return s }
+        s.end = word.end
+        s.token = lexer.next(source, word.end)
+        if s.token.kind == as_u32(14) { s.error = wrong(s.token) return s }
+        if (s.token.kind == as_u32(41)) == false { return s }
+        if dotted == false { s.error = wrong(s.token) return s }
+        if bytes.len(s.name) == NAME_CAP {
+            s.error = syntax.error(7, s.token.start, s.token.end)
+            return s
+        }
+        s.name = bytes.push(s.name, as_u32(46), NAME_CAP)
+        s.token = lexer.next(source, s.token.end)
+    }
+    s.error = syntax.error(7, s.token.start, s.token.end)
+    s
+}
+
+// Expected names already come from the admitted package or a normalized use.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((NAME_CAP < bytes.len(expected)) == false)]
+pub fn open(source: bytes.Bytes, expected: bytes.Bytes, is_entry: Bool) -> Header {
+    let first = lexer.next(source, syntax.ZERO)
+    let is_program = first.kind == as_u32(10)
+    let is_module = keyword(first, MODULE)
+    if syntax.either(is_program, is_module) == false {
+        return Header { token: first, error: wrong(first) }
+    }
+    if (is_program == is_entry) == false {
+        return Header { token: first, error: syntax.error(3, first.start, first.end) }
+    }
+    let name = path(source, lexer.next(source, first.end), is_entry == false)
+    if (name.error.code == syntax.ZERO) == false { return Header { token: name.token, error: name.error } }
+    if noun.eq(bytes.to_noun(name.name), bytes.to_noun(expected)) == false {
+        return Header { token: name.token, error: syntax.error(3, name.start, name.end) }
+    }
+    Header { token: name.token, error: syntax.error(0, name.start, name.end) }
+}
+
+// The caller retains each occurrence in order and advances with result.token.
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn next_use(source: bytes.Bytes, token: syntax.Token) -> Import {
+    if keyword(token, USE) == false {
+        let mut error = syntax.error(0, token.start, token.end)
+        if token.kind == as_u32(14) { error = wrong(token) }
+        return Import { exists: false, name: bytes.empty(), token,
+            start: token.start, path_start: token.start, end: token.end,
+            error }
+    }
+    let name = path(source, lexer.next(source, token.end), true)
+    Import { exists: true, name: name.name, token: name.token, start: token.start,
+        path_start: name.start, end: name.end, error: name.error }
+}

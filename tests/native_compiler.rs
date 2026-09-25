@@ -102,6 +102,10 @@ mod bounds;
 
 #[path = "native_compiler/job_package.rs"]
 mod job_package;
+#[path = "native_compiler/module_graph.rs"]
+mod module_graph;
+#[path = "native_compiler/module_header.rs"]
+mod module_header;
 
 #[path = "native_compiler/locals.rs"]
 mod locals;

@@ -1,0 +1,137 @@
+module std.compiler.nox.module_graph
+
+use vm.nox.noun
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.job
+use std.compiler.nox.utf8
+use std.compiler.nox.lexer
+use std.compiler.nox.module_header
+use std.compiler.nox.module_store
+
+pub struct Graph {
+    pub package: job.Package, pub sources: bytes.BytesTable, pub names: bytes.BytesTable,
+    pub modules: seq.Seq, pub indexes: Noun, pub capacity: U32,
+    pub total_bytes: U32, pub total_uses: U32, pub error_index: U32, pub error: syntax.Error
+}
+struct Walk { graph: Graph, current: U32, parents: Noun, depth: U32, done: Bool }
+
+#[pure]
+fn fail(input: Graph, index: U32, error: syntax.Error) -> Graph {
+    let mut graph = input
+    graph.error_index = index
+    graph.error = error
+    graph
+}
+
+// Caller checks remaining shared source capacity before opening the payload.
+#[pure]
+fn register(input: Graph, index: U32, source: bytes.Bytes, name: bytes.Bytes, entry: Bool) -> Graph {
+    let mut graph = input
+    if seq.len(graph.modules) == graph.capacity { return fail(graph, index, syntax.error(7, syntax.ZERO, syntax.ZERO)) }
+    let encoding = utf8.validate(source)
+    if (encoding.code == syntax.ZERO) == false { return fail(graph, index, encoding) }
+    let header = module_header.open(source, name, entry)
+    if (header.error.code == syntax.ZERO) == false { return fail(graph, index, header.error) }
+    let id = seq.len(graph.modules)
+    let unit = module_store.Module { index, offset: header.token.start,
+        status: as_u32(1), count: syntax.ZERO, uses: noun.atom(0) }
+    graph.sources = bytes.table_push(graph.sources, source, graph.capacity)
+    graph.names = bytes.table_push(graph.names, name, graph.capacity)
+    graph.modules = seq.push(graph.modules, module_store.pack(unit), graph.capacity)
+    graph.indexes = tree.set(graph.indexes, seq.len(graph.package.modules), index, noun.atom(as_field(id) + 1))
+    graph.total_bytes = as_u32(as_field(graph.total_bytes) + as_field(bytes.len(source)))
+    graph
+}
+
+#[pure]
+fn step(input: Walk) -> Walk {
+    let mut s = input
+    let mut unit = module_store.read(s.graph.modules, s.current)
+    let source = bytes.table_get(s.graph.sources, s.current)
+    let item = module_header.next_use(source, lexer.next(source, unit.offset))
+    if (item.error.code == syntax.ZERO) == false { s.graph = fail(s.graph, unit.index, item.error) return s }
+    if item.exists == false {
+        unit.offset = item.token.start
+        s.graph.modules = seq.set(s.graph.modules, s.current, module_store.pack(module_store.finish(unit)))
+        if noun.eq(s.parents, noun.atom(0)) { s.done = true return s }
+        s.current = as_u32(noun.as_field(noun.head(s.parents)))
+        s.parents = noun.tail(s.parents)
+        s.depth = syntax.dec(s.depth)
+        return s
+    }
+    if s.graph.total_uses == s.graph.capacity {
+        s.graph = fail(s.graph, unit.index, syntax.error(7, item.start, item.end))
+        return s
+    }
+    let found = job.find(s.graph.package, item.name)
+    s.graph.package.remaining = found.remaining
+    if found.exists == false { s.graph = fail(s.graph, unit.index, syntax.error(3, item.start, item.end)) return s }
+    let saved = as_u32(noun.as_field(tree.get(s.graph.indexes, seq.len(s.graph.package.modules), found.index)))
+    let mut target = seq.len(s.graph.modules)
+    if (saved == syntax.ZERO) == false {
+        target = syntax.dec(saved)
+        if module_store.read(s.graph.modules, target).status == as_u32(1) {
+            s.graph = fail(s.graph, unit.index, syntax.error(4, item.start, item.end))
+            return s
+        }
+    } else {
+        if syntax.either(target == s.graph.capacity, s.depth == s.graph.capacity) {
+            s.graph = fail(s.graph, found.index, syntax.error(7, syntax.ZERO, syntax.ZERO))
+            return s
+        }
+        let capacity = as_u32(field.sub(as_field(syntax.SOURCE_CAP), as_field(s.graph.total_bytes)))
+        let opened = job.open(s.graph.package, found.index, capacity)
+        s.graph.package.remaining = opened.remaining
+        if (opened.error.code == syntax.ZERO) == false { s.graph = fail(s.graph, found.index, opened.error) return s }
+        s.graph = register(s.graph, found.index, opened.content, item.name, false)
+        if (s.graph.error.code == syntax.ZERO) == false { return s }
+    }
+    unit.offset = item.token.start
+    unit.count = syntax.inc(unit.count)
+    let occurrence = module_store.Use { target, start: item.start, path_start: item.path_start, end: item.end }
+    unit.uses = noun.pair(module_store.use_record(occurrence), unit.uses)
+    s.graph.modules = seq.set(s.graph.modules, s.current, module_store.pack(unit))
+    s.graph.total_uses = syntax.inc(s.graph.total_uses)
+    if saved == syntax.ZERO {
+        s.parents = noun.pair(noun.atom(as_field(s.current)), s.parents)
+        s.depth = syntax.inc(s.depth)
+        s.current = target
+    }
+    s
+}
+
+#[pure]
+fn chunk(input: Walk) -> Walk {
+    let mut s = input
+    for turn in 0..8 {
+        s = step(s)
+        if syntax.either(s.done, (s.graph.error.code == syntax.ZERO) == false) { return s }
+    }
+    s
+}
+
+// The admitted entry handle is reused. Unreachable source payloads stay opaque.
+#[pure]
+pub fn discover(view: job.View) -> Graph {
+    let zero = syntax.ZERO
+    let mut capacity = view.sequence_limit
+    if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
+    let empty = tree.empty(tree.shape(seq.len(view.package.modules)).height)
+    let graph = Graph { package: view.package, sources: bytes.table_empty(), names: bytes.table_empty(),
+        modules: seq.empty(), indexes: empty, capacity, total_bytes: zero, total_uses: zero,
+        error_index: view.index, error: view.error }
+    if (view.error.code == zero) == false { return graph }
+    let graph = register(graph, view.index, view.source, view.name, true)
+    if (graph.error.code == zero) == false { return graph }
+    let mut s = Walk { graph, current: zero, parents: noun.atom(0), depth: as_u32(1), done: false }
+    // Each source is completed once and each use consumed once, both <=4096.
+    for block in 0..1024 {
+        s = chunk(s)
+        if syntax.either(s.done, (s.graph.error.code == zero) == false) { return s.graph }
+    }
+    fail(s.graph, view.index, syntax.error(7, zero, zero))
+}
