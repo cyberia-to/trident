@@ -155,6 +155,15 @@ limits. Names/versions, records, source and diagnostics count toward their enclo
 container limits. Job limits must fit the worker's independently supplied admission
 limits; parsing the untrusted limits record never raises those caps.
 
+The guest package reader retains the admitted module table, its indexed-read
+cost, explicit options, source limit and remaining validation allowance in the
+entry view. Subsequent module lookup and source opening consume that same
+allowance. Lookup compares complete logical paths and returns an explicit
+found flag plus the original package index; source/AST sentinels never stand
+for package indices. Opening a source checks the caller's remaining source
+capacity before validating its Bytes payload. Reachability, once-only source
+accounting, UTF-8 and language semantics belong to the guest module resolver.
+
 Reduction, allocated arena-node and pending evaluator-frame limits are distinct.
 The worker separately bounds trace retention, total memory and wall time; those
 host admission limits cannot silently change generated code. The actual arena

@@ -33,13 +33,13 @@ fn wide(bits: usize) -> String {
 }
 
 #[test]
-fn wide_record_sources_retain_the_full_compiler_arena_boundary() {
+fn wide_record_sources_execute_when_the_unchanged_compiler_arena_fits_them() {
     support::worker(|| {
+        let mut accepted = Vec::new();
         for bits in [61, 62, 63, 64, 65] {
             let source = wide(bits);
             assert!(source.len() < 4096);
-            // Keep the original wide source vectors. Direct emitter tests
-            // cover these paths, while full C1 generation still needs SH4.
+            // Keep every original wide source and the 786432 lifetime ceiling.
             let result = support::try_compile_only_package(
                 &[support::module(source.as_bytes())],
                 "sample",
@@ -47,14 +47,29 @@ fn wide_record_sources_retain_the_full_compiler_arena_boundary() {
                 support::options(),
                 data::caps(),
             );
-            let error = result
-                .expect_err("promote this source boundary to positive acceptance when SH4 fits it");
-            assert!(
-                error.contains("Error(Unavailable)") && error.contains("nodes=786432"),
-                "bits={bits}: {error}"
-            );
+            match result {
+                Ok(support::Compilation::Program {
+                    bytes,
+                    reductions,
+                    nodes,
+                    frames,
+                }) => {
+                    assert_eq!(support::run_artifact(&bytes), 3199, "guest bits={bits}");
+                    println!("wide{bits}: reductions={reductions}, nodes={nodes}, frames={frames}");
+                    accepted.push(bits);
+                }
+                Err(error) => {
+                    assert!(
+                        error.contains("Error(Unavailable)") && error.contains("nodes=786432"),
+                        "bits={bits}: {error}"
+                    );
+                    println!("wide{bits}: {error}");
+                }
+                Ok(support::Compilation::Errors(errors)) => panic!("bits={bits}: {errors:?}"),
+            }
             assert_eq!(support::rust_value(&source), 3199, "seed bits={bits}");
         }
+        assert_eq!(accepted, [61, 62]);
     });
 }
 

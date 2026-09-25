@@ -164,18 +164,28 @@ fn validate_chunk(todo: Noun, remaining: U32) -> (Noun, U32) {
             if capacity == 1 {
                 // The entire Noun is the occupied value; do not descend into it.
             } else {
-                let half_capacity = capacity * HALF
-                let half = convert.as_u32(half_capacity)
-                let mut left_count = occupied
-                let mut right_count = ZERO
-                if half < occupied {
-                    left_count = half
-                    right_count = convert.as_u32(field.sub(convert.as_field(occupied), half_capacity))
+                if capacity == 2 {
+                    // Check the branch while keeping arbitrary leaf Nouns opaque.
+                    // Both leaf positions retain their visit charge, but need no
+                    // traversal tasks or separate validator loop iterations.
+                    assert(convert.as_u32(1) < budget)
+                    budget = convert.as_u32(field.sub(convert.as_field(budget), 2))
+                    assert(noun.eq(noun.pair(noun.head(node), noun.tail(node)), node))
+                    if occupied == convert.as_u32(1) { assert(noun.eq(noun.tail(node), noun.atom(0))) }
+                } else {
+                    let half_capacity = capacity * HALF
+                    let half = convert.as_u32(half_capacity)
+                    let mut left_count = occupied
+                    let mut right_count = ZERO
+                    if half < occupied {
+                        left_count = half
+                        right_count = convert.as_u32(field.sub(convert.as_field(occupied), half_capacity))
+                    }
+                    let child_padding = noun.head(padding)
+                    let right = task(noun.tail(node), right_count, half_capacity, child_padding)
+                    let left = task(noun.head(node), left_count, half_capacity, child_padding)
+                    work = noun.pair(left, noun.pair(right, work))
                 }
-                let child_padding = noun.head(padding)
-                let right = task(noun.tail(node), right_count, half_capacity, child_padding)
-                let left = task(noun.head(node), left_count, half_capacity, child_padding)
-                work = noun.pair(left, noun.pair(right, work))
             }
         }
     }

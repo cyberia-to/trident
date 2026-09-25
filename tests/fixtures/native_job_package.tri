@@ -1,0 +1,46 @@
+program native_job_package
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.bytes
+use std.compiler.nox.job
+
+// Raw component probe: [JOB1 [query Bytes [capacity remaining-override]]].
+// Zero keeps the admitted allowance; U32::MAX observes entry admission only.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let request = job.read(noun.head(input))
+    assert_eq(convert.as_field(request.error.code), 0)
+    let arguments = noun.tail(input)
+    let query = bytes.from_noun(noun.head(arguments), as_u32(255), as_u32(1000000))
+    let limits = noun.tail(arguments)
+    let capacity = as_u32(noun.as_field(noun.head(limits)))
+    let allowance = as_u32(noun.as_field(noun.tail(limits)))
+    let mut package = request.package
+    let admitted = package.remaining
+    let only_entry = allowance == as_u32(4294967295)
+    let mut found = job.Found { exists: false, index: as_u32(0), remaining: admitted }
+    if only_entry == false {
+        if (allowance == as_u32(0)) == false { package.remaining = allowance }
+        found = job.find(package, query)
+    }
+    let mut present: Field = 0
+    let mut content = bytes.empty()
+    let mut code = as_u32(0)
+    let mut remaining = found.remaining
+    if found.exists {
+        present = 1
+        package.remaining = found.remaining
+        let opened = job.open(package, found.index, capacity)
+        content = opened.content
+        code = opened.error.code
+        remaining = opened.remaining
+    }
+    let result = noun.pair(bytes.to_noun(content), package.options)
+    let status = noun.pair(noun.atom(as_field(code)), result)
+    let opened = noun.pair(noun.atom(as_field(remaining)), status)
+    let searched = noun.pair(noun.atom(as_field(found.remaining)), opened)
+    let admitted = noun.pair(noun.atom(as_field(admitted)), searched)
+    let located = noun.pair(noun.atom(as_field(found.index)), admitted)
+    noun.pair(noun.atom(as_field(request.index)), noun.pair(noun.atom(present), located))
+}

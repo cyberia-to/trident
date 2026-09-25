@@ -4,6 +4,7 @@ use vm.nox.noun
 use vm.core.convert
 use vm.core.field
 use std.nox.tree
+use std.nox.seq
 
 const TAG: Field = 1113150513
 const ZERO: U32 = 0
@@ -13,6 +14,34 @@ const INV4: Field = 13835058052060938241
 
 // The root contains packed U32 words, with no embedded Seq wrapper.
 pub struct Bytes { length: U32, root: Noun }
+
+// Only validated Bytes enter this table. Its private storage cannot be replaced
+// by untrusted Nouns between compiler stages.
+pub struct BytesTable { values: seq.Seq }
+
+#[pure]
+#[ensures(table_len(result) == ZERO)]
+pub fn table_empty() -> BytesTable { BytesTable { values: seq.empty() } }
+
+#[pure]
+#[ensures(result == seq.len(table.values))]
+pub fn table_len(table: BytesTable) -> U32 { seq.len(table.values) }
+
+#[pure]
+#[requires(table_len(table) < max_length)]
+#[ensures(convert.as_field(table_len(result)) == convert.as_field(table_len(table)) + 1)]
+pub fn table_push(table: BytesTable, value: Bytes, max_length: U32) -> BytesTable {
+    assert(table_len(table) < max_length)
+    let stored = noun.pair(noun.atom(convert.as_field(value.length)), value.root)
+    BytesTable { values: seq.push(table.values, stored, max_length) }
+}
+
+#[pure]
+#[requires(index < table_len(table))]
+pub fn table_get(table: BytesTable, index: U32) -> Bytes {
+    let stored = seq.get(table.values, index)
+    Bytes { length: convert.as_u32(noun.as_field(noun.head(stored))), root: noun.tail(stored) }
+}
 
 #[pure]
 #[ensures(len(result) == ZERO)]
