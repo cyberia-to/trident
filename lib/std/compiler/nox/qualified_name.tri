@@ -1,0 +1,63 @@
+module std.compiler.nox.qualified_name
+
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+
+const PREFIX_CAP: U32 = 255
+
+pub struct Name {
+    pub prefix: bytes.Bytes, pub member: syntax.Token, pub token: syntax.Token,
+    pub start: U32, pub end: U32, pub error: syntax.Error
+}
+
+#[pure]
+fn wrong(token: syntax.Token) -> syntax.Error {
+    if token.kind == as_u32(14) { return syntax.error(1, token.start, token.end) }
+    syntax.error(2, token.start, token.end)
+}
+
+// Only words followed by a dot belong to the bounded module prefix. The final
+// member stays a source token, so long member identifiers are never truncated.
+#[pure]
+fn append(source: bytes.Bytes, input: Name) -> Name {
+    let mut s = input
+    if (bytes.len(s.prefix) == syntax.ZERO) == false {
+        if bytes.len(s.prefix) == PREFIX_CAP {
+            s.error = syntax.error(7, s.member.start, s.member.end) return s
+        }
+        s.prefix = bytes.push(s.prefix, as_u32(46), PREFIX_CAP)
+    }
+    let mut pos = s.member.start
+    for letter in 0..256 {
+        if pos == s.member.end { return s }
+        if bytes.len(s.prefix) == PREFIX_CAP {
+            s.error = syntax.error(7, s.member.start, s.member.end) return s
+        }
+        s.prefix = bytes.push(s.prefix, bytes.get(source, pos), PREFIX_CAP)
+        pos = syntax.inc(pos)
+    }
+    s.error = syntax.error(7, s.member.start, s.member.end)
+    s
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+pub fn parse(source: bytes.Bytes, first: syntax.Token) -> Name {
+    let mut s = Name { prefix: bytes.empty(), member: first, token: first,
+        start: first.start, end: first.end, error: syntax.error(0, first.start, first.end) }
+    // A prefix admits at most 128 identifier components; the source ceiling is
+    // separate. The extra final component is an arbitrarily long member token.
+    for part in 0..256 {
+        if (s.member.kind == as_u32(1)) == false { s.error = wrong(s.member) return s }
+        s.end = s.member.end
+        s.token = lexer.next(source, s.member.end)
+        if s.token.kind == as_u32(14) { s.error = wrong(s.token) return s }
+        if (s.token.kind == as_u32(41)) == false { return s }
+        s = append(source, s)
+        if (s.error.code == syntax.ZERO) == false { return s }
+        s.member = lexer.next(source, s.token.end)
+    }
+    s.error = syntax.error(7, s.member.start, s.member.end)
+    s
+}

@@ -1,0 +1,96 @@
+module std.compiler.nox.constant_exports
+
+use vm.nox.noun
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+
+// Export IDs are stable across dependency modules. Linked lists index only
+// final public bindings; source spans always belong to their recorded owner.
+pub struct Bank { records: seq.Seq, heads: Noun, modules: U32 }
+pub struct Binding {
+    pub owner: U32, pub name: syntax.Token, pub ty: Field, pub value: Field,
+    pub literal_owner: U32, pub literal: syntax.Token
+}
+pub struct Found { pub exists: Bool, pub id: U32 }
+
+#[pure]
+pub fn empty(modules: U32) -> Bank {
+    Bank { records: seq.empty(), heads: tree.empty(tree.shape(modules).height), modules }
+}
+
+#[pure]
+pub fn len(bank: Bank) -> U32 { seq.len(bank.records) }
+
+#[pure]
+fn span(token: syntax.Token) -> Noun {
+    noun.pair(noun.atom(as_field(token.start)), noun.atom(as_field(token.end)))
+}
+
+#[pure]
+fn token(value: Noun, kind: Field, literal: Field) -> syntax.Token {
+    syntax.token(kind, as_u32(noun.as_field(noun.head(value))), as_u32(noun.as_field(noun.tail(value))), literal)
+}
+
+#[pure]
+#[requires(id < len(bank))]
+pub fn read(bank: Bank, id: U32) -> Binding {
+    let row = noun.tail(seq.get(bank.records, id))
+    let name = noun.tail(row)
+    let ty = noun.tail(name)
+    let value = noun.tail(ty)
+    let origin = noun.tail(value)
+    let number = noun.as_field(noun.head(value))
+    Binding { owner: as_u32(noun.as_field(noun.head(row))), name: token(noun.head(name), 1, 0),
+        ty: noun.as_field(noun.head(ty)), value: number,
+        literal_owner: as_u32(noun.as_field(noun.head(origin))), literal: token(noun.tail(origin), 2, number) }
+}
+
+// Callers check source-work capacity before publishing. The bank keeps its own
+// typed storage and never admits externally supplied serialized record handles.
+#[pure]
+#[requires(len(bank) < cap)]
+pub fn push(bank: Bank, item: Binding, cap: U32) -> Bank {
+    assert(item.owner < bank.modules)
+    assert(item.literal_owner < bank.modules)
+    let id = len(bank)
+    let next = tree.get(bank.heads, bank.modules, item.owner)
+    let origin = noun.pair(noun.atom(as_field(item.literal_owner)), span(item.literal))
+    let value = noun.pair(noun.atom(item.value), origin)
+    let row = noun.pair(noun.atom(as_field(item.owner)), noun.pair(span(item.name), noun.pair(noun.atom(item.ty), value)))
+    Bank { records: seq.push(bank.records, noun.pair(next, row), cap),
+        heads: tree.set(bank.heads, bank.modules, item.owner, noun.atom(as_field(id) + 1)), modules: bank.modules }
+}
+
+// Two independent source buffers prevent a foreign declaration's offsets from
+// accidentally selecting unrelated bytes in the importing source.
+#[pure]
+fn same(caller: bytes.Bytes, query: syntax.Token, source: bytes.Bytes, name: syntax.Token) -> Bool {
+    if (field.sub(as_field(query.end), as_field(query.start)) == field.sub(as_field(name.end), as_field(name.start))) == false { return false }
+    let mut a = query.start
+    let mut b = name.start
+    for step in 0..4096 {
+        if a == query.end { return true }
+        if (bytes.get(caller, a) == bytes.get(source, b)) == false { return false }
+        a = syntax.inc(a)
+        b = syntax.inc(b)
+    }
+    a == query.end
+}
+
+#[pure]
+#[requires(owner < bank.modules)]
+#[requires((syntax.SOURCE_CAP < len(bank)) == false)]
+pub fn find(bank: Bank, owner: U32, source: bytes.Bytes, caller: bytes.Bytes, query: syntax.Token) -> Found {
+    let mut cursor = as_u32(noun.as_field(tree.get(bank.heads, bank.modules, owner)))
+    for step in 0..4096 {
+        if cursor == syntax.ZERO { return Found { exists: false, id: syntax.ZERO } }
+        let id = syntax.dec(cursor)
+        let binding = read(bank, id)
+        if same(caller, query, source, binding.name) { return Found { exists: true, id } }
+        cursor = as_u32(noun.as_field(noun.head(seq.get(bank.records, id))))
+    }
+    Found { exists: false, id: syntax.ZERO }
+}

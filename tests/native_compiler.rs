@@ -103,6 +103,12 @@ mod bounds;
 #[path = "native_compiler/job_package.rs"]
 mod job_package;
 
+#[path = "native_compiler/qualified_name.rs"]
+mod qualified_name;
+
+#[path = "native_compiler/constant_imports.rs"]
+mod constant_imports;
+
 #[path = "native_compiler/locals.rs"]
 mod locals;
 
