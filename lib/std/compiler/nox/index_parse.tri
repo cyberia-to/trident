@@ -9,6 +9,7 @@ use std.compiler.nox.ast
 use std.compiler.nox.types
 use std.compiler.nox.lexer
 use std.compiler.nox.expression_state
+use std.compiler.nox.array_size
 
 // Index and call frames share a delimiter-owned stack. An index frame keeps
 // [base-node saved-value-count]; the '[' marker owns its matching ']'.
@@ -19,7 +20,9 @@ pub fn enter(source: bytes.Bytes, input: expression_state.State) -> expression_s
     s.vals = syntax.dec(s.vals)
     let base = seq.get(s.values, s.vals)
     let node = seq.get(s.nodes, as_u32(noun.as_field(base)))
-    if noun.eq(ast.ty(node), noun.atom(types.DIGEST)) == false { s.error = ast.issue(5, node) return s }
+    if noun.eq(ast.ty(node), noun.atom(types.DIGEST)) == false {
+        if types.array_info(ast.ty(node)).valid == false { s.error = ast.issue(5, node) return s }
+    }
     s.frames = noun.pair(noun.pair(base, noun.atom(as_field(s.vals))), s.frames)
     s.operators = ast.store(s.operators, s.ops, noun.atom(36), s.capacity)
     s.ops = syntax.inc(s.ops)
@@ -43,8 +46,21 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State) -> expression_
         }
         if seq.len(s.nodes) == s.node_cap { s.error = ast.failed(s.token, 7) return s }
         let id = seq.len(s.nodes)
-        let start = ast.start(seq.get(s.nodes, as_u32(base)))
-        s.nodes = seq.push(s.nodes, ast.typed(ast.DIGEST_INDEX, base, index, noun.atom(types.FIELD), start, s.token.end), s.node_cap)
+        let parent = seq.get(s.nodes, as_u32(base))
+        let start = ast.start(parent)
+        let mut kind = ast.DIGEST_INDEX
+        if noun.eq(ast.ty(parent), noun.atom(types.DIGEST)) == false {
+            kind = ast.ARRAY_INDEX
+            if ast.kind(node) == ast.LITERAL {
+                let length = types.array_info(ast.ty(parent)).length
+                let literal = array_size.decimal(source, ast.start(node), ast.end(node), length)
+                if syntax.either(literal.exceeded, (literal.value < length) == false) {
+                    s.error = syntax.error(5, start, s.token.end) return s
+                }
+            }
+            s.needs_get = true
+        }
+        s.nodes = seq.push(s.nodes, ast.typed(kind, base, index, noun.atom(types.FIELD), start, s.token.end), s.node_cap)
         s.values = seq.set(s.values, saved, noun.atom(as_field(id)))
         s.ops = syntax.dec(s.ops)
         s.frames = noun.tail(s.frames)

@@ -7,6 +7,7 @@ use std.nox.tree
 use std.compiler.nox.syntax
 use std.compiler.nox.blocks
 use std.compiler.nox.body_state
+use std.compiler.nox.body_store
 use std.compiler.nox.coverage
 use std.compiler.nox.codegen
 use std.compiler.nox.formula
@@ -49,7 +50,7 @@ pub struct Built { pub output: formula.Value, pub loops: seq.Seq, pub failed: Bo
 // initialize parameters and local padding; body emission never resets them.
 #[pure]
 #[requires(s.root < seq.len(s.blocks))]
-pub fn reusable(s: body_state.State, flags: Noun, locals: U32, context: call_codegen.Context, depth_cap: U32) -> Built {
+pub fn reusable(s: body_store.Body, flags: Noun, locals: U32, context: call_codegen.Context, depth_cap: U32) -> Built {
     let failure = Built { output: flow.literal(0), loops: seq.empty(), failed: true }
     let shape = tree.shape(locals)
     let expressions = codegen.with_calls(s.nodes, shape, context, depth_cap)
@@ -95,6 +96,6 @@ pub fn generate(s: body_state.State, depth_cap: U32) -> codegen.Compiled {
     let locals = seq.len(s.bindings)
     let mut context = call_codegen.empty()
     context.arguments = s.arguments
-    let built = reusable(s, marked.flags, locals, context, depth_cap)
+    let built = reusable(body_store.checked(s), marked.flags, locals, context, depth_cap)
     standalone(built, locals, depth_cap, false)
 }

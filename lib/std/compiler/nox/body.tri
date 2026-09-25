@@ -29,10 +29,10 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
     }
     if s.token.kind == as_u32(8) { return control_parse.close(source, s, cap, true) }
     if s.returned { s.error = syntax.error(5, s.token.start, s.token.end) return s }
-    if s.token.kind == as_u32(15) { return declarations.parse(source, s, cap) }
+    if s.token.kind == as_u32(15) { return declarations.parse(source, s, cap, s.token) }
     if s.token.kind == as_u32(1) {
         let next = lexer.next(source, s.token.end)
-        if next.kind == as_u32(18) { return declarations.parse(source, s, cap) }
+        if next.kind == as_u32(18) { return declarations.parse(source, s, cap, next) }
     }
     if s.token.kind == as_u32(23) { return control_parse.enter(source, s, cap) }
     if s.token.kind == as_u32(31) { return loop_parse.enter(source, s, cap) }
@@ -55,6 +55,7 @@ fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.St
     s.nodes = value.nodes
     s.arguments = value.arguments
     s.edges = value.edges
+    if value.needs_get { s.needs_get = true }
     s.token = value.token
     if returning {
         let node = seq.get(s.nodes, value.value)

@@ -74,7 +74,23 @@ pub fn run_traced(
     nodes: u32,
     tracer: &mut impl nox::trace::Tracer,
 ) -> Result<Run, String> {
-    let mut arena = Reduction::<{ 1 << 18 }>::try_new_boxed().unwrap();
+    if nodes > 786432 {
+        run_in::<{ 1 << 24 }>(bytes, input, budget, frames, nodes, tracer)
+    } else if nodes > 196608 {
+        run_in::<{ 1 << 20 }>(bytes, input, budget, frames, nodes, tracer)
+    } else {
+        run_in::<{ 1 << 18 }>(bytes, input, budget, frames, nodes, tracer)
+    }
+}
+fn run_in<const N: usize>(
+    bytes: &[u8],
+    input: &Noun,
+    budget: u64,
+    frames: u32,
+    nodes: u32,
+    tracer: &mut impl nox::trace::Tracer,
+) -> Result<Run, String> {
+    let mut arena = Reduction::<N>::try_new_boxed().unwrap();
     assert!(arena.limit_allocations(nodes));
     let root = artifact::decode(&mut arena, bytes, LIMITS).map_err(|e| format!("{e:?}"))?;
     let mut cursor = arena.tail(root).unwrap();

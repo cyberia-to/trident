@@ -1,0 +1,54 @@
+program native_array_plan
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.body_state
+use std.compiler.nox.body_store
+use std.compiler.nox.function_plan
+use std.compiler.nox.code_plan
+use std.compiler.nox.blocks
+
+// [ordered-IDs-Seq [loop-count [helper-flag cap]]]. Rust supplies canonical
+// IDs to isolate planning from source parsing and Seq push construction cost.
+// Function count is a power of two; all bodies have the same checked metadata.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let order = seq.from_noun(noun.head(input), as_u32(4096), as_u32(16385))
+    let count = seq.len(order)
+    let loops = as_u32(noun.as_field(noun.head(noun.tail(input))))
+    let settings = noun.tail(noun.tail(input))
+    let needed = noun.as_field(noun.head(settings)) == 1
+    let cap = as_u32(noun.as_field(noun.tail(settings)))
+    let zero = as_u32(0)
+    let mut body = body_state.initial(syntax.token(0, zero, zero, 0))
+    body.needs_get = needed
+    body.loops = loop_records(loops)
+    let stored = body_store.pack(body, noun.atom(0))
+    let restored = body_store.read(stored, as_u32(4096))
+    assert(restored.needs_get == needed)
+    assert_eq(as_field(body_store.loop_count(stored)), as_field(loops))
+    let shape = tree.shape(count)
+    assert_eq(shape.capacity, as_field(count))
+    let mut root = stored
+    for level in 0..12 {
+        if level < shape.height { root = noun.pair(root, root) }
+    }
+    let encoded = noun.pair(noun.atom(1397051697), noun.pair(noun.atom(as_field(count)), root))
+    let bodies = seq.from_noun(encoded, as_u32(4096), as_u32(16385))
+    let functions = function_plan.Plan { order, slots: noun.atom(0), next: count, error: syntax.error(0, zero, zero) }
+    let plan = code_plan.extend(bodies, functions, cap)
+    noun.pair(blocks.flag(plan.failed), noun.pair(noun.atom(as_field(plan.count)), noun.atom(as_field(plan.get_slot))))
+}
+
+#[pure]
+fn loop_records(count: U32) -> seq.Seq {
+    let mut result = seq.empty()
+    for i in 0..4096 {
+        if i == count { return result }
+        result = seq.push(result, noun.atom(0), as_u32(4096))
+    }
+    result
+}

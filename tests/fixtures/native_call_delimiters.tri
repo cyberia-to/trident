@@ -24,7 +24,7 @@ fn main(input: Noun) -> Noun {
     let mut s = expression_state.State { operators: seq.empty(), values: seq.empty(), ops: depth, vals: zero,
         token, operand: true, done: false, error: syntax.error(0, zero, zero), capacity: as_u32(64),
         node_cap: as_u32(4096), nodes: seq.empty(), context, before_block: false,
-        arguments: seq.empty(), frames: noun.atom(0), edges: noun.atom(0) }
+        arguments: seq.empty(), frames: noun.atom(0), edges: noun.atom(0), needs_get: false }
     for i in 0..64 {
         if i < depth {
             s.operators = seq.push(s.operators, noun.atom(as_field(expression_state.CALL_MARKER)), as_u32(64))

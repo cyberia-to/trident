@@ -12,7 +12,7 @@ use std.compiler.nox.flow
 
 pub struct Context {
     pub arguments: seq.Seq, pub bodies: seq.Seq, pub slots: Noun,
-    pub functions: U32, pub table: tree.Shape, pub capacity: U32, pub loop_base: U32
+    pub functions: U32, pub table: tree.Shape, pub capacity: U32, pub loop_base: U32, pub get_slot: U32
 }
 pub struct Built { pub output: formula.Value, pub failed: Bool }
 struct Collected { reversed: seq.Seq, head: U32, failed: Bool }
@@ -21,7 +21,7 @@ struct Folded { values: seq.Seq, next: U32 }
 #[pure]
 pub fn empty() -> Context {
     Context { arguments: seq.empty(), bodies: seq.empty(), slots: noun.atom(0),
-        functions: as_u32(0), table: tree.shape(as_u32(0)), capacity: as_u32(0), loop_base: as_u32(0) }
+        functions: as_u32(0), table: tree.shape(as_u32(0)), capacity: as_u32(0), loop_base: as_u32(0), get_slot: signatures.NONE }
 }
 
 #[pure]

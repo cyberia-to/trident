@@ -9,22 +9,23 @@ pub const CALL_MARKER: U32 = 27
 // Internal marker: a parenthesized expression becomes a tuple at its first comma.
 pub const TUPLE_MARKER: U32 = 38
 pub const RECORD_MARKER: U32 = 42
+pub const ARRAY_MARKER: U32 = 44
 pub struct Context {
     pub types: type_registry.Scope, pub bindings: seq.Seq, pub visible: Noun, pub functions: seq.Seq, pub params: seq.Seq
 }
 pub struct Parsed {
     pub nodes: seq.Seq, pub arguments: seq.Seq, pub edges: Noun,
-    pub value: U32, pub token: syntax.Token, pub error: syntax.Error
+    pub value: U32, pub token: syntax.Token, pub error: syntax.Error, pub needs_get: Bool
 }
 pub struct State {
     // Delimiters update this list at every open/close. Keep it at the head of
     // the persistent record so nested groups do not rebuild its whole spine.
-    pub frames: Noun,
+    pub frames: Noun, pub token: syntax.Token,
     pub operators: seq.Seq, pub values: seq.Seq, pub ops: U32, pub vals: U32,
-    pub token: syntax.Token, pub operand: Bool, pub done: Bool, pub error: syntax.Error,
+    pub operand: Bool, pub done: Bool, pub error: syntax.Error,
     pub capacity: U32, pub node_cap: U32, pub nodes: seq.Seq,
     pub context: Context, pub before_block: Bool,
-    pub arguments: seq.Seq, pub edges: Noun
+    pub arguments: seq.Seq, pub edges: Noun, pub needs_get: Bool
 }
 
 #[pure]

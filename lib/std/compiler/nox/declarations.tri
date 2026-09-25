@@ -17,7 +17,7 @@ use std.compiler.nox.types
 use std.compiler.nox.tuple_declarations
 
 #[pure]
-pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
+pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32, following: syntax.Token) -> body_state.State {
     let mut s = input
     let declaration = s.token.kind == as_u32(15)
     let mut name = s.token
@@ -52,7 +52,8 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
         slot = binding.slot
         expected_type = binding.ty
         has_expected = true
-        s.token = lexer.next(source, name.end)
+        // The body dispatcher already read this assignment token.
+        s.token = following
     }
     if (s.token.kind == as_u32(18)) == false { s.error = ast.failed(s.token, 2) return s }
     if syntax.either(seq.len(s.statements) == cap, syntax.both(declaration, seq.len(s.bindings) == cap)) {
@@ -70,6 +71,7 @@ pub fn parse(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_sta
     s.nodes = rhs.nodes
     s.arguments = rhs.arguments
     s.edges = rhs.edges
+    if rhs.needs_get { s.needs_get = true }
     s.token = rhs.token
     s = body_state.append(s, blocks.statement(blocks.WRITE, slot, rhs.value, as_u32(0)), cap)
     // Initializer sees the previous binding; only now does the new slot exist.

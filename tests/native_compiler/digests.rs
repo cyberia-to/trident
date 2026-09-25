@@ -311,7 +311,7 @@ fn digest_index_nodes_and_delimiters_respect_separate_exact_capacity_limits() {
 }
 
 #[test]
-fn digest_brackets_preserve_unsupported_array_diagnostics() {
+fn array_literals_and_annotations_follow_digest_bracket_support() {
     support::worker(|| {
         for body in [
             "fn main()->Field{let a=[1,2] 0}",
@@ -321,7 +321,9 @@ fn digest_brackets_preserve_unsupported_array_diagnostics() {
         ] {
             let source = format!("program sample {body}");
             match support::compile_only(source.as_bytes(), data::caps()) {
-                support::Compilation::Errors(errors) => assert_eq!(errors[0].code, 6, "{source}"),
+                support::Compilation::Program { bytes, .. } => {
+                    assert_eq!(support::run_artifact(&bytes), 0, "{source}")
+                }
                 other => panic!("{source}: {other:?}"),
             }
         }
