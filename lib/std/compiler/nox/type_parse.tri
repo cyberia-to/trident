@@ -10,6 +10,7 @@ use std.compiler.nox.lexer
 use std.compiler.nox.ast
 use std.compiler.nox.types
 use std.compiler.nox.array_size
+use std.compiler.nox.qualified_name
 
 pub struct Parsed { pub ty: Noun, pub token: syntax.Token, pub error: syntax.Error }
 struct State {
@@ -49,7 +50,17 @@ fn step(source: bytes.Bytes, scope: type_registry.Scope, input: State, cap: U32,
         }
         if s.token.kind == as_u32(1) {
             let following = lexer.next(source, s.token.end)
-            if following.kind == as_u32(41) { s.error = syntax.error(6, s.token.start, following.end) return s }
+            if following.kind == as_u32(41) {
+                let query = qualified_name.parse(source, s.token)
+                s.error = query.error
+                if (s.error.code == syntax.ZERO) == false { return s }
+                let found = type_registry.imported(source, query, scope)
+                if found.exists == false { s.error = syntax.error(5, query.start, query.end) return s }
+                s.ty = found.ty
+                s.token = query.token
+                s.operand = false
+                return s
+            }
             let found = type_registry.lookup(scope, type_registry.name(source, s.token))
             if found.exists == false { s.error = ast.failed(s.token, 5) return s }
             s.ty = found.ty

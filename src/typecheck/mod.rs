@@ -12,6 +12,7 @@ mod expr;
 mod file;
 mod flow;
 mod imports;
+pub(crate) mod nominal_bindings;
 mod noun;
 mod privacy;
 mod resolve;

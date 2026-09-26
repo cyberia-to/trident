@@ -18,6 +18,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
     long_type = "S" + "n" * 256
     long_field = "f" * 256
     cases = [
+        ("record-duplicate-type", source("struct S{} struct S{}", "input"), value),
         ("record-empty", source("struct Empty{}", "let s=Empty{} if s==(Empty{}){input}else{nox_noun_atom(0)}"), value),
         ("record-shorthand", source("struct Pair{x:Field,y:Field}", "let x=7 let p:Pair=Pair{y:9,x,} nox_noun_atom(p.x*10+p.y)"), 79),
         ("record-typed-call", source("pub struct S{pub x:Noun} pub fn id(x:S)->S{x}", "id(S{x:input}).x"), value),
@@ -63,7 +64,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         ("record-noun-equality", source("struct S{x:Noun}", "let s=S{x:input} s==s input"), 5),
         ("record-late-signature", source("fn f(s:Later)->Later{s} struct Later{x:Field}", "input"), 5),
         ("record-recursive-type", source("struct S{x:S}", "input"), 5),
-        ("record-duplicate-type", source("struct S{} struct S{}", "input"), 5),
+        ("record-changed-type", source("struct S{} struct S{x:Field}", "input"), 5),
         ("record-duplicate-field", source("struct S{x:Field,x:Field}", "input"), 5),
         ("record-fields33", source("struct S{" + wide_fields + ",f32:Field}", "input"), 7),
     ]

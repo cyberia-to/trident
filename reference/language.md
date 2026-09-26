@@ -69,7 +69,14 @@ Two levels only:
 For a repeated struct name, the final active declaration controls whether that
 name is exported. A final private struct withdraws an earlier public export;
 an inactive declaration does not change visibility. Active declarations still
-undergo checking in source order.
+undergo checking in source order. Each defining module and struct name has one
+resolved layout: every active declaration must preserve the ordered field names,
+resolved field types and field visibility, including nested nominal layouts.
+Changing that layout is an error at the repeated declaration. The struct's own
+`pub` flag may change. Equivalent qualified type spellings and equal resolved
+array extents denote the same field type. Ordinary function signatures and struct
+fields resolve local types in source order, alongside directly imported public
+types; later local declarations do not make an earlier reference valid.
 
 No `pub(crate)`, no `friend`, no `internal`.
 

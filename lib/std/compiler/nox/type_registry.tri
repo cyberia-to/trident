@@ -7,12 +7,15 @@ use std.nox.seq
 use std.compiler.nox.syntax
 use std.compiler.nox.nominal
 use std.compiler.nox.types
+use std.compiler.nox.type_imports
+use std.compiler.nox.type_exports
+use std.compiler.nox.qualified_name
 
-pub struct Scope { pub owner: bytes.Bytes, pub records: seq.Seq }
+pub struct Scope { pub owner: bytes.Bytes, pub records: seq.Seq, pub imports: type_imports.View }
 pub struct Found { pub ty: Noun, pub exists: Bool, pub public: Bool }
 
 #[pure]
-pub fn empty() -> Scope { Scope { owner: bytes.empty(), records: seq.empty() } }
+pub fn empty() -> Scope { Scope { owner: bytes.empty(), records: seq.empty(), imports: type_imports.empty() } }
 
 // Names retain every byte; the lexer's seven-byte keyword hint is never identity.
 #[pure]
@@ -39,17 +42,28 @@ pub fn record(ty: Noun, public: Bool) -> Noun {
     noun.pair(ty, noun.atom(flag))
 }
 
+// Reverse lookup selects final local visibility without making imports bare.
 #[pure]
 #[requires((syntax.SOURCE_CAP < seq.len(scope.records)) == false)]
-pub fn lookup(scope: Scope, name: bytes.Bytes) -> Found {
-    let wanted = bytes.to_noun(name)
-    for index in 0..4096 {
-        if index == seq.len(scope.records) { return Found { ty: noun.atom(types.INVALID), exists: false, public: false } }
-        let item = seq.get(scope.records, index)
-        let ty = noun.head(item)
-        if noun.eq(nominal.name(ty), wanted) {
-            return Found { ty, exists: true, public: noun.as_field(noun.tail(item)) == 1 }
-        }
+pub fn position(scope: Scope, wanted: Noun) -> U32 {
+    let mut index = seq.len(scope.records)
+    for step in 0..4096 {
+        if index == syntax.ZERO { return syntax.SOURCE_CAP }
+        index = syntax.dec(index)
+        if noun.eq(nominal.name(noun.head(seq.get(scope.records, index))), wanted) { return index }
     }
-    Found { ty: noun.atom(types.INVALID), exists: false, public: false }
+    syntax.SOURCE_CAP
+}
+
+#[pure]
+pub fn lookup(scope: Scope, name: bytes.Bytes) -> Found {
+    let index = position(scope, bytes.to_noun(name))
+    if index == syntax.SOURCE_CAP { return Found { ty: noun.atom(types.INVALID), exists: false, public: false } }
+    let item = seq.get(scope.records, index)
+    Found { ty: noun.head(item), exists: true, public: noun.as_field(noun.tail(item)) == 1 }
+}
+
+#[pure]
+pub fn imported(source: bytes.Bytes, query: qualified_name.Name, scope: Scope) -> type_exports.Found {
+    type_imports.lookup(query, name(source, query.member), scope.imports)
 }

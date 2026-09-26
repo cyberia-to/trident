@@ -30,6 +30,12 @@ impl TIRBuilder {
             &self.cfg_flags,
             &self.constant_bindings,
         )?;
+        crate::typecheck::nominal_bindings::validate_modules(
+            &refs,
+            &scopes,
+            &resolved,
+            &self.cfg_flags,
+        )?;
         for ((module, scope), constants) in files.iter().zip(&scopes).zip(&resolved) {
             scope.validate_names(module, &refs, &self.cfg_flags, &builtins, constants)?;
         }

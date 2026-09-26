@@ -43,7 +43,7 @@ fn malformed_and_unsupported_sources_fail_with_bound_diagnostics() {
         for expression in ["1&2", "1<2"] {
             support::error(&support::source(expression), 5);
         }
-        // Qualified calls await callable imports; lexical primitives have no fields.
+        // Unknown qualified calls reject; lexical primitives have no fields.
         support::error(&support::source("convert.as_u32(7)"), 5);
         support::error(&support::source("let convert=7 convert.as_u32(7)"), 5);
         for word in [
