@@ -1,6 +1,6 @@
 # Self-hosting on soft3 — progress ledger
 
-Updated: 2026-09-25. Working contract:
+Updated: 2026-09-26. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
 This ledger is the current execution checklist. Dated assessments and receipts
 retain their original observations; they are not substituted for gate evidence.
@@ -29,8 +29,8 @@ allocation remains open, including a valid 4096-byte whitespace workload.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
 `360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
-Accepted checkout: `~/cyber/.worktrees/selfhost-0.4-module-graph/trident`.
-Next callable implementation: `~/cyber/.worktrees/selfhost-0.4-function-imports/trident`.
+Accepted nominal-layout checkout: `~/cyber/.worktrees/selfhost-0.4-nominal-bindings/trident`.
+Validated nominal-import delivery: `~/cyber/.worktrees/selfhost-0.4-type-imports/trident`.
 Dependencies use clean worktrees at the pinned receipt revisions.
 PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 
@@ -152,7 +152,10 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   final visibility and owner-specific diagnostics; [execution evidence](self-hosting/guest-function-imports.md).
 - [x] SH3 seed stable nominal layouts across repeated declarations;
   [isolated and integrated evidence](self-hosting/nominal-bindings-combined.md).
-- [ ] SH3 guest nominal types/intrinsics and complete compiler closure coverage;
+- [x] SH3 guest nominal imports: ordered public type/constructor aliases, owner-preserving
+  opaque returns and aggregate dependency signatures; [execution evidence](self-hosting/guest-type-imports.md).
+  The delivery consumes deterministic codec prerequisites in Trisha/Joy and targets `release/0.4`.
+- [ ] SH3 exact intrinsics and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
   786432-node arena; all prior successful ART1 identities are preserved.
@@ -478,3 +481,26 @@ explicitly reused with unchanged guest/runtime sources and sibling pins; those
 corpora were not rerun for this seed-only integration. Guest nominal imports,
 exact intrinsics, generated compiler profiles, compiler scale, C2/C3, six
 platforms and native Zheng remain open. Noun stays 128K.
+
+
+## Guest nominal imports — 2026-09-26
+
+Compiler source `7c1701c4c0f7a6f3862fc858ca80a794a999f96e`, acceptance harness
+`a166c8de6fb39e992a8dbc2bd6fe0466e1629ad7`, with accepted seed layout ancestry.
+[Receipt](self-hosting/guest-type-imports-validation.json): 1175 / 122 / 380
+owner tests pass, four existing Trisha tests ignored, zero warnings; 133 baseline
+rows and 43 manual baselines unchanged. The 113 formal verdicts remain UNKNOWN.
+Installed full corpus: 1198 commands / 402 observations; type imports 111 / 24,
+callable imports 149 / 32, constants 141 / 31 and graph 39 / 12.
+All prior 235 successful observations retain their 203 distinct ART1 identities;
+six formerly unsupported aggregate/type import cases now execute. Two exact-cost
+boundary cases recalibrate to measured usage and still reject one below; other
+limits remain unchanged. Repeated nominal layouts execute, changed layouts reject.
+
+A clean rebuild exposed randomized upstream codec derive output. The Trisha/Joy
+prerequisite fixes generation order at existing locked versions. Two fresh builds
+produce identical binaries; every installed corpus above was then rerun with those
+binaries, retaining source/artifact fields and exact execution costs. Old drift
+and the failing macro regression remain in the receipt. C1 and graph artifacts
+also reproduce after clean committed installation. This closes nominal imports;
+intrinsics, generated compiler profiles, whole-source scale and C2/C3 remain open.
