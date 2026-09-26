@@ -1,0 +1,248 @@
+diff --git a/lib/std/nox/bytes.tri b/lib/std/nox/bytes.tri
+index 08e60a4..f6427f9 100644
+--- a/lib/std/nox/bytes.tri
++++ b/lib/std/nox/bytes.tri
+@@ -13,7 +13,7 @@ const BYTE_LIMIT: U32 = 256
+ const INV4: Field = 13835058052060938241
+ 
+ // The root contains packed U32 words, with no embedded Seq wrapper.
+-pub struct Bytes { length: U32, root: Noun, words: U32 }
++pub struct Bytes { length: U32, root: Noun, words: U32, capacity: Field }
+ 
+ // Only validated Bytes enter this table. Its private storage cannot be replaced
+ // by untrusted Nouns between compiler stages.
+@@ -32,7 +32,7 @@ pub fn table_len(table: BytesTable) -> U32 { seq.len(table.values) }
+ #[ensures(convert.as_field(table_len(result)) == convert.as_field(table_len(table)) + 1)]
+ pub fn table_push(table: BytesTable, value: Bytes, max_length: U32) -> BytesTable {
+     assert(table_len(table) < max_length)
+-    let stored = noun.pair(noun.atom(convert.as_field(value.length)), noun.pair(value.root, noun.atom(convert.as_field(value.words))))
++    let stored = noun.pair(noun.atom(convert.as_field(value.length)), noun.pair(value.root, noun.pair(noun.atom(convert.as_field(value.words)), noun.atom(value.capacity))))
+     BytesTable { values: seq.push(table.values, stored, max_length) }
+ }
+ 
+@@ -41,12 +41,14 @@ pub fn table_push(table: BytesTable, value: Bytes, max_length: U32) -> BytesTabl
+ pub fn table_get(table: BytesTable, index: U32) -> Bytes {
+     let stored = seq.get(table.values, index)
+     let payload = noun.tail(stored)
+-    Bytes { length: convert.as_u32(noun.as_field(noun.head(stored))), root: noun.head(payload), words: convert.as_u32(noun.as_field(noun.tail(payload))) }
++    let geometry = noun.tail(payload)
++    Bytes { length: convert.as_u32(noun.as_field(noun.head(stored))), root: noun.head(payload),
++        words: convert.as_u32(noun.as_field(noun.head(geometry))), capacity: noun.as_field(noun.tail(geometry)) }
+ }
+ 
+ #[pure]
+ #[ensures(len(result) == ZERO)]
+-pub fn empty() -> Bytes { Bytes { length: ZERO, root: noun.atom(0), words: ZERO } }
++pub fn empty() -> Bytes { Bytes { length: ZERO, root: noun.atom(0), words: ZERO, capacity: 1 } }
+ 
+ #[pure]
+ #[ensures(result == b.length)]
+@@ -84,7 +86,7 @@ fn inverse_scale(position: U32) -> Field {
+ #[ensures(result < BYTE_LIMIT)]
+ pub fn get(b: Bytes, index: U32) -> U32 {
+     assert(index < b.length)
+-    let word = convert.as_u32(noun.as_field(tree.get(b.root, b.words, quotient(index))))
++    let word = convert.as_u32(noun.as_field(tree.get_with_capacity(b.root, b.words, quotient(index), b.capacity)))
+     let position = index & THREE
+     let mask = convert.as_u32(255 * scale(position))
+     convert.as_u32(convert.as_field(word & mask) * inverse_scale(position))
+@@ -100,11 +102,11 @@ pub fn set(b: Bytes, index: U32, value: U32) -> Bytes {
+     assert(value < BYTE_LIMIT)
+     let words = b.words
+     let at = quotient(index)
+-    let word = convert.as_u32(noun.as_field(tree.get(b.root, words, at)))
++    let word = convert.as_u32(noun.as_field(tree.get_with_capacity(b.root, words, at, b.capacity)))
+     let factor = scale(index & THREE)
+     let mask = convert.as_u32(255 * factor)
+     let next = field.sub(convert.as_field(word), convert.as_field(word & mask)) + convert.as_field(value) * factor
+-    Bytes { length: b.length, root: tree.set(b.root, words, at, noun.atom(next)), words }
++    Bytes { length: b.length, root: tree.set(b.root, words, at, noun.atom(next)), words, capacity: b.capacity }
+ }
+ 
+ #[pure]
+@@ -117,10 +119,11 @@ pub fn push(b: Bytes, value: U32, max_length: U32) -> Bytes {
+     let length = convert.as_u32(convert.as_field(b.length) + 1)
+     if (b.length & THREE) == ZERO {
+         let root = tree.push(b.root, b.words, noun.atom(convert.as_field(value)), word_count(max_length))
+-        return Bytes { length, root, words: convert.as_u32(convert.as_field(b.words) + 1) }
++        let words = convert.as_u32(convert.as_field(b.words) + 1)
++        return Bytes { length, root, words, capacity: tree.shape(words).capacity }
+     }
+     // Existing high bytes are zero; exposing the next one preserves validity.
+-    set(Bytes { length, root: b.root, words: b.words }, b.length, value)
++    set(Bytes { length, root: b.root, words: b.words, capacity: b.capacity }, b.length, value)
+ }
+ 
+ #[pure]
+@@ -131,14 +134,14 @@ pub fn to_noun(b: Bytes) -> Noun {
+ 
+ // Payload reads share the shape validator's allowance and charge before get.
+ #[pure]
+-fn validate_words_chunk(root: Noun, length: U32, words: U32, start: U32, visits: U32, cost: U32) -> (U32, U32) {
++fn validate_words_chunk(root: Noun, length: U32, words: U32, start: U32, visits: U32, cost: U32, capacity: Field) -> (U32, U32) {
+     let mut index = start
+     let mut remaining = visits
+     for step in 0..128 {
+         if index == words { return (index, remaining) }
+         assert((remaining < cost) == false)
+         remaining = convert.as_u32(field.sub(convert.as_field(remaining), convert.as_field(cost)))
+-        let word = convert.as_u32(noun.as_field(tree.get(root, words, index)))
++        let word = convert.as_u32(noun.as_field(tree.get_with_capacity(root, words, index, capacity)))
+         index = convert.as_u32(convert.as_field(index) + 1)
+         if index == words {
+             let used = length & THREE
+@@ -174,8 +177,8 @@ pub fn from_noun_budget(value: Noun, max_length: U32, max_visits: U32) -> (Bytes
+     let mut index = ZERO
+     // At most 2^30 packed words; chunks release the evaluator's loop frames.
+     for chunk in 0..8388608 {
+-        (index, remaining) = validate_words_chunk(root, length, words, index, remaining, cost)
+-        if index == words { return (Bytes { length, root, words }, remaining) }
++        (index, remaining) = validate_words_chunk(root, length, words, index, remaining, cost, geometry.capacity)
++        if index == words { return (Bytes { length, root, words, capacity: geometry.capacity }, remaining) }
+     }
+     assert_eq(0, 1)
+     (empty(), ZERO)
+diff --git a/lib/std/nox/tree.tri b/lib/std/nox/tree.tri
+index 24c53b6..03eaf4a 100644
+--- a/lib/std/nox/tree.tri
++++ b/lib/std/nox/tree.tri
+@@ -55,11 +55,22 @@ pub fn shape(length: U32) -> Shape {
+ #[pure]
+ #[requires(index < length)]
+ pub fn get(root: Noun, length: U32, index: U32) -> Noun {
++    assert(index < length)
++    if length == convert.as_u32(1) { return root }
++    get_with_capacity(root, length, index, shape(length).capacity)
++}
++
++// Validated handles can retain this geometry instead of deriving it per read.
++// The raw-tree contract still requires the canonical shape for length.
++#[pure]
++#[requires(index < length)]
++#[requires(capacity == shape(length).capacity)]
++pub fn get_with_capacity(root: Noun, length: U32, index: U32, capacity: Field) -> Noun {
+     assert(index < length)
+     if length == convert.as_u32(1) { return root }
+     let mut cursor = root
+     let mut offset = index
+-    let mut capacity = shape(length).capacity
++    let mut capacity = capacity
+     for level in 0..32 {
+         // Resolve the final two levels without allocating their continuation.
+         // Both low bits select branches; the returned leaf stays opaque.
+diff --git a/reference/self-hosting-data.md b/reference/self-hosting-data.md
+index 3c1215c..ec6a705 100644
+--- a/reference/self-hosting-data.md
++++ b/reference/self-hosting-data.md
+@@ -186,6 +186,10 @@ consume and produce raw Nouns; they cannot construct a validated Seq/Bytes
+ handle. Seq and Bytes retain separate private constructors and field owners.
+ Raw `get`, `set` and `push` require an existing canonical tree for their supplied
+ length. Untrusted roots must pass `validate` before those operations.
++`get_with_capacity(root, length, index, capacity)` also requires the canonical
++capacity `shape(length).capacity`. It checks the index against length and uses
++the supplied capacity without deriving it again. This raw helper cannot create
++a validated handle; callers retain responsibility for its shape precondition.
+ Shape validation returns the remaining visit allowance so Bytes can charge its
+ word scan against the same budget. The traversal uses a Noun work stack and
+ bounded helper chunks: returning from each chunk releases its evaluator frames.
+@@ -210,11 +214,13 @@ it, `table_len(table)` returns its length, `table_push(table, value: Bytes,
+ max_len: U32)` appends within an explicit cap, and `table_get(table, index: U32)`
+ returns the stored `Bytes` after checking the index. Old table and byte values
+ remain unchanged by later appends or byte updates. Each entry stores the private
+-length/root representation and a derived packed-word count inside the owning
+-library. The private count equals ceil(length / 4), is derived by trusted
+-constructors and preserved by set/table snapshots. External decoding initializes
+-it only after validation; push updates it
+-only when crossing a packed-word boundary. BYT1 serialization and admission
++length/root representation, derived packed-word count and canonical tree capacity
++inside the owning library. The private count equals ceil(length / 4), and the
++private Field capacity equals `shape(word_count).capacity`, including capacity
++one for empty bytes. Trusted constructors derive both values; set and table
++snapshots preserve them. External decoding initializes them only after
++validation; push updates them only when crossing a packed-word boundary.
++Reads use the retained capacity. BYT1 serialization and admission
+ visit charges stay unchanged. Callers cannot construct,
+ project or mutate its backing sequence. There is no raw-Noun table constructor or
+ serialization API. External bytes still cross `from_noun_budget` exactly once;
+diff --git a/tests/native_collections.rs b/tests/native_collections.rs
+index eb6f4a2..3eb9a98 100644
+--- a/tests/native_collections.rs
++++ b/tests/native_collections.rs
+@@ -165,7 +165,7 @@ fn byte_word_arithmetic_handles_the_last_u32_index() {
+             "program byte_boundary",
+             1,
+         );
+-        let source = format!("{source}\nfn main(input:Noun)->Noun {{ let b=Bytes {{ length:as_u32(4294967295),root:input,words:as_u32(1073741824) }}\nlet changed=set(b,as_u32(4294967294),as_u32(255))\nassert_eq(convert.as_field(get(changed,as_u32(4294967294))),255)\nassert_eq(convert.as_field(get(changed,as_u32(4294967293))),0)\nassert_eq(convert.as_field(get(b,as_u32(4294967294))),0)\nto_noun(changed) }}");
++        let source = format!("{source}\nfn main(input:Noun)->Noun {{ let b=Bytes {{ length:as_u32(4294967295),root:input,words:as_u32(1073741824),capacity:1073741824 }}\nlet changed=set(b,as_u32(4294967294),as_u32(255))\nassert_eq(convert.as_field(get(changed,as_u32(4294967294))),255)\nassert_eq(convert.as_field(get(changed,as_u32(4294967293))),0)\nassert_eq(convert.as_field(get(b,as_u32(4294967294))),0)\nto_noun(changed) }}");
+         let program = compile_source(&source);
+         let mut ar = Arena::new();
+         let input = empty_tree(&mut ar, 30);
+@@ -188,7 +188,7 @@ fn sparse_bytes_append_to_the_last_u32_length_without_word_count_overflow() {
+             "program byte_growth",
+             1,
+         );
+-        let body = "let b=Bytes{length:as_u32(4294967292),root:input,words:as_u32(1073741823)}
++        let body = "let b=Bytes{length:as_u32(4294967292),root:input,words:as_u32(1073741823),capacity:1073741824}
+             let a=push(b,as_u32(11),as_u32(4294967295))
+             let c=push(a,as_u32(22),as_u32(4294967295))
+             let d=push(c,as_u32(33),as_u32(4294967295))
+@@ -228,11 +228,16 @@ fn only_the_library_can_construct_validated_collection_handles() {
+             "is private",
+         ),
+         (
+-            "bytes.to_noun(bytes.Bytes { length:as_u32(0),root:input,words:as_u32(0) })",
++            "bytes.to_noun(bytes.Bytes { length:as_u32(0),root:input,words:as_u32(0),capacity:1 })",
+             "is private",
+         ),
+         ("seq.empty().root", "is private"),
+         ("noun.atom(as_field(bytes.empty().words))", "is private"),
++        ("noun.atom(bytes.empty().capacity)", "is private"),
++        (
++            "let mut b=bytes.empty() b.capacity=8 bytes.to_noun(b)",
++            "is private",
++        ),
+         (
+             "let mut b=bytes.empty() b.words=as_u32(9) bytes.to_noun(b)",
+             "is private",
+diff --git a/tests/native_collections/indexed_reads.rs b/tests/native_collections/indexed_reads.rs
+index 202520f..81b3ddb 100644
+--- a/tests/native_collections/indexed_reads.rs
++++ b/tests/native_collections/indexed_reads.rs
+@@ -5,6 +5,7 @@ use std::collections::BTreeSet;
+ fn indexed_reads_preserve_pair_leaves_at_every_u32_height_and_reject_the_end() {
+     support::worker(|| {
+         let program = compile("let args=noun.tail(input) tree.get(noun.head(input),as_u32(noun.as_field(noun.head(args))),as_u32(noun.as_field(noun.tail(args))))");
++        let cached = compile("let args=noun.tail(input) let position=noun.tail(args) tree.get_with_capacity(noun.head(input),as_u32(noun.as_field(noun.head(args))),as_u32(noun.as_field(noun.head(position))),noun.as_field(noun.tail(position)))");
+         let mut lengths: BTreeSet<u32> = (1..=9).collect();
+         for bit in 1..32 {
+             let power = 1u32 << bit;
+@@ -45,6 +46,14 @@ fn indexed_reads_preserve_pair_leaves_at_every_u32_height_and_reject_the_end() {
+                 let actual = run(&mut arena, &program, input)
+                     .unwrap_or_else(|error| panic!("length={length}, index={index}: {error}"));
+                 equal(&arena, actual, expected);
++                let capacity = atom(&mut arena, 1u64 << height).unwrap();
++                let position = pair(&mut arena, at, capacity).unwrap();
++                let args = pair(&mut arena, count, position).unwrap();
++                let cached_input = pair(&mut arena, root, args).unwrap();
++                let actual = run(&mut arena, &cached, cached_input).unwrap_or_else(|error| {
++                    panic!("cached length={length}, index={index}: {error}")
++                });
++                equal(&arena, actual, expected);
+             }
+             let mut arena = Arena::new();
+             let root = empty_tree(&mut arena, height as usize);
+@@ -52,6 +61,14 @@ fn indexed_reads_preserve_pair_leaves_at_every_u32_height_and_reject_the_end() {
+             let args = pair(&mut arena, count, count).unwrap();
+             let input = pair(&mut arena, root, args).unwrap();
+             assert!(run(&mut arena, &program, input).is_err(), "length={length}");
++            let capacity = atom(&mut arena, 1u64 << height).unwrap();
++            let position = pair(&mut arena, count, capacity).unwrap();
++            let args = pair(&mut arena, count, position).unwrap();
++            let cached_input = pair(&mut arena, root, args).unwrap();
++            assert!(
++                run(&mut arena, &cached, cached_input).is_err(),
++                "cached length={length}"
++            );
+         }
+     });
+ }
