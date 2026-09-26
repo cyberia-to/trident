@@ -1,0 +1,466 @@
+{
+  "binary_sha256": "3614adbb3ea1e45869b6b0843a6ea8809503d4e61bbbe372b4fa39ed66e5ef66",
+  "compiler": {
+    "sha256": "f39413a1c5abc217bd3f926fa8b6d6546c243678e7381c947dc7ebc74c044b04",
+    "particle": "bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b",
+    "dag_entries": 90563
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "build",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/trident/compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "pack-job",
+        "--manifest",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/package.json",
+        "--compiler",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/job.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"3272942b71fa0093a6cc345c13d108a05ae98812acaa30dfe6c47f2be717c1e8\",\"limits\":{\"arena_nodes\":786432,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":100000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"dep\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"30bd7963268bca48c88e3d3965f594dab470d574b003acebc96770c61f3d5206\",\"source_bytes\":45,\"source_particle\":\"9035dfb44c911859224d82249564dabc693655c7a5a1dc055f947534df3c5bd0\"},{\"logical_path\":\"sample\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf\",\"source_bytes\":42,\"source_particle\":\"1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03\"}],\"options\":{\"cfg_flags\":[\"explicit\"],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"52d3ece418fb79c5e9f8cda5fb2680d6421df4d3bf6fd910f1ca19a5a7929758\",\"validation_visits\":285},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/program.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/program.dag\",\"execution\":{\"allocated_nodes\":122047,\"arena_reserved_bytes\":104857616,\"charged_reductions\":1091442,\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":6,\"end_byte\":27,\"message\":\"unsupported construct\",\"module_index\":0,\"start_byte\":23}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":285,\"limits\":{\"arena_nodes\":786432,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":100000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"dep\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"30bd7963268bca48c88e3d3965f594dab470d574b003acebc96770c61f3d5206\",\"source_bytes\":45,\"source_particle\":\"9035dfb44c911859224d82249564dabc693655c7a5a1dc055f947534df3c5bd0\"},{\"logical_path\":\"sample\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf\",\"source_bytes\":42,\"source_particle\":\"1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03\"}],\"options\":{\"cfg_flags\":[\"explicit\"],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":65,\"package_particle\":\"52d3ece418fb79c5e9f8cda5fb2680d6421df4d3bf6fd910f1ca19a5a7929758\",\"status\":\"compile_error\"},\"elapsed_micros\":1721486,\"frame_buffer_bytes\":11534336,\"input_particle\":\"3272942b71fa0093a6cc345c13d108a05ae98812acaa30dfe6c47f2be717c1e8\",\"output_particle\":\"412e125dd118e9f71414e3d1d1833d19848b83c37aa9831c096608535272c752\",\"peak_frames\":639,\"program_particle\":\"bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"412e125dd118e9f71414e3d1d1833d19848b83c37aa9831c096608535272c752\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/protected.dag",
+        "--force",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code6 module0 [23..27): unsupported construct\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "pack-job",
+        "--manifest",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/package.json",
+        "--compiler",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/job.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"b8001416eb049004ed212ed2f6162ae51f7f6ab922ef1f09defd770038e7ebbc\",\"limits\":{\"arena_nodes\":786432,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":100000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"dep\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"dde77f9ef69c588a6829f2b23a0c2797e3ecc1e72da4fd0e41397a2f3514edf2\",\"source_bytes\":66,\"source_particle\":\"23cf927f870e571e9a8c5904fcd73426fdf3337e4557e2a358944e45afd9f71e\"},{\"logical_path\":\"sample\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf\",\"source_bytes\":42,\"source_particle\":\"1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03\"}],\"options\":{\"cfg_flags\":[\"explicit\"],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"07163f0e82f31e9e4871e0f8da71e5b0b37d16cf6a6c29aec75896dfce8e5041\",\"validation_visits\":301},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/program.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/program.dag\",\"execution\":{\"allocated_nodes\":125872,\"arena_reserved_bytes\":104857616,\"charged_reductions\":1236646,\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":6,\"end_byte\":29,\"message\":\"unsupported construct\",\"module_index\":0,\"start_byte\":23}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":301,\"limits\":{\"arena_nodes\":786432,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":100000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"dep\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"dde77f9ef69c588a6829f2b23a0c2797e3ecc1e72da4fd0e41397a2f3514edf2\",\"source_bytes\":66,\"source_particle\":\"23cf927f870e571e9a8c5904fcd73426fdf3337e4557e2a358944e45afd9f71e\"},{\"logical_path\":\"sample\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf\",\"source_bytes\":42,\"source_particle\":\"1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03\"}],\"options\":{\"cfg_flags\":[\"explicit\"],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":65,\"package_particle\":\"07163f0e82f31e9e4871e0f8da71e5b0b37d16cf6a6c29aec75896dfce8e5041\",\"status\":\"compile_error\"},\"elapsed_micros\":1816083,\"frame_buffer_bytes\":11534336,\"input_particle\":\"b8001416eb049004ed212ed2f6162ae51f7f6ab922ef1f09defd770038e7ebbc\",\"output_particle\":\"0306125779d6e103e977771a447c80780439b3f9ee79504751d4d485409b8d2b\",\"peak_frames\":804,\"program_particle\":\"bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"0306125779d6e103e977771a447c80780439b3f9ee79504751d4d485409b8d2b\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-function-imports/install/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/compiler.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/protected.dag",
+        "--force",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code6 module0 [23..29): unsupported construct\n"
+    }
+  ],
+  "observations": [
+    {
+      "case": "noun-return",
+      "sources": {
+        "dep": "6d6f64756c65206465702070756220666e206628292d3e4e6f756e7b6e6f785f6e6f756e5f61746f6d2830297d",
+        "sample": "70726f6772616d2073616d706c65207573652064657020666e206d61696e28292d3e4669656c647b377d"
+      },
+      "admission": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "3272942b71fa0093a6cc345c13d108a05ae98812acaa30dfe6c47f2be717c1e8",
+          "limits": {
+            "arena_nodes": 786432,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 100000000,
+            "sequence_length": 4096,
+            "source_bytes": 4096,
+            "validation_visits": 1000000
+          },
+          "modules": [
+            {
+              "logical_path": "dep",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "30bd7963268bca48c88e3d3965f594dab470d574b003acebc96770c61f3d5206",
+              "source_bytes": 45,
+              "source_particle": "9035dfb44c911859224d82249564dabc693655c7a5a1dc055f947534df3c5bd0"
+            },
+            {
+              "logical_path": "sample",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf",
+              "source_bytes": 42,
+              "source_particle": "1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03"
+            }
+          ],
+          "options": {
+            "cfg_flags": [
+              "explicit"
+            ],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "52d3ece418fb79c5e9f8cda5fb2680d6421df4d3bf6fd910f1ca19a5a7929758",
+          "validation_visits": 285
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "compiler_execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/noun-return/program.dag",
+        "execution": {
+          "allocated_nodes": 122047,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 1091442,
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 6,
+                "end_byte": 27,
+                "message": "unsupported construct",
+                "module_index": 0,
+                "start_byte": 23
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 285,
+            "limits": {
+              "arena_nodes": 786432,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 100000000,
+              "sequence_length": 4096,
+              "source_bytes": 4096,
+              "validation_visits": 1000000
+            },
+            "modules": [
+              {
+                "logical_path": "dep",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "30bd7963268bca48c88e3d3965f594dab470d574b003acebc96770c61f3d5206",
+                "source_bytes": 45,
+                "source_particle": "9035dfb44c911859224d82249564dabc693655c7a5a1dc055f947534df3c5bd0"
+              },
+              {
+                "logical_path": "sample",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf",
+                "source_bytes": 42,
+                "source_particle": "1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03"
+              }
+            ],
+            "options": {
+              "cfg_flags": [
+                "explicit"
+              ],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 65,
+            "package_particle": "52d3ece418fb79c5e9f8cda5fb2680d6421df4d3bf6fd910f1ca19a5a7929758",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 1721486,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "3272942b71fa0093a6cc345c13d108a05ae98812acaa30dfe6c47f2be717c1e8",
+          "output_particle": "412e125dd118e9f71414e3d1d1833d19848b83c37aa9831c096608535272c752",
+          "peak_frames": 639,
+          "program_particle": "bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "412e125dd118e9f71414e3d1d1833d19848b83c37aa9831c096608535272c752",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 6,
+          "end_byte": 27,
+          "message": "unsupported construct",
+          "module_index": 0,
+          "start_byte": 23
+        }
+      ],
+      "previous_output_preserved": true
+    },
+    {
+      "case": "digest-return",
+      "sources": {
+        "dep": "6d6f64756c65206465702070756220666e206628292d3e4469676573747b6e6f785f6e6f756e5f6964656e74697479286e6f785f6e6f756e5f61746f6d283029297d",
+        "sample": "70726f6772616d2073616d706c65207573652064657020666e206d61696e28292d3e4669656c647b377d"
+      },
+      "admission": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "b8001416eb049004ed212ed2f6162ae51f7f6ab922ef1f09defd770038e7ebbc",
+          "limits": {
+            "arena_nodes": 786432,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 100000000,
+            "sequence_length": 4096,
+            "source_bytes": 4096,
+            "validation_visits": 1000000
+          },
+          "modules": [
+            {
+              "logical_path": "dep",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "dde77f9ef69c588a6829f2b23a0c2797e3ecc1e72da4fd0e41397a2f3514edf2",
+              "source_bytes": 66,
+              "source_particle": "23cf927f870e571e9a8c5904fcd73426fdf3337e4557e2a358944e45afd9f71e"
+            },
+            {
+              "logical_path": "sample",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf",
+              "source_bytes": 42,
+              "source_particle": "1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03"
+            }
+          ],
+          "options": {
+            "cfg_flags": [
+              "explicit"
+            ],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "07163f0e82f31e9e4871e0f8da71e5b0b37d16cf6a6c29aec75896dfce8e5041",
+          "validation_visits": 301
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "compiler_execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-v7si4mwz/digest-return/program.dag",
+        "execution": {
+          "allocated_nodes": 125872,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 1236646,
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 6,
+                "end_byte": 29,
+                "message": "unsupported construct",
+                "module_index": 0,
+                "start_byte": 23
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 301,
+            "limits": {
+              "arena_nodes": 786432,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 100000000,
+              "sequence_length": 4096,
+              "source_bytes": 4096,
+              "validation_visits": 1000000
+            },
+            "modules": [
+              {
+                "logical_path": "dep",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "dde77f9ef69c588a6829f2b23a0c2797e3ecc1e72da4fd0e41397a2f3514edf2",
+                "source_bytes": 66,
+                "source_particle": "23cf927f870e571e9a8c5904fcd73426fdf3337e4557e2a358944e45afd9f71e"
+              },
+              {
+                "logical_path": "sample",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "77b1d008656e22acc010d2086751aef1a763b17ea2de64e8119963284a7043cf",
+                "source_bytes": 42,
+                "source_particle": "1ea0c514b984b82e7f73e1f9ea8f7fc482317acd9ebdc7ae49f48bdf9b600e03"
+              }
+            ],
+            "options": {
+              "cfg_flags": [
+                "explicit"
+              ],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 65,
+            "package_particle": "07163f0e82f31e9e4871e0f8da71e5b0b37d16cf6a6c29aec75896dfce8e5041",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 1816083,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "b8001416eb049004ed212ed2f6162ae51f7f6ab922ef1f09defd770038e7ebbc",
+          "output_particle": "0306125779d6e103e977771a447c80780439b3f9ee79504751d4d485409b8d2b",
+          "peak_frames": 804,
+          "program_particle": "bd8f33dfa9301d3190c676e7840d34e03dc9dfd795c2b92102584f545dad9b4b",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "0306125779d6e103e977771a447c80780439b3f9ee79504751d4d485409b8d2b",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 6,
+          "end_byte": 29,
+          "message": "unsupported construct",
+          "module_index": 0,
+          "start_byte": 23
+        }
+      ],
+      "previous_output_preserved": true
+    }
+  ]
+}
