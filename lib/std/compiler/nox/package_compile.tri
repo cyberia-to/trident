@@ -24,6 +24,19 @@ fn failed(index: U32, error: syntax.Error) -> Compiled {
     Compiled { formula: noun.atom(0), index, error }
 }
 
+// JOB1 admission fixes strict ASCII module-path order. Discovery retains each
+// package index, so these ranks compare owners without rereading source bytes.
+#[pure]
+fn owner_ranks(modules: seq.Seq, cap: U32) -> seq.Seq {
+    let mut ranks = seq.empty()
+    for owner in 0..4096 {
+        if owner == seq.len(modules) { return ranks }
+        let index = module_store.read(modules, owner).index
+        ranks = seq.push(ranks, noun.atom(as_field(index)), cap)
+    }
+    ranks
+}
+
 #[pure]
 pub fn compile(view: job.View) -> Compiled {
     let header = module_graph.entry_header(view)
@@ -43,8 +56,8 @@ pub fn compile(view: job.View) -> Compiled {
     for position in 0..4096 {
         if position == seq.len(ordered.modules) {
             if bank.entry == signatures.NONE { return failed(view.index, syntax.error(3, syntax.ZERO, syntax.ZERO)) }
-            let sorted = module_function_order.sort(bank.functions, bank.owners,
-                graph.names, graph.sources, bank.roots, graph.capacity)
+            let sorted = module_function_order.sort_ranked(bank.functions, bank.owners,
+                graph.names, graph.sources, bank.roots, owner_ranks(graph.modules, graph.capacity), graph.capacity)
             let plan = intrinsic_plan.check(function_plan.ordered(bank.functions, bank.bodies, sorted, bank.entry, graph.capacity), bank.bodies, bank.intrinsics, graph.capacity)
             if (plan.error.code == syntax.ZERO) == false {
                 let mut index = view.index

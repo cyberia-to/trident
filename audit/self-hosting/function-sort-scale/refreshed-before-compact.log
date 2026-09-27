@@ -1,0 +1,22 @@
+    Finished `release` profile [optimized] target(s) in 0.11s
+     Running tests/native_function_sort.rs (../target-pipeline-review/release/deps/native_function_sort-a547a15cc1ca9759)
+
+running 1 test
+test native_module_sort_handles_real_compiler_declaration_names has been running for over 60 seconds
+
+thread '<unnamed>' (15501221) panicked at tests/native_function_sort.rs:210:18:
+compact-name-declarations: Halt(54); nodes=12076930; frames=3004
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'native_module_sort_handles_real_compiler_declaration_names' (15501220) panicked at tests/native_control/support.rs:13:10:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+test native_module_sort_handles_real_compiler_declaration_names ... FAILED
+
+failures:
+
+failures:
+    native_module_sort_handles_real_compiler_declaration_names
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 469.82s
+
+error: test failed, to rerun pass `--test native_function_sort`

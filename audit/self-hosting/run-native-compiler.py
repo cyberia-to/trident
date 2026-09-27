@@ -15,38 +15,7 @@ import native_array_cases
 import native_constant_cases
 import native_assertion_cases
 import native_attribute_cases
-
-P = 18446744069414584321
-
-
-def decode(path):
-    """Small independent reader for the already admitted canonical output DAG."""
-    data = path.read_bytes()
-    assert data[:8] == b"NOXDAG01"
-    root, count, cursor, nodes = data[8:40], int.from_bytes(data[40:44], "little"), 44, {}
-    for _ in range(count):
-        particle = data[cursor:cursor + 32]
-        width = data[cursor + 32]
-        cursor += 33
-        payload = data[cursor:cursor + width]
-        cursor += width
-        assert particle not in nodes
-        if width == 8:
-            value = int.from_bytes(payload, "little")
-            assert value < P
-        else:
-            assert width == 64
-            value = (nodes[payload[:32]], nodes[payload[32:]])
-        nodes[particle] = value
-    assert cursor == len(data) and particle == root
-    return nodes[root]
-
-
-def record(tag, *fields):
-    body = 0
-    for value in reversed(fields):
-        body = (value, body)
-    return tag, body
+from native_compiler_artifact import decode, record
 
 
 def collection_visits(length, packed=False):
@@ -65,23 +34,58 @@ def collection_visits(length, packed=False):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--joy", type=Path, required=True)
+    parser.add_argument("--compiler", type=Path,
+                        help="use this compiler-profile ART1 unchanged; never build a compiler")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--time-ms", type=int, default=30000,
                         help="explicit host deadline per compiler job; deterministic work limits stay fixed")
     args = parser.parse_args()
     binary = args.joy.resolve()
+    supplied_compiler = args.compiler.resolve() if args.compiler is not None else None
+    if supplied_compiler is not None and not supplied_compiler.is_file():
+        parser.error("--compiler must name an existing ART1 file")
+    for option, protected in [("--joy", binary), ("--compiler", supplied_compiler)]:
+        if protected is not None and (args.output.resolve() == protected or
+                (args.output.exists() and protected.exists() and args.output.samefile(protected))):
+            parser.error(f"--output must not replace {option}")
+    if args.output.exists() or args.output.is_symlink():
+        parser.error("choose a new receipt path; existing evidence is preserved")
     binary_sha = hashlib.sha256(binary.read_bytes()).hexdigest()
     repo = Path(__file__).resolve().parents[2]
     commands, observations = [], []
     compiler_sha, compiler_particle = None, None
+    compiler = supplied_compiler
+    compiler_mode = "provided" if supplied_compiler is not None else "seed-build"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     accepted = json.loads((repo / "audit/self-hosting/native-control-cli.json").read_text())
     prior_cases = {item["case"]: item for item in accepted["observations"] if "case" in item and "expected" in item}
     host = ["--budget", "100000000", "--frames", "65536", "--time-ms", str(args.time_ms)]
+
+    def current_compiler_sha():
+        return (hashlib.sha256(compiler.read_bytes()).hexdigest()
+                if compiler is not None and compiler.is_file() else None)
+
+    def receipt(status, **extra):
+        args.output.write_text(json.dumps({
+            "schema": "trident/native-compiler-cli/v1", "kind": "local-development",
+            "status": status, "binary_sha256": binary_sha,
+            "compiler_mode": compiler_mode, "compiler_path": str(compiler) if compiler else None,
+            "compiler_sha256": compiler_sha, "compiler_sha256_start": compiler_sha,
+            "compiler_sha256_end": current_compiler_sha(),
+            "compiler_particle": compiler_particle, "commands": commands,
+            "observations": observations, "compiler_host_time_ms": args.time_ms,
+            **extra,
+        }, indent=2) + "\n")
+
     with tempfile.TemporaryDirectory(prefix="trident-sh2-") as temporary:
         root = Path(temporary)
 
         def run(arguments, expected=0):
+            if supplied_compiler is not None:
+                assert arguments[0] != "build", "provided-compiler mode cannot build source"
+            if compiler_sha is not None and current_compiler_sha() != compiler_sha:
+                receipt("compiler_changed")
+                raise AssertionError("compiler changed before command")
             command = [str(binary), *map(str, arguments)]
             result = subprocess.run(command, capture_output=True, text=True, check=False)
             row = {"command": command, "exit_code": result.returncode,
@@ -89,22 +93,22 @@ def main():
             commands.append(row)
             # Preserve completed commands even when the next assertion fails.
             # Only the final receipt below marks the whole corpus as passed.
-            args.output.write_text(json.dumps({
-                "schema": "trident/native-compiler-cli/v1", "kind": "local-development",
-                "status": "running" if result.returncode == expected else "command_failed",
-                "binary_sha256": binary_sha, "compiler_sha256": compiler_sha,
-                "compiler_particle": compiler_particle, "commands": commands,
-                "observations": observations, "compiler_host_time_ms": args.time_ms,
-            }, indent=2) + "\n")
+            if compiler_sha is not None and current_compiler_sha() != compiler_sha:
+                receipt("compiler_changed")
+                raise AssertionError("compiler changed during command")
+            receipt("running" if result.returncode == expected else "command_failed")
             assert result.returncode == expected, row
             return json.loads(result.stdout) if result.stdout.startswith("{") else None
 
-        # The only source build in this runner. All case files are created later.
-        compiler = root / "compiler.dag"
-        run(["build", repo / "compiler/nox/main.tri", "--emit", "artifact",
-             "--artifact-profile", "compiler-job", "-o", compiler])
-        compiler_sha = hashlib.sha256(compiler.read_bytes()).hexdigest()
-        compiler_particle = compiler.read_bytes()[8:40].hex()
+        if supplied_compiler is None:
+            # The only source build. Provided-compiler mode cannot enter here.
+            compiler = root / "compiler.dag"
+            run(["build", repo / "compiler/nox/main.tri", "--emit", "artifact",
+                 "--artifact-profile", "compiler-job", "-o", compiler])
+        compiler_bytes = compiler.read_bytes()
+        compiler_sha = hashlib.sha256(compiler_bytes).hexdigest()
+        compiler_particle = compiler_bytes[8:40].hex()
+        receipt("running")
         vectors = json.loads((repo.parent / "joy/cli/tests/compiler_vectors.json").read_text())
         zero = root / "zero.dag"
         zero.write_bytes(bytes.fromhex(vectors["files"]["zero"]))
@@ -128,13 +132,19 @@ def main():
             job = directory / "job.dag"
             arena = 786432 if manifest["limits"]["arena_nodes"] > 196608 else 196608
             job_hosts[job] = arena
-            run(["pack-job", "--compiler", compiler, "--manifest", directory / "package.json", "-o", job,
-                 *host, "--arena-nodes", arena])
+            # Joy admits the canonical ART1 and requires compiler profile(1,1).
+            # Its JOB1 binding must identify the same supplied/built compiler.
+            packed = run(["pack-job", "--compiler", compiler, "--manifest", directory / "package.json", "-o", job,
+                          *host, "--arena-nodes", arena])
+            assert packed["package"]["compiler_particle"] == compiler_particle, "packed JOB1 compiler identity"
             return directory, job
 
         def execute(job, output, emit="program", expected=0, force=False):
-            return run(["run-artifact", compiler, "--input", job, "--emit", emit, "-o", output,
-                        *host, "--arena-nodes", job_hosts[job], *(["--force"] if force else [])], expected)
+            result = run(["run-artifact", compiler, "--input", job, "--emit", emit, "-o", output,
+                          *host, "--arena-nodes", job_hosts[job], *(["--force"] if force else [])], expected)
+            if result is not None:
+                assert result["execution"]["program_particle"] == compiler_particle, "executed compiler identity"
+            return result
 
         def source(expression):
             return f"program sample fn main() -> Field {{ {expression} }}".encode()
@@ -459,16 +469,10 @@ def main():
         assert protected.read_bytes() == prior_program
         observations.append({"case": "calls64-arena", "result": "runtime failure; no program publication",
                              "compiler_execution": failure, "previous_program_preserved": True})
-        assert hashlib.sha256(compiler.read_bytes()).hexdigest() == compiler_sha
-
-    # A rebuild during this long corpus would mix distinct installed inputs.
-    assert hashlib.sha256(binary.read_bytes()).hexdigest() == binary_sha, "installed Joy changed during acceptance"
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development", "status": "passed",
-        "binary_sha256": binary_sha, "compiler_sha256": compiler_sha,
-        "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
-        "compiler_host_time_ms": args.time_ms,
-        "scope": "SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun, Digest, tuple, nominal and fixed Field-array values with typed constants and resolved assertions; complete compiler/self-build and native execution proofs remain open"}, indent=2) + "\n")
+        assert current_compiler_sha() == compiler_sha, "compiler changed during acceptance"
+        # A rebuild during this long corpus would mix distinct installed inputs.
+        assert hashlib.sha256(binary.read_bytes()).hexdigest() == binary_sha, "installed Joy changed during acceptance"
+        receipt("passed", scope="SH2 arithmetic and SH3 locals, scoped control, reusable functions, checked U32 scalar operations reusable literal-range loops and structured Noun, Digest, tuple, nominal and fixed Field-array values with typed constants and resolved assertions; complete compiler/self-build and native execution proofs remain open")
     print(json.dumps({"commands": len(commands), "observations": len(observations), "receipt": str(args.output)}))
 
 

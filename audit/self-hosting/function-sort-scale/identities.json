@@ -1,0 +1,49 @@
+{
+  "schema": "trident/function-sort-scale/v1",
+  "kind": "local-development",
+  "input_revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+  "trident_head_at_collection": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+  "nox_head_at_collection": "13b4c2ee71b3f3e205ddc9ad30d1476b86a7ccc5",
+  "note": "Components were compiled during separately owned concurrent work; artifact identities pin each measured formula. Final combined-source acceptance remains the parent task.",
+  "source_snapshot": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-sort-source-s60ya0_8",
+  "components": {
+    "initial-insertion": {
+      "path": "/tmp/trident-sort-before.dag",
+      "sha256": "bdae5417cf8f52e7ebbecdfaef91b30cb26c976fccc639b7801d0ce9a1fc6185",
+      "dag_entries": 7685
+    },
+    "refreshed-insertion": {
+      "path": "/tmp/trident-sort-before-final.dag",
+      "sha256": "8390c9854a126eb2a445eaa1f8139cc8bc45df6296ab2d727d45d2a8e7ab0782",
+      "dag_entries": 8732
+    },
+    "global-merge": {
+      "path": "/tmp/trident-sort-after.dag",
+      "sha256": "1c8b7fd9c9f2a86fb9aa284e971df2bc396a04f06cd8ebe05c94e4a173b59f63",
+      "dag_entries": 8315
+    },
+    "ranked-merge": {
+      "path": "/tmp/trident-sort-ranked.dag",
+      "sha256": "6a52a897640586d3434a88dd47a7f91254f4a4f7ea58ef2c0f46f08e21ebf9c2",
+      "dag_entries": 9889
+    },
+    "grouped-ranked": {
+      "path": "/tmp/trident-sort-grouped.dag",
+      "sha256": "ab6df8b3e0a0d03cebb42be6e6debe279a29d0f28be82d3a0ca7e5aaef4f86e7",
+      "dag_entries": 11238
+    },
+    "specialized-ranked": {
+      "path": "/tmp/trident-sort-specialized.dag",
+      "sha256": "655bb7c2455300776ab28f3020ca283fa3818343de9a5c9b6a85c8560d74c02f",
+      "dag_entries": 10924
+    }
+  },
+  "files": {
+    "lib/std/compiler/nox/module_function_order.tri": "a8413d5c496c4758cf7cef95b7fecfb3b045c253a4c1fa4229b94457026126e4",
+    "lib/std/compiler/nox/package_compile.tri": "44bc21ca51430a53b3765743bce738290fbdb7620f0cbb3f49f483224b26370a",
+    "tests/native_function_sort.rs": "dcc05c5391c1ba8815ccbbc6a1f76502be195a193930e8bfbb369b36c36bf563",
+    "tests/fixtures/native_module_function_sort.tri": "a590fa20e900727bb4a321e77b118bc27eebde4ea816a4db803e5592f725469e",
+    "tests/fixtures/native_module_function_ranked_sort.tri": "5d79f73926cfdda287e7273bc09726dd4eba5b607f3652bacc532dbec5c829da",
+    "lib/std/compiler/nox/function_order.tri": "9a2cc8e7c7080ab1756143f38904d79d37a46df542762c1c52f3131baff40dfa"
+  }
+}

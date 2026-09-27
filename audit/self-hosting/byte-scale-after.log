@@ -1,0 +1,25 @@
+   Compiling cyber-nox v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox/rs)
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 14.11s
+     Running tests/native_byte_scale.rs (../target-byte-scale/release/deps/native_byte_scale-9838781ac917d431)
+
+running 6 tests
+byte-scale mode=0 bytes=128 reductions=14124 nodes=7712 frames=248
+byte-scale mode=1 bytes=128 reductions=26766 nodes=8697 frames=248
+byte-scale mode=0 bytes=4096 reductions=392583 nodes=30153 frames=1216
+byte-scale mode=1 bytes=4096 reductions=718021 nodes=59532 frames=1216
+byte-scale mode=0 bytes=16384 reductions=1563357 nodes=92376 frames=1264
+byte-scale mode=1 bytes=16384 reductions=2857933 nodes=209905 frames=1264
+test byte_suffix_cursors_exclude_padding_and_match_every_packed_lane ... ok
+test fused_admission_checks_every_word_and_partial_block_padding ... ok
+byte-scale mode=1 bytes=65536 reductions=11422186 nodes=806490 frames=1456
+test utf8_preserves_the_final_error_span_at_the_source_ceiling ... ok
+byte-scale mode=0 bytes=65536 reductions=6244671 nodes=335001 frames=1456
+test suffix_cursors_preserve_opaque_leaves_across_every_u32_tree_height ... ok
+byte-scale mode=1 bytes=65536 reductions=11413207 nodes=805402 frames=1456
+test packed_source_scale_preserves_complete_admission_and_utf8 ... ok
+test packed_utf8_preserves_every_byte_lane_and_exact_error_spans has been running for over 60 seconds
+test packed_utf8_preserves_every_byte_lane_and_exact_error_spans ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 229.39s
+

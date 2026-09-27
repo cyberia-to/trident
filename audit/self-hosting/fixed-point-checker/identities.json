@@ -1,0 +1,64 @@
+{
+  "schema": "trident/fixed-point-checker-validation/v1",
+  "kind": "local-development",
+  "scope": "checker unit tests plus real source metadata guard only; no completed C2/C3 fixed-point receipt",
+  "trident_head_at_collection": "97539fbbeb599e000ec037c427c5b5c5e775e0cd",
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_selfhost_fixed_point.py",
+        "-v"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit_code": 0,
+      "log": "unit-tests.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "audit/self-hosting/fixed-point-checker/snapshot-only.py",
+        "--receipt",
+        "../measurements/compacting-closure.json",
+        "--inventory-checker",
+        "../target-root/release/examples/selfhost_inventory",
+        "--output",
+        "audit/self-hosting/fixed-point-checker/snapshot-only.json"
+      ],
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "exit_code": 0,
+      "log": "snapshot-only.log",
+      "scope": "metadata-only"
+    }
+  ],
+  "source_files": {
+    "audit/self-hosting/check-selfhost-fixed-point.py": {
+      "sha256": "70490f34f3e3238addef19e9ed5199b3796b6a628b92492bd56e1c00817f07c1",
+      "lines": 293
+    },
+    "audit/self-hosting/test_selfhost_fixed_point.py": {
+      "sha256": "97f61a6044b0f3937859745c58475441d1c8e372f9a567bdaf1d68a2b4c6a95c",
+      "lines": 253
+    },
+    "audit/self-hosting/fixed-point-checker/snapshot-only.py": {
+      "sha256": "f00b3265fc476bafd26d13693ee6951c0656b5dcbfdc5449076c998b9f69cf97",
+      "lines": 42
+    }
+  },
+  "evidence": {
+    "snapshot-only.json": "4e93fb7f78ebe485438be30d692be3e6ec3bf52e3c5ad149b8d558751386163a",
+    "unit-tests.log": "832aa362639c94ca0579ef036df0d9bfb4c2cb57967e8b66ee7cea44b79264f6",
+    "snapshot-only.log": "207cc0833c4fd48185fe71f7e7002b7f19f4855c644bc2266c2f8ffe06c1175d"
+  }
+}

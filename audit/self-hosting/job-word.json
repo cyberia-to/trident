@@ -1,0 +1,190 @@
+{
+  "revision": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+  "scope": "Native private job.before comparator component; includes both input Bytes admissions; no complete discovery claim",
+  "working_source_sha256": {
+    "lib/std/compiler/nox/job.tri": "718c36591327eefb58decbc9c876419b3b988b658590366fad1c05919f6edb60",
+    "lib/std/nox/bytes.tri": "293a6a44eb56633a8df095184c13bbcdefe4cfcd6a3480adc7b3a4c20f1a53db",
+    "lib/std/nox/tree.tri": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4",
+    "tests/native_job_word_compare.rs": "b1ba91afe1c1a58c554d962859da88ebcbbcc15e3ce026f3f8f7f6848b5b86e7"
+  },
+  "input": "left = x repeated prefix times then a; right = x repeated prefix times then z",
+  "limits": {
+    "reductions": 20000000,
+    "arena_capacity": 262144,
+    "arena_nodes": 196608,
+    "frames": 65536,
+    "name_bytes": 255,
+    "each_input_admission_visits": 10000
+  },
+  "baseline": {
+    "revision": "ca9d926",
+    "command": "TRIDENT_JOB_COMPARE_REVISION=ca9d926 CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_job_word_compare word_comparison_resource_probe -- --nocapture",
+    "log": "job-word-before.log",
+    "points": [
+      {
+        "common_prefix_bytes": 0,
+        "validation_visits": 2,
+        "reductions": 11186,
+        "nodes": 5525,
+        "frames": 155
+      },
+      {
+        "common_prefix_bytes": 3,
+        "validation_visits": 8,
+        "reductions": 17382,
+        "nodes": 5693,
+        "frames": 155
+      },
+      {
+        "common_prefix_bytes": 4,
+        "validation_visits": 20,
+        "reductions": 31902,
+        "nodes": 6301,
+        "frames": 176
+      },
+      {
+        "common_prefix_bytes": 15,
+        "validation_visits": 96,
+        "reductions": 92592,
+        "nodes": 7795,
+        "frames": 235
+      },
+      {
+        "common_prefix_bytes": 31,
+        "validation_visits": 256,
+        "reductions": 165968,
+        "nodes": 7973,
+        "frames": 364
+      },
+      {
+        "common_prefix_bytes": 127,
+        "validation_visits": 1536,
+        "reductions": 807966,
+        "nodes": 19249,
+        "frames": 1150
+      },
+      {
+        "common_prefix_bytes": 254,
+        "validation_visits": 3570,
+        "reductions": 1681386,
+        "nodes": 38680,
+        "frames": 2174
+      }
+    ]
+  },
+  "after": {
+    "revision": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+    "working_source_sha256": {
+      "lib/std/compiler/nox/job.tri": "718c36591327eefb58decbc9c876419b3b988b658590366fad1c05919f6edb60",
+      "lib/std/nox/bytes.tri": "293a6a44eb56633a8df095184c13bbcdefe4cfcd6a3480adc7b3a4c20f1a53db",
+      "lib/std/nox/tree.tri": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4",
+      "tests/native_job_word_compare.rs": "b1ba91afe1c1a58c554d962859da88ebcbbcc15e3ce026f3f8f7f6848b5b86e7"
+    },
+    "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_job_word_compare word_comparison_resource_probe -- --nocapture",
+    "log": "job-word-measurements.log",
+    "points": [
+      {
+        "common_prefix_bytes": 0,
+        "validation_visits": 2,
+        "reductions": 11872,
+        "nodes": 6095,
+        "frames": 155
+      },
+      {
+        "common_prefix_bytes": 3,
+        "validation_visits": 8,
+        "reductions": 15803,
+        "nodes": 6220,
+        "frames": 155
+      },
+      {
+        "common_prefix_bytes": 4,
+        "validation_visits": 20,
+        "reductions": 21233,
+        "nodes": 6727,
+        "frames": 176
+      },
+      {
+        "common_prefix_bytes": 15,
+        "validation_visits": 96,
+        "reductions": 43910,
+        "nodes": 7900,
+        "frames": 208
+      },
+      {
+        "common_prefix_bytes": 31,
+        "validation_visits": 256,
+        "reductions": 54346,
+        "nodes": 7477,
+        "frames": 208
+      },
+      {
+        "common_prefix_bytes": 127,
+        "validation_visits": 1536,
+        "reductions": 223856,
+        "nodes": 15152,
+        "frames": 388
+      },
+      {
+        "common_prefix_bytes": 254,
+        "validation_visits": 3570,
+        "reductions": 453929,
+        "nodes": 29934,
+        "frames": 652
+      }
+    ]
+  },
+  "verification": [
+    {
+      "revision": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_job_word_compare -- --nocapture",
+      "log": "job-word-after.log",
+      "result": "3 passed"
+    },
+    {
+      "revision": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_compiler job_package -- --nocapture",
+      "log": "job-word-package.log",
+      "result": "3 passed; unchanged package limits"
+    },
+    {
+      "revision": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo check --tests --locked --offline",
+      "log": "job-word-check.log",
+      "result": "passed; zero warnings"
+    }
+  ],
+  "source_note": "Full suites ran before removal of the unused vm.core.convert import; the final source measurement rerun yields identical resource values.",
+  "audit": {
+    "log": "job-word-audit.json",
+    "result": "unknown; exit 2; aggregates unsupported; zero compiler warnings"
+  },
+  "tradeoff": "First-byte difference increases from 11186 to 11872 reductions and 5525 to 6095 nodes. Common-prefix workloads improve; no quota is expanded.",
+  "combined_full_gate": {
+    "revision": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+    "source_state": "Frozen combined working tree; includes the comparator, byte discard, compiler sorting, and native support changes. This gate is not claimed for either isolated production change alone.",
+    "command": "CARGO_TARGET_DIR=/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-root cargo test --release --locked --offline -- --test-threads=4 > /tmp/selfhost-trident-full-tests-2.log 2>&1",
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+    "log": "job-word-full-gate.log",
+    "log_sha256": "9e3bdacfa728cd6bbdb65ef725b1c88ffd0dd7c03a4b33f91303e1a335af661f",
+    "exit_code": 0,
+    "suites": 42,
+    "passed": 1190,
+    "failed": 0,
+    "ignored": 2,
+    "warnings": 0,
+    "native_compiler_passed": 188,
+    "nox_revision": "13b4c2e",
+    "working_source_sha256": {
+      "lib/std/compiler/nox/job.tri": "718c36591327eefb58decbc9c876419b3b988b658590366fad1c05919f6edb60",
+      "lib/std/nox/bytes.tri": "89d0653ff2883c1ec5bed8443e86c320227affabbd99b5be9fa54cc2a4029790",
+      "tests/native_job_word_compare.rs": "b1ba91afe1c1a58c554d962859da88ebcbbcc15e3ce026f3f8f7f6848b5b86e7",
+      "tests/native_byte_discard.rs": "7981850b200982acf127974a699a6e38500518004ba0112aacd3196f3fa42173",
+      "lib/std/compiler/nox/function_order.tri": "9a2cc8e7c7080ab1756143f38904d79d37a46df542762c1c52f3131baff40dfa",
+      "lib/std/compiler/nox/module_function_order.tri": "a8413d5c496c4758cf7cef95b7fecfb3b045c253a4c1fa4229b94457026126e4",
+      "lib/std/compiler/nox/package_compile.tri": "44bc21ca51430a53b3765743bce738290fbdb7620f0cbb3f49f483224b26370a",
+      "tests/native_compiler/support.rs": "4badab49d4dd32c2ed1158b879911d43009ead0742eb32a288556086e6ed6e97"
+    },
+    "notes": "The root diagnostic seed helper import-completeness guard was added after this gate compiled and was separately built/tested by the root agent. No production source change is attributed to that helper."
+  }
+}

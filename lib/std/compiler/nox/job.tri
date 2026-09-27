@@ -1,7 +1,6 @@
 module std.compiler.nox.job
 
 use vm.nox.noun
-use vm.core.convert
 use vm.core.field
 use std.nox.bytes
 use std.nox.seq
@@ -86,17 +85,45 @@ fn byte_cost(value: bytes.Bytes) -> U32 {
 
 // Both paths are validated; repeated comparison reads still spend admission work.
 #[pure]
+#[requires((as_u32(255) < bytes.len(left)) == false)]
+#[requires((as_u32(255) < bytes.len(right)) == false)]
 fn before(left: bytes.Bytes, right: bytes.Bytes, allowance: U32) -> (Bool, U32) {
     let mut remaining = allowance
     let cost = as_u32(as_field(byte_cost(left)) + as_field(byte_cost(right)))
-    for index in 0..255 {
+    let left_length = bytes.len(left)
+    let right_length = bytes.len(right)
+    let mut index = syntax.ZERO
+    // Every block starts at lane zero. A partial final word returns at the
+    // first end or differing byte; its canonical padding never orders paths.
+    for block in 0..64 {
         if index == bytes.len(left) { return (index < bytes.len(right), remaining) }
         if index == bytes.len(right) { return (false, remaining) }
+        // Cover the first path reads before fetching either packed word.
         remaining = charge(remaining, cost)
-        let a = bytes.get(left, index)
-        let b = bytes.get(right, index)
-        if a < b { return (true, remaining) }
-        if b < a { return (false, remaining) }
+        let a = bytes.word_at(left, index)
+        let b = bytes.word_at(right, index)
+        let end = as_u32(as_field(index) + 4)
+        let mut complete_equal = false
+        if a == b { complete_equal = syntax.both((left_length < end) == false, (right_length < end) == false) }
+        if complete_equal {
+            // The first byte pair was already charged; retain the other three
+            // historical charges even though the packed equality shares work.
+            remaining = charge(remaining, as_u32(as_field(cost) * 3))
+            index = end
+        } else {
+            for lane in 0..4 {
+                if (lane == syntax.ZERO) == false {
+                    if index == left_length { return ((index < right_length), remaining) }
+                    if index == right_length { return (false, remaining) }
+                    remaining = charge(remaining, cost)
+                }
+                let first = bytes.word_byte(a, lane)
+                let second = bytes.word_byte(b, lane)
+                if first < second { return (true, remaining) }
+                if second < first { return (false, remaining) }
+                index = syntax.inc(index)
+            }
+        }
     }
     (false, remaining)
 }

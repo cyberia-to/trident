@@ -1,0 +1,14 @@
+program native_byte_scale
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.utf8
+
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(65536), as_u32(1000000))
+    if noun.as_field(noun.tail(input)) == 0 { return bytes.to_noun(source) }
+    let error = utf8.validate(source)
+    noun.pair(noun.atom(as_field(error.code)),
+        noun.pair(noun.atom(as_field(error.start)), noun.atom(as_field(error.end))))
+}

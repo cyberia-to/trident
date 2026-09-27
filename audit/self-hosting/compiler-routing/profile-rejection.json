@@ -1,0 +1,39 @@
+{
+  "schema": "trident/native-compiler-cli/v1",
+  "kind": "local-development",
+  "status": "command_failed",
+  "binary_sha256": "9be2cc973013e52558e3fe3e19c4f5599d47c52493696c83d37883d9dba6b0f8",
+  "compiler_mode": "provided",
+  "compiler_path": "/private/tmp/trident-sort-specialized.dag",
+  "compiler_sha256": "655bb7c2455300776ab28f3020ca283fa3818343de9a5c9b6a85c8560d74c02f",
+  "compiler_sha256_start": "655bb7c2455300776ab28f3020ca283fa3818343de9a5c9b6a85c8560d74c02f",
+  "compiler_sha256_end": "655bb7c2455300776ab28f3020ca283fa3818343de9a5c9b6a85c8560d74c02f",
+  "compiler_particle": "eb13e63df2d8fbc4b35fe361e1b38aa31599cc3a99e2ba873f0a69eb2036d107",
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-scaled/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/private/tmp/trident-sort-specialized.dag",
+        "--manifest",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-sh2-wjdrqm7c/precedence/package.json",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-sh2-wjdrqm7c/precedence/job.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000",
+        "--arena-nodes",
+        "196608"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: pack-job requires compiler profile(1,1)\n"
+    }
+  ],
+  "observations": [],
+  "compiler_host_time_ms": 30000
+}

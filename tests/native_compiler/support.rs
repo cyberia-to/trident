@@ -179,7 +179,8 @@ fn compile_in<const N: usize>(
     host[9] = (N / 4 * 3) as u64;
     let admitted = validate::job(&mut ar, job, c1, host).unwrap();
     let code = formula(&ar, c1);
-    let run = sequential::reduce(
+    // Match Joy's trace-free worker; charges and all original quotas are unchanged.
+    let run = sequential::reduce_cached(
         &mut ar,
         job,
         code,
@@ -187,7 +188,6 @@ fn compile_in<const N: usize>(
         sequential::Limits {
             max_frames: caps[10] as u32,
         },
-        &mut NoTrace,
     )
     .map_err(|error| format!("guest executor: {error:?}; nodes={}", ar.count()))?;
     let (result, left) = match run.outcome {

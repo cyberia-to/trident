@@ -28,7 +28,8 @@ pub(crate) struct ModuleInfo {
 mod names;
 pub(crate) mod scope;
 mod visibility;
-pub(crate) use names::canonical_module_name;
+/// Canonical import owner used by discovery and direct import scopes.
+pub use names::canonical_module_name;
 mod resolver;
 use resolver::*;
 
