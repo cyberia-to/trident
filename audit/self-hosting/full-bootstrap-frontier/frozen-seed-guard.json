@@ -1,0 +1,31 @@
+{
+  "guard": {
+    "command": [
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+      "--manifest",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/package-missing-import.json",
+      "--entry",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/0.tri",
+      "--compiler-job",
+      "--output",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/missing-import-rejected.dag"
+    ],
+    "exit_code": 1,
+    "stderr": "Error: \"snapshot omits vm.nox.noun imported by std.compiler.nox.aggregate_gen\"\n"
+  },
+  "reproduction": {
+    "command": [
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+      "--manifest",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/package.json",
+      "--entry",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/0.tri",
+      "--compiler-job",
+      "--output",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/reproduced-packed-c1-guarded.dag"
+    ],
+    "exit_code": 0,
+    "sha256": "e2dcc0e2b844bb667d30f03e0a4536069d8093cb5ff851a12fa8590f472bb61f"
+  },
+  "helper_sha256": "38ca4b1816bdee44952a90c0c1773ae6d2322bc1948c372af6356ad8711c08a5"
+}
