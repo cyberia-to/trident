@@ -1,0 +1,33 @@
+program native_module_function_sort
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.module_function_order
+
+// [signatures [owners [module-name/source pairs [roots capacity]]]].
+#[pure]
+fn main(input: Noun) -> Noun {
+    let functions = seq.from_noun(noun.head(input), as_u32(4096), as_u32(1000000))
+    let rest = noun.tail(input)
+    let owners = seq.from_noun(noun.head(rest), as_u32(4096), as_u32(1000000))
+    let rest = noun.tail(rest)
+    let modules = seq.from_noun(noun.head(rest), as_u32(4096), as_u32(1000000))
+    let rest = noun.tail(rest)
+    let roots = seq.from_noun(noun.head(rest), as_u32(4096), as_u32(1000000))
+    let cap = as_u32(noun.as_field(noun.tail(rest)))
+    let mut names = bytes.table_empty()
+    let mut sources = bytes.table_empty()
+    for index in 0..4096 {
+        if index == seq.len(modules) {
+            let sorted = module_function_order.sort(functions, owners, names, sources, roots, cap)
+            return noun.pair(noun.atom(as_field(sorted.error.code)),
+                noun.pair(noun.atom(as_field(sorted.next)), seq.to_noun(sorted.ids)))
+        }
+        let unit = seq.get(modules, index)
+        names = bytes.table_push(names, bytes.from_noun(noun.head(unit), as_u32(255), as_u32(1000000)), as_u32(4096))
+        sources = bytes.table_push(sources, bytes.from_noun(noun.tail(unit), as_u32(65536), as_u32(1000000)), as_u32(4096))
+    }
+    assert_eq(0, 1)
+    noun.atom(0)
+}

@@ -1,28 +1,53 @@
 module std.compiler.nox.module_function_order
 
 use vm.nox.noun
+use vm.core.field
 use std.nox.bytes
 use std.nox.seq
+use std.nox.tree
 use std.compiler.nox.syntax
 use std.compiler.nox.signatures
 use std.compiler.nox.function_order
 
-struct Sources { functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable }
-struct Insert { ids: seq.Seq, gap: U32, done: Bool }
+struct Sources {
+    functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable
+}
+struct Merge { output: seq.Seq, left: U32, right: U32, middle: U32, end: U32 }
+struct RankedOwners { root: Noun, count: U32 }
+const HALF: Field = 9223372034707292161
 
 #[pure]
 fn before_span(left: bytes.Bytes, a: syntax.Token, right: bytes.Bytes, b: syntax.Token) -> Bool {
     let mut x = a.start
     let mut y = b.start
+    if x == a.end { return (y == b.end) == false }
+    if y == b.end { return false }
+    let mut first_word = bytes.word_at(left, x)
+    let mut second_word = bytes.word_at(right, y)
     for step in 0..65536 {
         if x == a.end { return (y == b.end) == false }
         if y == b.end { return false }
-        let first = bytes.get(left, x)
-        let second = bytes.get(right, y)
-        if first < second { return true }
-        if second < first { return false }
-        x = syntax.inc(x)
-        y = syntax.inc(y)
+        let first_lane = x & as_u32(3)
+        let second_lane = y & as_u32(3)
+        let mut advance = as_u32(1)
+        // Equal packed words preserve every byte comparison. Skip only the
+        // common suffix that lies entirely inside both source name spans.
+        if syntax.both(first_lane == second_lane, first_word == second_word) {
+            let stride = as_u32(field.sub(4, as_field(first_lane)))
+            let next_x = as_u32(as_field(x) + as_field(stride))
+            let next_y = as_u32(as_field(y) + as_field(stride))
+            if syntax.both((a.end < next_x) == false, (b.end < next_y) == false) { advance = stride }
+        }
+        if advance == as_u32(1) {
+            let first = bytes.word_byte(first_word, first_lane)
+            let second = bytes.word_byte(second_word, second_lane)
+            if first < second { return true }
+            if second < first { return false }
+        }
+        x = as_u32(as_field(x) + as_field(advance))
+        y = as_u32(as_field(y) + as_field(advance))
+        if syntax.both(x < a.end, (x & as_u32(3)) == syntax.ZERO) { first_word = bytes.word_at(left, x) }
+        if syntax.both(y < b.end, (y & as_u32(3)) == syntax.ZERO) { second_word = bytes.word_at(right, y) }
     }
     false
 }
@@ -45,41 +70,213 @@ fn before(scope: Sources, left: U32, right: U32) -> Bool {
 }
 
 #[pure]
-fn insert_chunk(scope: Sources, id: U32, input: Insert) -> Insert {
+fn merge_chunk(scope: Sources, values: seq.Seq, input: Merge, cap: U32) -> Merge {
     let mut s = input
     for step in 0..8 {
-        if s.gap == syntax.ZERO { s.done = true return s }
-        let previous = seq.get(s.ids, syntax.dec(s.gap))
-        if before(scope, id, as_u32(noun.as_field(previous))) == false { s.done = true return s }
-        s.ids = seq.set(s.ids, s.gap, previous)
-        s.gap = syntax.dec(s.gap)
+        if seq.len(s.output) == s.end { return s }
+        let mut take_right = s.left == s.middle
+        if syntax.both(s.left < s.middle, s.right < s.end) {
+            let left = as_u32(noun.as_field(seq.get(values, s.left)))
+            let right = as_u32(noun.as_field(seq.get(values, s.right)))
+            // Equal keys retain the left run's original declaration order.
+            take_right = before(scope, right, left)
+        }
+        if take_right {
+            s.output = seq.push(s.output, seq.get(values, s.right), cap)
+            s.right = syntax.inc(s.right)
+        } else {
+            s.output = seq.push(s.output, seq.get(values, s.left), cap)
+            s.left = syntax.inc(s.left)
+        }
     }
     s
 }
 
 #[pure]
-fn insert(scope: Sources, roots: seq.Seq, id: U32, cap: U32) -> seq.Seq {
-    let value = noun.atom(as_field(id))
-    let mut s = Insert { ids: seq.push(roots, value, cap), gap: seq.len(roots), done: false }
+fn merge(scope: Sources, values: seq.Seq, width: U32, output: seq.Seq, cap: U32) -> seq.Seq {
+    let start = seq.len(output)
+    let mut middle = as_u32(as_field(start) + as_field(width))
+    if seq.len(values) < middle { middle = seq.len(values) }
+    let mut end = as_u32(as_field(middle) + as_field(width))
+    if seq.len(values) < end { end = seq.len(values) }
+    let mut s = Merge { output, left: start, right: middle, middle, end }
     for block in 0..512 {
-        s = insert_chunk(scope, id, s)
-        if s.done { return seq.set(s.ids, s.gap, value) }
+        s = merge_chunk(scope, values, s, cap)
+        if seq.len(s.output) == s.end { return s.output }
     }
-    seq.set(s.ids, s.gap, value)
+    s.output
+}
+
+#[pure]
+fn pass(scope: Sources, values: seq.Seq, width: U32, cap: U32) -> seq.Seq {
+    let mut output = seq.empty()
+    for run in 0..4096 {
+        if seq.len(output) == seq.len(values) { return output }
+        output = merge(scope, values, width, output, cap)
+    }
+    output
+}
+
+#[pure]
+fn prefix(roots: seq.Seq, cap: U32) -> seq.Seq {
+    let mut output = seq.empty()
+    for next in 0..4096 {
+        if next == cap { return output }
+        output = seq.push(output, seq.get(roots, next), cap)
+    }
+    output
+}
+
+#[pure]
+fn ordered(scope: Sources, roots: seq.Seq, cap: U32) -> function_order.Ordered {
+    let mut result = function_order.Ordered { ids: roots, next: seq.len(roots),
+        error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
+    // Preserve the sorted admitted prefix and processed count on exhaustion.
+    if cap < seq.len(roots) {
+        result.ids = prefix(roots, cap)
+        result.next = cap
+        result.error = syntax.error(7, syntax.ZERO, syntax.ZERO)
+    }
+    let mut width = as_u32(1)
+    // TABLE_CAP is 4096, so twelve doubling passes cover every admitted root.
+    for level in 0..12 {
+        if (width < seq.len(result.ids)) == false { return result }
+        result.ids = pass(scope, result.ids, width, cap)
+        width = as_u32(as_field(width) * 2)
+    }
+    result
+}
+
+#[pure]
+fn buckets(owners: seq.Seq, roots: seq.Seq, count: U32) -> Noun {
+    let mut output = tree.empty(tree.shape(count).height)
+    for index in 0..4096 {
+        if index == seq.len(roots) { return output }
+        let value = seq.get(roots, index)
+        let owner = as_u32(noun.as_field(seq.get(owners, as_u32(noun.as_field(value)))))
+        output = tree.set(output, count, owner, noun.pair(value, tree.get(output, count, owner)))
+    }
+    output
+}
+
+#[pure]
+fn ranked_owners(table: Noun, ranks: seq.Seq) -> RankedOwners {
+    let count = seq.len(ranks)
+    let mut output = RankedOwners { root: tree.empty(as_u32(16)), count: syntax.ZERO }
+    for owner in 0..4096 {
+        if owner == count { return output }
+        if noun.eq(tree.get(table, count, owner), noun.atom(0)) == false {
+            let rank = as_u32(noun.as_field(seq.get(ranks, owner)))
+            output.root = tree.set(output.root, as_u32(65536), rank, noun.atom(as_field(owner) + 1))
+            output.count = syntax.inc(output.count)
+        }
+    }
+    output
+}
+
+// Admitted package indices use at most sixteen bits. Shared zero subtrees let
+// selection skip absent package slots without scanning the package length.
+#[pure]
+fn first_rank(root: Noun) -> U32 {
+    let mut cursor = root
+    let mut padding = tree.empty(as_u32(16))
+    let mut stride: Field = 65536
+    let mut offset: Field = 0
+    for level in 0..16 {
+        stride = stride * HALF
+        padding = noun.head(padding)
+        let left = noun.head(cursor)
+        if noun.eq(left, padding) { cursor = noun.tail(cursor) offset = offset + stride }
+        else { cursor = left }
+    }
+    as_u32(offset)
+}
+
+#[pure]
+fn owner_order(input: RankedOwners, cap: U32) -> seq.Seq {
+    let mut table = input.root
+    let mut output = seq.empty()
+    for index in 0..4096 {
+        if index == input.count { return output }
+        let rank = first_rank(table)
+        let owner = syntax.dec(as_u32(noun.as_field(tree.get(table, as_u32(65536), rank))))
+        output = seq.push(output, noun.atom(as_field(owner)), cap)
+        table = tree.set(table, as_u32(65536), rank, noun.atom(0))
+    }
+    output
+}
+
+#[pure]
+fn reverse(input: Noun) -> Noun {
+    let mut rest = input
+    let mut output = noun.atom(0)
+    for index in 0..4096 {
+        if noun.eq(rest, noun.atom(0)) { return output }
+        output = noun.pair(noun.head(rest), output)
+        rest = noun.tail(rest)
+    }
+    output
+}
+
+#[pure]
+fn member_roots(input: Noun, cap: U32) -> seq.Seq {
+    let mut rest = reverse(input)
+    let mut output = seq.empty()
+    for index in 0..4096 {
+        if noun.eq(rest, noun.atom(0)) { return output }
+        output = seq.push(output, noun.head(rest), cap)
+        rest = noun.tail(rest)
+    }
+    output
+}
+
+#[pure]
+fn append(values: seq.Seq, input: seq.Seq, cap: U32) -> seq.Seq {
+    let mut output = input
+    for index in 0..4096 {
+        if index == seq.len(values) { return output }
+        output = seq.push(output, seq.get(values, index), cap)
+    }
+    output
+}
+
+// Bucket by the complete owner identity, preserving original member order.
+// Only active owners consume sort slots, including on a capacity-error prefix.
+#[pure]
+fn grouped(functions: seq.Seq, owners: seq.Seq, sources: bytes.BytesTable, roots: seq.Seq, ranks: seq.Seq, cap: U32) -> function_order.Ordered {
+    let mut admitted = roots
+    let mut error = syntax.error(0, syntax.ZERO, syntax.ZERO)
+    if cap < seq.len(roots) { admitted = prefix(roots, cap) error = syntax.error(7, syntax.ZERO, syntax.ZERO) }
+    let table = buckets(owners, admitted, seq.len(ranks))
+    let owners = owner_order(ranked_owners(table, ranks), cap)
+    let mut result = function_order.Ordered { ids: seq.empty(), next: seq.len(admitted), error }
+    for position in 0..4096 {
+        if position == seq.len(owners) { return result }
+        let owner = as_u32(noun.as_field(seq.get(owners, position)))
+        let members = member_roots(tree.get(table, seq.len(ranks), owner), cap)
+        let sorted = function_order.sort_roots(bytes.table_get(sources, owner), functions, members, cap)
+        result.ids = append(sorted, result.ids, cap)
+    }
+    result
 }
 
 #[pure]
 #[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
 #[requires((cap < seq.len(roots)) == false)]
 pub fn sort(functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable, roots: seq.Seq, cap: U32) -> function_order.Ordered {
-    let scope = Sources { functions, owners, names, sources }
-    let mut result = function_order.Ordered { ids: seq.empty(), next: syntax.ZERO,
-        error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
-    for next in 0..4096 {
-        if next == seq.len(roots) { return result }
-        if seq.len(result.ids) == cap { result.error = syntax.error(7, syntax.ZERO, syntax.ZERO) return result }
-        result.ids = insert(scope, result.ids, as_u32(noun.as_field(seq.get(roots, next))), cap)
-        result.next = syntax.inc(next)
-    }
-    result
+    ordered(Sources { functions, owners, names, sources }, roots, cap)
+}
+
+// Compiler-owned ranks are admitted JOB1 package indices. Its module paths are
+// strictly ASCII-sorted and unique, so rank comparison is complete owner-name
+// comparison, including prefix-related paths. This entry consumes that proven
+// ordering; standalone callers without it use sort's complete byte comparison.
+#[pure]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
+#[requires((cap < seq.len(roots)) == false)]
+#[requires(seq.len(ranks) == bytes.table_len(names))]
+#[requires((syntax.TABLE_CAP < bytes.table_len(names)) == false)]
+pub fn sort_ranked(functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable, roots: seq.Seq, ranks: seq.Seq, cap: U32) -> function_order.Ordered {
+    assert(seq.len(ranks) == bytes.table_len(names))
+    grouped(functions, owners, sources, roots, ranks, cap)
 }
