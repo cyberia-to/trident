@@ -49,10 +49,14 @@ completed with every stage successful.
 
 [PR112](https://github.com/cyberia-to/trident/pull/112) pins the bootstrap implementation
 at `23691cd2c6885bf25bfc023799552559724dbc2b`. [The six-platform CI run](https://github.com/cyberia-to/trident/actions/runs/36353842247)
-has started actual native jobs on macOS/Linux/Windows ARM64/x64. Each requires
-two clean origin bootstraps and both supplied-compiler corpora; starting those
-jobs establishes no platform acceptance. Subsequent receipts are collected on
-`test/0.4-selfhost-acceptance`, preserving that stable CI head.
+started actual native jobs on macOS/Linux/Windows ARM64/x64. Intel macOS
+repetition 1 reached the explicit 3600000 ms deadline during `C1(S1) -> C2`
+and emitted no C2. Its C1, JOB1 and inventory exactly match the successful
+local run; [the original failed artifact and log](self-hosting/bootstrap-results/run-36353842247/intel-deadline/README.md)
+are retained byte-exact. Other targets were still running at that observation.
+SH6 remains open. The next delivery separates the two clean repetitions into
+independent native jobs and declares a bounded larger host deadline; it requires
+new actual results. Receipts are collected on `test/0.4-selfhost-acceptance`.
 
 Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
 Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
@@ -278,8 +282,8 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
-| Bounded long-trivia scanning | Trident / SH4 | Full compiler succeeds; valid 64 KiB comment hits 65536 active frames. Exact 4 KiB, invalid 64 KiB and excess 65537 paths complete; full-package relocation/order/identity checks pass |
-| C3 and cross-platform acceptance | Trident + Joy / SH5–SH6 | Actual C2 semantic corpus and exact C2/C3 fixed point pass. Actual C3 corpus, clean repeat and six-platform CI remain required |
+| Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
+| Cross-platform acceptance | Trident + Joy / SH6 | S1 exact C2/C3 fixed point and both actual corpora pass locally. Intel macOS clean C1 hits the one-hour deadline; new declared profile and two clean native repetitions per target remain required |
 | Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence
