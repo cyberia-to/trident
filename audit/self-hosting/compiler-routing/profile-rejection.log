@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/run-native-compiler.py", line 480, in <module>
+    main()
+    ~~~~^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/run-native-compiler.py", line 235, in main
+    directory, job = package(name, content, {"arena_nodes": 786432} if name.startswith(("scalar-", "loop-")) else None)
+                     ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/run-native-compiler.py", line 137, in package
+    packed = run(["pack-job", "--compiler", compiler, "--manifest", directory / "package.json", "-o", job,
+                  *host, "--arena-nodes", arena])
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/run-native-compiler.py", line 100, in run
+    assert result.returncode == expected, row
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'command': ['/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-scaled/bin/joy', 'pack-job', '--compiler', '/private/tmp/trident-sort-specialized.dag', '--manifest', '/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-sh2-wjdrqm7c/precedence/package.json', '-o', '/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-sh2-wjdrqm7c/precedence/job.dag', '--budget', '100000000', '--frames', '65536', '--time-ms', '30000', '--arena-nodes', '196608'], 'exit_code': 1, 'stdout': '', 'stderr': 'error: pack-job requires compiler profile(1,1)\n'}
