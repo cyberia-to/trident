@@ -24,7 +24,7 @@ pub fn cmd_generate(args: GenerateArgs) {
         process::exit(1);
     }
 
-    let source = match std::fs::read_to_string(&input) {
+    let source = match trident::read_source_file(&input) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("error: cannot read '{}': {}", input.display(), e);

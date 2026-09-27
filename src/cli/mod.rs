@@ -185,7 +185,7 @@ pub use artifact::prepare_artifact;
 
 /// Try to load and parse a .tri file, returning None on error (prints diagnostics).
 pub fn try_load_and_parse(path: &Path) -> Option<(String, trident::ast::File)> {
-    let source = match std::fs::read_to_string(path) {
+    let source = match trident::read_source_file(path) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("error: cannot read '{}': {}", path.display(), e);
