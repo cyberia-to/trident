@@ -1,0 +1,47 @@
+{
+  "status": "failed",
+  "binary_sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "compiler": {
+    "sha256": "0fe0b19a530c7ec37b17ae10ac6e8b17edba134a2941293bde23c9478cd180d7",
+    "particle": "55b07f44e2d65db4e04774a09a7e1f3f4597e6c9ecb30ad20512fa46f44607da",
+    "dag_entries": 10
+  },
+  "compiler_mode": "provided",
+  "compiler_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-raw-profile.dag",
+  "compiler_sha256_start": "0fe0b19a530c7ec37b17ae10ac6e8b17edba134a2941293bde23c9478cd180d7",
+  "compiler_sha256_end": "0fe0b19a530c7ec37b17ae10ac6e8b17edba134a2941293bde23c9478cd180d7",
+  "binary_sha256_start": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "binary_sha256_end": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--manifest",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-es4hdpzw/full-short/package.json",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-raw-profile.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-es4hdpzw/full-short/job.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: pack-job requires compiler profile(1,1)\n",
+      "reference_only": false
+    }
+  ],
+  "observations": [],
+  "reference_scope": "Rust-built raw-profile oracles are separate comparisons; never compiler substitutes",
+  "failure": {
+    "kind": "AssertionError",
+    "message": "{'command': ['/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy', 'pack-job', '--manifest', '/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-es4hdpzw/full-short/package.json', '--compiler', '/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-raw-profile.dag', '-o', '/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-es4hdpzw/full-short/job.dag', '--budget', '100000000', '--frames', '65536', '--time-ms', '60000', '--arena-nodes', '786432'], 'exit_code': 1, 'stdout': '', 'stderr': 'error: pack-job requires compiler profile(1,1)\\n', 'reference_only': False}"
+  }
+}

@@ -2,57 +2,94 @@
 
 Updated: 2026-09-27. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
-This ledger is the current execution checklist. Dated assessments and receipts
-retain their original observations; they are not substituted for gate evidence.
+This ledger tracks acceptance. Linked receipts retain exact commands, revisions,
+source/artifact identities, failed experiments and historical resource limits.
+Component results close only their named substeps.
 
 ## Current position
 
-**Next: SH3 compiler language coverage and SH4 compiler-scale resources.** SH0's compiler
-inventory, data/job formats and runtime/control-flow contract are reviewed and
-specified. Nox's complete codec, lifetime arena allowance and sequential heap
-executor and Joy's structured raw run are in `release/0.4`.
-Native source Noun and source→ART1→Joy execution are implemented and tested
-in the current delivery branches; see [evidence](self-hosting/native-noun.md).
-Reusable raw source calls/loops and checked dynamic array indexing now have
-[execution acceptance](self-hosting/native-control.md). Native Seq/Bytes have
-[execution acceptance](self-hosting/native-collections.md). Production compiler
-JOB1/RES1 admission is delivered in Joy [PR9](https://github.com/cyberia-to/joy/pull/9);
-[receipt](../../joy/audit/self-hosting/compiler-jobs.md). Explicit compiler-profile
-seed export and source-guest execution have [acceptance](self-hosting/native-compiler-profile.md).
-Generated 1/1 compiler artifacts now have [installed execution acceptance](self-hosting/generated-compiler-profiles.md):
-C1 emits a compiler that handles fresh source jobs and publishes programs Joy executes.
-SH1 and SH2 are closed. The native source compiler has
-[SH2 acceptance](self-hosting/native-source-compiler.md): fresh source packages
-become separately executed nox programs through Joy.
-No self-compilation or compiler execution proof is claimed.
-The [bounded heap-arena increment](self-hosting/native-compiler-arena.md) admits
-larger native compiler jobs through explicit Joy quotas. Complete source-scale
-allocation remains open. The [source-capacity increment](self-hosting/source-capacity.md)
-separates file bytes from compiler IDs and preserves existing successful workloads.
-The exact complete source package is admitted by Joy; C1 exhausts the explicit
-100M reduction budget before RES1. A valid 4096-byte whitespace workload remains
-a separate fixed-arena boundary.
+The complete frozen compiler has produced C2 through Joy/nox. SH0–SH3 are
+closed; SH4–SH8 remain open. The next steps are actual C2 corpus acceptance,
+C2(S) → C3, exact fixed point and reproducible bootstrap. No compiler execution
+proof is claimed. The separate literal compiler fixture remains historical.
 
-Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
-`360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
-Accepted nominal-layout checkout: `~/cyber/.worktrees/selfhost-0.4-nominal-bindings/trident`.
-Validated nominal-import delivery: `~/cyber/.worktrees/selfhost-0.4-type-imports/trident`.
-Dependencies use clean worktrees at the pinned receipt revisions.
-PRs target the integration branch; master stays unchanged until 0.4 acceptance.
+The [complete build receipt](self-hosting/body-scale/README.md) pins Trident
+`b991d901`: 94 modules, 484 functions, 369820 source bytes. The full Rust gate
+passed 1195 tests with five diagnostic ignores and zero Rust warnings.
+The [reviewed feature map](self-hosting/compiler-feature-coverage.md) maps all
+51 used feature kinds to positive/rejection evidence; it closes SH3 for the
+explicit native subset, including lexical-only contract attributes.
 
-| Gate | Status | Missing acceptance evidence |
+Actual C1(S) published C2 SHA256
+`fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0`.
+Its successful execution charged 10357536443 reductions, allocated 190792140
+nodes cumulatively, peaked at the 3145728 resident-node cap and completed
+66 collections in 1471089704 worker microseconds. Exact commands, source and
+runtime revisions, unchanged input hashes and canonical artifacts are retained.
+This proves complete source compilation; actual C2 semantic acceptance is
+running separately. C2(S) → C3 is also running on the same frozen source.
+
+Bounded NoTrace compaction is merged into `release/0.4`: nox
+[PR23](https://github.com/cyberia-to/nox/pull/23) and Joy
+[PR20](https://github.com/cyberia-to/joy/pull/20). Joy's explicit worker ceiling
+is extended by [PR21](https://github.com/cyberia-to/joy/pull/21), with default
+limits unchanged; its [receipt](../../joy/audit/compiler-work-budget/README.md)
+records the boundary checks. [Nox phase localization](../../nox/audit/prefix-frontier/README.md)
+is retained in [PR24](https://github.com/cyberia-to/nox/pull/24).
+Earlier Trident scaling merged in [PR109](https://github.com/cyberia-to/trident/pull/109).
+Current alias/export lookup changes and audit tooling are on
+`feat/0.4-selfhost-body-scale` for the same integration branch.
+
+The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
+remains identified as a different source/runtime attempt. The
+[fixed-point checker](self-hosting/fixed-point-job-binding/README.md) now binds
+verified source copies to the actual executed JOB1 through canonical repacking.
+[Extended supplied-compiler routing](self-hosting/extended-compiler-routing/README.md)
+keeps independent Rust oracles separate and executes the selected C2 unchanged.
+Tooling preparation alone closes neither corpus nor fixed-point acceptance.
+
+| Gate | Status | Acceptance evidence / remaining work |
 |---|---|---|
 | [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Closed — contract gate | [Owner review and runtime evidence](self-hosting/native-runtime.md) |
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
-| [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executable corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
-| [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — foundation accepted | Whole compiler subset and executed differential/rejection corpus |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — byte capacity and exact closure probe accepted | Complete guest discovery, compiler-scale execution and boundary receipts |
-| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — needs SH3/SH4 | C1 compiles all of S into usable C2 on nox |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, regression corpus and six-platform CI |
-| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design after SH0 | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
+| [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executed corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
+| [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — complete compiler stages now succeed | Retain exact 4 KiB/64 KiB boundaries, dependency identity, reorder and relocation evidence |
+| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — actual C2 produced | Actual supplied C2 must pass the independent corpus; SH4 acceptance also remains |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, C3 corpus, repeat bootstrap and six-platform CI |
+| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
+
+- [x] Localize the body-stage budget barrier and reduce repeated imported-owner
+  suffix/export-row work. Preserve historical failures and original fixture
+  quotas; retain isolated measurements in the owning audit reports.
+- [x] Complete SH3's construct inventory and review executed positive/rejection
+  evidence against the actual frozen compiler closure.
+- [ ] Complete SH4's data-intensive stages within predeclared guest, cumulative
+  allocation, resident, collection-work, frame and host-time limits. Retain
+  4 KiB/64 KiB/full-closure and exact/one-below boundaries, dependency-identity
+  changes, package reorder and checkout-directory reproducibility. Earlier
+  fixed-arena whitespace/64 KiB failures remain open until measured again.
+- [x] Freeze S, options/ABI and seed identity; obtain complete `C1(S) -> C2`
+  through Joy. Save its actual independently loadable compiler artifact and
+  complete measurements; no host-built replacement may complete this step.
+- [ ] Run the unchanged independent positive/rejection corpus through actual C2
+  using `run-native-compiler.py --compiler PATH`; execute its emitted programs.
+- [ ] Run `C2(S) -> C3` with the same frozen sources/options/limits. Verify actual
+  canonical bytes, particles, receipt bindings and source snapshots with
+  `check-selfhost-fixed-point.py`; run the regression corpus through C3.
+- [ ] Repeat clean bootstrap, document one complete runner and execute the SH6
+  six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
+  Retain source/seed/artifact identities and downloadable CI evidence.
+- [ ] Design and accept the SH7 native compiler proof relation, then prove both
+  complete self-builds under SH8 with fresh-process and adversarial verification.
+
+Resolve language/protocol choices in their owner contracts before dependent
+implementation. PRs target `release/0.4`; master remains outside this delivery.
+
+## Delivered increments
 
 - [x] SH0.1 Inventory the actual compiler/library closure and map constructs to
   existing support, seed extensions and native rewrites. Record original modules
@@ -166,11 +203,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [combined acceptance](self-hosting/generated-compiler-profiles.md).
 - [x] Joy explicit compiler arena and deadline: accepted [PR13](https://github.com/cyberia-to/joy/pull/13),
   [combined boundary evidence](../../joy/audit/explicit-compiler-arena-combined.md).
-  Defaults and the reduction ceiling stay fixed; complete source scale remains open.
+  That delivery preserves defaults and its reduction ceiling; complete source scale remains open.
 - [x] SH3 exact intrinsic declarations, ABI validation and final callable identity;
   [installed acceptance and preserved boundaries](self-hosting/guest-intrinsics.md).
-- [ ] SH3 complete compiler closure coverage;
-  [implementation order](../.claude/plans/native-imports.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
   786432-node arena; all prior successful ART1 identities are preserved.
   [Stable installed acceptance](self-hosting/native-indexed-reads.md).
@@ -179,9 +214,6 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH4 independent source-byte capacity and exact full-closure probe:
   complete scans and original spans beyond 4096 bytes, preserved internal IDs;
   [acceptance and runtime boundary](self-hosting/source-capacity.md).
-- [ ] SH4 complete guest discovery and allocation scale: reduce repeated
-  byte/tree work and measure the exact closure again. Preserve existing
-  fixed-arena boundary fixtures before selecting any new explicit runtime tier.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
   [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
@@ -189,18 +221,28 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] Native wrapper prerequisite: nominal module ownership, enforced private
   fields and duplicate-owner rejection. [Validation](self-hosting/native-wrapper-privacy.md).
 
-Resolve protocol or language choices explicitly in their owner contracts before
-dependent implementation. Keep the next executable task and its dependencies
-visible here as those decisions land.
+- [x] SH4 packed byte/path traversal and stable bounded function ordering;
+  [byte validation](self-hosting/byte-discard.md),
+  [job path reads](self-hosting/job-word.md),
+  [ordering measurements](self-hosting/function-sort-scale.md) and
+  [frozen complete-source frontier](self-hosting/full-bootstrap-frontier.md).
+- [x] SH4 bounded nox compaction and explicit Joy worker policy;
+  [runtime accounting/root review](../../nox/audit/sequential-compaction/README.md)
+  and [installed Joy boundaries](../../joy/audit/self-hosting-compaction/README.md).
+- [x] SH4 exact discovery component with canonical output and successful gas
+  preserved under compaction; complete compilation remains open.
+- [x] Supplied compiler routing (`8467b2c`) and retained fixed-point checks
+  (`e306dc4`); [routing evidence](self-hosting/compiler-routing/README.md) and
+  [checker evidence](self-hosting/fixed-point-checker/README.md). Partial real
+  probes and synthetic checker tests do not close SH5/SH6.
 
 ## Known blockers and ownership
 
-| Blocker | Owner / first gate | Baseline |
+| Blocker | Owner / first gate | Current evidence |
 |---|---|---|
-| Complete compiler-scale execution | nox + Joy + Trident / SH4 | [Exact closure probe](self-hosting/source-capacity.md) reaches the 100M reduction ceiling without RES1; isolated module discovery also exhausts that budget. Full execution and fixed-arena source boundaries remain open |
-| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; [seed explicit imports](self-hosting/explicit-imports.md) are accepted; [guest callable and nominal imports](self-hosting/guest-type-imports.md) are accepted; [exact intrinsics](self-hosting/guest-intrinsics.md) are accepted; whole-source coverage remains open |
-| No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
-| Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
+| Scale boundary and package invariance acceptance | Trident + nox + Joy / SH4 | [Full C1(S) succeeds](self-hosting/body-scale/README.md); complete the 64 KiB worker and full-package identity/order/relocation checks |
+| Semantic/fixed-point and cross-platform acceptance | Trident + Joy / SH5–SH6 | Actual C2 exists; C2 corpus and C2(S) are running. C3 corpus, exact fixed point, clean repeat and six-platform CI remain required |
+| Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence
 
@@ -218,381 +260,92 @@ remaining execution and coverage gates are listed above.
   in [the initial probe receipt](self-hosting-2026-09-23/probes.json).
   Compiler-scale native runs and full bootstrap were not performed.
 
-No future runner names or successful CI runs are claimed here. Add actual
-commands, artifact locations and gate receipts as implementations land.
+The delivered helpers are named above. A complete successful bootstrap runner
+and six-platform CI acceptance remain pending.
 
 ## Planning estimate
 
-The initial native self-hosting envelope is **40–70 three-hour sessions**
+The initial native self-hosting envelope is 40–70 three-hour sessions
 (120–210 focused hours), with low confidence. It includes the native contract,
 Rust seed extensions, nox/Joy runtime transport, compiler port and bootstrap
 hardening. It is not measured remaining work or a promise. The concrete
 SH6 six-target matrix is required regardless of this initial estimate.
 
-SH2 now removes uncertainty about the complete native compilation pipeline.
-Its lifetime-arena boundary confirms that compiler-scale data handling remains
-substantial work; the original broad estimate is not a measured remaining-work
-estimate. Re-estimate from the SH3 feature inventory and SH4 complete workload.
+The complete C1(S) build now measures 1471089704 worker microseconds on the
+reference host, with bounded resident memory; see the exact command and revisions
+in the body-scale receipt. This supplies a baseline for subsequent full-build
+runs, not a wall-time estimate for corpus, clean builds or CI. Remaining work
+centres on acceptance and reproducibility; the original broad estimate is historical.
 Zheng compiler-scale proving (SH7/SH8) needs a relation design and measurements
 before a credible effort bound. A public native profile may close those gates;
 private/succinct compilation and semantic preservation remain separate claims.
 
-## Session log
+## Delivery history and retained receipts
 
-| Date | Work | Result / next action |
+This index condenses repeated delivered-history prose. Each linked receipt keeps
+its original commands, revisions, counts, failed runs, artifact comparisons and
+quota changes. Acceptance is limited to that receipt's source and binary. Later
+component or local gates do not silently rerun earlier installed corpora. Formal
+audit UNKNOWN verdicts remain UNKNOWN; Noun temperature remains 128K.
+
+| Date | Delivery / revision | Retained evidence and qualification |
 |---|---|---|
-| 2026-09-23 | Compiler prototype and native soft3 assessment | Baseline probes recorded; self-compilation remains open |
-| 2026-09-23 | Working SH0–SH8 contract, dependencies, owners and acceptance | Documentation only; start SH0.1 inventory |
-| 2026-09-23 | SH0.1 AST inventory tool and migration disposition on the 0.4 delivery branch | 10 modules, 985 functions, 321415 bytes; proceed to SH0.2 native data contract |
-| 2026-09-23 | SH0.2 native data contract and conformance on `feat/0.4-sh0-native-data` | 18 tests, including six actual nox probes; proceed to SH0.3 job/result and artifact transport |
-| 2026-09-23 | SH0.3 job/result contract, bounded reference admission and complete canonical transport | Nine protocol tests +18 data tests; nox's codec passed178 workspace tests; proceed to SH0.4 runtime/control flow |
+| 2026-09-23 | Starting prototype/native assessments | [Prototype](self-hosting-readiness-2026-09-23.md), [soft3](soft3-self-compilation-readiness-2026-09-23.md), [raw probes](self-hosting-2026-09-23/probes.json); no full bootstrap |
+| 2026-09-23 | SH0 inventory/data/jobs/runtime | [Inventory](self-hosting/sh0-inventory-validation.json), [data](self-hosting/native-data.md), [jobs](self-hosting/native-jobs.md), [runtime review](self-hosting/sh0-runtime-validation.json); contracts closed |
+| 2026-09-24 | SH1 reusable raw control and native collections | [Control](self-hosting/sh1-control-validation.json), [collections](self-hosting/sh1-collections-validation.json); exact output and allowance boundaries |
+| 2026-09-24 | SH1 compiler profile | [Combined acceptance](self-hosting/native-compiler-profile.md); source-guest JOB1/RES1 execution closes SH1 |
+| 2026-09-24 | Shared validation budget `4a9a283`; Joy exact files `a3dd4c5` | [Combined commands](self-hosting/shared-validation-budget.json); formal collection analysis UNKNOWN |
+| 2026-09-24 | SH2 `7684fd7` | [Native compiler](self-hosting/sh2-native-compiler-validation.json); fresh packages compile inside nox and their emitted programs execute |
+| 2026-09-24 | Seed expression-before-block `fd64b73` | [Cross-target acceptance](self-hosting/sh3-block-expressions-validation.json) |
+| 2026-09-24 | Zero-width/array extent repair `f11a432` | [Execution and bounds](self-hosting/sh3-zero-width-validation.json) |
+| 2026-09-24 | Resolved halting and scoped final bindings | [Acceptance](self-hosting/resolved-halting.md) |
+| 2026-09-24 | Native locals/control/functions `5339030` | [Locals](self-hosting/sh3-native-locals-validation.json), [control](self-hosting/native-compiler-control.md), [functions](self-hosting/native-compiler-functions.md); cost and deep-call/default-arena failures retained |
+| 2026-09-24 | Heap arena: nox `568ac16`, Joy `820041b`, runner `1e08ded` | [Acceptance](self-hosting/native-compiler-arena.md); original whitespace boundary retained |
+| 2026-09-24 | U32/scalars `fb2bcd9`, diagnostic refinement `6a1abc2` | [Acceptance](self-hosting/native-compiler-scalars.md); runtime conversion traps distinct from compile diagnostics |
+| 2026-09-24 | Literal-range loops `7e5a274` | [Acceptance](self-hosting/native-compiler-loops.md); scope/early-return/exact limits |
+| 2026-09-24 | Noun/structured entry `4dbd03e`, harness `c5d1901` | [Acceptance](self-hosting/native-compiler-nouns.md); complete output and runtime projection traps |
+| 2026-09-24 | Aggregate descriptors `adbb00e` | [Acceptance](self-hosting/native-compiler-types.md); sharing/depth/arity bounds |
+| 2026-09-24 | Digest `dbf3c13` | [Acceptance](self-hosting/native-compiler-digest.md); identity words and checked reads |
+| 2026-09-24 | Tuples `850525c` | [Acceptance](self-hosting/sh3-native-tuples-validation.json); old default arena boundary and earlier artifacts preserved |
+| 2026-09-24 | Exactly-once seed field initialization `ac2481d` | [Acceptance](self-hosting/unique-struct-initializers-validation.json); duplicate fields reject |
+| 2026-09-24 | Nominal identity/layout `1e36ceb` | [Acceptance](self-hosting/native-compiler-nominal-validation.json); owner-based visibility |
+| 2026-09-24 | Source records `60ea10e` | [Acceptance](self-hosting/native-compiler-records-validation.json); original long-name arena failure retained |
+| 2026-09-24 | Persistent record writes `324a015` | [Acceptance](self-hosting/native-compiler-record-writes-validation.json); original wide-source generation failures retained |
+| 2026-09-25 | Fixed Field arrays `a427531` | [Acceptance](self-hosting/native-compiler-arrays-validation.json); separate planner allowance never replaces source acceptance |
+| 2026-09-25 | Typed seed constants `2f6b0ef` | [Acceptance](self-hosting/typed-constants-validation.json); unchanged C1, earlier guest corpus reused explicitly |
+| 2026-09-25 | Retained packages `473d20c` | [Acceptance](self-hosting/guest-package-validation.json); record widths 61/62 recover, wider failures retained; host deadline selection explicit |
+| 2026-09-25 | Constant imports `17685e1` / harness `655ac69` | [Acceptance](self-hosting/guest-constant-linking-validation.json); long-name and widths 61–64 recover within original caps, width 65 still fails at this revision |
+| 2026-09-25 | Direct function imports `4acc730` | [Acceptance](self-hosting/guest-function-imports-validation.json); final visibility/owners, previous artifacts preserved |
+| 2026-09-25 | Seed nominal repair `5d06645`, combined `285681d` | [Combined acceptance](self-hosting/nominal-bindings-combined-validation.json); unchanged guest/runtime corpus reused explicitly |
+| 2026-09-26 | Guest nominal imports `7c1701c`, harness `a166c8d` | [Acceptance](self-hosting/guest-type-imports-validation.json); deterministic codec prerequisite, clean rebuilds and installed corpora rerun; earlier derive drift retained |
+| 2026-09-27 | Generated profiles `3cfaf0c`, Joy `a15adb7` | [Acceptance](self-hosting/generated-compiler-profiles.md); literal compiler emitted by C1 compiles fresh jobs, full self-source still open |
+| 2026-09-27 | Exact intrinsics `be9676d` | [Acceptance](self-hosting/guest-intrinsics.md); original width-65 case recovers, exact resource recalibration and earlier failures retained; full closure returns capacity diagnostic |
+| 2026-09-27 | Independent source bytes `40a86de` | [Acceptance](self-hosting/source-capacity.md); exact earlier closure admitted, 100M reduction failure before RES1; 64 KiB fixed-arena boundary retained |
+| 2026-09-27 | Byte/path/sort scaling through `713f457` | [Frontier](self-hosting/full-bootstrap-frontier.md); exact discovery succeeds at larger explicit limits, append-only all-body arena failure and rejected lexer regression retained |
+| 2026-09-27 | Opt-in nox/Joy compaction | [Nox](../../nox/audit/sequential-compaction/README.md), [Joy](../../joy/audit/self-hosting-compaction/README.md); merged components, whole self-build remains open |
+| 2026-09-27 | Supplied-compiler runner `8467b2c`, checker `e306dc4` | [Routing](self-hosting/compiler-routing/README.md), [checker](self-hosting/fixed-point-checker/README.md); partial real probes, no C2/C3 corpus or fixed-point acceptance |
+| 2026-09-27 | Full compacting C1(S), retained at `90ac882` | [Failure](self-hosting/full-bootstrap-compacting/README.md); execution-budget rejection, bounded resident storage, no C2 |
+| 2026-09-27 | Alias/export lookup through `b991d901`, explicit Joy `2878f4b` | [Complete C1(S)](self-hosting/body-scale/README.md) produces actual C2; [SH3 feature map](self-hosting/compiler-feature-coverage.md) reviewed, corpus/fixed point pending |
 
-For a gate update, record its receipt link, exact owner commits/patches, passed
-and failed conditions, next action and any changed estimate. Preserve previous
-failed receipts. Mark completed substeps independently; close the gate only
-when the complete reference acceptance is satisfied.
-
-2026-09-23 continuation: SH0.4/SH0.5 contract review closed; nox runtime
-PR18/PR19 merged into release/0.4. Joy raw transport PR5 also merged; native source data is next.
-
-2026-09-24 continuation: reusable raw-native calls/loops, checked dynamic array
-indexing and balanced frames passed Trident, Joy CLI and Trisha compatibility
-gates. [Pinned commands and observations](self-hosting/sh1-control-validation.json).
-Continue with canonical source Seq/Bytes, then production compiler-job admission.
-
-2026-09-24 continuation: native source Seq/Bytes passed exact canonical output,
-validation allowance and installed Joy runtime quota boundaries.
-[Collections receipt](self-hosting/sh1-collections-validation.json).
-Continue with production compiler JOB1/RES1 admission and binding in Joy.
-
-2026-09-24 continuation: explicit compiler-profile source export and real source-guest
-JOB1/RES1 execution accepted. SH1 closed by the [combined receipt](self-hosting/native-compiler-profile.md).
-Proceed with SH2 source packages and arithmetic compilation inside nox.
-
-2026-09-24 continuation: Joy [PR11](https://github.com/cyberia-to/joy/pull/11)
-landed exact-file source packaging on `release/0.4` at
-`a3dd4c5c7c2f870f6632deace5b137a141796173`. The native collection APIs now
-return remaining validation visits for a shared guest pass at Trident
-`4a9a2838b6336fdc0ba9126b12b88e1a8ee43340`. The chained Seq/Bytes execution
-matches the independent model at exact and insufficient allowances, including
-chunk boundaries. [Commands and revisions](self-hosting/shared-validation-budget.json)
-record 876 Trident package tests plus 34 silicon tests, 120 Joy tests and
-133/43 Trisha fixture/baseline checks with unchanged result/cycle rows.
-Formal collection analysis remains UNKNOWN. The SH2 lexical, grammar and
-diagnostic contract is now explicit; actual guest source compilation is next.
-
-2026-09-24 continuation: SH2 accepted at source
-`7684fd7e67d3d6610c42553088767844af379f36`. The fixed native compiler compiles
-fresh source packages and Joy executes its emitted programs. Exact output,
-diagnostic, shared-validation and execution-limit cases passed; the source
-admission arena limit remains explicit. [Pinned evidence](self-hosting/sh2-native-compiler-validation.json).
-Continue with SH3 frontend repairs and whole-compiler language coverage, then
-SH4 resource work before attempting C2.
-
-2026-09-24 continuation: expression-before-block parsing accepted at Trident
-`fd64b73f094ff6a611f8473364f7758484c02fd9`, with Trisha companion
-`03b6f9dda71f08000265c929ea55dc32642b050f`.
-[Commands and evidence](self-hosting/sh3-block-expressions-validation.json).
-Continue with the observed zero-width TIR value defect and resolved halting
-semantics, then complete native compiler coverage. SH3 remains open.
-
-2026-09-24 continuation: zero-width value and checked array-extent repair accepted
-at Trident `f11a4320ed2b42be5f4a32789c06c5c5fe4fa1bd`, with Trisha
-`3140d30ff2a9d4ba57641148e3f227148577cc0f`.
-[Exact commands and evidence](self-hosting/sh3-zero-width-validation.json).
-Continue with resolved halting-call semantics through type checking and lowering,
-then whole native compiler coverage. SH3 remains open.
-
-2026-09-24 continuation: resolved assertion failure, continuing branch values,
-per-owner callable/constant bindings and local root shadowing passed the
-[halting acceptance](self-hosting/resolved-halting.md). Continue with native
-Field locals/assignments and actual runtime slots inside the guest compiler.
-
-2026-09-24 continuation: native Field locals, mutation and lexical shadowing
-accepted through full source/JOB/ART1 execution. [Pinned validation](self-hosting/sh3-native-locals-validation.json).
-Continue with native Bool/equality/control flow; compiler-scale arena remains
-open and is reproduced by the larger assignment workload.
-
-2026-09-24 continuation: native typed functions accepted at Trident
-`5339030b66c8e9835d79f175ef2ac5eb98d1e75e`. The installed Joy corpus covers
-forward/nested calls, fresh frames, Unit and final callable bindings;
-[commands, measurements and limits](self-hosting/native-compiler-functions.md).
-Continue with an in-place heap arena in nox and explicit larger structured
-pack/run allowance in Joy. Compiler cost increased and deep-call/default-arena
-failures remain recorded; full SH3/SH4 and self-build are open.
-
-2026-09-24 continuation: bounded heap arena accepted at nox `568ac16`,
-Joy `820041b` and Trident runner `1e08ded`.
-[Measured acceptance](self-hosting/native-compiler-arena.md) preserves canonical
-artifacts and exact job quotas while admitting larger real native compilations.
-The valid 4096-byte whitespace workload remains an explicit SH4 boundary.
-Continue with [native scalar coverage](../.claude/plans/native-compiler-scalars.md).
-
-2026-09-24 continuation: native U32 and checked builtin operations accepted at
-Trident `fb2bcd9`, with diagnostic acceptance refinement `6a1abc2`.
-[Source and installed execution evidence](self-hosting/native-compiler-scalars.md)
-preserves previous ART1 identities, separates compilation from runtime conversion
-traps, and records increased compiler cost. Continue with
-[literal-range loops](../.claude/plans/native-compiler-loops.md); complete SH3/SH4,
-C2/C3, six-platform release and native compiler proofs remain open.
-
-2026-09-24 continuation: native reusable literal-range loops accepted at Trident
-`7e5a27461b0cbad23db15c249734c3ed9095adf8`.
-[Source/JOB tests and installed execution](self-hosting/native-compiler-loops.md)
-cover nested scope, early return, raw U32 bounds and exact resource limits,
-while preserving prior ART1 identities. Continue with native Noun values and
-structured raw entry; full SH3/SH4 and C2/C3 remain open.
-
-2026-09-24 continuation: native Noun values and structured entry accepted at
-Trident `4dbd03e95defbff53c27d453ca6ca7e15bf292c7`, with CLI diagnostic assertions
-refined at `c5d1901f5be44caf097cc33e7e09132538ce7fa7`.
-[Full JOB/ART1 and installed acceptance](self-hosting/native-compiler-nouns.md)
-checks complete nested output, runtime projection traps and exact resource bounds.
-Continue with canonical aggregate descriptors, Digest and tuples. Full SH3/SH4,
-C2/C3 and platform acceptance remain open.
-
-2026-09-24 continuation: canonical aggregate descriptor foundation accepted at
-Trident `adbb00e`. [Pinned validation](self-hosting/native-compiler-types.md)
-checks logical sharing/depth/arity bounds and retains every earlier positive
-ART1 identity. Continue with source Digest identity/indexing and tuples; full
-SH3/SH4 and C2/C3 remain open.
-
-2026-09-24 continuation: native Digest identity and checked component reads
-accepted at Trident `dbf3c13`. [Pinned validation](self-hosting/native-compiler-digest.md)
-compares every identity word with input particle bytes and covers runtime traps,
-ordering and exact quotas. Earlier positive ART1 identities remain unchanged.
-Continue with tuple annotations/values and destructuring; full SH3/SH4, C2/C3
-and six-platform acceptance remain open.
-
-
-2026-09-24 continuation: native tuple annotations/values and ordered
-flat destructuring accepted at `850525c`. [Pinned evidence](self-hosting/sh3-native-tuples-validation.json)
-records 1017 Trident, 122 Joy and 380 Trisha passing tests, four existing
-ignored Trisha cases, zero Rust warnings, unchanged 133 fixture results and 43 baselines,
-614 installed commands / 207 observations and all 91 earlier positive ART1
-identities unchanged. The post-commit rebuild reproduces all three binaries
-and the executed C1 artifact byte for byte. All 64 formal audits are UNKNOWN.
-The old 64-group default arena boundary remains green. Next: repair duplicate
-struct initializers in the seed, then nominal structs/field reads and nested
-writes. Full SH3/SH4, C2/C3, six-platform acceptance and compiler proofs remain open.
-
-
-2026-09-24 continuation: seed struct literals reject repeated initializers at
-`ac2481d`, closing an exactly-once field-contract violation before the nominal
-struct increment. [Pinned evidence](self-hosting/unique-struct-initializers-validation.json)
-records 1020 / 122 / 380 passing owner tests, unchanged 133 fixture rows and 43
-manual baselines, nine installed CLI commands and unchanged complete C1 bytes.
-All 64 formal audits remain UNKNOWN; guest structs and full SH3/SH4 stay open.
-
-
-2026-09-24 continuation: nominal descriptor identity, field layout and owner-based
-visibility accepted at `1e36ceb`. [Pinned evidence](self-hosting/native-compiler-nominal-validation.json)
-records 1026 / 122 / 380 passing owner tests, unchanged 133 fixture rows and 43
-manual baselines, 614 general CLI commands plus 52 component commands, and all
-105 prior positive ART1 identities unchanged. All 67 formal audits are UNKNOWN.
-Source struct declarations/constructors/reads follow; full SH3/SH4, C2/C3 and
-six-platform acceptance remain open. Noun temperature stays 128K.
-
-
-2026-09-24 continuation: source nominal declarations, constructors and field reads
-accepted at `60ea10e`. [Pinned evidence](self-hosting/native-compiler-records-validation.json)
-records 1034 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43
-manual baselines, 712 installed CLI commands / 240 observations, and all 105
-previous positive ART1 identities unchanged. Rebuilt binaries and complete C1
-are byte-identical to those tested. All 71 formal audits remain UNKNOWN.
-The valid combined long-name workload exhausts 786432 arena nodes and stays
-explicitly open under SH4. Next: persistent static field writes, then arrays
-and imports. Full SH3/SH4, C2/C3, six platforms and native proofs remain open.
-Noun temperature stays 128K.
-
-
-2026-09-24 continuation: persistent static record field writes accepted at
-`324a015`. [Pinned evidence](self-hosting/native-compiler-record-writes-validation.json)
-records 1040 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43
-manual baselines, 773 installed CLI commands / 262 observations and all 119
-previous positive ART1 identities unchanged. Eight new successful JOB1 programs
-exercise snapshots, nested values, calls, loops and complete Noun/Digest/tuple
-replacement. Constructor continuations decode owned layouts once; public
-Seq/Bytes admission remains intact. The five retained wide-source programs still
-exhaust 786432 nodes during generation; direct emitter path tests do not close
-this SH4 boundary. All 74 formal audits are UNKNOWN. Arrays, real imports,
-full SH3/SH4, generated compiler profiles, C2/C3, six platforms and native proof
-gates remain open. Noun temperature stays 128K.
-
-
-2026-09-25 continuation: fixed Field-array values, exact annotations and checked
-reads accepted at `a427531`. [Pinned evidence](self-hosting/native-compiler-arrays-validation.json)
-records 1048 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43
-manual baselines, 851 installed commands / 288 observations and all 127 prior
-positive ART1 identities unchanged. Fourteen new successful JOB1 programs cover
-array transfer, snapshots, typed calls and shared reads. Public source arenas
-remain unchanged; the separate 4096-function planner component uses its own
-larger allowance. Post-commit installs reproduce the executed binaries and C1.
-All 79 formal audits are UNKNOWN. Next: unify seed typed constant resolution,
-then guest constants/attributes/asserts and real imports. Full SH3/SH4, generated
-profiles, C2/C3, six platforms and native proofs remain open. Noun stays 128K.
-
-
-2026-09-25 continuation: shared typed Rust seed constants accepted at `2f6b0ef`.
-[Pinned evidence](self-hosting/typed-constants-validation.json) records
-1058 / 122 / 380 passing owner tests, 133 unchanged fixture rows and 43 baselines,
-61 installed commands and 20 cases exercised on nox and Triton. Final active
-value/type/visibility now agree across checking, generic specialization and
-lowering; aliases preserve lexical ownership and raw integer dimensions.
-Rejected sources preserve existing artifacts. Rebuilds reproduce all three
-binaries; entire C1 matches the array delivery, whose 851-command guest corpus
-was not rerun for this seed-only change. All 79 formal audits remain UNKNOWN.
-Next: guest constants, attributes/asserts, then imports. Full SH3/SH4, generated
-profiles, C2/C3, six platforms and native proofs stay open. Noun stays 128K.
-
-2026-09-25 continuation: retained guest packages accepted at `473d20c`.
-[Pinned evidence](self-hosting/guest-package-validation.json) records
-1120 / 122 / 380 passing owner tests, 133 unchanged baseline rows and 43 manual
-programs, 1192 installed commands / 401 observations and all 189 previous
-positive ART1 identities unchanged. The original 61/62-bit record-write vectors
-now compile and execute to 3199 within the same 786432-node arena; 63–65 remain
-explicit allocation failures. The corpus selects the supported 60000ms host
-deadline, with Joy's 30000ms default and deterministic quotas unchanged.
-All 92 formal audits remain UNKNOWN. Package index 4096 is tested separately
-from compact IDs and source capacity. Guest graph/linking, whole compiler scale,
-generated compiler profiles, C2/C3, six platforms and native Zheng proofs remain
-open. Noun stays 128K.
-
-
-2026-09-25 continuation: C1 constant imports accepted from compiler source
-`17685e1` and harness/integration `655ac69`.
-[Receipt](self-hosting/guest-constant-linking-validation.json): 1143 / 122 / 380
-passing tests, four existing Trisha cases ignored, zero Rust warnings, 133
-unchanged baseline rows / 43 manual programs and 106 UNKNOWN formal audits.
-The 1195-command / 401-observation full corpus preserves all 234 previous
-successful compilations / 202 distinct ART1 programs; current totals are 235 / 203.
-Import acceptance adds 135 commands / 31 observations; graph acceptance keeps
-all 12 complete outputs and allowance results across 39 commands. The original
-long-name record source now executes to 79 under its unchanged 786432-node cap;
-original wide61–64 writes still execute to 3199, while wide65 remains unavailable.
-Post-commit install commands/logs and byte comparisons pin all three binaries,
-C1 and the graph component. Whole language coverage, generated compiler profiles,
-compiler-scale memory, C2/C3, six platforms and native Zheng proof gates stay open.
-Imported types also require the seed nominal-layout coherence repair recorded in
-the active import plan. Noun stays 128K.
-
-2026-09-25 continuation: ordinary direct function imports accepted from compiler
-source `4acc73021497950154ec6b2e68e1e6f2536a2ba3`.
-[Receipt](self-hosting/guest-function-imports-validation.json): 1154 / 122 / 380
-CPU tests, zero warnings, 133 unchanged baseline rows, 111 formal UNKNOWN.
-The complete 1195-command corpus preserves all 235 successful observations
-and 203 distinct ART1 identities, including module-source identities and all
-227 recorded source_hex values. Imported calls add 32 observations across
-140 commands; constants retain 31 observations across 139 commands and the
-39-command graph corpus retains all 12 outputs/allowances. The unchanged
-64-bit record write uses 771882 nodes and the long-name record uses 781466,
-both under the original 786432 ceiling. Nominal signatures, exact intrinsics,
-generated compiler profiles, source/runtime scale, C2/C3, six platforms and
-native Zheng remain open. Noun stays 128K.
-
-2026-09-25 continuation: seed nominal layout repair at `5d06645` is integrated
-with the accepted guest function imports at `285681d707a178d9ebd875e5b13753eb3f58f856`.
-[Combined receipt](self-hosting/nominal-bindings-combined-validation.json):
-1165 / 122 / 380 passing tests, four existing Trisha cases ignored, zero warnings,
-133 unchanged baseline rows / 43 manual programs and 111 formal UNKNOWN audits.
-The fresh installed CLI run checks eight cases on both warriors in 28 commands;
-changed field types, privacy or order fail before replacing existing output.
-The isolated seed receipt is preserved. All three combined binaries reproduce
-byte for byte after commit, while C1 and graph bytes match the accepted function
-import artifacts. Their full 1195-command and 39-command execution receipts are
-explicitly reused with unchanged guest/runtime sources and sibling pins; those
-corpora were not rerun for this seed-only integration. Guest nominal imports,
-exact intrinsics, generated compiler profiles, compiler scale, C2/C3, six
-platforms and native Zheng remain open. Noun stays 128K.
-
-
-## Guest nominal imports — 2026-09-26
-
-Compiler source `7c1701c4c0f7a6f3862fc858ca80a794a999f96e`, acceptance harness
-`a166c8de6fb39e992a8dbc2bd6fe0466e1629ad7`, with accepted seed layout ancestry.
-[Receipt](self-hosting/guest-type-imports-validation.json): 1175 / 122 / 380
-owner tests pass, four existing Trisha tests ignored, zero warnings; 133 baseline
-rows and 43 manual baselines unchanged. The 113 formal verdicts remain UNKNOWN.
-Installed full corpus: 1198 commands / 402 observations; type imports 111 / 24,
-callable imports 149 / 32, constants 141 / 31 and graph 39 / 12.
-All prior 235 successful observations retain their 203 distinct ART1 identities;
-six formerly unsupported aggregate/type import cases now execute. Two exact-cost
-boundary cases recalibrate to measured usage and still reject one below; other
-limits remain unchanged. Repeated nominal layouts execute, changed layouts reject.
-
-A clean rebuild exposed randomized upstream codec derive output. The Trisha/Joy
-prerequisite fixes generation order at existing locked versions. Two fresh builds
-produce identical binaries; every installed corpus above was then rerun with those
-binaries, retaining source/artifact fields and exact execution costs. Old drift
-and the failing macro regression remain in the receipt. C1 and graph artifacts
-also reproduce after clean committed installation. This closes nominal imports;
-intrinsics, generated compiler profiles, whole-source scale and C2/C3 remain open.
-
-
-2026-09-27 continuation: generated compiler profiles are validated at `3cfaf0c`
-with accepted Joy arena `a15adb7` and deterministic codec dependencies.
-[Evidence](self-hosting/generated-compiler-profiles.md) records all seven owner
-gates: 1178 / 123 / 380 tests, zero Rust warnings, four existing ignored tests,
-133 unchanged baseline rows / 43 manual programs and 113 formal UNKNOWN results.
-The unchanged 3004-byte literal compiler becomes a fresh 1/1 artifact through C1;
-it compiles new 0/3/7/9 source jobs with complete identity-bound results that Joy
-executes. Profile acceptance passes 65 commands / 21 observations. Full raw
-acceptance passes 1198 / 402 and retains 236 prior successes / 203 ART1 identities;
-types 111/24, calls 149/32, constants 141/31 and graph 39/12 preserve their outputs.
-All three binaries, C1 and the graph component reproduce after committed installation.
-This closes generated compiler profiles. Intrinsics, legacy remaps, complete source
-scale, C2/C3 and six CPU platform acceptance remain open; native Zheng proof gates
-remain separate. Delivery PR102 targets `release/0.4`; defaults are unchanged.
-
-
-2026-09-27 continuation: exact native intrinsics accepted from source `be9676d`
-with Joy `a15adb7` and Trisha `f5c94f5`.
-[Evidence](self-hosting/guest-intrinsics.md) pins all seven green owner gates:
-1197 / 123 / 380 tests, zero Rust warnings, four existing ignored tests,
-133 unchanged baseline rows / 43 manual programs and 119 formal UNKNOWN results.
-The full installed corpus passes 1199 commands / 402 observations and retains
-all 236 prior successful observations / 203 distinct ART1 identities. The original
-wide65 record also completes under its unchanged arena cap. Three exact resource
-boundary probes recalibrate and retain one-below rejection. Intrinsic acceptance
-adds 158 commands / 37 observations; all other focused corpora pass. Clean source
-installs reproduce all three binaries, C1 and the graph artifact. Failed runs
-and collection resource experiments remain recorded. The actual native closure
-has 94 modules / 455 functions / 345639 bytes; C1 returns capacity diagnostic 7
-and produces no C2. Whole-source admission, compiler-scale execution, C2/C3,
-six CPU platforms and native Zheng gates remain open. Noun stays 128K.
-
-
-2026-09-27 continuation: independent source-byte capacity accepted from `40a86de`.
-[Evidence](self-hosting/source-capacity.md) records all seven green owner gates:
-1203 / 123 / 380 tests, zero Rust warnings, four existing ignored tests,
-133 unchanged baseline rows / 43 manual programs and 120 formal UNKNOWN results.
-The full installed corpus passes 1198 commands / 402 observations; all 237 prior
-successes retain 204 distinct ART1 identities. Ordinary fixture quotas remain
-unchanged; exact resource boundaries recalibrate and retain one-below rejection.
-Long source comments/dependencies and original spans pass installed acceptance.
-Exact full-size component scans use explicitly larger test limits; the complete
-65536-byte JOB1 still exhausts the supported arena. The exact compiler closure
-is 94 modules / 455 functions / 345791 bytes. Joy packs it, then C1 exhausts
-100M reductions without RES1 or C2. A diagnostic entry reader completes; isolated
-module discovery already exhausts the same budget. Next: bounded byte/tree
-traversal, then complete discovery and later-stage measurements. All three
-binaries and C1/graph reproduce from the committed source. C2/C3, six CPU
-platforms and native Zheng proofs remain open. Noun stays 128K.
-
+Historical scalar/loop implementation plans remain linked for continuity:
+[scalars](../.claude/plans/native-compiler-scalars.md),
+[loops](../.claude/plans/native-compiler-loops.md). The delivered increments and
+current pending list supersede their old sequencing. Initial integration began
+from `360b737e073ca2f969ab0c78460b4228bcac7b78`; accepted nominal-layout/import
+worktrees and sibling pins remain identified in their receipts.
 
 ### Soft3 runtime ownership correction
 
-Joy source `06aac01` removes its private Trisha/Triton adapter and dependency
-closure. Trident `7b1d4c0` separates external target resources behind the default
-`external-targets` feature; Joy disables it, while Trisha `aa25e32` enables it
-explicitly. Native nox compiler sources and compilation profiles stay unchanged.
-Secret execution remains supported; private/zero-knowledge proving in Joy is
-unavailable. Public Zheng execution and authenticated public-state certificates
-remain supported. This does not close SH7/SH8 or advance C2/C3 acceptance.
+Joy `06aac01` removed its private Trisha/Triton adapter and dependency closure.
+Trident `7b1d4c0` isolated foreign target resources behind `external-targets`;
+Joy disables that feature and Trisha `aa25e32` enables it explicitly. Native
+compiler source and profiles stayed unchanged. The
+[owner receipt](../../joy/audit/soft3-only/README.md) preserves compatibility,
+installed profile acceptance and unchanged C1/artifact identities. At that
+revision secret execution and public Zheng certificates remained supported,
+while private/zero-knowledge proving was unavailable. Native compiler proof
+acceptance remains governed by SH7/SH8 and the current owner contracts.
 
-[Owner receipt](../../joy/audit/soft3-only/README.md) records commands and revisions:
-124 Joy tests, both724-test compiler library configurations,26 import/target
-checks,14/13 differential checks,430 Trisha compatibility tests with6 existing
-ignored and133 unchanged baseline rows/43 manual baselines. The installed
-65-command/21-observation generated compiler acceptance preserves all204 fixture
-files and the accepted C1 SHA-256 `4aed7fc83be96156fcb65c3bbb369c192ad27f894ab78a030e3588056a66d112`.
+For each gate update, retain exact source/binary identities, passed and failed
+conditions, next action and any changed estimate. Preserve failed receipts;
+close a gate only when its complete reference acceptance is satisfied.

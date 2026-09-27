@@ -1,0 +1,75 @@
+{
+  "schema": "trident/generated-compiler-profile/v1",
+  "status": "failed",
+  "scope": "generated bounded literal compiler; C2/self-hosting remains open",
+  "artifact_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-generated-raw-final-files-5ecikzb2",
+  "binary": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1\n",
+      "stderr": "",
+      "reference_only": false,
+      "elapsed_nanoseconds": 9396959
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": " M audit/self-hosting/check-generated-compiler-profile.py\n M audit/self-hosting/check-guest-constant-linking.py\n M audit/self-hosting/check-selfhost-fixed-point.py\n M audit/self-hosting/fixed-point-checker/README.md\n M audit/self-hosting/test_selfhost_fixed_point.py\n M reference/self-hosting.md\n?? audit/self-hosting/__pycache__/\n?? audit/self-hosting/body-scale/\n?? audit/self-hosting/compiler-feature-coverage.json\n?? audit/self-hosting/compiler-feature-coverage.md\n?? audit/self-hosting/compiler-feature-coverage.py\n?? audit/self-hosting/compiler-feature-coverage.test.py\n?? audit/self-hosting/compiler-feature-coverage.validation.log\n?? audit/self-hosting/extended-compiler-routing/\n?? audit/self-hosting/fixed-point-job-binding/\n?? audit/self-hosting/native_compiler_selection.py\n?? audit/self-hosting/test_compiler_selection.py\n",
+      "stderr": "",
+      "reference_only": false,
+      "elapsed_nanoseconds": 16306959
+    }
+  ],
+  "observations": [],
+  "source_snapshots": [
+    {
+      "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/tests/fixtures/native_generated_literal_compiler.tri",
+      "snapshot": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-generated-raw-final-files-5ecikzb2/source-snapshot/tests/fixtures/native_generated_literal_compiler.tri",
+      "category": "generated compiler source",
+      "sha256": "574881745b384db045b860cf92da4041f90c47d7c1970b3dee191904fcc703b0",
+      "bytes": 3004
+    },
+    {
+      "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-generated-compiler-profile.py",
+      "snapshot": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-generated-raw-final-files-5ecikzb2/source-snapshot/audit/self-hosting/check-generated-compiler-profile.py",
+      "category": "acceptance runner",
+      "sha256": "40aad4cd96d8decdafbee391bc7144c0fd5bd293be20ecc37817cc28895c29da",
+      "bytes": 18555
+    }
+  ],
+  "compiler_mode": "provided",
+  "compiler_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-raw-profile.dag",
+  "compiler_sha256_start": "0fe0b19a530c7ec37b17ae10ac6e8b17edba134a2941293bde23c9478cd180d7",
+  "compiler_sha256_end": "0fe0b19a530c7ec37b17ae10ac6e8b17edba134a2941293bde23c9478cd180d7",
+  "binary_sha256_start": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "binary_sha256_end": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "revision": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "working_tree": " M audit/self-hosting/check-generated-compiler-profile.py\n M audit/self-hosting/check-guest-constant-linking.py\n M audit/self-hosting/check-selfhost-fixed-point.py\n M audit/self-hosting/fixed-point-checker/README.md\n M audit/self-hosting/test_selfhost_fixed_point.py\n M reference/self-hosting.md\n?? audit/self-hosting/__pycache__/\n?? audit/self-hosting/body-scale/\n?? audit/self-hosting/compiler-feature-coverage.json\n?? audit/self-hosting/compiler-feature-coverage.md\n?? audit/self-hosting/compiler-feature-coverage.py\n?? audit/self-hosting/compiler-feature-coverage.test.py\n?? audit/self-hosting/compiler-feature-coverage.validation.log\n?? audit/self-hosting/extended-compiler-routing/\n?? audit/self-hosting/fixed-point-job-binding/\n?? audit/self-hosting/native_compiler_selection.py\n?? audit/self-hosting/test_compiler_selection.py\n",
+  "failure": "AssertionError: ART1 profile",
+  "files": [
+    {
+      "path": "source-snapshot/audit/self-hosting/check-generated-compiler-profile.py",
+      "bytes": 18555,
+      "sha256": "40aad4cd96d8decdafbee391bc7144c0fd5bd293be20ecc37817cc28895c29da"
+    },
+    {
+      "path": "source-snapshot/tests/fixtures/native_generated_literal_compiler.tri",
+      "bytes": 3004,
+      "sha256": "574881745b384db045b860cf92da4041f90c47d7c1970b3dee191904fcc703b0"
+    }
+  ]
+}

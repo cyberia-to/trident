@@ -167,6 +167,15 @@ The package's 255-byte logical-name ceiling applies to that prefix; member
 identifiers retain the source-language length bound. An identifier is required
 after every dot. Lexical failures retain code 1, incomplete paths code 2 and
 prefix-capacity failures code 7, all at the original offending token.
+
+`qualified_name.matches_owner(prefix, owner)` compares validated byte handles
+bounded by 255 bytes. It accepts the complete owner or exactly its final dotted
+component; a dotted suffix shorter than the complete owner does not match. The
+comparison preserves every byte and leaves both handles unchanged. Function,
+constant and type import readers use this predicate while retaining the complete
+ordered-use scan: a later missing or private member leaves an earlier public
+binding visible.
+
 Imported constant lookup compares a member against its defining source, keeps
 the calling expression's span, and retains literal provenance independently of
 the canonical Field value. Direct-use order determines each exported binding;

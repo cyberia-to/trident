@@ -1,0 +1,14 @@
+program native_alias_suffix
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.qualified_name
+
+#[pure]
+fn main(input: Noun) -> Noun {
+    let prefix = bytes.from_noun(noun.head(input), as_u32(255), as_u32(10000))
+    let owner = bytes.from_noun(noun.tail(input), as_u32(255), as_u32(10000))
+    let mut answer: Field = 0
+    if qualified_name.matches_owner(prefix, owner) { answer = 1 }
+    noun.atom(answer)
+}

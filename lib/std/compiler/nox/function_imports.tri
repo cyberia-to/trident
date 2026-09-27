@@ -3,7 +3,6 @@ module std.compiler.nox.function_imports
 use vm.nox.noun
 use std.nox.bytes
 use std.compiler.nox.syntax
-use std.compiler.nox.ascii
 use std.compiler.nox.qualified_name
 use std.compiler.nox.function_exports
 
@@ -21,19 +20,6 @@ pub fn empty() -> View {
 }
 
 #[pure]
-fn alias(prefix: bytes.Bytes, owner: bytes.Bytes) -> Bool {
-    if noun.eq(bytes.to_noun(prefix), bytes.to_noun(owner)) { return true }
-    let mut start = syntax.ZERO
-    let mut pos = syntax.ZERO
-    for letter in 0..255 {
-        if pos == bytes.len(owner) { return ascii.same(owner, start, pos, prefix) }
-        if bytes.get(owner, pos) == as_u32(46) { start = syntax.inc(pos) }
-        pos = syntax.inc(pos)
-    }
-    ascii.same(owner, start, pos, prefix)
-}
-
-#[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn lookup(source: bytes.Bytes, name: qualified_name.Name, view: View) -> function_exports.Found {
     let mut found = function_exports.Found { exists: false, target: syntax.ZERO }
@@ -45,7 +31,7 @@ pub fn lookup(source: bytes.Bytes, name: qualified_name.Name, view: View) -> fun
         // complete record and source-order list remain owned by the graph.
         let target = as_u32(noun.as_field(noun.head(noun.head(rest))))
         let owner = bytes.table_get(view.names, target)
-        if alias(name.prefix, owner) {
+        if qualified_name.matches_owner(name.prefix, owner) {
             let candidate = function_exports.find(view.exports, target,
                 bytes.table_get(view.sources, target), source, name.member)
             // A missing/private member of a later same-basename owner leaves

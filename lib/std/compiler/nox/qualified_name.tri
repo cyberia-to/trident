@@ -1,6 +1,8 @@
 module std.compiler.nox.qualified_name
 
 use std.nox.bytes
+use vm.nox.noun
+use vm.core.field
 use std.compiler.nox.syntax
 use std.compiler.nox.lexer
 
@@ -9,6 +11,28 @@ const PREFIX_CAP: U32 = 255
 pub struct Name {
     pub prefix: bytes.Bytes, pub member: syntax.Token, pub token: syntax.Token,
     pub start: U32, pub end: U32, pub error: syntax.Error
+}
+
+// Full owner equality is canonical. Otherwise only one final component may
+// match: a dot inside the candidate suffix rejects a partial qualified path.
+#[pure]
+#[requires((PREFIX_CAP < bytes.len(prefix)) == false)]
+#[requires((PREFIX_CAP < bytes.len(owner)) == false)]
+pub fn matches_owner(prefix: bytes.Bytes, owner: bytes.Bytes) -> Bool {
+    if noun.eq(bytes.to_noun(prefix), bytes.to_noun(owner)) { return true }
+    let length = bytes.len(prefix)
+    if (length < bytes.len(owner)) == false { return false }
+    let start = as_u32(field.sub(as_field(bytes.len(owner)), as_field(length)))
+    if (bytes.get(owner, syntax.dec(start)) == as_u32(46)) == false { return false }
+    let mut pos = start
+    for index in 0..255 {
+        if index == length { return true }
+        let value = bytes.get(owner, pos)
+        if value == as_u32(46) { return false }
+        if (value == bytes.get(prefix, index)) == false { return false }
+        pos = syntax.inc(pos)
+    }
+    true
 }
 
 #[pure]

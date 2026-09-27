@@ -1,0 +1,161 @@
+{
+  "base_revision": "213b32fbdfa7a9393afb8c547480b0d47726a965",
+  "source_sha256": {
+    "lib/std/compiler/nox/function_exports.tri": "69e18c06f64b3e9a265833e85d41944c855c4299b52c530cb71e5515af9b46d4",
+    "tests/native_function_exports.rs": "abba0733e43595ff2ed6e7062fbc4e79f4038099d27529d4da4568ab93714d96",
+    "tests/fixtures/native_function_exports.tri": "ede5b47caba5b9c1472289209ed9628134aa67946a4088e39d2b65b29d6ec791"
+  },
+  "frozen_sources": "../alias-suffix-source-snapshot.json",
+  "frozen_sources_sha256": "7274b1ff84210cfa28fd7b022e7fc4147761bc27986d6159cb13f395849fdc25",
+  "paired_command": "TRIDENT_EXPORT_FROZEN_SNAPSHOT=1 CARGO_TARGET_DIR=../target-root cargo test --release --locked --offline --test native_function_exports -- --include-ignored --nocapture",
+  "imports_command": "CARGO_TARGET_DIR=../target-root cargo test --release --locked --offline --test native_compiler function_ -- --nocapture",
+  "check_command": "CARGO_TARGET_DIR=../target-probe cargo check --tests --locked --offline",
+  "audit_command": "../install-body-scale/bin/trident audit lib/std/compiler/nox/function_exports.tri --json",
+  "audit_exit_code": 2,
+  "audit_verdict": "unknown: aggregate parameters/returns",
+  "logs": {
+    "paired": {
+      "file": "paired.log",
+      "raw_sha256": "2fb3acec68572d373c77f5e88270b7da070895b8b004bd8a464f0fd22edba0b1",
+      "normalized_sha256": "7d31ee9b7dd708906224b4497320ec2c9fbc98801270c8c4a704dd7871282ac2"
+    },
+    "imports": {
+      "file": "imports.log",
+      "raw_sha256": "f675ed49c1c293109419855e672b2b8f8c72d89ebadd99ce70a292f24fd3cecd",
+      "normalized_sha256": "ce6ba6742ba9366c858f4208f76a848d06111ee5ca586ffd30c847a34e0ea8ab"
+    },
+    "check": {
+      "file": "check.log",
+      "raw_sha256": "8c8aa54b34f0ceada33a790495b966147a3db1f35894cb85554fba2c3feb08e8",
+      "normalized_sha256": "8c8aa54b34f0ceada33a790495b966147a3db1f35894cb85554fba2c3feb08e8"
+    },
+    "audit": {
+      "file": "audit.json",
+      "raw_sha256": "beb5e07ab5f7a5f672f53a49b1be3ae41ae85ee0baf9ba03412d11b6264b520f",
+      "normalized_sha256": "beb5e07ab5f7a5f672f53a49b1be3ae41ae85ee0baf9ba03412d11b6264b520f"
+    },
+    "audit_stderr": {
+      "file": "audit_stderr.log",
+      "raw_sha256": "e6632e6fabbd83ca3babec6c86d8ce72dadeedc3933dfd412e8cec2ec86115ec",
+      "normalized_sha256": "e6632e6fabbd83ca3babec6c86d8ce72dadeedc3933dfd412e8cec2ec86115ec"
+    }
+  },
+  "log_normalization": "Trailing line whitespace and final empty lines removed; values and diagnostic text unchanged. Raw logs retained in /tmp.",
+  "measurements": [
+    {
+      "export_lookup": [
+        {
+          "after": {
+            "frames": 467,
+            "loaded_nodes": 6371,
+            "nodes": 50842,
+            "reductions": 1276457,
+            "result": [
+              1,
+              0
+            ]
+          },
+          "before": {
+            "frames": 467,
+            "loaded_nodes": 6390,
+            "nodes": 50949,
+            "reductions": 1348546,
+            "result": [
+              1,
+              0
+            ]
+          },
+          "query": "name00"
+        },
+        {
+          "after": {
+            "frames": 467,
+            "loaded_nodes": 6371,
+            "nodes": 42090,
+            "reductions": 827341,
+            "result": [
+              1,
+              16
+            ]
+          },
+          "before": {
+            "frames": 467,
+            "loaded_nodes": 6390,
+            "nodes": 42153,
+            "reductions": 863016,
+            "result": [
+              1,
+              16
+            ]
+          },
+          "query": "name16"
+        },
+        {
+          "after": {
+            "frames": 467,
+            "loaded_nodes": 6371,
+            "nodes": 33390,
+            "reductions": 410213,
+            "result": [
+              1,
+              31
+            ]
+          },
+          "before": {
+            "frames": 467,
+            "loaded_nodes": 6390,
+            "nodes": 33410,
+            "reductions": 410321,
+            "result": [
+              1,
+              31
+            ]
+          },
+          "query": "name31"
+        },
+        {
+          "after": {
+            "frames": 467,
+            "loaded_nodes": 6371,
+            "nodes": 42043,
+            "reductions": 612968,
+            "result": [
+              0,
+              0
+            ]
+          },
+          "before": {
+            "frames": 467,
+            "loaded_nodes": 6390,
+            "nodes": 42152,
+            "reductions": 687112,
+            "result": [
+              0,
+              0
+            ]
+          },
+          "query": "absent"
+        }
+      ]
+    },
+    {
+      "compiler": [
+        {
+          "artifact_blake3": "d0d1cfd8d088503bb257b5496ebd36f6f9f9241809938cea24928343deb01d26",
+          "artifact_bytes": 9700617,
+          "loaded_nodes": 100701,
+          "source_blake3": "f11ca5d7779fb943b3c516898c0fb8c9967832e5e1204895668e0d06dfca9afa",
+          "variant": "before"
+        },
+        {
+          "artifact_blake3": "70c027b41b8ae91318b0d70a571df422fecb689ed5625190ed466a6157fa90dc",
+          "artifact_bytes": 9708336,
+          "loaded_nodes": 100780,
+          "source_blake3": "3f538ca623f71201f2f9376965fc9344525d64c39a1b8683f038ef6ee925d966",
+          "variant": "after"
+        }
+      ]
+    }
+  ],
+  "scope": "Isolated lookup, frozen full C1 footprint and focused regressions. No full C1(S), C2 or fixed-point acceptance."
+}

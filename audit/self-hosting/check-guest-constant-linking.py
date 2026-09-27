@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+from native_compiler_selection import CompilerSelection
 
 
 def cases():
@@ -71,6 +72,7 @@ def main(case_provider=cases):
     parser = argparse.ArgumentParser()
     parser.add_argument('--joy', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--compiler', type=Path, help='use this compiler ART1 unchanged; retain separate reference-only oracles')
     parser.add_argument('--case', action='append', help='run only the named acceptance case (repeatable)')
     args = parser.parse_args()
     selected = list(case_provider())
@@ -78,31 +80,47 @@ def main(case_provider=cases):
         requested = set(args.case)
         assert requested <= {case['case'] for case in selected}, requested
         selected = [case for case in selected if case['case'] in requested]
+    selection = CompilerSelection(args, parser)
     repo = Path(__file__).resolve().parents[2]
-    binary = args.joy.resolve()
+    binary = selection.binary
     sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
     binary_sha = sha(binary)
     spec = importlib.util.spec_from_file_location('native', Path(__file__).with_name('run-native-compiler.py'))
     native = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(native)
     commands, observations = [], []
+    compiler_info = None
     identities = {}
     host = ['--budget', '100000000', '--frames', '65536', '--time-ms', '60000', '--arena-nodes', '786432']
 
-    def run(arguments, expected=0):
-        command = [str(binary), *map(str, arguments)]
-        result = subprocess.run(command, cwd=repo, capture_output=True, text=True)
-        record = dict(command=command, exit_code=result.returncode, stdout=result.stdout, stderr=result.stderr)
-        commands.append(record)
-        assert result.returncode == expected, record
-        return json.loads(result.stdout) if result.stdout.startswith('{') else None
+    def flush(status, **extra):
+        selection.write_report(dict(status=status, binary_sha256=binary_sha,
+            compiler=compiler_info, **selection.describe(), commands=commands, observations=observations,
+            reference_scope='Rust-built raw-profile oracles are separate comparisons; never compiler substitutes', **extra))
 
-    with tempfile.TemporaryDirectory(prefix='trident-guest-constants-') as temp:
-        root = Path(temp)
+    def run(arguments, expected=0, reference_only=False):
+        try:
+            selection.before(arguments, reference_only)
+            command = [str(binary), *map(str, arguments)]
+            result = subprocess.run(command, cwd=repo, capture_output=True, text=True)
+            record = dict(command=command, exit_code=result.returncode, stdout=result.stdout,
+                          stderr=result.stderr, reference_only=reference_only)
+            commands.append(record)
+            value = json.loads(result.stdout) if result.stdout.startswith('{') else None
+            selection.after(arguments, value, expected)
+            assert result.returncode == expected, record
+        except Exception:
+            flush('failed')
+            raise
+        flush('running')
+        return value
+
+    def exercise(root):
+        nonlocal compiler_info
         zero = root / 'zero.dag'
         zero.write_bytes(bytes.fromhex(json.loads((repo.parent / 'joy/cli/tests/compiler_vectors.json').read_text())['files']['zero']))
-        compiler = root / 'compiler.dag'
-        run(['build', repo / 'compiler/nox/main.tri', '--emit', 'artifact', '--artifact-profile', 'compiler-job', '-o', compiler])
+        compiler = selection.select(root / 'compiler.dag', lambda path:
+            run(['build', repo / 'compiler/nox/main.tri', '--emit', 'artifact', '--artifact-profile', 'compiler-job', '-o', path]))
         compiler_info = dict(sha256=sha(compiler), particle=compiler.read_bytes()[8:40].hex(), dag_entries=int.from_bytes(compiler.read_bytes()[40:44], 'little'))
         for case in selected:
             directory = root / case['case']
@@ -141,9 +159,9 @@ def main(case_provider=cases):
                 output = directory / 'value.dag'
                 execution = run(['run-artifact', program, '--input', zero, '-o', output, *host])
                 assert native.decode(output) == case['value'], case['case']
-                run(seed_cmd)
+                run(seed_cmd, reference_only=True)
                 expected = directory / 'seed-value.dag'
-                run(['run-artifact', oracle, '--input', zero, '-o', expected, *host])
+                run(['run-artifact', oracle, '--input', zero, '-o', expected, *host], reference_only=True)
                 assert output.read_bytes() == expected.read_bytes(), case['case']
                 if 'identity' in case:
                     previous = identities.setdefault(case['identity'], program.read_bytes())
@@ -162,11 +180,21 @@ def main(case_provider=cases):
                 run(['run-artifact', compiler, '--input', job, '--emit', 'program', '-o', protected, '--force', *host], 1)
                 assert protected.read_bytes() == b'previous output'
                 if case['seed_reject']:
-                    run(seed_cmd, 1)
+                    run(seed_cmd, 1, reference_only=True)
                 observation.update(diagnostics=result['diagnostics'], previous_output_preserved=True)
             observations.append(observation)
-    assert sha(binary) == binary_sha, 'installed Joy changed during acceptance'
-    args.output.write_text(json.dumps(dict(binary_sha256=binary_sha, compiler=compiler_info, commands=commands, observations=observations), indent=2) + '\n')
+
+    try:
+        with tempfile.TemporaryDirectory(prefix='trident-guest-constants-') as temp:
+            try:
+                exercise(Path(temp))
+                selection.check()
+                flush('passed')
+            except BaseException as error:
+                flush('failed', failure=dict(kind=type(error).__name__, message=str(error)))
+                raise
+    finally:
+        selection.close()
     print(json.dumps(dict(commands=len(commands), observations=len(observations), compiler=compiler_info)))
 
 

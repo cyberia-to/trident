@@ -105,6 +105,15 @@ class FixedPointReceipts(unittest.TestCase):
 
     def metadata(self, command, **kwargs):
         self.calls.append(command)
+        if command[0] == str(self.binary):
+            self.assertEqual(command[1], "pack-job")
+            package = json.loads(Path(command[command.index("--manifest") + 1]).read_text())
+            content = Path(package["modules"][0]["file"]).read_bytes()
+            # The synthetic transport changes its output when the actual source
+            # changes, even if all accompanying receipt hashes were updated.
+            value = self.job if content == SOURCE else self.job + b"different source"
+            Path(command[command.index("-o") + 1]).write_bytes(value)
+            return subprocess.CompletedProcess(command, 0, "packed\n", "")
         self.assertEqual(command[0], str(self.checker))
         self.assertEqual(command[-1], "--check")
         self.assertNotIn("cargo", command)
@@ -116,7 +125,8 @@ class FixedPointReceipts(unittest.TestCase):
 
     def run_check(self, expected=0, metadata=None):
         args = [str(HERE / "check-selfhost-fixed-point.py"), "--first", str(self.first),
-                "--second", str(self.second), "--inventory-checker", str(self.checker), "--output", str(self.output)]
+                "--second", str(self.second), "--inventory-checker", str(self.checker),
+                "--joy", str(self.binary), "--output", str(self.output)]
         with patch.object(sys, "argv", args), patch.object(CHECK.subprocess, "run", metadata or self.metadata), contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(CHECK.main(), expected)
         return json.loads(self.output.read_text())
@@ -131,7 +141,9 @@ class FixedPointReceipts(unittest.TestCase):
         before = self.compiler.read_bytes()
         result = self.run_check()
         self.assertEqual(result["status"], "passed")
-        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(len(self.calls), 4)
+        self.assertEqual(len(result["job_checks"]), 2)
+        self.assertTrue(all(row["exact_job_bytes_equal"] for row in result["job_checks"]))
         self.assertEqual(result["fixed_point"]["artifact_sha256"], sha(self.c2))
         self.assertEqual(result["fixed_point"]["particle"], self.c2[8:40].hex())
         self.assertEqual(result["inventory_checker_sha256_start"], result["inventory_checker_sha256_end"])
@@ -145,6 +157,68 @@ class FixedPointReceipts(unittest.TestCase):
     def test_source_sha_and_snapshot_inventory_both_bind_actual_bytes(self):
         (self.root / "first/0.tri").write_bytes(SOURCE.replace(b"7", b"8"))
         self.reject("snapshot source SHA256")
+
+    def test_same_length_source_and_updated_hash_cannot_replace_executed_job(self):
+        changed = SOURCE.replace(b"7", b"8")
+        (self.root / "first/0.tri").write_bytes(changed)
+        receipt = json.loads(self.first.read_text())
+        receipt["sources"]["native_compiler"]["sha256"] = sha(changed)
+        self.save(self.first, receipt)
+
+        def updated_inventory(command, **kwargs):
+            if command[0] == str(self.checker):
+                return subprocess.CompletedProcess(command, 0, "new inventory agrees\n", "")
+            return self.metadata(command, **kwargs)
+
+        result = self.run_check(1, updated_inventory)
+        self.assertIn("retained JOB1 differs", result["error"]["message"])
+        self.assertEqual(result["job_checks"][0]["exit_code"], 0)
+        self.assertNotIn("fixed_point", result)
+
+    def test_job_checker_failure_and_binary_mutation_are_rejected(self):
+        for mode in ("failure", "mutation"):
+            with self.subTest(mode=mode):
+                self.output = self.root / f"transport-{mode}.json"
+
+                def rejected(command, **kwargs):
+                    if command[0] == str(self.binary):
+                        if mode == "mutation":
+                            self.binary.write_bytes(b"replaced binary")
+                        return subprocess.CompletedProcess(command, 1, "", "pack rejected")
+                    return self.metadata(command, **kwargs)
+
+                result = self.run_check(1, rejected)
+                message = "job checker changed during check" if mode == "mutation" else "snapshot JOB1 repack failed"
+                self.assertEqual(result["error"]["message"], message)
+                self.assertNotIn("fixed_point", result)
+
+    def test_receipt_flags_cannot_add_an_output_or_command_option(self):
+        receipt = json.loads(self.first.read_text())
+        receipt["host_flags"] += ["-o", str(self.root / "unexpected")]
+        for row in receipt["commands"][-2:]:
+            row["command"] += ["-o", str(self.root / "unexpected")]
+        self.save(self.first, receipt)
+        self.reject("command option -o")
+        self.assertEqual(self.calls, [])
+
+    def test_final_tool_identity_failure_never_retains_fixed_point_acceptance(self):
+        original_verify = CHECK.verify
+        for path, message in [(self.checker, "inventory checker start/end binding"),
+                              (self.binary, "job checker start/end binding")]:
+            with self.subTest(tool=path.name):
+                self.output = self.root / f"late-{path.name}.json"
+                original = path.read_bytes()
+
+                def changed_after_steps(*args):
+                    original_verify(*args)
+                    path.write_bytes(b"late replacement")
+
+                with patch.object(CHECK, "verify", changed_after_steps):
+                    result = self.run_check(1)
+                path.write_bytes(original)
+                self.assertEqual(result["error"]["message"], message)
+                self.assertEqual(len(result["steps"]), 2)
+                self.assertNotIn("fixed_point", result)
 
     def test_inventory_checker_failure_cannot_be_replaced_by_declared_hashes(self):
         changed = SOURCE.replace(b"7", b"8")

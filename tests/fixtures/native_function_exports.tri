@@ -1,0 +1,39 @@
+program native_function_exports
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.function_exports
+
+#[pure]
+fn load(input: Noun) -> function_exports.Bank {
+    let mut rows = input
+    let mut bank = function_exports.empty(as_u32(8))
+    for index in 0..4096 {
+        if noun.eq(rows, noun.atom(0)) { return bank }
+        let row = noun.head(rows)
+        let name = noun.head(noun.tail(row))
+        bank = function_exports.push(bank, function_exports.Binding {
+            owner: as_u32(noun.as_field(noun.head(row))),
+            name: syntax.token(1, as_u32(noun.as_field(noun.head(name))), as_u32(noun.as_field(noun.tail(name))), 0),
+            target: as_u32(noun.as_field(noun.tail(noun.tail(row)))) }, syntax.TABLE_CAP)
+        rows = noun.tail(rows)
+    }
+    bank
+}
+
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), syntax.SOURCE_CAP, as_u32(100000))
+    let args = noun.tail(input)
+    let caller = bytes.from_noun(noun.head(args), syntax.SOURCE_CAP, as_u32(100000))
+    let request = noun.tail(args)
+    let owner = as_u32(noun.as_field(noun.head(request)))
+    let span = noun.head(noun.tail(request))
+    let query = syntax.token(1, as_u32(noun.as_field(noun.head(span))), as_u32(noun.as_field(noun.tail(span))), 0)
+    let bank = load(noun.tail(noun.tail(request)))
+    let found = function_exports.find(bank, owner, source, caller, query)
+    let mut exists: Field = 0
+    if found.exists { exists = 1 }
+    noun.pair(noun.atom(exists), noun.atom(as_field(found.target)))
+}
