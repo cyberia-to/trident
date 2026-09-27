@@ -231,3 +231,17 @@ pub fn validate_entry(input: header_state.State) -> header_state.State {
     s.error = syntax.error(3, entry.name.start, entry.name.end)
     s
 }
+
+// The header has already passed the ordinary scalar/structured entry check.
+// Compiler-profile output must preserve the entire JOB1 subject and RES1 value.
+#[pure]
+#[requires(syntax.either(profile == 0, profile == 1))]
+pub fn require_profile(input: header_state.State, profile: Field) -> header_state.State {
+    let mut s = input
+    if (s.error.code == syntax.ZERO) == false { return s }
+    if syntax.both(profile == 1, s.structured == false) {
+        let entry = signatures.read(seq.get(s.functions, s.entry))
+        s.error = syntax.error(3, entry.name.start, entry.name.end)
+    }
+    s
+}

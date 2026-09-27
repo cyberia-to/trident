@@ -72,6 +72,13 @@ fn publish(source: bytes.Bytes, owner: U32, start: U32, public: seq.Seq, input: 
 #[pure]
 #[requires(owner < seq.len(graph.modules))]
 pub fn check(graph: module_graph.Graph, owner: U32, entry_index: U32, input: Bank) -> Bank {
+    check_profile(graph, owner, entry_index, input, 0)
+}
+
+#[pure]
+#[requires(owner < seq.len(graph.modules))]
+#[requires(syntax.either(profile == 0, profile == 1))]
+pub fn check_profile(graph: module_graph.Graph, owner: U32, entry_index: U32, input: Bank, profile: Field) -> Bank {
     let mut s = input
     let unit = module_store.read(graph.modules, owner)
     let source = bytes.table_get(graph.sources, owner)
@@ -88,7 +95,7 @@ pub fn check(graph: module_graph.Graph, owner: U32, entry_index: U32, input: Ban
     s.error = parsed.error
     if (s.error.code == syntax.ZERO) == false { return s }
     if entry {
-        parsed = headers.validate_entry(parsed)
+        parsed = headers.require_profile(headers.validate_entry(parsed), profile)
         s.error = parsed.error
         if (s.error.code == syntax.ZERO) == false { return s }
         s.entry = parsed.entry

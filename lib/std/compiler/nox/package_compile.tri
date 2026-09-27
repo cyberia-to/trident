@@ -30,8 +30,8 @@ pub fn compile(view: job.View) -> Compiled {
     // No graph storage is needed when the checked header has no direct uses.
     // A one-module package can still contain a self-use and must discover it.
     if syntax.both(header.token.kind == as_u32(13), header.token.value == 7697253) == false {
-        let compiled = parser.compile_at(view.source, view.name, header.token.start,
-            constant_imports.empty(), view.sequence_limit, view.depth_limit)
+        let compiled = parser.compile_profile(view.source, view.name, header.token.start,
+            constant_imports.empty(), view.sequence_limit, view.depth_limit, view.profile)
         return Compiled { formula: compiled.formula, index: view.index, error: compiled.error }
     }
     let graph = module_graph.discover_open(view, header)
@@ -58,7 +58,7 @@ pub fn compile(view: job.View) -> Compiled {
             return Compiled { formula: compiled.formula, index: view.index, error: compiled.error }
         }
         let owner = as_u32(noun.as_field(seq.get(ordered.modules, position)))
-        bank = module_functions.check(graph, owner, view.index, bank)
+        bank = module_functions.check_profile(graph, owner, view.index, bank, view.profile)
         if (bank.error.code == syntax.ZERO) == false {
             return failed(module_store.read(graph.modules, owner).index, bank.error)
         }

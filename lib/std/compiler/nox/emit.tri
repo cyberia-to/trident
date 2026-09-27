@@ -21,9 +21,15 @@ pub fn binary(kind: U32, left: Noun, right: Noun) -> Noun {
 }
 
 #[pure]
-pub fn artifact(formula: Noun) -> Noun {
+pub fn artifact(formula: Noun) -> Noun { artifact_profile(formula, 0) }
+
+#[pure]
+#[requires(syntax.either(profile == 0, profile == 1))]
+pub fn artifact_profile(formula: Noun, profile: Field) -> Noun {
+    assert(syntax.either(profile == 0, profile == 1))
+    let requested = noun.atom(profile)
     let zero = noun.atom(0)
-    noun.pair(noun.atom(1095914545), noun.pair(zero, noun.pair(zero, noun.pair(zero, noun.pair(formula, zero)))))
+    noun.pair(noun.atom(1095914545), noun.pair(zero, noun.pair(requested, noun.pair(requested, noun.pair(formula, zero)))))
 }
 
 #[pure]
@@ -35,6 +41,12 @@ fn result(input: Noun, status: Field, payload: Noun) -> Noun {
 
 #[pure]
 pub fn success(input: Noun, formula: Noun) -> Noun { result(input, 0, artifact(formula)) }
+
+#[pure]
+#[requires(syntax.either(profile == 0, profile == 1))]
+pub fn success_profile(input: Noun, formula: Noun, profile: Field) -> Noun {
+    result(input, 0, artifact_profile(formula, profile))
+}
 
 #[pure]
 fn text(content: [Field; 24], length: U32) -> bytes.Bytes {

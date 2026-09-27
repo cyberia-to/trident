@@ -178,7 +178,7 @@ fn entry_selection_ignores_unused_source_and_rejects_unsupported_requests() {
                 options,
                 support::CAPS,
             ) {
-                Result::Errors(errors) => assert_eq!(errors[0].code, 6),
+                Result::Errors(errors) => assert_eq!(errors[0].code, if profiles == 1 { 3 } else { 6 }),
                 other => panic!("{other:?}"),
             }
         }
