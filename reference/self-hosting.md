@@ -767,6 +767,19 @@ the corpus as dependencies become supported; SH5 requires the full closure.
 **Outcome:** source/module loading and native data processing support the whole
 compiler at measured, declared resource limits.
 
+Inventory the native entry and its canonical source imports with:
+
+```sh
+cargo run --release --locked --example selfhost_inventory -- --root . --entry compiler/nox/main.tri --output audit/self-hosting/native-compiler-closure.json
+```
+
+Append `--check` to compare against the saved receipt without replacing it.
+The inventory includes every declaration in the selected sources, with relative
+paths and source identities. It rejects a program imported as a module and an
+entry name that also resolves as an imported module. Omitting `--entry` retains
+the original inventory of RAM compiler modules. Compilation, dependency-graph
+admission and runtime budgets retain their separate SH3/SH4 gates.
+
 - Resolve all imports from the supplied package, with deterministic logical
   paths and dependency order. Reject missing, ambiguous, cyclic/unsupported or
   identity-mismatched modules according to the language contract.
