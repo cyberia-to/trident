@@ -3,6 +3,7 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -36,10 +37,10 @@ class BootstrapBoundaries(unittest.TestCase):
                     binary_sha256_start=binary, binary_sha256_end=binary,
                     observations=[{}] * count, commands=[dict(command=["joy", "run"], exit_code=1)])
 
-    def fixture(self):
+    def fixture(self, numbers=(1, 2), target="aarch64-apple-darwin"):
         """Receipt wiring fixture only; tests do not represent compiler execution."""
         rows = []
-        for number in (1, 2):
+        for number in numbers:
             prefix = f"repeat-{number}/"
             artifact = self.identity(prefix + "compiler.dag", b"fixture compiler")
             inventory = self.identity(prefix + "inventory.json", {"fixture": True})
@@ -65,15 +66,197 @@ class BootstrapBoundaries(unittest.TestCase):
             rows.append(dict(number=number, status="passed", tools={"joy": "j", "inventory": "i"},
                              inventory=inventory, c1=artifact, c2=artifact, c3=artifact,
                              step2=steps[0], step3=steps[1], corpora=corpora, fixed_point=fixed, comparison=comparison))
-        report = dict(schema="trident/clean-bootstrap/v1", status="passed",
-                    target="aarch64-apple-darwin", host={"rust": "host: aarch64-apple-darwin\nrelease: 1.95.0"},
-                    profile=RUNNER.PROFILE, repetitions=rows,
+        report = dict(schema=RUNNER.SCHEMA, status="passed", ci_origin=None, selected_repetitions=list(numbers),
+                    target=target, host={"rust": f"host: {target}\nrelease: 1.95.0"},
+                    profile=dict(RUNNER.PROFILE), repetitions=rows,
                     pins={name: "a" * 40 for name in RUNNER.REPOS}, rust_version="1.95.0", runner_sha256="r")
         self.refresh_files(report)
         return report
 
     def refresh_files(self, report):
         report["files"] = self.identity("files.json", RUNNER.evidence_files(self.root))
+
+    def matrix_fixture(self, origin=None):
+        reports, parent = [], self.root
+        try:
+            for target in RUNNER.TARGETS:
+                for number in (1, 2):
+                    self.root = parent / f"{target}-repeat-{number}"
+                    report = self.fixture((number,), target)
+                    report["ci_origin"] = copy.deepcopy(origin)
+                    reports.append((self.root, report))
+        finally:
+            self.root = parent
+        return reports
+
+    def test_single_repeat_and_local_default_keep_distinct_numbered_evidence(self):
+        for numbers in ((1,), (2,), (1, 2)):
+            report = self.fixture(numbers)
+            self.assertEqual(RUNNER.compare([(self.root, report)]), report["repetitions"][0]["c2"]["sha256"])
+        for numbers in ([], [True], [0], [3], [2, 1], [1, 1], [1, 2, 3]):
+            with self.subTest(numbers=numbers), self.assertRaisesRegex(ValueError, "selected repetitions"):
+                RUNNER.selected({"selected_repetitions": numbers})
+
+    def test_selected_repeat_cannot_relabel_first_repeat_or_reuse_its_evidence(self):
+        report = self.fixture((1,))
+        report["selected_repetitions"] = [2]
+        with self.assertRaisesRegex(ValueError, "numbered repetitions"):
+            RUNNER.compare([(self.root, report)])
+        report["repetitions"][0]["number"] = 2
+        with self.assertRaisesRegex(ValueError, "directory reused"):
+            RUNNER.compare([(self.root, report)])
+
+    def test_legacy_two_repeat_receipt_cannot_claim_current_schema_acceptance(self):
+        report = self.fixture()
+        report["schema"] = "trident/clean-bootstrap/v1"
+        with self.assertRaisesRegex(ValueError, "current schema"):
+            RUNNER.compare([(self.root, report)])
+
+    def test_matrix_requires_exact_twelve_single_repeat_jobs(self):
+        reports = self.matrix_fixture()
+        expected = reports[0][1]["repetitions"][0]["c2"]["sha256"]
+        self.assertEqual(RUNNER.compare_matrix(reports), expected)
+        for changed in (reports[:-1], reports + reports[:1], reports[:-1] + reports[:1]):
+            with self.assertRaisesRegex(ValueError, "platform.*evidence"):
+                RUNNER.compare_matrix(changed)
+        report = reports[-1][1]
+        report["selected_repetitions"] = [1, 2]
+        with self.assertRaisesRegex(ValueError, "one selected repetition"):
+            RUNNER.compare_matrix(reports)
+
+    def test_matrix_rejects_mixed_ci_runs_attempts_heads_and_missing_origin(self):
+        origin = dict(run_id="123", run_attempt="2", head_sha="a" * 40)
+        reports = self.matrix_fixture(origin)
+        RUNNER.compare_matrix(reports, origin)
+        last = reports[-1][1]
+        for changed in (None, origin | {"run_id": "124"}, origin | {"run_attempt": "1"},
+                        origin | {"head_sha": "b" * 40}):
+            last["ci_origin"] = changed
+            with self.subTest(changed=changed), self.assertRaises(ValueError):
+                RUNNER.compare_matrix(reports, origin)
+            with self.assertRaises(ValueError):
+                RUNNER.compare_matrix(reports)
+        last["ci_origin"] = origin
+        with self.assertRaisesRegex(ValueError, "CI run origin"):
+            RUNNER.compare_matrix(reports, origin | {"run_attempt": "3"})
+
+    def test_matrix_rejects_changed_pins_profile_source_options_and_limits(self):
+        reports = self.matrix_fixture()
+        root, report = reports[-1]
+        for key, value in (("pins", report["pins"] | {"joy": "b" * 40}),
+                           ("profile", report["profile"] | {"time-ms": 3_600_000}),
+                           ("runner_sha256", "other")):
+            old = report[key]
+            report[key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                RUNNER.compare_matrix(reports)
+            report[key] = old
+        parent, self.root = self.root, root
+        try:
+            row = report["repetitions"][0]
+            fixed = RUNNER.load(root / row["fixed_point"]["path"])
+            for key, value in (("source_sha256_set", ["other"]), ("options", {"changed": 1}), ("limits", {"changed": 1})):
+                changed = copy.deepcopy(fixed)
+                changed["fixed_point"][key] = value
+                row["comparison"] = changed["fixed_point"]
+                row["fixed_point"] = self.identity(row["fixed_point"]["path"], changed)
+                self.refresh_files(report)
+                with self.subTest(key=key), self.assertRaisesRegex(ValueError, "source/options/limits differ"):
+                    RUNNER.compare_matrix(reports)
+        finally:
+            self.root = parent
+
+    def test_ci_origin_requires_exact_ids_and_binds_pinned_head(self):
+        with patch.dict(RUNNER.os.environ, {}, clear=True):
+            self.assertIsNone(RUNNER.ci_origin())
+        env = dict(GITHUB_ACTIONS="true", GITHUB_RUN_ID="123", GITHUB_RUN_ATTEMPT="2", BOOTSTRAP_HEAD_SHA="a" * 40)
+        with patch.dict(RUNNER.os.environ, env, clear=True):
+            self.assertEqual(RUNNER.ci_origin(), dict(run_id="123", run_attempt="2", head_sha="a" * 40))
+        for key, value in (("GITHUB_RUN_ID", ""), ("GITHUB_RUN_ATTEMPT", "0"), ("BOOTSTRAP_HEAD_SHA", "short")):
+            with patch.dict(RUNNER.os.environ, env | {key: value}, clear=True), self.assertRaises(ValueError):
+                RUNNER.ci_origin()
+        report = self.fixture((2,))
+        report["ci_origin"] = dict(run_id="123", run_attempt="2", head_sha="b" * 40)
+        with self.assertRaisesRegex(ValueError, "CI head differs"):
+            RUNNER.compare([(self.root, report)])
+
+    def test_prepare_only_routes_explicit_second_repeat_without_build_fallback(self):
+        output, work = self.root / "evidence", self.root / "work"
+        args = [str(SCRIPT), "--target", "aarch64-apple-darwin", "--prepare-only", "--repeat", "2",
+                "--pins-json", json.dumps({name: "a" * 40 for name in RUNNER.REPOS}),
+                "--work", str(work), "--output", str(output)]
+        with patch.object(sys, "argv", args), patch.dict(RUNNER.os.environ, {}, clear=True), \
+             patch.object(RUNNER.Audit, "run", return_value="host: aarch64-apple-darwin\nrelease: 1.95.0"), \
+             patch.object(RUNNER, "native"), patch.object(RUNNER, "repetition") as run:
+            self.assertEqual(RUNNER.main(), 0)
+        run.assert_called_once()
+        self.assertEqual(run.call_args.args[1:3], (work.resolve() / "repeat-2", 2))
+        receipt = RUNNER.load(output / "receipt.json")
+        self.assertEqual(receipt["selected_repetitions"], [2])
+        self.assertEqual(receipt["status"], "prepared")
+        self.assertNotIn("compiler_sha256", receipt)
+
+    def test_repeat_cli_rejects_invalid_number_without_creating_output(self):
+        output = self.root / "evidence"
+        result = subprocess.run([sys.executable, str(SCRIPT), "--repeat", "3", "--output", str(output)],
+                                capture_output=True, check=False)
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse(output.exists())
+
+    def test_mismatched_ci_head_fails_before_work_or_build_and_retains_receipt(self):
+        output, work = self.root / "evidence", self.root / "work"
+        args = [str(SCRIPT), "--target", "aarch64-apple-darwin", "--repeat", "2",
+                "--pins-json", json.dumps({name: "a" * 40 for name in RUNNER.REPOS}),
+                "--work", str(work), "--output", str(output)]
+        env = dict(GITHUB_ACTIONS="true", GITHUB_RUN_ID="123", GITHUB_RUN_ATTEMPT="2", BOOTSTRAP_HEAD_SHA="b" * 40)
+        with patch.object(sys, "argv", args), patch.dict(RUNNER.os.environ, env, clear=True), \
+             patch.object(RUNNER.Audit, "run") as command:
+            self.assertEqual(RUNNER.main(), 1)
+        command.assert_not_called()
+        self.assertFalse(work.exists())
+        receipt = RUNNER.load(output / "receipt.json")
+        self.assertEqual(receipt["status"], "failed")
+        self.assertIn("CI head differs", receipt["error"])
+
+    def test_whole_compiler_routes_two_hour_ceiling_with_bounded_outer_timeout(self):
+        audit = RUNNER.Audit(self.root / "evidence", {"repetitions": []})
+        sources = self.root / "sources"
+        helper = sources / "trident/audit/self-hosting/bootstrap-runner.py"
+        helper.parent.mkdir(parents=True)
+        helper.write_bytes(SCRIPT.read_bytes())
+        evidence = audit.output / "repeat-2"
+        evidence.mkdir()
+        joy, checker, inventory, c1 = [evidence / name for name in ("joy", "checker", "inventory.json", "c1.dag")]
+        for path in (joy, checker, inventory, c1):
+            path.write_bytes(b"routing fixture only")
+        with patch.object(RUNNER, "prepare", return_value=(sources, joy, checker, inventory, c1)), \
+             patch.object(audit, "run", side_effect=RuntimeError("stop before guest execution")) as command:
+            with self.assertRaisesRegex(RuntimeError, "stop before guest"):
+                RUNNER.repetition(audit, self.root / "work", 2, "aarch64-apple-darwin", {})
+        argv, cwd, timeout = command.call_args.args
+        self.assertEqual(timeout, 7500)
+        self.assertEqual(argv[argv.index("--time-ms") + 1], "7200000")
+        self.assertEqual(argv[argv.index("--compiler") + 1], c1)
+        self.assertEqual(cwd, sources / "trident")
+        self.assertNotIn("status", audit.report["repetitions"][0])
+
+    def test_workflow_uses_exact_cross_product_and_attempt_scoped_artifacts(self):
+        workflow = SCRIPT.parents[2] / ".github/workflows/selfhost-bootstrap.yml"
+        text = workflow.read_text(encoding="utf-8")
+        matrix = text.split("      matrix:\n", 1)[1].split("    defaults:\n", 1)[0]
+        self.assertNotIn("include:", matrix)
+        self.assertIn("repeat: [1, 2]", matrix)
+        platforms = re.findall(r"- target: (\S+)\n +runner: (\S+)\n +architecture: (\S+)", matrix)
+        self.assertEqual(len(platforms), 6)
+        self.assertEqual({t for t, _, _ in platforms}, set(RUNNER.TARGETS))
+        for target, _, architecture in platforms:
+            self.assertEqual(architecture, RUNNER.TARGETS[target][1])
+        self.assertIn('--repeat "$env:BOOTSTRAP_REPEAT"', text)
+        self.assertIn("name: bootstrap-${{ matrix.platform.target }}-repeat-${{ matrix.repeat }}-attempt-${{ github.run_attempt }}", text)
+        self.assertIn("pattern: bootstrap-*-repeat-*-attempt-${{ github.run_attempt }}", text)
+        self.assertIn("name: bootstrap-matrix-comparison-attempt-${{ github.run_attempt }}", text)
+        self.assertIn("BOOTSTRAP_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", text)
+        self.assertNotIn("overwrite: true", text)
 
     def test_pins_require_complete_exact_commit_identities(self):
         values = {name: "a" * 40 for name in RUNNER.REPOS}

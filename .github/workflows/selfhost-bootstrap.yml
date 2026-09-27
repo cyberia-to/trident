@@ -12,15 +12,19 @@ on:
 permissions:
   contents: read
 
+env:
+  BOOTSTRAP_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 jobs:
   bootstrap:
-    name: Bootstrap ${{ matrix.target }}
-    runs-on: ${{ matrix.runner }}
+    name: Bootstrap ${{ matrix.platform.target }} repeat ${{ matrix.repeat }}
+    runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
-        include:
+        repeat: [1, 2]
+        platform:
           - target: aarch64-apple-darwin
             runner: macos-15
             architecture: arm64
@@ -45,7 +49,8 @@ jobs:
     env:
       PYTHONUTF8: '1'
       PYTHONDONTWRITEBYTECODE: '1'
-      BOOTSTRAP_TARGET: ${{ matrix.target }}
+      BOOTSTRAP_TARGET: ${{ matrix.platform.target }}
+      BOOTSTRAP_REPEAT: ${{ matrix.repeat }}
       BOOTSTRAP_PINS: >-
         {"trident":"${{ github.event.pull_request.head.sha || github.sha }}",
         "joy":"2878f4b17dfedf237c6110d7d411bb4824e65103",
@@ -66,16 +71,17 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
-          architecture: ${{ matrix.architecture }}
+          architecture: ${{ matrix.platform.architecture }}
       - name: Install the exact native Rust toolchain
         run: rustup toolchain install "1.95.0-$env:BOOTSTRAP_TARGET" --profile minimal
       - name: Check orchestration failure boundaries
         run: python -m unittest audit/self-hosting/test_bootstrap_runner.py
-      - name: Run two clean native bootstraps and both supplied-compiler corpora
+      - name: Run one clean native bootstrap and both supplied-compiler corpora
         timeout-minutes: 330
         run: >-
           python audit/self-hosting/bootstrap-runner.py
           --target "$env:BOOTSTRAP_TARGET"
+          --repeat "$env:BOOTSTRAP_REPEAT"
           --rust-version 1.95.0
           --work "$env:RUNNER_TEMP/bootstrap-work"
           --output "$env:RUNNER_TEMP/bootstrap-evidence"
@@ -83,7 +89,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: bootstrap-${{ matrix.target }}
+          name: bootstrap-${{ matrix.platform.target }}-repeat-${{ matrix.repeat }}-attempt-${{ github.run_attempt }}
           path: ${{ runner.temp }}/bootstrap-evidence
           if-no-files-found: error
           include-hidden-files: true
@@ -91,7 +97,7 @@ jobs:
           retention-days: 14
 
   compare:
-    name: Compare all six actual platform outputs
+    name: Compare all twelve native platform/repetition outputs
     needs: bootstrap
     if: always()
     runs-on: ubuntu-24.04
@@ -111,7 +117,7 @@ jobs:
           python-version: '3.13'
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          pattern: bootstrap-*
+          pattern: bootstrap-*-repeat-*-attempt-${{ github.run_attempt }}
           path: ${{ runner.temp }}/platform-results
       - name: Require complete retained artifacts and equal C2/C3 across all platforms
         if: always()
@@ -126,7 +132,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: bootstrap-matrix-comparison
+          name: bootstrap-matrix-comparison-attempt-${{ github.run_attempt }}
           path: ${{ runner.temp }}/matrix-comparison
           if-no-files-found: error
           compression-level: 6
