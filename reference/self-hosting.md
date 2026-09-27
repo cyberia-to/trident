@@ -328,9 +328,9 @@ this subset. Unit functions may fall through and produce native atom zero.
 Bare return is accepted only for Unit. Explicit and terminal return values must
 match the declared result, except a resolved builtin `assert(false)` which
 halts before producing a value. Local inference can retain Unit values; assignment
-preserves that type. Conditions still require Field or Bool. Generic and
-intrinsic declarations remain outside this subset. Direct ordinary imports
-follow the module rules below.
+preserves that type. Conditions still require Field or Bool. Generic declarations
+remain outside this subset. Direct imports follow the module rules below;
+bodyless intrinsics follow the exact declaration contract.
 
 The scalar unqualified builtins are: `as_u32(Field) -> U32`,
 `as_field(U32) -> Field` and `sub(Field, Field) -> Field`. Final user function
@@ -387,9 +387,17 @@ declaration metadata; the existing packed signature format remains unchanged.
 Attribute prefixes on constants/structs are syntax errors. A `#` outside a
 function prefix, including before `program`, after `pub`, inside parameters,
 bodies or constant initializers, retains its unsupported diagnostic. Unknown
-attributes and unsupported forms such as `pure()`, `cfg`, `test`, `intrinsic`
+attributes and unsupported forms such as `pure()`, `cfg` and `test`
 diagnose as unsupported. Malformed supported delimiters are syntax errors;
 invalid lexical tokens retain lexical diagnostics.
+
+Bodyless, nongeneric intrinsic declarations validate their owner namespace and
+complete ABI. The final declaration determines the intrinsic identity; direct
+aliases retain visibility and source-member purity checks. Existing guest builtin
+identities lower directly. Known but unavailable operations retain their types
+and report an unsupported call in reachable ordinary bodies before emission.
+The [exact intrinsic contract](self-hosting-jobs.md#exact-intrinsic-declarations)
+defines the admitted registry, final-attribute rule and diagnostic precedence.
 
 The native subset admits opaque Noun parameters, results and local bindings.
 A Noun frame slot retains a complete immutable subtree. Two entry signatures
@@ -547,12 +555,11 @@ expression nodes retain the caller's full qualified span and normalized value.
 
 A checked entry without uses compiles directly without allocating a graph. A
 self-use still enters discovery and reports a cycle. Dependencies currently
-admit constants, nominal structs and ordinary functions with all admitted
+admit constants, nominal structs, validated intrinsics and ordinary functions with all admitted
 parameter/result types. Qualified calls and types resolve direct public imports;
 private helpers and opaque descriptors retain their own module scope. All bodies
 are checked, including replaced declarations. Generated compiler-job profiles
-preserve explicit JOB1 options. Intrinsic declarations and legacy path remaps
-remain subsequent work.
+preserve explicit JOB1 options. Legacy path remaps remain subsequent work.
 All reached sources share the existing4096-byte ceiling; import support does
 not imply compiler-scale memory or a complete self-build. The detailed contract
 is [native compiler jobs](self-hosting-jobs.md).

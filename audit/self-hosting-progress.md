@@ -163,7 +163,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] Joy explicit compiler arena and deadline: accepted [PR13](https://github.com/cyberia-to/joy/pull/13),
   [combined boundary evidence](../../joy/audit/explicit-compiler-arena-combined.md).
   Defaults and the reduction ceiling stay fixed; complete source scale remains open.
-- [ ] SH3 exact intrinsics and complete compiler closure coverage;
+- [x] SH3 exact intrinsic declarations, ABI validation and final callable identity;
+  [installed acceptance and preserved boundaries](self-hosting/guest-intrinsics.md).
+- [ ] SH3 complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
   786432-node arena; all prior successful ART1 identities are preserved.
@@ -528,3 +530,20 @@ All three binaries, C1 and the graph component reproduce after committed install
 This closes generated compiler profiles. Intrinsics, legacy remaps, complete source
 scale, C2/C3 and six CPU platform acceptance remain open; native Zheng proof gates
 remain separate. Delivery PR102 targets `release/0.4`; defaults are unchanged.
+
+
+2026-09-27 continuation: exact native intrinsics accepted from source `be9676d`
+with Joy `a15adb7` and Trisha `f5c94f5`.
+[Evidence](self-hosting/guest-intrinsics.md) pins all seven green owner gates:
+1197 / 123 / 380 tests, zero Rust warnings, four existing ignored tests,
+133 unchanged baseline rows / 43 manual programs and 119 formal UNKNOWN results.
+The full installed corpus passes 1199 commands / 402 observations and retains
+all 236 prior successful observations / 203 distinct ART1 identities. The original
+wide65 record also completes under its unchanged arena cap. Three exact resource
+boundary probes recalibrate and retain one-below rejection. Intrinsic acceptance
+adds 158 commands / 37 observations; all other focused corpora pass. Clean source
+installs reproduce all three binaries, C1 and the graph artifact. Failed runs
+and collection resource experiments remain recorded. The actual native closure
+has 94 modules / 455 functions / 345639 bytes; C1 returns capacity diagnostic 7
+and produces no C2. Whole-source admission, compiler-scale execution, C2/C3,
+six CPU platforms and native Zheng gates remain open. Noun stays 128K.

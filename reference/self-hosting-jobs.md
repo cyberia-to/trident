@@ -177,7 +177,7 @@ module aliases. Callable resolution is independent of lexical variables;
 qualified constant reads and field projections keep lexical shadowing. Imported
 constructors and nominal type annotations resolve final public type descriptors
 through direct aliases, independently of lexical variables. Intrinsic declarations
-remain unsupported. Symbolic array extents and loop bounds retain
+follow the exact ABI and reachable-lowering rules below. Symbolic array extents and loop bounds retain
 their existing unsupported diagnostics; ordinary constant expressions use the
 normalized runtime value, including checked runtime indexing.
 
