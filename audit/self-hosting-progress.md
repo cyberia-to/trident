@@ -11,7 +11,7 @@ Component results close only their named substeps.
 The complete frozen compiler has produced usable C2 through Joy/nox; C2 has
 recompiled the same source into byte-identical C3. SH0–SH3 are closed. SH4 has
 a measured 64 KiB scanner frame failure; the remaining SH5/SH6 acceptance waits
-for that repair, actual C3 corpus and six-platform clean reproduction. No compiler execution
+for that repair and six-platform clean reproduction. Actual C2 and C3 corpora both pass. No compiler execution
 proof is claimed. The separate literal compiler fixture remains historical.
 
 The [complete build receipt](self-hosting/body-scale/README.md) pins Trident
@@ -32,7 +32,10 @@ runners: 547 observations and 1816 commands, with unchanged cases/limits and
 separate raw Rust oracles. The [actual second build and fixed point](self-hosting/fixed-point/README.md)
 passed source/JOB1/producer bindings and exact C2/C3 byte comparison. C2(S)
 charged 9771339293 reductions with 162260313 cumulative allocations and
-56 collections. Actual C3 corpus is running separately.
+56 collections. The [independent actual C3 corpus](self-hosting/c3-corpus/README.md)
+also passed all 547 observations and 1816 commands, with the same cases and
+limits. These receipts describe frozen source `b991d901`; the scanner repair
+starts a new source snapshot and requires its own complete bootstrap.
 
 Bounded NoTrace compaction is merged into `release/0.4`: nox
 [PR23](https://github.com/cyberia-to/nox/pull/23) and Joy
@@ -63,7 +66,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — valid 64 KiB comment exhausts frames | Whole compiler succeeds; repair bounded scanning while retaining original small-fixture quotas |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Execution criterion met; SH4 prerequisite open | [Actual C2 passes all six semantic corpora](self-hosting/c2-corpus/README.md); source-scale repair remains |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — exact C2/C3 fixed point passed locally | C3 corpus, clean repeat and six native CPU platforms remain required |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — exact C2/C3 fixed point passed locally | Both actual C2/C3 corpora pass; scanner-source bootstrap, clean repeat and six native CPU platforms remain required |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
@@ -84,10 +87,11 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
   complete measurements; no host-built replacement may complete this step.
 - [x] Run the unchanged independent positive/rejection corpus through actual C2
   using `run-native-compiler.py --compiler PATH`; execute its emitted programs.
-- [ ] Run `C2(S) -> C3` with the same frozen sources/options/limits. Verify actual
+- [x] Run `C2(S) -> C3` with the same frozen sources/options/limits. Verify actual
   canonical bytes, particles, receipt bindings and source snapshots with
-  `check-selfhost-fixed-point.py` (passed); finish the actual C3 regression corpus.
-- [ ] Repeat clean bootstrap, document one complete runner and execute the SH6
+  `check-selfhost-fixed-point.py`; complete the independent actual C3 corpus.
+  The scanner source change requires repeating this evidence for its new snapshot.
+- [ ] Repeat clean bootstrap with the [documented runner](../reference/self-hosting.md#sh6-reproducible-bootstrap) and execute the SH6
   six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
   Retain source/seed/artifact identities and downloadable CI evidence.
 - [ ] Design and accept the SH7 native compiler proof relation, then prove both
