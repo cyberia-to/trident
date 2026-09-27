@@ -66,6 +66,10 @@ fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
 establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
 has started at `c17bd03`; SH6 remains open until it completes successfully.
 Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
+The reviewed [artifact replay tool](self-hosting/bootstrap-results/archive-tool/README.md)
+preserves every raw platform file with a shared byte store and exact path
+manifests. Its real Intel roundtrip and 19 corruption/boundary guards pass;
+storage validation supplies no additional platform acceptance.
 
 Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
 Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
