@@ -1,0 +1,129 @@
+name: SH6 native bootstrap
+
+on:
+  pull_request:
+    branches: [release/0.4]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    name: Bootstrap ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            runner: macos-15
+            architecture: arm64
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+            architecture: x64
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            architecture: arm64
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            architecture: x64
+          - target: aarch64-pc-windows-msvc
+            runner: windows-11-arm
+            architecture: arm64
+          - target: x86_64-pc-windows-msvc
+            runner: windows-2022
+            architecture: x64
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      BOOTSTRAP_TARGET: ${{ matrix.target }}
+      BOOTSTRAP_PINS: >-
+        {"trident":"${{ github.event.pull_request.head.sha || github.sha }}",
+        "joy":"2878f4b17dfedf237c6110d7d411bb4824e65103",
+        "nox":"f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+        "hemera":"a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+        "strata":"d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+        "zheng":"b54b209b91b8bf99c2975c4c24493a2411c23079",
+        "bbg":"1d39975ad199b48c350fa4cc011cbf6f289480ee",
+        "lens":"17cafe91431977b738e5b72361187cd01ad93638",
+        "neuron":"fd24e768d623604b67e20b4b93fa8e82c83ac373"}
+    steps:
+      - name: Preserve tracked bytes on every platform
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+          architecture: ${{ matrix.architecture }}
+      - name: Install the exact native Rust toolchain
+        run: rustup toolchain install "1.95.0-$env:BOOTSTRAP_TARGET" --profile minimal
+      - name: Check orchestration failure boundaries
+        run: python -m unittest audit/self-hosting/test_bootstrap_runner.py
+      - name: Run two clean native bootstraps and both supplied-compiler corpora
+        timeout-minutes: 330
+        run: >-
+          python audit/self-hosting/bootstrap-runner.py
+          --target "$env:BOOTSTRAP_TARGET"
+          --rust-version 1.95.0
+          --work "$env:RUNNER_TEMP/bootstrap-work"
+          --output "$env:RUNNER_TEMP/bootstrap-evidence"
+      - name: Retain success and failure evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bootstrap-${{ matrix.target }}
+          path: ${{ runner.temp }}/bootstrap-evidence
+          if-no-files-found: error
+          include-hidden-files: true
+          compression-level: 6
+          retention-days: 14
+
+  compare:
+    name: Compare all six actual platform outputs
+    needs: bootstrap
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      BOOTSTRAP_RESULT: ${{ needs.bootstrap.result }}
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: bootstrap-*
+          path: ${{ runner.temp }}/platform-results
+      - name: Require complete retained artifacts and equal C2/C3 across all platforms
+        if: always()
+        run: >-
+          python audit/self-hosting/bootstrap-runner.py
+          --matrix "$RUNNER_TEMP/platform-results"
+          --output "$RUNNER_TEMP/matrix-comparison"
+      - name: Require every platform job to finish successfully
+        if: always()
+        run: test "$BOOTSTRAP_RESULT" = success
+      - name: Retain aggregate acceptance or missing-platform failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bootstrap-matrix-comparison
+          path: ${{ runner.temp }}/matrix-comparison
+          if-no-files-found: error
+          compression-level: 6
+          retention-days: 14
