@@ -27,7 +27,11 @@ become separately executed nox programs through Joy.
 No self-compilation or compiler execution proof is claimed.
 The [bounded heap-arena increment](self-hosting/native-compiler-arena.md) admits
 larger native compiler jobs through explicit Joy quotas. Complete source-scale
-allocation remains open, including a valid 4096-byte whitespace workload.
+allocation remains open. The [source-capacity increment](self-hosting/source-capacity.md)
+separates file bytes from compiler IDs and preserves existing successful workloads.
+The exact complete source package is admitted by Joy; C1 exhausts the explicit
+100M reduction budget before RES1. A valid 4096-byte whitespace workload remains
+a separate fixed-arena boundary.
 
 Integration: `release/0.4`. First delivery: `feat/0.4-sh0-inventory`, based on
 `360b737e073ca2f969ab0c78460b4228bcac7b78`, with pinned release sibling checkouts.
@@ -42,7 +46,7 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executable corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — foundation accepted | Whole compiler subset and executed differential/rejection corpus |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — bounded heap-arena increment accepted | Real closure, complete compiler-scale memory/runtime and boundary receipts |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — byte capacity and exact closure probe accepted | Complete guest discovery, compiler-scale execution and boundary receipts |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — needs SH3/SH4 | C1 compiles all of S into usable C2 on nox |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, regression corpus and six-platform CI |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design after SH0 | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
@@ -172,8 +176,12 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
   [Stable installed acceptance](self-hosting/native-indexed-reads.md).
 - [x] SH4 reproducible complete native source inventory: parser-owned entry/import
   closure with stale-receipt rejection; [acceptance](self-hosting/native-source-inventory.md).
-- [ ] SH4 source admission and allocation scale: repair the valid 4096-byte
-  whitespace workload's lifetime arena boundary and measure full compiler closure.
+- [x] SH4 independent source-byte capacity and exact full-closure probe:
+  complete scans and original spans beyond 4096 bytes, preserved internal IDs;
+  [acceptance and runtime boundary](self-hosting/source-capacity.md).
+- [ ] SH4 complete guest discovery and allocation scale: reduce repeated
+  byte/tree work and measure the exact closure again. Preserve existing
+  fixed-arena boundary fixtures before selecting any new explicit runtime tier.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
   [design](self-hosting/native-control-design.md). Flat bundle lowering remains legacy.
@@ -189,14 +197,17 @@ visible here as those decisions land.
 
 | Blocker | Owner / first gate | Baseline |
 |---|---|---|
-| RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
-| Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Explicit heap arena admits larger real compiler jobs; valid 4096-byte whitespace workload and full closure remain open |
-| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; [seed explicit imports](self-hosting/explicit-imports.md) are accepted; [guest callable and nominal imports](self-hosting/guest-type-imports.md) are accepted; exact intrinsics and whole-source coverage remain open |
-| Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
+| Complete compiler-scale execution | nox + Joy + Trident / SH4 | [Exact closure probe](self-hosting/source-capacity.md) reaches the 100M reduction ceiling without RES1; isolated module discovery also exhausts that budget. Full execution and fixed-arena source boundaries remain open |
+| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; [seed explicit imports](self-hosting/explicit-imports.md) are accepted; [guest callable and nominal imports](self-hosting/guest-type-imports.md) are accepted; [exact intrinsics](self-hosting/guest-intrinsics.md) are accepted; whole-source coverage remains open |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
 
 ## Baseline evidence
+
+The original RAM prototype and its AST-to-nox gaps remain historical findings
+in the [prototype probes](self-hosting-2026-09-23/probes.json). The active native
+closure uses the delivered Noun collections and native code generator; its
+remaining execution and coverage gates are listed above.
 
 - [2026-09-23 soft3 assessment](soft3-self-compilation-readiness-2026-09-23.md):
   native target, runtime/backend/proof distinctions and inspected source paths.
@@ -549,3 +560,21 @@ and collection resource experiments remain recorded. The actual native closure
 has 94 modules / 455 functions / 345639 bytes; C1 returns capacity diagnostic 7
 and produces no C2. Whole-source admission, compiler-scale execution, C2/C3,
 six CPU platforms and native Zheng gates remain open. Noun stays 128K.
+
+
+2026-09-27 continuation: independent source-byte capacity accepted from `40a86de`.
+[Evidence](self-hosting/source-capacity.md) records all seven green owner gates:
+1203 / 123 / 380 tests, zero Rust warnings, four existing ignored tests,
+133 unchanged baseline rows / 43 manual programs and 120 formal UNKNOWN results.
+The full installed corpus passes 1198 commands / 402 observations; all 237 prior
+successes retain 204 distinct ART1 identities. Ordinary fixture quotas remain
+unchanged; exact resource boundaries recalibrate and retain one-below rejection.
+Long source comments/dependencies and original spans pass installed acceptance.
+Exact full-size component scans use explicitly larger test limits; the complete
+65536-byte JOB1 still exhausts the supported arena. The exact compiler closure
+is 94 modules / 455 functions / 345791 bytes. Joy packs it, then C1 exhausts
+100M reductions without RES1 or C2. A diagnostic entry reader completes; isolated
+module discovery already exhausts the same budget. Next: bounded byte/tree
+traversal, then complete discovery and later-stage measurements. All three
+binaries and C1/graph reproduce from the committed source. C2/C3, six CPU
+platforms and native Zheng proofs remain open. Noun stays 128K.
