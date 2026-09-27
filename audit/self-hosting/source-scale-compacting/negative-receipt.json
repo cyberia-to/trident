@@ -1,0 +1,1220 @@
+{
+  "schema": "trident/source-scale-compacting/v1",
+  "status": "passed",
+  "scope": "provided-C2 source-size corpus only; full C2 corpus/fixed point/platform acceptance remain open",
+  "invocation": [
+    "audit/self-hosting/source-scale-compacting/check.py",
+    "--joy",
+    "../install-compiler-work-budget/bin/joy",
+    "--joy-sha256",
+    "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+    "--compiler",
+    "../measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+    "--compiler-sha256",
+    "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+    "--producer-receipt",
+    "../measurements/body-scale-closure-20b.json",
+    "--producer-receipt-sha256",
+    "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f",
+    "--output",
+    "audit/self-hosting/source-scale-compacting/negative-receipt.json",
+    "--case",
+    "baseline",
+    "--case",
+    "diagnostic-after-comment",
+    "--case",
+    "exact65536",
+    "--case",
+    "excess65537"
+  ],
+  "script_sha256": "03a99dd789a54a4bdfc616adfcc121b1d7a1cafcf300f3668b800213b673addb",
+  "binary": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+  "compiler": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+  "compiler_sha256_start": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+  "binary_sha256_start": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "producer_receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b.json",
+  "producer_receipt_sha256": "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f",
+  "host_flags": [
+    "--arena-nodes",
+    "1000000000",
+    "--budget",
+    "20000000000",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "3600000",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "10000000000"
+  ],
+  "program_host_flags": [
+    "--budget",
+    "1000000",
+    "--arena-nodes",
+    "196608",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "30000"
+  ],
+  "limits": {
+    "modules": 128,
+    "diagnostics": 16,
+    "sequence_length": 65536,
+    "validation_visits": 16777216,
+    "artifact_bytes": 16777216,
+    "artifact_nodes": 196608,
+    "artifact_depth": 4096,
+    "reductions": 20000000000,
+    "arena_nodes": 1000000000,
+    "evaluator_frames": 65536
+  },
+  "selected_cases": [
+    "baseline",
+    "diagnostic-after-comment",
+    "exact65536",
+    "excess65537"
+  ],
+  "complete_corpus": false,
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":35,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737\",\"source_bytes\":35,\"source_particle\":\"962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a\",\"validation_visits\":202},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1255528750
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/program.dag\",\"execution\":{\"allocated_nodes\":112307,\"arena_reserved_bytes\":419430416,\"charged_reductions\":366104,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":308489,\"peak_resident_nodes\":112307,\"pinned_nodes\":100422,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":112307,\"scratch_bytes\":29360128,\"total_allocations\":112307},\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":202,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":35,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737\",\"source_bytes\":35,\"source_particle\":\"962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a\",\"status\":\"success\"},\"elapsed_micros\":1314577,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8\",\"output_particle\":\"ae1b9447b91e10b9181619c485687573b402d3091e5a3ac2a2294860b63a1682\",\"peak_frames\":397,\"program_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1328118167
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/program.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/zero.dag",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/value.dag",
+        "--budget",
+        "1000000",
+        "--arena-nodes",
+        "196608",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/value.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":654,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 8717458
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"374f7cea3f5466a0fd1010beafce24a36ec8c1493218276ca0cb7f42ff3555f2\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4139,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2\",\"source_bytes\":4139,\"source_particle\":\"65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5\",\"validation_visits\":2264},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1283857709
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/result.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/result.dag\",\"execution\":{\"allocated_nodes\":545237,\"arena_reserved_bytes\":419430416,\"charged_reductions\":23825396,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":20668133,\"peak_resident_nodes\":545237,\"pinned_nodes\":100455,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":545237,\"scratch_bytes\":29360128,\"total_allocations\":545237},\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":5,\"end_byte\":4138,\"message\":\"invalid binding\",\"module_index\":0,\"start_byte\":4131}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":2264,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4139,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2\",\"source_bytes\":4139,\"source_particle\":\"65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":59,\"package_particle\":\"95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5\",\"status\":\"compile_error\"},\"elapsed_micros\":4156961,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"374f7cea3f5466a0fd1010beafce24a36ec8c1493218276ca0cb7f42ff3555f2\",\"output_particle\":\"6be5c8a70b4fa7434186ff941a56d848d209722d98fe1a57346c8ced7854a8d9\",\"peak_frames\":33076,\"program_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"6be5c8a70b4fa7434186ff941a56d848d209722d98fe1a57346c8ced7854a8d9\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 4171118083
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/program.dag",
+        "--force",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code5 module0 [4131..4138): invalid binding\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 4178057333
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"3daf70312ff8d0c26055056a4181a61528f8a4095edadf20bee5fe796d414a93\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6\",\"source_bytes\":65536,\"source_particle\":\"73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf\",\"validation_visits\":32946},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1460846791
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/result.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/result.dag\",\"execution\":{\"allocated_nodes\":438873,\"arena_reserved_bytes\":419430416,\"charged_reductions\":6147232,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":6732813,\"peak_resident_nodes\":438873,\"pinned_nodes\":100422,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":438873,\"scratch_bytes\":29360128,\"total_allocations\":438873},\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":1,\"end_byte\":1,\"message\":\"invalid encoding/token\",\"module_index\":0,\"start_byte\":0}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":32946,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6\",\"source_bytes\":65536,\"source_particle\":\"73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":65,\"package_particle\":\"7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf\",\"status\":\"compile_error\"},\"elapsed_micros\":3055742,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"3daf70312ff8d0c26055056a4181a61528f8a4095edadf20bee5fe796d414a93\",\"output_particle\":\"bd202ea8daefa9a59917b2f87cfdaf74875153e18bcd5635e04a34584ffd32f4\",\"peak_frames\":1619,\"program_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"bd202ea8daefa9a59917b2f87cfdaf74875153e18bcd5635e04a34584ffd32f4\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 3068339417
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/program.dag",
+        "--force",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code1 module0 [0..1): invalid encoding/token\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 3050891792
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"889b0224315a6508a791f98c28f7fd6ebdd863222518f58597e54598115c96ca\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65537,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178\",\"source_bytes\":65537,\"source_particle\":\"e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d\",\"validation_visits\":32976},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1454799791
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/result.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/result.dag\",\"execution\":{\"allocated_nodes\":107802,\"arena_reserved_bytes\":419430416,\"charged_reductions\":100737,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":100441,\"peak_resident_nodes\":107802,\"pinned_nodes\":100424,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":107802,\"scratch_bytes\":29360128,\"total_allocations\":107802},\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":7,\"end_byte\":0,\"message\":\"compiler capacity\",\"module_index\":0,\"start_byte\":0}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":32976,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65537,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178\",\"source_bytes\":65537,\"source_particle\":\"e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":65,\"package_particle\":\"f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d\",\"status\":\"compile_error\"},\"elapsed_micros\":1294362,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"889b0224315a6508a791f98c28f7fd6ebdd863222518f58597e54598115c96ca\",\"output_particle\":\"87fbadad179379433b91e5c6d4e3a48f01fc3cae72bdb104513ed5c7ada00ee3\",\"peak_frames\":312,\"program_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"87fbadad179379433b91e5c6d4e3a48f01fc3cae72bdb104513ed5c7ada00ee3\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1306145125
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/program.dag",
+        "--force",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code7 module0 [0..0): compiler capacity\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 1300497000
+    }
+  ],
+  "observations": [
+    {
+      "case": "baseline",
+      "status": "passed",
+      "source_bytes": 35,
+      "source_sha256": "5c9aa89baf258457fb467293f9c205b82a05ff7422dd0c8dc5d115613e04b694",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 35
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 35,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+              "source_bytes": 35,
+              "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+          "validation_visits": 202
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "77b5b7c4b8c286bc59d75d6630113d6faafb414d8bdaa5df2e59a316534bf5ab",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/program.dag",
+        "execution": {
+          "allocated_nodes": 112307,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 366104,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 308489,
+            "peak_resident_nodes": 112307,
+            "pinned_nodes": 100422,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 112307,
+            "scratch_bytes": 29360128,
+            "total_allocations": 112307
+          },
+          "compiler_job": {
+            "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 202,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 35,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+                "source_bytes": 35,
+                "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+            "status": "success"
+          },
+          "elapsed_micros": 1314577,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8",
+          "output_particle": "ae1b9447b91e10b9181619c485687573b402d3091e5a3ac2a2294860b63a1682",
+          "peak_frames": 397,
+          "program_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+        "schema": "joy/artifact-run/v1"
+      },
+      "program_sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82",
+      "runtime_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/baseline/value.dag",
+        "execution": {
+          "allocated_nodes": 10,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 1,
+          "elapsed_micros": 654,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+          "peak_frames": 1,
+          "program_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 13,
+      "baseline_artifact_bytes_equal": true,
+      "output_sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "case": "diagnostic-after-comment",
+      "status": "passed",
+      "source_bytes": 4139,
+      "source_sha256": "96474061b8146cc7e37f9074608cb6df702285e0434177acccdb44205e9c8864",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 4139
+        }
+      },
+      "expected_diagnostic": 5,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "374f7cea3f5466a0fd1010beafce24a36ec8c1493218276ca0cb7f42ff3555f2",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 4139,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2",
+              "source_bytes": 4139,
+              "source_particle": "65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5",
+          "validation_visits": 2264
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "e7e2876d6a1bfb8cfe515634bb797eec2c32cca0b60f5914e96a4a82f9488c1a",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/diagnostic-after-comment/result.dag",
+        "execution": {
+          "allocated_nodes": 545237,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 23825396,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 20668133,
+            "peak_resident_nodes": 545237,
+            "pinned_nodes": 100455,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 545237,
+            "scratch_bytes": 29360128,
+            "total_allocations": 545237
+          },
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 5,
+                "end_byte": 4138,
+                "message": "invalid binding",
+                "module_index": 0,
+                "start_byte": 4131
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 2264,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 4139,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2",
+                "source_bytes": 4139,
+                "source_particle": "65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 59,
+            "package_particle": "95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 4156961,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "374f7cea3f5466a0fd1010beafce24a36ec8c1493218276ca0cb7f42ff3555f2",
+          "output_particle": "6be5c8a70b4fa7434186ff941a56d848d209722d98fe1a57346c8ced7854a8d9",
+          "peak_frames": 33076,
+          "program_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "6be5c8a70b4fa7434186ff941a56d848d209722d98fe1a57346c8ced7854a8d9",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 5,
+          "end_byte": 4138,
+          "message": "invalid binding",
+          "module_index": 0,
+          "start_byte": 4131
+        }
+      ],
+      "result_sha256": "a0c2584c98c5a5203aeccbeba1b5c33d47ba07a0878441a88ee5ddc26a3e1c79",
+      "previous_program_preserved": true
+    },
+    {
+      "case": "exact65536",
+      "status": "passed",
+      "source_bytes": 65536,
+      "source_sha256": "d02a8a5dbddd3ad6821b0f905317e147e4a0ab755815d479d81943c47e950f15",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 65536
+        }
+      },
+      "expected_diagnostic": 1,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "3daf70312ff8d0c26055056a4181a61528f8a4095edadf20bee5fe796d414a93",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 65536,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6",
+              "source_bytes": 65536,
+              "source_particle": "73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf",
+          "validation_visits": 32946
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "39c599a32ad95076b8c39b2fbbaf97257e04c338cdffd0d9162312a44ce957cd",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/exact65536/result.dag",
+        "execution": {
+          "allocated_nodes": 438873,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 6147232,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 6732813,
+            "peak_resident_nodes": 438873,
+            "pinned_nodes": 100422,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 438873,
+            "scratch_bytes": 29360128,
+            "total_allocations": 438873
+          },
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 1,
+                "end_byte": 1,
+                "message": "invalid encoding/token",
+                "module_index": 0,
+                "start_byte": 0
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 32946,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 65536,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6",
+                "source_bytes": 65536,
+                "source_particle": "73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 65,
+            "package_particle": "7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 3055742,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "3daf70312ff8d0c26055056a4181a61528f8a4095edadf20bee5fe796d414a93",
+          "output_particle": "bd202ea8daefa9a59917b2f87cfdaf74875153e18bcd5635e04a34584ffd32f4",
+          "peak_frames": 1619,
+          "program_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "bd202ea8daefa9a59917b2f87cfdaf74875153e18bcd5635e04a34584ffd32f4",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 1,
+          "end_byte": 1,
+          "message": "invalid encoding/token",
+          "module_index": 0,
+          "start_byte": 0
+        }
+      ],
+      "result_sha256": "ecd2bb78ce608dde92cee46ca660b02c76d36c9f50bfc326d36fc6be9a1e0f29",
+      "previous_program_preserved": true
+    },
+    {
+      "case": "excess65537",
+      "status": "passed",
+      "source_bytes": 65537,
+      "source_sha256": "36ebf6a953addb5627cca0cf48c3518c99655cbbe1c43638e897b3c376f2c2d1",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 65537
+        }
+      },
+      "expected_diagnostic": 7,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "889b0224315a6508a791f98c28f7fd6ebdd863222518f58597e54598115c96ca",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 65537,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178",
+              "source_bytes": 65537,
+              "source_particle": "e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d",
+          "validation_visits": 32976
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "16a2edb0e4df98ed501dd5b22cf39f753c40396ca627dd525a901e15354b8f74",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/excess65537/result.dag",
+        "execution": {
+          "allocated_nodes": 107802,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 100737,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 100441,
+            "peak_resident_nodes": 107802,
+            "pinned_nodes": 100424,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 107802,
+            "scratch_bytes": 29360128,
+            "total_allocations": 107802
+          },
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 7,
+                "end_byte": 0,
+                "message": "compiler capacity",
+                "module_index": 0,
+                "start_byte": 0
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 32976,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 65537,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178",
+                "source_bytes": 65537,
+                "source_particle": "e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 65,
+            "package_particle": "f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 1294362,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "889b0224315a6508a791f98c28f7fd6ebdd863222518f58597e54598115c96ca",
+          "output_particle": "87fbadad179379433b91e5c6d4e3a48f01fc3cae72bdb104513ed5c7ada00ee3",
+          "peak_frames": 312,
+          "program_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "87fbadad179379433b91e5c6d4e3a48f01fc3cae72bdb104513ed5c7ada00ee3",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 7,
+          "end_byte": 0,
+          "message": "compiler capacity",
+          "module_index": 0,
+          "start_byte": 0
+        }
+      ],
+      "result_sha256": "024facda4d0da97efc5975eff4bf17f1c387fa952f4cd19046487a80d607c8bc",
+      "previous_program_preserved": true
+    }
+  ],
+  "artifact_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s",
+  "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+  "input_fixture": {
+    "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/joy/cli/tests/compiler_vectors.json",
+    "source_sha256": "4b118cd9c9f20764e46b16676d4cb63599dc40c7e8f3a40a47c4fe5962f752ad",
+    "retained": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/negative-receipt-files-syzeno4s/zero.dag",
+    "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+  },
+  "compiler_sha256_end": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+  "binary_sha256_end": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8"
+}
