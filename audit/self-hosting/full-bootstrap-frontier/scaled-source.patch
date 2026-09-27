@@ -1,17 +1,8 @@
 --- a/lib/std/compiler/nox/function_order.tri
 +++ b/lib/std/compiler/nox/function_order.tri
-@@ -9,6 +9,7 @@
- 
- pub struct Ordered { pub ids: seq.Seq, pub next: U32, pub error: syntax.Error }
- struct Insert { ids: seq.Seq, gap: U32, done: Bool }
+@@ -11,0 +12 @@
 +struct Merge { output: seq.Seq, left: U32, right: U32, middle: U32, end: U32 }
- 
- #[pure]
- fn before(source: bytes.Bytes, left: syntax.Token, right: syntax.Token) -> Bool {
-@@ -55,6 +56,71 @@
- }
- 
- #[pure]
+@@ -57,0 +59,65 @@
 +fn merge_chunk(source: bytes.Bytes, functions: seq.Seq, values: seq.Seq, input: Merge, cap: U32) -> Merge {
 +    let mut s = input
 +    for step in 0..8 {
@@ -77,28 +68,14 @@
 +}
 +
 +#[pure]
- fn chunk(source: bytes.Bytes, functions: seq.Seq, input: Ordered, cap: U32) -> Ordered {
-     let mut s = input
-     for turn in 0..8 {
 --- a/lib/std/compiler/nox/job.tri
 +++ b/lib/std/compiler/nox/job.tri
-@@ -1,7 +1,6 @@
- module std.compiler.nox.job
- 
- use vm.nox.noun
+@@ -4 +3,0 @@
 -use vm.core.convert
- use vm.core.field
- use std.nox.bytes
- use std.nox.seq
-@@ -86,17 +85,45 @@
- 
- // Both paths are validated; repeated comparison reads still spend admission work.
- #[pure]
+@@ -88,0 +88,2 @@
 +#[requires((as_u32(255) < bytes.len(left)) == false)]
 +#[requires((as_u32(255) < bytes.len(right)) == false)]
- fn before(left: bytes.Bytes, right: bytes.Bytes, allowance: U32) -> (Bool, U32) {
-     let mut remaining = allowance
-     let cost = as_u32(as_field(byte_cost(left)) + as_field(byte_cost(right)))
+@@ -92 +93,6 @@
 -    for index in 0..255 {
 +    let left_length = bytes.len(left)
 +    let right_length = bytes.len(right)
@@ -106,10 +83,9 @@
 +    // Every block starts at lane zero. A partial final word returns at the
 +    // first end or differing byte; its canonical padding never orders paths.
 +    for block in 0..64 {
-         if index == bytes.len(left) { return (index < bytes.len(right), remaining) }
-         if index == bytes.len(right) { return (false, remaining) }
+@@ -94,0 +101 @@
 +        // Cover the first path reads before fetching either packed word.
-         remaining = charge(remaining, cost)
+@@ -96,4 +103,24 @@
 -        let a = bytes.get(left, index)
 -        let b = bytes.get(right, index)
 -        if a < b { return (true, remaining) }
@@ -138,23 +114,13 @@
 +                index = syntax.inc(index)
 +            }
 +        }
-     }
-     (false, remaining)
- }
 --- a/lib/std/compiler/nox/module_function_order.tri
 +++ b/lib/std/compiler/nox/module_function_order.tri
-@@ -1,28 +1,53 @@
- module std.compiler.nox.module_function_order
- 
- use vm.nox.noun
+@@ -3,0 +4 @@
 +use vm.core.field
- use std.nox.bytes
- use std.nox.seq
+@@ -5,0 +7 @@
 +use std.nox.tree
- use std.compiler.nox.syntax
- use std.compiler.nox.signatures
- use std.compiler.nox.function_order
- 
+@@ -10,2 +12,6 @@
 -struct Sources { functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable }
 -struct Insert { ids: seq.Seq, gap: U32, done: Bool }
 +struct Sources {
@@ -163,18 +129,12 @@
 +struct Merge { output: seq.Seq, left: U32, right: U32, middle: U32, end: U32 }
 +struct RankedOwners { root: Noun, count: U32 }
 +const HALF: Field = 9223372034707292161
- 
- #[pure]
- fn before_span(left: bytes.Bytes, a: syntax.Token, right: bytes.Bytes, b: syntax.Token) -> Bool {
-     let mut x = a.start
-     let mut y = b.start
+@@ -16,0 +23,4 @@
 +    if x == a.end { return (y == b.end) == false }
 +    if y == b.end { return false }
 +    let mut first_word = bytes.word_at(left, x)
 +    let mut second_word = bytes.word_at(right, y)
-     for step in 0..65536 {
-         if x == a.end { return (y == b.end) == false }
-         if y == b.end { return false }
+@@ -20,6 +30,21 @@
 -        let first = bytes.get(left, x)
 -        let second = bytes.get(right, y)
 -        if first < second { return true }
@@ -202,17 +162,10 @@
 +        y = as_u32(as_field(y) + as_field(advance))
 +        if syntax.both(x < a.end, (x & as_u32(3)) == syntax.ZERO) { first_word = bytes.word_at(left, x) }
 +        if syntax.both(y < b.end, (y & as_u32(3)) == syntax.ZERO) { second_word = bytes.word_at(right, y) }
-     }
-     false
- }
-@@ -45,41 +70,213 @@
- }
- 
- #[pure]
+@@ -48 +73 @@
 -fn insert_chunk(scope: Sources, id: U32, input: Insert) -> Insert {
 +fn merge_chunk(scope: Sources, values: seq.Seq, input: Merge, cap: U32) -> Merge {
-     let mut s = input
-     for step in 0..8 {
+@@ -51,5 +76,15 @@
 -        if s.gap == syntax.ZERO { s.done = true return s }
 -        let previous = seq.get(s.ids, syntax.dec(s.gap))
 -        if before(scope, id, as_u32(noun.as_field(previous))) == false { s.done = true return s }
@@ -233,11 +186,7 @@
 +            s.output = seq.push(s.output, seq.get(values, s.left), cap)
 +            s.left = syntax.inc(s.left)
 +        }
-     }
-     s
- }
- 
- #[pure]
+@@ -61,3 +96,7 @@
 -fn insert(scope: Sources, roots: seq.Seq, id: U32, cap: U32) -> seq.Seq {
 -    let value = noun.atom(as_field(id))
 -    let mut s = Insert { ids: seq.push(roots, value, cap), gap: seq.len(roots), done: false }
@@ -248,7 +197,7 @@
 +    let mut end = as_u32(as_field(middle) + as_field(width))
 +    if seq.len(values) < end { end = seq.len(values) }
 +    let mut s = Merge { output, left: start, right: middle, middle, end }
-     for block in 0..512 {
+@@ -65,4 +104,157 @@
 -        s = insert_chunk(scope, id, s)
 -        if s.done { return seq.set(s.ids, s.gap, value) }
 -    }
@@ -410,12 +359,7 @@
 +        result.ids = append(sorted, result.ids, cap)
 +    }
 +    result
- }
- 
- #[pure]
- #[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
- #[requires((cap < seq.len(roots)) == false)]
- pub fn sort(functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable, roots: seq.Seq, cap: U32) -> function_order.Ordered {
+@@ -75,11 +267,16 @@
 -    let scope = Sources { functions, owners, names, sources }
 -    let mut result = function_order.Ordered { ids: seq.empty(), next: syntax.ZERO,
 -        error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
@@ -445,10 +389,7 @@
 +}
 --- a/lib/std/compiler/nox/package_compile.tri
 +++ b/lib/std/compiler/nox/package_compile.tri
-@@ -24,6 +24,19 @@
-     Compiled { formula: noun.atom(0), index, error }
- }
- 
+@@ -26,0 +27,13 @@
 +// JOB1 admission fixes strict ASCII module-path order. Discovery retains each
 +// package index, so these ranks compare owners without rereading source bytes.
 +#[pure]
@@ -462,26 +403,14 @@
 +    ranks
 +}
 +
- #[pure]
- pub fn compile(view: job.View) -> Compiled {
-     let header = module_graph.entry_header(view)
-@@ -43,8 +56,8 @@
-     for position in 0..4096 {
-         if position == seq.len(ordered.modules) {
-             if bank.entry == signatures.NONE { return failed(view.index, syntax.error(3, syntax.ZERO, syntax.ZERO)) }
+@@ -46,2 +59,2 @@
 -            let sorted = module_function_order.sort(bank.functions, bank.owners,
 -                graph.names, graph.sources, bank.roots, graph.capacity)
 +            let sorted = module_function_order.sort_ranked(bank.functions, bank.owners,
 +                graph.names, graph.sources, bank.roots, owner_ranks(graph.modules, graph.capacity), graph.capacity)
-             let plan = intrinsic_plan.check(function_plan.ordered(bank.functions, bank.bodies, sorted, bank.entry, graph.capacity), bank.bodies, bank.intrinsics, graph.capacity)
-             if (plan.error.code == syntax.ZERO) == false {
-                 let mut index = view.index
 --- a/lib/std/nox/bytes.tri
 +++ b/lib/std/nox/bytes.tri
-@@ -198,13 +198,13 @@
-     let c = noun.head(right)
-     let d = noun.tail(right)
-     // Each checked conversion must execute, including the first seven words.
+@@ -201,7 +201,7 @@
 -    let w0 = convert.as_u32(noun.as_field(noun.head(a)))
 -    let w1 = convert.as_u32(noun.as_field(noun.tail(a)))
 -    let w2 = convert.as_u32(noun.as_field(noun.head(b)))
@@ -496,6 +425,3 @@
 +    convert.as_u32(noun.as_field(noun.head(c)))
 +    convert.as_u32(noun.as_field(noun.tail(c)))
 +    convert.as_u32(noun.as_field(noun.head(d)))
-     convert.as_u32(noun.as_field(noun.tail(d)))
- }
- 

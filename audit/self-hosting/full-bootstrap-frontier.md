@@ -5,7 +5,9 @@ at this frontier: no successful C2 is claimed here.
 
 [Identities and revisions](full-bootstrap-frontier/identities.json) bind each
 source variant, compiler and diagnostic prefix. Frozen source patches against
-Trident `ca9d926` preserve the intermediate inputs. The final `scaled` source
+Trident `ca9d926` preserve the intermediate inputs. Apply with
+`git apply --unidiff-zero`; both [patches reproduce all recorded source hashes](full-bootstrap-frontier/patch-reproduction.json).
+The final `scaled` source
 is committed as `713f457`; its unchanged closure contains 94 modules, 486
 functions and 369707 bytes. `selfhost_inventory --check` is recorded in each
 full-closure receipt. Nox is `13b4c2e`; Joy's cached runner is `4e814a9`.
