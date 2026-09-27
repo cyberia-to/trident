@@ -165,6 +165,19 @@ Measure physical arena size, codec workspace, frame storage and trace mode;
 logical node count is not measured RSS. Worker cancellation/time supervision
 must not leave a detached computation that later publishes an artifact.
 
+Joy may explicitly select bounded compacting execution for pure run-only jobs;
+see its structured-run contract. The append-only policy above remains the
+default. In compacting mode LIM1 arena_nodes is a conservative cumulative fresh
+allocation allowance: loaded nodes and reconstructed collected values charge,
+current hash-cons hits do not. A separate host resident-node limit bounds
+storage, and a separate collection-work limit bounds scans/index rebuilding.
+Collection never replenishes either cumulative allowance or guest gas. The
+loaded program/input arena stays pinned; only internal unreachable temporaries
+are reclaimed. Report cumulative allocations, resident/peak nodes, reclaimed
+nodes, passes, collection work and scratch storage separately. Successful noun
+identity and gas agree with append-only execution, while internal Order values
+and allocation history need not. Traced execution retains its existing policy.
+
 NOXDAG01 preserves unique DAG nodes and complete topology. Never flatten output
 or recursively print shared nouns into exponentially expanded bracket text.
 Encode and validate successful output fully before atomic publication. Existing
