@@ -1,0 +1,736 @@
+{
+  "schema": "trident/lexer-bootstrap-archive/v1",
+  "status": "passed",
+  "source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "source_count": 94,
+  "source_bytes": 370544,
+  "source_archive_members": 95,
+  "source_blobs_verified": true,
+  "producer_source_copies_verified": true,
+  "manifest_verified": true,
+  "original_files_preserved": {
+    "artifacts.json": {
+      "sha256": "49a1e117cb62d9fe8ad84fcd6ac718184f7263b6d8585ea152eeb5fee3ae2788",
+      "bytes": 2740
+    },
+    "c1-to-c2.json": {
+      "sha256": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+      "bytes": 189746
+    },
+    "c1.dag.gz": {
+      "sha256": "d90dc269d23c78780c176a0e488add2cdfb950d7ff7b9933613d3487b330352d",
+      "bytes": 4034487
+    },
+    "c2.dag.gz": {
+      "sha256": "ae592b0e27815fe605f4385cc9a73e67e531d6a5abfecc9b3312a6b1bc0d4b8e",
+      "bytes": 4042349
+    },
+    "inventory.json": {
+      "sha256": "d35d263c7f9f27cbe7ea760a34393105ae8140dc6ab84d484151b6fe04960571",
+      "bytes": 356821
+    },
+    "job1.dag.gz": {
+      "sha256": "db12cd852a07e751732a214b6eddc9737683313afd6eaf9978d46d881da238fb",
+      "bytes": 4105275
+    },
+    "launch.json": {
+      "sha256": "f915a594946f50c23f25feb777baba7b68615b1d809e0830ba47ef6115b10e29",
+      "bytes": 14518
+    },
+    "sources.tar.gz": {
+      "sha256": "c9cf43c04d53adfdf1f3b771d1b209757923bd8657dcfa9560b762d7991011cf",
+      "bytes": 79086
+    }
+  },
+  "sources": [
+    {
+      "logical_path": "native_compiler",
+      "archive_path": "0.tri",
+      "git_path": "compiler/nox/main.tri",
+      "sha256": "4aa567d2473b3b0869c4366ad67ab29feb7407f090ebfca1791eb8790223d836",
+      "bytes": 581
+    },
+    {
+      "logical_path": "std.compiler.nox.aggregate_gen",
+      "archive_path": "1.tri",
+      "git_path": "lib/std/compiler/nox/aggregate_gen.tri",
+      "sha256": "16385690ea13466b37f153d38e575445a7c48649fc719be5f48548127e6929b2",
+      "bytes": 884
+    },
+    {
+      "logical_path": "std.compiler.nox.array_gen",
+      "archive_path": "2.tri",
+      "git_path": "lib/std/compiler/nox/array_gen.tri",
+      "sha256": "45178d2f5eebeaa16abe0b524081939dccdcc10d0b19924bca4504d93f7b41ea",
+      "bytes": 2611
+    },
+    {
+      "logical_path": "std.compiler.nox.array_parse",
+      "archive_path": "3.tri",
+      "git_path": "lib/std/compiler/nox/array_parse.tri",
+      "sha256": "936600f40d2007f4b0c79634ec90bfb9da12bf709f2baea0166088ca1e974da0",
+      "bytes": 3401
+    },
+    {
+      "logical_path": "std.compiler.nox.array_size",
+      "archive_path": "4.tri",
+      "git_path": "lib/std/compiler/nox/array_size.tri",
+      "sha256": "d4cb6ba9e52172d5cb9de45e9751c4c4acfd5c2988b3db291423ca117e1a1112",
+      "bytes": 2623
+    },
+    {
+      "logical_path": "std.compiler.nox.ascii",
+      "archive_path": "5.tri",
+      "git_path": "lib/std/compiler/nox/ascii.tri",
+      "sha256": "186fbb74915fdf0f8e96a6541deac136caf2c54c6e33ab1b3613bf16157c8bf8",
+      "bytes": 3487
+    },
+    {
+      "logical_path": "std.compiler.nox.ast",
+      "archive_path": "6.tri",
+      "git_path": "lib/std/compiler/nox/ast.tri",
+      "sha256": "32a3d6f4f2adca39c2edfb83506a1e16a4f375ecdbc7749c0699b9bd04ecac28",
+      "bytes": 3696
+    },
+    {
+      "logical_path": "std.compiler.nox.attributes",
+      "archive_path": "7.tri",
+      "git_path": "lib/std/compiler/nox/attributes.tri",
+      "sha256": "6737ecbd5315373d2b02a176e6712946686d30ebcae5fd198bd626d76fe2b3ec",
+      "bytes": 4940
+    },
+    {
+      "logical_path": "std.compiler.nox.block_gen",
+      "archive_path": "8.tri",
+      "git_path": "lib/std/compiler/nox/block_gen.tri",
+      "sha256": "78ec09a75c9dcf74336421de8af3f373e4c043c32931c9e7483b35519297294e",
+      "bytes": 4491
+    },
+    {
+      "logical_path": "std.compiler.nox.blocks",
+      "archive_path": "9.tri",
+      "git_path": "lib/std/compiler/nox/blocks.tri",
+      "sha256": "6522f78e7a190b5768c0cc86c5291d205749465dfb74f8fccf5ed8c79bf8e362",
+      "bytes": 1845
+    },
+    {
+      "logical_path": "std.compiler.nox.body",
+      "archive_path": "10.tri",
+      "git_path": "lib/std/compiler/nox/body.tri",
+      "sha256": "32bb6ce5a836d8399febe1d0d7712a73c16b18db13221a2011c17f45de0f9b89",
+      "bytes": 8005
+    },
+    {
+      "logical_path": "std.compiler.nox.body_state",
+      "archive_path": "11.tri",
+      "git_path": "lib/std/compiler/nox/body_state.tri",
+      "sha256": "6baea2076545742c9902cc8eed6c0adbdf6e618a28ccc440d22d81190d020327",
+      "bytes": 2062
+    },
+    {
+      "logical_path": "std.compiler.nox.body_store",
+      "archive_path": "12.tri",
+      "git_path": "lib/std/compiler/nox/body_store.tri",
+      "sha256": "b8105f960cbbf5bff2f9e1d7261ba4936e94f929be0c9d674bdfb99cf23149b9",
+      "bytes": 3967
+    },
+    {
+      "logical_path": "std.compiler.nox.builtin_gen",
+      "archive_path": "13.tri",
+      "git_path": "lib/std/compiler/nox/builtin_gen.tri",
+      "sha256": "0cb89f5bb22f2aa876a950278fae5a279a8059793815da5dc8124d3f709ade8b",
+      "bytes": 2485
+    },
+    {
+      "logical_path": "std.compiler.nox.builtins",
+      "archive_path": "14.tri",
+      "git_path": "lib/std/compiler/nox/builtins.tri",
+      "sha256": "efb517e16fc89570d96fb8809f00057ce7f440dd74650d1f3d1dd953bc4d2fb3",
+      "bytes": 4055
+    },
+    {
+      "logical_path": "std.compiler.nox.call_codegen",
+      "archive_path": "15.tri",
+      "git_path": "lib/std/compiler/nox/call_codegen.tri",
+      "sha256": "15a7bc148449237eb353d68822d44141f63f31b12a90ccdcc62356038a7754db",
+      "bytes": 4570
+    },
+    {
+      "logical_path": "std.compiler.nox.call_frames",
+      "archive_path": "16.tri",
+      "git_path": "lib/std/compiler/nox/call_frames.tri",
+      "sha256": "9f5640c682e02ab21c937ebdabbf6acd9860188e118c33abceacfd17f2d99a03",
+      "bytes": 1172
+    },
+    {
+      "logical_path": "std.compiler.nox.call_graph",
+      "archive_path": "17.tri",
+      "git_path": "lib/std/compiler/nox/call_graph.tri",
+      "sha256": "dd634625d583ead38090f0960aa1e34d4c8f4fdef95f7e2adaf95258353bb878",
+      "bytes": 4925
+    },
+    {
+      "logical_path": "std.compiler.nox.call_parse",
+      "archive_path": "18.tri",
+      "git_path": "lib/std/compiler/nox/call_parse.tri",
+      "sha256": "de96007aadcb0dac6d15c33987a83bb65d4d9aa22438867ab93826d6f53260b4",
+      "bytes": 5978
+    },
+    {
+      "logical_path": "std.compiler.nox.check_functions",
+      "archive_path": "19.tri",
+      "git_path": "lib/std/compiler/nox/check_functions.tri",
+      "sha256": "0619ab3982eb83fd8e7cdad31dd80ee18099f4d534cd1188944ce05a80dcc672",
+      "bytes": 4607
+    },
+    {
+      "logical_path": "std.compiler.nox.check_scope",
+      "archive_path": "20.tri",
+      "git_path": "lib/std/compiler/nox/check_scope.tri",
+      "sha256": "8c7da25152f0ba3e64bd7fdc41280c0bf922a7d5d65bbe90c027f0fb8f882b62",
+      "bytes": 1227
+    },
+    {
+      "logical_path": "std.compiler.nox.code_plan",
+      "archive_path": "21.tri",
+      "git_path": "lib/std/compiler/nox/code_plan.tri",
+      "sha256": "336435403596764b1b093c8125fdc28a8113f3189a28d3a956c2cc57692eabab",
+      "bytes": 2036
+    },
+    {
+      "logical_path": "std.compiler.nox.codegen",
+      "archive_path": "22.tri",
+      "git_path": "lib/std/compiler/nox/codegen.tri",
+      "sha256": "4f076285e8003241aae6c5e899ef341a3f2a79b0f4c5ce03bb8c6955cdf612a2",
+      "bytes": 9025
+    },
+    {
+      "logical_path": "std.compiler.nox.const_module",
+      "archive_path": "23.tri",
+      "git_path": "lib/std/compiler/nox/const_module.tri",
+      "sha256": "bab0af2b459743779b632d054428f6cb26424cc7bc76596eeca9e0cc935fa84e",
+      "bytes": 3466
+    },
+    {
+      "logical_path": "std.compiler.nox.const_parse",
+      "archive_path": "24.tri",
+      "git_path": "lib/std/compiler/nox/const_parse.tri",
+      "sha256": "ae4c382120ed7aa5d11ff3a1991fb65b250a285934d02424c20da477674486a6",
+      "bytes": 5842
+    },
+    {
+      "logical_path": "std.compiler.nox.constant_exports",
+      "archive_path": "25.tri",
+      "git_path": "lib/std/compiler/nox/constant_exports.tri",
+      "sha256": "93e428f0c34b955fd6e50f0b2033e06ea44b245ce8851c6345c68f961a67fcd9",
+      "bytes": 4147
+    },
+    {
+      "logical_path": "std.compiler.nox.constant_imports",
+      "archive_path": "26.tri",
+      "git_path": "lib/std/compiler/nox/constant_imports.tri",
+      "sha256": "b5ecc2d0475365aa33d5c21a537a401e4dbfe3702917989cac11de3d8c3c111c",
+      "bytes": 1826
+    },
+    {
+      "logical_path": "std.compiler.nox.constants",
+      "archive_path": "27.tri",
+      "git_path": "lib/std/compiler/nox/constants.tri",
+      "sha256": "ae412f7852541b6cae52f96b60643d1ee7563fbd87961e0e7814b1b6de896148",
+      "bytes": 7952
+    },
+    {
+      "logical_path": "std.compiler.nox.contexts",
+      "archive_path": "28.tri",
+      "git_path": "lib/std/compiler/nox/contexts.tri",
+      "sha256": "b64f7fa548a7a4be1a8c4f2528cf98bb2266af78021abb462a3254b415fc22f1",
+      "bytes": 1630
+    },
+    {
+      "logical_path": "std.compiler.nox.control_gen",
+      "archive_path": "29.tri",
+      "git_path": "lib/std/compiler/nox/control_gen.tri",
+      "sha256": "49063f797711ac307e45aa906232cc6fd773a84acf01d53029c4d1e47d20f872",
+      "bytes": 4472
+    },
+    {
+      "logical_path": "std.compiler.nox.control_parse",
+      "archive_path": "30.tri",
+      "git_path": "lib/std/compiler/nox/control_parse.tri",
+      "sha256": "1aa05302f8de871173dc1c97f3da14317b891f0ce90e85ee39c0476b28d98926",
+      "bytes": 4497
+    },
+    {
+      "logical_path": "std.compiler.nox.coverage",
+      "archive_path": "31.tri",
+      "git_path": "lib/std/compiler/nox/coverage.tri",
+      "sha256": "1e58e2fbc69ccea501564f129855308b175bc8ea8505807755ca9325f7e0fc5a",
+      "bytes": 4697
+    },
+    {
+      "logical_path": "std.compiler.nox.declarations",
+      "archive_path": "32.tri",
+      "git_path": "lib/std/compiler/nox/declarations.tri",
+      "sha256": "a7f1fb9e4829b46ccace804af871465a12780f17ebe25c86ea909860d245067e",
+      "bytes": 3337
+    },
+    {
+      "logical_path": "std.compiler.nox.digest_gen",
+      "archive_path": "33.tri",
+      "git_path": "lib/std/compiler/nox/digest_gen.tri",
+      "sha256": "bbf574f7589bf91cea996a8835beedc4381d47b8649fd1ae5963cede448d9b0e",
+      "bytes": 1096
+    },
+    {
+      "logical_path": "std.compiler.nox.emit",
+      "archive_path": "34.tri",
+      "git_path": "lib/std/compiler/nox/emit.tri",
+      "sha256": "90143c8ef2c3730d68d690cab96fb4f1e954058369aa18c41d2a8afa716f5dd4",
+      "bytes": 3419
+    },
+    {
+      "logical_path": "std.compiler.nox.entry_frame",
+      "archive_path": "35.tri",
+      "git_path": "lib/std/compiler/nox/entry_frame.tri",
+      "sha256": "6bef585ab6ce5f81de44947c00fb72861bf6270a6f4acca87952db146b200911",
+      "bytes": 833
+    },
+    {
+      "logical_path": "std.compiler.nox.expression",
+      "archive_path": "36.tri",
+      "git_path": "lib/std/compiler/nox/expression.tri",
+      "sha256": "282c170961f2404fa56a103c93845c4d5b969b229de451485fc28eeb5e2cb87c",
+      "bytes": 14226
+    },
+    {
+      "logical_path": "std.compiler.nox.expression_state",
+      "archive_path": "37.tri",
+      "git_path": "lib/std/compiler/nox/expression_state.tri",
+      "sha256": "d343c1f589a5446637ddc2436880fa07010e5ffcdc84e04eaba7f330a2bac443",
+      "bytes": 1314
+    },
+    {
+      "logical_path": "std.compiler.nox.flow",
+      "archive_path": "38.tri",
+      "git_path": "lib/std/compiler/nox/flow.tri",
+      "sha256": "ea7e896c9d5dd961ea5c04f090417085bd33cfef022b4add01707ad318ee5c06",
+      "bytes": 1947
+    },
+    {
+      "logical_path": "std.compiler.nox.formula",
+      "archive_path": "39.tri",
+      "git_path": "lib/std/compiler/nox/formula.tri",
+      "sha256": "22b176acd62f643d8c32ad87a48950702e717e2cf376d5549f37d1c21af4d4c2",
+      "bytes": 1309
+    },
+    {
+      "logical_path": "std.compiler.nox.function_exports",
+      "archive_path": "40.tri",
+      "git_path": "lib/std/compiler/nox/function_exports.tri",
+      "sha256": "69e18c06f64b3e9a265833e85d41944c855c4299b52c530cb71e5515af9b46d4",
+      "bytes": 4071
+    },
+    {
+      "logical_path": "std.compiler.nox.function_gen",
+      "archive_path": "41.tri",
+      "git_path": "lib/std/compiler/nox/function_gen.tri",
+      "sha256": "a435c056cf9ebb4709061b0ba969951eb1b6ffe9f7d5c7be9f75211ea949ea35",
+      "bytes": 4938
+    },
+    {
+      "logical_path": "std.compiler.nox.function_imports",
+      "archive_path": "42.tri",
+      "git_path": "lib/std/compiler/nox/function_imports.tri",
+      "sha256": "2ba0e4785aca4b9ce9bdd50b27ff16b4076930084618e0c279cb1dde39fb6900",
+      "bytes": 1880
+    },
+    {
+      "logical_path": "std.compiler.nox.function_order",
+      "archive_path": "43.tri",
+      "git_path": "lib/std/compiler/nox/function_order.tri",
+      "sha256": "9a2cc8e7c7080ab1756143f38904d79d37a46df542762c1c52f3131baff40dfa",
+      "bytes": 5698
+    },
+    {
+      "logical_path": "std.compiler.nox.function_plan",
+      "archive_path": "44.tri",
+      "git_path": "lib/std/compiler/nox/function_plan.tri",
+      "sha256": "0450109a0c7f2f87ba38d4bc51d9db3e0f19576dd9d60805c7a04288aca67d68",
+      "bytes": 2618
+    },
+    {
+      "logical_path": "std.compiler.nox.group_parse",
+      "archive_path": "45.tri",
+      "git_path": "lib/std/compiler/nox/group_parse.tri",
+      "sha256": "85348e84d3df114d1cbde36db99d6ab81eef228cad308097ca8370d4a98ea14e",
+      "bytes": 3865
+    },
+    {
+      "logical_path": "std.compiler.nox.halting",
+      "archive_path": "46.tri",
+      "git_path": "lib/std/compiler/nox/halting.tri",
+      "sha256": "37703da1296e7d2a43fd2efa43acd91041e38de7fa582487f1f543c25c3d4c23",
+      "bytes": 751
+    },
+    {
+      "logical_path": "std.compiler.nox.header_state",
+      "archive_path": "47.tri",
+      "git_path": "lib/std/compiler/nox/header_state.tri",
+      "sha256": "9bc8a0971dcf3a992c7a233f7c0e057c1d68af790fa6998385f293d9752eebf5",
+      "bytes": 1995
+    },
+    {
+      "logical_path": "std.compiler.nox.headers",
+      "archive_path": "48.tri",
+      "git_path": "lib/std/compiler/nox/headers.tri",
+      "sha256": "a6bdebaed8ef736d699b6ce7a05b55dae4612c21350837532bd21df37914f27e",
+      "bytes": 12936
+    },
+    {
+      "logical_path": "std.compiler.nox.index_parse",
+      "archive_path": "49.tri",
+      "git_path": "lib/std/compiler/nox/index_parse.tri",
+      "sha256": "19c85212756eee7c0d1438d743053209df55888b9cacc3a541bf2255e5439f1d",
+      "bytes": 3023
+    },
+    {
+      "logical_path": "std.compiler.nox.intrinsic_abi",
+      "archive_path": "50.tri",
+      "git_path": "lib/std/compiler/nox/intrinsic_abi.tri",
+      "sha256": "16d6d63167270db9b2f256bf5dfde478d6870f636c721773d0ca984c19a3d8a4",
+      "bytes": 4896
+    },
+    {
+      "logical_path": "std.compiler.nox.intrinsic_bindings",
+      "archive_path": "51.tri",
+      "git_path": "lib/std/compiler/nox/intrinsic_bindings.tri",
+      "sha256": "5aa54f9bd8ddb2a8d649d559523d82102d9abe104f3372b07dc57120a009ddcb",
+      "bytes": 1843
+    },
+    {
+      "logical_path": "std.compiler.nox.intrinsic_plan",
+      "archive_path": "52.tri",
+      "git_path": "lib/std/compiler/nox/intrinsic_plan.tri",
+      "sha256": "cb6d46970af649be621a0f09874387e2e165ec78566969896f23b9231cd25fd6",
+      "bytes": 1599
+    },
+    {
+      "logical_path": "std.compiler.nox.job",
+      "archive_path": "53.tri",
+      "git_path": "lib/std/compiler/nox/job.tri",
+      "sha256": "718c36591327eefb58decbc9c876419b3b988b658590366fad1c05919f6edb60",
+      "bytes": 11465
+    },
+    {
+      "logical_path": "std.compiler.nox.lexer",
+      "archive_path": "54.tri",
+      "git_path": "lib/std/compiler/nox/lexer.tri",
+      "sha256": "8c21e20b82854e7f82023c275ded0802ab345fc6155ea144f1d8ae48c0bf58e2",
+      "bytes": 7185
+    },
+    {
+      "logical_path": "std.compiler.nox.loop_gen",
+      "archive_path": "55.tri",
+      "git_path": "lib/std/compiler/nox/loop_gen.tri",
+      "sha256": "94792cf555ecb7c20e6281562af2d2a8d01a3e277974566842f4a48d15ee888e",
+      "bytes": 3357
+    },
+    {
+      "logical_path": "std.compiler.nox.loop_parse",
+      "archive_path": "56.tri",
+      "git_path": "lib/std/compiler/nox/loop_parse.tri",
+      "sha256": "57dbf7397b8d3a92e3142f7ba2878187a6e6725d59a323052f4e21e9360928a0",
+      "bytes": 4460
+    },
+    {
+      "logical_path": "std.compiler.nox.loop_records",
+      "archive_path": "57.tri",
+      "git_path": "lib/std/compiler/nox/loop_records.tri",
+      "sha256": "b3498e95a140efb2ecb06c07f3bdeef9fa694893fcf372ed02bac74aec889be2",
+      "bytes": 1065
+    },
+    {
+      "logical_path": "std.compiler.nox.module_function_order",
+      "archive_path": "58.tri",
+      "git_path": "lib/std/compiler/nox/module_function_order.tri",
+      "sha256": "a8413d5c496c4758cf7cef95b7fecfb3b045c253a4c1fa4229b94457026126e4",
+      "bytes": 11204
+    },
+    {
+      "logical_path": "std.compiler.nox.module_functions",
+      "archive_path": "59.tri",
+      "git_path": "lib/std/compiler/nox/module_functions.tri",
+      "sha256": "5b60e2cf60d6d0b02382d7548c220f8ebef8e79ef60ccfe8821a86df0bad05ae",
+      "bytes": 6045
+    },
+    {
+      "logical_path": "std.compiler.nox.module_graph",
+      "archive_path": "60.tri",
+      "git_path": "lib/std/compiler/nox/module_graph.tri",
+      "sha256": "70594036286ec8ceabcb71c0f9836934890827fc9ff286abf66f5500dda5c62f",
+      "bytes": 7434
+    },
+    {
+      "logical_path": "std.compiler.nox.module_header",
+      "archive_path": "61.tri",
+      "git_path": "lib/std/compiler/nox/module_header.tri",
+      "sha256": "165ef18ca19198c3f81ffe5a96229328e6c74780ddd1f81ac3bb039000d66e1e",
+      "bytes": 4591
+    },
+    {
+      "logical_path": "std.compiler.nox.module_order",
+      "archive_path": "62.tri",
+      "git_path": "lib/std/compiler/nox/module_order.tri",
+      "sha256": "b302787b116c2942ed2296bcc42a490f0492f3df817ebd938340ff2b22b3e4ba",
+      "bytes": 4287
+    },
+    {
+      "logical_path": "std.compiler.nox.module_store",
+      "archive_path": "63.tri",
+      "git_path": "lib/std/compiler/nox/module_store.tri",
+      "sha256": "e1658d0c4e12d718217e626b50f2af74bd3ac76b2f785b29c077a125582ad053",
+      "bytes": 2563
+    },
+    {
+      "logical_path": "std.compiler.nox.nominal",
+      "archive_path": "64.tri",
+      "git_path": "lib/std/compiler/nox/nominal.tri",
+      "sha256": "205855de91c4db11d997fb5c17cd26417f9205c29b8cd300c4f9db367837b2e4",
+      "bytes": 4366
+    },
+    {
+      "logical_path": "std.compiler.nox.package_compile",
+      "archive_path": "65.tri",
+      "git_path": "lib/std/compiler/nox/package_compile.tri",
+      "sha256": "44bc21ca51430a53b3765743bce738290fbdb7620f0cbb3f49f483224b26370a",
+      "bytes": 3968
+    },
+    {
+      "logical_path": "std.compiler.nox.parser",
+      "archive_path": "66.tri",
+      "git_path": "lib/std/compiler/nox/parser.tri",
+      "sha256": "1f4327d3da7e74e04f6c6eb214efe321810766d24b5222137cbf74bff6389306",
+      "bytes": 2977
+    },
+    {
+      "logical_path": "std.compiler.nox.purity",
+      "archive_path": "67.tri",
+      "git_path": "lib/std/compiler/nox/purity.tri",
+      "sha256": "3a6b45b8889bbde83b1c4be3fdc235e09c1e7e48b027116b6b220b1d6f283158",
+      "bytes": 2925
+    },
+    {
+      "logical_path": "std.compiler.nox.qualified_call",
+      "archive_path": "68.tri",
+      "git_path": "lib/std/compiler/nox/qualified_call.tri",
+      "sha256": "0b5ce202423f7e2e701082213bf6c7fbaa2ccc93e67aa62f54caeac6a8d84481",
+      "bytes": 1167
+    },
+    {
+      "logical_path": "std.compiler.nox.qualified_name",
+      "archive_path": "69.tri",
+      "git_path": "lib/std/compiler/nox/qualified_name.tri",
+      "sha256": "2cc1ec05f692a24eb54db7458b4a4056918dd10a7e78c92c953a57b297998eae",
+      "bytes": 3439
+    },
+    {
+      "logical_path": "std.compiler.nox.record_assign",
+      "archive_path": "70.tri",
+      "git_path": "lib/std/compiler/nox/record_assign.tri",
+      "sha256": "8f7088a61aeb5a1e6ff2af3fbaf21c43d2c840fa6493008c93603e4a3ca68112",
+      "bytes": 2711
+    },
+    {
+      "logical_path": "std.compiler.nox.record_edit_gen",
+      "archive_path": "71.tri",
+      "git_path": "lib/std/compiler/nox/record_edit_gen.tri",
+      "sha256": "b6f5ad380b82ce8bf760cc2bdc1c9c6d8742d50aa27955829fba33db861425cb",
+      "bytes": 2042
+    },
+    {
+      "logical_path": "std.compiler.nox.record_frames",
+      "archive_path": "72.tri",
+      "git_path": "lib/std/compiler/nox/record_frames.tri",
+      "sha256": "796fa0c7f8d96f74f18ad131648b995e9ac748cbefb42026870b1cdb146fad23",
+      "bytes": 2217
+    },
+    {
+      "logical_path": "std.compiler.nox.record_parse",
+      "archive_path": "73.tri",
+      "git_path": "lib/std/compiler/nox/record_parse.tri",
+      "sha256": "db8b886307ed4bdfceac0386dcd8c32277bb67b0cc46eaf59c67f33280877868",
+      "bytes": 7994
+    },
+    {
+      "logical_path": "std.compiler.nox.signatures",
+      "archive_path": "74.tri",
+      "git_path": "lib/std/compiler/nox/signatures.tri",
+      "sha256": "192fd20331a541e1fd4e47b4fd2ace95a87ddef8b2d37780273d50aeef5ad70e",
+      "bytes": 3074
+    },
+    {
+      "logical_path": "std.compiler.nox.struct_parse",
+      "archive_path": "75.tri",
+      "git_path": "lib/std/compiler/nox/struct_parse.tri",
+      "sha256": "74f02fe3adc2847ce50e0da39f866cae26c04878daabf53adfc39ced66bab384",
+      "bytes": 3701
+    },
+    {
+      "logical_path": "std.compiler.nox.symbols",
+      "archive_path": "76.tri",
+      "git_path": "lib/std/compiler/nox/symbols.tri",
+      "sha256": "f72ba9ec0568bd4784386d7b2cc9a946fe2915ce45595050bade3d1b75c25a2e",
+      "bytes": 2243
+    },
+    {
+      "logical_path": "std.compiler.nox.syntax",
+      "archive_path": "77.tri",
+      "git_path": "lib/std/compiler/nox/syntax.tri",
+      "sha256": "2f06cd88eb350f402f6c9ae0118b3edb7a79ba2730747ada96bb01fc51852e89",
+      "bytes": 1946
+    },
+    {
+      "logical_path": "std.compiler.nox.terminal",
+      "archive_path": "78.tri",
+      "git_path": "lib/std/compiler/nox/terminal.tri",
+      "sha256": "fada1a138d39418d1fcb69aca21e014abdb7c31c732328fc80060152107c672e",
+      "bytes": 2396
+    },
+    {
+      "logical_path": "std.compiler.nox.tuple_bind",
+      "archive_path": "79.tri",
+      "git_path": "lib/std/compiler/nox/tuple_bind.tri",
+      "sha256": "253ac4f3133e4d079bab6599d2df9c4bb4ecb1a952457b4a42c97dd585d9c8dc",
+      "bytes": 3341
+    },
+    {
+      "logical_path": "std.compiler.nox.tuple_declarations",
+      "archive_path": "80.tri",
+      "git_path": "lib/std/compiler/nox/tuple_declarations.tri",
+      "sha256": "0307964dc968f7450cd1f917b8f7d50df2314e5c81ef40b6796bd20fddda2ec5",
+      "bytes": 3402
+    },
+    {
+      "logical_path": "std.compiler.nox.tuple_pattern",
+      "archive_path": "81.tri",
+      "git_path": "lib/std/compiler/nox/tuple_pattern.tri",
+      "sha256": "54bcf80c289fc09ffddfc30e904844ca96b7abf5124725078d37e80ac00aae71",
+      "bytes": 2139
+    },
+    {
+      "logical_path": "std.compiler.nox.type_exports",
+      "archive_path": "82.tri",
+      "git_path": "lib/std/compiler/nox/type_exports.tri",
+      "sha256": "8c41e0531703fda83d13670e9b6d6c708f68238fc8d2d0c8594216d16308c6ea",
+      "bytes": 2521
+    },
+    {
+      "logical_path": "std.compiler.nox.type_imports",
+      "archive_path": "83.tri",
+      "git_path": "lib/std/compiler/nox/type_imports.tri",
+      "sha256": "a405a2a7635de409c10c4ae314c7a822277c6d2e4e2df8fa3f2326d21144ff7b",
+      "bytes": 2020
+    },
+    {
+      "logical_path": "std.compiler.nox.type_parse",
+      "archive_path": "84.tri",
+      "git_path": "lib/std/compiler/nox/type_parse.tri",
+      "sha256": "98d9d599c19b11ad4b093824c587c09c5f3a103dec8f4d4b093459e75a1b532f",
+      "bytes": 5195
+    },
+    {
+      "logical_path": "std.compiler.nox.type_registry",
+      "archive_path": "85.tri",
+      "git_path": "lib/std/compiler/nox/type_registry.tri",
+      "sha256": "2fb9aaa832f79c4be974494cf09461651887959746ba3e4a0047e338acbd007a",
+      "bytes": 2550
+    },
+    {
+      "logical_path": "std.compiler.nox.types",
+      "archive_path": "86.tri",
+      "git_path": "lib/std/compiler/nox/types.tri",
+      "sha256": "83a64259516e2b1182e74605f43f5674c5308d97b89cd2e4a5f7b73d7730a11c",
+      "bytes": 5175
+    },
+    {
+      "logical_path": "std.compiler.nox.utf8",
+      "archive_path": "87.tri",
+      "git_path": "lib/std/compiler/nox/utf8.tri",
+      "sha256": "eec8b5cbe9364a5dab13205bea7e315a6ec5a14e2deb567e86db0bedabbe5fab",
+      "bytes": 5181
+    },
+    {
+      "logical_path": "std.nox.bytes",
+      "archive_path": "88.tri",
+      "git_path": "lib/std/nox/bytes.tri",
+      "sha256": "89d0653ff2883c1ec5bed8443e86c320227affabbd99b5be9fa54cc2a4029790",
+      "bytes": 12478
+    },
+    {
+      "logical_path": "std.nox.seq",
+      "archive_path": "89.tri",
+      "git_path": "lib/std/nox/seq.tri",
+      "sha256": "1c70fc4614edd8dafcf667536d488335ae31df436c7c1fd5c2306eb87f37c20b",
+      "bytes": 2130
+    },
+    {
+      "logical_path": "std.nox.tree",
+      "archive_path": "90.tri",
+      "git_path": "lib/std/nox/tree.tri",
+      "sha256": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4",
+      "bytes": 12984
+    },
+    {
+      "logical_path": "vm.core.convert",
+      "archive_path": "91.tri",
+      "git_path": "lib/vm/core/convert.tri",
+      "sha256": "bed1495b40f6d3b0085961924fb2ac2bc6a37b22267110dfb8a2b71af6d58b19",
+      "bytes": 323
+    },
+    {
+      "logical_path": "vm.core.field",
+      "archive_path": "92.tri",
+      "git_path": "lib/vm/core/field.tri",
+      "sha256": "45718423e4f0a72eb0e8528993f2c0b7bde9d858e6c7f8ebeaf53aaf313a210a",
+      "bytes": 461
+    },
+    {
+      "logical_path": "vm.nox.noun",
+      "archive_path": "93.tri",
+      "git_path": "lib/vm/nox/noun.tri",
+      "sha256": "a2795c828bf8a325b82edd59bb73fac9909984e63b2144573183db0a7a4a5603",
+      "bytes": 1026
+    }
+  ],
+  "source_scale": {
+    "receipt": {
+      "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale.json",
+      "path": "source-scale/receipt.json",
+      "sha256": "75cdf5438afcfb110497e3a82bc815489d6a11fef0ba9fdf56daa3097e3d427b",
+      "bytes": 92264
+    },
+    "archive_sha256": "c4fc965429f825be91b7aea9cbccb3d9a1ed022b41554e91bc9faf75d71795f9",
+    "file_count": 31,
+    "passed_cases": 6
+  },
+  "package_invariance": {
+    "receipt": {
+      "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-package-determinism.json",
+      "path": "package-invariance/receipt.json",
+      "sha256": "c78a78371afe0c248068f06fd0bbe0434ebc6765b4e5b77b156c9dbd62f5993c",
+      "bytes": 250515
+    },
+    "archive": {
+      "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-package-determinism.inputs.tar.gz",
+      "path": "package-invariance/inputs.tar.gz",
+      "sha256": "b65f3c67312d780fb6cec9ca807f75df20e7c7b28c2724f87751284b6b7784c2",
+      "bytes": 83523
+    },
+    "file_count": 97
+  },
+  "install": {
+    "receipt_sha256": "a7c1b9f38acc6dcf8d0d2d73b99fcfdd25deea9a0795a4798092dc4e358fd79c",
+    "retained_files": 15
+  },
+  "scope": "Completed local first build and SH4 source/package checks only. S1 C2 semantic corpus and C2 to C3 validation are ongoing and unclaimed here."
+}

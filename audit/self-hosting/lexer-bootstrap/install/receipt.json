@@ -1,0 +1,591 @@
+{
+  "schema": "trident/local-candidate-install/v1",
+  "status": "passed",
+  "created_at": "2026-09-27T21:45:24.844694+00:00",
+  "scope": "Local candidate install and C0 seed reproduction only. This is not a release candidate or a C2 acceptance run. Dependency status was captured after the builds; unrelated dirty siblings are retained explicitly.",
+  "trident_revision": "4bbe399c85a5c5ef50e40791cc5f8da79e929071",
+  "guest_source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "joy_revision": "2878f4b17dfedf237c6110d7d411bb4824e65103",
+  "prefix": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-lexer-candidate",
+  "target": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-lexer-install",
+  "commands": [
+    {
+      "id": "install-trident",
+      "argv": [
+        "cargo",
+        "install",
+        "--path",
+        "../lexer-runtime/trident",
+        "--root",
+        "../install-lexer-candidate",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "env": {
+        "CARGO_TARGET_DIR": "../target-lexer-install"
+      },
+      "exit_code": 0,
+      "raw_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-trident.log",
+        "sha256": "4d128f019cad4cff10a7c926da2a508da092ad236046c5fd1cbe0ff34e5c49ef",
+        "bytes": 4665
+      },
+      "retained_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-trident.log.gz",
+        "sha256": "d81993b899482b4f3287ce0bd398dedde10e622f2347ec89acf5be192129bef2",
+        "bytes": 1255
+      },
+      "cargo_install_path_reminders": [
+        "warning: be sure to add `/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-lexer-candidate/bin` to your PATH to be able to run the installed binaries"
+      ],
+      "rust_compiler_warnings": []
+    },
+    {
+      "id": "install-joy-first",
+      "argv": [
+        "cargo",
+        "install",
+        "--path",
+        "../lexer-runtime/joy/cli",
+        "--root",
+        "../install-lexer-candidate",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "env": {
+        "CARGO_TARGET_DIR": "../target-lexer-install"
+      },
+      "exit_code": 101,
+      "raw_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-joy.log",
+        "sha256": "acf4701ffc76ae3d9a4b9d202300873e2ac9490941c493f4e5c16109a1261cb7",
+        "bytes": 800
+      },
+      "retained_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-joy.log.gz",
+        "sha256": "14f9def6aaf7c54898fb6dc87553491b8a23ed906c7eb45d76fd1718f870d9cf",
+        "bytes": 302
+      },
+      "cargo_install_path_reminders": [],
+      "rust_compiler_warnings": []
+    },
+    {
+      "id": "install-joy",
+      "argv": [
+        "cargo",
+        "install",
+        "--path",
+        "../lexer-runtime/joy/cli",
+        "--root",
+        "../install-lexer-candidate",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "env": {
+        "CARGO_TARGET_DIR": "../target-lexer-install"
+      },
+      "exit_code": 0,
+      "raw_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-joy-2.log",
+        "sha256": "91d92bb41f587f4d7f1b0760e685bc57766127d429afe65703f40d00888026af",
+        "bytes": 5633
+      },
+      "retained_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-joy-2.log.gz",
+        "sha256": "d57be673497984ba06f1678d55a1661f69b036649b5504570b2cce73913f8f94",
+        "bytes": 1294
+      },
+      "cargo_install_path_reminders": [
+        "warning: be sure to add `/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-lexer-candidate/bin` to your PATH to be able to run the installed binaries"
+      ],
+      "rust_compiler_warnings": []
+    },
+    {
+      "id": "installed-c0-seed",
+      "argv": [
+        "../install-lexer-candidate/bin/joy",
+        "build",
+        "compiler/nox/main.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "compiler-job",
+        "-o",
+        "../measurements/lexer-frame/installed-seed.dag"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "env": {},
+      "exit_code": 0,
+      "raw_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/installed-seed.log",
+        "sha256": "9bda9355129d459a7cecbdcf9eae35d8ef77ebf10ecad734a2060d15eac7de94",
+        "bytes": 47
+      },
+      "retained_log": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/installed-seed.log.gz",
+        "sha256": "7e2ce93ba1f3f556465538bc01f4c7da0ab10ea773d92afd517d61ca5ad55876",
+        "bytes": 66
+      },
+      "cargo_install_path_reminders": [],
+      "rust_compiler_warnings": []
+    }
+  ],
+  "toolchain": {
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21) (Homebrew)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)"
+  },
+  "binaries": [
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-lexer-candidate/bin/joy",
+      "sha256": "b218b97356f44ba71ea12448e37af23ce1b0d2e7aecd9b4a32dd3eb4bd857ee1",
+      "bytes": 4961888
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-lexer-candidate/bin/trident",
+      "sha256": "661888ab82e3af993117b870eafe2879692d67fde5f8cbb39ee41fb5aa6ebb34",
+      "bytes": 8710112
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-lexer-candidate/bin/trident-lsp",
+      "sha256": "2508e3739f0f564f1e11b1a3c8c90e4d5acbfdf0d6278014d15363cbce952fae",
+      "bytes": 6443568
+    }
+  ],
+  "pinned_runtime": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+    "bytes": 4961904,
+    "unchanged": true
+  },
+  "installed_seed": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/installed-seed.dag",
+    "sha256": "5728e07a37e111f88166c471ad338f8947b74dfdc842ed1ffa9fa0886c005fda",
+    "bytes": 9715917,
+    "byte_equal_frozen": true,
+    "expected_sha256": "5728e07a37e111f88166c471ad338f8947b74dfdc842ed1ffa9fa0886c005fda",
+    "particle": "5dad67d86e586f4e0949e5517fc94fd298dc0ed4aaee216eabb826a69e1af7ca"
+  },
+  "frozen_seed": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/after-v9.dag",
+    "sha256": "5728e07a37e111f88166c471ad338f8947b74dfdc842ed1ffa9fa0886c005fda",
+    "bytes": 9715917
+  },
+  "cargo_metadata": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-cargo-metadata.json",
+    "sha256": "b1a085672ed4b34eb1a7e06cf5b55c94a54ff0e62513f32e8e0eccb42856fc32",
+    "bytes": 693217,
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "../lexer-runtime/joy/cli/Cargo.toml",
+      "--format-version",
+      "1",
+      "--locked",
+      "--offline"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+    "exit_code": 0
+  },
+  "local_packages": [
+    {
+      "name": "bbg",
+      "version": "0.3.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/bbg/rs/Cargo.toml",
+        "sha256": "1c831bd86843f1237e7d8e02005d2ac35b604da5c01c8af234bda90ed8c24b60",
+        "bytes": 1425
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/bbg"
+    },
+    {
+      "name": "cyber-hemera",
+      "version": "0.3.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/hemera/rs/Cargo.toml",
+        "sha256": "78c4b45871ca5501ff0d76d3c9f4f11eea3ec682f1288891227cf9c1840123ee",
+        "bytes": 895
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/hemera"
+    },
+    {
+      "name": "cyber-joy",
+      "version": "0.5.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/joy/cli/Cargo.toml",
+        "sha256": "57127ddd1dd84f35dc0f44c8e80f75e766e57efa85adee20fa7bbe9f231834c5",
+        "bytes": 769
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/joy"
+    },
+    {
+      "name": "cyber-lens",
+      "version": "0.2.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/src/Cargo.toml",
+        "sha256": "4b8c4561c2e961319c4587cb57c40ade70c1b50c1c135912b045711675e634b2",
+        "bytes": 1058
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-lens-assayer",
+      "version": "0.2.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/assayer/Cargo.toml",
+        "sha256": "7c81ae94c5b690b0378e7275cc4ea37f972bff3384f9d85a227d3c7dcede4473",
+        "bytes": 532
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-lens-binius",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/binius/Cargo.toml",
+        "sha256": "ded752ece5f2ff73e38838f047178ed80cde7b7e4aa185ca41246ee923199e8e",
+        "bytes": 452
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-lens-brakedown",
+      "version": "0.2.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/brakedown/Cargo.toml",
+        "sha256": "3e86f99b93d9f0fcf3f862721e8b3cfae17a65463acab89ad85be51af85b74ee",
+        "bytes": 657
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-lens-core",
+      "version": "0.1.2",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/core/Cargo.toml",
+        "sha256": "96d25d7762172996535d0ecadc6ef2c0720ebbba1fc638b7f5bd4d748377b842",
+        "bytes": 660
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-lens-ikat",
+      "version": "0.2.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/ikat/Cargo.toml",
+        "sha256": "a66dffcb98609e49c8fc2e8c674105ca2a82a7c3e20030782f95c49f3964f84e",
+        "bytes": 502
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-lens-porphyry",
+      "version": "0.2.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/porphyry/Cargo.toml",
+        "sha256": "c6d5e1bc72a8a9a9f5e7e970ce81a0e6f73c7d64665b093b087320d04bc04512",
+        "bytes": 459
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens"
+    },
+    {
+      "name": "cyber-nox",
+      "version": "0.3.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox/rs/Cargo.toml",
+        "sha256": "1ed9bdab78ffc1665345b9fd1b26ad15aa483177e770f0505567197716379bdb",
+        "bytes": 1503
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox"
+    },
+    {
+      "name": "joy-rs",
+      "version": "0.5.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/joy/rs/Cargo.toml",
+        "sha256": "2f7e80eb1dc0880dafeb53b5623432bc9bf775a1a15f599cb723eceee2bf181e",
+        "bytes": 874
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/joy"
+    },
+    {
+      "name": "neuron-id",
+      "version": "0.1.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/neuron/id/Cargo.toml",
+        "sha256": "2e7784f46f0ec9c990ac98191560ccefc1a31a4ee3dda55fc2cb5340e44bd4ce",
+        "bytes": 196
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/neuron"
+    },
+    {
+      "name": "strata-compute",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/compute/Cargo.toml",
+        "sha256": "73dedb862ee01c4d8a8c89aa9ef58060e5a2aea777dc3b2230afa36e5b6d3496",
+        "bytes": 376
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-core",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/core/Cargo.toml",
+        "sha256": "d66bf3c5cea53cf966cdc3135ae88863b116d62c4c3d92bd391a3e94aa7c00e0",
+        "bytes": 359
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-ext",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/ext/Cargo.toml",
+        "sha256": "608924d6ce12e3e30be06bdd04fd3e977e2d4ea71ae35a13a0fb9cf2a9e1d513",
+        "bytes": 401
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-genies",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/genies/rs/Cargo.toml",
+        "sha256": "a0afb792d43fa46e891e37ff7a15eb1d56215db93ab3ec3bd6d8eaf16c30e7c4",
+        "bytes": 772
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-jali",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/jali/rs/Cargo.toml",
+        "sha256": "851459897a5a08243774cbd9a0a892ec1f05dd9f37e49761b84a9b93492f2691",
+        "bytes": 791
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-kuro",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/kuro/rs/Cargo.toml",
+        "sha256": "424f8b9fa7829ae73fbd55325e6c6c62c3b2c805cad17b938d51c40730010e20",
+        "bytes": 641
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-nebu",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/nebu/rs/Cargo.toml",
+        "sha256": "d8680eb61013c42f54bbd5834d758f10d844dc4882b8121f1f5fc9aa7e429c20",
+        "bytes": 1173
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-proof",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/proof/Cargo.toml",
+        "sha256": "ee45baf48effc4601e21169dc77db4128687e9a1ac8b27d10fd80adf8fe3b146",
+        "bytes": 369
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "strata-trop",
+      "version": "0.1.1",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata/trop/rs/Cargo.toml",
+        "sha256": "dda1d2f34cea1a79a7181a18bdd97d76c1ef6604c1d4d063d7edb7f33366d5be",
+        "bytes": 607
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata"
+    },
+    {
+      "name": "trident-lang",
+      "version": "0.3.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/trident/Cargo.toml",
+        "sha256": "ead7567142c0e14d070bb1726e5b194ba1535f54dd959217c10b170e2f42e747",
+        "bytes": 3014
+      },
+      "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/trident"
+    },
+    {
+      "name": "zheng",
+      "version": "0.4.0",
+      "manifest": {
+        "path": "/Users/master/cyber/.worktrees/joy-soft3-reaudit/zheng/rs/Cargo.toml",
+        "sha256": "623f4ee86597449f4de5355cc3adc79c4991027d2bc1a421b0ea5321d0dff83d",
+        "bytes": 1099
+      },
+      "repository": "/Users/master/cyber/.worktrees/joy-soft3-reaudit/zheng"
+    }
+  ],
+  "post_build_dependency_state": [
+    {
+      "path": "/Users/master/cyber/.worktrees/joy-soft3-reaudit/zheng",
+      "revision": "b54b209b91b8bf99c2975c4c24493a2411c23079",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-00.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/bbg",
+      "revision": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-01.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/hemera",
+      "revision": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-02.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens",
+      "revision": "17cafe91431977b738e5b72361187cd01ad93638",
+      "status_porcelain_z": " M brakedown/src/public.rs\u0000 M brakedown/src/tests.rs\u0000 M cli/src/artifact.rs\u0000 M core/src/fri.rs\u0000 M core/src/lib.rs\u0000 M core/tests/serde_roundtrip.rs\u0000",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-03.diff.gz",
+        "sha256": "103df802b59b25e3dfa276b779965f9b9b97b43c9fdef589aa9303c09e77e1f5",
+        "bytes": 1666
+      },
+      "diff_raw_sha256": "07eaceae4913b3e7d3f547b6144eb9636f6de5e01d1cac23de980ebbe25e8346",
+      "changed_files": [
+        {
+          "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/brakedown/src/public.rs",
+          "sha256": "2ad27aaaea48c8052ca1bcee664f47c025559eef460f078f83131511fdc01165",
+          "bytes": 13129
+        },
+        {
+          "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/brakedown/src/tests.rs",
+          "sha256": "d1cb0162dcace6e9038f8ef54bd2d14a2a22d7b9292007bed25101a700957989",
+          "bytes": 10462
+        },
+        {
+          "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/cli/src/artifact.rs",
+          "sha256": "07a09e47633baea3ece6ee0c2d05a171980df606a16550b1dfb2707d04a5dfa5",
+          "bytes": 9761
+        },
+        {
+          "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/core/src/fri.rs",
+          "sha256": "17978ade5b2f344187ae2293e61f2871bb2a8e32db9684b2f4d7a6f9bab8c841",
+          "bytes": 4669
+        },
+        {
+          "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/core/src/lib.rs",
+          "sha256": "5f293b77bb38eedc245d13e2a2e3683a40af4a00182be9cdd49bae6a1e449cf6",
+          "bytes": 2094
+        },
+        {
+          "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/lens/core/tests/serde_roundtrip.rs",
+          "sha256": "38009eacca04d66c9be90e3ac3b25819bbb101a1cf8e4648e9fc489300f080af",
+          "bytes": 2868
+        }
+      ],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/neuron",
+      "revision": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-04.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-clean/strata",
+      "revision": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-05.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/joy",
+      "revision": "2878f4b17dfedf237c6110d7d411bb4824e65103",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-06.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lexer-runtime/trident",
+      "revision": "4bbe399c85a5c5ef50e40791cc5f8da79e929071",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-07.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox",
+      "revision": "f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+      "status_porcelain_z": "",
+      "diff": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-frame/install-dependency-08.diff.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "bytes": 20
+      },
+      "diff_raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "changed_files": [],
+      "untracked_files": []
+    }
+  ],
+  "full_gate": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/lexer-frame-chunks/full-gate.json",
+    "sha256": "c85bdf67f138da6991416d7844be5028205835f5c2e92f812d3d5736c46ef321",
+    "bytes": 122224
+  },
+  "retained_initial_failure": "Initial Joy installation failed before compilation because the isolated staging directory lacked the lens relative dependency. Adding read-only sibling links resolved it; the raw failure log is retained."
+}

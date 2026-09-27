@@ -8,34 +8,41 @@ Component results close only their named substeps.
 
 ## Current position
 
-The complete frozen compiler has produced usable C2 through Joy/nox; C2 has
-recompiled the same source into byte-identical C3. SH0–SH3 are closed. SH4 has
-a measured 64 KiB scanner frame failure; the remaining SH5/SH6 acceptance waits
-for that repair and six-platform clean reproduction. Actual C2 and C3 corpora both pass. No compiler execution
-proof is claimed. The separate literal compiler fixture remains historical.
+The current S1 source has compiled its complete compiler through Joy/nox and
+published C2. SH0–SH4 are closed for this frozen subset and measured workload.
+S1's actual C2 corpus, C2(S) build, C3 corpus and six-platform clean reproduction
+remain the SH5/SH6 work. The earlier S0 snapshot already reached exact C2/C3
+equality and passed both supplied-compiler corpora. Compilation proofs remain
+separate SH7/SH8 gates.
 
-The [complete build receipt](self-hosting/body-scale/README.md) pins Trident
-`b991d901`: 94 modules, 484 functions, 369820 source bytes. The full Rust gate
-passed 1195 tests with five diagnostic ignores and zero Rust warnings.
-The [reviewed feature map](self-hosting/compiler-feature-coverage.md) maps all
-51 used feature kinds to positive/rejection evidence; it closes SH3 for the
-explicit native subset, including lexical-only contract attributes.
+S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
+484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
+covers the unchanged 51 feature kinds, with 65 named Rust references and 145
+historical installed observations. The [split Rust test gate](self-hosting/lexer-frame-chunks/full-gate.json)
+passed 1197 distinct tests, with five existing ignores and zero Rust warnings.
+A reviewed two-test rerun is counted separately from those unique tests.
 
-Actual C1(S) published C2 SHA256
+The [current complete build and source-scale evidence](self-hosting/lexer-bootstrap/README.md)
+retain S1's actual C2 SHA256
+`76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8`.
+C1(S1) charged 10378203737 reductions, allocated 190817237 nodes cumulatively,
+peaked at 3145728 resident nodes, completed 66 collections and took 1425188177
+worker microseconds. Actual C2 passed all six source-scale cases: the valid
+65536-byte comment uses 4324 frames and emits the same independently executed
+program as the short case. Negative cases preserve the prior published program.
+Full S1 package relocation/reversal preserves exact JOB1 bytes; a dependency
+change changes package identity. These results close the measured SH4 barrier.
+The separate identifier/decimal/name scanners retain their documented bounds;
+this trivia repair does not claim universal success for every maximal token.
+
+Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
+Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
 `fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0`.
-Its successful execution charged 10357536443 reductions, allocated 190792140
-nodes cumulatively, peaked at the 3145728 resident-node cap and completed
-66 collections in 1471089704 worker microseconds. Exact commands, source and
-runtime revisions, unchanged input hashes and canonical artifacts are retained.
-The [actual C2 corpus](self-hosting/c2-corpus/README.md) passed all six semantic
-runners: 547 observations and 1816 commands, with unchanged cases/limits and
-separate raw Rust oracles. The [actual second build and fixed point](self-hosting/fixed-point/README.md)
-passed source/JOB1/producer bindings and exact C2/C3 byte comparison. C2(S)
-charged 9771339293 reductions with 162260313 cumulative allocations and
-56 collections. The [independent actual C3 corpus](self-hosting/c3-corpus/README.md)
-also passed all 547 observations and 1816 commands, with the same cases and
-limits. These receipts describe frozen source `b991d901`; the scanner repair
-starts a new source snapshot and requires its own complete bootstrap.
+The [actual C2 corpus](self-hosting/c2-corpus/README.md) and independent
+[actual C3 corpus](self-hosting/c3-corpus/README.md) each passed 547 observations
+and 1816 commands with unchanged cases and limits. The [fixed-point receipt](self-hosting/fixed-point/README.md)
+binds both actual source packages and producer steps to exact C2/C3 equality.
+Those immutable measurements remain distinct from the current S1 acceptance.
 
 Bounded NoTrace compaction is merged into `release/0.4`: nox
 [PR23](https://github.com/cyberia-to/nox/pull/23) and Joy
@@ -47,8 +54,9 @@ is retained in [PR24](https://github.com/cyberia-to/nox/pull/24).
 Earlier Trident scaling merged in [PR109](https://github.com/cyberia-to/trident/pull/109).
 Alias/export lookup changes, complete C1(S) and audit tooling merged in
 [PR110](https://github.com/cyberia-to/trident/pull/110) at `2184197`. Current
-acceptance work is on `feat/0.4-reproducible-bootstrap`; the isolated scanner
-repair is on `feat/0.4-source-frame-chunking`. Both target `release/0.4`.
+acceptance work is on `feat/0.4-reproducible-bootstrap`. The scanner repair
+merged through [PR111](https://github.com/cyberia-to/trident/pull/111) at
+`c54446a`; integration targets `release/0.4`. Master remains untouched.
 
 The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
 remains identified as a different source/runtime attempt. The
@@ -64,9 +72,9 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executed corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — valid 64 KiB comment exhausts frames | Whole compiler succeeds; repair bounded scanning while retaining original small-fixture quotas |
-| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Execution criterion met; SH4 prerequisite open | [Actual C2 passes all six semantic corpora](self-hosting/c2-corpus/README.md); source-scale repair remains |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — exact C2/C3 fixed point passed locally | Both actual C2/C3 corpora pass; scanner-source bootstrap, clean repeat and six native CPU platforms remain required |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
+| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — S1 C2 published | Complete current S1 supplied-C2 corpus; S0 already passed all six semantic corpora |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — S0 fixed point and both corpora passed | Current S1 fixed point/C3 corpus, clean repetitions and six native CPU platforms remain required |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
@@ -77,20 +85,19 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
   quotas; retain isolated measurements in the owning audit reports.
 - [x] Complete SH3's construct inventory and review executed positive/rejection
   evidence against the actual frozen compiler closure.
-- [ ] Complete SH4's data-intensive stages within predeclared guest, cumulative
+- [x] Complete SH4's data-intensive stages within predeclared guest, cumulative
   allocation, resident, collection-work, frame and host-time limits. Retain
   4 KiB/64 KiB/full-closure and exact/one-below boundaries, dependency-identity
-  changes, package reorder and checkout-directory reproducibility. Earlier
-  fixed-arena whitespace/64 KiB failures remain open until measured again.
+  changes, package reorder and checkout-directory reproducibility. Current S1
+  succeeds under the declared profile; earlier failures remain in their receipts.
 - [x] Freeze S, options/ABI and seed identity; obtain complete `C1(S) -> C2`
   through Joy. Save its actual independently loadable compiler artifact and
   complete measurements; no host-built replacement may complete this step.
-- [x] Run the unchanged independent positive/rejection corpus through actual C2
-  using `run-native-compiler.py --compiler PATH`; execute its emitted programs.
-- [x] Run `C2(S) -> C3` with the same frozen sources/options/limits. Verify actual
-  canonical bytes, particles, receipt bindings and source snapshots with
-  `check-selfhost-fixed-point.py`; complete the independent actual C3 corpus.
-  The scanner source change requires repeating this evidence for its new snapshot.
+- [ ] Complete the unchanged independent positive/rejection corpus through
+  actual S1 C2 and execute its emitted programs. Historical S0 completion is
+  retained separately; the current compiler is supplied with `--compiler PATH`.
+- [ ] Complete current S1 `C2(S) -> C3`, exact canonical byte/particle and
+  source/JOB1 checks, then the independent actual C3 regression corpus.
 - [ ] Repeat clean bootstrap with the [documented runner](../reference/self-hosting.md#sh6-reproducible-bootstrap) and execute the SH6
   six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
   Retain source/seed/artifact identities and downloadable CI evidence.
