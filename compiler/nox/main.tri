@@ -12,5 +12,5 @@ fn main(input: Noun) -> Noun {
     if (request.error.code == as_u32(0)) == false { return emit.failure(input, request.index, request.error) }
     let compiled = package_compile.compile(request)
     if (compiled.error.code == as_u32(0)) == false { return emit.failure(input, compiled.index, compiled.error) }
-    emit.success(input, compiled.formula)
+    emit.success_profile(input, compiled.formula, request.profile)
 }

@@ -198,9 +198,11 @@ the guest validates the collections it consumes with one threaded allowance.
 Unused modules remain identity-bound and structurally admitted without lexical
 analysis. The guest discovers the direct-use closure from the selected entry
 and checks each reached source in its own module scope. The requested entry
-function is `main` and generated
-profiles are raw `(0,0)`; other structurally admitted entry/generated-profile
-requests produce diagnostics. Invalid JOB1 option values fail Joy admission.
+function is `main`. Generated profiles are explicitly `(0,0)` for ordinary
+programs or `(1,1)` for compiler JOB1/RES1 artifacts. The latter requires the
+final entry to take and return Noun; a scalar entry reports diagnostic3 at its
+name before checking the entry module's function bodies. Dependencies retain
+their normal checking order. Invalid JOB1 option values fail Joy admission.
 
 ```text
 program := "program" logical_path use* declaration+ EOF
@@ -394,8 +396,9 @@ A Noun frame slot retains a complete immutable subtree. Two entry signatures
 are accepted: the existing `main() -> Field`, and
 `main(input: Noun) -> Noun`. The latter receives the original runtime subject
 in its first parameter, in both standalone and table-dispatched programs.
-Generated ART1 profiles remain raw `(0,0)`; a structured entry alone does not
-request or establish the compiler JOB1/RES1 profile.
+Generated ART1 profiles come from JOB1 options. A structured entry supports
+both `(0,0)` and `(1,1)`; its source signature alone does not select the compiler
+JOB1/RES1 profile. A scalar entry supports only `(0,0)`.
 
 Six direct nox builtins use their existing seed names:
 `nox_noun_atom(Field) -> Noun`, `nox_noun_pair(Noun,Noun) -> Noun`,
@@ -410,7 +413,7 @@ well typed, then trap only when the emitted program reaches them.
 Noun arithmetic, ordering, bit operations, indexing and the `==` operator
 remain rejected; `nox_noun_eq` supplies explicit native equality. Conditions
 remain Field/Bool. Qualified calls require actual module/import resolution.
-Compiler-profile generation remains a subsequent increment. Earlier scalar-entry programs retain their ART1 bytes.
+Requested compiler-profile generation retains the same complete formula. Earlier scalar-entry programs retain their ART1 bytes.
 
 Compiler-owned type descriptors are canonical Noun values. Primitive tags
 Field/Bool/Unit/U32/Noun retain atoms0/1/2/3/4; atom5 marks an invalid type and
@@ -546,8 +549,7 @@ admit constants and ordinary functions with scalar Field/Bool/U32 parameters
 and scalar or Unit results. Qualified calls resolve direct public imports;
 private helpers retain their own module scope. All bodies are checked, including
 replaced declarations. Dependency structs, nominal signatures and intrinsics,
-qualified constructors/types, legacy path remaps and generated compiler-job
-profiles remain subsequent work.
+qualified constructors/types, legacy path remaps remain subsequent work.
 All reached sources share the existing4096-byte ceiling; import support does
 not imply compiler-scale memory or a complete self-build. The detailed contract
 is [native compiler jobs](self-hosting-jobs.md).

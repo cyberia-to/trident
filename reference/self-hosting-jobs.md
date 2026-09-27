@@ -63,6 +63,23 @@ must be rejected until specified. Literal constant folding required for language
 semantics remains allowed. Intrinsic semantics come from the compiler/machine
 profile; arbitrary source declarations cannot replace them.
 
+### Generated compiler profiles
+
+C1 accepts the declared option pairs 0/0 and 1/1. Profile 0/0 keeps the existing
+scalar or structured entry behavior. Profile 1/1 requires the final entry
+`main(input: Noun) -> Noun`; a scalar entry produces diagnostic 3 at its name,
+before checking the entry module's function bodies or emitting code. Dependencies
+are checked first in module order. The same rule applies to entries with imports.
+The emitted ART1 carries the requested pair exactly. Source syntax, return type,
+file extension and the producing compiler never infer an output profile.
+
+A generated 1/1 artifact enters Joy's ordinary compiler admission path: execution
+requires a matching JOB1 and a valid identity-bound RES1. Profile declaration
+alone does not establish compiler correctness or self-compilation. Acceptance
+executes a freshly generated small compiler on fresh source, validates its RES1
+and separately executes the published nox program. Complete C2/C3 gates still
+require the entire pinned compiler source closure.
+
 ## Source packages and resolution
 
 Modules are sorted strictly by logical path's ASCII bytes, with no duplicates.

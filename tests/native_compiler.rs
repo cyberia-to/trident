@@ -216,3 +216,6 @@ mod constants;
 
 #[path = "native_compiler/constant_bounds.rs"]
 mod constant_bounds;
+
+#[path = "native_compiler/generated_profiles.rs"]
+mod generated_profiles;

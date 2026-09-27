@@ -22,7 +22,7 @@ pub struct Package {
 pub struct View {
     pub source: bytes.Bytes, pub name: bytes.Bytes, pub index: U32,
     pub sequence_limit: U32, pub depth_limit: U32, pub error: syntax.Error,
-    pub package: Package
+    pub package: Package, pub profile: Field
 }
 
 pub struct Found { pub exists: Bool, pub index: U32, pub remaining: U32 }
@@ -71,7 +71,7 @@ fn reject(name: bytes.Bytes, index: U32, code: Field) -> View {
     let zero = syntax.ZERO
     View { source: bytes.empty(), name, index, sequence_limit: zero,
         depth_limit: zero, error: syntax.error(code, zero, zero),
-        package: Package { modules: seq.empty(), read_cost: zero, remaining: zero,
+        profile: 0, package: Package { modules: seq.empty(), read_cost: zero, remaining: zero,
             source_limit: zero, options: noun.atom(0) } }
 }
 
@@ -191,7 +191,7 @@ pub fn read(input: Noun) -> View {
         let (entry_record, left) = record(seq.get(modules, index), 1297040433, as_u32(4), remaining)
         remaining = charge(left, as_u32(1))
         if noun.eq(slot(entry_record, syntax.ZERO), entry) {
-            if syntax.either((input_profile == 0) == false, (output_profile == 0) == false) { return reject(name, index, 6) }
+            if syntax.either(syntax.either(input_profile == 0, input_profile == 1) == false, (output_profile == input_profile) == false) { return reject(name, index, 6) }
             if (bytes.len(entry_function) == as_u32(4)) == false { return reject(name, index, 6) }
             // Four reads in the one-word entry-function payload.
             remaining = charge(remaining, as_u32(4))
@@ -204,7 +204,7 @@ pub fn read(input: Noun) -> View {
             let (content, left) = bytes.from_noun_budget(source, source_limit, remaining)
             return View { source: content, name, index, sequence_limit, depth_limit,
                 error: syntax.error(0, syntax.ZERO, syntax.ZERO),
-                package: Package { modules, read_cost, remaining: left, source_limit, options: opts } }
+                package: Package { modules, read_cost, remaining: left, source_limit, options: opts }, profile: input_profile }
         }
     }
     // The host contract guarantees a matching entry module.
