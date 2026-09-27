@@ -1,6 +1,6 @@
 # Self-hosting on soft3 — progress ledger
 
-Updated: 2026-09-26. Working contract:
+Updated: 2026-09-27. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
 This ledger is the current execution checklist. Dated assessments and receipts
 retain their original observations; they are not substituted for gate evidence.
@@ -19,6 +19,8 @@ Reusable raw source calls/loops and checked dynamic array indexing now have
 JOB1/RES1 admission is delivered in Joy [PR9](https://github.com/cyberia-to/joy/pull/9);
 [receipt](../../joy/audit/self-hosting/compiler-jobs.md). Explicit compiler-profile
 seed export and source-guest execution have [acceptance](self-hosting/native-compiler-profile.md).
+Generated 1/1 compiler artifacts now have [installed execution acceptance](self-hosting/generated-compiler-profiles.md):
+C1 emits a compiler that handles fresh source jobs and publishes programs Joy executes.
 SH1 and SH2 are closed. The native source compiler has
 [SH2 acceptance](self-hosting/native-source-compiler.md): fresh source packages
 become separately executed nox programs through Joy.
@@ -155,6 +157,12 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH3 guest nominal imports: ordered public type/constructor aliases, owner-preserving
   opaque returns and aggregate dependency signatures; [execution evidence](self-hosting/guest-type-imports.md).
   The delivery consumes deterministic codec prerequisites in Trisha/Joy and targets `release/0.4`.
+- [x] Explicit generated 1/1 compiler profiles: exact requested metadata, final
+  structured entry validation, complete JOB1-bound RES1 and executed generated programs;
+  [combined acceptance](self-hosting/generated-compiler-profiles.md).
+- [x] Joy explicit compiler arena and deadline: accepted [PR13](https://github.com/cyberia-to/joy/pull/13),
+  [combined boundary evidence](../../joy/audit/explicit-compiler-arena-combined.md).
+  Defaults and the reduction ceiling stay fixed; complete source scale remains open.
 - [ ] SH3 exact intrinsics and complete compiler closure coverage;
   [implementation order](../.claude/plans/native-imports.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
@@ -179,7 +187,7 @@ visible here as those decisions land.
 |---|---|---|
 | RAM-based compiler structures; migrate onto delivered native collections | Trident / SH0–SH1 | `.tri` compiler modules and current AST/type system |
 | Full compiler arena/memory scale still unmeasured | nox + Joy + Trident / SH1, SH4 | Explicit heap arena admits larger real compiler jobs; valid 4096-byte whitespace workload and full closure remain open |
-| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; [seed explicit imports](self-hosting/explicit-imports.md) are accepted; true guest imports remain open |
+| Full native compiler language coverage | Trident / SH3 | Scalar/control/call/loop/Noun foundations, Digest, tuples, nominal records/writes, arrays and [typed constants](self-hosting/native-compiler-constants.md) are accepted. [Assertions](self-hosting/native-compiler-assertions.md) and [attributes](self-hosting/native-compiler-attributes.md) are accepted; [final callable ownership](self-hosting/final-callable-exports.md) is accepted; [seed explicit imports](self-hosting/explicit-imports.md) are accepted; [guest callable and nominal imports](self-hosting/guest-type-imports.md) are accepted; exact intrinsics and whole-source coverage remain open |
 | Prototype semantic errors and missing `.tri` AST-to-nox generator | Trident / SH2–SH3 | [prototype probes](self-hosting-2026-09-23/probes.json) |
 | No complete source build or fixed-point runner | Trident + Joy / SH4–SH6 | [starting assessment](soft3-self-compilation-readiness-2026-09-23.md) |
 | Native dynamic apply runs but production proof rejects it | Zheng + Joy / SH7–SH8 | [run/prove receipt](self-hosting-2026-09-23/soft3-runtime-probes.json) |
@@ -504,3 +512,19 @@ binaries, retaining source/artifact fields and exact execution costs. Old drift
 and the failing macro regression remain in the receipt. C1 and graph artifacts
 also reproduce after clean committed installation. This closes nominal imports;
 intrinsics, generated compiler profiles, whole-source scale and C2/C3 remain open.
+
+
+2026-09-27 continuation: generated compiler profiles are validated at `3cfaf0c`
+with accepted Joy arena `a15adb7` and deterministic codec dependencies.
+[Evidence](self-hosting/generated-compiler-profiles.md) records all seven owner
+gates: 1178 / 123 / 380 tests, zero Rust warnings, four existing ignored tests,
+133 unchanged baseline rows / 43 manual programs and 113 formal UNKNOWN results.
+The unchanged 3004-byte literal compiler becomes a fresh 1/1 artifact through C1;
+it compiles new 0/3/7/9 source jobs with complete identity-bound results that Joy
+executes. Profile acceptance passes 65 commands / 21 observations. Full raw
+acceptance passes 1198 / 402 and retains 236 prior successes / 203 ART1 identities;
+types 111/24, calls 149/32, constants 141/31 and graph 39/12 preserve their outputs.
+All three binaries, C1 and the graph component reproduce after committed installation.
+This closes generated compiler profiles. Intrinsics, legacy remaps, complete source
+scale, C2/C3 and six CPU platform acceptance remain open; native Zheng proof gates
+remain separate. Delivery PR102 targets `release/0.4`; defaults are unchanged.
