@@ -63,7 +63,7 @@ fn block(body: blocks.Block, terminal: Bool, nodes: seq.Seq, statements: seq.Seq
         s = statement_chunk(s, nodes, statements, arguments, flags, count, loops)
         if noun.eq(s.remaining, noun.atom(0)) { return s.covered }
     }
-    // Source-built lists contain at most SOURCE_CAP statement records.
+    // Source-built lists contain at most TABLE_CAP statement records.
     false
 }
 

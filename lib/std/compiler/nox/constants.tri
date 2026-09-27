@@ -58,7 +58,7 @@ pub fn read(value: Noun) -> Declaration {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(scope.declarations)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(scope.declarations)) == false)]
 pub fn find(source: bytes.Bytes, name: syntax.Token, scope: Scope) -> Found {
     let mut remaining = seq.len(scope.declarations)
     for turn in 0..4096 {
@@ -154,7 +154,7 @@ fn chunk(source: bytes.Bytes, input: State) -> State {
 
 // Each declaration expands once, unwinds at most once and finishes once.
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(scope.declarations)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(scope.declarations)) == false)]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn resolve(source: bytes.Bytes, scope: Scope) -> Resolved {
     let zero = syntax.ZERO

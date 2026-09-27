@@ -100,6 +100,9 @@ mod diagnostics;
 #[path = "native_compiler/bounds.rs"]
 mod bounds;
 
+#[path = "native_compiler/source_capacity.rs"]
+mod source_capacity;
+
 #[path = "native_compiler/job_package.rs"]
 mod job_package;
 #[path = "native_compiler/module_graph.rs"]

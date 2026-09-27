@@ -14,7 +14,7 @@ struct Insert { ids: seq.Seq, gap: U32, done: Bool }
 fn before(source: bytes.Bytes, left: syntax.Token, right: syntax.Token) -> Bool {
     let mut a = left.start
     let mut b = right.start
-    for turn in 0..4096 {
+    for turn in 0..65536 {
         if a == left.end { return (b == right.end) == false }
         if b == right.end { return false }
         let x = bytes.get(source, a)
@@ -50,7 +50,7 @@ fn insert(source: bytes.Bytes, functions: seq.Seq, input: seq.Seq, id: U32, cap:
         s = insert_chunk(source, functions, declaration.name, s)
         if s.done { return seq.set(s.ids, s.gap, value) }
     }
-    // At most SOURCE_CAP final bindings can precede this insertion.
+    // At most TABLE_CAP final bindings can precede this insertion.
     seq.set(s.ids, s.gap, value)
 }
 
@@ -70,7 +70,7 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, input: Ordered, cap: U32) -> O
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
 pub fn sort(source: bytes.Bytes, functions: seq.Seq, cap: U32) -> Ordered {
     let zero = syntax.ZERO
     let mut s = Ordered { ids: seq.empty(), next: zero, error: syntax.error(0, zero, zero) }

@@ -9,10 +9,23 @@ fn guest_admission_charges_repeated_entry_bytes_to_exact_shared_allowance() {
 fn operator_stack_capacity_is_checked_before_push() {
     support::worker(|| {
         let exact = format!("{}1{}", "(".repeat(64), ")".repeat(64));
-        assert_eq!(
-            support::value(support::compile(&support::source(&exact))),
-            1
-        );
+        // Keep both the original model allowance and the installed CLI JOB1
+        // metadata: distinct cap atoms also consume the fixed lifetime arena.
+        for limit in [4096, 8192] {
+            let mut caps = support::CAPS;
+            caps[0] = limit;
+            caps[3] = limit;
+            assert_eq!(
+                support::value(support::compile_package(
+                    &[support::module(&support::source(&exact))],
+                    "sample",
+                    "main",
+                    support::options(),
+                    caps,
+                )),
+                1
+            );
+        }
         let excess = format!("{}1{}", "(".repeat(65), ")".repeat(65));
         let source = support::source(&excess);
         let error = support::error(&source, 7);
@@ -40,37 +53,6 @@ fn irrelevant_package_metadata_and_cfg_never_enter_program_identity() {
         match support::compile_package(&[changed], "sample", "main", options, caps) {
             Result::Program { bytes, .. } => assert_eq!(bytes, original),
             other => panic!("{other:?}"),
-        }
-    });
-}
-
-#[test]
-fn source_ceiling_rejects_before_lexing_oversized_selected_bytes() {
-    support::worker(|| {
-        for length in [4096, 4097] {
-            let mut source = vec![0; length];
-            source[0] = 255;
-            let mut caps = support::CAPS;
-            caps[0] = 8192;
-            caps[3] = 8192;
-            match support::try_compile_package(
-                &[support::module(&source)],
-                "sample",
-                "main",
-                support::options(),
-                caps,
-            ) {
-                Ok(Result::Errors(errors)) => {
-                    assert_eq!(errors[0].code, if length == 4096 { 1 } else { 7 })
-                }
-                // A source ceiling does not promise that the full admission
-                // workload fits the independent lifetime arena allowance.
-                Err(error) if length == 4096 => {
-                    assert!(error.contains("Error(Unavailable)"), "{error}");
-                    assert!(error.contains("nodes=196608"), "{error}");
-                }
-                other => panic!("{length}: {other:?}"),
-            }
         }
     });
 }

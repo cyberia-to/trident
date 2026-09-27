@@ -125,8 +125,10 @@ token (including an empty EOF span), invalid lexical tokens report code1, and an
 overlong normalized path reports code7. Complete body syntax and semantics remain
 the responsibility of the later compiler stages.
 
-The first guest graph component shares a 4096-byte budget across all reached
-sources, including the entry. Each source is opened and UTF-8-checked once;
+The guest admits at most 65536 bytes in each reached source. The sum of reached
+source bytes, including the entry, must fit the explicit JOB1 `source_bytes`
+allowance. This byte allowance is independent of internal table IDs and their
+4096-entry capacity. Each source is opened and UTF-8-checked once;
 repeated uses retain separate spans and still charge package lookup work. Reached
 module and use counts and traversal frames are each bounded by the smaller of
 the job sequence limit and4096, checked before append. Original package indices
@@ -134,6 +136,13 @@ and compact reached-module IDs are distinct. A missing import or cycle points
 to the caller's full use span; a reached encoding/name error points into the
 reached source. A source-capacity error identifies the target package index with
 an empty span. Unused sources receive no guest header or UTF-8 inspection.
+Byte offsets and name/number/UTF-8 scans cover the complete admitted source,
+including comments and leading zeroes. Source admission never changes the
+4096 sentinel used for absent internal declarations. Header and expression
+drivers each retain 8192 steps, body drivers 4096 steps, and call-graph traversal
+16384 steps per pass; exhaustion reports capacity code 7 before publication.
+These work bounds are independent of source length and do not establish that a
+particular file fits the separately supplied execution arena or reduction budget.
 This component currently resolves canonical import spellings exactly. Applying
 the seed's documented legacy remaps before lookup remains part of complete guest
 resolution acceptance; this component alone does not close that gate.

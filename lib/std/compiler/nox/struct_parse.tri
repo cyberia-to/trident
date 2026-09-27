@@ -22,7 +22,7 @@ fn failed(scope: type_registry.Scope, token: syntax.Token, code: Field) -> Parse
 // registry, so a declaration cannot refer to itself or a later layout.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Scope, public: Bool, cap: U32) -> Parsed {
     let name_token = lexer.next(source, opening.end)
     if (name_token.kind == as_u32(1)) == false { return failed(scope, name_token, 2) }

@@ -174,6 +174,8 @@ fn compile_in<const N: usize>(
     let mut host = CAPS;
     host[0] = 4_194_304;
     host[3] = 65_536;
+    // Match Joy's maximum; each existing job still requests its original allowance.
+    host[4] = 16 << 20;
     host[9] = (N / 4 * 3) as u64;
     let admitted = validate::job(&mut ar, job, c1, host).unwrap();
     let code = formula(&ar, c1);

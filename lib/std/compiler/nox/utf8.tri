@@ -50,7 +50,7 @@ fn chunk(source: bytes.Bytes, input: Scan) -> Scan {
 pub fn validate(source: bytes.Bytes) -> syntax.Error {
     let zero = syntax.ZERO
     let mut s = Scan { pos: zero, pending: zero, lead: zero, low: zero, high: zero, error: false }
-    for block in 0..64 {
+    for block in 0..1024 {
         s = chunk(source, s)
         if s.error { return syntax.error(1, s.lead, s.pos) }
         if s.pos == bytes.len(source) {

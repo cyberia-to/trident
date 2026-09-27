@@ -40,7 +40,7 @@ fn chunk(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, arguments: seq.Se
 
 #[pure]
 #[requires(root < seq.len(bodies))]
-#[requires((syntax.SOURCE_CAP < seq.len(bodies)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(bodies)) == false)]
 pub fn mark(nodes: seq.Seq, statements: seq.Seq, bodies: seq.Seq, arguments: seq.Seq, root: U32, returns: Noun) -> Marked {
     let flags = tree.set(tree.empty(tree.shape(seq.len(bodies)).height), seq.len(bodies), root, noun.atom(1))
     let mut s = Marked { flags, remaining: seq.len(bodies), error: syntax.error(0, syntax.ZERO, syntax.ZERO) }

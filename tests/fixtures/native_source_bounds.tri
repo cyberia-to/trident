@@ -1,0 +1,58 @@
+program native_source_bounds
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.lexer
+use std.compiler.nox.utf8
+use std.compiler.nox.ascii
+use std.compiler.nox.symbols
+use std.compiler.nox.type_registry
+
+#[pure]
+fn output(kind: U32, start: U32, end: U32, value: Field) -> Noun {
+    noun.pair(noun.atom(as_field(kind)), noun.pair(noun.atom(as_field(start)),
+        noun.pair(noun.atom(as_field(end)), noun.atom(value))))
+}
+
+// [BYT1 [mode offset]]. Components use explicit source/validation allowances.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), syntax.SOURCE_CAP, as_u32(1000000))
+    let args = noun.tail(input)
+    let mode = noun.as_field(noun.head(args))
+    let start = as_u32(noun.as_field(noun.tail(args)))
+    if mode == 4 {
+        assert(bytes.len(source) == as_u32(256))
+        let mut mismatches = syntax.ZERO
+        for value in 0..256 {
+            let mut actual = syntax.ZERO
+            if ascii.space(value) { actual = as_u32(1) }
+            if (actual == bytes.get(source, value)) == false {
+                mismatches = syntax.inc(mismatches)
+            }
+        }
+        let mut outside: Field = 0
+        if ascii.space(start) { outside = 1 }
+        return output(mismatches, start, as_u32(256), outside)
+    }
+    if mode == 1 {
+        let error = utf8.validate(source)
+        return output(error.code, error.start, error.end, 0)
+    }
+    let token = lexer.next(source, start)
+    if mode == 2 {
+        let name = type_registry.name(source, token)
+        let second = lexer.next(source, token.end)
+        let same = symbols.same(source, second, symbols.binding(token, false, noun.atom(0)))
+        let mut equal: Field = 0
+        if same { equal = 1 }
+        return output(bytes.len(name), token.end, second.end, equal)
+    }
+    if mode == 3 {
+        let mut same: Field = 0
+        if ascii.same_line(source, start, bytes.len(source)) { same = 1 }
+        return output(syntax.ZERO, start, bytes.len(source), same)
+    }
+    output(token.kind, token.start, token.end, token.value)
+}

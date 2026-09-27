@@ -45,7 +45,7 @@ fn repeated(fields: seq.Seq, index: U32, name: Noun) -> Bool {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < node_cap) == false)]
+#[requires((syntax.TABLE_CAP < node_cap) == false)]
 #[requires((syntax.STACK_CAP < depth_cap) == false)]
 pub fn build(owner: bytes.Bytes, name: bytes.Bytes, fields: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
     let zero = syntax.ZERO

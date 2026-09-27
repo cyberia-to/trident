@@ -87,7 +87,7 @@ fn block_chunk(bodies: seq.Seq, flags: Noun, statements: seq.Seq, values: seq.Se
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(bodies)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(bodies)) == false)]
 pub fn generate(bodies: seq.Seq, flags: Noun, statements: seq.Seq, values: seq.Seq, shape: tree.Shape, depth_cap: U32, loops: seq.Seq, context: call_codegen.Context) -> Emitted {
     let mut s = Emitted { values: seq.empty(), next: syntax.ZERO, failed: false }
     for turn in 0..512 {

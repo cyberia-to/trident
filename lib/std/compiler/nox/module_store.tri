@@ -56,7 +56,7 @@ fn reverse_chunk(input: Noun, output: Noun) -> (Noun, Noun) {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < value.count) == false)]
+#[requires((syntax.TABLE_CAP < value.count) == false)]
 pub fn finish(value: Module) -> Module {
     let mut rest = value.uses
     let mut ordered = noun.atom(0)

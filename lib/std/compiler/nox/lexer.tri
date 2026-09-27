@@ -10,7 +10,7 @@ use vm.core.field
 fn identifier(source: bytes.Bytes, start: U32) -> syntax.Token {
     let mut pos = start
     let mut packed: Field = 0
-    for step in 0..4096 {
+    for step in 0..65536 {
         if pos == bytes.len(source) { return syntax.token(ascii.keyword(packed), start, pos, packed) }
         let c = bytes.get(source, pos)
         if (syntax.either(ascii.initial(c), ascii.digit(c))) == false {
@@ -31,7 +31,7 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
     let mut comparison: Field = 0
     let mut value: Field = 0
     let mut overflow = false
-    for step in 0..4096 {
+    for step in 0..65536 {
         if pos == bytes.len(source) {
             if overflow { return syntax.token(14, start, pos, 0) }
             return syntax.token(2, start, pos, value)
@@ -73,7 +73,7 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
 pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
     let mut pos = start
     let mut comment = false
-    for step in 0..4097 {
+    for step in 0..65537 {
         if pos == bytes.len(source) { return syntax.token(0, pos, pos, 0) }
         let c = bytes.get(source, pos)
         if comment {

@@ -19,10 +19,10 @@ pub fn initial(value: U32) -> Bool {
 
 #[pure]
 pub fn space(value: U32) -> Bool {
-    if value == as_u32(9) { return true }
-    if value == as_u32(10) { return true }
-    if value == as_u32(12) { return true }
-    if value == as_u32(13) { return true }
+    if value < as_u32(14) {
+        if value < as_u32(9) { return false }
+        return (value == as_u32(11)) == false
+    }
     value == as_u32(32)
 }
 
@@ -91,7 +91,7 @@ pub fn punctuation(value: U32) -> Bool {
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn same_line(source: bytes.Bytes, start: U32, end: U32) -> Bool {
     let mut pos = start
-    for step in 0..4096 {
+    for step in 0..65536 {
         if pos == end { return true }
         if bytes.get(source, pos) == as_u32(10) { return false }
         pos = syntax.inc(pos)

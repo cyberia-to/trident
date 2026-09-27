@@ -52,7 +52,7 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_function
 // Every declaration is checked, even if its callable binding is replaced later.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32) -> Checked {
     check_range(source, functions, params, pure_functions, scope, consts, cap,
         syntax.ZERO, seq.len(functions), function_imports.empty(), seq.empty())
@@ -62,7 +62,7 @@ pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_func
 // appended body occupies its global declaration ID, including replaced bodies.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires((end < start) == false)]
 #[requires((seq.len(functions) < end) == false)]
 #[requires(seq.len(bodies) == start)]
@@ -73,7 +73,7 @@ pub fn check_range(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pur
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires((end < start) == false)]
 #[requires((seq.len(functions) < end) == false)]
 #[requires(seq.len(bodies) == start)]

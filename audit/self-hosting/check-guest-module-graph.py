@@ -75,7 +75,7 @@ def cases():
         error=(1, 7, 26, 31), sequence_cap=2)
     exact = "module a //" + " " * (4096 - len(entry) - 11)
     yield row("source4096", {"a": exact, "entry": entry}, order=["a", "entry"])
-    yield row("source4097", {"a": exact + " ", "entry": entry}, error=(0, 7, 0, 0))
+    yield row("source4097", {"a": exact + " ", "entry": entry}, order=["a", "entry"])
     large = {"entry": "program entry use z", **{f"m{i:04}": b"\xff" for i in range(4095)}, "z": "module z"}
     yield row("index4096", large, order=["z", "entry"])
 

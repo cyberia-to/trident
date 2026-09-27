@@ -28,7 +28,7 @@ pub fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
     if (field.sub(as_field(name.end), as_field(name.start)) == field.sub(as_field(end), as_field(start))) == false { return false }
     let mut a = name.start
     let mut b = start
-    for step in 0..4096 {
+    for step in 0..65536 {
         if a == name.end { return true }
         if (bytes.get(source, a) == bytes.get(source, b)) == false { return false }
         a = syntax.inc(a)
@@ -38,7 +38,7 @@ pub fn same(source: bytes.Bytes, name: syntax.Token, binding: Noun) -> Bool {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(bindings)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(bindings)) == false)]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn lookup(source: bytes.Bytes, name: syntax.Token, bindings: seq.Seq, visible: Noun) -> Found {
     let mut cursor = visible

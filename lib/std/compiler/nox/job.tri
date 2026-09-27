@@ -141,7 +141,7 @@ pub fn open(package: Package, index: U32, source_capacity: U32) -> Source {
     let remaining = charge(left, as_u32(7))
     let source = slot(body, as_u32(3))
     let length = as_u32(noun.as_field(noun.head(noun.tail(source))))
-    if source_capacity < length {
+    if syntax.either((source_capacity < length), (syntax.SOURCE_CAP < length)) {
         return Source { content: bytes.empty(), remaining, error: syntax.error(7, syntax.ZERO, syntax.ZERO) }
     }
     let (content, remaining) = bytes.from_noun_budget(source, package.source_limit, remaining)

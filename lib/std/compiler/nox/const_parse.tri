@@ -91,7 +91,7 @@ fn close(source: bytes.Bytes, input: Parsed, groups: U32, item: constants.Declar
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, token: syntax.Token, scope: constants.Scope, public: Bool, cap: U32) -> Parsed {
     let mut s = Parsed { scope, token, error: syntax.error(0, token.start, token.end) }
     if seq.len(scope.declarations) == cap { s.error = syntax.error(7, token.start, token.end) return s }

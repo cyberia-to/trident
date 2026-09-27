@@ -13,15 +13,15 @@ pub struct Size { pub value: U32, pub exceeded: Bool }
 pub struct Parsed { pub ty: Noun, pub token: syntax.Token, pub error: syntax.Error }
 
 // Read known decimal source digits before Field normalization. Values never
-// grow beyond ten times the source allowance, so even raw u64 limits are safe.
+// grow beyond ten times the internal table allowance, so even raw u64 limits are safe.
 #[pure]
 #[requires((end < start) == false)]
 #[requires((bytes.len(source) < end) == false)]
-#[requires((syntax.SOURCE_CAP < limit) == false)]
+#[requires((syntax.TABLE_CAP < limit) == false)]
 pub fn decimal(source: bytes.Bytes, start: U32, end: U32, limit: U32) -> Size {
     let mut pos = start
     let mut value = syntax.ZERO
-    for step in 0..4096 {
+    for step in 0..65536 {
         if pos == end { return Size { value, exceeded: false } }
         let digit = field.sub(as_field(bytes.get(source, pos)), 48)
         value = as_u32(as_field(value) * 10 + digit)
@@ -37,7 +37,7 @@ fn fail(token: syntax.Token, code: Field) -> Parsed {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires((syntax.STACK_CAP < stack) == false)]
 pub fn parse(source: bytes.Bytes, opening: syntax.Token, cap: U32, stack: U32) -> Parsed {
     let element = lexer.next(source, opening.end)

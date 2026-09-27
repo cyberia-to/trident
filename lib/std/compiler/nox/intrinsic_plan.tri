@@ -25,7 +25,7 @@ fn operation_error(nodes: seq.Seq) -> syntax.Error {
 // Checked but unused declarations retain known ABI identities. Only expressions
 // in reachable ordinary functions must have executable lowering at this point.
 #[pure]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn check(input: function_plan.Plan, bodies: seq.Seq, bank: intrinsic_bindings.Bank, cap: U32) -> function_plan.Plan {
     let mut s = input
     if (s.error.code == syntax.ZERO) == false { return s }

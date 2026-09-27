@@ -182,8 +182,8 @@ pub fn statements(statements: seq.Seq, values: seq.Seq, shape: tree.Shape, resul
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(nodes)) == false)]
-#[requires((syntax.SOURCE_CAP < locals) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(nodes)) == false)]
+#[requires((syntax.TABLE_CAP < locals) == false)]
 pub fn generate(nodes: seq.Seq, writes: seq.Seq, result: U32, locals: U32, depth_cap: U32) -> Compiled {
     let zero = syntax.ZERO
     let failure = Compiled { formula: noun.atom(0), error: syntax.error(7, zero, zero) }
