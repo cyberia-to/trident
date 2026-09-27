@@ -1,0 +1,48 @@
+module std.compiler.nox.intrinsic_bindings
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.intrinsic_abi
+
+// A persistent index over the bounded global declaration space. Empty banks
+// allocate no tree; the first intrinsic creates shared zero subtrees. IDs stay
+// sparse and monotonically appended, while lookup takes one bounded tree walk.
+pub struct Bank { root: Noun, count: U32, last: U32, unsupported: Bool }
+
+#[pure]
+pub fn empty() -> Bank {
+    Bank { root: noun.atom(0), count: syntax.ZERO, last: syntax.ZERO, unsupported: false }
+}
+
+#[pure]
+#[requires(target < syntax.SOURCE_CAP)]
+#[requires(syntax.ZERO < kind)]
+#[requires(kind < intrinsic_abi.COUNT)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn append(bank: Bank, target: U32, kind: U32, cap: U32) -> Bank {
+    assert(target < syntax.SOURCE_CAP)
+    assert(syntax.ZERO < kind)
+    assert(kind < intrinsic_abi.COUNT)
+    assert((syntax.SOURCE_CAP < cap) == false)
+    assert(bank.count < cap)
+    let mut root = bank.root
+    if bank.count == syntax.ZERO { root = tree.empty(tree.shape(syntax.SOURCE_CAP).height) }
+    else { assert(bank.last < target) }
+    root = tree.set(root, syntax.SOURCE_CAP, target, noun.atom(as_field(kind)))
+    Bank { root, count: syntax.inc(bank.count), last: target,
+        unsupported: syntax.either(bank.unsupported, intrinsic_abi.lowerable(kind) == false) }
+}
+
+// Missing IDs are zero, including a later ordinary replacement of an intrinsic.
+#[pure]
+#[requires(target < syntax.SOURCE_CAP)]
+#[ensures(result < intrinsic_abi.COUNT)]
+pub fn kind(bank: Bank, target: U32) -> U32 {
+    if bank.count == syntax.ZERO { return intrinsic_abi.NONE }
+    as_u32(noun.as_field(tree.get(bank.root, syntax.SOURCE_CAP, target)))
+}
+
+#[pure]
+pub fn needs_lowering(bank: Bank) -> Bool { bank.unsupported }

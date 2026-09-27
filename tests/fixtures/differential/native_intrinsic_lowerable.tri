@@ -1,0 +1,8 @@
+program native_intrinsic_lowerable
+
+use std.compiler.nox.intrinsic_abi
+
+fn main(kind: U32) -> Field {
+    if intrinsic_abi.lowerable(kind) { return 1 }
+    0
+}

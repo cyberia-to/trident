@@ -5,9 +5,13 @@ use vm.core.field
 use std.nox.bytes
 use std.compiler.nox.syntax
 use std.compiler.nox.lexer
+use std.compiler.nox.intrinsic_abi
 
 pub const HASH: U32 = 46
-pub struct Parsed { pub token: syntax.Token, pub error: syntax.Error, pub pure: Bool }
+pub struct Parsed {
+    pub token: syntax.Token, pub error: syntax.Error, pub pure: Bool,
+    pub intrinsic: Bool, pub identity: U32, pub intrinsic_start: U32, pub intrinsic_end: U32
+}
 struct Payload { token: syntax.Token, depth: U32, error: syntax.Error }
 
 #[pure]
@@ -20,12 +24,15 @@ fn expected(token: syntax.Token) -> syntax.Error {
 fn kind(source: bytes.Bytes, name: syntax.Token) -> Field {
     if name.value == 1886745189 { return 1 } // pure
     if name.value == 28550414818502003 { return 2 } // ensures
-    if (field.sub(as_field(name.end), as_field(name.start)) == 8) == false { return 0 }
-    let spelling = [114,101,113,117,105,114,101,115] // requires
-    for i in 0..8 {
-        if (as_field(bytes.get(source, as_u32(as_field(name.start) + as_field(i)))) == spelling[i]) == false { return 0 }
-    }
-    2
+    let length = as_u32(field.sub(as_field(name.end), as_field(name.start)))
+    let mut spelling = [105,110,116,114,105,110,115,105,99] // intrinsic
+    let mut attribute: Field = 3
+    if length == as_u32(8) {
+        spelling = [114,101,113,117,105,114,101,115,0] // requires
+        attribute = 2
+    } else if (length == as_u32(9)) == false { return 0 }
+    if syntax.spells(source, name, spelling) { return attribute }
+    0
 }
 
 // The seed collects lexical metadata, balancing parentheses alone. No source
@@ -51,6 +58,7 @@ fn payload(source: bytes.Bytes, opening: syntax.Token) -> Payload {
 #[pure]
 fn one(source: bytes.Bytes, input: Parsed) -> Parsed {
     let mut s = input
+    let start = s.token.start
     s.token = lexer.next(source, s.token.end)
     if (s.token.kind == as_u32(36)) == false { s.error = expected(s.token) return s }
     let name = lexer.next(source, s.token.end)
@@ -67,12 +75,26 @@ fn one(source: bytes.Bytes, input: Parsed) -> Parsed {
             else { s.error = expected(s.token) }
             return s
         }
+        if attribute == 3 {
+            // Only the final attribute is resolved by the header checker.
+            // The seed inserts spaces between payload tokens; more than one
+            // token therefore cannot name one of our identifier identities.
+            s.intrinsic = true
+            s.identity = intrinsic_abi.NONE
+            s.intrinsic_start = start
+            let first = lexer.next(source, s.token.end)
+            if first.kind == as_u32(1) {
+                let after = lexer.next(source, first.end)
+                if after.kind == as_u32(6) { s.identity = intrinsic_abi.lookup(source, first) }
+            }
+        }
         let collected = payload(source, s.token)
         s.token = collected.token
         s.error = collected.error
         if (s.error.code == syntax.ZERO) == false { return s }
     }
     if (s.token.kind == as_u32(37)) == false { s.error = expected(s.token) return s }
+    if attribute == 3 { s.intrinsic_end = s.token.end }
     s.token = lexer.next(source, s.token.end)
     s
 }
@@ -80,7 +102,8 @@ fn one(source: bytes.Bytes, input: Parsed) -> Parsed {
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn parse(source: bytes.Bytes, start: syntax.Token) -> Parsed {
-    let mut s = Parsed { token: start, error: syntax.error(0, start.start, start.end), pure: false }
+    let mut s = Parsed { token: start, error: syntax.error(0, start.start, start.end), pure: false,
+        intrinsic: false, identity: intrinsic_abi.NONE, intrinsic_start: syntax.ZERO, intrinsic_end: syntax.ZERO }
     for turn in 0..4096 {
         if (s.token.kind == HASH) == false { return s }
         s = one(source, s)

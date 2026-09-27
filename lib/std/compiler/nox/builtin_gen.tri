@@ -36,6 +36,7 @@ pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> fo
         if kind == builtins.ASSERT_EQ { return assertion(binary(9, left, right)) }
         if kind == builtins.NOUN_PAIR { return formula.pair(left, right) }
         if kind == builtins.NOUN_EQ { return binary(9, left, right) }
+        assert(kind == builtins.SUBTRACT)
         return binary(6, left, right)
     }
     if kind == builtins.ASSERT { return assertion(right) }
@@ -45,6 +46,7 @@ pub fn generate(kind: U32, values: seq.Seq, arguments: seq.Seq, head: U32) -> fo
     if kind == builtins.NOUN_FIELD { return binary(5, right, flow.literal(0)) }
     if kind == builtins.NOUN_ATOM { return right }
     if kind == builtins.TO_FIELD { return right }
+    assert(kind == builtins.TO_U32)
     let crash = formula.Value { formula: noun.pair(noun.atom(8), flow.literal(0).formula), depth: as_u32(2) }
     let condition = binary(10, flow.axis(1), flow.literal(4294967296))
     flow.compose(right, flow.branch(condition, flow.axis(1), crash))

@@ -73,21 +73,22 @@ fn scale(position: U32) -> Field {
 }
 
 #[pure]
-#[requires(position < convert.as_u32(4))]
-fn inverse_scale(position: U32) -> Field {
-    let inverses = [1, 18374686475393433601, 18446462594437939201, 18446742969902956801]
-    inverses[position]
-}
-
-#[pure]
 #[requires(index < len(b))]
 #[ensures(result < BYTE_LIMIT)]
 pub fn get(b: Bytes, index: U32) -> U32 {
     assert(index < b.length)
     let word = convert.as_u32(noun.as_field(tree.get(b.root, b.words, quotient(index))))
     let position = index & THREE
-    let mask = convert.as_u32(255 * scale(position))
-    convert.as_u32(convert.as_field(word & mask) * inverse_scale(position))
+    // The low two bits select a fixed byte lane. Direct masks avoid building
+    // and indexing two temporary tables for each source byte.
+    if position == ZERO { return word & convert.as_u32(255) }
+    if position == convert.as_u32(1) {
+        return convert.as_u32(convert.as_field(word & convert.as_u32(65280)) * 18374686475393433601)
+    }
+    if position == convert.as_u32(2) {
+        return convert.as_u32(convert.as_field(word & convert.as_u32(16711680)) * 18446462594437939201)
+    }
+    convert.as_u32(convert.as_field(word & convert.as_u32(4278190080)) * 18446742969902956801)
 }
 
 #[pure]

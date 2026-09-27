@@ -31,10 +31,7 @@ pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
     let length = as_u32(field.sub(as_field(token.end), as_field(token.start)))
     if syntax.both(length == as_u32(6), token.value == 107148485161588) { return ASSERT }
     if length == as_u32(9) {
-        let spelling = [97,115,115,101,114,116,95,101,113]
-        for i in 0..9 {
-            if (as_field(bytes.get(source, as_u32(as_field(token.start) + as_field(i)))) == spelling[i]) == false { return NONE }
-        }
+        if syntax.spells(source, token, [97,115,115,101,114,116,95,101,113]) == false { return NONE }
         return ASSERT_EQ
     }
     if syntax.both(length == as_u32(6), token.value == 107148150649650) { return TO_U32 }

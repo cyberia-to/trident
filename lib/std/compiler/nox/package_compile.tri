@@ -15,6 +15,7 @@ use std.compiler.nox.module_function_order
 use std.compiler.nox.function_plan
 use std.compiler.nox.function_gen
 use std.compiler.nox.signatures
+use std.compiler.nox.intrinsic_plan
 
 pub struct Compiled { pub formula: Noun, pub index: U32, pub error: syntax.Error }
 
@@ -44,7 +45,7 @@ pub fn compile(view: job.View) -> Compiled {
             if bank.entry == signatures.NONE { return failed(view.index, syntax.error(3, syntax.ZERO, syntax.ZERO)) }
             let sorted = module_function_order.sort(bank.functions, bank.owners,
                 graph.names, graph.sources, bank.roots, graph.capacity)
-            let plan = function_plan.ordered(bank.functions, bank.bodies, sorted, bank.entry, graph.capacity)
+            let plan = intrinsic_plan.check(function_plan.ordered(bank.functions, bank.bodies, sorted, bank.entry, graph.capacity), bank.bodies, bank.intrinsics, graph.capacity)
             if (plan.error.code == syntax.ZERO) == false {
                 let mut index = view.index
                 if plan.error_function < seq.len(bank.owners) {

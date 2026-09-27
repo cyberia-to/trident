@@ -14,6 +14,8 @@ use std.compiler.nox.builtins
 use std.compiler.nox.purity
 use std.compiler.nox.function_imports
 use std.compiler.nox.qualified_name
+use std.compiler.nox.intrinsic_abi
+use std.compiler.nox.intrinsic_bindings
 
 #[pure]
 fn open(source: bytes.Bytes, opening: syntax.Token, callee: U32, builtin: U32, start: U32, input: expression_state.State) -> expression_state.State {
@@ -41,12 +43,14 @@ pub fn enter(source: bytes.Bytes, opening: syntax.Token, input: expression_state
     if callee == signatures.NONE {
         builtin = builtins.lookup(source, s.token)
         if builtin == builtins.NONE { s.error = syntax.error(5, s.token.start, s.token.end) return s }
+    } else {
+        builtin = intrinsic_bindings.kind(s.context.scope.intrinsics, callee)
     }
     open(source, opening, callee, builtin, s.token.start, s)
 }
 
-// A qualified ordinary function retains its exact global target. The final
-// member controls the source purity rule, but never selects a builtin opcode.
+// Final declaration identity selects a builtin, while the source member name
+// independently controls purity. Ordinary wrappers retain ordinary call edges.
 #[pure]
 #[requires(name.token.kind == as_u32(5))]
 pub fn enter_qualified(source: bytes.Bytes, name: qualified_name.Name, input: expression_state.State) -> expression_state.State {
@@ -59,7 +63,8 @@ pub fn enter_qualified(source: bytes.Bytes, name: qualified_name.Name, input: ex
     if (found.target < seq.len(s.context.scope.functions)) == false {
         s.error = syntax.error(5, name.start, name.end) return s
     }
-    open(source, name.token, found.target, builtins.NONE, name.start, s)
+    let builtin = intrinsic_bindings.kind(s.context.scope.intrinsics, found.target)
+    open(source, name.token, found.target, builtin, name.start, s)
 }
 
 // Called only when the nearest delimiter is this call's operator marker.
@@ -67,8 +72,8 @@ pub fn enter_qualified(source: bytes.Bytes, name: qualified_name.Name, input: ex
 pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool) -> expression_state.State {
     let mut s = input
     let mut frame = call_frames.read(noun.head(s.frames))
-    let mut count = builtins.arity(frame.builtin)
-    let mut returns = builtins.returns(frame.builtin)
+    let mut count = intrinsic_abi.arity(frame.builtin)
+    let mut returns = intrinsic_abi.returns(frame.builtin)
     let mut params = syntax.ZERO
     if frame.builtin == builtins.NONE {
         let function = signatures.read(seq.get(s.context.scope.functions, frame.callee))
@@ -81,7 +86,7 @@ pub fn finish(source: bytes.Bytes, input: expression_state.State, closing: Bool)
         if frame.count == count { s.error = syntax.error(5, frame.start, s.token.end) return s }
         let value = as_u32(noun.as_field(seq.get(s.values, frame.vals)))
         let argument = seq.get(s.nodes, value)
-        let mut ty = builtins.parameter(frame.builtin)
+        let mut ty = intrinsic_abi.parameter(frame.builtin, frame.count)
         if frame.builtin == builtins.NONE {
             let parameter = seq.get(s.context.scope.params, as_u32(as_field(params) + as_field(frame.count)))
             ty = noun.tail(noun.tail(parameter))

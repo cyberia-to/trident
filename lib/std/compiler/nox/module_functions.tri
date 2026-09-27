@@ -18,6 +18,7 @@ use std.compiler.nox.type_exports
 use std.compiler.nox.type_imports
 use std.compiler.nox.type_registry
 use std.compiler.nox.nominal
+use std.compiler.nox.intrinsic_bindings
 
 // Declaration IDs are shared by signatures, checked bodies and owner records.
 // Final roots retain private helpers, while exports contain only public targets.
@@ -25,7 +26,7 @@ pub struct Bank {
     pub functions: seq.Seq, pub params: seq.Seq, pub bodies: seq.Seq,
     pub owners: seq.Seq, pub roots: seq.Seq,
     pub exports: function_exports.Bank, pub constants: constant_exports.Bank,
-    pub types: type_exports.Bank, pub type_count: U32, pub entry: U32, pub structured: Bool, pub error: syntax.Error
+    pub types: type_exports.Bank, pub type_count: U32, pub entry: U32, pub structured: Bool, pub error: syntax.Error, pub intrinsics: intrinsic_bindings.Bank
 }
 
 #[pure]
@@ -34,7 +35,7 @@ pub fn empty(modules: U32) -> Bank {
     Bank { functions: seq.empty(), params: seq.empty(), bodies: seq.empty(),
         owners: seq.empty(), roots: seq.empty(), exports: function_exports.empty(modules),
         constants: constant_exports.empty(modules), types: type_exports.empty(modules), type_count: syntax.ZERO, entry: signatures.NONE, structured: false,
-        error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
+        error: syntax.error(0, syntax.ZERO, syntax.ZERO), intrinsics: intrinsic_bindings.empty() }
 }
 
 #[pure]
@@ -90,8 +91,8 @@ pub fn check_profile(graph: module_graph.Graph, owner: U32, entry_index: U32, in
     let imported_types = type_imports.View { names: graph.names, exports: s.types, uses: unit.uses }
     let start = seq.len(s.functions)
     let entry = unit.index == entry_index
-    let mut parsed = headers.scan_module(source, unit.offset, name, constants,
-        imported_types, s.type_count, s.functions, s.params, graph.capacity)
+    let mut parsed = headers.scan_with_intrinsics(source, unit.offset, name, constants,
+        imported_types, s.type_count, s.functions, s.params, graph.capacity, s.intrinsics)
     s.error = parsed.error
     if (s.error.code == syntax.ZERO) == false { return s }
     if entry {
@@ -101,11 +102,12 @@ pub fn check_profile(graph: module_graph.Graph, owner: U32, entry_index: U32, in
         s.entry = parsed.entry
         s.structured = parsed.structured
     }
-    let checked = check_functions.check_range(source, parsed.functions, parsed.params,
+    let checked = check_functions.check_range_with_intrinsics(source, parsed.functions, parsed.params,
         parsed.pure_functions, parsed.types, parsed.constants, graph.capacity,
-        start, seq.len(parsed.functions), imports, s.bodies)
+        start, seq.len(parsed.functions), imports, s.bodies, parsed.intrinsics)
     s.error = checked.error
     if (s.error.code == syntax.ZERO) == false { return s }
+    s.intrinsics = parsed.intrinsics
     s.functions = parsed.functions
     s.params = parsed.params
     s.bodies = checked.bodies

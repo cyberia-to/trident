@@ -1,4 +1,6 @@
 //! Execute source collections on nox and compare against the independent model.
+#[path = "native_collections/byte_reads.rs"]
+mod byte_reads;
 #[path = "native_collections/bytes_table.rs"]
 mod bytes_table;
 #[path = "native_collections/indexed_reads.rs"]

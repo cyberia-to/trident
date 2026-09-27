@@ -13,6 +13,9 @@ use std.compiler.nox.check_functions
 use std.compiler.nox.function_plan
 use std.compiler.nox.function_gen
 use std.compiler.nox.constant_imports
+use std.compiler.nox.function_imports
+use std.compiler.nox.intrinsic_plan
+use std.nox.seq
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
@@ -46,9 +49,9 @@ pub fn compile_profile(source: bytes.Bytes, name: bytes.Bytes, start: U32, impor
     if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
     let parsed = headers.require_profile(headers.parse_imports(source, start, name, imports, capacity), profile)
     if (parsed.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: parsed.error } }
-    let checked = check_functions.check(source, parsed.functions, parsed.params, parsed.pure_functions, parsed.types, parsed.constants, capacity)
+    let checked = check_functions.check_range_with_intrinsics(source, parsed.functions, parsed.params, parsed.pure_functions, parsed.types, parsed.constants, capacity, syntax.ZERO, seq.len(parsed.functions), function_imports.empty(), seq.empty(), parsed.intrinsics)
     if (checked.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: checked.error } }
-    let plan = function_plan.plan(source, parsed.functions, checked.bodies, parsed.entry, capacity)
+    let plan = intrinsic_plan.check(function_plan.plan(source, parsed.functions, checked.bodies, parsed.entry, capacity), checked.bodies, parsed.intrinsics, capacity)
     if (plan.error.code == syntax.ZERO) == false { return codegen.Compiled { formula: noun.atom(0), error: plan.error } }
     function_gen.generate(checked.bodies, plan, parsed.entry, capacity, depth_cap, parsed.structured)
 }

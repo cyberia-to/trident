@@ -377,6 +377,23 @@ fn native_tuple_discard_recognition_requires_both_token_kind_and_spelling() {
     }
 }
 
+#[test]
+fn intrinsic_lowering_admission_and_empty_header_metadata_match_their_contracts() {
+    let assembly = fixture("native_intrinsic_lowerable");
+    for kind in (0..=19).chain([u64::from(u32::MAX)]) {
+        assert_eq!(
+            execute(&assembly, &[kind], &[]).unwrap(),
+            vec![u64::from((1..=12).contains(&kind))]
+        );
+    }
+    // Native Bool uses 1=false. The remaining metadata fields and aggregate
+    // terminator are zero: no purity/export/intrinsic survives a reset.
+    assert_eq!(
+        execute(&fixture("native_header_metadata"), &[], &[]).unwrap(),
+        vec![1, 1, 1, 0, 0, 0, 0]
+    );
+}
+
 /// Cost analysis of a library selects its first active public function.
 /// Every successful entry needs the scoped executed fixture above. This pin
 /// does not claim all functions in those modules lower or execute correctly.
@@ -413,7 +430,9 @@ fn census_every_in_surface_module_has_a_differential() {
             "lib/std/compiler/lower.tri".to_string(),
             "lib/std/compiler/nox/ascii.tri".to_string(),
             "lib/std/compiler/nox/blocks.tri".to_string(),
+            "lib/std/compiler/nox/header_state.tri".to_string(),
             "lib/std/compiler/nox/headers.tri".to_string(),
+            "lib/std/compiler/nox/intrinsic_abi.tri".to_string(),
             "lib/std/compiler/nox/syntax.tri".to_string(),
             "lib/std/compiler/nox/tuple_pattern.tri".to_string(),
             "lib/std/compiler/nox/type_parse.tri".to_string(),

@@ -1,0 +1,127 @@
+module std.compiler.nox.intrinsic_abi
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.types
+use std.compiler.nox.signatures
+use std.compiler.nox.builtins
+
+// IDs 1..12 remain the existing guest lowering ABI.
+pub const NONE: U32 = 0
+pub const TO_U32: U32 = 1
+pub const TO_FIELD: U32 = 2
+pub const SUBTRACT: U32 = 3
+pub const NOUN_ATOM: U32 = 4
+pub const NOUN_PAIR: U32 = 5
+pub const NOUN_HEAD: U32 = 6
+pub const NOUN_TAIL: U32 = 7
+pub const NOUN_FIELD: U32 = 8
+pub const NOUN_EQ: U32 = 9
+pub const NOUN_IDENTITY: U32 = 10
+pub const ASSERT: U32 = 11
+pub const ASSERT_EQ: U32 = 12
+pub const FIELD_ADD: U32 = 13
+pub const FIELD_MUL: U32 = 14
+pub const NEG: U32 = 15
+pub const INV: U32 = 16
+pub const SPLIT: U32 = 17
+pub const COUNT: U32 = 18
+
+// Known declarations and reachable lowering are separate decisions. A known
+// unsupported operation keeps its ABI identity for an unsupported diagnostic.
+#[pure]
+pub fn lowerable(kind: U32) -> Bool {
+    syntax.both((NONE < kind), (kind < builtins.COUNT))
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((bytes.len(source) < token.end) == false)]
+#[requires((token.end < token.start) == false)]
+#[ensures(result < COUNT)]
+pub fn lookup(source: bytes.Bytes, token: syntax.Token) -> U32 {
+    let length = as_u32(field.sub(as_field(token.end), as_field(token.start)))
+    if syntax.both(length == as_u32(3), token.value == 7234919) { return NEG }
+    if syntax.both(length == as_u32(3), token.value == 6909558) { return INV }
+    if syntax.both(length == as_u32(5), token.value == 495807392116) { return SPLIT }
+    if length == as_u32(9) {
+        if syntax.spells(source, token, [102,105,101,108,100,95,97,100,100]) { return FIELD_ADD }
+        if syntax.spells(source, token, [102,105,101,108,100,95,109,117,108]) { return FIELD_MUL }
+    }
+    builtins.lookup(source, token)
+}
+
+#[pure]
+#[ensures(result < as_u32(3))]
+pub fn arity(kind: U32) -> U32 {
+    if syntax.either(kind == NONE, (kind < COUNT) == false) { return syntax.ZERO }
+    if kind < builtins.COUNT { return builtins.arity(kind) }
+    if syntax.either(kind == FIELD_ADD, kind == FIELD_MUL) { return as_u32(2) }
+    as_u32(1)
+}
+
+#[pure]
+pub fn parameter(kind: U32, index: U32) -> Noun {
+    if (index < arity(kind)) == false { return noun.atom(types.INVALID) }
+    if kind < builtins.COUNT { return builtins.parameter(kind) }
+    noun.atom(types.FIELD)
+}
+
+#[pure]
+pub fn returns(kind: U32) -> Noun {
+    if syntax.either(kind == NONE, (kind < COUNT) == false) { return noun.atom(types.INVALID) }
+    if kind < builtins.COUNT { return builtins.returns(kind) }
+    if kind == SPLIT {
+        let mut children = seq.push(seq.empty(), noun.atom(types.UINT32), as_u32(2))
+        children = seq.push(children, noun.atom(types.UINT32), as_u32(2))
+        return types.tuple(children, as_u32(3), as_u32(1)).ty
+    }
+    noun.atom(types.FIELD)
+}
+
+// Function/parameter records are compiler-owned; only their ordered types
+// participate in this check. Names, body spans and parameter flags do not.
+#[pure]
+#[requires((syntax.SOURCE_CAP < seq.len(params)) == false)]
+pub fn valid(kind: U32, f: signatures.Function, params: seq.Seq) -> Bool {
+    if syntax.either(kind == NONE, (kind < COUNT) == false) { return false }
+    if (f.count == arity(kind)) == false { return false }
+    if seq.len(params) < f.params { return false }
+    let remaining = as_u32(field.sub(as_field(seq.len(params)), as_field(f.params)))
+    if remaining < f.count { return false }
+    if noun.eq(f.returns, returns(kind)) == false { return false }
+    for i in 0..2 {
+        if i < f.count {
+            let binding = seq.get(params, as_u32(as_field(f.params) + as_field(i)))
+            if noun.eq(noun.tail(noun.tail(binding)), parameter(kind, i)) == false { return false }
+        }
+    }
+    true
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(owner)) == false)]
+pub fn allowed_owner(owner: bytes.Bytes) -> Bool {
+    let length = bytes.len(owner)
+    let mut suffix = syntax.ZERO
+    // The low three prior bytes plus one byte fit U32 exactly. Testing the
+    // previous four-byte window before shifting recognizes the complete .ext.
+    // segment with one source read per position and no modular packing alias.
+    for i in 0..4096 {
+        if i == length { return false }
+        let byte = bytes.get(owner, i)
+        if syntax.both(suffix == as_u32(778401908), byte == as_u32(46)) { return true }
+        suffix = as_u32(as_field(suffix & as_u32(16777215)) * 256 + as_field(byte))
+        if i == as_u32(2) {
+            if syntax.either(suffix == as_u32(7761198), suffix == as_u32(7303982)) { return true }
+        }
+        if i == as_u32(3) {
+            if syntax.either(suffix == as_u32(1937007662), suffix == as_u32(1702392878)) { return true }
+        }
+    }
+    false
+}

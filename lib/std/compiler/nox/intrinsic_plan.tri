@@ -1,0 +1,44 @@
+module std.compiler.nox.intrinsic_plan
+
+use vm.nox.noun
+use vm.core.convert
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.ast
+use std.compiler.nox.body_store
+use std.compiler.nox.function_plan
+use std.compiler.nox.intrinsic_abi
+use std.compiler.nox.intrinsic_bindings
+
+#[pure]
+fn operation_error(nodes: seq.Seq) -> syntax.Error {
+    for index in 0..4096 {
+        if index == seq.len(nodes) { return syntax.error(0, syntax.ZERO, syntax.ZERO) }
+        let node = seq.get(nodes, index)
+        if ast.kind(node) == ast.BUILTIN {
+            if intrinsic_abi.lowerable(as_u32(ast.left(node))) == false { return ast.issue(6, node) }
+        }
+    }
+    syntax.error(0, syntax.ZERO, syntax.ZERO)
+}
+
+// Checked but unused declarations retain known ABI identities. Only expressions
+// in reachable ordinary functions must have executable lowering at this point.
+#[pure]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+pub fn check(input: function_plan.Plan, bodies: seq.Seq, bank: intrinsic_bindings.Bank, cap: U32) -> function_plan.Plan {
+    let mut s = input
+    if (s.error.code == syntax.ZERO) == false { return s }
+    if intrinsic_bindings.needs_lowering(bank) == false { return s }
+    for position in 0..4096 {
+        if position == seq.len(s.order) { return s }
+        let id = as_u32(noun.as_field(seq.get(s.order, position)))
+        let nodes = body_store.expression_nodes(seq.get(bodies, id), cap)
+        s.error = operation_error(nodes)
+        if (s.error.code == syntax.ZERO) == false {
+            s.error_function = id
+            return s
+        }
+    }
+    s
+}

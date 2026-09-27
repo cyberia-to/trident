@@ -19,6 +19,8 @@ use std.compiler.nox.types
 use std.compiler.nox.struct_parse
 use std.compiler.nox.type_parse
 use std.compiler.nox.type_imports
+use std.compiler.nox.intrinsic_abi
+use std.compiler.nox.intrinsic_bindings
 
 #[pure]
 fn expected(token: syntax.Token) -> syntax.Error {
@@ -30,6 +32,24 @@ fn expected(token: syntax.Token) -> syntax.Error {
 
 #[pure]
 pub fn scalar(token: syntax.Token) -> Field { type_parse.scalar(token) }
+
+// One completed signature occupies one global declaration ID. Cold metadata
+// resets here so adjacent unannotated declarations cannot inherit an identity.
+#[pure]
+fn complete(input: header_state.State, cap: U32) -> header_state.State {
+    let mut s = input
+    let id = seq.len(s.functions)
+    if s.current.name.value == 1835100526 { s.entry = id }
+    if s.metadata.pure { s.pure_functions = seq.push(s.pure_functions, noun.atom(as_field(id)), cap) }
+    if s.metadata.exported { s.public_functions = seq.push(s.public_functions, noun.atom(as_field(id)), cap) }
+    if s.metadata.intrinsic {
+        s.intrinsics = intrinsic_bindings.append(s.intrinsics, id, s.metadata.identity, cap)
+    }
+    s.functions = seq.push(s.functions, signatures.pack(s.current), cap)
+    s.metadata = header_state.metadata()
+    s.phase = 0
+    s
+}
 
 #[pure]
 fn open(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
@@ -43,6 +63,16 @@ fn open(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_stat
         if (s.error.code == syntax.ZERO) == false { return s }
         s.current.returns = parsed.ty
         s.token = parsed.token
+    }
+    if s.metadata.intrinsic {
+        if s.token.kind == as_u32(7) {
+            s.error = syntax.error(6, s.metadata.start, s.metadata.end) return s
+        }
+        if intrinsic_abi.valid(s.metadata.identity, s.current, s.params) == false {
+            s.error = syntax.error(5, s.metadata.start, s.metadata.end) return s
+        }
+        s.current.close = s.token.start
+        return complete(s, cap)
     }
     if (s.token.kind == as_u32(7)) == false { s.error = expected(s.token) return s }
     s.current.open = s.token.end
@@ -85,21 +115,8 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32, type_limit: U3
         if s.token.kind == as_u32(8) {
             s.nesting = syntax.dec(s.nesting)
             if s.nesting == syntax.ZERO {
-                // Function count is checked before its header/body scan begins.
-                // Each sparse table has at most one entry per completed local
-                // declaration, so that check also leaves room for these pushes.
-                if s.current.name.value == 1835100526 { s.entry = seq.len(s.functions) }
                 s.current.close = s.token.end
-                if s.current_pure {
-                    s.pure_functions = seq.push(s.pure_functions, noun.atom(as_field(seq.len(s.functions))), cap)
-                    s.current_pure = false
-                }
-                if s.current_public {
-                    s.public_functions = seq.push(s.public_functions, noun.atom(as_field(seq.len(s.functions))), cap)
-                    s.current_public = false
-                }
-                s.functions = seq.push(s.functions, signatures.pack(s.current), cap)
-                s.phase = 0
+                s = complete(s, cap)
             }
         }
         s.token = lexer.next(source, s.token.end)
@@ -112,7 +129,9 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32, type_limit: U3
         s.token = parsed.token
         s.error = parsed.error
         if (s.error.code == syntax.ZERO) == false { return s }
-        if parsed.pure { s.current_pure = true }
+        s.metadata = header_state.Metadata { pure: parsed.pure, exported: false,
+            intrinsic: parsed.intrinsic, identity: parsed.identity,
+            start: parsed.intrinsic_start, end: parsed.intrinsic_end }
     }
     let mut public = false
     if s.token.kind == as_u32(40) { public = true s.token = lexer.next(source, s.token.end) }
@@ -140,13 +159,24 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32, type_limit: U3
         return s
     }
     if (s.token.kind == as_u32(11)) == false { s.error = expected(s.token) return s }
+    if s.metadata.intrinsic {
+        if intrinsic_abi.allowed_owner(s.types.owner) == false {
+            s.error = syntax.error(5, s.metadata.start, s.metadata.end) return s
+        }
+        if s.metadata.identity == intrinsic_abi.NONE {
+            s.error = syntax.error(6, s.metadata.start, s.metadata.end) return s
+        }
+    }
     if seq.len(s.functions) == cap { s.error = syntax.error(7, s.token.start, s.token.end) return s }
     let name = lexer.next(source, s.token.end)
     if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
     s.token = lexer.next(source, name.end)
+    if syntax.both(s.metadata.intrinsic, s.token.kind == as_u32(29)) {
+        s.error = syntax.error(6, s.metadata.start, s.metadata.end) return s
+    }
     if (s.token.kind == as_u32(5)) == false { s.error = expected(s.token) return s }
     s.current = signatures.Function { name, params: seq.len(s.params), count: syntax.ZERO, returns: noun.atom(types.UNIT), open: syntax.ZERO, close: syntax.ZERO }
-    s.current_public = public
+    s.metadata.exported = public
     s.phase = 1
     s.token = lexer.next(source, s.token.end)
     s
@@ -191,7 +221,21 @@ pub fn parse_imports(source: bytes.Bytes, start: U32, owner: bytes.Bytes, import
 #[ensures((cap < seq.len(result.public_functions)) == false)]
 pub fn scan_module(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View,
     imported_types: type_imports.View, type_start: U32, functions: seq.Seq, params: seq.Seq, cap: U32) -> header_state.State {
+    scan_with_intrinsics(source, start, owner, imports, imported_types, type_start,
+        functions, params, cap, intrinsic_bindings.empty())
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((cap < seq.len(functions)) == false)]
+#[requires((cap < seq.len(params)) == false)]
+#[requires((cap < type_start) == false)]
+pub fn scan_with_intrinsics(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View,
+    imported_types: type_imports.View, type_start: U32, functions: seq.Seq, params: seq.Seq, cap: U32,
+    intrinsics: intrinsic_bindings.Bank) -> header_state.State {
     let mut s = header_state.initial(lexer.next(source, start))
+    s.intrinsics = intrinsics
     s.functions = functions
     s.params = params
     s.types.owner = owner
@@ -223,6 +267,9 @@ pub fn validate_entry(input: header_state.State) -> header_state.State {
     if (s.error.code == syntax.ZERO) == false { return s }
     if s.entry == signatures.NONE { s.error = syntax.error(3, s.token.start, s.token.end) return s }
     let entry = signatures.read(seq.get(s.functions, s.entry))
+    if (intrinsic_bindings.kind(s.intrinsics, s.entry) == intrinsic_abi.NONE) == false {
+        s.error = syntax.error(6, entry.name.start, entry.name.end) return s
+    }
     if syntax.both(entry.count == syntax.ZERO, noun.eq(entry.returns, noun.atom(types.FIELD))) { return s }
     if syntax.both(entry.count == as_u32(1), noun.eq(entry.returns, noun.atom(types.NOUN))) {
         let parameter = seq.get(s.params, entry.params)
