@@ -88,12 +88,9 @@ pub fn find(bank: Bank, owner: U32, source: bytes.Bytes, caller: bytes.Bytes, qu
     for step in 0..4096 {
         if cursor == syntax.ZERO { return Found { exists: false, id: syntax.ZERO } }
         let id = syntax.dec(cursor)
-        // Only the name and predecessor participate in lookup. This private
-        // bank already owns the complete type/value/literal provenance row.
-        let row = seq.get(bank.records, id)
-        let name = token(noun.head(noun.tail(noun.tail(row))), 1, 0)
-        if same(caller, query, source, name) { return Found { exists: true, id } }
-        cursor = as_u32(noun.as_field(noun.head(row)))
+        let binding = read(bank, id)
+        if same(caller, query, source, binding.name) { return Found { exists: true, id } }
+        cursor = as_u32(noun.as_field(noun.head(seq.get(bank.records, id))))
     }
     Found { exists: false, id: syntax.ZERO }
 }
