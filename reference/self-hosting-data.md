@@ -75,7 +75,7 @@ must compare complete names, with stable insertion order and no host hash map.
 Invalid tags/shapes/word ranges/padding, an out-of-bounds index, capacity overflow
 or budget exhaustion fail explicitly. Operations return no successful partial
 value; old roots remain valid. Allocations made before failure may remain charged
-to the job's append-only arena. No rollback or reclamation is implied. Collection
+to the job's allocation allowance. No rollback or reclamation is implied. Collection
 precondition failures are fatal execution errors in the minimal API. The compiler
 checks expected source errors before calling them and emits diagnostics through
 SH0.3's result protocol. Malformed external data may instead fail the job at its
@@ -301,8 +301,9 @@ projections, dynamic traversal and runtime control flow in the selected profile.
 Current run support does not establish that its production relation proves this
 workload. Native proof acceptance remains SH7/SH8.
 
-Per-operation logarithmic tree work does not bound total historical allocations:
-the current arena does not free old roots. Packed source buffers reduce input
-leaves, while ASTs, updates, formulas and traces still consume budget. SH4 must
-measure the complete compiler workload; this contract does not certify it fits
-Joy's current fixed arena or nox's recursion limit.
+Per-operation logarithmic tree work does not bound total historical allocations.
+The default append-only arena retains them. Explicit [compacting execution](self-hosting-runtime.md#arena-transport-and-host-resources)
+may reclaim unreachable temporaries while preserving every live noun. It keeps
+resident storage separate from cumulative allocation and collection-work bounds.
+Packed sources, ASTs, environments, formulas and traces still consume resources.
+SH4 must measure the complete workload against the selected worker's bounds.
