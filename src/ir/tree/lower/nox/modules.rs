@@ -63,6 +63,8 @@ impl NoxCompiler {
         let builtins = crate::typecheck::TypeChecker::builtin_return_types(
             &crate::target::TerrainConfig::nox(),
         );
+        crate::typecheck::nominal_bindings::validate_modules(files, &scopes, &resolved, flags)
+            .map_err(|errors| errors[0].message.clone())?;
         for ((file, constants), scope) in files.iter().zip(&resolved).zip(&scopes) {
             scope
                 .validate_names(file, files, flags, &builtins, constants)

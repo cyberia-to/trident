@@ -5,6 +5,7 @@ use std.compiler.nox.constants
 use std.compiler.nox.constant_imports
 use std.compiler.nox.attributes
 use vm.core.convert
+use vm.core.field
 use vm.nox.noun
 use std.nox.bytes
 use std.nox.seq
@@ -17,6 +18,7 @@ use std.compiler.nox.header_state
 use std.compiler.nox.types
 use std.compiler.nox.struct_parse
 use std.compiler.nox.type_parse
+use std.compiler.nox.type_imports
 
 #[pure]
 fn expected(token: syntax.Token) -> syntax.Error {
@@ -30,29 +32,12 @@ fn expected(token: syntax.Token) -> syntax.Error {
 pub fn scalar(token: syntax.Token) -> Field { type_parse.scalar(token) }
 
 #[pure]
-fn dependency_type(token: syntax.Token) -> syntax.Error {
-    let tag = scalar(token)
-    if syntax.either(tag == types.FIELD, syntax.either(tag == types.BOOL, tag == types.UINT32)) {
-        return syntax.error(0, syntax.ZERO, syntax.ZERO)
-    }
-    if syntax.either(tag == types.NOUN, tag == types.DIGEST) { return syntax.error(6, token.start, token.end) }
-    if syntax.either(token.kind == as_u32(1), syntax.either(token.kind == as_u32(5), token.kind == as_u32(36))) {
-        return syntax.error(6, token.start, token.end)
-    }
-    expected(token)
-}
-
-#[pure]
-fn open(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bool) -> header_state.State {
+fn open(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
     let mut s = input
     // Called at the closing parameter parenthesis, with an optional annotation.
     s.token = lexer.next(source, s.token.end)
     if s.token.kind == as_u32(9) {
         s.token = lexer.next(source, s.token.end)
-        if dependency {
-            s.error = dependency_type(s.token)
-            if (s.error.code == syntax.ZERO) == false { return s }
-        }
         let parsed = type_parse.parse(source, s.token, s.types, cap)
         s.error = parsed.error
         if (s.error.code == syntax.ZERO) == false { return s }
@@ -68,18 +53,14 @@ fn open(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bo
 }
 
 #[pure]
-fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bool) -> header_state.State {
+fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32) -> header_state.State {
     let mut s = input
-    if s.token.kind == as_u32(6) { return open(source, s, cap, dependency) }
+    if s.token.kind == as_u32(6) { return open(source, s, cap) }
     let name = s.token
     if (name.kind == as_u32(1)) == false { s.error = expected(name) return s }
     s.token = lexer.next(source, name.end)
     if (s.token.kind == as_u32(17)) == false { s.error = expected(s.token) return s }
     s.token = lexer.next(source, s.token.end)
-    if dependency {
-        s.error = dependency_type(s.token)
-        if (s.error.code == syntax.ZERO) == false { return s }
-    }
     let parsed = type_parse.parse(source, s.token, s.types, cap)
     s.error = parsed.error
     if (s.error.code == syntax.ZERO) == false { return s }
@@ -87,16 +68,16 @@ fn parameter(source: bytes.Bytes, input: header_state.State, cap: U32, dependenc
     s.params = seq.push(s.params, symbols.binding(name, false, parsed.ty), cap)
     s.current.count = syntax.inc(s.current.count)
     s.token = parsed.token
-    if s.token.kind == as_u32(6) { return open(source, s, cap, dependency) }
+    if s.token.kind == as_u32(6) { return open(source, s, cap) }
     if (s.token.kind == as_u32(26)) == false { s.error = expected(s.token) return s }
     s.token = lexer.next(source, s.token.end)
     s
 }
 
 #[pure]
-fn step(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bool) -> header_state.State {
+fn step(source: bytes.Bytes, input: header_state.State, cap: U32, type_limit: U32) -> header_state.State {
     let mut s = input
-    if s.phase == 1 { return parameter(source, s, cap, dependency) }
+    if s.phase == 1 { return parameter(source, s, cap) }
     if s.phase == 2 {
         if s.token.kind == syntax.ZERO { s.error = expected(s.token) return s }
         if s.token.kind == as_u32(14) { s.error = ast.failed(s.token, 1) return s }
@@ -151,7 +132,7 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bo
         return s
     }
     if s.token.kind == as_u32(39) {
-        if dependency { s.error = syntax.error(6, s.token.start, s.token.end) return s }
+        if seq.len(s.types.records) == type_limit { s.error = ast.failed(lexer.next(source, s.token.end), 7) return s }
         let parsed = struct_parse.parse(source, s.token, s.types, public, cap)
         s.types = parsed.scope
         s.token = parsed.token
@@ -172,10 +153,10 @@ fn step(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bo
 }
 
 #[pure]
-fn chunk(source: bytes.Bytes, input: header_state.State, cap: U32, dependency: Bool) -> header_state.State {
+fn chunk(source: bytes.Bytes, input: header_state.State, cap: U32, type_limit: U32) -> header_state.State {
     let mut s = input
     for turn in 0..16 {
-        s = step(source, s, cap, dependency)
+        s = step(source, s, cap, type_limit)
         if syntax.either(s.done, (s.error.code == syntax.ZERO) == false) { return s }
     }
     s
@@ -193,7 +174,7 @@ pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, cap: U32) -> h
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 pub fn parse_imports(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View, cap: U32) -> header_state.State {
-    validate_entry(scan_module(source, start, owner, imports, seq.empty(), seq.empty(), cap, false))
+    validate_entry(scan_module(source, start, owner, imports, type_imports.empty(), syntax.ZERO, seq.empty(), seq.empty(), cap))
 }
 
 // Shared tables retain prior owners' declarations. This scan records only the
@@ -204,18 +185,22 @@ pub fn parse_imports(source: bytes.Bytes, start: U32, owner: bytes.Bytes, import
 #[requires((syntax.SOURCE_CAP < cap) == false)]
 #[requires((cap < seq.len(functions)) == false)]
 #[requires((cap < seq.len(params)) == false)]
+#[requires((cap < type_start) == false)]
 #[ensures((cap < seq.len(result.functions)) == false)]
 #[ensures((cap < seq.len(result.params)) == false)]
 #[ensures((cap < seq.len(result.public_functions)) == false)]
 pub fn scan_module(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View,
-    functions: seq.Seq, params: seq.Seq, cap: U32, dependency: Bool) -> header_state.State {
+    imported_types: type_imports.View, type_start: U32, functions: seq.Seq, params: seq.Seq, cap: U32) -> header_state.State {
     let mut s = header_state.initial(lexer.next(source, start))
     s.functions = functions
     s.params = params
     s.types.owner = owner
+    s.types.imports = imported_types
+    assert((cap < type_start) == false)
+    let type_limit = as_u32(field.sub(as_field(cap), as_field(type_start)))
     s.constants.imports = imports
     for turn in 0..512 {
-        s = chunk(source, s, cap, dependency)
+        s = chunk(source, s, cap, type_limit)
         if (s.error.code == syntax.ZERO) == false { return s }
         if s.done {
             let resolved = constants.resolve(source, s.constants)

@@ -215,7 +215,7 @@ fn guest_imports_validate_private_and_replaced_declarations_before_exporting() {
             &deps,
             "sample",
             "dep.X",
-            6,
+            5,
         );
     });
 }

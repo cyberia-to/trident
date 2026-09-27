@@ -1,0 +1,62 @@
+module std.compiler.nox.type_exports
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.nox.tree
+use std.compiler.nox.syntax
+use std.compiler.nox.nominal
+use std.compiler.nox.types
+
+// The driver publishes final public descriptors built by nominal.build. Their
+// owned names and layouts retain defining identity independently of graph IDs.
+pub struct Bank { records: seq.Seq, heads: Noun, modules: U32 }
+pub struct Found { pub exists: Bool, pub ty: Noun }
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < modules) == false)]
+#[ensures(len(result) == syntax.ZERO)]
+pub fn empty(modules: U32) -> Bank {
+    assert((syntax.SOURCE_CAP < modules) == false)
+    Bank { records: seq.empty(), heads: tree.empty(tree.shape(modules).height), modules }
+}
+
+#[pure]
+pub fn len(bank: Bank) -> U32 { seq.len(bank.records) }
+
+// A row is [previous descriptor]; module heads contain row ID+1, or zero.
+// Capacity is checked before append. Known descriptors enter unchanged; this
+// compiler-owned bank has no serialized-handle admission or source-name spans.
+#[pure]
+#[requires(len(bank) < cap)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires(owner < bank.modules)]
+#[requires(noun.as_field(noun.head(ty)) == types.NOMINAL)]
+#[ensures(as_field(len(result)) == as_field(len(bank)) + 1)]
+pub fn push(bank: Bank, owner: U32, ty: Noun, cap: U32) -> Bank {
+    assert((syntax.SOURCE_CAP < cap) == false)
+    assert(len(bank) < cap)
+    assert(owner < bank.modules)
+    assert_eq(noun.as_field(noun.head(ty)), types.NOMINAL)
+    let id = len(bank)
+    let next = tree.get(bank.heads, bank.modules, owner)
+    Bank { records: seq.push(bank.records, noun.pair(next, ty), cap),
+        heads: tree.set(bank.heads, bank.modules, owner, noun.atom(as_field(id) + 1)), modules: bank.modules }
+}
+
+#[pure]
+#[requires(owner < bank.modules)]
+#[requires((syntax.SOURCE_CAP < bytes.len(name)) == false)]
+pub fn find(bank: Bank, owner: U32, name: bytes.Bytes) -> Found {
+    let wanted = bytes.to_noun(name)
+    let mut cursor = as_u32(noun.as_field(tree.get(bank.heads, bank.modules, owner)))
+    for step in 0..4096 {
+        if cursor == syntax.ZERO { return Found { exists: false, ty: noun.atom(types.INVALID) } }
+        let row = seq.get(bank.records, syntax.dec(cursor))
+        let ty = noun.tail(row)
+        if noun.eq(nominal.name(ty), wanted) { return Found { exists: true, ty } }
+        cursor = as_u32(noun.as_field(noun.head(row)))
+    }
+    assert(cursor == syntax.ZERO)
+    Found { exists: false, ty: noun.atom(types.INVALID) }
+}

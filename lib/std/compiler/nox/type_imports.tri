@@ -1,0 +1,62 @@
+module std.compiler.nox.type_imports
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.syntax
+use std.compiler.nox.ascii
+use std.compiler.nox.qualified_name
+use std.compiler.nox.type_exports
+use std.compiler.nox.types
+
+// Graph names and ordered uses select only direct dependencies. Descriptors
+// already own complete declaration names, so lookup needs no foreign source.
+pub struct View {
+    pub names: bytes.BytesTable, pub exports: type_exports.Bank, pub uses: Noun
+}
+
+#[pure]
+pub fn empty() -> View {
+    View { names: bytes.table_empty(), exports: type_exports.empty(syntax.ZERO), uses: noun.atom(0) }
+}
+
+#[pure]
+#[requires((as_u32(255) < bytes.len(owner)) == false)]
+fn alias(prefix: bytes.Bytes, owner: bytes.Bytes) -> Bool {
+    if noun.eq(bytes.to_noun(prefix), bytes.to_noun(owner)) { return true }
+    let mut start = syntax.ZERO
+    let mut pos = syntax.ZERO
+    for letter in 0..255 {
+        if pos == bytes.len(owner) { return ascii.same(owner, start, pos, prefix) }
+        if bytes.get(owner, pos) == as_u32(46) { start = syntax.inc(pos) }
+        pos = syntax.inc(pos)
+    }
+    ascii.same(owner, start, pos, prefix)
+}
+
+// The caller extracts the final member once from its own source. A successful
+// qualified_name.parse and the graph own prefix/name bounds and use records.
+// Qualified lookup inspects every ordered use, including after a match; lists
+// over 4096 fail closed instead of returning a partially resolved binding.
+#[pure]
+#[requires(name.error.code == syntax.ZERO)]
+#[requires((syntax.SOURCE_CAP < bytes.len(member)) == false)]
+pub fn lookup(name: qualified_name.Name, member: bytes.Bytes, view: View) -> type_exports.Found {
+    let mut found = type_exports.Found { exists: false, ty: noun.atom(types.INVALID) }
+    if bytes.len(name.prefix) == syntax.ZERO { return found }
+    let mut rest = view.uses
+    for step in 0..4096 {
+        if noun.eq(rest, noun.atom(0)) { return found }
+        // module_store.Use starts with its compact target module ID.
+        let target = as_u32(noun.as_field(noun.head(noun.head(rest))))
+        let owner = bytes.table_get(view.names, target)
+        if alias(name.prefix, owner) {
+            let candidate = type_exports.find(view.exports, target, member)
+            // Missing/private symbols in a later same-basename module leave
+            // the earlier public binding visible; repeated uses retain order.
+            if candidate.exists { found = candidate }
+        }
+        rest = noun.tail(rest)
+    }
+    assert(noun.eq(rest, noun.atom(0)))
+    found
+}

@@ -1,0 +1,36 @@
+diff --git a/lib/std/nox/tree.tri b/lib/std/nox/tree.tri
+index 24c53b6..17509cd 100644
+--- a/lib/std/nox/tree.tri
++++ b/lib/std/nox/tree.tri
+@@ -43,8 +43,19 @@ pub fn shape(length: U32) -> Shape {
+         if length < convert.as_u32(17) { return Shape { height: convert.as_u32(4), capacity: 16 } }
+         return Shape { height: convert.as_u32(5), capacity: 32 }
+     }
+-    let mut capacity: Field = 64
+-    for height in 6..32 {
++    // Compiler source buffers occupy at most 1024 packed words. Avoid a loop
++    // continuation per level for this common range while retaining U32 scale.
++    if length < convert.as_u32(1025) {
++        if length < convert.as_u32(257) {
++            if length < convert.as_u32(65) { return Shape { height: convert.as_u32(6), capacity: 64 } }
++            if length < convert.as_u32(129) { return Shape { height: convert.as_u32(7), capacity: 128 } }
++            return Shape { height: convert.as_u32(8), capacity: 256 }
++        }
++        if length < convert.as_u32(513) { return Shape { height: convert.as_u32(9), capacity: 512 } }
++        return Shape { height: convert.as_u32(10), capacity: 1024 }
++    }
++    let mut capacity: Field = 2048
++    for height in 11..32 {
+         if (convert.as_u32(capacity) < length) == false { return Shape { height, capacity } }
+         capacity = capacity * 2
+     }
+diff --git a/reference/self-hosting-data.md b/reference/self-hosting-data.md
+index 3c1215c..9afa1ef 100644
+--- a/reference/self-hosting-data.md
++++ b/reference/self-hosting-data.md
+@@ -267,3 +267,5 @@ the current arena does not free old roots. Packed source buffers reduce input
+ leaves, while ASTs, updates, formulas and traces still consume budget. SH4 must
+ measure the complete compiler workload; this contract does not certify it fits
+ Joy's current fixed arena or nox's recursion limit.
++
++Canonical indexed-tree geometry uses exact integer thresholds for common lengths; the computed height and capacity, private collection layouts, public encodings and validation charges remain unchanged.

@@ -219,3 +219,9 @@ mod constant_bounds;
 
 #[path = "native_compiler/generated_profiles.rs"]
 mod generated_profiles;
+
+#[path = "native_compiler/type_import_bounds.rs"]
+mod type_import_bounds;
+
+#[path = "native_compiler/type_imports.rs"]
+mod type_imports;

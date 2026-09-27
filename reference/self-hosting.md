@@ -454,13 +454,15 @@ exists, and whether access is permitted. A public field is visible from any
 module; a private field is visible only to its defining owner. A known primitive
 or tuple descriptor has no nominal fields. Nominal records remain distinct from
 tuples for destructuring. This foundation provides internal data and visibility
-checks. Module-local source syntax is described below; actual import resolution
-and cross-module source-level privacy acceptance remain subsequent gates.
+checks. Direct nominal imports retain these descriptors and their defining-owner
+visibility checks across source modules.
 
 The bounded native source compiler admits module-local nominal declarations
 `[pub] struct Name { [pub] field: Type, ... }`, including empty layouts and
-trailing commas. Names retain complete source spelling. Duplicate declarations
-and fields reject with diagnostic5; up to32 fields and the requested registry,
+trailing commas. Names retain complete source spelling. Repeated declarations
+must preserve the complete resolved ordered layout, including field visibility;
+only the struct's export visibility may change. Incompatible repeats and duplicate
+fields reject with diagnostic5; up to32 fields and the requested registry,
 logical type-node and depth allowances apply independently. The current
 module's logical JOB1 name owns each descriptor. Type export visibility is
 stored separately from each field's visibility.
@@ -472,7 +474,7 @@ constructors while rejecting forward/self-recursive layouts and earlier
 signatures referring to later types. Unknown named types produce diagnostic5.
 `Unit` remains available as a nominal declaration name; primitive Unit still
 has no explicit source spelling. Public local functions retain normal callable
-binding behavior. Cross-module nominal exports/imports remain a later gate.
+binding behavior. Final public nominal bindings enter ordered direct-use import views.
 
 Constructor recognition follows uppercase final names and named-field syntax.
 Each required field appears once, in explicit `name: expression` or shorthand
@@ -492,8 +494,8 @@ Postfix `.field` reads work on locals, calls, constructors and parenthesized
 bases, preserving complete field types and evaluating the base once. Lookup
 checks both existence and defining-owner/public visibility. Delimiter-owned
 constructor contexts permit constructors inside groups/calls/index expressions
-even when an outer condition precedes a block. Qualified import/type resolution
-remains a subsequent increment.
+even when an outer condition precedes a block. Qualified types and constructors resolve direct full/short aliases independently
+of lexical variables; inferred opaque values retain private type identity.
 
 Static field assignment `local.field[.field...] = expression` requires a
 mutable local root, an existing visible field at each selection, and an RHS
@@ -545,11 +547,12 @@ expression nodes retain the caller's full qualified span and normalized value.
 
 A checked entry without uses compiles directly without allocating a graph. A
 self-use still enters discovery and reports a cycle. Dependencies currently
-admit constants and ordinary functions with scalar Field/Bool/U32 parameters
-and scalar or Unit results. Qualified calls resolve direct public imports;
-private helpers retain their own module scope. All bodies are checked, including
-replaced declarations. Dependency structs, nominal signatures and intrinsics,
-qualified constructors/types, legacy path remaps remain subsequent work.
+admit constants, nominal structs and ordinary functions with all admitted
+parameter/result types. Qualified calls and types resolve direct public imports;
+private helpers and opaque descriptors retain their own module scope. All bodies
+are checked, including replaced declarations. Generated compiler-job profiles
+preserve explicit JOB1 options. Intrinsic declarations and legacy path remaps
+remain subsequent work.
 All reached sources share the existing4096-byte ceiling; import support does
 not imply compiler-scale memory or a complete self-build. The detailed contract
 is [native compiler jobs](self-hosting-jobs.md).

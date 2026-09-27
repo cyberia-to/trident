@@ -53,7 +53,7 @@ def cases():
             {'dep': f'module dep {declaration}'}, 'sample', 'dep.X', 5)
     yield negative('type-mismatch', 'program sample use z.bridge const X:U32=bridge.X fn main()->Field{7}', base, 'sample', 'bridge.X', 5)
     for name, body in [('call', 'bridge.X()'), ('constructor', 'bridge.X{}')]:
-        yield negative(name, f'program sample use z.bridge fn main()->Field{{{body}}}', base, 'sample', 'bridge.X', 5 if name == 'call' else 6)
+        yield negative(name, f'program sample use z.bridge fn main()->Field{{{body}}}', base, 'sample', 'bridge.X', 5)
     yield negative('cycle', 'program sample use a fn main()->Field{7}', {'a': 'module a use z', 'z': 'module z use a'}, 'z', 'use a', 4)
     yield negative('self-cycle', 'program sample use sample fn main()->Field{7}', {}, 'sample', 'use sample', 4)
     yield negative('missing', 'program sample use a fn main()->Field{7}', {'a': 'module a use z'}, 'a', 'use z', 3)
@@ -64,7 +64,7 @@ def cases():
             ('attribute', '#[pure] fn f()->Field{7}')]:
         yield positive(name, 'program sample use a fn main()->Field{7}', {'a': f'module a {declaration}'}, 7)
     for name, declaration, span in [('struct', 'struct S{x:Field}', 'struct')]:
-        yield negative(name, 'program sample use a fn main()->Field{7}', {'a': f'module a {declaration}'}, 'a', span, 6, False)
+        yield positive(name, 'program sample use a fn main()->Field{7}', {'a': f'module a {declaration}'}, 7)
 
 
 def main(case_provider=cases):
@@ -131,7 +131,7 @@ def main(case_provider=cases):
                     continue
                 target = seed_root / (name.replace('.', '/') + '.tri')
                 target.parent.mkdir(parents=True, exist_ok=True)
-                if name == 'sample':
+                if name == 'sample' and not case.get('structured', False):
                     source = source.replace(b'fn main()->Field', b'fn result()->Field', 1) + b' fn main(input:Noun)->Noun{nox_noun_atom(result())}'
                 target.write_bytes(source)
             oracle = directory / 'seed.dag'

@@ -14,6 +14,10 @@ use std.compiler.nox.constant_imports
 use std.compiler.nox.const_module
 use std.compiler.nox.function_exports
 use std.compiler.nox.function_imports
+use std.compiler.nox.type_exports
+use std.compiler.nox.type_imports
+use std.compiler.nox.type_registry
+use std.compiler.nox.nominal
 
 // Declaration IDs are shared by signatures, checked bodies and owner records.
 // Final roots retain private helpers, while exports contain only public targets.
@@ -21,7 +25,7 @@ pub struct Bank {
     pub functions: seq.Seq, pub params: seq.Seq, pub bodies: seq.Seq,
     pub owners: seq.Seq, pub roots: seq.Seq,
     pub exports: function_exports.Bank, pub constants: constant_exports.Bank,
-    pub entry: U32, pub structured: Bool, pub error: syntax.Error
+    pub types: type_exports.Bank, pub type_count: U32, pub entry: U32, pub structured: Bool, pub error: syntax.Error
 }
 
 #[pure]
@@ -29,7 +33,7 @@ pub struct Bank {
 pub fn empty(modules: U32) -> Bank {
     Bank { functions: seq.empty(), params: seq.empty(), bodies: seq.empty(),
         owners: seq.empty(), roots: seq.empty(), exports: function_exports.empty(modules),
-        constants: constant_exports.empty(modules), entry: signatures.NONE, structured: false,
+        constants: constant_exports.empty(modules), types: type_exports.empty(modules), type_count: syntax.ZERO, entry: signatures.NONE, structured: false,
         error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
 }
 
@@ -83,10 +87,11 @@ pub fn check_profile(graph: module_graph.Graph, owner: U32, entry_index: U32, in
         exports: s.constants, uses: unit.uses }
     let imports = function_imports.View { sources: graph.sources, names: graph.names,
         exports: s.exports, uses: unit.uses }
+    let imported_types = type_imports.View { names: graph.names, exports: s.types, uses: unit.uses }
     let start = seq.len(s.functions)
     let entry = unit.index == entry_index
     let mut parsed = headers.scan_module(source, unit.offset, name, constants,
-        s.functions, s.params, graph.capacity, entry == false)
+        imported_types, s.type_count, s.functions, s.params, graph.capacity)
     s.error = parsed.error
     if (s.error.code == syntax.ZERO) == false { return s }
     if entry {
@@ -108,5 +113,18 @@ pub fn check_profile(graph: module_graph.Graph, owner: U32, entry_index: U32, in
     s.error = constants.error
     if (s.error.code == syntax.ZERO) == false { return s }
     s.constants = constants.exports
+    s.type_count = as_u32(as_field(s.type_count) + as_field(seq.len(parsed.types.records)))
+    for index in 0..4096 {
+        if index == seq.len(parsed.types.records) {
+            return publish(source, owner, start, parsed.public_functions, s, graph.capacity)
+        }
+        let record = seq.get(parsed.types.records, index)
+        let ty = noun.head(record)
+        if noun.as_field(noun.tail(record)) == 1 {
+            if type_registry.position(parsed.types, nominal.name(ty)) == index {
+                s.types = type_exports.push(s.types, owner, ty, graph.capacity)
+            }
+        }
+    }
     publish(source, owner, start, parsed.public_functions, s, graph.capacity)
 }

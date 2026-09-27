@@ -164,9 +164,9 @@ the canonical Field value. Direct-use order determines each exported binding;
 only final public declarations enter an importing scope.
 
 The C1 import slice checks dependency modules containing imports, Field/U32
-constant declarations and ordinary functions with Field/Bool/U32 parameters and
-Field/Bool/U32/Unit results. Other dependency declarations and signatures report
-unsupported construct (code 6). Every declaration is checked, including private declarations
+constant declarations, nominal structs and ordinary functions with all admitted
+parameter/result types, including Noun, Digest, tuples, fixed Field arrays and
+nominal descriptors. Unsupported declarations report code 6. Every declaration is checked, including private declarations
 and declarations replaced by a later binding. After checking a module, only its
 final public bindings are published to its direct importers. A published alias
 keeps its own defining name and the terminal literal's original owner/span.
@@ -175,8 +175,9 @@ module aliases. Lexical variables shadow a module root; a local constant with
 that name does not hide the module alias. Qualified calls resolve final public functions through the same ordered direct
 module aliases. Callable resolution is independent of lexical variables;
 qualified constant reads and field projections keep lexical shadowing. Imported
-constructors, nominal signatures and intrinsic declarations remain unsupported
-in this slice. Symbolic array extents and loop bounds retain
+constructors and nominal type annotations resolve final public type descriptors
+through direct aliases, independently of lexical variables. Intrinsic declarations
+remain unsupported. Symbolic array extents and loop bounds retain
 their existing unsupported diagnostics; ordinary constant expressions use the
 normalized runtime value, including checked runtime indexing.
 
@@ -277,3 +278,22 @@ identity, limits, consumed reductions, allocated nodes and trace mode.
 Golden vectors and hostile-container tests belong to the implementation receipts.
 SH0 closes only after runtime/control-flow policy and all owner interfaces are
 reviewed; SH1/SH2 require executed structured transport and actual guest compilation.
+
+### Direct nominal imports
+
+A module exports its final public nominal descriptors under direct ordered full
+and short aliases. The descriptor retains the defining owner, complete ordered
+fields, field visibility and nested types. A private type can cross a function
+boundary as an inferred opaque value; naming or constructing it still requires
+a visible direct binding. Function parameters and results preserve whole Noun,
+Digest, tuple, fixed Field-array and nominal values in one native slot.
+
+One owner/name has one resolved layout. Repeated struct declarations may change
+the struct's export visibility; field names/order, types and visibility must
+remain equal. Every declaration counts toward the shared type-declaration
+allowance, including private and replaced declarations. Forward type names stay
+unavailable. Qualified constructors and type annotations use the type namespace
+independently of lexical module-root variables. Field projections and constants
+retain lexical shadowing. Constructor field checks use the defining owner and
+execute values in declaration order. Symbolic array extents, intrinsics and
+compiler-profile output remain subsequent increments.
