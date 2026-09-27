@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Retain completed local S1 measurements; never run a compiler or change sources."""
 from pathlib import Path
-import datetime, gzip, hashlib, io, json, subprocess, tarfile
+import datetime, gzip, hashlib, io, json, subprocess, sys, tarfile
+if sys.flags.optimize:
+    raise RuntimeError('archive verification requires unoptimized Python')
 A = Path(__file__).resolve().parent
 R = A.parents[3]
 M = R / 'measurements'

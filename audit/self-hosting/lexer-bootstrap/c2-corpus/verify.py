@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Verify retained S1 C2 corpus bindings without running any language stage."""
 from pathlib import Path
-import gzip, hashlib, json, subprocess, tarfile
+import gzip, hashlib, json, subprocess, sys, tarfile
+if sys.flags.optimize:
+    raise RuntimeError('archive verification requires unoptimized Python')
 A = Path(__file__).resolve().parent
 REPO = A.parents[3]
 REV = '77213171d39b88c5f41221912251cc4813ac2b11'
