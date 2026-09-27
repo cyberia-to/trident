@@ -177,7 +177,7 @@ module aliases. Callable resolution is independent of lexical variables;
 qualified constant reads and field projections keep lexical shadowing. Imported
 constructors and nominal type annotations resolve final public type descriptors
 through direct aliases, independently of lexical variables. Intrinsic declarations
-remain unsupported. Symbolic array extents and loop bounds retain
+follow the exact ABI and reachable-lowering rules below. Symbolic array extents and loop bounds retain
 their existing unsupported diagnostics; ordinary constant expressions use the
 normalized runtime value, including checked runtime indexing.
 
@@ -295,5 +295,48 @@ allowance, including private and replaced declarations. Forward type names stay
 unavailable. Qualified constructors and type annotations use the type namespace
 independently of lexical module-root variables. Field projections and constants
 retain lexical shadowing. Constructor field checks use the defining owner and
-execute values in declaration order. Symbolic array extents, intrinsics and
-compiler-profile output remain subsequent increments.
+execute values in declaration order. Symbolic array extents remain a subsequent
+increment. Compiler-profile output follows the requested profile contract;
+intrinsic declarations follow the bounded slice below.
+
+### Exact intrinsic declarations
+
+The bounded guest intrinsic slice admits bodyless, nongeneric function
+signatures in the seed's intrinsic owner namespaces: a logical owner starting
+with `std.`, `vm.`, `os.` or `ext.`, or containing `.ext.`. The namespace match
+is case-sensitive and preserves component boundaries. Ordinary modules cannot
+introduce intrinsic declarations.
+
+The declaration registry admits the existing guest builtin identities
+(`as_u32`, `as_field`, `sub`, the seven `nox_noun_*` operations, `assert` and
+`assert_eq`) and the known ABI identities `field_add`, `field_mul`, `neg`,
+`inv` and `split`. It validates exact ordered parameter and result descriptors,
+including the `(U32, U32)` result of `split`. Parameter names do not affect the
+ABI. An incompatible known signature reports code 5 at the intrinsic attribute.
+Other intrinsic identities, generic declarations and declarations with bodies
+remain outside this slice and report code 6. This bounded registry does not
+claim support for every selected-target intrinsic.
+
+Intrinsic attributes retain the seed's last-attribute-wins rule. Metadata
+payloads are lexed and balanced before the final selected identity is checked;
+an earlier unsupported identity can be replaced by a later supported identity.
+A single identifier names a registered identity. Multiple payload tokens retain
+the seed's space-separated spelling and cannot silently become a dotted name.
+Every active private or replaced declaration still receives ABI validation.
+
+Callable resolution selects the final declaration before reading its intrinsic
+identity. Direct qualified aliases preserve that exact target and visibility;
+an ordinary wrapper or same-named function never inherits intrinsic behavior.
+Purity checks use the final source member name. Only a direct resolved `assert`
+on a literal `false` supplies the existing halting rule.
+
+Known ABI and executable lowering are distinct. The existing guest builtins
+are lowerable; the added field operations and `split` initially have known
+signatures only. Their declarations and calls in unreachable ordinary bodies
+can be checked. A reachable unsupported operation reports code 6 at its call
+in the original source module before emission. Intrinsic declarations do not
+supply runtime function-table entries; this slice requires an ordinary entry
+function. Header namespace and ABI errors precede entry validation; in a JOB1
+package the identifier-only program owner rejects an intrinsic entry through
+the namespace rule first. Emission has an explicit lowerable-kind guard, so
+extending the registry cannot select an unrelated fallback opcode.

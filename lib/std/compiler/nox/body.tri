@@ -23,6 +23,7 @@ use std.compiler.nox.types
 use std.compiler.nox.tuple_declarations
 use std.compiler.nox.record_assign
 use std.compiler.nox.halting
+use std.compiler.nox.intrinsic_bindings
 
 #[pure]
 fn step(source: bytes.Bytes, input: body_state.State, cap: U32) -> body_state.State {
@@ -143,8 +144,17 @@ pub fn function(source: bytes.Bytes, signature: signatures.Function, functions: 
 #[requires((end < start) == false)]
 #[requires((seq.len(functions) < end) == false)]
 pub fn function_in(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, pure: Bool, cap: U32, start: U32, end: U32, imports: function_imports.View) -> body_state.State {
+    function_with_intrinsics(source, signature, functions, params, scope, consts, pure, cap,
+        start, end, imports, intrinsic_bindings.empty())
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((end < start) == false)]
+#[requires((seq.len(functions) < end) == false)]
+pub fn function_with_intrinsics(source: bytes.Bytes, signature: signatures.Function, functions: seq.Seq, params: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, pure: Bool, cap: U32, start: U32, end: U32, imports: function_imports.View, intrinsics: intrinsic_bindings.Bank) -> body_state.State {
     let context = check_scope.Scope { pure, types: scope, functions, params, constants: consts,
-        function_start: start, function_end: end, imported_functions: imports }
+        function_start: start, function_end: end, imported_functions: imports, intrinsics }
     let initial = body_state.scoped(lexer.next(source, signature.open), syntax.dec(signature.open), signature.returns, context)
     let mut s = Parameters { body: initial, next: syntax.ZERO }
     for turn in 0..512 {

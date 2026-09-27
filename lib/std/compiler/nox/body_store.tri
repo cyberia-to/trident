@@ -19,6 +19,17 @@ pub fn pack(s: body_state.State, terminal: Noun) -> Noun {
     noun.pair(sizes, noun.pair(expressions, noun.pair(control, flow)))
 }
 
+// Bodyless declarations retain only the flow spine read by the call graph.
+// Their zero expression/control slots intentionally cannot decode as a Body.
+// Resolved intrinsic calls have no function edge, and entry validation rejects
+// intrinsic entries, so no executable plan can reach this graph-only record.
+#[pure]
+pub fn opaque() -> Noun {
+    let zero = noun.atom(0)
+    let flow = noun.pair(zero, noun.pair(zero, zero))
+    noun.pair(zero, noun.pair(zero, noun.pair(zero, flow)))
+}
+
 #[pure]
 pub fn locals(value: Noun) -> U32 { as_u32(noun.as_field(noun.head(noun.head(value)))) }
 
@@ -68,4 +79,14 @@ pub fn read(value: Noun, cap: U32) -> Body {
         root: as_u32(noun.as_field(noun.head(noun.tail(sizes)))),
         returns: noun.head(flow), needs_get: needs_get(value)
     }
+}
+
+// Intrinsic preflight needs only expression nodes. Keep their complete sequence
+// validation without decoding the unrelated statements, blocks and loop banks.
+#[pure]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[ensures((cap < seq.len(result)) == false)]
+pub fn expression_nodes(value: Noun, cap: U32) -> seq.Seq {
+    let expressions = noun.head(noun.tail(value))
+    seq.from_noun(noun.head(expressions), cap, as_u32(as_field(cap) * 4 + 1))
 }

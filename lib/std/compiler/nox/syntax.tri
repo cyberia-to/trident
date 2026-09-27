@@ -2,6 +2,7 @@ module std.compiler.nox.syntax
 
 use vm.core.convert
 use vm.core.field
+use std.nox.bytes
 
 pub const ZERO: U32 = 0
 pub const SOURCE_CAP: U32 = 4096
@@ -35,3 +36,17 @@ pub fn either(a: Bool, b: Bool) -> Bool { if a { return true } b }
 
 #[pure]
 pub fn both(a: Bool, b: Bool) -> Bool { if a { return b } false }
+
+// Exact bounded spelling for metadata names longer than the lexer pack.
+#[pure]
+#[requires((name.end < name.start) == false)]
+#[requires((bytes.len(source) < name.end) == false)]
+#[requires((9 < field.sub(convert.as_field(name.end), convert.as_field(name.start))) == false)]
+pub fn spells(source: bytes.Bytes, name: Token, spelling: [Field; 9]) -> Bool {
+    let length = convert.as_u32(field.sub(convert.as_field(name.end), convert.as_field(name.start)))
+    for i in 0..9 {
+        if i == length { return true }
+        if (convert.as_field(bytes.get(source, convert.as_u32(convert.as_field(name.start) + convert.as_field(i)))) == spelling[i]) == false { return false }
+    }
+    true
+}

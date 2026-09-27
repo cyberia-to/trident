@@ -12,11 +12,13 @@ use std.compiler.nox.body
 use std.compiler.nox.body_store
 use std.compiler.nox.coverage
 use std.compiler.nox.function_imports
+use std.compiler.nox.intrinsic_bindings
+use std.compiler.nox.intrinsic_abi
 
 pub struct Checked { pub bodies: seq.Seq, pub next: U32, pub error: syntax.Error, pub pure_next: U32 }
 
 #[pure]
-fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, input: Checked, cap: U32, start: U32, end: U32, imports: function_imports.View) -> Checked {
+fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, input: Checked, cap: U32, start: U32, end: U32, imports: function_imports.View, intrinsics: intrinsic_bindings.Bank) -> Checked {
     let mut s = input
     for turn in 0..8 {
         if s.next == end { return s }
@@ -28,14 +30,20 @@ fn chunk(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_function
                 s.pure_next = syntax.inc(s.pure_next)
             }
         }
-        let parsed = body.function_in(source, signature, functions, params, scope, consts, pure, cap, start, end, imports)
-        s.error = parsed.error
-        if (s.error.code == syntax.ZERO) == false { return s }
-        let checked = coverage.check(parsed)
-        s.error = checked.error
-        if (s.error.code == syntax.ZERO) == false { return s }
+        let mut stored = noun.atom(0)
+        if (intrinsic_bindings.kind(intrinsics, s.next) == intrinsic_abi.NONE) == false {
+            stored = body_store.opaque()
+        } else {
+            let parsed = body.function_with_intrinsics(source, signature, functions, params, scope, consts, pure, cap, start, end, imports, intrinsics)
+            s.error = parsed.error
+            if (s.error.code == syntax.ZERO) == false { return s }
+            let checked = coverage.check(parsed)
+            s.error = checked.error
+            if (s.error.code == syntax.ZERO) == false { return s }
+            stored = body_store.pack(parsed, checked.flags)
+        }
         if seq.len(s.bodies) == cap { s.error = syntax.error(7, signature.name.start, signature.name.end) return s }
-        s.bodies = seq.push(s.bodies, body_store.pack(parsed, checked.flags), cap)
+        s.bodies = seq.push(s.bodies, stored, cap)
         s.next = syntax.inc(s.next)
     }
     s
@@ -59,13 +67,24 @@ pub fn check(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_func
 #[requires((seq.len(functions) < end) == false)]
 #[requires(seq.len(bodies) == start)]
 pub fn check_range(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32, start: U32, end: U32, imports: function_imports.View, bodies: seq.Seq) -> Checked {
+    check_range_with_intrinsics(source, functions, params, pure_functions, scope, consts, cap,
+        start, end, imports, bodies, intrinsic_bindings.empty())
+}
+
+#[pure]
+#[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
+#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((end < start) == false)]
+#[requires((seq.len(functions) < end) == false)]
+#[requires(seq.len(bodies) == start)]
+pub fn check_range_with_intrinsics(source: bytes.Bytes, functions: seq.Seq, params: seq.Seq, pure_functions: seq.Seq, scope: type_registry.Scope, consts: constants.Scope, cap: U32, start: U32, end: U32, imports: function_imports.View, bodies: seq.Seq, intrinsics: intrinsic_bindings.Bank) -> Checked {
     let zero = syntax.ZERO
     let mut s = Checked { bodies, next: start, error: syntax.error(0, zero, zero), pure_next: zero }
     if syntax.either(syntax.either((end < start), (seq.len(functions) < end)), (seq.len(bodies) == start) == false) {
         s.error = syntax.error(7, zero, zero) return s
     }
     for turn in 0..512 {
-        s = chunk(source, functions, params, pure_functions, scope, consts, s, cap, start, end, imports)
+        s = chunk(source, functions, params, pure_functions, scope, consts, s, cap, start, end, imports, intrinsics)
         if syntax.either(s.next == end, (s.error.code == zero) == false) { return s }
     }
     s.error = syntax.error(7, zero, zero)

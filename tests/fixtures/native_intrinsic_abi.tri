@@ -1,0 +1,94 @@
+program native_intrinsic_abi
+
+use vm.nox.noun
+use vm.core.convert
+use vm.core.field
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.signatures
+use std.compiler.nox.builtins
+use std.compiler.nox.intrinsic_abi
+use std.compiler.nox.intrinsic_bindings
+
+#[pure]
+fn flag(value: Bool) -> Noun {
+    if value { return noun.atom(1) }
+    noun.atom(0)
+}
+
+// Mode 0: [source-Bytes [start end]]. Construct the lexer's packed identifier
+// from the exact requested span, including zero for identifiers over 7 bytes.
+#[pure]
+fn lookup(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(4096), as_u32(16384))
+    let span = noun.tail(input)
+    let start = as_u32(noun.as_field(noun.head(span)))
+    let end = as_u32(noun.as_field(noun.tail(span)))
+    assert((end < start) == false)
+    assert((bytes.len(source) < end) == false)
+    let length = as_u32(field.sub(as_field(end), as_field(start)))
+    let mut packed: Field = 0
+    if (as_u32(7) < length) == false {
+        for i in 0..7 {
+            if i < length { packed = packed * 256 + as_field(bytes.get(source, as_u32(as_field(start) + as_field(i)))) }
+        }
+    }
+    let token = syntax.token(1, start, end, packed)
+    noun.pair(noun.atom(as_field(intrinsic_abi.lookup(source, token))), noun.atom(as_field(builtins.lookup(source, token))))
+}
+
+#[pure]
+fn bank(entries: seq.Seq, cap: U32) -> intrinsic_bindings.Bank {
+    let mut result = intrinsic_bindings.empty()
+    for i in 0..4096 {
+        if i == seq.len(entries) { return result }
+        let entry = seq.get(entries, i)
+        result = intrinsic_bindings.append(result, as_u32(noun.as_field(noun.head(entry))), as_u32(noun.as_field(noun.tail(entry))), cap)
+    }
+    result
+}
+
+// Mode 4: [entry-Seq [query-Seq cap]] -> queried kind-Seq. Entries use exact
+// global declaration IDs; no caller or member spelling participates.
+#[pure]
+fn bindings(input: Noun) -> Noun {
+    let entries = seq.from_noun(noun.head(input), as_u32(4096), as_u32(8191))
+    let rest = noun.tail(input)
+    let queries = seq.from_noun(noun.head(rest), as_u32(4096), as_u32(8191))
+    let table = bank(entries, as_u32(noun.as_field(noun.tail(rest))))
+    let mut result = seq.empty()
+    for i in 0..4096 {
+        if i == seq.len(queries) { return seq.to_noun(result) }
+        let target = as_u32(noun.as_field(seq.get(queries, i)))
+        result = seq.push(result, noun.atom(as_field(intrinsic_bindings.kind(table, target))), as_u32(4096))
+    }
+    seq.to_noun(result)
+}
+
+// Mode 1: kind -> [arity [lowerable [parameter0 [parameter1 [parameter2 return]]]]].
+// Mode 2: [kind [Function parameter-Seq]] -> exact ABI validity.
+// Mode 3: owner-Bytes -> exact intrinsic namespace policy.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let mode = noun.as_field(noun.head(input))
+    let data = noun.tail(input)
+    if mode == 0 { return lookup(data) }
+    if mode == 4 { return bindings(data) }
+    if mode == 1 {
+        let kind = as_u32(noun.as_field(data))
+        return noun.pair(noun.atom(as_field(intrinsic_abi.arity(kind))), noun.pair(flag(intrinsic_abi.lowerable(kind)),
+            noun.pair(intrinsic_abi.parameter(kind, as_u32(0)), noun.pair(intrinsic_abi.parameter(kind, as_u32(1)),
+            noun.pair(intrinsic_abi.parameter(kind, as_u32(2)), intrinsic_abi.returns(kind))))))
+    }
+    if mode == 2 {
+        let kind = as_u32(noun.as_field(noun.head(data)))
+        let rest = noun.tail(data)
+        let f = signatures.read(noun.head(rest))
+        let params = seq.from_noun(noun.tail(rest), as_u32(4096), as_u32(8191))
+        return flag(intrinsic_abi.valid(kind, f, params))
+    }
+    assert_eq(mode, 3)
+    let owner = bytes.from_noun(data, as_u32(4096), as_u32(16384))
+    flag(intrinsic_abi.allowed_owner(owner))
+}

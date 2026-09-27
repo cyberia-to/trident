@@ -48,8 +48,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
     observations.append({'case':'record-write-rhs-trap','source_hex':content.hex(),'compiler_execution':compiled,'program_execution_error':commands[-1]['stderr'],'previous_output_preserved':True})
 
     # Unchanged full-source vectors and arena ceiling from record_write_bounds.rs.
-    # Terminal tree reads let the original 61–64-bit paths finish generation;
-    # wider paths still preserve the previous output on arena exhaustion.
+    # Compact tree/byte reads let all original 61–65-bit paths finish generation.
     for bits in [61,62,63,64,65]:
         outer=min(bits,64)-32
         fields=','.join(f'f{i}:Field' for i in range(31));values=','.join(f'f{i}:{i}' for i in range(31))
@@ -58,17 +57,11 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         extra,value,path=('struct Wrap{value:Outer}',f'Wrap{{value:{outer_value}}}','w.value.last.last') if bits==65 else ('',outer_value,'w.last.last')
         content=f'program sample struct Inner{{{fields},last:Field}} struct Outer{{{prefix_fields},last:Inner}} {extra} fn main()->Field{{let mut w={value} let old=w {path}=99 {path.replace("w.","old.",1)}*100+{path}}}'.encode()
         name=f'record-write-wide-{bits}-arena';directory,job=package(name,content,{'arena_nodes':786432})
-        if bits <= 64:
-            program=directory/'program.dag';compiled=execute(job,program)
-            assert compiled['execution']['compiler_job']['status']=='success'
-            output=directory/'output.dag';executed=run(['run-artifact',program,'--input',zero,'-o',output])
-            assert decode(output)==3199,(name,decode(output))
-            assert executed['execution']['program_particle']==compiled['published_particle']
-            observations.append({'case':name,'source_hex':content.hex(),'expected':3199,
-                'compiler_execution':compiled,'program_execution':executed,
-                'program_bytes':len(program.read_bytes()),'complete_output_checked':True})
-            continue
-        protected=directory/'program.dag';protected.write_bytes(prior_program);failure=execute(job,protected,expected=1,force=True)
-        assert 'Unavailable' in commands[-1]['stderr'],commands[-1]
-        assert protected.read_bytes()==prior_program
-        observations.append({'case':name,'source_hex':content.hex(),'result':'valid source exceeds 786432-node compiler arena; full generation SH4 open','compiler_execution':failure,'previous_program_preserved':True})
+        program=directory/'program.dag';compiled=execute(job,program)
+        assert compiled['execution']['compiler_job']['status']=='success'
+        output=directory/'output.dag';executed=run(['run-artifact',program,'--input',zero,'-o',output])
+        assert decode(output)==3199,(name,decode(output))
+        assert executed['execution']['program_particle']==compiled['published_particle']
+        observations.append({'case':name,'source_hex':content.hex(),'expected':3199,
+            'compiler_execution':compiled,'program_execution':executed,
+            'program_bytes':len(program.read_bytes()),'complete_output_checked':True})

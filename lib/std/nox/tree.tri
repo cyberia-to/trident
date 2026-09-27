@@ -43,8 +43,9 @@ pub fn shape(length: U32) -> Shape {
         if length < convert.as_u32(17) { return Shape { height: convert.as_u32(4), capacity: 16 } }
         return Shape { height: convert.as_u32(5), capacity: 32 }
     }
-    let mut capacity: Field = 64
-    for height in 6..32 {
+    if length < convert.as_u32(65) { return Shape { height: convert.as_u32(6), capacity: 64 } }
+    let mut capacity: Field = 128
+    for height in 7..32 {
         if (convert.as_u32(capacity) < length) == false { return Shape { height, capacity } }
         capacity = capacity * 2
     }
@@ -71,6 +72,23 @@ pub fn get(root: Noun, length: U32, index: U32) -> Noun {
             if offset == convert.as_u32(2) { return noun.head(noun.tail(cursor)) }
             return noun.tail(noun.tail(cursor))
         }
+        // An odd remaining height ends in three direct selections.
+        if capacity == 8 {
+            if offset < convert.as_u32(4) {
+                if offset < convert.as_u32(2) {
+                    if offset == ZERO { return noun.head(noun.head(noun.head(cursor))) }
+                    return noun.tail(noun.head(noun.head(cursor)))
+                }
+                if offset == convert.as_u32(2) { return noun.head(noun.tail(noun.head(cursor))) }
+                return noun.tail(noun.tail(noun.head(cursor)))
+            }
+            if offset < convert.as_u32(6) {
+                if offset == convert.as_u32(4) { return noun.head(noun.head(noun.tail(cursor))) }
+                return noun.tail(noun.head(noun.tail(cursor)))
+            }
+            if offset == convert.as_u32(6) { return noun.head(noun.tail(noun.tail(cursor))) }
+            return noun.tail(noun.tail(noun.tail(cursor)))
+        }
         // The final branch selects an opaque leaf directly. Returning here
         // avoids rebuilding loop state only to return on the next iteration.
         if capacity == 2 {
@@ -80,6 +98,16 @@ pub fn get(root: Noun, length: U32, index: U32) -> Noun {
         capacity = capacity * HALF
         let half = convert.as_u32(capacity)
         if offset < half {
+            cursor = noun.head(cursor)
+        } else {
+            cursor = noun.tail(cursor)
+            offset = convert.as_u32(field.sub(convert.as_field(offset), capacity))
+        }
+        // The preceding terminal cases leave at least four levels here.
+        // Consume a second branch before allocating the next continuation.
+        capacity = capacity * HALF
+        let quarter = convert.as_u32(capacity)
+        if offset < quarter {
             cursor = noun.head(cursor)
         } else {
             cursor = noun.tail(cursor)

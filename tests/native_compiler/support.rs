@@ -149,7 +149,11 @@ pub fn try_compile_only_package(
     opts: schema::Options,
     caps: [u64; 11],
 ) -> std::result::Result<Compilation, String> {
-    if caps[9] > 196608 {
+    if caps[9] > 786432 {
+        // Match Joy's explicit compiler tier; existing fixture caps stay fixed.
+        assert!(caps[9] <= 3145728);
+        compile_in::<{ 1 << 22 }>(modules, name, function, opts, caps)
+    } else if caps[9] > 196608 {
         compile_in::<{ 1 << 20 }>(modules, name, function, opts, caps)
     } else {
         compile_in::<{ 1 << 18 }>(modules, name, function, opts, caps)

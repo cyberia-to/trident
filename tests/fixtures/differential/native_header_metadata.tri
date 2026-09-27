@@ -1,0 +1,5 @@
+program native_header_metadata
+
+use std.compiler.nox.header_state
+
+fn main() -> header_state.Metadata { header_state.metadata() }

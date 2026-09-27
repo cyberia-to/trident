@@ -225,3 +225,6 @@ mod type_import_bounds;
 
 #[path = "native_compiler/type_imports.rs"]
 mod type_imports;
+
+#[path = "native_compiler/intrinsics.rs"]
+mod intrinsics;

@@ -118,9 +118,10 @@ fn native_attributes_reject_malformed_delimiters_and_invalid_placement() {
         ] {
             rejects(body, code, true);
         }
-        for prefix in ["#[cfg(nox)]", "#[test]", "#[intrinsic(assert)]"] {
+        for prefix in ["#[cfg(nox)]", "#[test]"] {
             rejects(&format!("{prefix} fn main()->Field{{7}}"), 6, false);
         }
+        rejects("#[intrinsic(assert)] fn main()->Field{7}", 5, false);
     });
 }
 

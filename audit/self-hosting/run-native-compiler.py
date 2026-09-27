@@ -73,6 +73,8 @@ def main():
     binary_sha = hashlib.sha256(binary.read_bytes()).hexdigest()
     repo = Path(__file__).resolve().parents[2]
     commands, observations = [], []
+    compiler_sha, compiler_particle = None, None
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     accepted = json.loads((repo / "audit/self-hosting/native-control-cli.json").read_text())
     prior_cases = {item["case"]: item for item in accepted["observations"] if "case" in item and "expected" in item}
     host = ["--budget", "100000000", "--frames", "65536", "--time-ms", str(args.time_ms)]
@@ -85,6 +87,15 @@ def main():
             row = {"command": command, "exit_code": result.returncode,
                    "stdout": result.stdout, "stderr": result.stderr}
             commands.append(row)
+            # Preserve completed commands even when the next assertion fails.
+            # Only the final receipt below marks the whole corpus as passed.
+            args.output.write_text(json.dumps({
+                "schema": "trident/native-compiler-cli/v1", "kind": "local-development",
+                "status": "running" if result.returncode == expected else "command_failed",
+                "binary_sha256": binary_sha, "compiler_sha256": compiler_sha,
+                "compiler_particle": compiler_particle, "commands": commands,
+                "observations": observations, "compiler_host_time_ms": args.time_ms,
+            }, indent=2) + "\n")
             assert result.returncode == expected, row
             return json.loads(result.stdout) if result.stdout.startswith("{") else None
 
@@ -451,7 +462,7 @@ def main():
     # A rebuild during this long corpus would mix distinct installed inputs.
     assert hashlib.sha256(binary.read_bytes()).hexdigest() == binary_sha, "installed Joy changed during acceptance"
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development",
+    args.output.write_text(json.dumps({"schema": "trident/native-compiler-cli/v1", "kind": "local-development", "status": "passed",
         "binary_sha256": binary_sha, "compiler_sha256": compiler_sha,
         "compiler_particle": compiler_particle, "commands": commands, "observations": observations,
         "compiler_host_time_ms": args.time_ms,

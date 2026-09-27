@@ -59,7 +59,7 @@ def check(root, repo, run, package, execute, decode, record, observations, comma
         ('attribute-pure-args', source(prefix='#[pure()]'), 6),
         ('attribute-bare-contract', source(prefix='#[requires]'), 6),
         ('attribute-cfg', source(prefix='#[cfg(nox)]'), 6),
-        ('attribute-intrinsic', source(prefix='#[intrinsic(assert)]'), 6),
+        ('attribute-intrinsic', source(prefix='#[intrinsic(assert)]'), 5),
         ('attribute-asm', source(prefix='#[requires(asm)]'), 6),
         ('attribute-invalid-token', source(prefix='#[requires(@)]'), 1),
         ('attribute-numeric-overflow', source(prefix='#[requires(18446744073709551616)]'), 1),
