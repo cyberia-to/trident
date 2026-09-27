@@ -33,7 +33,7 @@ fn nominal_source_types_names_and_initializer_errors_reject_before_emission() {
             ("struct S{x:S} fn main()->Field{7}",5),
             ("struct S{x:Later} struct Later{x:Field} fn main()->Field{7}",5),
             ("fn main()->Field{let s:Missing=7 7}",5),
-            ("struct S{x:external.T} fn main()->Field{7}",6),
+            ("struct S{x:external.T} fn main()->Field{7}",5),
         ] {
             let source=format!("program sample {body}");
             match support::compile_only(source.as_bytes(),data::caps()) {
@@ -49,7 +49,7 @@ fn nominal_source_types_names_and_initializer_errors_reject_before_emission() {
 fn nominal_declaration_duplicates_and_wide_layouts_report_exact_name_spans() {
     support::worker(|| {
         for (body,span,code) in [
-            ("struct S{} struct S{} fn main()->Field{7}".to_string(),"S",5),
+            ("struct S{} struct S{x:Field} fn main()->Field{7}".to_string(),"S",5),
             ("struct S{x:Field,x:Field} fn main()->Field{7}".to_string(),"x",5),
             (format!("struct S{{{}}} fn main()->Field{{7}}",(0..33).map(|i|format!("f{i}:Field")).collect::<Vec<_>>().join(",")),"f32",7),
             ("struct A{n:Field} fn id(x:A)->A{let z:Later=x x} struct Later{n:Field} fn main()->Field{7}".to_string(),"x",5),
@@ -60,7 +60,7 @@ fn nominal_declaration_duplicates_and_wide_layouts_report_exact_name_spans() {
                     assert_eq!(errors[0].code,code,"{source}");
                     assert_eq!(&source[errors[0].start as usize..errors[0].end as usize],span,"{source}");
                     if source.contains("let z:Later=x") {assert_eq!(errors[0].start as usize,source.find("=x").unwrap()+1);}
-                    if source.contains("struct S{} struct S{}") {assert_eq!(errors[0].start as usize,source.rfind("S{}").unwrap());}
+                    if source.contains("struct S{} struct S{x:Field}") {assert_eq!(errors[0].start as usize,source.rfind("S{x:Field}").unwrap());}
                     if source.contains("x:Field,x:Field") {assert_eq!(errors[0].start as usize,source.rfind("x:Field").unwrap());}
                 }
                 other=>panic!("{source}: {other:?}"),

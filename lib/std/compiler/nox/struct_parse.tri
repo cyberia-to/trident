@@ -28,7 +28,7 @@ pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Sc
     if (name_token.kind == as_u32(1)) == false { return failed(scope, name_token, 2) }
     if seq.len(scope.records) == cap { return failed(scope, name_token, 7) }
     let name = type_registry.name(source, name_token)
-    if type_registry.lookup(scope, name).exists { return failed(scope, name_token, 5) }
+    let previous = type_registry.lookup(scope, name)
     let mut token = lexer.next(source, name_token.end)
     if (token.kind == as_u32(7)) == false { return failed(scope, token, 2) }
     token = lexer.next(source, token.end)
@@ -44,6 +44,9 @@ pub fn parse(source: bytes.Bytes, opening: syntax.Token, scope: type_registry.Sc
                     at = syntax.token(1, as_u32(noun.as_field(noun.head(span))), as_u32(noun.as_field(noun.tail(span))), 0)
                 }
                 return failed(scope, at, as_field(built.status))
+            }
+            if previous.exists {
+                if noun.eq(previous.ty, built.ty) == false { return failed(scope, name_token, 5) }
             }
             let mut result = scope
             result.records = seq.push(result.records, type_registry.record(built.ty, public), cap)

@@ -216,3 +216,9 @@ mod constants;
 
 #[path = "native_compiler/constant_bounds.rs"]
 mod constant_bounds;
+
+#[path = "native_compiler/type_import_bounds.rs"]
+mod type_import_bounds;
+
+#[path = "native_compiler/type_imports.rs"]
+mod type_imports;

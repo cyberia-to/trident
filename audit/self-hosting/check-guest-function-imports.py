@@ -70,7 +70,7 @@ def cases():
             ('struct', 'pub struct S{x:Field}', 'struct'),
             ('noun-return', 'pub fn f()->Noun{nox_noun_atom(0)}', 'Noun'),
             ('digest-return', 'pub fn f()->Digest{nox_noun_identity(nox_noun_atom(0))}', 'Digest')]:
-        yield negative(name, 'program sample use dep fn main()->Field{7}', {'dep': f'module dep {declaration}'}, 'dep', span, 6, False)
+        yield positive(name, 'program sample use dep fn main()->Field{7}', {'dep': f'module dep {declaration}'}, 7)
 
 
 if __name__ == '__main__':
