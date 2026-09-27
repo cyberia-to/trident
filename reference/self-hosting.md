@@ -842,9 +842,46 @@ regression corpus correctly, and clean bootstrap reproduction succeeds on the
 six supported CPU release targets: macOS, Linux glibc and Windows MSVC, each
 on ARM64 and x64. Record missing platform evidence as an open gate.
 
-CI pins the source closure/seed and invokes one documented bootstrap runner.
-Its command and artifact paths are added to the ledger when implemented;
-this specification does not advertise an existing bootstrap CLI command.
+The bootstrap runner is
+[`audit/self-hosting/bootstrap-runner.py`](../audit/self-hosting/bootstrap-runner.py).
+Supply `BOOTSTRAP_PINS` as a JSON object with exact full Git commit identities
+for `trident`, `joy`, `nox`, `hemera`, `strata`, `zheng`, `bbg`, `lens` and
+`neuron`. Install the native Rust 1.95.0 toolchain and Python 3.13, then invoke
+the runner with fresh, separate build and evidence directories, for example
+on macOS ARM64:
+
+```sh
+python3 audit/self-hosting/bootstrap-runner.py --target aarch64-apple-darwin --work ../sh6-work --output ../sh6-evidence
+```
+
+`--pins-json` accepts the same JSON explicitly. Each invocation performs two
+repetitions with separate source checkouts and build directories. It fetches
+the pinned commits and locked dependencies, then builds offline, constructs
+C1, executes both complete self-builds, checks their fixed point and runs
+all six semantic corpora with actual C2 and actual C3. Rust-generated raw
+reference programs remain separately identified comparison oracles.
+`--prepare-only` stops after preparing C1 and reports `prepared`; it cannot
+pass bootstrap acceptance.
+
+Each whole-compiler job uses the same declared profile: 20000000000
+reductions, 1000000000 cumulative nodes, 3145728 resident nodes, 10000000000
+collection work, 65536 frames and 3600000 milliseconds. A failed limit
+fails the repetition. Corpus cases retain their existing deterministic limits.
+The output directory retains `receipt.json`, `files.json`, command logs and
+`repeat-1/` / `repeat-2/` source inventories, C1/C2/C3 artifacts, full job
+receipts, fixed-point checks and corpus evidence.
+
+The [`selfhost-bootstrap.yml`](../.github/workflows/selfhost-bootstrap.yml)
+workflow runs the six native targets for pull requests to `release/0.4`,
+using the exact PR head and pinned sibling revisions. Each target uploads
+its evidence, including failures. The aggregate invokes the same runner
+with `--matrix PLATFORM_RESULTS --output MATRIX_EVIDENCE`, where
+`PLATFORM_RESULTS` contains one downloaded evidence directory per target.
+It requires both complete repetitions on all six targets, verifies the
+retained file identities and compares exact C2/C3 bytes across platforms.
+Missing or incomplete platform evidence fails acceptance. The
+[progress ledger](../audit/self-hosting-progress.md) records executed results;
+adding this runner or workflow alone closes no gate.
 
 **Receipt:** C2/C3 comparison, corpus results, six-target matrix, CI run and
 downloadable source/seed/artifact identities. This closes reproducible native
