@@ -1,0 +1,192 @@
+{
+  "scope": "Extended supplied-artifact tool readiness; no actual C2 or full-corpus acceptance",
+  "base_revision": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "source_sha256": {
+    "audit/self-hosting/check-guest-constant-linking.py": "0dbbbba9166c674e23a3dbdd027edbf777e7c13880f7d24a6ca985b91c4802c0",
+    "audit/self-hosting/check-generated-compiler-profile.py": "40aad4cd96d8decdafbee391bc7144c0fd5bd293be20ecc37817cc28895c29da",
+    "audit/self-hosting/native_compiler_selection.py": "222b68904b74baff7978211a6f3f11d0c1d478fb7861d4c97747659179f28984",
+    "audit/self-hosting/test_compiler_selection.py": "0ed589dfb0858debdbecb067ef3af9ba9d937d7b2143e64544729b2eb8a29770",
+    "audit/self-hosting/extended-compiler-routing/coverage.py": "ebb0e9e1e3943d21d922faf9c20f646d6110e13c7b1ea99d1e01ed760c0a4bf4"
+  },
+  "checks": {
+    "unit-tests": {
+      "command": [
+        "python3",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_compiler_selection.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "log": "unit-tests.log",
+      "original_log_sha256": "dbebf9ce636131ef75287b86ed915d3cfa0a9c9cf6584be9017d44f189a8b872",
+      "log_sha256": "dbebf9ce636131ef75287b86ed915d3cfa0a9c9cf6584be9017d44f189a8b872",
+      "original_log_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-final-original-logs/unit-tests.log",
+      "passed": 14,
+      "failed": 0,
+      "warnings": 0
+    },
+    "existing-route-tests": {
+      "command": [
+        "python3",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_native_compiler_runner.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "log": "existing-route-tests.log",
+      "original_log_sha256": "6736862cf02b072dc513f6b3de9915d5ef9b13dd4ef02e8dc7caefdf3461b3d3",
+      "log_sha256": "6736862cf02b072dc513f6b3de9915d5ef9b13dd4ef02e8dc7caefdf3461b3d3",
+      "original_log_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-final-original-logs/existing-route-tests.log",
+      "passed": 9,
+      "failed": 0,
+      "warnings": 0
+    },
+    "provided-c1-final": {
+      "command": [
+        "python3",
+        "audit/self-hosting/check-guest-constant-linking.py",
+        "--joy",
+        "../install-compiler-work-budget/bin/joy",
+        "--compiler",
+        "../measurements/scaled-c1.dag",
+        "--case",
+        "full-short",
+        "--output",
+        "audit/self-hosting/extended-compiler-routing/provided-c1-final.json"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "log": "provided-c1-final.log",
+      "original_log_sha256": "014e91332bd2ef8fa697458151ae7d8b8d1dc2018740570d48af16ec2f68bd8c",
+      "log_sha256": "014e91332bd2ef8fa697458151ae7d8b8d1dc2018740570d48af16ec2f68bd8c",
+      "original_log_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-final-original-logs/provided-c1-final.log",
+      "receipt": "provided-c1-final.json",
+      "receipt_sha256": "b7cb10a815dfd7d94753c98335fe50f28d8f6ba46f3592bd939ecb052ffece4f",
+      "status": "passed",
+      "commands": 5,
+      "observations": 1
+    },
+    "profile-rejection-final": {
+      "command": [
+        "python3",
+        "audit/self-hosting/check-guest-constant-linking.py",
+        "--joy",
+        "../install-compiler-work-budget/bin/joy",
+        "--compiler",
+        "../measurements/extended-routing-raw-profile.dag",
+        "--case",
+        "full-short",
+        "--output",
+        "audit/self-hosting/extended-compiler-routing/profile-rejection-final.json"
+      ],
+      "exit_code": 1,
+      "expected_exit": 1,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "log": "profile-rejection-final.log",
+      "original_log_sha256": "564123abfc5518bd4d3d73b3124e1984b9ac37db6f656ac2676111454d3bbe82",
+      "log_sha256": "564123abfc5518bd4d3d73b3124e1984b9ac37db6f656ac2676111454d3bbe82",
+      "original_log_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-final-original-logs/profile-rejection-final.log",
+      "receipt": "profile-rejection-final.json",
+      "receipt_sha256": "79205d545d33881df754f3767a986b7372b238d1a56a9282e05a936d86791b39",
+      "status": "failed",
+      "commands": 1,
+      "observations": 0
+    },
+    "generated-profile-rejection-final": {
+      "command": [
+        "python3",
+        "audit/self-hosting/check-generated-compiler-profile.py",
+        "--joy",
+        "../install-compiler-work-budget/bin/joy",
+        "--compiler",
+        "../measurements/extended-routing-raw-profile.dag",
+        "--output",
+        "../measurements/extended-routing-generated-raw-final.json"
+      ],
+      "exit_code": 1,
+      "expected_exit": 1,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "log": "generated-profile-rejection-final.log",
+      "original_log_sha256": "97ad86fe8b73a03f5ab6846cfefa839b17007cdd4183d598f6eddfa8bc6b49ee",
+      "log_sha256": "97ad86fe8b73a03f5ab6846cfefa839b17007cdd4183d598f6eddfa8bc6b49ee",
+      "original_log_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-final-original-logs/generated-profile-rejection-final.log",
+      "receipt": "generated-profile-rejection-final.json",
+      "receipt_sha256": "64d63ab67b78042961c72ddb10f39bc48ef96f5a7b6c6df10a4a880e4ede561c",
+      "status": "failed",
+      "commands": 2,
+      "observations": 0
+    }
+  },
+  "inputs": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy": {
+      "sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+      "bytes": 4961904
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/scaled-c1.dag": {
+      "sha256": "67fd57be4b610d4716fc550c28fba9034782e003a21188c95f12bc03d85c92d3",
+      "bytes": 9719875
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-raw-profile.dag": {
+      "sha256": "0fe0b19a530c7ec37b17ae10ac6e8b17edba134a2941293bde23c9478cd180d7",
+      "bytes": 790
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/joy/cli/tests/compiler_vectors.json": {
+      "sha256": "4b118cd9c9f20764e46b16676d4cb63599dc40c7e8f3a40a47c4fe5962f752ad",
+      "bytes": 153091
+    }
+  },
+  "runtime": {
+    "joy_revision": "2878f4b17dfedf237c6110d7d411bb4824e65103",
+    "nox_revision": "1eaa8a494f994e4da6b20509469c1e62624f3f2d",
+    "install_receipt": "../measurements/joy-compiler-work-budget-install.json"
+  },
+  "raw_profile_fixture": {
+    "source": "../joy/cli/tests/compiler_vectors.json",
+    "key": "files.generated",
+    "purpose": "canonical raw-profile input rejected as a compiler, never a C2 substitute"
+  },
+  "coverage": {
+    "path": "coverage.json",
+    "sha256": "3b1c335a781a7fd6ae8fb20881f847b7f41abb5cbb097de5c4fbf5a2fee948d3",
+    "command": [
+      "python3",
+      "audit/self-hosting/extended-compiler-routing/coverage.py"
+    ],
+    "exit_code": 0
+  },
+  "log_normalization": "Trailing whitespace and terminal empty lines only; original copies and original/normalized SHA256 are recorded. Initial pre-review smoke evidence is retained separately under ../measurements/extended-routing-initial-tool-checks."
+}
