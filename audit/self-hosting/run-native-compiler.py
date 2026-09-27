@@ -271,8 +271,7 @@ def main():
                      ("syntax", source("(1"), 2), ("utf8", b"//\xed\xa0\x80", 1),
                      ("unsupported", source("let x: XField=1 x"), 6),
                      ("u32-field-literal", source("let x: U32=1 x"), 5),
-                     ("stack65", source("(" * 65 + "1" + ")" * 65), 7),
-                     ("source4097", b"\xff" + bytes(4096), 7)]
+                     ("stack65", source("(" * 65 + "1" + ")" * 65), 7)]
         negatives.extend([
             ("unselected-type", source("if true {7} else {false}"), 5),
             ("unselected-name", source("if true {7} else {missing}"), 5),
@@ -435,13 +434,16 @@ def main():
                                  "previous_program_preserved": True})
 
         # Record the actual runtime limit below the algorithmic source ceiling.
-        directory, job = package("source4096-arena", b"\xff" + bytes(4095))
-        protected = directory / "program.dag"
-        protected.write_bytes(prior_program)
-        execute(job, protected, expected=1, force=True)
-        assert protected.read_bytes() == prior_program
-        observations.append({"case": "source4096-arena", "result": "runtime failure; no RES1 or program publication",
-                             "previous_program_preserved": True})
+        for name, content in [("source4096-arena", b"\xff" + bytes(4095)),
+                              ("source4097", b"\xff" + bytes(4096))]:
+            directory, job = package(name, content)
+            protected = directory / "program.dag"
+            protected.write_bytes(prior_program)
+            execute(job, protected, expected=1, force=True)
+            assert protected.read_bytes() == prior_program
+            observations.append({"case": name, "source_hex": content.hex(),
+                                 "result": "runtime failure; no RES1 or program publication",
+                                 "previous_program_preserved": True})
         directory, job = package("assignments31-arena", source("let mut x=0 " + "x=x+1 " * 31 + "x"))
         protected = directory / "program.dag"
         protected.write_bytes(prior_program)

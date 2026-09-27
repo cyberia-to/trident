@@ -60,7 +60,7 @@ pub fn checked(s: body_state.State) -> Body {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn read(value: Noun, cap: U32) -> Body {
     let sizes = noun.head(value)
     let contents = noun.tail(value)
@@ -84,7 +84,7 @@ pub fn read(value: Noun, cap: U32) -> Body {
 // Intrinsic preflight needs only expression nodes. Keep their complete sequence
 // validation without decoding the unrelated statements, blocks and loop banks.
 #[pure]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[ensures((cap < seq.len(result)) == false)]
 pub fn expression_nodes(value: Noun, cap: U32) -> seq.Seq {
     let expressions = noun.head(noun.tail(value))

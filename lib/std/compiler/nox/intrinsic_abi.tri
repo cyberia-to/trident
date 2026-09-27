@@ -86,7 +86,7 @@ pub fn returns(kind: U32) -> Noun {
 // Function/parameter records are compiler-owned; only their ordered types
 // participate in this check. Names, body spans and parameter flags do not.
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(params)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(params)) == false)]
 pub fn valid(kind: U32, f: signatures.Function, params: seq.Seq) -> Bool {
     if syntax.either(kind == NONE, (kind < COUNT) == false) { return false }
     if (f.count == arity(kind)) == false { return false }
@@ -111,7 +111,7 @@ pub fn allowed_owner(owner: bytes.Bytes) -> Bool {
     // The low three prior bytes plus one byte fit U32 exactly. Testing the
     // previous four-byte window before shifting recognizes the complete .ext.
     // segment with one source read per position and no modular packing alias.
-    for i in 0..4096 {
+    for i in 0..65536 {
         if i == length { return false }
         let byte = bytes.get(owner, i)
         if syntax.both(suffix == as_u32(778401908), byte == as_u32(46)) { return true }

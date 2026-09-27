@@ -31,7 +31,7 @@ fn bound(source: bytes.Bytes, token: syntax.Token, last_digit: U32) -> Bound {
         return result
     }
     let mut pos = token.start
-    for turn in 0..4096 {
+    for turn in 0..65536 {
         if pos == token.end { return result }
         let digit = as_u32(field.sub(as_field(bytes.get(source, pos)), 48))
         if result.value == 4294967296 { result.error = syntax.error(5, token.start, token.end) return result }

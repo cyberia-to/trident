@@ -25,7 +25,7 @@ pub fn empty() -> Scope { Scope { owner: bytes.empty(), records: seq.empty(), im
 pub fn name(source: bytes.Bytes, token: syntax.Token) -> bytes.Bytes {
     let mut result = bytes.empty()
     let mut pos = token.start
-    for step in 0..4096 {
+    for step in 0..65536 {
         if pos == token.end { return result }
         result = bytes.push(result, bytes.get(source, pos), syntax.SOURCE_CAP)
         pos = syntax.inc(pos)
@@ -44,21 +44,21 @@ pub fn record(ty: Noun, public: Bool) -> Noun {
 
 // Reverse lookup selects final local visibility without making imports bare.
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(scope.records)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(scope.records)) == false)]
 pub fn position(scope: Scope, wanted: Noun) -> U32 {
     let mut index = seq.len(scope.records)
     for step in 0..4096 {
-        if index == syntax.ZERO { return syntax.SOURCE_CAP }
+        if index == syntax.ZERO { return syntax.TABLE_CAP }
         index = syntax.dec(index)
         if noun.eq(nominal.name(noun.head(seq.get(scope.records, index))), wanted) { return index }
     }
-    syntax.SOURCE_CAP
+    syntax.TABLE_CAP
 }
 
 #[pure]
 pub fn lookup(scope: Scope, name: bytes.Bytes) -> Found {
     let index = position(scope, bytes.to_noun(name))
-    if index == syntax.SOURCE_CAP { return Found { ty: noun.atom(types.INVALID), exists: false, public: false } }
+    if index == syntax.TABLE_CAP { return Found { ty: noun.atom(types.INVALID), exists: false, public: false } }
     let item = seq.get(scope.records, index)
     Found { ty: noun.head(item), exists: true, public: noun.as_field(noun.tail(item)) == 1 }
 }

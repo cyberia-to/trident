@@ -89,7 +89,7 @@ fn step(input: Walk) -> Walk {
             s.graph = fail(s.graph, found.index, syntax.error(7, syntax.ZERO, syntax.ZERO))
             return s
         }
-        let capacity = as_u32(field.sub(as_field(syntax.SOURCE_CAP), as_field(s.graph.total_bytes)))
+        let capacity = as_u32(field.sub(as_field(s.graph.package.source_limit), as_field(s.graph.total_bytes)))
         let opened = job.open(s.graph.package, found.index, capacity)
         s.graph.package.remaining = opened.remaining
         if (opened.error.code == syntax.ZERO) == false { s.graph = fail(s.graph, found.index, opened.error) return s }
@@ -142,7 +142,7 @@ pub fn entry_header(view: job.View) -> module_header.Header {
 pub fn discover_open(view: job.View, header: module_header.Header) -> Graph {
     let zero = syntax.ZERO
     let mut capacity = view.sequence_limit
-    if syntax.SOURCE_CAP < capacity { capacity = syntax.SOURCE_CAP }
+    if syntax.TABLE_CAP < capacity { capacity = syntax.TABLE_CAP }
     let empty = tree.empty(tree.shape(seq.len(view.package.modules)).height)
     let graph = Graph { package: view.package, sources: bytes.table_empty(), names: bytes.table_empty(),
         modules: seq.empty(), indexes: empty, capacity, total_bytes: zero, total_uses: zero,

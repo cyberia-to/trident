@@ -14,9 +14,9 @@ pub struct Binding { pub owner: U32, pub name: syntax.Token, pub target: U32 }
 pub struct Found { pub exists: Bool, pub target: U32 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < modules) == false)]
+#[requires((syntax.TABLE_CAP < modules) == false)]
 pub fn empty(modules: U32) -> Bank {
-    assert((syntax.SOURCE_CAP < modules) == false)
+    assert((syntax.TABLE_CAP < modules) == false)
     Bank { records: seq.empty(), heads: tree.empty(tree.shape(modules).height), modules }
 }
 
@@ -43,13 +43,13 @@ pub fn read(bank: Bank, id: U32) -> Binding {
 // its own storage and has no constructor for externally serialized records.
 #[pure]
 #[requires(len(bank) < cap)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires(item.owner < bank.modules)]
-#[requires(item.target < syntax.SOURCE_CAP)]
+#[requires(item.target < syntax.TABLE_CAP)]
 pub fn push(bank: Bank, item: Binding, cap: U32) -> Bank {
-    assert((syntax.SOURCE_CAP < cap) == false)
+    assert((syntax.TABLE_CAP < cap) == false)
     assert(item.owner < bank.modules)
-    assert(item.target < syntax.SOURCE_CAP)
+    assert(item.target < syntax.TABLE_CAP)
     let id = len(bank)
     let next = tree.get(bank.heads, bank.modules, item.owner)
     let row = noun.pair(noun.atom(as_field(item.owner)), noun.pair(span(item.name), noun.atom(as_field(item.target))))
@@ -63,7 +63,7 @@ fn same(caller: bytes.Bytes, query: syntax.Token, source: bytes.Bytes, name: syn
     if (field.sub(as_field(query.end), as_field(query.start)) == field.sub(as_field(name.end), as_field(name.start))) == false { return false }
     let mut a = query.start
     let mut b = name.start
-    for step in 0..4096 {
+    for step in 0..65536 {
         if a == query.end { return true }
         if (bytes.get(caller, a) == bytes.get(source, b)) == false { return false }
         a = syntax.inc(a)

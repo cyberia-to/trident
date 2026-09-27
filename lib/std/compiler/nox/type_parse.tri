@@ -108,7 +108,7 @@ fn step(source: bytes.Bytes, scope: type_registry.Scope, input: State, cap: U32,
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, token: syntax.Token, scope: type_registry.Scope, cap: U32) -> Parsed {
     let zero = syntax.ZERO
     if cap == zero { return Parsed { ty: noun.atom(types.INVALID), token, error: syntax.error(7, token.start, token.end) } }

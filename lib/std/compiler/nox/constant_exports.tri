@@ -71,7 +71,7 @@ fn same(caller: bytes.Bytes, query: syntax.Token, source: bytes.Bytes, name: syn
     if (field.sub(as_field(query.end), as_field(query.start)) == field.sub(as_field(name.end), as_field(name.start))) == false { return false }
     let mut a = query.start
     let mut b = name.start
-    for step in 0..4096 {
+    for step in 0..65536 {
         if a == query.end { return true }
         if (bytes.get(caller, a) == bytes.get(source, b)) == false { return false }
         a = syntax.inc(a)
@@ -82,7 +82,7 @@ fn same(caller: bytes.Bytes, query: syntax.Token, source: bytes.Bytes, name: syn
 
 #[pure]
 #[requires(owner < bank.modules)]
-#[requires((syntax.SOURCE_CAP < len(bank)) == false)]
+#[requires((syntax.TABLE_CAP < len(bank)) == false)]
 pub fn find(bank: Bank, owner: U32, source: bytes.Bytes, caller: bytes.Bytes, query: syntax.Token) -> Found {
     let mut cursor = as_u32(noun.as_field(tree.get(bank.heads, bank.modules, owner)))
     for step in 0..4096 {

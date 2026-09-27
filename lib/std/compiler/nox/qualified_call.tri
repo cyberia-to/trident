@@ -15,7 +15,7 @@ use vm.nox.noun
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn follows(source: bytes.Bytes, dot: syntax.Token, before_block: Bool, frames: Noun) -> Bool {
     let mut next = dot
-    for part in 0..4096 {
+    for part in 0..65536 {
         let member = lexer.next(source, next.end)
         if (member.kind == as_u32(1)) == false { return false }
         next = lexer.next(source, member.end)

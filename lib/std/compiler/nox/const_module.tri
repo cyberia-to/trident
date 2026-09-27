@@ -46,7 +46,7 @@ fn chunk(source: bytes.Bytes, input: Scan, cap: U32) -> Scan {
 // and private declarations retain the seed's validation obligations.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View, cap: U32) -> constants.Resolved {
     let mut scope = constants.empty()
     scope.owner = owner
@@ -61,7 +61,7 @@ pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: const
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(scope.declarations)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(scope.declarations)) == false)]
 pub fn publish(source: bytes.Bytes, scope: constants.Scope, owner: U32, bank: constant_exports.Bank, cap: U32) -> Published {
     let mut s = Published { exports: bank, error: syntax.error(0, syntax.ZERO, syntax.ZERO) }
     for id in 0..4096 {

@@ -47,7 +47,7 @@ pub fn contains_noun(ty: Noun) -> Bool { info(ty).contains_noun }
 // Count logical type occurrences, including repeated children; sharing in the
 // canonical DAG does not evade source complexity or nesting allowances.
 #[pure]
-#[requires((syntax.SOURCE_CAP < node_cap) == false)]
+#[requires((syntax.TABLE_CAP < node_cap) == false)]
 #[requires((syntax.STACK_CAP < depth_cap) == false)]
 pub fn tuple(children: seq.Seq, node_cap: U32, depth_cap: U32) -> Built {
     let failure = Built { ty: noun.atom(INVALID), failed: true }
@@ -104,7 +104,7 @@ pub fn component(parts: Parts, index: U32) -> Noun {
 // Fixed Field arrays use [18 [[element length] metadata]]. Logical occurrence
 // count includes every element, even when their canonical type value is shared.
 #[pure]
-#[requires((syntax.SOURCE_CAP < node_cap) == false)]
+#[requires((syntax.TABLE_CAP < node_cap) == false)]
 #[requires((syntax.STACK_CAP < depth_cap) == false)]
 pub fn array(length: U32, node_cap: U32, depth_cap: U32) -> Built {
     if syntax.either(depth_cap == syntax.ZERO, (length < node_cap) == false) {

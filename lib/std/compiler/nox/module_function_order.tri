@@ -14,7 +14,7 @@ struct Insert { ids: seq.Seq, gap: U32, done: Bool }
 fn before_span(left: bytes.Bytes, a: syntax.Token, right: bytes.Bytes, b: syntax.Token) -> Bool {
     let mut x = a.start
     let mut y = b.start
-    for step in 0..4096 {
+    for step in 0..65536 {
         if x == a.end { return (y == b.end) == false }
         if y == b.end { return false }
         let first = bytes.get(left, x)
@@ -69,7 +69,7 @@ fn insert(scope: Sources, roots: seq.Seq, id: U32, cap: U32) -> seq.Seq {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
 #[requires((cap < seq.len(roots)) == false)]
 pub fn sort(functions: seq.Seq, owners: seq.Seq, names: bytes.BytesTable, sources: bytes.BytesTable, roots: seq.Seq, cap: U32) -> function_order.Ordered {
     let scope = Sources { functions, owners, names, sources }

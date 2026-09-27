@@ -25,7 +25,7 @@ fn chunk(values: seq.Seq, arguments: seq.Seq, input: Values) -> Values {
 
 // Reversed owned links become a zero-ended list, evaluated in source order.
 #[pure]
-#[requires((syntax.SOURCE_CAP < count) == false)]
+#[requires((syntax.TABLE_CAP < count) == false)]
 pub fn values(values: seq.Seq, arguments: seq.Seq, head: U32, count: U32) -> formula.Value {
     let mut s = Values { output: flow.literal(0), head, remaining: count }
     for block in 0..512 {

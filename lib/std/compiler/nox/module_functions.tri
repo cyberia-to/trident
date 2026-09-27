@@ -30,7 +30,7 @@ pub struct Bank {
 }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < modules) == false)]
+#[requires((syntax.TABLE_CAP < modules) == false)]
 pub fn empty(modules: U32) -> Bank {
     Bank { functions: seq.empty(), params: seq.empty(), bodies: seq.empty(),
         owners: seq.empty(), roots: seq.empty(), exports: function_exports.empty(modules),

@@ -101,10 +101,11 @@ fn chunk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, input: Walked, cap
     s
 }
 
-// Source-built graphs have at most SOURCE_CAP calls and declarations in total.
+// Each pass allows 16384 traversal steps, independently of source bytes.
+// Exhaustion reports capacity even when every function table fits TABLE_CAP.
 // Reuse this traversal for all final definitions, then for reachability from main.
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
 pub fn walk(functions: seq.Seq, bodies: seq.Seq, roots: seq.Seq, cap: U32) -> Walked {
     let zero = syntax.ZERO
     let mut s = Walked { colors: tree.empty(tree.shape(seq.len(functions)).height), heights: tree.empty(tree.shape(seq.len(functions)).height), frames: noun.atom(0),

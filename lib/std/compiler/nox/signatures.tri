@@ -56,7 +56,7 @@ fn chunk(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq, start: U32
 
 // Final callable bindings are independent of the current lexical local scope.
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn lookup(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq) -> U32 {
     lookup_range(source, name, functions, syntax.ZERO, seq.len(functions))
@@ -64,7 +64,7 @@ pub fn lookup(source: bytes.Bytes, name: syntax.Token, functions: seq.Seq) -> U3
 
 // Only the current owner's declaration range supplies bare callable names.
 #[pure]
-#[requires((syntax.SOURCE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 #[requires((end < start) == false)]
 #[requires((seq.len(functions) < end) == false)]

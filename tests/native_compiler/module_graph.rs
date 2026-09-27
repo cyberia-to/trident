@@ -79,7 +79,7 @@ fn admitted_job(modules: &[schema::Module], cap: u64) -> Vec<u8> {
     let mut arena = Arena::try_new_boxed().unwrap();
     assert!(arena.limit_allocations(786432));
     let mut caps = support::CAPS;
-    // Host source allowance exceeds the unchanged4096 guest closure cap.
+    // Source bytes and compact module IDs have independent allowances.
     caps[0] = 8192;
     caps[1] = 65536;
     caps[3] = cap;
@@ -374,10 +374,6 @@ fn native_module_graph_keeps_one_allowance_and_checks_shared_source_and_use_caps
         assert_eq!((graph.code, graph.bytes), (0, 4096));
         let modules = [module("a", format!("{exact} ")), module("entry", entry)];
         let graph = run(&modules, 4096, 0).unwrap();
-        assert_eq!(
-            (graph.index, graph.code, graph.start, graph.end),
-            (0, 7, 0, 0)
-        );
-        assert_eq!(graph.bytes, entry.len());
+        assert_eq!((graph.code, graph.bytes), (0, 4097));
     });
 }

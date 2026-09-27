@@ -560,8 +560,9 @@ parameter/result types. Qualified calls and types resolve direct public imports;
 private helpers and opaque descriptors retain their own module scope. All bodies
 are checked, including replaced declarations. Generated compiler-job profiles
 preserve explicit JOB1 options. Legacy path remaps remain subsequent work.
-All reached sources share the existing4096-byte ceiling; import support does
-not imply compiler-scale memory or a complete self-build. The detailed contract
+Each reached source admits at most 65536 bytes; their sum fits the explicit JOB1
+source allowance. Internal table IDs remain bounded by4096. Admission does not
+establish compiler-scale execution or a complete self-build. The detailed contract
 is [native compiler jobs](self-hosting-jobs.md).
 
 Fixed Field arrays use `[Field; N]` annotations with a raw decimal extent.
@@ -708,14 +709,15 @@ independent nox arena, reduction and evaluator-frame limits. SH4 measures the
 complete compiler workload. An iterative operator/value stack avoids recursive
 descent; helper chunks return explicitly to release evaluator frames.
 
-The initial ceilings are 4096 selected source bytes and 64 live entries in
-each operator/value stack, further restricted by the requested sequence cap.
-Expression records, statements and binding tables each obey the lesser of the
-requested sequence cap and the selected-source ceiling; every append checks
-capacity before modifying the collection.
-At most 4096 nonempty tokens and 4096 operator reductions fit the 8192-step
-parser driver. UTF-8 validation uses 64-byte chunks; parsing uses 32-step
-chunks; body parsing and expression/statement emission use eight-record chunks
+Each reached source admits at most 65536 bytes; their total obeys the explicit
+JOB1 source allowance. Operator/value stacks admit at most 64 live entries,
+further restricted by the requested sequence cap. Expression records, statements
+and binding tables each obey the lesser of the requested sequence cap and the
+independent 4096-entry table capacity; every append checks capacity before
+modifying the collection. Source offsets never serve as table IDs or absent-ID
+sentinels. The expression driver admits at most 8192 parsing/reduction steps;
+exhaustion returns a capacity diagnostic before publication. UTF-8 validation
+uses 64-byte chunks; parsing uses 32-step chunks; body parsing and expression/statement emission use eight-record chunks
 with explicit completion. Generated formula depth plus its ART1/RES1 wrappers must fit the
 requested artifact depth. The guest JOB reader charges every record projection,
 collection traversal and repeated admission payload read to its shared visit

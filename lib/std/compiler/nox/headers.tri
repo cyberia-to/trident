@@ -195,14 +195,14 @@ fn chunk(source: bytes.Bytes, input: header_state.State, cap: U32, type_limit: U
 // Braces are tokens; braces inside comments never delimit bodies.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn parse(source: bytes.Bytes, start: U32, owner: bytes.Bytes, cap: U32) -> header_state.State {
     parse_imports(source, start, owner, constant_imports.empty(), cap)
 }
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 pub fn parse_imports(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports: constant_imports.View, cap: U32) -> header_state.State {
     validate_entry(scan_module(source, start, owner, imports, type_imports.empty(), syntax.ZERO, seq.empty(), seq.empty(), cap))
 }
@@ -212,7 +212,7 @@ pub fn parse_imports(source: bytes.Bytes, start: U32, owner: bytes.Bytes, import
 // Dependency Unit returns use the ordinary omitted return annotation.
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires((cap < seq.len(functions)) == false)]
 #[requires((cap < seq.len(params)) == false)]
 #[requires((cap < type_start) == false)]
@@ -227,7 +227,7 @@ pub fn scan_module(source: bytes.Bytes, start: U32, owner: bytes.Bytes, imports:
 
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires((cap < seq.len(functions)) == false)]
 #[requires((cap < seq.len(params)) == false)]
 #[requires((cap < type_start) == false)]

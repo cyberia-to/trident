@@ -14,10 +14,10 @@ pub struct Bank { records: seq.Seq, heads: Noun, modules: U32 }
 pub struct Found { pub exists: Bool, pub ty: Noun }
 
 #[pure]
-#[requires((syntax.SOURCE_CAP < modules) == false)]
+#[requires((syntax.TABLE_CAP < modules) == false)]
 #[ensures(len(result) == syntax.ZERO)]
 pub fn empty(modules: U32) -> Bank {
-    assert((syntax.SOURCE_CAP < modules) == false)
+    assert((syntax.TABLE_CAP < modules) == false)
     Bank { records: seq.empty(), heads: tree.empty(tree.shape(modules).height), modules }
 }
 
@@ -29,12 +29,12 @@ pub fn len(bank: Bank) -> U32 { seq.len(bank.records) }
 // compiler-owned bank has no serialized-handle admission or source-name spans.
 #[pure]
 #[requires(len(bank) < cap)]
-#[requires((syntax.SOURCE_CAP < cap) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
 #[requires(owner < bank.modules)]
 #[requires(noun.as_field(noun.head(ty)) == types.NOMINAL)]
 #[ensures(as_field(len(result)) == as_field(len(bank)) + 1)]
 pub fn push(bank: Bank, owner: U32, ty: Noun, cap: U32) -> Bank {
-    assert((syntax.SOURCE_CAP < cap) == false)
+    assert((syntax.TABLE_CAP < cap) == false)
     assert(len(bank) < cap)
     assert(owner < bank.modules)
     assert_eq(noun.as_field(noun.head(ty)), types.NOMINAL)
