@@ -10,6 +10,9 @@ SDK/lib/catalog migration, owner metadata, runtime guards and packaging.
 Real VM correctness fixes; source/archive installs and exact binary smoke pass.
 Full release scope explicitly reaffirmed by owner; active work and gates:
 `audit/full-release-preparation.md`. No narrower scope accepted.
-Real private/state execution, full baseline coverage, crypto correctness,
-Neptune validation/deployment, coordinated versions and fresh archives remain
-under implementation. Historical ownership candidates are now stale.
+Joy's native public/private state execution is implemented; current profile
+and security assumptions are in `joy/specs/private-execution.md` and
+`zheng/specs/native-private-ccs.md`. Joy owns soft3/cyber integration; Trisha
+owns Triton/Neptune. Full dynamic nox proof coverage, self-build proofs,
+Neptune deployment and coordinated release qualification have separate gates.
+Historical ownership candidates are now stale.

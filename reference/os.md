@@ -70,9 +70,11 @@ execution does not silently supply an unchecked root.
 
 `JOYST001` proves public state execution, binding active namespace/key/value
 coordinates and all four root limbs to the same verifier-derived Zheng relation.
-Joy's soft3-only proof stack currently has no zero-knowledge or hidden-query
-execution protocol. Secret-bearing state reads may execute, but proving them
-is explicitly refused. Historical private envelopes are unsupported.
+The native `JOYZH001` private profile constrains secret call witnesses and
+hidden namespace/key/value selection inside that relation. It authenticates
+all public tables before deriving the circuit, with all root limbs bound to
+the actual lookup. Table contents remain public. Secret inputs or explicit
+`--zk` select this profile; historical foreign private envelopes are unsupported.
 `JOYEXEC2` is the separate stateless public execution certificate; it discloses
 its witness and does not accept private calls. Proof verification checks the
 expected program, public input/output, selected cost and relevant state root.
@@ -80,7 +82,8 @@ expected program, public input/output, selected cost and relevant state root.
 Dynamic continuations/variable noun shapes, a private database and live state
 synchronization remain outside the production proof contract. The experimental
 tagged relation is not used by these formats. See
-[Zheng execution contract](../../zheng/specs/execution.md) and
+[Zheng execution contract](../../zheng/specs/execution.md),
+[native private profile](../../joy/specs/private-execution.md), and
 [Joy CLI](../../joy/specs/cli.md) for exact admission and disclosure requirements.
 
 ## Design vocabulary

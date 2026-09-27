@@ -870,8 +870,13 @@ native proof path. Experimental circuit tests alone do not close this gate.
 **Receipt:** normative relation/profile version, production dispatch/verifier,
 positive and adversarial pilot proofs, limits and measured proving resources.
 A full-witness public proof may satisfy the declared profile; succinctness and
-zero knowledge require separate evidence. Historical foreign-backend JOYZK
-artifacts are unsupported in soft3-only Joy and do not satisfy this milestone.
+zero knowledge require separate evidence. Joy now dispatches bounded static
+private execution to native Zheng through `JOYZH001`; its
+[private proof contract](../../joy/specs/private-execution.md) covers atom calls
+and hidden queries over authenticated public tables. The dynamic compiler
+execution model remains outside that relation, so this profile alone does not
+close SH7 or the self-build proof gate. Historical foreign-backend JOYZK artifacts
+are unsupported in soft3-only Joy and do not satisfy this milestone.
 
 ## SH8. Proved self-compilation
 

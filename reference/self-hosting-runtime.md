@@ -198,8 +198,11 @@ and variable shapes. SH7 must bind complete program/input/output particles,
 execution budget and supported control flow to the same verified execution.
 New artifact wrappers or copied source hashes alone prove nothing about that
 relation. SH8 needs native proofs of both complete self-builds. Joy uses the
-soft3 proof stack only; retired foreign private artifacts cannot satisfy native
-proof independence.
+soft3 proof stack only. Its native `JOYZH001` private profile covers the bounded
+static relation, including atom call witnesses and hidden queries over public
+tables. The compiler's dynamic continuations and variable data shapes still
+need the SH7 extension; private proof support alone does not close SH7 or SH8.
+Retired foreign private artifacts cannot satisfy native proof independence.
 
 Owners: Trident specifies source semantics/code layout; nox enforces reduction,
 allocation and frame behavior; Joy enforces transport/admission/publication;

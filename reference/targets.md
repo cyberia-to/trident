@@ -72,8 +72,10 @@ trisha describe --target neptune
 Explicit state selection belongs to the runtime owner. A state preset or
 endpoint alone does not establish transaction submission support. In
 particular Joy accepts authenticated public BBG certificates with `--state`
-and proves supported public lookups through Zheng. Live synchronization and
-private/zero-knowledge state proving remain unavailable.
+and proves supported public lookups through Zheng. Secret inputs or `--zk`
+select the native private profile, which also proves hidden queries over those
+public tables. Live synchronization and private database contents remain
+outside this contract.
 
 ## Versioned target packages
 
@@ -121,7 +123,7 @@ substitute Hemera for Tip5.
 
 | Owner | Native execution | Proof contract | Deployment |
 |---|---|---|---|
-| Joy / nox | Public inputs, sequential secret witnesses and authenticated public state certificates | Native Zheng public execution/state certificates; full witness, linear verification; secret/zero-knowledge proving unavailable | Unimplemented |
+| Joy / nox | Public inputs, sequential secret witnesses and authenticated public state certificates | Native Zheng public certificates or JOYZH001 private proofs; hidden queries over public tables; linear proof size | Unimplemented |
 | Trisha / Triton | Triton adapter | Installed package declares proof formats and restrictions | Consult installed capability and Neptune command; packaging is not chain deployment |
 
 Always consult the installed package, not a catalog status level, before

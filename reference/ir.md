@@ -129,12 +129,13 @@ arguments are subject leaves; results are noun leaves. Imports, function
 inlining and bounded source loops are resolved before runtime.
 
 The resulting formulas are executed by nox through Joy. Zheng supports a
-bounded static public proof subset of those formulas. Successful lowering
+bounded static execution relation for those formulas. Successful lowering
 or native execution does not imply that a certificate can be generated.
-Private backends constrain atom calls and secrets. State backends bind reads
-to authenticated tables; private queries over public tables are bounded to
-2048 fields. Dynamic continuations and incompatible branch shapes still exceed
-the current relation. See Zheng's execution backend contract for exact bounds.
+Joy's native Zheng private profile constrains atom calls and secrets. State
+profiles bind reads to authenticated tables; private queries over public tables
+are bounded to 2048 fields. Dynamic continuations and incompatible branch shapes
+still exceed the current relation. See Zheng's execution backend contract for
+exact bounds.
 
 ## Target propagation and identity
 
@@ -159,8 +160,13 @@ Compiler symbolic analysis, target execution and cryptographic verification
 are distinct checks. The current Zheng certificate authenticates the
 supported public execution relation with a full disclosed witness and
 linear verification. Joy also authenticates public state execution through
-Zheng. Private/zero-knowledge execution and hidden-query proofs are unavailable
-in the soft3-only warrior; secret execution remains supported.
+Zheng. The native JOYZH001 profile proves the same bounded relation with hidden
+witness columns and supports hidden queries over authenticated public tables.
+Its arithmetic MPC-in-the-head construction has linear proof size; public
+outputs and selected cost remain visible. See the
+[native private protocol](../../zheng/specs/native-private-ccs.md) for its
+security assumptions and [Joy's contract](../../joy/specs/private-execution.md)
+for artifact and state binding.
 
 See [Warrior API](warrior-api.md) for package boundaries and the
 [ownership review](../audit/target-ownership.md) for migration gates.
