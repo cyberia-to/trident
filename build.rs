@@ -10,10 +10,18 @@ fn collect(root: &Path, dir: &Path, entries: &mut Vec<(String, String)>) -> io::
             collect(root, &path, entries)?;
         } else if path.extension().is_some_and(|e| e == "tri" || e == "toml") {
             let relative = path.strip_prefix(root).map_err(io::Error::other)?;
-            entries.push((
-                relative.to_string_lossy().replace('\\', "/"),
-                fs::read_to_string(path)?,
-            ));
+            let relative = relative.to_string_lossy().replace('\\', "/");
+            let external = env::var_os("CARGO_FEATURE_EXTERNAL_TARGETS").is_some();
+            let stack_compiler = relative.starts_with("lib/std/compiler/")
+                && relative
+                    .trim_start_matches("lib/std/compiler/")
+                    .split('/')
+                    .count()
+                    == 1;
+            if !external && (relative.starts_with("catalog/") || stack_compiler) {
+                continue;
+            }
+            entries.push((relative, fs::read_to_string(path)?));
         }
     }
     Ok(())

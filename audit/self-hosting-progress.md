@@ -578,3 +578,21 @@ module discovery already exhausts the same budget. Next: bounded byte/tree
 traversal, then complete discovery and later-stage measurements. All three
 binaries and C1/graph reproduce from the committed source. C2/C3, six CPU
 platforms and native Zheng proofs remain open. Noun stays 128K.
+
+
+### Soft3 runtime ownership correction
+
+Joy source `06aac01` removes its private Trisha/Triton adapter and dependency
+closure. Trident `7b1d4c0` separates external target resources behind the default
+`external-targets` feature; Joy disables it, while Trisha `aa25e32` enables it
+explicitly. Native nox compiler sources and compilation profiles stay unchanged.
+Secret execution remains supported; private/zero-knowledge proving in Joy is
+unavailable. Public Zheng execution and authenticated public-state certificates
+remain supported. This does not close SH7/SH8 or advance C2/C3 acceptance.
+
+[Owner receipt](../../joy/audit/soft3-only/README.md) records commands and revisions:
+124 Joy tests, both724-test compiler library configurations,26 import/target
+checks,14/13 differential checks,430 Trisha compatibility tests with6 existing
+ignored and133 unchanged baseline rows/43 manual baselines. The installed
+65-command/21-observation generated compiler acceptance preserves all204 fixture
+files and the accepted C1 SHA-256 `4aed7fc83be96156fcb65c3bbb369c192ad27f894ab78a030e3588056a66d112`.

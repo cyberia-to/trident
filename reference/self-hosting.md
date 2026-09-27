@@ -870,8 +870,8 @@ native proof path. Experimental circuit tests alone do not close this gate.
 **Receipt:** normative relation/profile version, production dispatch/verifier,
 positive and adversarial pilot proofs, limits and measured proving resources.
 A full-witness public proof may satisfy the declared profile; succinctness and
-zero knowledge require separate evidence. Triton-backed JOYZK003 is a distinct
-profile and does not satisfy this native milestone.
+zero knowledge require separate evidence. Historical foreign-backend JOYZK
+artifacts are unsupported in soft3-only Joy and do not satisfy this milestone.
 
 ## SH8. Proved self-compilation
 

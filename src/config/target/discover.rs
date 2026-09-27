@@ -6,6 +6,7 @@ use std::process::{Command, Stdio};
 
 pub fn owner_for(target: &str) -> Option<&'static str> {
     match target {
+        #[cfg(feature = "external-targets")]
         "triton" | "neptune" => Some("trisha"),
         "nox" | "cyber" => Some("joy"),
         _ => None,
@@ -155,7 +156,10 @@ impl TargetPackage {
             .map_err(|e| err(format!("invalid {owner} target package: {e}")))?;
         package.validate().map_err(err)?;
         let correct_target = match target {
-            "triton" | "nox" => package.terrain.name == target && package.union.is_none(),
+            "nox" => package.terrain.name == target && package.union.is_none(),
+            #[cfg(feature = "external-targets")]
+            "triton" => package.terrain.name == target && package.union.is_none(),
+            #[cfg(feature = "external-targets")]
             "neptune" => {
                 package.terrain.name == "triton"
                     && package.union.as_ref().map(|u| u.name.as_str()) == Some("neptune")

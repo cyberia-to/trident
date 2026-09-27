@@ -70,9 +70,9 @@ execution does not silently supply an unchecked root.
 
 `JOYST001` proves public state execution, binding active namespace/key/value
 coordinates and all four root limbs to the same verifier-derived Zheng relation.
-`JOYZK003` proves private inputs and query coordinates using Trisha's native
-Triton checker. Hidden queries require all ten authenticated public dimension
-tables and retain the2048-field/32768-gate limits. The database remains public.
+Joy's soft3-only proof stack currently has no zero-knowledge or hidden-query
+execution protocol. Secret-bearing state reads may execute, but proving them
+is explicitly refused. Historical private envelopes are unsupported.
 `JOYEXEC2` is the separate stateless public execution certificate; it discloses
 its witness and does not accept private calls. Proof verification checks the
 expected program, public input/output, selected cost and relevant state root.

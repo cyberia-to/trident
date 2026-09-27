@@ -197,8 +197,9 @@ extend the production Zheng relation: it currently rejects dynamic continuations
 and variable shapes. SH7 must bind complete program/input/output particles,
 execution budget and supported control flow to the same verified execution.
 New artifact wrappers or copied source hashes alone prove nothing about that
-relation. SH8 needs native proofs of both complete self-builds. Triton-backed
-JOYZK003 remains a distinct profile and cannot satisfy native proof independence.
+relation. SH8 needs native proofs of both complete self-builds. Joy uses the
+soft3 proof stack only; retired foreign private artifacts cannot satisfy native
+proof independence.
 
 Owners: Trident specifies source semantics/code layout; nox enforces reduction,
 allocation and frame behavior; Joy enforces transport/admission/publication;

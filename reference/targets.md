@@ -7,6 +7,20 @@ in the discovery catalog is not an implemented compiler or runtime. Current
 compilation paths are the reference nox compiler in Trident and the Triton
 adapter in Trisha. Other catalog machines remain declarations.
 
+## Compiler build boundary
+
+The default `external-targets` Cargo feature includes the discovery catalog,
+external owner registrations, legacy Neptune import aliases and the historical
+RAM/TASM compiler source resources. The full compiler and external warriors
+select this feature. Generic package validation and compiler IR remain shared.
+
+A dependency with `default-features = false` embeds portable libraries and the
+native nox compiler SDK, and registers only nox/cyber discovery. Joy selects
+this configuration so its compiler dependency carries no foreign catalog,
+legacy foreign import routing or stack compiler prototype resources. Cargo
+features are additive: a binary's resolved feature closure is the acceptance
+boundary, not an individual dependency declaration.
+
 ## Ownership and physical layout
 
 | Responsibility | Owner and location |
@@ -57,8 +71,9 @@ trisha describe --target neptune
 
 Explicit state selection belongs to the runtime owner. A state preset or
 endpoint alone does not establish transaction submission support. In
-particular Joy refuses CLI state requests; public Zheng certificates cannot
-prove state execution.
+particular Joy accepts authenticated public BBG certificates with `--state`
+and proves supported public lookups through Zheng. Live synchronization and
+private/zero-knowledge state proving remain unavailable.
 
 ## Versioned target packages
 
@@ -106,7 +121,7 @@ substitute Hemera for Tip5.
 
 | Owner | Native execution | Proof contract | Deployment |
 |---|---|---|---|
-| Joy / nox | Public inputs and sequential secret witnesses; no CLI state loader | Bounded public Zheng execution certificate; full witness, linear verification; no ZK, secrets or state | Unimplemented |
+| Joy / nox | Public inputs, sequential secret witnesses and authenticated public state certificates | Native Zheng public execution/state certificates; full witness, linear verification; secret/zero-knowledge proving unavailable | Unimplemented |
 | Trisha / Triton | Triton adapter | Installed package declares proof formats and restrictions | Consult installed capability and Neptune command; packaging is not chain deployment |
 
 Always consult the installed package, not a catalog status level, before
