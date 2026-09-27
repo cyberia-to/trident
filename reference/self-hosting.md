@@ -206,7 +206,7 @@ their normal checking order. Invalid JOB1 option values fail Joy admission.
 
 ```text
 program := "program" logical_path use* declaration+ EOF
-module := "module" logical_path use* ("pub"? constant)* EOF
+module := "module" logical_path use* declaration* EOF
 use := "use" logical_path
 logical_path := identifier ("." identifier)*
 declaration := function_attribute* "pub"? function | "pub"? (constant | record_declaration)
@@ -337,7 +337,8 @@ The scalar unqualified builtins are: `as_u32(Field) -> U32`,
 bindings take precedence over builtin names, including forward declarations;
 local variables do not replace callable bindings. Builtins do not enter the
 function graph or code table. Every argument is type checked and evaluated
-once in source order. Qualified names require future import resolution.
+once in source order. Qualified names use the direct-import resolution rules
+in [the module contract](self-hosting-jobs.md).
 
 `as_u32` checks that its evaluated Field argument is less than 2^32. Failure
 traps during execution of the emitted program through `inv(0)`; compiling that

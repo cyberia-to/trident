@@ -8,71 +8,71 @@ Component results close only their named substeps.
 
 ## Current position
 
-Next: localize compiler stage/module costs and bound alias lookup, then rerun
-complete C1(S). SH0–SH2 are closed; SH3–SH8 remain open. No C2 has been produced
-from the complete compiler source, and no compiler execution proof is claimed.
-Generated compiler-profile acceptance uses a separate literal compiler fixture.
+The complete frozen compiler has produced C2 through Joy/nox. SH0–SH3 are
+closed; SH4–SH8 remain open. The next steps are actual C2 corpus acceptance,
+C2(S) → C3, exact fixed point and reproducible bootstrap. No compiler execution
+proof is claimed. The separate literal compiler fixture remains historical.
 
-The [byte/path/function-order frontier](self-hosting/full-bootstrap-frontier.md)
-pins source baseline `713f457`: 94 modules, 486 functions, 369707 bytes. Its
-Trident gate passed 1190 tests with two existing ignores and zero warnings.
-Frozen patches and seed guards retain earlier variants without mixing source
-identities. The next work branch is `feat/0.4-selfhost-body-scale`.
+The [complete build receipt](self-hosting/body-scale/README.md) pins Trident
+`b991d901`: 94 modules, 484 functions, 369820 source bytes. The full Rust gate
+passed 1195 tests with five diagnostic ignores and zero Rust warnings.
+The [reviewed feature map](self-hosting/compiler-feature-coverage.md) maps all
+51 used feature kinds to positive/rejection evidence; it closes SH3 for the
+explicit native subset, including lexical-only contract attributes.
+
+Actual C1(S) published C2 SHA256
+`fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0`.
+Its successful execution charged 10357536443 reductions, allocated 190792140
+nodes cumulatively, peaked at the 3145728 resident-node cap and completed
+66 collections in 1471089704 worker microseconds. Exact commands, source and
+runtime revisions, unchanged input hashes and canonical artifacts are retained.
+This proves complete source compilation; actual C2 semantic acceptance is
+running separately. C2(S) → C3 is also running on the same frozen source.
 
 Bounded NoTrace compaction is merged into `release/0.4`: nox
-[PR23](https://github.com/cyberia-to/nox/pull/23) at `98285b9` and Joy
-[PR20](https://github.com/cyberia-to/joy/pull/20) at `89fa55d`.
-The [nox receipt](../../nox/audit/sequential-compaction/README.md) records
-220 default and 219 parallel-feature passing tests; the
-[Joy receipt](../../joy/audit/self-hosting-compaction/README.md) records
-168 passing tests and zero Rust warnings. Compaction is explicit; historical
-default fixture quotas stay unchanged. Trident's delivered scaling and audit
-units are merged in [PR109](https://github.com/cyberia-to/trident/pull/109) at
-`ce83a0f`, checked with `gh pr view 109` on 2026-09-27.
+[PR23](https://github.com/cyberia-to/nox/pull/23) and Joy
+[PR20](https://github.com/cyberia-to/joy/pull/20). Joy's explicit worker ceiling
+is extended by [PR21](https://github.com/cyberia-to/joy/pull/21), with default
+limits unchanged; its [receipt](../../joy/audit/compiler-work-budget/README.md)
+records the boundary checks. [Nox phase localization](../../nox/audit/prefix-frontier/README.md)
+is retained in [PR24](https://github.com/cyberia-to/nox/pull/24).
+Earlier Trident scaling merged in [PR109](https://github.com/cyberia-to/trident/pull/109).
+Current alias/export lookup changes and audit tooling are on
+`feat/0.4-selfhost-body-scale` for the same integration branch.
 
-The saved discovery component reaches all 94 modules with compaction and
-preserves its baseline's canonical output bytes and 684646281 successful
-reductions. This is a component run of the saved packed input. The
-[actual complete C1(S) attempt](self-hosting/full-bootstrap-compacting/README.md)
-uses the frozen scaled source and fails with `execution budget exhausted` under
-a configured 10000000000-reduction limit. It reports 122586717 cumulative fresh
-allocations, 3145728 peak resident nodes and 42 collections. Failed charged gas
-is unavailable. No RES1 program or C2 was published. Its exploratory binary
-predates the final nox accounting guards; the receipt preserves that identity.
-
-The [supplied-compiler corpus route](self-hosting/compiler-routing/README.md)
-and [fixed-point checker](self-hosting/fixed-point-checker/README.md) are ready.
-Their tests and partial metadata/routing probes establish no C2/C3 acceptance.
-The checker verifies retained source snapshots and actual chained artifact bytes;
-semantic corpus acceptance remains a separate gate.
+The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
+remains identified as a different source/runtime attempt. The
+[fixed-point checker](self-hosting/fixed-point-job-binding/README.md) now binds
+verified source copies to the actual executed JOB1 through canonical repacking.
+[Extended supplied-compiler routing](self-hosting/extended-compiler-routing/README.md)
+keeps independent Rust oracles separate and executes the selected C2 unchanged.
+Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 
 | Gate | Status | Acceptance evidence / remaining work |
 |---|---|---|
 | [SH0](../reference/self-hosting.md#sh0-contract-and-compiler-subset) | Closed — contract gate | [Owner review and runtime evidence](self-hosting/native-runtime.md) |
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executed corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
-| [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Open — delivered features below | Whole compiler subset mapped to executed positive/differential/rejection cases |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — exact discovery component and bounded reclamation measured | Complete compiler stages and boundary receipts under declared budgets |
-| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — needs SH3/SH4 | C1 compiles all of S into C2; supplied C2 passes the independent corpus |
+| [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — complete compiler stages now succeed | Retain exact 4 KiB/64 KiB boundaries, dependency identity, reorder and relocation evidence |
+| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — actual C2 produced | Actual supplied C2 must pass the independent corpus; SH4 acceptance also remains |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, C3 corpus, repeat bootstrap and six-platform CI |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
 
-- [ ] Localize discovery/header, module-body checking, planning and generation
-  costs on exact frozen inputs. Implement bounded alias lookup with preserved
-  final ownership, privacy, diagnostics and canonical artifacts. Preserve failed
-  attempts and all default-quota fixtures; measure each change independently.
-- [ ] Complete SH3's construct inventory and executed positive/rejection corpus
-  against the actual compiler closure, including any remaining legacy remaps.
-  [Implementation order](../.claude/plans/native-imports.md).
+- [x] Localize the body-stage budget barrier and reduce repeated imported-owner
+  suffix/export-row work. Preserve historical failures and original fixture
+  quotas; retain isolated measurements in the owning audit reports.
+- [x] Complete SH3's construct inventory and review executed positive/rejection
+  evidence against the actual frozen compiler closure.
 - [ ] Complete SH4's data-intensive stages within predeclared guest, cumulative
   allocation, resident, collection-work, frame and host-time limits. Retain
   4 KiB/64 KiB/full-closure and exact/one-below boundaries, dependency-identity
   changes, package reorder and checkout-directory reproducibility. Earlier
   fixed-arena whitespace/64 KiB failures remain open until measured again.
-- [ ] Freeze S, options/ABI and seed identity; obtain complete `C1(S) -> C2`
+- [x] Freeze S, options/ABI and seed identity; obtain complete `C1(S) -> C2`
   through Joy. Save its actual independently loadable compiler artifact and
   complete measurements; no host-built replacement may complete this step.
 - [ ] Run the unchanged independent positive/rejection corpus through actual C2
@@ -240,9 +240,8 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
-| Complete compiler-scale execution | Trident + nox + Joy / SH4 | [Full C1(S) failure](self-hosting/full-bootstrap-compacting/README.md) preserves the configured 10B reduction limit, bounded resident memory and unknown failed gas; locate stage/module cost before the next full run |
-| Whole native compiler language coverage | Trident / SH3 | Delivered feature receipts below preserve accepted behavior; every construct in the complete source still needs mapped execution/rejection evidence |
-| Complete source build and semantic/fixed-point acceptance | Trident + Joy / SH5–SH6 | Runners exist, but there is no C2; [routing](self-hosting/compiler-routing/README.md) and [checker](self-hosting/fixed-point-checker/README.md) validation remain partial |
+| Scale boundary and package invariance acceptance | Trident + nox + Joy / SH4 | [Full C1(S) succeeds](self-hosting/body-scale/README.md); complete the 64 KiB worker and full-package identity/order/relocation checks |
+| Semantic/fixed-point and cross-platform acceptance | Trident + Joy / SH5–SH6 | Actual C2 exists; C2 corpus and C2(S) are running. C3 corpus, exact fixed point, clean repeat and six-platform CI remain required |
 | Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence
@@ -272,10 +271,11 @@ Rust seed extensions, nox/Joy runtime transport, compiler port and bootstrap
 hardening. It is not measured remaining work or a promise. The concrete
 SH6 six-target matrix is required regardless of this initial estimate.
 
-SH2 established bounded native compilation. Exact discovery and the failed full
-compacting run now expose a computational frontier with bounded resident memory.
-Re-estimate from stage/module measurements and complete SH3/SH4 workloads; the
-original broad estimate remains historical, not measured remaining work.
+The complete C1(S) build now measures 1471089704 worker microseconds on the
+reference host, with bounded resident memory; see the exact command and revisions
+in the body-scale receipt. This supplies a baseline for subsequent full-build
+runs, not a wall-time estimate for corpus, clean builds or CI. Remaining work
+centres on acceptance and reproducibility; the original broad estimate is historical.
 Zheng compiler-scale proving (SH7/SH8) needs a relation design and measurements
 before a credible effort bound. A public native profile may close those gates;
 private/succinct compilation and semantic preservation remain separate claims.
@@ -325,6 +325,7 @@ audit UNKNOWN verdicts remain UNKNOWN; Noun temperature remains 128K.
 | 2026-09-27 | Opt-in nox/Joy compaction | [Nox](../../nox/audit/sequential-compaction/README.md), [Joy](../../joy/audit/self-hosting-compaction/README.md); merged components, whole self-build remains open |
 | 2026-09-27 | Supplied-compiler runner `8467b2c`, checker `e306dc4` | [Routing](self-hosting/compiler-routing/README.md), [checker](self-hosting/fixed-point-checker/README.md); partial real probes, no C2/C3 corpus or fixed-point acceptance |
 | 2026-09-27 | Full compacting C1(S), retained at `90ac882` | [Failure](self-hosting/full-bootstrap-compacting/README.md); execution-budget rejection, bounded resident storage, no C2 |
+| 2026-09-27 | Alias/export lookup through `b991d901`, explicit Joy `2878f4b` | [Complete C1(S)](self-hosting/body-scale/README.md) produces actual C2; [SH3 feature map](self-hosting/compiler-feature-coverage.md) reviewed, corpus/fixed point pending |
 
 Historical scalar/loop implementation plans remain linked for continuity:
 [scalars](../.claude/plans/native-compiler-scalars.md),

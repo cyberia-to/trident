@@ -1,0 +1,50 @@
+{
+  "source_commit": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "source_snapshot_matches_every_committed_module": true,
+  "module_count": 94,
+  "function_count": 484,
+  "source_bytes": 369820,
+  "files": {
+    "seed": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-c1.dag",
+      "sha256": "4b8276068704063eb13e5555bca872372d2975b4ac71cf93edc03273222327b6",
+      "bytes": 9706396
+    },
+    "inventory": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-inventory.json",
+      "sha256": "c121df82df67e1672e83cfc30b94a9161cde551b1be1890ff1e075c070ef2ea9",
+      "bytes": 356739
+    },
+    "snapshot_manifest": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-source/package.json",
+      "sha256": "ad92d52fc30f1d819a3a144908ea51c38e5d103ba7f85238043a9a235554f6ea",
+      "bytes": 8334
+    },
+    "snapshot_capture": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-source/capture.json",
+      "sha256": "ca4af86f1c77adb6873952f01c8259f61d1b7d84fdf09147b1b04eeb71e2f236",
+      "bytes": 19929
+    },
+    "seed_builder": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+      "sha256": "bbf5dca566cedfb5b3bbc01d86a506ae72118fb3662c1ccd8c8c486cce967d61",
+      "bytes": 3469232
+    },
+    "inventory_checker": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_inventory",
+      "sha256": "fd55f00bf4488a5681887aed72fce9680c5c272ca934987dd724221bc27707f6",
+      "bytes": 1233840
+    },
+    "joy": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+      "sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+      "bytes": 4961904
+    }
+  },
+  "commands": {
+    "inventory": "   Compiling cyber-nox v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox/rs)\n   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)\n    Finished `release` profile [optimized] target(s) in 15.24s\n     Running `../target-probe/release/examples/selfhost_inventory --root . --entry compiler/nox/main.tri --output ../measurements/body-scale-inventory.json`\n94 modules, 484 functions, 369820 source bytes\n",
+    "seed": "   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)\n    Finished `release` profile [optimized] target(s) in 0.53s\n     Running `../target-probe/release/examples/selfhost_seed_snapshot --manifest ../measurements/body-scale-source/package.json --entry ../measurements/body-scale-source/0.tri --output ../measurements/body-scale-c1.dag --compiler-job`\n"
+  },
+  "runtime_joy_commit": "2878f4b17dfedf237c6110d7d411bb4824e65103",
+  "scope": "Rust seed from frozen complete source, followed by separate actual Joy full-build receipt; no C2 acceptance in this seed receipt"
+}

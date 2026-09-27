@@ -1,0 +1,46 @@
+{
+  "schema": "trident/full-source-c1-artifacts/v1",
+  "source_revision": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "command_receipt": "c1-to-c2.json",
+  "platform": "macOS-26.4.1-arm64-arm-64bit-Mach-O",
+  "files": {
+    "c1.dag.gz": {
+      "source_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-c1.dag",
+      "bytes": 9706396,
+      "sha256": "4b8276068704063eb13e5555bca872372d2975b4ac71cf93edc03273222327b6",
+      "gzip_bytes": 4030385,
+      "gzip_sha256": "7560ee4412b12647f1aa5f313568b37c6113185b20eb5a34675524e2ca1beb99"
+    },
+    "job.dag.gz": {
+      "source_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/job.dag",
+      "bytes": 6754045,
+      "sha256": "262fdfaa44f91d0bca113addf9711e71949dd5c63fb888a747543107ee6cdb0e",
+      "gzip_bytes": 4100730,
+      "gzip_sha256": "c6bb19dc77ea222132007997e2c729829c743bb53c41244afde6d681a3222a5e"
+    },
+    "c2.dag.gz": {
+      "source_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+      "bytes": 9681676,
+      "sha256": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+      "gzip_bytes": 4038351,
+      "gzip_sha256": "32c164ef4c224188c000eaab9301c531681597adb81bf556d8ab417f966da2c2"
+    },
+    "sources.tar.gz": {
+      "bytes": 460800,
+      "sha256": "b7313ff34177ec5d7d2201e0d843cc5c51eb64f5d31862ac7525984f5cdd4b72",
+      "gzip_bytes": 78982,
+      "gzip_sha256": "15ba94f477ff10aac8d082b6cbd5c50f6f5d459c17e1f522d99d5eecb63d670b",
+      "members": 95,
+      "scope": "Exact original source copies and package.json; tar metadata normalized, contents unchanged"
+    },
+    "joy-install.log.gz": {
+      "source_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/joy-compiler-work-budget-install.log",
+      "bytes": 570,
+      "sha256": "b67196f6eed05ded01801bf41a7e19c9862a3ebf870c3e27975b4e7ced01284c",
+      "gzip_bytes": 266,
+      "gzip_sha256": "dc61029b35200d9e184627fe960d0721a7bba3332a15ed74d199054474c0b418"
+    }
+  },
+  "receipt_sha256": "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f",
+  "packing": "gzip.compress(data, mtime=0); exact decompressed bytes checked against retained original"
+}
