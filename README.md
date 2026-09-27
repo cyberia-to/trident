@@ -346,11 +346,11 @@ The nox compiler and Joy executor support the surface documented in
 [reference/nox.md](reference/nox.md). Zheng derives the execution constraints
 from the canonical program; verification binds public input, output, cost and
 authenticated state roots. Public JOYEXEC2 and JOYST001 certificates disclose
-the witness. Private JOYZK003 artifacts prove the same bounded relation using
-a real Triton STARK and omit private columns. Private queries select from
-bounded fully public state tables. Dynamic continuations, variable noun shapes
-and a private database remain unimplemented. Legacy unauthenticated recursive
-opening APIs remain disabled. See [Joy's proof contracts](../joy/README.md)
+the witness. Joy uses only the soft3 proof stack. Secret inputs execute on nox,
+while private/zero-knowledge proving is unavailable and explicitly refused.
+Historical JOYZK artifacts are unsupported. Dynamic continuations, variable noun
+shapes and a private database remain unimplemented. Legacy unauthenticated
+recursive opening APIs remain disabled. See [Joy's proof contracts](../joy/README.md)
 and the [coordinated validation ledger](audit/full-release-preparation.md).
 
 ---
@@ -360,21 +360,26 @@ and the [coordinated validation ledger](audit/full-release-preparation.md).
 Build the coordinated development checkouts with their locked dependencies:
 
 ```sh
-nu ../trisha/patches/apply.nu
 cargo install --path . --locked
 cargo install --path ../joy/cli --locked
-cargo install --path ../trisha/cli --locked
 trident build main.tri                     # nox output by default
 trident run main.tri --input-values 3,5     # Joy execution
-trident build main.tri --target triton     # Trisha emits TASM
-trident run main.tri --target triton       # Trisha execution
-trident prove main.tri --target triton     # Triton STARK proof
 trident check main.tri                     # type-check
 trident fmt main.tri                       # format source
 ```
 
-Follow [Trisha's build instructions](../trisha/README.md) to prepare its
-patched dependencies before installing. Warriors must be on `PATH`.
+For the separate Triton/Neptune target, prepare and install Trisha:
+
+```sh
+nu ../trisha/patches/apply.nu
+cargo install --path ../trisha/cli --locked
+trident build main.tri --target triton     # Trisha emits TASM
+trident run main.tri --target triton       # Trisha execution
+trident prove main.tri --target triton     # Triton STARK proof
+```
+
+Follow [Trisha's build instructions](../trisha/README.md) for that target.
+Joy builds independently of Trisha. Installed warriors must be on `PATH`.
 An unavailable warrior is an error. An explicit target overrides the
 project target; otherwise `trident.toml` selects the target, then nox is
 the fallback. Standard compiler resources are embedded in the binaries.

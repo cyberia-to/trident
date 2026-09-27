@@ -158,8 +158,9 @@ measurements and are not proof-size benchmarks.
 Compiler symbolic analysis, target execution and cryptographic verification
 are distinct checks. The current Zheng certificate authenticates the
 supported public execution relation with a full disclosed witness and
-linear verification. Joy also provides a separate randomized Triton-backed
-private checker protocol and authenticated public/private-query state protocols.
+linear verification. Joy also authenticates public state execution through
+Zheng. Private/zero-knowledge execution and hidden-query proofs are unavailable
+in the soft3-only warrior; secret execution remains supported.
 
 See [Warrior API](warrior-api.md) for package boundaries and the
 [ownership review](../audit/target-ownership.md) for migration gates.
