@@ -107,21 +107,34 @@ fn legacy_stdlib_fallback(name: &str) -> Option<&'static str> {
         "std.io.mem" => Some("vm.io.mem"),
         "std.crypto.hash" => Some("vm.crypto.hash"),
         // Legacy std.xfield/kernel/utxo → os.neptune.*
+        #[cfg(feature = "external-targets")]
         "std.xfield" => Some("os.neptune.xfield"),
+        #[cfg(feature = "external-targets")]
         "std.kernel" => Some("os.neptune.kernel"),
+        #[cfg(feature = "external-targets")]
         "std.utxo" => Some("os.neptune.utxo"),
         // Backward compatibility: ext.triton.* → os.neptune.*
+        #[cfg(feature = "external-targets")]
         "ext.triton.xfield" => Some("os.neptune.xfield"),
+        #[cfg(feature = "external-targets")]
         "ext.triton.kernel" => Some("os.neptune.kernel"),
+        #[cfg(feature = "external-targets")]
         "ext.triton.utxo" => Some("os.neptune.utxo"),
+        #[cfg(feature = "external-targets")]
         "ext.triton.proof" => Some("os.neptune.proof"),
+        #[cfg(feature = "external-targets")]
         "ext.triton.recursive" => Some("os.neptune.recursive"),
 
         // Backward compatibility: <os>.ext.* → os.<os>.*
+        #[cfg(feature = "external-targets")]
         "neptune.ext.kernel" => Some("os.neptune.kernel"),
+        #[cfg(feature = "external-targets")]
         "neptune.ext.utxo" => Some("os.neptune.utxo"),
+        #[cfg(feature = "external-targets")]
         "neptune.ext.xfield" => Some("os.neptune.xfield"),
+        #[cfg(feature = "external-targets")]
         "neptune.ext.proof" => Some("os.neptune.proof"),
+        #[cfg(feature = "external-targets")]
         "neptune.ext.recursive" => Some("os.neptune.recursive"),
 
         // Backward compatibility: ext.<os>.* → os.<os>.*

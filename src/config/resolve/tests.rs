@@ -186,3 +186,11 @@ fn canonical_namespace_paths_do_not_repeat_extension_remapping() {
         dir.path().join("std/library/ext/helper.tri")
     );
 }
+
+#[test]
+fn legacy_foreign_aliases_follow_the_compiler_feature_boundary() {
+    for name in ["std.kernel", "ext.triton.xfield", "neptune.ext.utxo"] {
+        assert_eq!(super::legacy_stdlib_fallback(name).is_some(), cfg!(feature = "external-targets"));
+    }
+    assert_eq!(super::legacy_stdlib_fallback("std.field"), Some("vm.core.field"));
+}

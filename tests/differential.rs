@@ -223,6 +223,7 @@ fn poseidon_module_matches_rust_ground_truth() {
 }
 
 // Selected first-entry call trees, not whole-module certification.
+#[cfg(feature = "external-targets")]
 #[test]
 fn compiler_token_node_opcode_and_type_constants_match_their_public_ids() {
     for (name, expected) in [
@@ -406,6 +407,12 @@ fn census_every_in_surface_module_has_a_differential() {
     while let Some(dir) = stack.pop() {
         for entry in std::fs::read_dir(&dir).unwrap() {
             let path = entry.unwrap().path();
+            if !cfg!(feature = "external-targets")
+                && path.parent().is_some_and(|p| p.ends_with("lib/std/compiler"))
+                && path.is_file()
+            {
+                continue;
+            }
             if path.is_dir() {
                 stack.push(path.display().to_string());
             } else if path.extension().is_some_and(|e| e == "tri")
@@ -426,7 +433,9 @@ fn census_every_in_surface_module_has_a_differential() {
     assert_eq!(
         in_surface,
         vec![
+            #[cfg(feature = "external-targets")]
             "lib/std/compiler/lexer.tri".to_string(),
+            #[cfg(feature = "external-targets")]
             "lib/std/compiler/lower.tri".to_string(),
             "lib/std/compiler/nox/ascii.tri".to_string(),
             "lib/std/compiler/nox/blocks.tri".to_string(),
@@ -436,7 +445,9 @@ fn census_every_in_surface_module_has_a_differential() {
             "lib/std/compiler/nox/syntax.tri".to_string(),
             "lib/std/compiler/nox/tuple_pattern.tri".to_string(),
             "lib/std/compiler/nox/type_parse.tri".to_string(),
+            #[cfg(feature = "external-targets")]
             "lib/std/compiler/parser.tri".to_string(),
+            #[cfg(feature = "external-targets")]
             "lib/std/compiler/typecheck.tri".to_string(),
             "lib/std/crypto/bigint.tri".to_string(),
             "lib/std/crypto/ed25519.tri".to_string(),

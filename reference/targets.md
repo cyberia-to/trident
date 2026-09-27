@@ -7,6 +7,20 @@ in the discovery catalog is not an implemented compiler or runtime. Current
 compilation paths are the reference nox compiler in Trident and the Triton
 adapter in Trisha. Other catalog machines remain declarations.
 
+## Compiler build boundary
+
+The default `external-targets` Cargo feature includes the discovery catalog,
+external owner registrations, legacy Neptune import aliases and the historical
+RAM/TASM compiler source resources. The full compiler and external warriors
+select this feature. Generic package validation and compiler IR remain shared.
+
+A dependency with `default-features = false` embeds portable libraries and the
+native nox compiler SDK, and registers only nox/cyber discovery. Joy selects
+this configuration so its compiler dependency carries no foreign catalog,
+legacy foreign import routing or stack compiler prototype resources. Cargo
+features are additive: a binary's resolved feature closure is the acceptance
+boundary, not an individual dependency declaration.
+
 ## Ownership and physical layout
 
 | Responsibility | Owner and location |

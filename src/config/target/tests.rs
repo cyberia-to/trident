@@ -20,7 +20,7 @@ fn test_triton_defaults() {
 #[test]
 fn test_resolve_triton() {
     let config = TerrainConfig::triton();
-    assert_eq!(owner_for("triton"), Some("trisha"));
+    assert_eq!(owner_for("triton"), if cfg!(feature = "external-targets") { Some("trisha") } else { None });
     assert_eq!(config.name, "triton");
     assert_eq!(config.digest_width, 5);
 }
