@@ -209,7 +209,7 @@ pub(super) fn resolve_path_dep(
         }
     };
 
-    let source = std::fs::read_to_string(&source_file).map_err(|e| {
+    let source = crate::config::text_file::source(&source_file).map_err(|e| {
         format!(
             "path dep '{}': cannot read '{}': {}",
             dep_name,

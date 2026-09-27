@@ -59,7 +59,7 @@ pub struct Project {
 impl Project {
     /// Load project from a trident.toml file.
     pub fn load(toml_path: &Path) -> Result<Project, Diagnostic> {
-        let content = std::fs::read_to_string(toml_path).map_err(|e| {
+        let content = super::text_file::project(toml_path).map_err(|e| {
             Diagnostic::error(
                 format!("cannot read '{}': {}", toml_path.display(), e),
                 Span::dummy(),

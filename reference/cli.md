@@ -157,6 +157,14 @@ trident lsp                             # Start LSP server
 when source discovery, parsing or type checking fails. Successful checks print
 `OK: <input>` and exit with status0.
 
+Compiler filesystem inputs have per-file UTF-8 transport limits: 4 MiB for
+source entries and imported modules, and 1 MiB for project manifests and
+dependency lockfiles. Inputs must resolve to regular files; ordinary source
+symlinks remain supported. Reads keep their byte cap if a file grows. On macOS
+and Linux x86_64/aarch64, nonblocking opens and descriptor identity checks also
+reject replacement by a stream or another file during admission. These bounds
+do not establish an overall compilation time or aggregate source-package limit.
+
 ---
 
 ## Three-Register Flags
