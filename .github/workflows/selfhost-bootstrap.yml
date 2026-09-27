@@ -3,6 +3,10 @@ name: SH6 native bootstrap
 on:
   pull_request:
     branches: [release/0.4]
+    paths-ignore:
+      - '**/*.md'
+      - 'audit/self-hosting/lexer-bootstrap/**'
+      - 'audit/self-hosting/bootstrap-results/**'
   workflow_dispatch:
 
 permissions:

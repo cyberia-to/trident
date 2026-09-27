@@ -1,0 +1,14 @@
+program native_lexer_frames
+
+use vm.nox.noun
+use std.nox.bytes
+use std.compiler.nox.lexer
+
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(65536), as_u32(1000000))
+    let start = as_u32(noun.as_field(noun.tail(input)))
+    let token = lexer.next(source, start)
+    noun.pair(noun.atom(as_field(token.kind)), noun.pair(noun.atom(as_field(token.start)),
+        noun.pair(noun.atom(as_field(token.end)), noun.atom(token.value))))
+}

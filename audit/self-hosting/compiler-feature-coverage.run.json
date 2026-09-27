@@ -1,0 +1,40 @@
+{
+  "source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "tool_base_revision": "c464f91fc279cd5a69a65b1e29c6fe92276e02eb",
+  "merged_input_revision": "4bbe399c85a5c5ef50e40791cc5f8da79e929071",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "audit/self-hosting/compiler-feature-coverage.py",
+        "--rust-log",
+        "audit/self-hosting/lexer-frame-chunks/full-rust.log.gz",
+        "--require-rust-pass"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 104087375,
+      "output": "audit/self-hosting/compiler-feature-coverage.validation.json",
+      "sha256": "d5e0d1b3dd7e24f93da8f4131247b7aa2b9488d00a01d230306f137ca1b2b391"
+    },
+    {
+      "argv": [
+        "python3",
+        "-W",
+        "error",
+        "audit/self-hosting/compiler-feature-coverage.test.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 349375500,
+      "output": "audit/self-hosting/compiler-feature-coverage.validation.log",
+      "sha256": "7e957cc295229fc28bb3ae8ee1e2a1bee2dce71b1967a504da8e70918343755b"
+    }
+  ],
+  "inputs": {
+    "audit/self-hosting/compiler-feature-coverage.json": "4881aab0c8adb0bb667a778babcbed4ea3f2ff27d5a2224f2d7ff786b5fc14bc",
+    "audit/self-hosting/compiler-feature-coverage.py": "a7b3323d4f9db9f265e0c956a3b075d6dab064c6f788b2438768119a73833644",
+    "audit/self-hosting/compiler-feature-coverage.test.py": "98afa32d3150ac77115858fd4315d640248a0f651c12523888a4ce4a96e3c5d1"
+  },
+  "status": "passed"
+}

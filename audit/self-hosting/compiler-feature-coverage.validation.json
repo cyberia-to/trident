@@ -2,16 +2,16 @@
   "status": "mapping integrity passed",
   "features": 51,
   "modules": 94,
-  "rust_test_references": 63,
+  "rust_test_references": 65,
   "selected_installed_cases": 145,
   "historical_receipts": 8,
   "rust_evidence": {
-    "path": "audit/self-hosting/body-scale/full-tests.log.gz",
-    "sha256": "63dfdb448c7a299fc199b2c55d54d5efb63be0da584e03c8eea4f4734c9b4567",
+    "path": "audit/self-hosting/lexer-frame-chunks/full-rust.log.gz",
+    "sha256": "ccd2320d3b23478b76f225ee3988a0c0905cfe6ebe6db33dfdc165fc8393407d",
     "status": "selected suites passed",
     "missing": [],
     "incomplete_suites": [],
     "scope": "Rust-built C1 test binaries only; no installed-C2 or whole Cargo exit claim"
   },
-  "acceptance": "SH3 feature criterion met for reviewed map; SH4/SH5, C2 corpus and fixed point remain open"
+  "acceptance": "SH3 feature criterion met for reviewed map; SH4/SH5, C2/C3 corpora and fixed point are not checked by this mapping"
 }

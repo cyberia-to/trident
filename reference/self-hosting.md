@@ -874,7 +874,11 @@ receipts, fixed-point checks and corpus evidence.
 The [`selfhost-bootstrap.yml`](../.github/workflows/selfhost-bootstrap.yml)
 workflow runs the six native targets for pull requests to `release/0.4`,
 using the exact PR head and pinned sibling revisions. Each target uploads
-its evidence, including failures. The aggregate invokes the same runner
+its evidence, including failures. Documentation-only pull requests and new
+receipts under `audit/self-hosting/lexer-bootstrap/` or `bootstrap-results/`
+retain the acceptance of their recorded source revision without rerunning
+unchanged compiler jobs. Source, executable harness and workflow changes
+continue to trigger the gate. The aggregate invokes the same runner
 with `--matrix PLATFORM_RESULTS --output MATRIX_EVIDENCE`, where
 `PLATFORM_RESULTS` contains one downloaded evidence directory per target.
 It requires both complete repetitions on all six targets, verifies the
