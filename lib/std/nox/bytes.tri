@@ -198,13 +198,13 @@ fn validate_eight(node: Noun) -> U32 {
     let c = noun.head(right)
     let d = noun.tail(right)
     // Each checked conversion must execute, including the first seven words.
-    let w0 = convert.as_u32(noun.as_field(noun.head(a)))
-    let w1 = convert.as_u32(noun.as_field(noun.tail(a)))
-    let w2 = convert.as_u32(noun.as_field(noun.head(b)))
-    let w3 = convert.as_u32(noun.as_field(noun.tail(b)))
-    let w4 = convert.as_u32(noun.as_field(noun.head(c)))
-    let w5 = convert.as_u32(noun.as_field(noun.tail(c)))
-    let w6 = convert.as_u32(noun.as_field(noun.head(d)))
+    convert.as_u32(noun.as_field(noun.head(a)))
+    convert.as_u32(noun.as_field(noun.tail(a)))
+    convert.as_u32(noun.as_field(noun.head(b)))
+    convert.as_u32(noun.as_field(noun.tail(b)))
+    convert.as_u32(noun.as_field(noun.head(c)))
+    convert.as_u32(noun.as_field(noun.tail(c)))
+    convert.as_u32(noun.as_field(noun.head(d)))
     convert.as_u32(noun.as_field(noun.tail(d)))
 }
 
