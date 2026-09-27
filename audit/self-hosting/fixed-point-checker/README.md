@@ -32,12 +32,13 @@ PYTHONDONTWRITEBYTECODE=1 python3 audit/self-hosting/fixed-point-checker/snapsho
 Once two successful program-publication receipts exist, run:
 
 ```sh
-python3 audit/self-hosting/check-selfhost-fixed-point.py --first /path/to/c1-to-c2.json --second /path/to/c2-to-c3.json --inventory-checker /path/to/prebuilt/selfhost_inventory --output /path/to/new-fixed-point-check.json
+python3 audit/self-hosting/check-selfhost-fixed-point.py --first /path/to/c1-to-c2.json --second /path/to/c2-to-c3.json --inventory-checker /path/to/prebuilt/selfhost_inventory --joy /path/to/recorded/joy --output /path/to/new-fixed-point-check.json
 ```
 
-The checker reads original retained files and runs only the explicit metadata
-tool on temporary source trees. It builds no compiler, executes no guest and
-provides no fallback. It checks a minimal NOXDAG header/framing guard and trusts
-the recorded Joy admission for canonical ART1 validation and particle
-cryptography. A passed checker receipt establishes the recorded artifact byte
-fixed point; it does not establish compiler correctness or corpus acceptance.
+The current checker additionally [repacks JOB1 from verified source bytes](../fixed-point-job-binding/README.md)
+using the explicitly supplied Joy binary, whose SHA256 must match both runs.
+The metadata-only measurements above remain historical evidence of their named
+scope. No compiler is built or executed by either check. Repacking validates the
+compiler input and binds the exact sources, options and limits to the saved job.
+Recorded Joy execution still supplies the output claim; semantic correctness,
+corpus acceptance and execution proofs remain separate gates.

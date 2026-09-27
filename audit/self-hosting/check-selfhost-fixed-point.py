@@ -2,7 +2,8 @@
 
 This is receipt/file consistency evidence, not full self-host acceptance. Joy's
 recorded admission owns canonical ART1 validation and particle cryptography.
-The only subprocess is an explicitly supplied, prebuilt source inventory tool;
+Explicitly supplied prebuilt tools check the source inventory and canonically
+repack JOB1 from those exact bytes. They never execute a compiler stage;
 semantic corpus acceptance and execution proofs remain separate gates.
 """
 import argparse
@@ -123,13 +124,21 @@ def command_receipts(receipt, binary, compiler, directory, inventory):
     require(option(executed, "--emit") == "program", "program publication command")
     host = receipt["host_flags"]
     require(isinstance(host, list) and host and all(isinstance(v, str) for v in host), "host flags")
+    allowed = {"--arena-nodes", "--budget", "--frames", "--time-ms", "--validation-visits",
+               "--resident-nodes", "--collection-work"}
+    require(len(host) % 2 == 0 and len(host[::2]) == len(set(host[::2])) and
+            set(host[::2]) <= allowed and
+            all(re.fullmatch(r"[0-9]+", value) and int(value) > 0 for value in host[1::2]),
+            "bounded numeric host flags")
+    require({"--arena-nodes", "--budget", "--frames", "--time-ms"} <= set(host[::2]) and
+            (("--resident-nodes" in host) == ("--collection-work" in host)), "complete host limits")
     require(packed[1:3] == ["pack-job", "--compiler"] and packed[4] == "--manifest" and
             packed[6] == "-o" and packed[8:] == host, "pack argument/host flag binding")
     require(executed[3] == "--input" and executed[5:8] == ["--emit", "program", "-o"] and
             executed[9:] == host, "execution argument/host flag binding")
 
 
-def snapshot(receipt, directory, manifest, inventory, checker, report):
+def snapshot(receipt, directory, manifest, inventory, checker, report, *, bind_job=False):
     sources, modules = receipt["sources"], manifest["modules"]
     names = [module["logical_path"] for module in modules]
     require(names == sorted(sources) and len(names) == len(set(names)) and names, "complete module set/order")
@@ -174,7 +183,42 @@ def snapshot(receipt, directory, manifest, inventory, checker, report):
         require(report["inventory_checker_sha256_end"] == before, "inventory checker changed during check")
         require(checked.returncode == 0, "snapshot inventory check failed")
         require(sha_file(Path(receipt["inventory"])) == receipt["inventory_sha256"], "inventory changed during check")
+        # Repack from the very copies checked above, rather than trusting a
+        # source_particle string in historical stdout. This binds source bytes,
+        # module origins, options, limits and compiler to the actual saved JOB1.
+        if bind_job:
+            packed_manifest = dict(manifest)
+            packed_manifest["modules"] = [dict(module, file=str(tree / identities[module["logical_path"]]["path"]))
+                                          for module in modules]
+            repack_job(receipt, tree, packed_manifest, report)
     return identities
+
+
+def repack_job(receipt, temporary, manifest, report):
+    joy = Path(report["job_checker"])
+    before = sha_file(joy)
+    require(before == report["job_checker_sha256_start"] == receipt["binary_sha256"],
+            "job checker must be the recorded Joy binary")
+    compiler = temporary / "compiler.dag"
+    compiler_bytes = read(Path(receipt["compiler"]))
+    require(digest(compiler_bytes) == receipt["compiler_sha256"], "compiler changed before job check")
+    compiler.write_bytes(compiler_bytes)
+    package, output = temporary / "package.json", temporary / "job.dag"
+    package.write_text(json.dumps(manifest) + "\n", encoding="utf-8")
+    command = [str(joy), "pack-job", "--compiler", str(compiler), "--manifest", str(package),
+               "-o", str(output), *receipt["host_flags"]]
+    row = dict(command=command, exit_code=None, status="running", stdout="", stderr="")
+    report["job_checks"].append(row)
+    checked = subprocess.run(command, capture_output=True, text=True, check=False, timeout=60)
+    row.update(status="completed", exit_code=checked.returncode, stdout=checked.stdout, stderr=checked.stderr)
+    report["job_checker_sha256_end"] = sha_file(joy)
+    require(report["job_checker_sha256_end"] == before, "job checker changed during check")
+    require(checked.returncode == 0, "snapshot JOB1 repack failed")
+    packed = read(output, manifest["limits"]["artifact_bytes"])
+    retained = read(Path(receipt["artifact_directory"]) / "job.dag", manifest["limits"]["artifact_bytes"])
+    require(digest(retained) == receipt["job_sha256"], "JOB1 changed during snapshot check")
+    require(packed == retained, "retained JOB1 differs from the verified source snapshot")
+    row.update(job_sha256=digest(packed), exact_job_bytes_equal=True)
 
 
 def step(path, checker, report):
@@ -217,7 +261,7 @@ def step(path, checker, report):
     require(package["modules"] == compiled["modules"], "admitted/returned module identities")
     require(package["package_particle"] == compiled["package_particle"], "admitted/returned package identity")
     particle(package["package_particle"], "package particle")
-    identities = snapshot(receipt, directory, manifest, inventory, checker, report)
+    identities = snapshot(receipt, directory, manifest, inventory, checker, report, bind_job=True)
     require([module["logical_path"] for module in package["modules"]] == list(identities), "admitted module set/order")
     for module in package["modules"]:
         source = identities[module["logical_path"]]
@@ -256,7 +300,7 @@ def verify(first, second, checker, report):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("first", "second", "inventory-checker", "output"):
+    for name in ("first", "second", "inventory-checker", "joy", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
     if args.output.exists() or args.output.is_symlink():
@@ -264,7 +308,8 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report = dict(schema="trident/selfhost-fixed-point/v1", status="running", scope=SCOPE,
                   first=str(args.first.resolve()), second=str(args.second.resolve()),
-                  inventory_checker=str(args.inventory_checker.resolve()), inventory_checks=[], steps=[])
+                  inventory_checker=str(args.inventory_checker.resolve()), inventory_checks=[],
+                  job_checker=str(args.joy.resolve()), job_checks=[], steps=[])
     # Exclusive creation also protects evidence when two processes race.
     with args.output.open("x", encoding="utf-8") as output:
         def flush():
@@ -277,11 +322,15 @@ def main():
         try:
             checker = args.inventory_checker.resolve()
             report["inventory_checker_sha256_start"] = sha_file(checker)
+            report["job_checker_sha256_start"] = sha_file(args.joy.resolve())
             verify(args.first.resolve(), args.second.resolve(), checker, report)
             report["inventory_checker_sha256_end"] = sha_file(checker)
             require(report["inventory_checker_sha256_start"] == report["inventory_checker_sha256_end"], "inventory checker start/end binding")
+            report["job_checker_sha256_end"] = sha_file(args.joy.resolve())
+            require(report["job_checker_sha256_start"] == report["job_checker_sha256_end"], "job checker start/end binding")
             report["status"] = "passed"
         except Exception as error:
+            report.pop("fixed_point", None)
             report.update(status="rejected", error=dict(kind=type(error).__name__, message=str(error)))
         finally:
             flush()

@@ -1,0 +1,37 @@
+{
+  "base_revision": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "commands": {
+    "tests": "python3 -m unittest discover -s audit/self-hosting -p test_selfhost_fixed_point.py -v",
+    "real_probe": "python3 audit/self-hosting/fixed-point-job-binding/probe.py --receipt ../measurements/body-scale-closure-20b.json --inventory-checker ../target-probe/release/examples/selfhost_inventory --joy ../install-compiler-work-budget/bin/joy --output audit/self-hosting/fixed-point-job-binding/real-snapshot-final.json"
+  },
+  "evidence": {
+    "tests.log.gz": {
+      "sha256": "0da403d54c2edfd411a12223375bdf005fe887afe6fa32140462461f8224a00d",
+      "raw_sha256": "f72923cf9c8419c6e4193424d1237164c56c87af039d450744c90603c9edbe98",
+      "raw_bytes": 3151
+    },
+    "initial-probe-failure.log.gz": {
+      "sha256": "192317868a8853b6d93087997710b68dfb4f3e67f14eae04f4280b578fcc8b3d",
+      "raw_sha256": "ea382b5404716c896b1461dcc5a4298cec454f893d33370b3d578e175d478d6f",
+      "raw_bytes": 1808
+    },
+    "real-probe.log.gz": {
+      "sha256": "cd5f2d1727a76bc2a4a774a43a77ee06a87d86084457a5da60297b74176dd6fa",
+      "raw_sha256": "52d71a5be3d75e4bd01047f42f94b411b4d148428f8afc5e6f46a0a97cc876ad",
+      "raw_bytes": 102
+    }
+  },
+  "real_result": "real-snapshot-final.json",
+  "scope": "Checker consistency/admission component; no completed C2/C3 pair or compiler execution proof.",
+  "real_probe_source_sha256": {
+    "audit/self-hosting/check-selfhost-fixed-point.py": "7d04e55ea4b06aaac1be324f8750af79bc0fc81de58fd7c8aeddde0aa2dbd153",
+    "audit/self-hosting/test_selfhost_fixed_point.py": "613df1b42110b6a18827243b62ab6e58c30fa823a6b2ca7e6e1b6c37868f56bd",
+    "audit/self-hosting/fixed-point-job-binding/probe.py": "f6ce969a99d7bc08362353f3c767c84f8dc707c9355bc2fa7d37dbaee37e52f8"
+  },
+  "final_source_sha256": {
+    "audit/self-hosting/check-selfhost-fixed-point.py": "db059dd2eeec314200cd259cd563e88f29a54a52810437fa0d246b23bebee393",
+    "audit/self-hosting/test_selfhost_fixed_point.py": "615ba53d391e5ca539610051ffcc2673fcacce793e92250beef0681ab9239d2b",
+    "audit/self-hosting/fixed-point-job-binding/probe.py": "f6ce969a99d7bc08362353f3c767c84f8dc707c9355bc2fa7d37dbaee37e52f8"
+  },
+  "post_probe_change": "Clear fixed_point on late final tool-hash rejection; add inventory/Joy late-mutation regressions. Snapshot/repack logic unchanged."
+}
