@@ -40,7 +40,7 @@ CORE            256K         64K
 vm spec          32K         16K
 language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun            128K        128K      ← S0 fixed point/corpora pass; S1 scanner scale repaired, clean six-platform reproduction pending
+Noun            128K        128K      ← S1 usable C2 and exact C3; C3 corpus and clean six-platform reproduction pending
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
@@ -107,7 +107,7 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ◐ Native compiler coverage and measured scale accepted (SH3–SH4); S0 fixed point and both corpora pass; current S1 supplied-compiler acceptance and six-platform clean bootstrap remain (SH5–SH6)
+Noun        ◐ Complete S1 self-compilation accepted (SH3–SH5), exact C2/C3 fixed point; actual C3 corpus and six-platform clean bootstrap remain (SH6)
 cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ◐ Prototype pipeline emits TIR; lower wiring and self-compilation open

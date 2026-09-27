@@ -79,3 +79,8 @@ At this evidence cutoff, S1 C2 semantic corpus acceptance and C2→C3/fixed-poin
 validation are ongoing. This directory claims the completed local first build
 and SH4 source/package checks only. Clean bootstrap and platform acceptance
 remain separate.
+
+Subsequent evidence retains the [completed actual C2 semantic corpus](c2-corpus/README.md),
+the [exact C2/C3 fixed point](fixed-point/README.md), and the
+[separate example build check](example-build/README.md). The original first-build
+and source-scale receipts above remain unchanged.

@@ -1,0 +1,85 @@
+{
+  "schema": "trident/c2-corpus-binding/v1",
+  "status": "passed",
+  "command": [
+    "python3",
+    "audit/self-hosting/lexer-bootstrap/c2-corpus/verify.py"
+  ],
+  "source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "captured_revision": "4bbe399c85a5c5ef50e40791cc5f8da79e929071",
+  "source_count": 94,
+  "source_git_blobs_equal": true,
+  "producer_receipt_sha256": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+  "actual_c2_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "actual_c2_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+  "runtime_sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "validation_sha256": "c981b33eb313449927b2b02c19652479ec3e6aa4a031b4dd990fe842b3d8c9f1",
+  "summary_sha256": "5fddec7d6e9388e0a503ea175e81ab880222e9a137dfab934ffb21d58c2c3aa0",
+  "results": {
+    "constants": {
+      "observations": 31,
+      "commands": 140,
+      "raw_reference_builds": 31,
+      "compiler_seed_builds": 0,
+      "equal_fixed_job_limit_objects": 62,
+      "adaptive_boundary_job_limit_objects": 0,
+      "equal_host_resource_commands": 109
+    },
+    "callable": {
+      "observations": 32,
+      "commands": 148,
+      "raw_reference_builds": 32,
+      "compiler_seed_builds": 0,
+      "equal_fixed_job_limit_objects": 64,
+      "adaptive_boundary_job_limit_objects": 0,
+      "equal_host_resource_commands": 116
+    },
+    "types": {
+      "observations": 24,
+      "commands": 110,
+      "raw_reference_builds": 24,
+      "compiler_seed_builds": 0,
+      "equal_fixed_job_limit_objects": 48,
+      "adaptive_boundary_job_limit_objects": 0,
+      "equal_host_resource_commands": 86
+    },
+    "intrinsics": {
+      "observations": 37,
+      "commands": 157,
+      "raw_reference_builds": 28,
+      "compiler_seed_builds": 0,
+      "equal_fixed_job_limit_objects": 74,
+      "adaptive_boundary_job_limit_objects": 0,
+      "equal_host_resource_commands": 129
+    },
+    "generated-profile": {
+      "observations": 21,
+      "commands": 64,
+      "raw_reference_builds": 4,
+      "compiler_seed_builds": 0,
+      "equal_fixed_job_limit_objects": 0,
+      "adaptive_boundary_job_limit_objects": 0,
+      "equal_host_resource_commands": 58
+    },
+    "main": {
+      "observations": 402,
+      "commands": 1197,
+      "raw_reference_builds": 0,
+      "compiler_seed_builds": 0,
+      "equal_fixed_job_limit_objects": 391,
+      "adaptive_boundary_job_limit_objects": 3,
+      "equal_host_resource_commands": 1197
+    }
+  },
+  "totals": {
+    "observations": 547,
+    "commands": 1816,
+    "raw_reference_builds": 119,
+    "compiler_seed_builds": 0,
+    "equal_fixed_job_limit_objects": 639,
+    "adaptive_boundary_job_limit_objects": 3,
+    "equal_host_resource_commands": 1695
+  },
+  "generated_archive_members": 109,
+  "scope": "Actual local S1 C2 six-corpus acceptance only; C2 to C3, clean bootstrap, platforms and proofs are separate."
+}

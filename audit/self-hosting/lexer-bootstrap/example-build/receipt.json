@@ -1,0 +1,144 @@
+{
+  "schema": "trident/example-build-retention/v1",
+  "status": "passed",
+  "scope": "Build-only evidence for 21 examples; completes the example compilation slice omitted by selected-target Rust test commands. No example execution; 1197 unique test passes unchanged.",
+  "execution_revision": "4bbe399c85a5c5ef50e40791cc5f8da79e929071",
+  "source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "source_inventory": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-frame-chunks/inventory.json",
+    "sha256": "d35d263c7f9f27cbe7ea760a34393105ae8140dc6ab84d484151b6fe04960571"
+  },
+  "module_count": 94,
+  "source_bytes": 370544,
+  "source_inputs_unchanged": true,
+  "worktree_clean_start_end": true,
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "--offline",
+    "--examples"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+  "env": {
+    "CARGO_TARGET_DIR": "../target-lexer"
+  },
+  "exit_code": 0,
+  "rust_warnings": 0,
+  "elapsed_nanoseconds": 1331120333,
+  "start": "2026-09-27T22:01:50.908071+00:00",
+  "end": "2026-09-27T22:01:52.496633+00:00",
+  "example_count": 21,
+  "example_names": [
+    "ref_std_compiler_codegen",
+    "ref_std_compiler_lexer",
+    "ref_std_compiler_optimize",
+    "ref_std_compiler_parser",
+    "ref_std_compiler_pipeline",
+    "ref_std_compiler_typecheck",
+    "ref_std_crypto_bigint",
+    "ref_std_crypto_merkle",
+    "ref_std_crypto_poseidon",
+    "ref_std_crypto_poseidon2",
+    "ref_std_nn_tensor",
+    "ref_std_private_poly",
+    "ref_std_quantum_gates",
+    "ref_std_trinity_inference",
+    "selfhost_collections",
+    "selfhost_data",
+    "selfhost_inventory",
+    "selfhost_jobs",
+    "selfhost_runtime",
+    "selfhost_runtime_probe",
+    "selfhost_seed_snapshot"
+  ],
+  "test_count_delta": 0,
+  "existing_unique_test_passes": 1197,
+  "checker": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_inventory",
+    "sha256_start": "fd55f00bf4488a5681887aed72fce9680c5c272ca934987dd724221bc27707f6",
+    "sha256_end": "fd55f00bf4488a5681887aed72fce9680c5c272ca934987dd724221bc27707f6"
+  },
+  "tools": {
+    "cargo": {
+      "path": "/Users/master/.rustup/toolchains/stable-aarch64-apple-darwin/bin/cargo",
+      "sha256_start": "1de2e84c15443b70444eecfa959ff9099dd8c1a5606b6d9ef5bc0ea9c25bc7f9",
+      "sha256_end": "1de2e84c15443b70444eecfa959ff9099dd8c1a5606b6d9ef5bc0ea9c25bc7f9"
+    },
+    "rustc": {
+      "path": "/Users/master/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc",
+      "sha256_start": "a11618eca0956a8aa4372c2bc898690b513cbdfa2cb9125b2a5301e360ed5b49",
+      "sha256_end": "a11618eca0956a8aa4372c2bc898690b513cbdfa2cb9125b2a5301e360ed5b49"
+    }
+  },
+  "cargo_version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21) (Homebrew)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: aarch64-apple-darwin\nlibgit2: 1.9.2 (sys:0.20.4 system)\nlibcurl: 8.7.1 (sys:0.4.83+curl-8.15.0 system ssl:(SecureTransport) LibreSSL/3.3.6)\nos: Mac OS 26.4.1 [64-bit]\n",
+  "rust_version": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: aarch64-apple-darwin\nrelease: 1.95.0\nLLVM version: 22.1.3\n",
+  "build_log": {
+    "path": "build.log",
+    "bytes": 170,
+    "sha256": "8e0ae0b134d215109a426959ca67e428ffb03f55fac3f0ca8589815ebfc5c3d5"
+  },
+  "measurement_archive": {
+    "path": "measurement-files.tar.gz",
+    "bytes": 49477,
+    "sha256": "6b7a5bf033cfdc540c4e5ccd09c63ab05a16421679ef491c91f084fe4713ce3b",
+    "files": {
+      "build.log": {
+        "bytes": 170,
+        "sha256": "8e0ae0b134d215109a426959ca67e428ffb03f55fac3f0ca8589815ebfc5c3d5"
+      },
+      "cargo-metadata.json": {
+        "bytes": 23293,
+        "sha256": "e8dd67b2ac00575a20620a85b55a0e48dbbedcd4786dd9998a85076a59ef90e4"
+      },
+      "cargo-path.log": {
+        "bytes": 71,
+        "sha256": "5babd1b2b3a4d3b7fcc5a40039dc938684d4ffadbce31a0154d4741126a369b0"
+      },
+      "cargo-version.log": {
+        "bytes": 314,
+        "sha256": "4e883d6f2e10de6aea54caae061815fc3c880e284ddc105a4afba965750dfb8d"
+      },
+      "inputs.json": {
+        "bytes": 93748,
+        "sha256": "730ee3c02962a8ce81cd5cd2a8822e172bccf087252aa54026c1759f8aa51c0b"
+      },
+      "inventory-check.log": {
+        "bytes": 47,
+        "sha256": "0336a6c6d52765b98deeb2a94c18374ee65a11f13aef1a7d768f2640b3f802d6"
+      },
+      "receipt.json": {
+        "bytes": 10679,
+        "sha256": "9a81ba39b2ecf8100e61b6b32fddfedf8989b8b967932030b0c908bcf73fd087"
+      },
+      "revision.log": {
+        "bytes": 41,
+        "sha256": "f7a125cea54483ce6e375bae871bb5394d85cbd993dfe1b93b688a33f2a601da"
+      },
+      "rust-version.log": {
+        "bytes": 203,
+        "sha256": "d7fdd367b3ad098627179fd3b1d30a93f385ee891ae1138082e389d1b6317c68"
+      },
+      "rustc-path.log": {
+        "bytes": 71,
+        "sha256": "0c7e1d646d167f8ec98968e1719fc9b6b679bc7104a611e6de704b8c9439410b"
+      },
+      "status-end.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "status-start.log": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tracked-paths.log": {
+        "bytes": 49480,
+        "sha256": "6c7325037e770b59bf11a99bde38ed81298049f32f8be28f8ecadbff2812a105"
+      }
+    }
+  },
+  "measurement_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-example-build",
+  "runner_sha256": "24ebfec1fdd2221a5fca6667698cb06a78b3f6ebf304c5619aa8ef72564b9fc6",
+  "source_commit_blobs_verified": true
+}

@@ -8,12 +8,12 @@ Component results close only their named substeps.
 
 ## Current position
 
-The current S1 source has compiled its complete compiler through Joy/nox and
-published C2. SH0–SH4 are closed for this frozen subset and measured workload.
-S1's actual C2 corpus, C2(S) build, C3 corpus and six-platform clean reproduction
-remain the SH5/SH6 work. The earlier S0 snapshot already reached exact C2/C3
-equality and passed both supplied-compiler corpora. Compilation proofs remain
-separate SH7/SH8 gates.
+The current S1 compiler has compiled its complete source through Joy/nox,
+published usable C2 and reproduced it byte for byte as C3. SH0–SH5 are closed
+for this frozen subset and measured workload. Actual C3 corpus acceptance and
+clean reproduction on all six native platforms remain SH6 work. The earlier
+S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
+corpora. Compilation proofs remain separate SH7/SH8 gates.
 
 S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
 484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
@@ -21,6 +21,8 @@ covers the unchanged 51 feature kinds, with 65 named Rust references and 145
 historical installed observations. The [split Rust test gate](self-hosting/lexer-frame-chunks/full-gate.json)
 passed 1197 distinct tests, with five existing ignores and zero Rust warnings.
 A reviewed two-test rerun is counted separately from those unique tests.
+All 21 examples also [built with zero warnings](self-hosting/lexer-bootstrap/example-build/README.md);
+that build adds no test passes.
 
 The [current complete build and source-scale evidence](self-hosting/lexer-bootstrap/README.md)
 retain S1's actual C2 SHA256
@@ -34,6 +36,20 @@ Full S1 package relocation/reversal preserves exact JOB1 bytes; a dependency
 change changes package identity. These results close the measured SH4 barrier.
 The separate identifier/decimal/name scanners retain their documented bounds;
 this trivia repair does not claim universal success for every maximal token.
+
+Actual S1 C2 passed [all six unchanged semantic corpora](self-hosting/lexer-bootstrap/c2-corpus/README.md):
+547 observations and 1816 commands, including 119 explicitly identified raw
+Rust reference builds and no compiler replacements. Its [second complete self-build](self-hosting/lexer-bootstrap/fixed-point/README.md)
+charged 9777538159 reductions, allocated 162296944 nodes and took 1251723053
+worker microseconds. Strong source/JOB1/producer checks establish exact C2/C3
+byte and particle equality. Actual C3 corpus execution is underway.
+
+[PR112](https://github.com/cyberia-to/trident/pull/112) pins the bootstrap implementation
+at `23691cd2c6885bf25bfc023799552559724dbc2b`. [The six-platform CI run](https://github.com/cyberia-to/trident/actions/runs/36353842247)
+has started actual native jobs on macOS/Linux/Windows ARM64/x64. Each requires
+two clean origin bootstraps and both supplied-compiler corpora; starting those
+jobs establishes no platform acceptance. Subsequent receipts are collected on
+`test/0.4-selfhost-acceptance`, preserving that stable CI head.
 
 Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
 Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
@@ -73,8 +89,8 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executed corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
-| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — S1 C2 published | Complete current S1 supplied-C2 corpus; S0 already passed all six semantic corpora |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — S0 fixed point and both corpora passed | Current S1 fixed point/C3 corpus, clean repetitions and six native CPU platforms remain required |
+| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — current S1 byte fixed point passed | Actual S1 C3 corpus and clean repetitions on six native CPU platforms remain required |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
@@ -93,11 +109,12 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 - [x] Freeze S, options/ABI and seed identity; obtain complete `C1(S) -> C2`
   through Joy. Save its actual independently loadable compiler artifact and
   complete measurements; no host-built replacement may complete this step.
-- [ ] Complete the unchanged independent positive/rejection corpus through
+- [x] Complete the unchanged independent positive/rejection corpus through
   actual S1 C2 and execute its emitted programs. Historical S0 completion is
   retained separately; the current compiler is supplied with `--compiler PATH`.
-- [ ] Complete current S1 `C2(S) -> C3`, exact canonical byte/particle and
-  source/JOB1 checks, then the independent actual C3 regression corpus.
+- [x] Complete current S1 `C2(S) -> C3`, exact canonical byte/particle and
+  source/JOB1 checks.
+- [ ] Complete the independent actual S1 C3 regression corpus.
 - [ ] Repeat clean bootstrap with the [documented runner](../reference/self-hosting.md#sh6-reproducible-bootstrap) and execute the SH6
   six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
   Retain source/seed/artifact identities and downloadable CI evidence.
