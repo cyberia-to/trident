@@ -1,0 +1,111 @@
+{
+  "scope": "Synthetic orchestration/fixed-point guards and workflow lint; not native bootstrap acceptance",
+  "base_revision": "23691cd2c6885bf25bfc023799552559724dbc2b",
+  "runner_commit": "0699069ec774188971d6d797f0159f6a4903f366",
+  "joy_pin": "ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+  "python": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "inputs": {
+    "audit/self-hosting/bootstrap-runner.py": {
+      "bytes": 26365,
+      "sha256": "d5522330b73ad5454e54406747e010579baa17e1f148b8fb2354542b48ff4e35"
+    },
+    "audit/self-hosting/test_bootstrap_runner.py": {
+      "bytes": 23897,
+      "sha256": "9b65788e02a6b16e2dc57708243a7fc45085f2726dc73da674c886cdf1b4d5f3"
+    },
+    ".github/workflows/selfhost-bootstrap.yml": {
+      "bytes": 5428,
+      "sha256": "523232bfeb506f7c9c54c89ef2aa04f5df9046aa39c75efdb68656ea90be2384"
+    },
+    "reference/self-hosting.md": {
+      "bytes": 61243,
+      "sha256": "d504ca86ee0fedc38f6ad0e883402abd0944b946c48b02fd433ca46ea558b5f5"
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "audit/self-hosting/test_bootstrap_runner.py",
+        "audit/self-hosting/test_selfhost_fixed_point.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "file": "0.stdout.gz",
+        "bytes": 296,
+        "sha256": "4361a2ab42edeb8e94be4f9d6ec20b0719d36188e8303931d2148dc5a4661e94",
+        "stored_sha256": "6d2f68a0f3f5785db2348c663f6fd464c8c836a9c09fd2965e99feb292350f24"
+      },
+      "stderr": {
+        "file": "0.stderr.gz",
+        "bytes": 189,
+        "sha256": "a8ca1c9ccd22e3bc7374537e9cd486abdb97f1047149d5c81ac35e26bc4cc969",
+        "stored_sha256": "b75794fbd475370ea3994e53e97f6fb79ce3829abd674f7eb6493594346970f7"
+      }
+    },
+    {
+      "command": [
+        "python3",
+        "-O",
+        "-m",
+        "unittest",
+        "audit/self-hosting/test_bootstrap_runner.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "file": "1.stdout.gz",
+        "bytes": 296,
+        "sha256": "68582ee27f13e273bd5041a81f5d99008180c9fa8bb56fb27412930c4bb90781",
+        "stored_sha256": "b2b4b511a31227da5c05f813e2b9efd9817398006ff6842688f6aece5680f2d2"
+      },
+      "stderr": {
+        "file": "1.stderr.gz",
+        "bytes": 171,
+        "sha256": "f46a6ef192b0dab619fdf5a0673c2515ddab254f6e62e3b84298dd9a7e001bfb",
+        "stored_sha256": "d25737df2828c4509a5d76d0c9e7720573255925eacf899d8ee32cd2d678908a"
+      }
+    },
+    {
+      "command": [
+        "../actionlint-bin/actionlint",
+        ".github/workflows/selfhost-bootstrap.yml"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "file": "2.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "stderr": {
+        "file": "2.stderr.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      }
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "file": "3.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "stderr": {
+        "file": "3.stderr.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stored_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      }
+    }
+  ],
+  "status": "passed"
+}

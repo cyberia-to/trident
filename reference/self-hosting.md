@@ -854,8 +854,10 @@ on macOS ARM64:
 python3 audit/self-hosting/bootstrap-runner.py --target aarch64-apple-darwin --work ../sh6-work --output ../sh6-evidence
 ```
 
-`--pins-json` accepts the same JSON explicitly. Each invocation performs two
-repetitions with separate source checkouts and build directories. It fetches
+`--pins-json` accepts the same JSON explicitly. By default, an invocation performs
+two repetitions with separate source checkouts and build directories.
+`--repeat 1` or `--repeat 2` performs only that numbered repetition; CI runs
+each in an independent native job. Every invocation fetches
 the pinned commits and locked dependencies, then builds offline, constructs
 C1, executes both complete self-builds, checks their fixed point and runs
 all six semantic corpora with actual C2 and actual C3. Rust-generated raw
@@ -865,24 +867,35 @@ pass bootstrap acceptance.
 
 Each whole-compiler job uses the same declared profile: 20000000000
 reductions, 1000000000 cumulative nodes, 3145728 resident nodes, 10000000000
-collection work, 65536 frames and 3600000 milliseconds. A failed limit
-fails the repetition. Corpus cases retain their existing deterministic limits.
-The output directory retains `receipt.json`, `files.json`, command logs and
+collection work, 65536 frames and 7200000 milliseconds. The explicit
+compaction deadline is a host allowance; guest computational limits and
+compiler semantics remain fixed. A failed limit fails the repetition, with
+no automatic retry or in-run increase. Corpus cases retain their existing
+deterministic limits.
+The runner emits `trident/clean-bootstrap/v2` receipts with the selected
+repetition and CI run, attempt and head identities. The output directory
+retains `receipt.json`, `files.json`, command logs and
 `repeat-1/` / `repeat-2/` source inventories, C1/C2/C3 artifacts, full job
 receipts, fixed-point checks and corpus evidence.
 
 The [`selfhost-bootstrap.yml`](../.github/workflows/selfhost-bootstrap.yml)
-workflow runs the six native targets for pull requests to `release/0.4`,
-using the exact PR head and pinned sibling revisions. Each target uploads
-its evidence, including failures. Documentation-only pull requests and new
+workflow runs two independent jobs on each of the six native targets for
+pull requests to `release/0.4`, using the exact PR head and pinned sibling
+revisions. Every job uploads its numbered repetition evidence, including
+failures. This keeps the clean reproductions independently bounded by CI
+job duration. Documentation-only pull requests and new
 receipts under `audit/self-hosting/lexer-bootstrap/` or `bootstrap-results/`
 retain the acceptance of their recorded source revision without rerunning
 unchanged compiler jobs. Source, executable harness and workflow changes
 continue to trigger the gate. The aggregate invokes the same runner
 with `--matrix PLATFORM_RESULTS --output MATRIX_EVIDENCE`, where
-`PLATFORM_RESULTS` contains one downloaded evidence directory per target.
-It requires both complete repetitions on all six targets, verifies the
-retained file identities and compares exact C2/C3 bytes across platforms.
+`PLATFORM_RESULTS` contains twelve downloaded evidence directories, one per
+target and repetition. It requires both distinct complete repetitions on all
+six targets, verifies the retained file identities and compares exact C2/C3
+bytes across platforms. Source pins, execution profile and CI run identity
+must match; missing, repeated or mixed-run results cannot supply acceptance.
+Artifact names include the attempt number so earlier evidence remains intact.
+A new CI attempt requires all twelve fresh jobs.
 Missing or incomplete platform evidence fails acceptance. The
 [progress ledger](../audit/self-hosting-progress.md) records executed results;
 adding this runner or workflow alone closes no gate.

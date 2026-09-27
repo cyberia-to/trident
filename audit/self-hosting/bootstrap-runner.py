@@ -1,4 +1,4 @@
-"""SH6 runner: two clean native bootstraps and six-target artifact comparison.
+"""SH6 runner: selected clean native bootstraps and twelve-job comparison.
 
 Run with --pins-json '{"trident":"<40 hex>", ...}' (or BOOTSTRAP_PINS),
 --target <native Rust triple>, --work <fresh build directory>, --output <fresh
@@ -7,12 +7,13 @@ fetches exact Git objects and locked crates; builds and compiler jobs are offlin
 Rust builds C1 once per clean repetition. Supplied C2/C3 run all six corpora;
 their separately labeled raw Rust reference oracles never replace a compiler.
 The fixed profile is 20B reductions, 1B cumulative nodes, 3M resident nodes,
-10B collection work and one hour per whole compiler job. No failed limit is raised.
+10B collection work and two hours per whole compiler job; corpus limits are unchanged.
 Retained evidence is bounded to 50,000 files and 4 GiB, with a checked file manifest.
 
 --prepare-only builds tools/inventory/C1 and reports 'prepared', never acceptance.
---matrix <download directory> requires all six successful native results, checks
-their retained files and exact C2/C3 equality. Missing evidence is a failing gate.
+--repeat 1|2 selects one clean repetition; the local default runs both.
+--matrix <download directory> requires six targets times two single-repeat receipts,
+checks retained files and exact C2/C3 equality. Missing evidence is a failing gate.
 Temporary corpus files are retained by a child-only tempfile adapter; source,
 compiler instructions, expected results and existing corpus limits are unchanged.
 No workflow execution or file generation alone closes SH6 or its separate proofs.
@@ -50,7 +51,8 @@ CORPORA = {
 }
 PROFILE = {"budget": 20_000_000_000, "arena-nodes": 1_000_000_000,
            "resident-nodes": 3_145_728, "collection-work": 10_000_000_000,
-           "time-ms": 3_600_000, "validation-visits": 16_777_216}
+           "time-ms": 7_200_000, "validation-visits": 16_777_216}
+SCHEMA = "trident/clean-bootstrap/v2"
 MAX_FILE = 16 << 20
 MAX_EVIDENCE_FILES, MAX_EVIDENCE_BYTES = 50_000, 4 << 30
 
@@ -87,6 +89,30 @@ def pins(value):
     return result
 
 
+def validate_origin(origin):
+    if origin is not None:
+        require(isinstance(origin, dict) and set(origin) == {"run_id", "run_attempt", "head_sha"}, "CI origin fields")
+        require(all(isinstance(origin[k], str) and re.fullmatch(r"[1-9][0-9]*", origin[k])
+                    for k in ("run_id", "run_attempt")), "CI run identity")
+        require(isinstance(origin["head_sha"], str) and re.fullmatch(r"[0-9a-f]{40}", origin["head_sha"]), "CI head identity")
+    return origin
+
+
+def ci_origin():
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return None
+    return validate_origin(dict(run_id=os.environ.get("GITHUB_RUN_ID"),
+                                run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"),
+                                head_sha=os.environ.get("BOOTSTRAP_HEAD_SHA")))
+
+
+def selected(report):
+    numbers = report["selected_repetitions"]
+    require(isinstance(numbers, list) and all(type(n) is int for n in numbers)
+            and numbers in ([1], [2], [1, 2]), "selected repetitions must be [1], [2] or [1, 2]")
+    return numbers
+
+
 def native(target, rust, version):
     machine = platform.machine().lower()
     arch = {"arm64": "arm64", "aarch64": "arm64", "x86_64": "x64", "amd64": "x64"}.get(machine)
@@ -112,7 +138,7 @@ class Audit:
     def __init__(self, output, report):
         self.output = output.resolve()
         self.output.mkdir(parents=True, exist_ok=False)
-        self.report = dict(schema="trident/clean-bootstrap/v1", status="running", commands=[], **report)
+        self.report = dict(schema=SCHEMA, status="running", commands=[], **report)
         self.env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONUTF8="1")
         for name in ("RUSTC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS",
                      "PYTHONOPTIMIZE", "PYTHONPATH", "PYTHONHOME"):
@@ -243,7 +269,7 @@ def repetition(audit, work, number, target, source_pins, prepare_only=False):
                    "--compiler", compiler, "--inventory", inventory, "--output", receipt, "--emit", "program"]
         for key, value in PROFILE.items():
             command.extend(["--" + key, str(value)])
-        audit.run(command, sources / "trident", 3900)
+        audit.run(command, sources / "trident", 7500)
         result = load(receipt)
         require(result["status"] == "compiler-returned" and result["published_kind"] == "program", "whole compiler step failed")
         require(result["compiler_sha256"] == result["compiler_sha256_end"] == sha(compiler), "step compiler changed")
@@ -352,15 +378,17 @@ def compare(reports):
     require(len(reports) > 0, "missing bootstrap evidence")
     baseline, contract, source_contract = None, None, None
     for root, report in reports:
-        require(report["schema"] == "trident/clean-bootstrap/v1" and report["status"] == "passed", "bootstrap not passed")
+        require(report["schema"] == SCHEMA and report["status"] == "passed", "bootstrap not passed/current schema")
         require(report["files"]["path"] == "files.json" and load(retained(root, report["files"])) == evidence_files(root), "retained raw evidence differs")
         require(f"host: {report['target']}" in report["host"]["rust"].splitlines(), "recorded runtime was not native")
         require(f"release: {report['rust_version']}" in report["host"]["rust"].splitlines(), "recorded Rust release differs")
-        require(report["profile"] == PROFILE and len(report["repetitions"]) == 2, "bootstrap profile/repetition count")
-        current = (report["pins"], report["rust_version"], report["runner_sha256"])
+        numbers, origin = selected(report), validate_origin(report["ci_origin"])
+        require(report["profile"] == PROFILE and len(report["repetitions"]) == len(numbers), "bootstrap profile/repetition count")
+        require(origin is None or origin["head_sha"] == report["pins"]["trident"], "CI head differs from source pin")
+        current = (report["pins"], report["rust_version"], report["runner_sha256"], origin)
         require(contract is None or current == contract, "bootstrap inputs differ")
         contract = current
-        for number, row in enumerate(report["repetitions"], 1):
+        for number, row in zip(numbers, report["repetitions"]):
             require(type(row.get("number")) is int and row["number"] == number, "distinct numbered repetitions required")
             require(row["status"] == "passed" and len(row["corpora"]) == 2 * len(CORPORA), "incomplete corpus repetition")
             identities = [row[k] for k in ("c1", "c2", "c3", "inventory", "fixed_point", "step2", "step3")]
@@ -379,6 +407,19 @@ def compare(reports):
     return hashlib.sha256(baseline).hexdigest()
 
 
+def compare_matrix(reports, origin=None):
+    require(len(reports) == 2 * len(TARGETS), "missing/duplicate SH6 platform evidence (twelve jobs required)")
+    pairs = []
+    for _, report in reports:
+        numbers = selected(report)
+        require(len(numbers) == 1, "matrix requires one selected repetition per job")
+        pairs.append((report["target"], numbers[0]))
+        require(origin is None or report["ci_origin"] == origin, "matrix CI run origin differs")
+    require(set(pairs) == {(target, n) for target in TARGETS for n in (1, 2)}, "missing/duplicate SH6 platform/repeat evidence")
+    require(len({root.resolve() for root, _ in reports}) == len(reports), "matrix evidence directory reused")
+    return compare(reports)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("output", "work", "matrix", "corpus-child", "retain", "joy", "compiler"):
@@ -387,6 +428,7 @@ def main():
     parser.add_argument("--pins-json", default=os.environ.get("BOOTSTRAP_PINS"))
     parser.add_argument("--rust-version", default="1.95.0")
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--repeat", type=int, choices=(1, 2))
     args = parser.parse_args()
     if args.corpus_child:
         retained_corpus(args)
@@ -394,26 +436,30 @@ def main():
     require(args.output is not None, "fresh --output directory required")
     audit = Audit(args.output, dict(scope="SH6 bootstrap evidence; proof and semantic-preservation gates separate"))
     try:
+        audit.report["ci_origin"] = ci_origin()
         if args.matrix:
+            require(args.repeat is None and not args.prepare_only, "matrix does not accept repetition/prepare-only selection")
             reports = [(p.parent, load(p)) for p in args.matrix.glob("*/receipt.json")]
             audit.report["platform_reports"] = [dict(path=str(root / "receipt.json"), sha256=sha(root / "receipt.json")) for root, _ in reports]
-            require({r["target"] for _, r in reports} == set(TARGETS) and len(reports) == len(TARGETS), "missing/duplicate SH6 platform evidence")
-            audit.report["compiler_sha256"] = compare(reports)
+            audit.report["compiler_sha256"] = compare_matrix(reports, audit.report["ci_origin"])
         else:
             require(args.target and args.work and args.pins_json, "--target, --work and exact source pins required")
             source_pins = pins(args.pins_json)
+            origin = audit.report["ci_origin"]
+            require(origin is None or origin["head_sha"] == source_pins["trident"], "CI head differs from source pin")
             require(re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", args.rust_version), "exact stable Rust version required")
             require(not args.work.resolve().is_relative_to(audit.output) and not audit.output.is_relative_to(args.work.resolve()),
                     "build and evidence directories must be separate")
             args.work.mkdir(parents=True, exist_ok=False)
             audit.env["CARGO_HOME"] = str(args.work.resolve() / "cargo-home")
             audit.report.update(target=args.target, pins=source_pins, rust_version=args.rust_version,
-                                profile=PROFILE, runner_sha256=sha(__file__), repetitions=[])
+                                profile=PROFILE, runner_sha256=sha(__file__), repetitions=[],
+                                selected_repetitions=[args.repeat] if args.repeat else ([1] if args.prepare_only else [1, 2]))
             audit.env["RUSTUP_TOOLCHAIN"] = f"{args.rust_version}-{args.target}"
             rust = audit.run(["rustc", "-vV"], Path.cwd())
             native(args.target, rust, args.rust_version)
             audit.report["host"] = dict(platform=platform.platform(), python=sys.version, rust=rust)
-            for number in range(1, 2 if args.prepare_only else 3):
+            for number in selected(audit.report):
                 repetition(audit, args.work.resolve() / f"repeat-{number}", number, args.target, source_pins, args.prepare_only)
             if not args.prepare_only:
                 with (audit.output / "files.json").open("x", encoding="utf-8", newline="\n") as output:

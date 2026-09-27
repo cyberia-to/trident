@@ -47,16 +47,25 @@ also passed all 547 observations and 1816 commands using the true second
 producer output. The [local continuation](self-hosting/lexer-bootstrap/orchestration/README.md)
 completed with every stage successful.
 
-[PR112](https://github.com/cyberia-to/trident/pull/112) pins the bootstrap implementation
-at `23691cd2c6885bf25bfc023799552559724dbc2b`. [The six-platform CI run](https://github.com/cyberia-to/trident/actions/runs/36353842247)
-started actual native jobs on macOS/Linux/Windows ARM64/x64. Intel macOS
-repetition 1 reached the explicit 3600000 ms deadline during `C1(S1) -> C2`
-and emitted no C2. Its C1, JOB1 and inventory exactly match the successful
-local run; [the original failed artifact and log](self-hosting/bootstrap-results/run-36353842247/intel-deadline/README.md)
-are retained byte-exact. Other targets were still running at that observation.
-SH6 remains open. The next delivery separates the two clean repetitions into
-independent native jobs and declares a bounded larger host deadline; it requires
-new actual results. Receipts are collected on `test/0.4-selfhost-acceptance`.
+[PR112](https://github.com/cyberia-to/trident/pull/112) now pins bootstrap
+implementation `c17bd0371c11746f46e20222c48cae2ab08be79d` and Joy
+`ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe` ([Joy PR22](https://github.com/cyberia-to/joy/pull/22)).
+[The original CI run](https://github.com/cyberia-to/trident/actions/runs/36353842247)
+at `23691cd2c6885bf25bfc023799552559724dbc2b` hit the explicit 3600000 ms
+deadline on Intel macOS during repetition 1's `C1(S1) -> C2`, emitting no C2.
+Its C1, JOB1 and inventory exactly match the successful local run; the
+[original failed artifact and log](self-hosting/bootstrap-results/run-36353842247/intel-deadline/README.md)
+remain byte-exact. The other original jobs continue separately.
+
+The reviewed [split-repetition delivery](self-hosting/bootstrap-results/split-repetitions/README.md)
+starts two independent jobs per native platform with an explicit 7200000 ms
+whole-compiler deadline. Guest computational/memory limits and all corpus
+quotas are unchanged. Its v2 aggregate requires all twelve distinct results
+from the same CI run/attempt/head and exact C2/C3 bytes. The orchestration and
+fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
+establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
+has started at `c17bd03`; SH6 remains open until it completes successfully.
+Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
 
 Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
 Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
@@ -283,7 +292,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
-| Cross-platform acceptance | Trident + Joy / SH6 | S1 exact C2/C3 fixed point and both actual corpora pass locally. Intel macOS clean C1 hits the one-hour deadline; new declared profile and two clean native repetitions per target remain required |
+| Cross-platform acceptance | Trident + Joy / SH6 | S1 exact C2/C3 fixed point and both actual corpora pass locally. Intel macOS clean C1 hits the one-hour deadline; new two-hour profile is running in CI; both clean native repetitions per target remain required |
 | Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence
