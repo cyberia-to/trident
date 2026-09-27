@@ -84,3 +84,7 @@ Subsequent evidence retains the [completed actual C2 semantic corpus](c2-corpus/
 the [exact C2/C3 fixed point](fixed-point/README.md), and the
 [separate example build check](example-build/README.md). The original first-build
 and source-scale receipts above remain unchanged.
+
+The [actual C3 corpus](c3-corpus/README.md) subsequently passed as well.
+The [completed local continuation](orchestration/README.md) retains all stage
+commands and final exit statuses; clean native-platform repetition remains open.
