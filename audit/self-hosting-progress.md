@@ -8,9 +8,10 @@ Component results close only their named substeps.
 
 ## Current position
 
-The complete frozen compiler has produced C2 through Joy/nox. SH0–SH3 are
-closed; SH4–SH8 remain open. The next steps are actual C2 corpus acceptance,
-C2(S) → C3, exact fixed point and reproducible bootstrap. No compiler execution
+The complete frozen compiler has produced usable C2 through Joy/nox; C2 has
+recompiled the same source into byte-identical C3. SH0–SH3 are closed. SH4 has
+a measured 64 KiB scanner frame failure; the remaining SH5/SH6 acceptance waits
+for that repair, actual C3 corpus and six-platform clean reproduction. No compiler execution
 proof is claimed. The separate literal compiler fixture remains historical.
 
 The [complete build receipt](self-hosting/body-scale/README.md) pins Trident
@@ -26,8 +27,12 @@ Its successful execution charged 10357536443 reductions, allocated 190792140
 nodes cumulatively, peaked at the 3145728 resident-node cap and completed
 66 collections in 1471089704 worker microseconds. Exact commands, source and
 runtime revisions, unchanged input hashes and canonical artifacts are retained.
-This proves complete source compilation; actual C2 semantic acceptance is
-running separately. C2(S) → C3 is also running on the same frozen source.
+The [actual C2 corpus](self-hosting/c2-corpus/README.md) passed all six semantic
+runners: 547 observations and 1816 commands, with unchanged cases/limits and
+separate raw Rust oracles. The [actual second build and fixed point](self-hosting/fixed-point/README.md)
+passed source/JOB1/producer bindings and exact C2/C3 byte comparison. C2(S)
+charged 9771339293 reductions with 162260313 cumulative allocations and
+56 collections. Actual C3 corpus is running separately.
 
 Bounded NoTrace compaction is merged into `release/0.4`: nox
 [PR23](https://github.com/cyberia-to/nox/pull/23) and Joy
@@ -37,8 +42,10 @@ limits unchanged; its [receipt](../../joy/audit/compiler-work-budget/README.md)
 records the boundary checks. [Nox phase localization](../../nox/audit/prefix-frontier/README.md)
 is retained in [PR24](https://github.com/cyberia-to/nox/pull/24).
 Earlier Trident scaling merged in [PR109](https://github.com/cyberia-to/trident/pull/109).
-Current alias/export lookup changes and audit tooling are on
-`feat/0.4-selfhost-body-scale` for the same integration branch.
+Alias/export lookup changes, complete C1(S) and audit tooling merged in
+[PR110](https://github.com/cyberia-to/trident/pull/110) at `2184197`. Current
+acceptance work is on `feat/0.4-reproducible-bootstrap`; the isolated scanner
+repair is on `feat/0.4-source-frame-chunking`. Both target `release/0.4`.
 
 The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
 remains identified as a different source/runtime attempt. The
@@ -54,9 +61,9 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH1](../reference/self-hosting.md#sh1-native-bootstrap-foundation) | Closed — native bootstrap foundation | [Combined acceptance](self-hosting/native-compiler-profile.md) |
 | [SH2](../reference/self-hosting.md#sh2-first-native-compiler) | Closed — bounded native arithmetic compiler | [Source, executed corpus and installed CLI acceptance](self-hosting/native-source-compiler.md) |
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
-| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — complete compiler stages now succeed | Retain exact 4 KiB/64 KiB boundaries, dependency identity, reorder and relocation evidence |
-| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Open — actual C2 produced | Actual supplied C2 must pass the independent corpus; SH4 acceptance also remains |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — needs SH5 | C2/C3 fixed point, C3 corpus, repeat bootstrap and six-platform CI |
+| [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Open — valid 64 KiB comment exhausts frames | Whole compiler succeeds; repair bounded scanning while retaining original small-fixture quotas |
+| [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Execution criterion met; SH4 prerequisite open | [Actual C2 passes all six semantic corpora](self-hosting/c2-corpus/README.md); source-scale repair remains |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — exact C2/C3 fixed point passed locally | C3 corpus, clean repeat and six native CPU platforms remain required |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
@@ -75,11 +82,11 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 - [x] Freeze S, options/ABI and seed identity; obtain complete `C1(S) -> C2`
   through Joy. Save its actual independently loadable compiler artifact and
   complete measurements; no host-built replacement may complete this step.
-- [ ] Run the unchanged independent positive/rejection corpus through actual C2
+- [x] Run the unchanged independent positive/rejection corpus through actual C2
   using `run-native-compiler.py --compiler PATH`; execute its emitted programs.
 - [ ] Run `C2(S) -> C3` with the same frozen sources/options/limits. Verify actual
   canonical bytes, particles, receipt bindings and source snapshots with
-  `check-selfhost-fixed-point.py`; run the regression corpus through C3.
+  `check-selfhost-fixed-point.py` (passed); finish the actual C3 regression corpus.
 - [ ] Repeat clean bootstrap, document one complete runner and execute the SH6
   six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
   Retain source/seed/artifact identities and downloadable CI evidence.
@@ -240,8 +247,8 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
-| Scale boundary and package invariance acceptance | Trident + nox + Joy / SH4 | [Full C1(S) succeeds](self-hosting/body-scale/README.md); complete the 64 KiB worker and full-package identity/order/relocation checks |
-| Semantic/fixed-point and cross-platform acceptance | Trident + Joy / SH5–SH6 | Actual C2 exists; C2 corpus and C2(S) are running. C3 corpus, exact fixed point, clean repeat and six-platform CI remain required |
+| Bounded long-trivia scanning | Trident / SH4 | Full compiler succeeds; valid 64 KiB comment hits 65536 active frames. Exact 4 KiB, invalid 64 KiB and excess 65537 paths complete; full-package relocation/order/identity checks pass |
+| C3 and cross-platform acceptance | Trident + Joy / SH5–SH6 | Actual C2 semantic corpus and exact C2/C3 fixed point pass. Actual C3 corpus, clean repeat and six-platform CI remain required |
 | Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence
