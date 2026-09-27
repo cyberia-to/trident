@@ -170,7 +170,9 @@ PRs target the integration branch; master stays unchanged until 0.4 acceptance.
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
   786432-node arena; all prior successful ART1 identities are preserved.
   [Stable installed acceptance](self-hosting/native-indexed-reads.md).
-- [ ] SH4 source closure and allocation scale: repair the valid 4096-byte
+- [x] SH4 reproducible complete native source inventory: parser-owned entry/import
+  closure with stale-receipt rejection; [acceptance](self-hosting/native-source-inventory.md).
+- [ ] SH4 source admission and allocation scale: repair the valid 4096-byte
   whitespace workload's lifetime arena boundary and measure full compiler closure.
 - [x] SH1 native Noun/raw source slice: [implementation and execution evidence](self-hosting/native-noun.md).
 - [x] SH1 reusable raw calls/loops and dynamic indexing: [execution receipt](self-hosting/native-control.md),
