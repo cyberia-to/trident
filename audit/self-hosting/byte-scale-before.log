@@ -1,0 +1,17 @@
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running tests/native_byte_scale.rs (../target-byte-scale/release/deps/native_byte_scale-9838781ac917d431)
+
+running 1 test
+byte-scale mode=0 bytes=128 reductions=118011 nodes=11840 frames=410
+byte-scale mode=1 bytes=128 reductions=533942 nodes=18385 frames=643
+byte-scale mode=0 bytes=4096 reductions=6008331 nodes=341649 frames=1258
+byte-scale mode=1 bytes=4096 reductions=28591382 nodes=551194 frames=1258
+byte-scale mode=0 bytes=16384 reductions=28360365 nodes=1532390 frames=1458
+test packed_source_scale_preserves_complete_admission_and_utf8 has been running for over 60 seconds
+byte-scale mode=1 bytes=16384 reductions=136042424 nodes=2370732 frames=2707
+byte-scale mode=0 bytes=65536 reductions=130778415 nodes=6859493 frames=2237
+byte-scale mode=1 bytes=65536 reductions=630908474 nodes=10213028 frames=8862
+test packed_source_scale_preserves_complete_admission_and_utf8 ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 584.55s
+

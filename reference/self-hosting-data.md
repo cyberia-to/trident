@@ -186,8 +186,13 @@ consume and produce raw Nouns; they cannot construct a validated Seq/Bytes
 handle. Seq and Bytes retain separate private constructors and field owners.
 Raw `get`, `set` and `push` require an existing canonical tree for their supplied
 length. Untrusted roots must pass `validate` before those operations.
-Shape validation returns the remaining visit allowance so Bytes can charge its
-word scan against the same budget. The traversal uses a Noun work stack and
+Shape validation returns the remaining visit allowance to its caller. Bytes may
+fuse shape and packed-word checks in one traversal while preserving the exact
+shape-plus-payload charge: every occupied word retains its height-plus-one
+charge. A complete eight-word subtree costs fifteen shape visits and eight
+payload charges, all charged before the subtree is examined. Every occupied word
+must pass a checked U32 conversion, and final unused byte lanes must remain zero.
+The traversal uses a Noun work stack and
 bounded helper chunks: returning from each chunk releases its evaluator frames.
 The outer driver returns explicitly on completion or fails on exhaustion.
 Outer driver frames still grow with the number of chunks; this is not a
@@ -203,6 +208,40 @@ constant-memory promise or evidence that a complete compiler workload fits.
 | Encode | `to_noun(s: Seq) -> Noun` | `to_noun(b: Bytes) -> Noun` |
 | Validate/decode | `from_noun(n: Noun, max_len: U32, max_visits: U32) -> Seq` | `from_noun(n: Noun, max_len: U32, max_visits: U32) -> Bytes` |
 | Shared allowance | `from_noun_budget(n: Noun, max_len: U32, remaining: U32) -> (Seq, U32)` | `from_noun_budget(n: Noun, max_len: U32, remaining: U32) -> (Bytes, U32)` |
+
+Sequential raw-tree reads use `std.nox.tree.Cursor`, whose fields are private.
+Like the other raw-tree helpers, constructors require the canonical tree for
+the supplied length. A cursor preserves the pending right subtrees and an
+occupied-leaf count; pair-shaped leaves stay opaque. Cursor values are immutable,
+so reading a saved cursor again yields the same leaf. Each read descends at most
+32 levels; a complete walk enters each branch once. The caller bounds its own
+driver and releases evaluator frames between chunks.
+
+| Tree operation | Signature | Contract |
+|---|---|---|
+| Start | `cursor(root: Noun, length: U32) -> Cursor` | Starts at the first occupied leaf; empty when length is zero. |
+| Seek | `cursor_at(root: Noun, length: U32, start: U32) -> Cursor` | Requires `start <= length`; seeks in at most 32 descents and retains the occupied suffix. At length it is empty. |
+| Count | `remaining(cursor: Cursor) -> U32` | Number of occupied leaves still available. |
+| Advance | `read(cursor: Cursor) -> (Noun, Cursor)` | Requires a nonempty cursor; returns the next opaque leaf and a cursor with one fewer leaf. Padding is excluded. |
+
+Validated Bytes expose packed reads without changing BYT1 or the private handle's
+length/root/word-count fields. Byte offsets identify the containing packed word;
+byte lanes use the existing little-endian representation.
+
+| Packed operation | Signature | Contract |
+|---|---|---|
+| Words | `words(b: Bytes) -> tree.Cursor` | Visits exactly `ceil(len(b)/4)` U32 word atoms in byte order. |
+| Word suffix | `words_from(b: Bytes, offset: U32) -> tree.Cursor` | Requires `offset <= len(b)`; starts at the word containing the byte offset. At the byte length it is empty, including a partial final word. |
+| Containing word | `word_at(b: Bytes, offset: U32) -> U32` | Requires `offset < len(b)`; returns the packed word containing that byte. |
+| Lane | `word_byte(word: U32, position: U32) -> U32` | Requires `position < 4`; returns exactly the selected byte in `0..256`. |
+| Word groups | `word_groups(b: Bytes) -> tree.Cursor` | Requires `len(b) > 16`; returns `ceil(len(b)/32)` opaque height-three subtrees, each containing eight packed words. The final group's unused words and lanes are canonical zero padding. |
+
+The grouped view uses the same underlying tree. Its leaf interpretation changes
+only for this cursor; it constructs no alternative encoding and grants no new
+validation allowance. A consumer must respect the original byte length when
+examining a final partial group. Compiler UTF8 validation may skip a complete
+ASCII group only when no continuation is pending; scalar fallback must preserve
+the same first invalid byte and incomplete-sequence span.
 
 `std.nox.bytes.BytesTable` retains already validated byte handles across compiler
 stages. It is an opaque, persistent, append-only table: `table_empty()` constructs
