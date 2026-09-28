@@ -1,0 +1,100 @@
+{
+  "schema": "trident/native-phase-components-retention/v1",
+  "status": "twelve-producers-and-sixteen-corpora-verified",
+  "matrix_acceptance": false,
+  "run_id": 36382085561,
+  "head_sha": "57491633fbccb58ae44dca2da438ee31430be1bc",
+  "indices": {
+    "producer": "51f791f67822bd9ebaf4ee77f04806d10dff592e64a7528dfc985b1d84c0c13f",
+    "c2": "c320b4c8387b905cc5d4402ebae34952cc36d672bdae435315b9e18324622b96",
+    "c3": "6d74790ba0152e3e7f49949264d439b556cf359c523beee2910a81aad1e89122"
+  },
+  "producers": 12,
+  "corpus_jobs": 16,
+  "raw_files": 61368,
+  "raw_bytes": 1356568919,
+  "prior_snapshot": {
+    "path": "../components-027/retention.json",
+    "sha256": "3e359d28e68977486f9dc318ffd236c927e45f97be4281ee809e24872528c712"
+  },
+  "files": {
+    "producer-012/restore.stdout": {
+      "bytes": 942,
+      "sha256": "16815a212451fbb328a459f94b6d851cd979c30895492eac2d00f9b9699f9249",
+      "compressed_bytes": 234,
+      "compressed_sha256": "dee0194f1d4a355a6497ea8602fd4b1e47d2d2fd0314f62e7e988810945d5c82"
+    },
+    "producer-012/restore.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compressed_bytes": 20,
+      "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    "producer-012/replay.json": {
+      "bytes": 1091882,
+      "sha256": "c452643fc20de7b79d0762789ebd6dcee3c2d610391711bf7c6385603a3feff0",
+      "compressed_bytes": 246621,
+      "compressed_sha256": "ffd9c144110e0dda079aaaf0bdcb4151275125fcadeca7063928ae63bf03b01e"
+    },
+    "commands/replay-phase-producers-012.py": {
+      "bytes": 4455,
+      "sha256": "3e841dca7ccef5cee844354b3b12e90075c8044ea7a942d13e76f16279409bd1",
+      "compressed_bytes": 2068,
+      "compressed_sha256": "71ae8b9955b8974fccbd972a560176e79b683f1bd9c7a0048fee3583dd18b4c8"
+    },
+    "producer-index.json": {
+      "bytes": 2524,
+      "sha256": "51f791f67822bd9ebaf4ee77f04806d10dff592e64a7528dfc985b1d84c0c13f",
+      "compressed_bytes": 818,
+      "compressed_sha256": "30df49ef7aea8bda5313dc7ffd6dd4a9a4cdb30934fc3a57552562e97d9e2c66"
+    },
+    "c2-index.json": {
+      "bytes": 1678,
+      "sha256": "c320b4c8387b905cc5d4402ebae34952cc36d672bdae435315b9e18324622b96",
+      "compressed_bytes": 615,
+      "compressed_sha256": "ca48155a3dd47df77a57be88da88a2c0b01c5ca9c0f35fd3036eb48a27236091"
+    },
+    "c3-index.json": {
+      "bytes": 1678,
+      "sha256": "6d74790ba0152e3e7f49949264d439b556cf359c523beee2910a81aad1e89122",
+      "compressed_bytes": 614,
+      "compressed_sha256": "968ef91dece2abeb7e2a66cd6b723445c6116116d7f0264a1ba93bbc92838a4d"
+    },
+    "inputs/agent-phase-validation.json": {
+      "bytes": 34891,
+      "sha256": "f017c37feae634d1da86a8f9aa845ca007805c4ddcd04852ccdb0919f8dfc182",
+      "compressed_bytes": 3481,
+      "compressed_sha256": "f5145fa55964adfe685902c8d70c8416d24b573e8b7ff9747e89af369926d40b"
+    },
+    "imports/10957689633.json": {
+      "bytes": 1162,
+      "sha256": "866820ebfe0b79315b12fb06fe2c8b0f546bcc625bcf95a318e4d1d5ee4bd060",
+      "compressed_bytes": 506,
+      "compressed_sha256": "bfe4e0eb6cc3cda265792df0f5e9b1f4e97d7880f79e0c2efa8d236695a91f0b"
+    },
+    "imports/10957689633.stdout": {
+      "bytes": 282,
+      "sha256": "2e7939bc41e0fcc7c9261d755cf8a79e0581ba1ff3451821072300ecaafb7661",
+      "compressed_bytes": 221,
+      "compressed_sha256": "f460add69b8e409a5b8b4730a3724087425b769622df3738cb2107281c05109a"
+    },
+    "imports/10957689633.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compressed_bytes": 20,
+      "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    "jobs/job-108799762995-direct.json": {
+      "bytes": 3047,
+      "sha256": "a4b3f236bfd4d465ef4cadab568dbc88ec8852ecfc673166e3d8d0816bc1bf06",
+      "compressed_bytes": 869,
+      "compressed_sha256": "4fe31fedf6662fe441b940e397a6526ae08fea0cd7c767bebfb133757d728825"
+    },
+    "jobs/job-108799762995-api.log": {
+      "bytes": 40136,
+      "sha256": "2088d81df660e3f322b23dd921103cd5d02b60475a2dcf660fd6adcd8f761cf8",
+      "compressed_bytes": 8320,
+      "compressed_sha256": "2382e9e530f691781a3cb21efb376fb24f98266d5bda850d2c432e1203d968fd"
+    }
+  }
+}
