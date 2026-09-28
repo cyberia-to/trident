@@ -1,7 +1,7 @@
 # Clean native bootstrap: run 36359020560
 
-Partial acceptance: both Windows x64 repetitions pass. This receipt retains
-two of the twelve required native repetitions; SH6 remains open until all six
+Partial acceptance: both Windows x64 and Linux ARM64 repetitions pass. This
+receipt retains four of the twelve required native repetitions; SH6 remains open until all six
 platforms and the aggregate pass. No compilation proof is claimed.
 
 [GitHub run](https://github.com/cyberia-to/trident/actions/runs/36359020560),
@@ -46,12 +46,35 @@ parsing. Those immutable ZIP downloads remain in the measurement directory;
 the durable store retains their complete uncompressed trees and exact API
 metadata, with ZIP provenance.
 
+## Linux ARM64
+
+Both clean native Linux glibc repetitions pass with the same C1, actual C2/C3,
+S1 inventories and JOB1 bytes as Windows and the local reference. Each C2 and
+C3 passes all six corpora (547 observations / 1816 commands); both clean Cargo
+builds per repetition have zero Rust warnings. All non-time execution fields
+match the local S1 reports. The unchanged runner also compares all four
+retained Windows/Linux reports successfully; this remains a partial matrix.
+
+| Repetition | GitHub job | Artifact | C1→C2 worker seconds | C2→C3 worker seconds |
+|---|---|---|---:|---:|
+| 1 | `108732342692` | `10947959238` | 2304.321239 | 2045.023197 |
+| 2 | `108732342674` | `10948841523` | 2303.901358 | 2053.309206 |
+
+Original ZIP SHA-256 values are
+`a4f6d29e1488640caa1a5b3674946a388be0731dbeb29cc89bb9f56dbe5822d6`
+and `7d12850b510d0d1298ae6e0f36f03186975b8d038a69eb7883e02dc98c659c6d`
+for repetitions 1 and 2. Each retains 7277 files: 99902961 and 99902951 raw
+bytes respectively. Restored files matched the original ZIPs exactly and
+passed the frozen runner again. `linux-arm/files.json` binds the original
+command logs, direct GitHub job responses, worker measurements and independent
+inspection, including the four-report comparison.
+
 ## Retention and replay
 
 `platform-store/` uses the reviewed [raw artifact store](../archive-tool/README.md).
 Its current index SHA-256 is
-`6ee39efcd6101916c460df18ac29761921f1ea1cd2ccdb9198e42bb5a6544693`.
-The import commands report 7277 file members in each ZIP: 100042334 raw bytes
+`5dc79680d80b8cc9ed5f9d3627145df7e62d05c9f455edd07521d06c42e1a24b`.
+The Windows import commands report 7277 file members in each ZIP: 100042334 raw bytes
 for repetition 1 and 100042030 for repetition 2. Restored file sets and bytes
 matched both original ZIPs. The unchanged frozen runner then checked each
 restored tree's complete manifest, compiler chain, fixed point and corpora.

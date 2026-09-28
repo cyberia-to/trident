@@ -64,7 +64,7 @@ quotas are unchanged. Its v2 aggregate requires all twelve distinct results
 from the same CI run/attempt/head and exact C2/C3 bytes. The orchestration and
 fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
 establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
-is running at `c17bd03`. [Both Windows x64 repetitions](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora; the other five platforms and aggregate remain required. SH6 stays open.
+is running at `c17bd03`. [Both Windows x64 and Linux ARM64 repetitions](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora; the other four platforms and aggregate remain required. SH6 stays open.
 Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
 The reviewed [artifact replay tool](self-hosting/bootstrap-results/archive-tool/README.md)
 preserves every raw platform file with a shared byte store and exact path
@@ -110,7 +110,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — Windows x64 clean repetitions pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); other five platforms and aggregate remain required |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — Windows x64 and Linux ARM64 clean repetitions pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); other four platforms and aggregate remain required |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — implementation design remains | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
