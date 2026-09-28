@@ -7,9 +7,9 @@ successful aggregate. Earlier runs supply none of these phases.
 
 ## Retained component snapshot
 
-`components-025/retention.json` binds eleven independently verified producers
-and fourteen independently verified corpus phases. All twenty-five original GitHub jobs
-succeeded. The one remaining producer, ten remaining corpus jobs and final
+`components-027/retention.json` binds eleven independently verified producers
+and sixteen independently verified corpus phases. All twenty-seven original GitHub jobs
+succeeded. The one remaining producer, eight remaining corpus jobs and final
 aggregate are required before matrix acceptance.
 
 | Native producer | Repeat | Original artifact |
@@ -34,12 +34,12 @@ worker counter match the original S1 references. Both native Cargo builds per
 producer have zero warnings. Original elapsed times are preserved unchanged.
 Producer receipts retain status `produced`; corpus acceptance is separate.
 
-Seven native repetitions have both original C2 and C3 corpus phases verified:
-both ARM64 repetitions on Linux, Windows and macOS, plus Windows x64
-repetition 2. The original artifact IDs are retained in the store indices and
+Eight native repetitions have both original C2 and C3 corpus phases verified:
+both ARM64 repetitions on Linux, Windows and macOS, plus both Windows x64
+repetitions. The original artifact IDs are retained in the store indices and
 root replay. Each generation executed all six corpora: 547 observations and
-1816 commands, including independent reference oracles. Their fourteen restored
-trees contain 47460 files and 452723238 raw bytes.
+1816 commands, including independent reference oracles. Their sixteen restored
+trees contain 54240 files and 517862185 raw bytes.
 
 The exact commands in the compressed `commands/` drivers restore each store,
 compare every restored file byte for byte with its original ZIP, and execute
@@ -49,10 +49,10 @@ compare each copied producer receipt, manifest, selected compiler and native Joy
 byte for byte with the separately verified original producer. These component
 checks do not invoke or replace final36 acceptance.
 
-The twenty-five artifact trees total 53994 files and 1221404619 raw bytes; this sums
+The twenty-seven artifact trees total 60774 files and 1286543566 raw bytes; this sums
 per-artifact trees, including their shared copies. New raw logs, direct job
 responses, imports, current indices and root replays are retained in
-`components-025/`. It binds `components-021/` by digest; the linked snapshots
+`components-027/`. It binds `components-025/` by digest; the linked snapshots
 retain the producer replay and all preceding component checks and indices.
 
 ## Restore and finish acceptance
@@ -62,8 +62,8 @@ These are the exact store indices for this snapshot:
 | Store | Entries | Index SHA256 |
 |---|---:|---|
 | `producer` | 11 | `a917a935f945d9082d74757fc743890e6cfc81ecdf03c46d3b26aba9c0c2e297` |
-| `c2` | 7 | `9c575718940fba2c7322995ca964b39af3f68920ee45f0c6d3f314ecb00f4d96` |
-| `c3` | 7 | `f1789f7e4014dc834a25c59fff4c0a50d96454efd6522443f7733d54a24daa29` |
+| `c2` | 8 | `c320b4c8387b905cc5d4402ebae34952cc36d672bdae435315b9e18324622b96` |
+| `c3` | 8 | `6d74790ba0152e3e7f49949264d439b556cf359c523beee2910a81aad1e89122` |
 
 For example, restore the producer trees with:
 
@@ -76,7 +76,7 @@ python3 -B audit/self-hosting/bootstrap-results/archive-tool/archive.py restore 
 
 Use each role's store and hash, with a separate fresh destination. Later imports
 advance the indices; this commit's stores and the compressed indices under
-`components-025/` identify the exact replay snapshot. Store metadata preserves
+`components-027/` identify the exact replay snapshot. Store metadata preserves
 the original API bytes and ZIP digest. Original ZIP containers remain immutable
 in the local download directory recorded by the replay; the stores preserve
 all expanded files.
