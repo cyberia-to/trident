@@ -7,6 +7,9 @@ on:
       - '**/*.md'
       - 'audit/self-hosting/lexer-bootstrap/**'
       - 'audit/self-hosting/bootstrap-results/**'
+      - 'scripts/prepare-selfhost-source.py'
+      - 'scripts/test_prepare_selfhost_source.py'
+      - 'scripts/fixtures/selfhost-kit-metadata.tar.gz'
   workflow_dispatch:
 
 permissions:

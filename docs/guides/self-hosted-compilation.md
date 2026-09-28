@@ -1,0 +1,138 @@
+# Compile with the self-built nox compiler
+
+The current native compiler can compile `.tri` source while running inside
+Joy/nox. This guide uses an actual C2 emitted by that compiler, then executes
+its output. The supported language subset and larger self-build procedure are
+specified in [Self-Hosting](../../reference/self-hosting.md); current platform
+acceptance is recorded in [the ledger](../../audit/self-hosting-progress.md).
+
+Use the Joy `release/0.4` development implementation with `pack-job` and
+`run-artifact` support; this rehearsal used commit `ec83bd8d`. The installed
+`joy` must be on your command path.
+
+## Prepare the compiler and source package
+
+An accepted coordinated distribution includes `share/trident-selfhost/`.
+Verify the distribution and kit archive checksums before using their contents.
+Copy `compiler.dag`, `sample.tri`, `package.json` and `zero.dag` from that kit
+into a fresh directory. The compiler has SHA-256:
+
+```text
+76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8
+```
+
+The kit manifest binds every file. `sample.tri` is the source below,
+`package.json` provides its explicit module/entry/options/limits, and `zero.dag`
+is a complete native atom-zero input for the emitted program. A kit marked
+`rehearsal` remains an explicitly unaccepted local input; changing that field
+cannot confer distribution acceptance.
+
+```trident
+program sample
+
+fn main() -> Field {
+    13
+}
+```
+
+The package manifest includes every source module the guest may import.
+`pack-job` serializes their exact bytes and binds the job to `compiler.dag`.
+Module resolution, parsing, checking and code generation execute in the guest.
+
+## Compile and execute
+
+Run these commands in the prepared directory:
+
+```sh
+joy pack-job --compiler compiler.dag --manifest package.json --output job.dag
+joy run-artifact compiler.dag --input job.dag --emit program --output sample.dag
+joy run-artifact sample.dag --input zero.dag --output answer.dag
+```
+
+The second command publishes the ART1 program produced by C2. The third
+publishes its result as a complete NOXDAG01 noun: atom 13 in this example.
+Each successful command prints one JSON receipt. Keep those receipts and the
+output bytes together. The expected result is atom 13; the distribution
+validates this route using its installed Joy binary.
+
+Existing destinations require an explicit `--force`. A rejected package,
+runtime failure or compiler diagnostic leaves an existing program intact.
+These small commands use ordinary host limits. Larger packages need explicit
+job and host limits; the complete compiler bootstrap has its own measured
+profile in the self-hosting contract.
+
+The ordinary `joy build` command invokes the Rust seed compiler. Select the
+`pack-job` → `run-artifact` sequence above to compile with C2. This guide
+demonstrates execution; proofs of dynamic compilation remain SH7/SH8 work.
+
+
+## Rebuild the complete frozen compiler
+
+This path needs Python 3.10 or later, the supplied C2, installed Joy and the
+coordinated source archive. It requires no Rust toolchain, Cargo, seed compiler
+or inventory executable. Preparation checks exact bytes; Joy executes all
+source-language work inside the supplied compiler.
+The preparer reproduces frozen S1 only. Edited-source development uses a
+separate explicit JOB1 package manifest with its own declared inputs and limits.
+
+Unpack the checksum-verified source archive and portable kit. Obtain the
+`kit.json` SHA256 from the verified kit/distribution metadata; preserve that
+expected digest independently of files being checked. Set `kit_digest` to it,
+then prepare a fresh directory (its parent must already exist):
+
+```sh
+python3 /absolute/cyber-source/trident/scripts/prepare-selfhost-source.py \
+  --kit /absolute/trident-selfhost \
+  --kit-manifest-sha256 "$kit_digest" \
+  --source-root /absolute/cyber-source/trident \
+  --output /absolute/selfbuild
+```
+
+The helper requires an accepted kit by default. For an explicitly local
+historical rehearsal, append `--rehearsal`; both its receipt and any later run
+must retain that qualification. It never upgrades acceptance. The helper
+rejects changed or missing source bytes, altered compiler profiles/limits,
+unsafe paths and occupied or overlapping destinations before publishing a
+prepared package.
+
+The output contains the exact compiler, all 94 frozen source files,
+`package.json` and `receipt.json`. Status `prepared` establishes only byte
+preparation. The manifest preserves `native_compiler/main`, the origins,
+profile1/1 compiler output and every frozen job limit. Standard-library modules
+are explicit package inputs, with no host fallback.
+
+From that directory, pack and compile with the existing Joy commands:
+
+```sh
+joy pack-job --compiler compiler.dag --manifest package.json --output job.dag \
+  --arena-nodes 1000000000 --budget 20000000000 --frames 65536 \
+  --time-ms 7200000 --validation-visits 16777216 \
+  --resident-nodes 3145728 --collection-work 10000000000 \
+  > pack.stdout 2> pack.stderr
+joy run-artifact compiler.dag --input job.dag --emit program --output c3.dag \
+  --arena-nodes 1000000000 --budget 20000000000 --frames 65536 \
+  --time-ms 7200000 --validation-visits 16777216 \
+  --resident-nodes 3145728 --collection-work 10000000000 \
+  > compile.stdout 2> compile.stderr
+```
+
+Run the second command only after the first exits successfully. Choose fresh
+log destinations and retain each exit status. These are the published complete
+compiler allowances: 20 billion reductions, 1 billion cumulative nodes,
+3145728 resident nodes, 10 billion collection work, 65536 frames, 16777216
+validation visits and a two-hour host deadline. They are independent limits;
+a larger allowance is not a completion guarantee. No automatic retry raises a
+limit after failure.
+
+After the second command exits successfully, compare complete artifact bytes:
+
+```sh
+python3 -c 'from pathlib import Path; import sys; sys.exit(Path("compiler.dag").read_bytes() != Path("c3.dag").read_bytes())'
+```
+
+Exit zero means the emitted C3 matches the supplied C2 byte for byte. Preserve
+both artifacts, the preparation receipt, JOB1 and Joy JSON/raw logs. The
+admission's compiler/job particles must match execution's program/input
+particles, with compiler-job status `success`. This run establishes its own
+self-reproduction result; the native matrix/corpus acceptance and SH7/SH8
+compilation proofs have separate gates.
