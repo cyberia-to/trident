@@ -1,0 +1,33 @@
+{
+  "scope": "Post-run capture of original installation logs and supplemental explicit-toolchain versions",
+  "revision": "fef81df38e1e22fd0b20b2135408f2333c512f08",
+  "status": "passed",
+  "invocations": [
+    {
+      "name": "wrong-cargo-selector",
+      "original_path": "/tmp/trisha-cpu-proof-retention-install.log",
+      "exit_code": 101,
+      "bytes": 107,
+      "sha256": "fa5a3d69d2babcf1bf3392dc9069b8f1b916614dd716930c4a6c4e3a779c5112",
+      "warning_lines": 0
+    },
+    {
+      "name": "relative-prefix-advisory",
+      "original_path": "/tmp/trisha-cpu-proof-retention-install-corrected.log",
+      "exit_code": 0,
+      "bytes": 15130,
+      "sha256": "50a288b0d3759fbc919e07c4d293abaab0ab209f84abe29af9d3424a27943008",
+      "warning_lines": 1
+    },
+    {
+      "name": "absolute-prefix-final",
+      "original_path": "/tmp/trisha-cpu-proof-retention-install-final.log",
+      "exit_code": 0,
+      "bytes": 571,
+      "sha256": "e20aaec8f70dcb8b72c05bb40c8ea3fe47533c76a02d94b87cbffeb25cb32b24",
+      "warning_lines": 0
+    }
+  ],
+  "explanation": "Homebrew Cargo rejected rustup +toolchain syntax; explicit Rust 1.89 shims completed the build, then an absolute install prefix removed its PATH advisory. Original diagnostic logs retained.",
+  "final_command": "PATH=/Users/master/.cargo/bin:/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/install-trisha/bin:$PATH RUSTUP_TOOLCHAIN=1.89.0 CARGO_TARGET_DIR=/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/target-trisha CARGO_BUILD_JOBS=1 cargo install --path cli --root /Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/install-trisha --locked --offline --force"
+}
