@@ -43,6 +43,29 @@ producer have zero warnings. Original elapsed times are retained unchanged.
 The earlier seven-producer snapshot and its four-producer replay remain under
 `producer-007/`.
 
+## First complete corpus pair
+
+Linux ARM64 repetition 1 has both original native corpus phases verified:
+C2 artifact `10956384118` and C3 artifact `10955644380`. Each executed all six
+corpora, with 547 observations and 1816 commands including independent reference
+oracles. The original successful jobs, raw logs, imports and root replay are
+indexed in `corpora-002/retention.json`.
+
+The root replay restores both stores, compares every file with its original ZIP,
+runs the frozen corpus checker, and compares the copied producer receipt,
+manifest, selected compiler and native Joy byte for byte with the separately
+verified original producer. The two restored trees have 6780 files and
+65563914 raw bytes. This establishes one complete native repetition; the
+remaining repetitions and original aggregate are still required for SH6.
+
+| Store | Entries | Index SHA256 |
+|---|---:|---|
+| `c2` | 1 | `cdd91fe04cc40fa53a457a78f26265503a0b481cf166c88d8310adb66bbb0532` |
+| `c3` | 1 | `7d21ccc85aad8d55ef95fb8af1b9007fbcdb0f36027a16ea901c5083da3e10e4` |
+
+The compressed original indices and exact replay driver are retained in
+`corpora-002/`; use this commit's stores to repeat their restore commands.
+
 ## Restore and finish acceptance
 
 The producer store snapshot has index SHA256
