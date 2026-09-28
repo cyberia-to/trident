@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "observed_at": "2026-09-28T05:11:58.745227+00:00",
+  "scope": "Integrated internal noun/Cost CCS component; authenticated memory and SH7/SH8 remain open",
+  "pr": {
+    "baseRefName": "release/0.4",
+    "headRefOid": "2f79869a81a28daff3d700863ec593339ba4d08f",
+    "mergeCommit": {
+      "oid": "633e5ba980db94ca10d9d6b67cf24d9d3aef63a7"
+    },
+    "mergedAt": "2026-09-28T05:04:56Z",
+    "state": "MERGED"
+  },
+  "head": "2f79869a81a28daff3d700863ec593339ba4d08f",
+  "core_commit": "3295ca029c78c272dafb4c56944c7774be0136ae",
+  "merge_commit": "633e5ba980db94ca10d9d6b67cf24d9d3aef63a7",
+  "head_tree": "7a3577301a97364d8da3f90b15e3f8c3a9aaf276",
+  "merge_tree": "7a3577301a97364d8da3f90b15e3f8c3a9aaf276",
+  "source_capture_base": "c753f5ae055d3f4a43847877521f119d3b40dd39",
+  "source_capture_map_sha256": "62f17fddef1ac64f14c7b8e86a34c3692d159e935d7cf19981d2364657150dff",
+  "source_files": {
+    "rs/src/execution/proof.rs": {
+      "captured_sha256": "63833926f9118428cb8f2dd2397652ab9d30d4fc56844f3c3a18e328be5a606a",
+      "committed_sha256": "63833926f9118428cb8f2dd2397652ab9d30d4fc56844f3c3a18e328be5a606a"
+    },
+    "rs/src/execution/tagged/build.rs": {
+      "captured_sha256": "1e9b7bfafd8009fb4dd00ee1e1713def5f6b09d8e135264c439a373196b0d3a7",
+      "committed_sha256": "1e9b7bfafd8009fb4dd00ee1e1713def5f6b09d8e135264c439a373196b0d3a7"
+    },
+    "rs/src/execution/tagged/hash.rs": {
+      "captured_sha256": "522131d754d536705bb3bd58253657d3cc2412ea1e8b87198e540360fe218fdb",
+      "committed_sha256": "522131d754d536705bb3bd58253657d3cc2412ea1e8b87198e540360fe218fdb"
+    },
+    "rs/src/execution/tagged/mod.rs": {
+      "captured_sha256": "2f58bd30f3ebc5e29c870afa8c8b615f22e225e4f874b321107bea06f99b9bef",
+      "committed_sha256": "2f58bd30f3ebc5e29c870afa8c8b615f22e225e4f874b321107bea06f99b9bef"
+    },
+    "rs/src/execution/tagged/node_cost.rs": {
+      "captured_sha256": "a1b63e2e34a8b93305f3450f0db9b5d99103d555999119a1f7e237decc82a086",
+      "committed_sha256": "a1b63e2e34a8b93305f3450f0db9b5d99103d555999119a1f7e237decc82a086"
+    },
+    "rs/src/execution/tagged/node_cost_tests.rs": {
+      "captured_sha256": "38f890419ec3298dfa02e8889c50ef7fae1e9dee26f3b76128dac3dace71967e",
+      "committed_sha256": "38f890419ec3298dfa02e8889c50ef7fae1e9dee26f3b76128dac3dace71967e"
+    },
+    "rs/src/execution/tagged/node_cost_tests/adversarial.rs": {
+      "captured_sha256": "56e8bb83d9cd6aec0d68b5df4cdd2a50f155d873d2fabca8e7b4be25d867cc1c",
+      "committed_sha256": "56e8bb83d9cd6aec0d68b5df4cdd2a50f155d873d2fabca8e7b4be25d867cc1c"
+    },
+    "rs/src/execution/tagged/node_cost_tests/arithmetic.rs": {
+      "captured_sha256": "ba1a324c4420f3456d6c1b08c249c8559e6b07f75b693fabde8f89d182a3ca10",
+      "committed_sha256": "ba1a324c4420f3456d6c1b08c249c8559e6b07f75b693fabde8f89d182a3ca10"
+    },
+    "rs/src/execution/tagged/node_cost_tests/backend.rs": {
+      "captured_sha256": "ffaabdfe7f69941d934e21e1dd8df1a1306baf264696ad9aa6b2baa79a7698f6",
+      "committed_sha256": "ffaabdfe7f69941d934e21e1dd8df1a1306baf264696ad9aa6b2baa79a7698f6"
+    },
+    "rs/src/execution/tagged/uint64.rs": {
+      "captured_sha256": "f651a4853823d69ee308e72c3a74fbdab653da76b1ec63b4b21ceb844c2bf5d3",
+      "committed_sha256": "f651a4853823d69ee308e72c3a74fbdab653da76b1ec63b4b21ceb844c2bf5d3"
+    },
+    "rs/src/execution/tagged/word.rs": {
+      "captured_sha256": "7781ea3ab15d212da6a8042de9309e40f53b8e154d6871da7e2c10c03a692c32",
+      "committed_sha256": "7781ea3ab15d212da6a8042de9309e40f53b8e154d6871da7e2c10c03a692c32"
+    },
+    "specs/noun-cost-component.md": {
+      "captured_sha256": "d493fe195d99309bcfd35ad1c89dbe895be4f202faa126a94b8221b2434c566b",
+      "committed_sha256": "d493fe195d99309bcfd35ad1c89dbe895be4f202faa126a94b8221b2434c566b"
+    },
+    "specs/props/dynamic-noun-memory.md": {
+      "captured_sha256": "ca4fa674cafe1c88a11e793c3ab7380033a5d8f31608da413c8f74d2aafb1575",
+      "committed_sha256": "ca4fa674cafe1c88a11e793c3ab7380033a5d8f31608da413c8f74d2aafb1575"
+    },
+    "rs/Cargo.toml": {
+      "captured_sha256": "bdc301d45a6202266fdebc48d550742a4cac75013eb356d3c77b34b5e58ce0d2",
+      "committed_sha256": "bdc301d45a6202266fdebc48d550742a4cac75013eb356d3c77b34b5e58ce0d2"
+    }
+  },
+  "audit_receipt_sha256": "f9cee0e08500f7f8d7a8e65892ca3e438a72f66af8e63b5aa2e81541d8183fa7",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-node-cost",
+      "exit_code": 0,
+      "stdout": "2f79869a81a28daff3d700863ec593339ba4d08f\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD~1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-node-cost",
+      "exit_code": 0,
+      "stdout": "3295ca029c78c272dafb4c56944c7774be0136ae\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "origin/release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-node-cost",
+      "exit_code": 0,
+      "stdout": "633e5ba980db94ca10d9d6b67cf24d9d3aef63a7\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "2f79869a81a28daff3d700863ec593339ba4d08f^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-node-cost",
+      "exit_code": 0,
+      "stdout": "7a3577301a97364d8da3f90b15e3f8c3a9aaf276\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "633e5ba980db94ca10d9d6b67cf24d9d3aef63a7^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-node-cost",
+      "exit_code": 0,
+      "stdout": "7a3577301a97364d8da3f90b15e3f8c3a9aaf276\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "39",
+        "--repo",
+        "cyberia-to/zheng",
+        "--json",
+        "state,mergeCommit,headRefOid,baseRefName,mergedAt"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-node-cost",
+      "exit_code": 0,
+      "stdout": "{\"baseRefName\":\"release/0.4\",\"headRefOid\":\"2f79869a81a28daff3d700863ec593339ba4d08f\",\"mergeCommit\":{\"oid\":\"633e5ba980db94ca10d9d6b67cf24d9d3aef63a7\"},\"mergedAt\":\"2026-09-28T05:04:56Z\",\"state\":\"MERGED\"}\n",
+      "stderr": ""
+    }
+  ],
+  "source_hash_command": [
+    "git",
+    "show",
+    "<head>:<source path>"
+  ],
+  "source_hash_method": "SHA-256 of exact Git blob bytes, independently compared with original measured capture",
+  "frozen_sh6_pins_changed": false
+}
