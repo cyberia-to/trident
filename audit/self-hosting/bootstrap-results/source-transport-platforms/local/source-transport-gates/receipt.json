@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "commands": [
+    {
+      "name": "actionlint",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/actionlint-bin/actionlint",
+        ".github/workflows/selfhost-source-transport.yml"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+      "exit_code": 0,
+      "expected": 0
+    },
+    {
+      "name": "wrong-native-target",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "audit/self-hosting/check-source-transport.py",
+        "--target",
+        "x86_64-pc-windows-msvc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-gates/wrong-target"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+      "exit_code": 1,
+      "expected": 1
+    }
+  ]
+}

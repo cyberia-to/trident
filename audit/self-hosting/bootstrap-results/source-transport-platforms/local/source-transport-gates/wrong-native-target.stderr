@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/check-source-transport.py", line 96, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/check-source-transport.py", line 69, in main
+    require(report['native_target'] == args.target, 'native host and Python architecture')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/check-source-transport.py", line 19, in require
+    raise ValueError(message)
+ValueError: native host and Python architecture

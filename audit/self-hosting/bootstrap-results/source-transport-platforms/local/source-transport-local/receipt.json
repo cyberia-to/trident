@@ -1,0 +1,78 @@
+{
+  "status": "passed",
+  "revision": "a7b74dabc2fa38cdb031e97535d979a766ec1ea0",
+  "target": "aarch64-apple-darwin",
+  "machine": "arm64",
+  "native_target": "aarch64-apple-darwin",
+  "python": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "executable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+  "implementation": {
+    "bytes": 3710,
+    "sha256": "6490855c3444bd0270afbaf07bbdffaad98bb870f2af7e1c83ab650391a7f70a"
+  },
+  "tests": {
+    "bytes": 11702,
+    "sha256": "625553777cf2df5cf778ddb870f2714dfe7b1b6f171663fe5442d3c01b235dfd"
+  },
+  "preparer": {
+    "bytes": 12799,
+    "sha256": "4f2381880f7da77265ed562cb99bc0e7bcad4c5f7df28f8c62bf7a37f55c3711"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/check-source-transport.py",
+        "--worker",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-local/ordinary.json"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-O",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/check-source-transport.py",
+        "--worker",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-local/optimized.json"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+      "exit_code": 0
+    }
+  ],
+  "files": {
+    "optimized.json": {
+      "bytes": 104,
+      "sha256": "dc2f296a838a18c091d494635df6336c8c0fb77cea4129d83bbf155ff437678c"
+    },
+    "optimized.stderr": {
+      "bytes": 3331,
+      "sha256": "b2422b795f8b2fd1e21020490eba76ba13c5fe32e16be64a6e54a3aa7ad619ba"
+    },
+    "optimized.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordinary.json": {
+      "bytes": 104,
+      "sha256": "f5824c289c7812f6d13017f4ff26697a83cc5e164e1995020e4ce7a64661094d"
+    },
+    "ordinary.stderr": {
+      "bytes": 3331,
+      "sha256": "23da9543a6627ad1413ccd7e6160a061bdcffb8175795bb01ad2b63fbd281569"
+    },
+    "ordinary.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
