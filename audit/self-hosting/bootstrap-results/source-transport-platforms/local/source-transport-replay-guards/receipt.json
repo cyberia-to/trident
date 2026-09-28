@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "source_sha256": "fa1d89a82e7a28d90e6c1911a257b3f302a27f5f4cc345e4c6385651eb247359",
+  "commands": [
+    {
+      "name": "oversized-archive",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/archive-output"
+      ],
+      "exit_code": 1,
+      "expected": "bounded ordinary input: /Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/evidence.tar.gz",
+      "output_created": false
+    },
+    {
+      "name": "oversized-index",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/index-output"
+      ],
+      "exit_code": 1,
+      "expected": "bounded ordinary input: /Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/retention.json",
+      "output_created": false
+    },
+    {
+      "name": "physical-case-overlap",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/bootstrap-results/source-transport-platforms/replay.py",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/bootstrap-results/SOURCE-TRANSPORT-PLATFORMS/rejected-output"
+      ],
+      "exit_code": 1,
+      "expected": "output overlaps retained inputs",
+      "output_created": false
+    }
+  ]
+}
