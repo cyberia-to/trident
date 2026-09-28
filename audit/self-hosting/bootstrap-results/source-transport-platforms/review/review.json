@@ -1,0 +1,98 @@
+{
+  "schema": "trident/source-transport-independent-delivery-review/v1",
+  "status": "clear",
+  "reviewed_at": "2026-09-28T09:18:51.244678+00:00",
+  "checkout": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+  "revision": "85ab2d3f33d4e5d5e057600782aeb99bed2dfeb2",
+  "source_and_evidence": {
+    ".github/workflows/selfhost-source-transport.yml": {
+      "bytes": 2372,
+      "sha256": "fe99ca870db0a3dff6a02f2ed1072c6324b5e1772512edc5908e4fa71370814e"
+    },
+    "audit/self-hosting/check-source-transport.py": {
+      "bytes": 4986,
+      "sha256": "4831f011b0ae5a04ad843b9d2ecd485514eb2563bc7b4ab9524bfc121a1e2e4d"
+    },
+    "audit/self-hosting/bootstrap-results/source-transport-platforms/collect.py": {
+      "bytes": 2446,
+      "sha256": "e7f23e73a261aead0d02877bd109465cb5fe3279f09cf234143e98f080c34cb6"
+    },
+    "audit/self-hosting/bootstrap-results/source-transport-platforms/replay.py": {
+      "bytes": 4340,
+      "sha256": "fa1d89a82e7a28d90e6c1911a257b3f302a27f5f4cc345e4c6385651eb247359"
+    },
+    "audit/self-hosting/bootstrap-results/source-transport-platforms/retention.json": {
+      "bytes": 31927,
+      "sha256": "91b42900657206ad3f989b9f7ccdcc2542bb8a297f00b08ab783b3653f3d84e4"
+    },
+    "audit/self-hosting/bootstrap-results/source-transport-platforms/evidence.tar.gz": {
+      "bytes": 4314836,
+      "sha256": "d4ff213725b9c9605eecb4d2aba5ecdfa7786847ebbca16b5c7b24b3ac3102bb"
+    },
+    "audit/self-hosting/bootstrap-results/source-transport-platforms/README.md": {
+      "bytes": 3077,
+      "sha256": "5acabbc5e6d578b7085c9608464b1959954425fe316503f6a4ebd949750fda5b"
+    }
+  },
+  "identities_unchanged_at_end": true,
+  "original_ci": {
+    "run_id": 36400752982,
+    "run_attempt": 1,
+    "head_sha": "85ab2d3f33d4e5d5e057600782aeb99bed2dfeb2",
+    "native_targets": 6,
+    "unique_test_cases": 21,
+    "interpreter_modes": 2,
+    "selected": 252,
+    "passed": 248,
+    "skipped": 4,
+    "skip_scope": "Case-alias capability on both Linux targets in both modes; both Windows symlink guards ran."
+  },
+  "independent_checks": {
+    "archive_members_equal_original_bytes": 198,
+    "archive_raw_bytes": 5262843,
+    "retained_source_files_equal_exact_git_blobs": 101,
+    "compiler_modules_within_source_files": 94,
+    "offline_replay": {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/bootstrap-results/source-transport-platforms/replay.py",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/coordinated-soft3-release-3/source-transport-review/restored"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci",
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 169,
+        "sha256": "a34dc98aa481d1457c4effe823e987b89d1229984de8c6a4d95860af47542ecd"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "offline_verdict": {
+      "bytes": 30338,
+      "sha256": "874f4dc21ec5c2e0bc079ed7ece26e8ffb6f8fa0151b29c54fe6e51b04fd0b58"
+    },
+    "actual_architecture_origin_artifact_and_raw_outcome_bindings": "Reviewed retained verifier, original metadata and all six platform summaries."
+  },
+  "resolved_review_findings": [
+    {
+      "finding": "Archive/index were read before retained-size bounds.",
+      "resolution": "lstat ordinary-file and size admission, then bounded reads before parsing/decompression."
+    },
+    {
+      "finding": "Lexical output overlap test allowed case aliases on case-insensitive filesystems.",
+      "resolution": "Existing ordinary output ancestors are checked with samefile(ROOT) before mkdir."
+    },
+    {
+      "finding": "Collector uses assertions; optimized execution would remove historical integrity assertions.",
+      "resolution": "Collector remains immutable original normal-mode measurement recipe; README names python3 -B invocation and directs supported verification to replay.py."
+    }
+  ],
+  "outstanding_findings": [],
+  "scope": "Read-only review plus fresh offline evidence restore/replay. No new tests, compiler execution, proof runs or CI execution; this transport evidence does not close SH6, SH7, SH8, release readiness or language parity."
+}

@@ -135,10 +135,10 @@ def stop(process):
 
 
 class Audit:
-    def __init__(self, output, report):
+    def __init__(self, output, report, schema=SCHEMA):
         self.output = output.resolve()
         self.output.mkdir(parents=True, exist_ok=False)
-        self.report = dict(schema=SCHEMA, status="running", commands=[], **report)
+        self.report = dict(schema=schema, status="running", commands=[], **report)
         self.env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONUTF8="1")
         for name in ("RUSTC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS",
                      "PYTHONOPTIMIZE", "PYTHONPATH", "PYTHONHOME"):
@@ -190,12 +190,10 @@ def clean(audit, repo, revision):
             f"source checkout changed: {repo.name}")
 
 
-def prepare(audit, work, evidence, target, source_pins):
-    work.mkdir(parents=True, exist_ok=False)
-    evidence.mkdir()
+def checkout(audit, work, source_pins, names=REPOS):
     sources = work / "sources"
     sources.mkdir()
-    for name in REPOS:
+    for name in names:
         repo = sources / name
         audit.run(["git", "init", "-q", repo], work)
         audit.run(["git", "config", "core.autocrlf", "false"], repo)
@@ -204,6 +202,13 @@ def prepare(audit, work, evidence, target, source_pins):
         audit.run(["git", "fetch", "--depth", "1", "origin", source_pins[name]], repo)
         audit.run(["git", "checkout", "--detach", "FETCH_HEAD"], repo)
         clean(audit, repo, source_pins[name])
+    return sources
+
+
+def prepare(audit, work, evidence, target, source_pins):
+    work.mkdir(parents=True, exist_ok=False)
+    evidence.mkdir()
+    sources = checkout(audit, work, source_pins)
     audit.env.update(CARGO_TARGET_DIR=str(work / "target"), CARGO_BUILD_TARGET=target)
     audit.env.pop("CARGO_NET_OFFLINE", None)
     for name in ("joy", "trident"):
@@ -249,13 +254,15 @@ def corpus_result(report, compiler, binary, count):
     require(Path(report["compiler_path"]).resolve() == compiler.resolve(), "corpus compiler path")
 
 
-def repetition(audit, work, number, target, source_pins, prepare_only=False):
+def repetition(audit, work, number, target, source_pins, prepare_only=False, producer_only=False, prepared=None):
     evidence = audit.output / f"repeat-{number}"
     sources, joy, checker, inventory, c1 = prepare(audit, work, evidence, target, source_pins)
     summary = dict(number=number, tools={"joy": sha(joy), "inventory": sha(checker)},
                    inventory=audit.identity(inventory), c1=audit.identity(c1), corpora={})
     audit.report["repetitions"].append(summary)
     audit.flush()
+    if prepared is not None:
+        prepared(sources)
     if prepare_only:
         for name in REPOS:
             clean(audit, sources / name, source_pins[name])
@@ -291,24 +298,28 @@ def repetition(audit, work, number, target, source_pins, prepare_only=False):
     require(read(evidence / "c2.dag") == read(evidence / "c3.dag"), "C2/C3 bytes differ")
     summary["fixed_point"] = audit.identity(comparison)
     summary["comparison"] = checked["fixed_point"]
-    for generation in (2, 3):
-        compiler = evidence / f"c{generation}.dag"
-        for script, count in CORPORA.items():
-            label = f"c{generation}-{script.removesuffix('.py')}"
-            receipt = evidence / (label + ".json")
-            temporary = evidence / (label + "-files")
-            temporary.mkdir()
-            command = [sys.executable, Path(__file__).resolve(), "--corpus-child", helpers / script,
-                       "--retain", temporary, "--joy", joy, "--compiler", compiler, "--output", receipt]
-            audit.run(command, sources / "trident", 5400)
-            corpus_result(load(receipt), compiler, joy, count)
-            summary["corpora"][label] = audit.identity(receipt)
-            audit.flush()
+    if not producer_only:
+        for generation in (2, 3):
+            generation_corpora(audit, evidence, helpers, evidence / f"c{generation}.dag", joy, generation, summary)
     for name in REPOS:
         clean(audit, sources / name, source_pins[name])
-    summary["status"] = "passed"
+    summary["status"] = "produced" if producer_only else "passed"
     audit.flush()
     return summary
+
+
+def generation_corpora(audit, evidence, helpers, compiler, joy, generation, summary):
+    for script, count in CORPORA.items():
+        label = f"c{generation}-{script.removesuffix('.py')}"
+        receipt = evidence / (label + ".json")
+        temporary = evidence / (label + "-files")
+        temporary.mkdir()
+        command = [sys.executable, Path(__file__).resolve(), "--corpus-child", helpers / script,
+                   "--retain", temporary, "--joy", joy, "--compiler", compiler, "--output", receipt]
+        audit.run(command, helpers.parent.parent, 5400)
+        corpus_result(load(receipt), compiler, joy, count)
+        summary["corpora"][label] = audit.identity(receipt)
+        audit.flush()
 
 
 def retained_corpus(args):

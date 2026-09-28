@@ -856,8 +856,7 @@ python3 audit/self-hosting/bootstrap-runner.py --target aarch64-apple-darwin --w
 
 `--pins-json` accepts the same JSON explicitly. By default, an invocation performs
 two repetitions with separate source checkouts and build directories.
-`--repeat 1` or `--repeat 2` performs only that numbered repetition; CI runs
-each in an independent native job. Every invocation fetches
+`--repeat 1` or `--repeat 2` performs only that numbered repetition. Every full invocation fetches
 the pinned commits and locked dependencies, then builds offline, constructs
 C1, executes both complete self-builds, checks their fixed point and runs
 all six semantic corpora with actual C2 and actual C3. Rust-generated raw
@@ -879,23 +878,46 @@ retains `receipt.json`, `files.json`, command logs and
 receipts, fixed-point checks and corpus evidence.
 
 The [`selfhost-bootstrap.yml`](../.github/workflows/selfhost-bootstrap.yml)
-workflow runs two independent jobs on each of the six native targets for
+workflow runs two independent repetitions on each of the six native targets for
 pull requests to `release/0.4`, using the exact PR head and pinned sibling
-revisions. Every job uploads its numbered repetition evidence, including
-failures. This keeps the clean reproductions independently bounded by CI
-job duration. Documentation-only pull requests and new
+revisions. Each repetition uses the reusable
+[`selfhost-bootstrap-repeat.yml`](../.github/workflows/selfhost-bootstrap-repeat.yml):
+one producer job executes the complete C1→C2→C3 chain and fixed-point check,
+then two native jobs run all six corpora on C2 and C3 independently. Each job
+retains the existing 330-minute step and 350-minute job ceilings. Guest limits,
+individual compiler deadlines and corpus quotas remain unchanged.
+
+[`bootstrap-phases.py`](../audit/self-hosting/bootstrap-phases.py) implements
+this phase boundary. `--phase producer` accepts the normal target, repetition,
+pin, Rust version, work and output arguments, and exports the exact native Joy,
+C1/C2/C3, inventory and original self-build evidence. Its `produced` status
+establishes only the self-build stage. `--phase corpus --producer DIRECTORY
+--generation 2` (or `3`) consumes that producer's original receipt, manifest,
+Joy and selected compiler. The consumer checks their byte identities and
+native platform before running, restores executable permission on POSIX, and
+fetches the pinned Trident/Joy fixture checkouts. It never rebuilds Joy or
+substitutes a compiler. Both corpus jobs are bound to their distinct generation,
+producer receipt, compiler path, source pins, profile and CI origin.
+
+The `trident/clean-bootstrap-phase/v1` receipts retain these phase identities
+and hashes of the runner and phase implementation. All original receipts and
+raw files remain separate. The original full runner and its v2 replay continue
+to support local complete repetitions and their historical evidence.
+Every phase uploads success or failure evidence. Documentation-only pull requests and new
 receipts under `audit/self-hosting/lexer-bootstrap/` or `bootstrap-results/`
 retain the acceptance of their recorded source revision without rerunning
 unchanged compiler jobs. Source, executable harness and workflow changes
-continue to trigger the gate. The aggregate invokes the same runner
-with `--matrix PLATFORM_RESULTS --output MATRIX_EVIDENCE`, where
-`PLATFORM_RESULTS` contains twelve downloaded evidence directories, one per
-target and repetition. It requires both distinct complete repetitions on all
-six targets, verifies the retained file identities and compares exact C2/C3
-bytes across platforms. Source pins, execution profile and CI run identity
-must match; missing, repeated or mixed-run results cannot supply acceptance.
+continue to trigger the gate. The aggregate invokes the phase runner with
+`--phase matrix --matrix PHASE_RESULTS --output MATRIX_EVIDENCE`.
+`PHASE_RESULTS` contains 36 original evidence directories: twelve producers
+and twenty-four corpus jobs. It requires each target/repetition producer and
+both associated generations, verifies every retained file and phase binding,
+and compares exact C2/C3 bytes across all twelve producers. Source pins,
+execution profile, implementation and CI run/attempt/head must match; missing,
+repeated, relabelled or mixed-run results cannot supply acceptance.
 Artifact names include the attempt number so earlier evidence remains intact.
-A new CI attempt requires all twelve fresh jobs.
+A new CI attempt requires all twelve fresh producers and their twenty-four
+new corpus jobs. Previous run results cannot fill a missing phase.
 Missing or incomplete platform evidence fails acceptance. The
 [progress ledger](../audit/self-hosting-progress.md) records executed results;
 adding this runner or workflow alone closes no gate.
