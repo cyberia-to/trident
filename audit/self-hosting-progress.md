@@ -106,6 +106,10 @@ The next proof foundation is integrated separately: nox [PR25](https://github.co
 
 Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) now implements the first internal noun/Cost component and merged as `633e5ba` into `release/0.4`. Its fixed schema constrains native Hemera headers, all Cost cases, full-u64 saturation and six explicit read premises; unresolved reads prevent ordinary relation finalization. [The retained audit](https://github.com/cyberia-to/zheng/blob/2f79869a81a28daff3d700863ec593339ba4d08f/audit/noun-cost-component/README.md) records 229 default and 236 all-feature test passes, each with one existing ignored test and zero warnings, plus fourteen component tests. These totals overlap and are not added. The [integration receipt](self-hosting/bootstrap-results/noun-cost-integration/integration.json) binds all fourteen measured source identities to the committed delivery and exact merge tree. The separate example-feature repair is [PR38](https://github.com/cyberia-to/zheng/pull/38). The component leaves authenticated memory, transitions and production proof dispatch open; SH6 pins and SH7/SH8 acceptance stay unchanged.
 
+The integrated nox/Zheng revisions also pass the [clean downstream regression](self-hosting/bootstrap-results/noun-cost-joy-integration/README.md): Joy has 172 passing tests; Trident has 1197 passing tests and five existing ignores, and all 21 examples build. The real Z3 follow-up checks safe/unsafe outcomes with exit codes 0/1. Its first tool-path identity failure and corrected fresh-target replay remain retained. These local component checks leave the frozen native SH6 matrix unchanged.
+
+Coordinated distribution preparation is tracked in Trisha [PR18](https://github.com/cyberia-to/trisha/pull/18), with Joy's independent native smoke in [PR23](https://github.com/cyberia-to/joy/pull/23). The [source-bound Trisha audit](https://github.com/cyberia-to/trisha/blob/c1d228a5d0cfe2f8e0de1d1e953a1983ad8c0e90/audit/native-soft3-release/README.md) retains 429 CPU test passes, six existing ignores and sixteen packaging guards. The first complete archive attempt failed on the standalone fixture helper's stale lockfile; its original failure is retained and the repair is committed. The next archive built successfully and exposed a stale smoke fixture that read private imported fields; the fixture now declares those fields public, with separate positive and privacy-rejection checks retained. Complete installed archive validation and distribution of the actual C2 remain delivery work; component test counts do not close those gates.
+
 The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
 remains identified as a different source/runtime attempt. The
 [fixed-point checker](self-hosting/fixed-point-job-binding/README.md) now binds
@@ -150,6 +154,10 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 - [ ] Repeat clean bootstrap with the [documented runner](../reference/self-hosting.md#sh6-reproducible-bootstrap) and execute the SH6
   six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
   Retain source/seed/artifact identities and downloadable CI evidence.
+- [ ] Package the accepted actual C2 with its source/provenance manifest and
+  direct Joy commands. Verify source compilation, execution and failed-output
+  preservation using the installed and unpacked binaries. Complete the existing
+  CPU release/platform gates before declaring Trident 0.4 ready.
 - [ ] Design and accept the SH7 native compiler proof relation, then prove both
   complete self-builds under SH8 with fresh-process and adversarial verification.
 
