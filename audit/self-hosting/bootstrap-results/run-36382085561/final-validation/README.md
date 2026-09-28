@@ -1,7 +1,9 @@
-# Final phase-matrix validation preparation
+# Final phase-matrix validation
 
-Status: prepared and reviewed; the native run is still executing. This directory
-contains guard results, with no successful SH6 acceptance verdict.
+Status: passed on the complete original run and a fresh three-store restore.
+The [accepted evidence](../accepted/retention.json) binds the actual commands,
+original aggregate and final run response. `preparation/` retains the earlier
+guards and original diagnostics separately from this actual acceptance.
 
 The validator is specific to run `36382085561`, attempt `1`, Trident
 `57491633fbccb58ae44dca2da438ee31430be1bc`. It requires the twelve original

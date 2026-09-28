@@ -234,7 +234,7 @@ The broader goal is to verify that each compiler transformation preserves
 source-language semantics. That requires separate formal verification or
 translation validation; an execution proof alone does not establish it.
 The [current acceptance ledger](../../audit/self-hosting-progress.md) records
-the native compiler's local fixed point and corpus results. Package certificates
+the frozen native compiler's fixed point and corpus acceptance on six platforms. Package certificates
 and semantic-preservation guarantees remain future work.
 
 ---

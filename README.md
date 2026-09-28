@@ -339,9 +339,10 @@ The Rust compiler remains the reference frontend and tooling implementation.
 The native compiler in `compiler/nox/` and `lib/std/compiler/nox/` has compiled
 its complete frozen S1 source closure: 94 modules executed through Joy on nox.
 The generated C2 and C3 have identical canonical bytes and both pass the actual
-semantic corpus. This closes SH0–SH5 for that compiler subset and measured
-workload. SH6 still requires twelve successful independent native CI repetitions
-across six platforms. Native compilation proofs (SH7/SH8), full parity with the Rust frontend
+semantic corpus. SH0–SH6 are accepted for that frozen compiler subset: twelve
+independent native bootstrap repetitions and twenty-four C2/C3 corpus jobs passed on macOS,
+Linux and Windows, each ARM64 and x64. The original CI aggregate and independent
+artifact replay agree. Native compilation proofs (SH7/SH8), full parity with the Rust frontend
 and tooling, and formal semantic preservation remain separate work.
 
 [Self-hosting on soft3](reference/self-hosting.md) defines the native nox/Joy

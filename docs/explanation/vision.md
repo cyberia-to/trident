@@ -380,9 +380,10 @@ supply chain still rests on the same blind faith.
 Trident's native compiler runs on nox through Joy. Its frozen S1 implementation
 has compiled its complete 94-module source closure into C2 and reproduced the
 same canonical bytes as C3. Both generated compilers pass the actual semantic
-corpus. SH0–SH5 are accepted locally for that subset and measured workload;
-SH6 still requires twelve successful independent native CI repetitions across
-six platforms. The [acceptance ledger](../../audit/self-hosting-progress.md)
+corpus. SH0–SH6 are accepted for that frozen subset: twelve independent native
+bootstrap repetitions and all twenty-four C2/C3 corpus jobs passed across macOS, Linux and
+Windows on ARM64 and x64. The original CI aggregate and independent artifact
+replay agree. The [acceptance ledger](../../audit/self-hosting-progress.md)
 binds these results to exact sources and artifacts.
 
 The [self-hosting contract](../../reference/self-hosting.md) separates this

@@ -9,9 +9,11 @@ Component results close only their named substeps.
 ## Current position
 
 The current S1 compiler has compiled its complete source through Joy/nox,
-published usable C2 and reproduced it byte for byte as C3. SH0–SH5 are closed
-for this frozen subset and measured workload. Actual C3 also passes the full
-semantic corpus. Clean reproduction on all six native platforms remains SH6 work. The earlier
+published usable C2 and reproduced it byte for byte as C3. SH0–SH6 are closed
+for this frozen subset and measured workload. Twelve independent native
+bootstrap repetitions and all twenty-four actual C2/C3 corpus jobs passed on macOS, Linux
+and Windows, each ARM64 and x64. The original CI aggregate and independent
+byte-exact replay both pass. The earlier
 S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
 corpora. Compilation proofs remain separate SH7/SH8 gates.
 
@@ -70,9 +72,9 @@ quotas are unchanged. Its v2 aggregate requires all twelve distinct results
 from the same CI run/attempt/head and exact C2/C3 bytes. The orchestration and
 fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
 establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
-closed with failure at `c17bd03`. [Both repetitions on macOS ARM64 and Linux/Windows x64/ARM64](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora. Both Intel macOS repetitions completed both self-builds, exact C2/C3 equality and all six C2 corpora, then reached the 330-minute outer step limit during C3 corpora. The original aggregate rejects those partial reports. SH6 stays open. The next orchestration delivery separates each fresh producer from its two native corpus jobs while preserving exact producer tools, all test cases and execution limits.
+closed with failure at `c17bd03`. [Both repetitions on macOS ARM64 and Linux/Windows x64/ARM64](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora. Both Intel macOS repetitions completed both self-builds, exact C2/C3 equality and all six C2 corpora, then reached the 330-minute outer step limit during C3 corpora. The original aggregate rejected those partial reports and left SH6 open at that point. The following orchestration delivery separated each fresh producer from its two native corpus jobs while preserving exact producer tools, all test cases and execution limits.
 
-[PR112](https://github.com/cyberia-to/trident/pull/112) now carries the reviewed phase implementation at `57491633fbccb58ae44dca2da438ee31430be1bc`. The [new native run](https://github.com/cyberia-to/trident/actions/runs/36382085561) starts twelve fresh producers and twenty-four native C2/C3 corpus jobs. The aggregate requires exact producer receipt, compiler generation, Joy, source, profile and run/attempt/head bindings. The [source-bound preparation audit](https://github.com/cyberia-to/trident/blob/57491633fbccb58ae44dca2da438ee31430be1bc/audit/self-hosting/bootstrap-results/phase-jobs/README.md) retains 87 ordinary Python tests, the same 64 boundary tests under optimized Python, workflow validation and earlier diagnostics. These are orchestration checks. [All twelve original producer components](self-hosting/bootstrap-results/run-36382085561/README.md) are now independently restored and verified: both repetitions on macOS, Linux and Windows, each on ARM64 and x64. All reach the same C2/C3 and exact non-time S1 worker counters with zero native build warnings. Eleven native repetitions also pass their original C2/C3 corpus jobs: both ARM64 repetitions on Linux, Windows and macOS, both Windows x64 repetitions, both Linux x64 repetitions and Intel macOS repeat 2. Each of these twenty-two corpus jobs includes all six corpora, 547 observations and 1816 commands, with byte-exact producer/selected-compiler/Joy bindings. Intel macOS repeat 1 still needs both corpus jobs; the original aggregate remains required. The old run supplies no phase to the new matrix.
+[PR112](https://github.com/cyberia-to/trident/pull/112) carries the reviewed phase implementation at `57491633fbccb58ae44dca2da438ee31430be1bc`. The [original native run](https://github.com/cyberia-to/trident/actions/runs/36382085561), attempt 1, completed successfully on 2026-09-28. All twelve fresh producers and all twenty-four native C2/C3 corpus jobs pass. Each generation executes the same six corpora, 547 observations and 1816 commands, with exact producer, selected compiler, Joy, source, profile and run/attempt/head bindings. Both native Cargo builds per producer have zero warnings. The original aggregate compares every phase and yields the same C2/C3 bytes. The [accepted retained matrix](self-hosting/bootstrap-results/run-36382085561/README.md) contains 88488 expanded files and 1621286190 bytes, counting shared copies separately. A fresh restore of all three archive stores, byte comparison against every original ZIP and independent frozen matrix replay passed; the verification SHA256 is `be6d76f37c0daf9694e75dad83e200adc25a32b05e593fdbeec11f4d67a69f81`. Every non-time self-build field matches the original S1 reference. Earlier failed runs supply no phase to this matrix. The [source-bound preparation audit](https://github.com/cyberia-to/trident/blob/57491633fbccb58ae44dca2da438ee31430be1bc/audit/self-hosting/bootstrap-results/phase-jobs/README.md) separately retains orchestration guards and their original diagnostics.
 Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
 The reviewed [artifact replay tool](self-hosting/bootstrap-results/archive-tool/README.md)
 preserves every raw platform file with a shared byte store and exact path
@@ -110,7 +112,7 @@ The integrated nox/Zheng revisions also pass the [clean downstream regression](s
 
 Coordinated distribution preparation is tracked in Trisha [PR18](https://github.com/cyberia-to/trisha/pull/18), with Joy's independent native smoke in [PR23](https://github.com/cyberia-to/joy/pull/23). The [source-bound Trisha audit](https://github.com/cyberia-to/trisha/blob/f512e87e197df477eb4b8d952886f5d3a38a1d2b/audit/native-soft3-release/README.md) retains 429 CPU test passes, six existing ignores and sixteen packaging guards. The first complete archive attempt failed on the standalone fixture helper's stale lockfile; its original failure is retained and the repair is committed. The next archive built successfully and exposed a stale smoke fixture that read private imported fields; the fixture now declares those fields public, with separate positive and privacy-rejection checks retained. The [third installed rehearsal](https://github.com/cyberia-to/trisha/blob/f512e87e197df477eb4b8d952886f5d3a38a1d2b/audit/native-soft3-release/installed-rehearsal/README.md) now passes on macOS ARM64 with actual Rust 1.89: four archive-built binaries, Joy’s 49 commands, complete coordinated smoke, all 47 proof-corpus cases, 28 process/file probes, all 133 baseline executions, deterministic repack and unpacked LSP. Its 570 retained raw files include the actual proof payloads and independent source/archive review. The [archived CPU and full baseline-proof gate](https://github.com/cyberia-to/trisha/blob/fef81df38e1e22fd0b20b2135408f2333c512f08/audit/native-soft3-release/cpu-proof-rehearsal/README.md) also passed on the same closure: Trident workspace 1231 passing tests with five existing ignores, Trisha 429 with six, and Joy 172 with none; all commands have zero failures and warnings. The separate 198-proof gate covers 99 positive and 34 rejection fixtures and all 43 baselines. It verifies proof payloads in process and retains their exact events and claims; the payloads themselves are transient. The [root integration checks](self-hosting/bootstrap-results/cpu-proof-integration/root-review.json) compare original logs, committed source and tool/binary identities. Other native distribution platforms remain required.
 
-Portable C2 delivery is prepared in Trisha [PR19](https://github.com/cyberia-to/trisha/pull/19). Its assembler requires the exact successful original 36-phase validation before producing an accepted kit. Installed and unpacked Joy must compile the guide source with that supplied C2, execute atom 13 and preserve an existing output on guest rejection. The [retained historical-C2 rehearsal](https://github.com/cyberia-to/trisha/blob/4b81af3baf01180d95113e5d69ed8d7e5e69eb1e/audit/selfhost-kit/README.md) passes all five actual commands; 46 distinct Python guards and independent reviews validate the prepared boundaries. Production kit assembly and native package validation await SH6 acceptance.
+Portable C2 delivery is prepared in Trisha [PR19](https://github.com/cyberia-to/trisha/pull/19). Its assembler requires the exact successful original 36-phase validation before producing an accepted kit. Installed and unpacked Joy must compile the guide source with that supplied C2, execute atom 13 and preserve an existing output on guest rejection. The [retained historical-C2 rehearsal](https://github.com/cyberia-to/trisha/blob/4b81af3baf01180d95113e5d69ed8d7e5e69eb1e/audit/selfhost-kit/README.md) passes all five actual commands; 46 distinct Python guards and independent reviews validate the prepared boundaries. After SH6 passed, real accepted kit assembly, production unpack/check, installed and unpacked Joy routes, deterministic repack and default accepted-source preparation all passed. An independent review confirms the exact source/JOB/compiler bridge to the retained complete C2(S1) → C3 run. The final kit evidence is being retained in PR19; other native distribution platform gates remain separate.
 
 The [supplied-compiler delivery](self-hosting/bootstrap-results/supplied-compiler-integration/README.md) in Trident [PR113](https://github.com/cyberia-to/trident/pull/113) now completes the full C2(S1) → C3 through installed Joy with an empty toolchain command path. The byte-preparation helper verifies and copies all 94 frozen modules; the guest compiler performs all language work. Actual C3 bytes and every non-time execution field match the original reference. Its historical rehearsal-kit qualification is preserved. Both independent reviews, raw execution evidence and the clean isolated postcommit install are retained. The [six-platform transport validation](https://github.com/cyberia-to/trident/blob/70ca2ec038305f2518e771a4f3bdbef872268a5d/audit/self-hosting/bootstrap-results/source-transport-platforms/README.md) in [PR114](https://github.com/cyberia-to/trident/pull/114) subsequently passed on Python 3.13.15: the same 21 cases run in two modes on six native targets, with four explicit Linux filesystem-capability skips. Original CI bytes and independent source/receipt review are retained separately from SH6.
 
@@ -130,9 +132,9 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — all twelve prior self-build chains pass; phase matrix running | [Retained prior native results](self-hosting/bootstrap-results/run-36359020560/README.md); ten complete repetitions, Intel C3 outer timeouts; [fresh phase CI](https://github.com/cyberia-to/trident/actions/runs/36382085561) must finish all producers/corpora and aggregate |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Closed — frozen S1 reproducible native bootstrap | [Original CI and independently replayed artifacts](self-hosting/bootstrap-results/run-36382085561/README.md): twelve bootstrap repetitions, twenty-four actual corpora, six platforms; original aggregate passed |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — capture and internal noun/Cost constraints integrated | [Pinned source gap](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies bounded capture; Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) supplies local header/Cost constraints with unresolved memory reads; authenticated memory, transitions and production proof dispatch remain required |
-| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
+| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — SH6 accepted; needs SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
 
@@ -155,7 +157,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 - [x] Complete current S1 `C2(S) -> C3`, exact canonical byte/particle and
   source/JOB1 checks.
 - [x] Complete the independent actual S1 C3 regression corpus.
-- [ ] Repeat clean bootstrap with the [documented runner](../reference/self-hosting.md#sh6-reproducible-bootstrap) and execute the SH6
+- [x] Repeat clean bootstrap with the [documented runner](../reference/self-hosting.md#sh6-reproducible-bootstrap) and execute the SH6
   six-target CI matrix: macOS, Linux glibc and Windows MSVC, each ARM64/x64.
   Retain source/seed/artifact identities and downloadable CI evidence.
 - [ ] Package the accepted actual C2 with its source/provenance manifest and
@@ -320,7 +322,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
-| Cross-platform acceptance | Trident + Joy / SH6 | All twelve fresh S1 self-builds pass on six platforms. Eleven native repetitions also pass both actual corpora; Intel macOS repeat 1 corpus jobs and the original aggregate remain required. Original one-hour worker and 330-minute CI failures remain historical evidence |
+| Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
 | Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence
@@ -339,8 +341,8 @@ remaining execution and coverage gates are listed above.
   in [the initial probe receipt](self-hosting-2026-09-23/probes.json).
   Compiler-scale native runs and full bootstrap were not performed.
 
-The delivered helpers are named above. A complete successful bootstrap runner
-and six-platform CI acceptance remain pending.
+The delivered helpers and accepted six-platform bootstrap are linked above.
+The following original estimate is retained as historical planning context.
 
 ## Planning estimate
 
@@ -353,8 +355,9 @@ SH6 six-target matrix is required regardless of this initial estimate.
 The complete C1(S) build now measures 1471089704 worker microseconds on the
 reference host, with bounded resident memory; see the exact command and revisions
 in the body-scale receipt. This supplies a baseline for subsequent full-build
-runs, not a wall-time estimate for corpus, clean builds or CI. Remaining work
-centres on acceptance and reproducibility; the original broad estimate is historical.
+runs, not a wall-time estimate for corpus, clean builds or CI. SH6 acceptance
+is now complete; distribution delivery and native compilation proofs remain.
+The original broad estimate is historical.
 Zheng compiler-scale proving (SH7/SH8) needs a relation design and measurements
 before a credible effort bound. A public native profile may close those gates;
 private/succinct compilation and semantic preservation remain separate claims.
@@ -365,7 +368,8 @@ This index condenses repeated delivered-history prose. Each linked receipt keeps
 its original commands, revisions, counts, failed runs, artifact comparisons and
 quota changes. Acceptance is limited to that receipt's source and binary. Later
 component or local gates do not silently rerun earlier installed corpora. Formal
-audit UNKNOWN verdicts remain UNKNOWN; Noun temperature remains 128K.
+audit UNKNOWN verdicts remain UNKNOWN. SH6 acceptance moves the Noun layer
+to 64K in the current roadmap; historical receipt temperatures remain unchanged.
 
 | Date | Delivery / revision | Retained evidence and qualification |
 |---|---|---|
