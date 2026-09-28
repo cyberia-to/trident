@@ -112,6 +112,8 @@ Coordinated distribution preparation is tracked in Trisha [PR18](https://github.
 
 Portable C2 delivery is prepared in Trisha [PR19](https://github.com/cyberia-to/trisha/pull/19). Its assembler requires the exact successful original 36-phase validation before producing an accepted kit. Installed and unpacked Joy must compile the guide source with that supplied C2, execute atom 13 and preserve an existing output on guest rejection. The [retained historical-C2 rehearsal](https://github.com/cyberia-to/trisha/blob/4b81af3baf01180d95113e5d69ed8d7e5e69eb1e/audit/selfhost-kit/README.md) passes all five actual commands; 46 distinct Python guards and independent reviews validate the prepared boundaries. Production kit assembly and native package validation await SH6 acceptance.
 
+The [supplied-compiler delivery](self-hosting/bootstrap-results/supplied-compiler-integration/README.md) in Trident [PR113](https://github.com/cyberia-to/trident/pull/113) now completes the full C2(S1) → C3 through installed Joy with an empty toolchain command path. The byte-preparation helper verifies and copies all 94 frozen modules; the guest compiler performs all language work. Actual C3 bytes and every non-time execution field match the original reference. Its historical rehearsal-kit qualification is preserved. Both independent reviews, raw execution evidence and the clean isolated postcommit install are retained.
+
 The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
 remains identified as a different source/runtime attempt. The
 [fixed-point checker](self-hosting/fixed-point-job-binding/README.md) now binds
