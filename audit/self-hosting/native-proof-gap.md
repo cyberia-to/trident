@@ -7,7 +7,7 @@ The governing gates are [SH7 and SH8](../../reference/self-hosting.md#sh7-native
 
 Inspected inputs are the exact current bootstrap pins: Trident `c17bd037`,
 Joy `ec83bd8d`, nox `f8047c22`, Zheng `b54b209b`. The
-[source receipt](native-proof-gap-sources.json) records their full revisions,
+[source receipt](bootstrap-results/native-proof-gap-sources.json) records their full revisions,
 file hashes and actual `git show REV:PATH` commands. No compiler execution,
 proof generation, performance measurement or production code change was
 performed for this assessment.
