@@ -1,9 +1,10 @@
 # Clean native bootstrap: run 36359020560
 
-Partial acceptance: macOS ARM64 and both Linux/Windows architectures pass,
-with two clean repetitions each. This receipt retains ten of the twelve
-required repetitions; Intel macOS and the aggregate remain required. SH6 stays open.
-No compilation proof is claimed.
+Final result: failed. macOS ARM64 and both Linux/Windows architectures pass,
+with two clean repetitions each. Both Intel macOS repetitions exceeded the
+330-minute GitHub bootstrap-step deadline during their C3 corpora. All twelve
+original platform artifacts and the failed aggregate are retained. SH6 stays
+open. No compilation proof is claimed.
 
 [GitHub run](https://github.com/cyberia-to/trident/actions/runs/36359020560),
 attempt `1`, Trident head `c17bd0371c11746f46e20222c48cae2ab08be79d`.
@@ -136,19 +137,59 @@ exactly; the frozen runner and supplemental S1 checks pass on both restored
 trees. `linux-x64/files.json` binds the raw command logs, direct GitHub job
 responses and independent inspection, including the earlier ninth-result check.
 
+## Intel macOS and final aggregate
+
+Both clean Intel repetitions completed `C1(S1) -> C2`, actual `C2(S1) -> C3`,
+and the fixed-point check. Each actual C2 passed all six corpora (547
+observations / 1816 commands). Their C3 corpus runs were interrupted by the
+330-minute GitHub step limit. Both original outer receipts remain `running`,
+as captured when GitHub terminated the process; neither repetition is accepted.
+
+| Repetition | GitHub job | Artifact | C1→C2 worker seconds | C2→C3 worker seconds | Interrupted C3 corpus |
+|---|---|---|---:|---:|---|
+| 1 | `108732342534` | `10951539650` | 4730.908499 | 4576.039055 | main: 373 observations, 1123 commands recorded |
+| 2 | `108732342711` | `10952109432` | 4718.821175 | 3937.556209 | intrinsics: 10 observations, 51 commands recorded |
+
+Repetition 2 completed the C3 main, constant-linking, function-import and
+type-import corpora before interruption. Its generated-profile corpus had
+not started. Repetition 1 had not started any later C3 corpus. These partial
+counts describe retained progress and do not establish corpus acceptance.
+The exact active commands and timeout lines are retained in
+[mac-intel/](mac-intel/README.md).
+
+All twelve completed compiler chains match the local S1 compiler, inventory
+and JOB1 identities. Every execution field except worker time also matches
+the local reference. Both native Cargo builds in each Intel repetition have
+zero Rust warning lines.
+The [original aggregate](aggregate/README.md) failed with
+`ValueError: bootstrap not passed/current schema`. Its origin and all twelve
+producer receipt hashes match the retained originals. Local replay with the
+unchanged c17 runner reproduces that rejection.
+
 ## Retention and replay
 
 `platform-store/` uses the reviewed [raw artifact store](../archive-tool/README.md).
 Its current index SHA-256 is
-`2949968787dca98cb5740f76c499969b8002792e26bc0732772694174d3d3174`.
+`e63844ab6f5e79713f0b073fc70f22c9f5865a71f0ab6a8c6e61f032f3013b84`.
 The Windows import commands report 7277 file members in each ZIP: 100042334 raw bytes
 for repetition 1 and 100042030 for repetition 2. Restored file sets and bytes
 matched both original ZIPs. The unchanged frozen runner then checked each
 restored tree's complete manifest, compiler chain, fixed point and corpora.
 
-All ten restored reports also pass the unchanged runner’s cross-platform
-comparison. This is a partial comparison; the twelve-report matrix gate
-remains required.
+The ten successful restored reports pass the unchanged runner’s partial
+comparison. All twelve restored trees match their exact original ZIP file
+sets and bytes: 85424 files totaling 1187503511 raw bytes. Both the frozen
+`--matrix` CLI and the explicit original-run
+`compare_matrix` call reject the twelve-report matrix. The aggregate remains
+separate from the twelve-entry platform store.
+
+The previous ten-entry index, both new index snapshots, import/restore
+commands and full output streams are retained in `mac-intel/operations/`.
+All prior ten index entries and stored files remained byte-identical.
+`mac-intel/files.json` and `aggregate/files.json` bind the new evidence's
+compressed and raw identities. Verification ran at receipt revision
+`e9f5b83f929f95b2c36496fc3083605dcc73cddf`; the unchanged measured CI head is
+`c17bd0371c11746f46e20222c48cae2ab08be79d`.
 
 Exact import/restore command arrays and output streams, intermediate index
 snapshots, direct job API responses, raw job logs and validation results are
@@ -168,5 +209,7 @@ To replay a retained platform, restore this store using its recorded index
 hash, decompress the frozen runner and expected-input JSON retained here,
 then invoke `validate-platform.py` with the restored platform directory,
 those inputs, its explicit target/repetition and a fresh output file. Exact
-argument arrays are retained in the validation receipts. The twelve-directory
-`bootstrap-runner.py --matrix` invocation remains the final SH6 gate.
+argument arrays are retained in the validation receipts. The final
+twelve-directory `bootstrap-runner.py --matrix` invocation is retained with
+exit code 1 and local `ci_origin=null`. The prepared final-acceptance helper
+remains historical; it has not accepted this failed run.

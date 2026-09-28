@@ -1,4 +1,12 @@
-# Final matrix replay preparation
+# Final matrix replay preparation and failed-run closure
+
+Run `36359020560` finished with ten successful platform repetitions and two
+Intel macOS repetitions interrupted by the 330-minute GitHub step deadline.
+Its original aggregate failed. Final retention, exact ZIP/restored-byte
+comparison and the unchanged runner's expected rejection are recorded in
+[mac-intel/](../mac-intel/README.md) and [aggregate/](../aggregate/README.md).
+The helper and preparation receipts below remain unchanged historical work;
+they contain no successful final acceptance.
 
 The reviewed validator `verify-final-matrix.py` is prepared for the twelve
 platform artifacts of run `36359020560`, attempt 1, head
@@ -29,5 +37,9 @@ retained separately; neither helper version has accepted an incomplete matrix.
 The frozen-checkout cleanup receipt records removal of only the independently
 identified session-generated Python bytecode; tracked c17 source was unchanged.
 
-Actual final replay commands, original aggregate provenance and results will
-be retained here when the twelve native producers and aggregate are available.
+The actual failed-run replay uses local `ci_origin=null`, with the original
+run checked explicitly by `compare_matrix(reports, expected_origin)`. Both
+return `ValueError: bootstrap not passed/current schema`. The original
+aggregate binds exactly the same twelve producer receipt hashes. Its raw
+job log, direct job API response, final workflow API response and artifact
+ZIP/API pair are retained separately under `../aggregate/`.
