@@ -1,0 +1,20 @@
+{
+  "status": "review-clear",
+  "scope": "Independent read-only supplied-C2 full-run retention review; no compiler/proof rerun",
+  "previous_review": {
+    "path": "independent-full-source-review.json",
+    "sha256": "5c3b8f294952dd818171d84d367505db6567d5ef11ba1feb88023102490180ec"
+  },
+  "readme_sha256": "f99ad0f694d1099b23712e0f32720bcd4698be3898acaa9a5c9208becfe146db",
+  "index_sha256": "9847182e40223ef8d5af4363741a51bd671f05fd700665a33babf9e0506190ae",
+  "archive_sha256": "da8fc8f1015877d55355ae137f60a744a7f2e166453ee9af1905e176ed34986a",
+  "resolved_finding": "README explicitly separates three earlier transport paths-ignore entries from repository settings/required checks/branch protection.",
+  "runtime_provenance_exact_originals": 4,
+  "portable_checker": {
+    "normal_exit": 0,
+    "optimized_exit": 0
+  },
+  "source_c2_c3_counter_bindings": "284 raw originals byte-equal; 94 source copies equal pinned Git base574; 627 protected inputs equal helper98; actual Joy4035/empty PATH; one exited0 full guest call; C3==C2 and all non-time fields equal S1.",
+  "remaining_findings": [],
+  "qualification": "Historical rehearsal; accepted-kit positive/native matrix/corpus/SH7/SH8 closure not claimed."
+}
