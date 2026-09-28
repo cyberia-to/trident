@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "audit/self-hosting/bootstrap-results/run-36382085561/final-validation/test-final-matrix.py",
+    "--inputs",
+    "../measurements/ci-phases-readonly",
+    "--references",
+    "../measurements",
+    "PinnedInputGuards.test_s1_binding_ignores_only_elapsed_time",
+    "-v"
+  ],
+  "exit_code": 1,
+  "scope": "Pre-acceptance draft regression: actual original S1 receipts expose wrong elapsed field name",
+  "validator_sha256": "c92c3000dca0066875b958e593a8514a3876bd9d1f53e205ca35d0bf75ea9430"
+}

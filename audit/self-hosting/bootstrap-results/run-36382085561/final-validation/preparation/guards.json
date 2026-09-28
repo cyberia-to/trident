@@ -1,0 +1,116 @@
+{
+  "scope": "Preparation only: nineteen distinct guard tests repeated under optimized Python; no completed native phase accepted",
+  "source_revision": "2a5cb70eef839c558dc1d671bcb992316ed14214",
+  "uncommitted_source_files_before": {
+    "verify-final-matrix.py": "72cd11ec62e410e908590a785c79011989ea2c6c32872c5db31d72a62947c0ec",
+    "test-final-matrix.py": "9afffb4955d038e6e0a5cb67cd7a24728ebe48207f5bfcdef5f3df0a0e47b4f8"
+  },
+  "uncommitted_source_files_after": {
+    "verify-final-matrix.py": "72cd11ec62e410e908590a785c79011989ea2c6c32872c5db31d72a62947c0ec",
+    "test-final-matrix.py": "9afffb4955d038e6e0a5cb67cd7a24728ebe48207f5bfcdef5f3df0a0e47b4f8"
+  },
+  "inputs": {
+    "expected-inputs.json": {
+      "path": "preparation/inputs/expected-inputs.json.gz",
+      "bytes": 82904,
+      "sha256": "d1dca2687520edbded3bc6e3088fe7fb1d72a43318a3cc15b87e1aea3ca35dde",
+      "gzip_sha256": "4c7b0065cb5464610c2019097cb63cb60558264aabe8bc88a33e57fe4df15dc2"
+    },
+    "frozen/audit/self-hosting/bootstrap-runner.py": {
+      "path": "preparation/inputs/frozen/audit/self-hosting/bootstrap-runner.py.gz",
+      "bytes": 26768,
+      "sha256": "b1afcd9a51c4a92b5254ebb56bbcbe88f4ad81b9cdf98f607f2ff7140a7691fc",
+      "gzip_sha256": "cb24d6acf51eb16ef30125ff2ffda3b299577525be6259ea3b35256cbcc9c0f6"
+    },
+    "frozen/audit/self-hosting/bootstrap-phases.py": {
+      "path": "preparation/inputs/frozen/audit/self-hosting/bootstrap-phases.py.gz",
+      "bytes": 9616,
+      "sha256": "31a43e0172dad9bebe5c27fcdc67cb19af72b9322d93089b552ec2044ac4d640",
+      "gzip_sha256": "9365992ed683df7a648eb909d30b45dcce6ceb7bce5436ff3bd4dd449b7d36d7"
+    },
+    "frozen/audit/self-hosting/bootstrap_phase_checks.py": {
+      "path": "preparation/inputs/frozen/audit/self-hosting/bootstrap_phase_checks.py.gz",
+      "bytes": 11146,
+      "sha256": "8c438e3d625c56b27f5b9e1a43243e1f2377a8601c3fa159f9bcba98e25c1aa3",
+      "gzip_sha256": "bf9077051b0128010089f0a6e274718dc51ed4a62cd15cdbdc0ba93c77366551"
+    },
+    "references/lexer-v9-c1-to-c2.json": {
+      "path": "preparation/references/lexer-v9-c1-to-c2.json.gz",
+      "bytes": 189746,
+      "sha256": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+      "gzip_sha256": "30986785dfad47be2cce45b5797a5b8063187478a0f59a7c80465c2001424b79"
+    },
+    "references/lexer-v9-c2-to-c3.json": {
+      "path": "preparation/references/lexer-v9-c2-to-c3.json.gz",
+      "bytes": 189913,
+      "sha256": "9479e0899f4aeeee089bfc0fd53ab0d9767fde8f50de8d5cbfff55cda515e8fa",
+      "gzip_sha256": "5d11d292184baa70bbfb441e2e34abafbb2541989128d43806a6020f4b8d70ad"
+    }
+  },
+  "results": [
+    {
+      "name": "normal",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/bootstrap-results/run-36382085561/final-validation/test-final-matrix.py",
+        "--inputs",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/final-phase-guard-replay/inputs",
+        "--references",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/final-phase-guard-replay/references",
+        "-v"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "started_ns": 1790574656225859000,
+      "ended_ns": 1790574656617873000,
+      "exit_code": 0,
+      "stdout": {
+        "path": "preparation/normal.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "stderr": {
+        "path": "preparation/normal.stderr.gz",
+        "bytes": 2477,
+        "sha256": "c51140eea5574aad97c0b822f5b0ebfab59b2791684c1ddb6c169efe30823c60",
+        "gzip_sha256": "070058bb3518b159ff64279bcf4eee120b479957c3496ae7d099dffe547d61ec"
+      }
+    },
+    {
+      "name": "optimized",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-O",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/bootstrap-results/run-36382085561/final-validation/test-final-matrix.py",
+        "--inputs",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/final-phase-guard-replay/inputs",
+        "--references",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/final-phase-guard-replay/references",
+        "-v"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "started_ns": 1790574656618259000,
+      "ended_ns": 1790574657078819000,
+      "exit_code": 0,
+      "stdout": {
+        "path": "preparation/optimized.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "stderr": {
+        "path": "preparation/optimized.stderr.gz",
+        "bytes": 2477,
+        "sha256": "0ced72d5161d8eff8b45874a5aefcd8fa8ec1d472b56e536f922aa2707206177",
+        "gzip_sha256": "7c5af26249d0e5c566c7b3aaf43359af743777838aa5659dd63b23ba2ce0ecc9"
+      }
+    }
+  ],
+  "source_stable": true
+}
