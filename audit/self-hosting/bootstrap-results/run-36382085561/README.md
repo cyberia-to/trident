@@ -7,7 +7,7 @@ successful aggregate. Earlier runs supply none of these phases.
 
 ## Retained producer snapshot
 
-The `producer-007/` snapshot independently restores and verifies these seven
+The `producer-008/` snapshot independently restores and verifies these eight
 completed producer components. Each original GitHub job is successful; every
 producer receipt remains `produced`, which establishes the self-build phase.
 Corpus jobs and final matrix acceptance remain separate.
@@ -20,39 +20,42 @@ Corpus jobs and final matrix acceptance remain separate.
 | Linux ARM64 | 2 | 10955242264 |
 | Windows ARM64 | 1 | 10955053500 |
 | Windows ARM64 | 2 | 10955530212 |
+| Windows x64 | 1 | 10955124998 |
 | Windows x64 | 2 | 10955297375 |
 
-`producer-007/retention.json` indexes the original command logs, direct GitHub
+`producer-008/retention.json` binds the complete eight-producer replay and links
+the unchanged seven-producer snapshot. Together they index original command logs, direct GitHub
 job responses, expected-input contract and root replay. The source-bound
-commands in `commands/replay-phase-producers-007.py.gz` invoke the retained
+commands in `commands/replay-phase-producers-008.py.gz` invoke the retained
 archive tool, compare every restored file byte for byte with its original ZIP,
 and execute the exact frozen producer checker. The final36 validator's pinned
 helpers additionally bind original ZIP/API/store identities, successful distinct
 jobs, both S1 steps and every non-time execution field. This component check
 does not invoke or replace the final36 acceptance gate.
 
-The seven restored trees contain 4158 files and 487318625 raw bytes. All
+The eight restored trees contain 4752 files and 557136644 raw bytes. All
 producers emit the same complete C2 and C3, SHA256
 `76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8`.
 Their source inventory, JOB1 bytes, compiler identities and all non-time worker
 counters match the original S1 references. Both native Cargo builds per
 producer have zero warnings. Original elapsed times are retained unchanged.
-The earlier independent four-producer replay remains under `earlier-four/`.
+The earlier seven-producer snapshot and its four-producer replay remain under
+`producer-007/`.
 
 ## Restore and finish acceptance
 
 The producer store snapshot has index SHA256
-`6deb3f8b29d13e5eba6215c654261da2ed99b3ff3b6883e6e67738c02db7d833`:
+`74ce4551f06afc4c13bf5b183a1c912f075b3a638c3215b2030e0b57cb99c364`:
 
 ```sh
 python3 -B audit/self-hosting/bootstrap-results/archive-tool/archive.py restore \
   --store audit/self-hosting/bootstrap-results/run-36382085561/phase-stores/producer \
   --output /absolute/fresh/producer-results \
-  --index-sha256 6deb3f8b29d13e5eba6215c654261da2ed99b3ff3b6883e6e67738c02db7d833
+  --index-sha256 74ce4551f06afc4c13bf5b183a1c912f075b3a638c3215b2030e0b57cb99c364
 ```
 
 Later imports advance the store index. The compressed original index remains
-in `producer-007/producer-index.json.gz`; use this commit's store snapshot to
+in `producer-008/producer-index.json.gz`; use this commit's store snapshot to
 replay the command above. Store metadata retains the original API bytes and
 ZIP digest. Original ZIP containers remain immutable in the local download
 directory recorded by the replay; the store preserves all expanded files.
