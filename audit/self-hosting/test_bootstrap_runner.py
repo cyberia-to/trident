@@ -243,7 +243,7 @@ class BootstrapBoundaries(unittest.TestCase):
     def test_workflow_uses_exact_cross_product_and_attempt_scoped_artifacts(self):
         workflow = SCRIPT.parents[2] / ".github/workflows/selfhost-bootstrap.yml"
         text = workflow.read_text(encoding="utf-8")
-        matrix = text.split("      matrix:\n", 1)[1].split("    defaults:\n", 1)[0]
+        matrix = text.split("      matrix:\n", 1)[1].split("    uses:\n", 1)[0]
         self.assertNotIn("include:", matrix)
         self.assertIn("repeat: [1, 2]", matrix)
         platforms = re.findall(r"- target: (\S+)\n +runner: (\S+)\n +architecture: (\S+)", matrix)
@@ -251,12 +251,22 @@ class BootstrapBoundaries(unittest.TestCase):
         self.assertEqual({t for t, _, _ in platforms}, set(RUNNER.TARGETS))
         for target, _, architecture in platforms:
             self.assertEqual(architecture, RUNNER.TARGETS[target][1])
-        self.assertIn('--repeat "$env:BOOTSTRAP_REPEAT"', text)
-        self.assertIn("name: bootstrap-${{ matrix.platform.target }}-repeat-${{ matrix.repeat }}-attempt-${{ github.run_attempt }}", text)
-        self.assertIn("pattern: bootstrap-*-repeat-*-attempt-${{ github.run_attempt }}", text)
-        self.assertIn("name: bootstrap-matrix-comparison-attempt-${{ github.run_attempt }}", text)
+        repeated = workflow.with_name("selfhost-bootstrap-repeat.yml").read_text(encoding="utf-8")
+        self.assertIn("uses: ./.github/workflows/selfhost-bootstrap-repeat.yml", text)
+        self.assertIn("repeat: ${{ matrix.repeat }}", text)
+        self.assertEqual(repeated.count('--repeat "$env:BOOTSTRAP_REPEAT"'), 2)
+        self.assertIn("generation: [2, 3]", repeated)
+        self.assertIn("needs: producer", repeated)
+        self.assertIn("name: bootstrap-phase-${{ inputs.target }}-repeat-${{ inputs.repeat }}-producer-attempt-${{ github.run_attempt }}", repeated)
+        self.assertIn("name: bootstrap-phase-${{ inputs.target }}-repeat-${{ inputs.repeat }}-c${{ matrix.generation }}-attempt-${{ github.run_attempt }}", repeated)
+        self.assertIn("pattern: bootstrap-phase-*-repeat-*-attempt-${{ github.run_attempt }}", text)
+        self.assertIn("name: bootstrap-phase-matrix-comparison-attempt-${{ github.run_attempt }}", text)
         self.assertIn("BOOTSTRAP_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", text)
-        self.assertNotIn("overwrite: true", text)
+        self.assertIn("BOOTSTRAP_HEAD_SHA: ${{ inputs.head-sha }}", repeated)
+        self.assertNotIn("overwrite: true", text + repeated)
+        pins = re.findall(r'        \{"trident":.*?"neuron":"[0-9a-f]{40}"\}', text, flags=re.S)
+        self.assertEqual(len(pins), 2)
+        self.assertEqual(pins[0], pins[1], "producer and aggregate must anchor the same exact sibling pins")
 
     def test_pins_require_complete_exact_commit_identities(self):
         values = {name: "a" * 40 for name in RUNNER.REPOS}
