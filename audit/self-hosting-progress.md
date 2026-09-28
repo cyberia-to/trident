@@ -55,7 +55,13 @@ at `23691cd2c6885bf25bfc023799552559724dbc2b` hit the explicit 3600000 ms
 deadline on Intel macOS during repetition 1's `C1(S1) -> C2`, emitting no C2.
 Its C1, JOB1 and inventory exactly match the successful local run; the
 [original failed artifact and log](self-hosting/bootstrap-results/run-36353842247/intel-deadline/README.md)
-remain byte-exact. The other original jobs continue separately.
+remain byte-exact. The [complete original-run archive](self-hosting/bootstrap-results/run-36353842247/README.md)
+retains the final failed matrix: Linux ARM64 completed both repetitions;
+the other four platforms reached repetition 2 and then hit the 330-minute
+GitHub step limit. Their uploaded outer receipts remain `running`, and the
+original aggregate fails with `bootstrap not passed`. Exact restoration and
+local replay preserve those outcomes. These historical results do not replace
+any repetition of the new run.
 
 The reviewed [split-repetition delivery](self-hosting/bootstrap-results/split-repetitions/README.md)
 starts two independent jobs per native platform with an explicit 7200000 ms
@@ -64,7 +70,7 @@ quotas are unchanged. Its v2 aggregate requires all twelve distinct results
 from the same CI run/attempt/head and exact C2/C3 bytes. The orchestration and
 fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
 establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
-is running at `c17bd03`. [Both repetitions on macOS ARM64, Linux ARM64 and Windows x64/ARM64, plus Linux x64 repetition 2](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora; Linux x64 repetition 1, Intel macOS and the aggregate remain required. SH6 stays open.
+is running at `c17bd03`. [Both repetitions on macOS ARM64 and Linux/Windows x64/ARM64](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora; Intel macOS and the aggregate remain required. SH6 stays open.
 Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
 The reviewed [artifact replay tool](self-hosting/bootstrap-results/archive-tool/README.md)
 preserves every raw platform file with a shared byte store and exact path
@@ -110,8 +116,8 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — nine clean repetitions pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); Linux x64 repetition 1, Intel macOS and the aggregate remain required |
-| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — bounded witness capture prepared separately | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies an opt-in observer with independent downstream Joy validation, without changing SH6 pins; authenticated constraints and production proof dispatch remain required |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — ten clean repetitions on five platforms pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); Intel macOS and the aggregate remain required |
+| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — bounded witness capture prepared separately | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies an opt-in observer with independent downstream Joy validation, without changing SH6 pins; [draft CCS noun/Cost design](https://github.com/cyberia-to/zheng/pull/37), authenticated memory and production proof dispatch remain required |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
@@ -296,7 +302,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
-| Cross-platform acceptance | Trident + Joy / SH6 | S1 exact C2/C3 fixed point and both actual corpora pass locally. Intel macOS clean C1 hits the one-hour deadline; new two-hour profile is running in CI; both clean native repetitions per target remain required |
+| Cross-platform acceptance | Trident + Joy / SH6 | S1 fixed point and both actual corpora pass locally and in ten clean native repetitions on five platforms; both Intel macOS repetitions and the aggregate remain required. Original one-hour worker and 330-minute CI failures remain historical evidence |
 | Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
 
 ## Baseline evidence

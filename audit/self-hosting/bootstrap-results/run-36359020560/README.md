@@ -1,9 +1,8 @@
 # Clean native bootstrap: run 36359020560
 
-Partial acceptance: macOS ARM64, Linux ARM64 and both Windows architectures
-pass, with two clean repetitions each. Linux x64 repetition 2 also passes.
-This receipt retains nine of the twelve required repetitions; Linux x64
-repetition 1, Intel macOS and the aggregate remain required. SH6 stays open.
+Partial acceptance: macOS ARM64 and both Linux/Windows architectures pass,
+with two clean repetitions each. This receipt retains ten of the twelve
+required repetitions; Intel macOS and the aggregate remain required. SH6 stays open.
 No compilation proof is claimed.
 
 [GitHub run](https://github.com/cyberia-to/trident/actions/runs/36359020560),
@@ -115,36 +114,39 @@ exactly; the frozen runner and supplemental S1 checks pass on those restored
 trees. `windows-arm/files.json` binds the raw command logs, direct GitHub job
 responses and independent inspection.
 
-## Linux x64, repetition 2
+## Linux x64
 
-This clean native Linux glibc repetition passes with the same S1 inventory,
+Both clean native Linux glibc repetitions pass with the same S1 inventory,
 JOB1, C1 and actual C2/C3 identities as the retained local reference. Each
 actual C2 and C3 passes all six corpora (547 observations / 1816 commands);
-both native Cargo builds have zero Rust warnings. All non-time execution
-fields match the local S1 reports. Repetition 1 remains required.
+both native Cargo builds in each repetition have zero Rust warnings. All
+non-time execution fields match the local S1 reports.
 
 | Repetition | GitHub job | Artifact | C1→C2 worker seconds | C2→C3 worker seconds |
 |---|---|---|---:|---:|
+| 1 | `108732342724` | `10950806422` | 3388.536739 | 2985.452316 |
 | 2 | `108732342662` | `10949547915` | 2903.776886 | 2575.100262 |
 
-Original ZIP SHA-256 is
-`6f5f661a6878a47ac49cd5c4f86f9b9e9c70898d1b02892599195f8dba37118b`.
-It retains 7277 files and 99899095 raw bytes. Restored file sets and bytes
-match the original ZIP exactly; the frozen runner and supplemental S1 checks
-pass on the restored tree. `linux-x64/files.json` binds the raw command logs,
-direct GitHub job response and independent inspection.
+Original ZIP SHA-256 values are
+`3e797b28fc6edd44e0e6dd48ae4e90c9c11f3e0c6d908ce0c4d448b6ea008c7f`
+and `6f5f661a6878a47ac49cd5c4f86f9b9e9c70898d1b02892599195f8dba37118b`
+for repetitions 1 and 2. Each retains 7277 files: 99899142 and 99899095 raw
+bytes respectively. Restored file sets and bytes match the original ZIPs
+exactly; the frozen runner and supplemental S1 checks pass on both restored
+trees. `linux-x64/files.json` binds the raw command logs, direct GitHub job
+responses and independent inspection, including the earlier ninth-result check.
 
 ## Retention and replay
 
 `platform-store/` uses the reviewed [raw artifact store](../archive-tool/README.md).
 Its current index SHA-256 is
-`2eddf1526555e8419babac7004e0ce041e985356aafe5c782da191c210b49470`.
+`2949968787dca98cb5740f76c499969b8002792e26bc0732772694174d3d3174`.
 The Windows import commands report 7277 file members in each ZIP: 100042334 raw bytes
 for repetition 1 and 100042030 for repetition 2. Restored file sets and bytes
 matched both original ZIPs. The unchanged frozen runner then checked each
 restored tree's complete manifest, compiler chain, fixed point and corpora.
 
-All nine restored reports also pass the unchanged runner’s cross-platform
+All ten restored reports also pass the unchanged runner’s cross-platform
 comparison. This is a partial comparison; the twelve-report matrix gate
 remains required.
 
