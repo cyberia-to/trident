@@ -47,8 +47,8 @@ also passed all 547 observations and 1816 commands using the true second
 producer output. The [local continuation](self-hosting/lexer-bootstrap/orchestration/README.md)
 completed with every stage successful.
 
-[PR112](https://github.com/cyberia-to/trident/pull/112) now pins bootstrap
-implementation `c17bd0371c11746f46e20222c48cae2ab08be79d` and Joy
+The prior split-repetition bootstrap used implementation
+`c17bd0371c11746f46e20222c48cae2ab08be79d` and Joy
 `ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe` ([Joy PR22](https://github.com/cyberia-to/joy/pull/22)).
 [The original CI run](https://github.com/cyberia-to/trident/actions/runs/36353842247)
 at `23691cd2c6885bf25bfc023799552559724dbc2b` hit the explicit 3600000 ms
@@ -71,6 +71,8 @@ from the same CI run/attempt/head and exact C2/C3 bytes. The orchestration and
 fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
 establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
 closed with failure at `c17bd03`. [Both repetitions on macOS ARM64 and Linux/Windows x64/ARM64](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora. Both Intel macOS repetitions completed both self-builds, exact C2/C3 equality and all six C2 corpora, then reached the 330-minute outer step limit during C3 corpora. The original aggregate rejects those partial reports. SH6 stays open. The next orchestration delivery separates each fresh producer from its two native corpus jobs while preserving exact producer tools, all test cases and execution limits.
+
+[PR112](https://github.com/cyberia-to/trident/pull/112) now carries the reviewed phase implementation at `57491633fbccb58ae44dca2da438ee31430be1bc`. The [new native run](https://github.com/cyberia-to/trident/actions/runs/36382085561) starts twelve fresh producers and twenty-four native C2/C3 corpus jobs. The aggregate requires exact producer receipt, compiler generation, Joy, source, profile and run/attempt/head bindings. The [source-bound preparation audit](https://github.com/cyberia-to/trident/blob/57491633fbccb58ae44dca2da438ee31430be1bc/audit/self-hosting/bootstrap-results/phase-jobs/README.md) retains 87 ordinary Python tests, the same 64 boundary tests under optimized Python, workflow validation and earlier diagnostics. These are orchestration checks; native phase results and the original aggregate remain pending. The old run supplies no phase to the new matrix.
 Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
 The reviewed [artifact replay tool](self-hosting/bootstrap-results/archive-tool/README.md)
 preserves every raw platform file with a shared byte store and exact path
@@ -120,7 +122,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — all twelve self-build chains pass; two C3 corpora interrupted | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); ten complete repetitions, Intel outer timeouts and failed aggregate; phase separation in progress |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — all twelve prior self-build chains pass; phase matrix running | [Retained prior native results](self-hosting/bootstrap-results/run-36359020560/README.md); ten complete repetitions, Intel C3 outer timeouts; [fresh phase CI](https://github.com/cyberia-to/trident/actions/runs/36382085561) must finish all producers/corpora and aggregate |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — capture and internal noun/Cost constraints integrated | [Pinned source gap](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies bounded capture; Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) supplies local header/Cost constraints with unresolved memory reads; authenticated memory, transitions and production proof dispatch remain required |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
