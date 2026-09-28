@@ -12,6 +12,7 @@ workflow in the Trident development lifecycle.
 | Document | Description |
 |----------|-------------|
 | [Compiling a Program](compiling-a-program.md) | Build, check, cost analysis |
+| [Self-Built Compiler](self-hosted-compilation.md) | Package source, compile with C2 on Joy/nox, execute the output |
 | [Running a Program](running-a-program.md) | Execute, test, debug |
 | [Deploying a Program](deploying-a-program.md) | Neptune scripts, multi-target deployment |
 | [Generating Proofs](generating-proofs.md) | Execution trace to STARK proof |

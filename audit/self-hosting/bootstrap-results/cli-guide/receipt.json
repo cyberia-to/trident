@@ -1,0 +1,112 @@
+{
+  "scope": "Direct production CLI guide rehearsal with actual native CI C2; no new matrix or proof acceptance",
+  "trident_revision": "7e53efc9917bef3f589245a44bb51b8ac4a08601",
+  "joy_revision": "ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+  "joy_sha256": "1e2efc36fb8900c53965a1c31c176c99462dad94576396f5dd3c55ff871cbee5",
+  "compiler_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "ci_compiler_origin": {
+    "run_id": 36359020560,
+    "artifact_id": 10948746458,
+    "producer_receipt_sha256": "0be015998049a23ad8905a5d09268be43accbe21c9b11aafb1553e60612eb674"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-deadline/bin/joy",
+        "pack-job",
+        "--compiler",
+        "compiler.dag",
+        "--manifest",
+        "package.json",
+        "--output",
+        "job.dag"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/selfhost-cli-guide",
+      "started_ns": 1790562990699990000,
+      "finished_ns": 1790562991790421000,
+      "returncode": 0,
+      "stdout": "{\"artifact\":\"job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"aac34c63ad891053619ca38baf22a503607e645354a68a016953969d62de249e\",\"limits\":{\"arena_nodes\":196608,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":16384,\"modules\":32,\"reductions\":1000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"selfhost-guide\",\"origin_version\":\"1\",\"particle\":\"0e5b1293864c811f079ce1e64f5e9070baf2d8c3f13e31ec393bbaf3fa3def9b\",\"source_bytes\":46,\"source_particle\":\"beb42c528a7af2e234e8fca1520a84c0d295c704a96513a644f62e019b19ac95\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"450540b374bb9863666e6ee78cee08172cd8009035037ef732a61ec1534fb9e9\",\"validation_visits\":204},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-deadline/bin/joy",
+        "run-artifact",
+        "compiler.dag",
+        "--input",
+        "job.dag",
+        "--emit",
+        "program",
+        "--output",
+        "sample.dag"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/selfhost-cli-guide",
+      "started_ns": 1790562991790629000,
+      "finished_ns": 1790562992933964000,
+      "returncode": 0,
+      "stdout": "{\"artifact\":\"sample.dag\",\"execution\":{\"allocated_nodes\":113511,\"arena_reserved_bytes\":26214416,\"charged_reductions\":423528,\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":204,\"limits\":{\"arena_nodes\":196608,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":16384,\"modules\":32,\"reductions\":1000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"selfhost-guide\",\"origin_version\":\"1\",\"particle\":\"0e5b1293864c811f079ce1e64f5e9070baf2d8c3f13e31ec393bbaf3fa3def9b\",\"source_bytes\":46,\"source_particle\":\"beb42c528a7af2e234e8fca1520a84c0d295c704a96513a644f62e019b19ac95\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"450540b374bb9863666e6ee78cee08172cd8009035037ef732a61ec1534fb9e9\",\"status\":\"success\"},\"elapsed_micros\":1133663,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":2883584,\"input_particle\":\"aac34c63ad891053619ca38baf22a503607e645354a68a016953969d62de249e\",\"output_particle\":\"b6a5fb236d187fffa8a1d6df432579c36056664cf78b9a8d89791b5e85e9e9bd\",\"peak_frames\":411,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-deadline/bin/joy",
+        "run-artifact",
+        "sample.dag",
+        "--input",
+        "zero.dag",
+        "--output",
+        "answer.dag"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/selfhost-cli-guide",
+      "started_ns": 1790562992934186000,
+      "finished_ns": 1790562992945673000,
+      "returncode": 0,
+      "stdout": "{\"artifact\":\"answer.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":579,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    }
+  ],
+  "status": "passed",
+  "observed_output": 13,
+  "artifacts": [
+    {
+      "path": "answer.dag",
+      "bytes": 85,
+      "sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "path": "compiler.dag",
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    {
+      "path": "job.dag",
+      "bytes": 8209,
+      "sha256": "b72bd0849cc8999a71b16ba6fa23386009f96ba7f53c06f41d01d79cac41ea37"
+    },
+    {
+      "path": "package.json",
+      "bytes": 687,
+      "sha256": "7e623737987cc4d68068537ad3c3957cc04a9e6354993d120ea83df7191c7e21"
+    },
+    {
+      "path": "sample.dag",
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    {
+      "path": "sample.tri",
+      "bytes": 46,
+      "sha256": "5011b65fb188237be5dfa07b6dec6040f7a8ac9287391f618ca96db6ea868669"
+    },
+    {
+      "path": "zero.dag",
+      "bytes": 85,
+      "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+    }
+  ],
+  "runtime_scope": "Local installed Joy ec83bd8 with pinned binary identity; sibling working trees are not clean release inputs. This demonstration supplements, and does not replace, native CI acceptance.",
+  "runtime_install_receipt": {
+    "path": "runtime-install.json.gz",
+    "raw_sha256": "6bc6355cd78ee7fdfd68f07564bc0065f915d027ab6dcae144da84b8df74bb62"
+  }
+}
