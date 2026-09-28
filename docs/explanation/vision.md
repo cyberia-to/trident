@@ -377,26 +377,27 @@ opaque. Ken Thompson showed in 1984 that a compiler can inject
 backdoors invisible in the source. Forty years later, every software
 supply chain still rests on the same blind faith.
 
-Trident breaks the chain. The compiler self-hosts on Triton VM:
-Trident source compiles Trident source, and the execution produces a
-STARK proof that the compilation was faithful. Not "we audited the
-binary." Not "we reproduced the build." A cryptographic proof, from
-the mathematics itself, that the output corresponds to the input.
+Trident's native compiler runs on nox through Joy. Its frozen S1 implementation
+has compiled its complete 94-module source closure into C2 and reproduced the
+same canonical bytes as C3. Both generated compilers pass the actual semantic
+corpus. SH0–SH5 are accepted locally for that subset and measured workload;
+SH6 still requires twelve successful independent native CI repetitions across
+six platforms. The [acceptance ledger](../../audit/self-hosting-progress.md)
+binds these results to exact sources and artifacts.
 
-Seven compiler stages -- lexer, parser, typechecker, codegen, optimizer,
-lowering, pipeline -- are already written in Trident. 9,195 lines of
-self-hosted compiler. Three producers race on the same scoreboard: the
-classical compiler (`Tri`), hand-written expert assembly (`Hand`), and a
-[neural optimizer](../../reference/neural.md) (`Neural`) -- a
-13M-parameter GNN+Transformer that learns to emit better assembly than
-the compiler. `trident bench --full` adds execution, proving, and
-verification via STARK proof.
+The [self-hosting contract](../../reference/self-hosting.md) separates this
+result from native Zheng proofs of the actual compilations, which remain
+SH7/SH8 work. An execution proof would bind a compiler, its exact inputs and
+its output. Establishing that the compiler preserves source-language semantics
+requires separate verification or translation validation; a fixed point or
+execution proof alone does not establish it.
 
-`src/` is the Rust bootstrap -- it shrinks. `std/compiler/` is the
-self-hosted replacement -- it grows. When the last compiler stage moves
-to Trident, every `trident build` produces a proof certificate
-alongside the assembly. No trusted compiler. No trusted build server.
-No trusted anything. You verify.
+Rust still provides the reference frontend, seed compiler and tooling. The
+native compiler covers its declared implementation subset; full frontend and
+tooling parity remain separate work. The older RAM/TIR compiler components
+remain prototypes, and Triton remains an independent target owned by Trisha.
+Production compilation certificates require the SH7/SH8 relation and
+verification gates.
 
 ---
 

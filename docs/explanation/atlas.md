@@ -223,18 +223,19 @@ verifier checks a proof against a `program_digest`, they are
 implicitly confirming that the proof corresponds to the exact artifact
 stored under that hash in Atlas.
 
-Verification certificates take this further. A STARK proof that the
-compiler correctly compiled the source to the artifact can be stored
-as part of the package metadata. The certificate proves a specific
-claim: "source with hash X, when compiled, produces artifact with hash
-Y." Anyone can verify this claim without re-compiling, without trusting
-the publisher's toolchain, without trusting anything except mathematics.
+Future compilation certificates could be stored in package metadata. An
+execution proof would bind the chosen compiler, exact source/dependency package,
+options, limits and resulting artifact. It would establish that this compiler
+produced that artifact for those inputs. Native Zheng proofs of the actual
+self-builds remain separate SH7/SH8 gates in the
+[self-hosting contract](../../reference/self-hosting.md).
 
-The endgame is provable compilation. The Trident compiler self-hosts on
-the target VM. Every compilation produces a proof (zheng on nox, STARK on Triton). Every Atlas package
-comes with a mathematical guarantee that it was compiled correctly --
-source to assembly, each transformation proven, chained into a single
-certificate. Trust becomes optional because verification is cheap.
+The broader goal is to verify that each compiler transformation preserves
+source-language semantics. That requires separate formal verification or
+translation validation; an execution proof alone does not establish it.
+The [current acceptance ledger](../../audit/self-hosting-progress.md) records
+the native compiler's local fixed point and corpus results. Package certificates
+and semantic-preservation guarantees remain future work.
 
 ---
 

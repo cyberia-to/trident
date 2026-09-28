@@ -4,7 +4,8 @@ SH0.4 contract for Trident0.4 on nox through Joy. The raw ART1 source profile
 uses reusable code tables and the bounded heap evaluator. The flat bundle/proof
 profile retains its legacy inline/unrolled lowering. The
 [runtime baseline](../audit/self-hosting/runtime-baseline.json) records that
-older profile's limits; the progress ledger tracks the remaining SH1 gates.
+older profile's limits; the [progress ledger](../audit/self-hosting-progress.md)
+tracks current native compiler acceptance and the remaining gates.
 
 ## Source execution
 
@@ -185,16 +186,17 @@ files remain intact on execution, encoding or publication failure. The host may
 serialize/import/export nouns and validate protocol records; it must not lex,
 parse, typecheck or finish the guest compiler's generated program.
 
-## Joy admission and first SH1 delivery
+## Joy structured admission
 
-Add an explicit structured raw-artifact run API/command alongside the existing
-flat ProgramBundle path. Accept machine0 ART1 profile(0,0), a raw NOXDAG01 input,
-and explicit transport/reduction/node/frame ceilings. Return complete raw output
-plus its identity and successful charged cost. Profile(1,1) is admitted only
-when production JOB1/RES1 binding/admission is implemented; a hand-built fixture
-is not a compiler. Run-only uses NoTrace. No automatic proof fallback.
+Joy provides an explicit structured raw-artifact run API/command alongside the
+existing flat ProgramBundle path. It accepts machine0 ART1 profile(0,0), a raw
+NOXDAG01 input, and explicit transport/reduction/node/frame ceilings, returning
+complete raw output plus its identity and successful charged cost. Compiler
+profile(1,1) uses implemented JOB1 admission and RES1 binding/validation.
+Hand-built fixtures alone do not establish guest compiler acceptance. Run-only
+uses NoTrace. No automatic proof fallback.
 
-First acceptance commands belong in the implementing owner's receipt. Fixtures
+Acceptance commands and results belong in the implementing owner's receipt. Fixtures
 must cover topology distinction, shared deep DAG, runtime-generated formula,
 input/output byte boundaries, arena exhaustion during execution, frame failure,
 budget failure, unsupported services, failed atomic publication and no-overwrite.

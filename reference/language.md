@@ -158,7 +158,10 @@ checked `vm.nox.noun` operations and persistent `std.nox.seq` / `std.nox.bytes`
 wrappers. The 0.4 development compiler implements `Noun` and the seven native
 operations together with parsing, type checking and direct nox lowering.
 Reusable raw calls/loops and the collection wrappers are implemented in 0.4
-development. Production Joy compiler-job admission remains SH1 work.
+development. Joy implements structured compiler-job admission and JOB1/RES1
+validation. The [native compiler subset](self-hosting.md#native-compiler-subset-contract)
+and [acceptance ledger](../audit/self-hosting-progress.md) distinguish this
+development path from full Rust frontend coverage and release acceptance.
 
 `vm.nox.noun` exports `atom(Field) -> Noun`, `pair(Noun, Noun) -> Noun`,
 `head(Noun) -> Noun`, `tail(Noun) -> Noun`, `as_field(Noun) -> Field`,

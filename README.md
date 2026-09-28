@@ -335,9 +335,14 @@ See [Content-Addressed Code](docs/explanation/content-addressing.md).
 
 ## Verification status
 
-The Rust compiler is the current implementation. `lib/std/compiler/` contains
-experimental components, not a complete self-hosted compiler or a proof
-that this compiler binary faithfully implements the language.
+The Rust compiler remains the reference frontend and tooling implementation.
+The native compiler in `compiler/nox/` and `lib/std/compiler/nox/` has compiled
+its complete frozen S1 source closure: 94 modules executed through Joy on nox.
+The generated C2 and C3 have identical canonical bytes and both pass the actual
+semantic corpus. This closes SH0–SH5 for that compiler subset and measured
+workload. SH6 still requires twelve successful independent native CI repetitions
+across six platforms. Native compilation proofs (SH7/SH8), full parity with the Rust frontend
+and tooling, and formal semantic preservation remain separate work.
 
 [Self-hosting on soft3](reference/self-hosting.md) defines the native nox/Joy
 milestones and acceptance gates. The [progress ledger](audit/self-hosting-progress.md)
