@@ -100,6 +100,8 @@ acceptance work is on `feat/0.4-reproducible-bootstrap`. The scanner repair
 merged through [PR111](https://github.com/cyberia-to/trident/pull/111) at
 `c54446a`; integration targets `release/0.4`. Master remains untouched.
 
+The next proof foundation is integrated separately: nox [PR25](https://github.com/cyberia-to/nox/pull/25) merged as `172811b` into `release/0.4`, supplying bounded logical observation. Its [clean Joy integration and complete ordinary C2(S1) → C3 check](https://github.com/cyberia-to/nox/blob/84e35daab2a9af066c5d8ec85f73837083fbc1df/audit/semantic-observer/whole-compiler/README.md) preserve exact compiler bytes and every non-time execution field; capture was disabled for this compatibility check. Zheng [PR37](https://github.com/cyberia-to/zheng/pull/37) merged as `c753f5a`, adding only the draft noun/Cost/read-port relation proposal. [Integration identities](self-hosting/bootstrap-results/semantic-observer-integration/integration.json) bind both reviewed trees to their merge commits. Frozen SH6 source pins remain unchanged. Authenticated memory, compiler proof constraints and production proof dispatch remain open SH7 work.
+
 The [earlier full failure](self-hosting/full-bootstrap-compacting/README.md)
 remains identified as a different source/runtime attempt. The
 [fixed-point checker](self-hosting/fixed-point-job-binding/README.md) now binds
@@ -117,7 +119,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — ten clean repetitions on five platforms pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); Intel macOS and the aggregate remain required |
-| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — bounded witness capture prepared separately | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies an opt-in observer with independent downstream Joy validation, without changing SH6 pins; [draft CCS noun/Cost design](https://github.com/cyberia-to/zheng/pull/37), authenticated memory and production proof dispatch remain required |
+| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — bounded witness capture integrated separately | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies an opt-in observer with independent downstream Joy validation, without changing SH6 pins; the [merged draft CCS noun/Cost design](https://github.com/cyberia-to/zheng/pull/37) defines the next slice; authenticated memory and production proof dispatch remain required |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
