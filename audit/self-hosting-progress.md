@@ -1,6 +1,6 @@
 # Self-hosting on soft3 — progress ledger
 
-Updated: 2026-09-27. Working contract:
+Updated: 2026-09-28. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
 This ledger tracks acceptance. Linked receipts retain exact commands, revisions,
 source/artifact identities, failed experiments and historical resource limits.
@@ -64,7 +64,7 @@ quotas are unchanged. Its v2 aggregate requires all twelve distinct results
 from the same CI run/attempt/head and exact C2/C3 bytes. The orchestration and
 fixed-point guards pass 46 distinct tests; Joy passes 172 tests. These checks
 establish no full native acceptance. [The new twelve-job CI run](https://github.com/cyberia-to/trident/actions/runs/36359020560)
-is running at `c17bd03`. [Both repetitions on macOS ARM64, Linux ARM64 and Windows x64/ARM64](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora; Linux x64, Intel macOS and the aggregate remain required. SH6 stays open.
+is running at `c17bd03`. [Both repetitions on macOS ARM64, Linux ARM64 and Windows x64/ARM64, plus Linux x64 repetition 2](self-hosting/bootstrap-results/run-36359020560/README.md) pass, including exact restored artifacts and both actual compiler corpora; Linux x64 repetition 1, Intel macOS and the aggregate remain required. SH6 stays open.
 Receipts stay on `test/0.4-selfhost-acceptance` to preserve the tested CI head.
 The reviewed [artifact replay tool](self-hosting/bootstrap-results/archive-tool/README.md)
 preserves every raw platform file with a shared byte store and exact path
@@ -110,8 +110,8 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH3](../reference/self-hosting.md#sh3-compiler-language-coverage) | Closed — reviewed frozen subset | [Complete construct map and executed positive/rejection evidence](self-hosting/compiler-feature-coverage.md) |
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
-| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — eight clean repetitions on four platforms pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); Linux x64, Intel macOS and the aggregate remain required |
-| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — implementation design remains | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); final gate uses SH3/SH4 |
+| [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — nine clean repetitions pass | [Retained native CI results](self-hosting/bootstrap-results/run-36359020560/README.md); Linux x64 repetition 1, Intel macOS and the aggregate remain required |
+| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — bounded witness capture prepared separately | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies an opt-in observer with independent downstream Joy validation, without changing SH6 pins; authenticated constraints and production proof dispatch remain required |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
