@@ -111,7 +111,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Open — current S1 fixed point and both corpora passed | Clean repetitions on six native CPU platforms remain required |
-| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — design can proceed | Production native relation and compiler pilot proofs; final gate uses SH3/SH4 |
+| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — implementation design remains | [Pinned source gap and proposed first production slice](self-hosting/native-proof-gap.md); final gate uses SH3/SH4 |
 | [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — needs SH6/SH7 | Native proofs of both complete self-builds and adversarial verification |
 
 ## Next work, in order
