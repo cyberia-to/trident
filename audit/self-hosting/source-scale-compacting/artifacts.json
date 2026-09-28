@@ -1,0 +1,153 @@
+{
+  "schema": "trident/source-scale-files/v1",
+  "command": "python3 audit/self-hosting/source-scale-compacting/archive.py",
+  "script_sha256": "45b0c011a487286a622c7f29472c3ffd0f41d9583511d06d70d80942e56a48e2",
+  "archive_sha256": "8d1e01760644971b2fb449a4e339af5291b32f60d72d0f1da50e25d2666c7bb4",
+  "archive_bytes": 28968,
+  "receipt_hashes": {
+    "receipt.json": "8ca99b18280a950398204c74c49a3ae3164fbe9ca0088050bf0481b28f88cf9d",
+    "negative-receipt.json": "b837bbb53e1fcfcf2840f37089a01a8e40becaca9c2a245b29df785ce03d7db3"
+  },
+  "files": {
+    "negative-receipt-files-syzeno4s/baseline/job.dag": {
+      "bytes": 8030,
+      "sha256": "77b5b7c4b8c286bc59d75d6630113d6faafb414d8bdaa5df2e59a316534bf5ab"
+    },
+    "negative-receipt-files-syzeno4s/baseline/package.json": {
+      "bytes": 697,
+      "sha256": "b64d960a84ce5dc48c62923037d1fb5d619003bf71fb59cba17369ebef54d983"
+    },
+    "negative-receipt-files-syzeno4s/baseline/program.dag": {
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    "negative-receipt-files-syzeno4s/baseline/sample.tri": {
+      "bytes": 35,
+      "sha256": "5c9aa89baf258457fb467293f9c205b82a05ff7422dd0c8dc5d115613e04b694"
+    },
+    "negative-receipt-files-syzeno4s/baseline/value.dag": {
+      "bytes": 85,
+      "sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    "negative-receipt-files-syzeno4s/diagnostic-after-comment/job.dag": {
+      "bytes": 11492,
+      "sha256": "e7e2876d6a1bfb8cfe515634bb797eec2c32cca0b60f5914e96a4a82f9488c1a"
+    },
+    "negative-receipt-files-syzeno4s/diagnostic-after-comment/package.json": {
+      "bytes": 699,
+      "sha256": "5fb4528fba210fb9b4b45e4ff1258a85f6ff0051141eb6ecef169ebd1f04cab8"
+    },
+    "negative-receipt-files-syzeno4s/diagnostic-after-comment/program.dag": {
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    "negative-receipt-files-syzeno4s/diagnostic-after-comment/result.dag": {
+      "bytes": 2722,
+      "sha256": "a0c2584c98c5a5203aeccbeba1b5c33d47ba07a0878441a88ee5ddc26a3e1c79"
+    },
+    "negative-receipt-files-syzeno4s/diagnostic-after-comment/sample.tri": {
+      "bytes": 4139,
+      "sha256": "96474061b8146cc7e37f9074608cb6df702285e0434177acccdb44205e9c8864"
+    },
+    "negative-receipt-files-syzeno4s/exact65536/job.dag": {
+      "bytes": 9060,
+      "sha256": "39c599a32ad95076b8c39b2fbbaf97257e04c338cdffd0d9162312a44ce957cd"
+    },
+    "negative-receipt-files-syzeno4s/exact65536/package.json": {
+      "bytes": 700,
+      "sha256": "f0d979f1774041d9c7bfaf2f909da18c8e57719d036ffd640af25a34c5078405"
+    },
+    "negative-receipt-files-syzeno4s/exact65536/program.dag": {
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    "negative-receipt-files-syzeno4s/exact65536/result.dag": {
+      "bytes": 3069,
+      "sha256": "ecd2bb78ce608dde92cee46ca660b02c76d36c9f50bfc326d36fc6be9a1e0f29"
+    },
+    "negative-receipt-files-syzeno4s/exact65536/sample.tri": {
+      "bytes": 65536,
+      "sha256": "d02a8a5dbddd3ad6821b0f905317e147e4a0ab755815d479d81943c47e950f15"
+    },
+    "negative-receipt-files-syzeno4s/excess65537/job.dag": {
+      "bytes": 9295,
+      "sha256": "16a2edb0e4df98ed501dd5b22cf39f753c40396ca627dd525a901e15354b8f74"
+    },
+    "negative-receipt-files-syzeno4s/excess65537/package.json": {
+      "bytes": 700,
+      "sha256": "249e344c9e1680daa0ebaeba4bb22d2c0d7f82e4827ec01c9ba41a46a37531bf"
+    },
+    "negative-receipt-files-syzeno4s/excess65537/program.dag": {
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    "negative-receipt-files-syzeno4s/excess65537/result.dag": {
+      "bytes": 3069,
+      "sha256": "024facda4d0da97efc5975eff4bf17f1c387fa952f4cd19046487a80d607c8bc"
+    },
+    "negative-receipt-files-syzeno4s/excess65537/sample.tri": {
+      "bytes": 65537,
+      "sha256": "36ebf6a953addb5627cca0cf48c3518c99655cbbe1c43638e897b3c376f2c2d1"
+    },
+    "negative-receipt-files-syzeno4s/zero.dag": {
+      "bytes": 85,
+      "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+    },
+    "receipt-files-l34ooks9/baseline/job.dag": {
+      "bytes": 8030,
+      "sha256": "77b5b7c4b8c286bc59d75d6630113d6faafb414d8bdaa5df2e59a316534bf5ab"
+    },
+    "receipt-files-l34ooks9/baseline/package.json": {
+      "bytes": 697,
+      "sha256": "b64d960a84ce5dc48c62923037d1fb5d619003bf71fb59cba17369ebef54d983"
+    },
+    "receipt-files-l34ooks9/baseline/program.dag": {
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    "receipt-files-l34ooks9/baseline/sample.tri": {
+      "bytes": 35,
+      "sha256": "5c9aa89baf258457fb467293f9c205b82a05ff7422dd0c8dc5d115613e04b694"
+    },
+    "receipt-files-l34ooks9/baseline/value.dag": {
+      "bytes": 85,
+      "sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    "receipt-files-l34ooks9/valid4096/job.dag": {
+      "bytes": 10149,
+      "sha256": "e9ef576ce382b5878ce33e8241322e2cf236955f2ea23a3478af153c85436798"
+    },
+    "receipt-files-l34ooks9/valid4096/package.json": {
+      "bytes": 699,
+      "sha256": "8bc41ddc03cdef5e5d8dadf35dfebad1bf542e716e2bb8ac499f912993d0ed69"
+    },
+    "receipt-files-l34ooks9/valid4096/program.dag": {
+      "bytes": 790,
+      "sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82"
+    },
+    "receipt-files-l34ooks9/valid4096/sample.tri": {
+      "bytes": 4096,
+      "sha256": "97399baa952797fafd5f9b6cd878076abec9ea5f0441c6a50f763ab295c46d20"
+    },
+    "receipt-files-l34ooks9/valid4096/value.dag": {
+      "bytes": 85,
+      "sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    "receipt-files-l34ooks9/valid65536/job.dag": {
+      "bytes": 11313,
+      "sha256": "abd2c78ee26d3e2b41d0a489a4a7b593c2faf938f28f1396db7e3c15884a26e7"
+    },
+    "receipt-files-l34ooks9/valid65536/package.json": {
+      "bytes": 700,
+      "sha256": "f0d979f1774041d9c7bfaf2f909da18c8e57719d036ffd640af25a34c5078405"
+    },
+    "receipt-files-l34ooks9/valid65536/sample.tri": {
+      "bytes": 65536,
+      "sha256": "9a0125c744455fa4fa4d31ef3a9247f0e354e5a68fcef8b4be1a5af76587e449"
+    },
+    "receipt-files-l34ooks9/zero.dag": {
+      "bytes": 85,
+      "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+    }
+  }
+}

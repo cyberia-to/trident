@@ -1,0 +1,236 @@
+{
+  "scope": "Actual C3 semantic corpora only; clean repeat, platforms and proofs are separate",
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/collect.py",
+    "--input",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/c3-corpus"
+  ],
+  "launch_revision": "0fe4054c7f9c9dc0f88e853a16289a3358ccb7ab",
+  "compiler_sha256": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+  "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+  "binary_sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "all_source_hashes_unchanged": true,
+  "results": {
+    "constants": {
+      "observations": 31,
+      "commands": 140,
+      "reference_builds": 31,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-constants-cli.json",
+      "historical_receipt_sha256": "80114f1a2a410f97b679e88f7f86e95a70ce7f54533f9cc18eeed7e788186919"
+    },
+    "callable": {
+      "observations": 32,
+      "commands": 148,
+      "reference_builds": 32,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-callable-cli.json",
+      "historical_receipt_sha256": "743c3695bea3e356c5b6a148215913ebf30ee21c527c5fa1249be00cf644f59a"
+    },
+    "types": {
+      "observations": 24,
+      "commands": 110,
+      "reference_builds": 24,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-types-cli.json",
+      "historical_receipt_sha256": "54bae2410582342dde5e6cf2aec4b5d917f3b5f1b0daf4246aed0cad4c66f2bc"
+    },
+    "intrinsics": {
+      "observations": 37,
+      "commands": 157,
+      "reference_builds": 28,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-intrinsic-cli.json",
+      "historical_receipt_sha256": "aabbd2eba8bef1a5be420719b8cee066f2d229d7018012b3790f321832b6b8bc"
+    },
+    "generated-profile": {
+      "observations": 21,
+      "commands": 64,
+      "reference_builds": 4,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-profile-cli.json",
+      "historical_receipt_sha256": "c924415985c8b26b3389d99208bd1736dd80ccfa2dfc1c7a5d778bdc77955fb5"
+    },
+    "main": {
+      "observations": 402,
+      "commands": 1197,
+      "reference_builds": 0,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-full-cli.json",
+      "historical_receipt_sha256": "0ca59568f9df90254ed90cc34e6909e75900055eabf266eff13fc3bd9576900c"
+    }
+  },
+  "evidence": {
+    "inputs.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/inputs.json",
+      "original_sha256": "4a27933334b919c68735629e9046f531738208f1efe7149f87d6ce8e1c107170",
+      "original_bytes": 16350,
+      "sha256": "4a27933334b919c68735629e9046f531738208f1efe7149f87d6ce8e1c107170",
+      "bytes": 16350
+    },
+    "summary.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/summary.json",
+      "original_sha256": "bbab6d9d8fbc87c1a87a490e02710005d5da49b3a204d790e2b548fa4829c83e",
+      "original_bytes": 8626,
+      "sha256": "bbab6d9d8fbc87c1a87a490e02710005d5da49b3a204d790e2b548fa4829c83e",
+      "bytes": 8626
+    },
+    "run.py.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/run.py",
+      "original_sha256": "c55c278ac786e0494db5ef2b601a5185eaaacc3ca1e2db99112acf7ea4e0dcd6",
+      "original_bytes": 4610,
+      "sha256": "2a9587044c33807a56400ae2e4ad0f81ecb859029e32b75f23b5186f6cac7926",
+      "bytes": 1927
+    },
+    "collect.py.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/collect.py",
+      "original_sha256": "e796fec34e2e3ba4c84517ba9ca7919aebf14037a6013bd62e1a562ac1e84c40",
+      "original_bytes": 5674,
+      "sha256": "f9b763d350744a36fa259b8d3a3c29c10130702e146f8f90b02b96fafb6229e9",
+      "bytes": 1987
+    },
+    "constants-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/constants-command.json",
+      "original_sha256": "df75a8e1aaa04ac1e08db284c535aea87b40afd0103566bc09623fd8c86ee9ab",
+      "original_bytes": 1281,
+      "sha256": "df75a8e1aaa04ac1e08db284c535aea87b40afd0103566bc09623fd8c86ee9ab",
+      "bytes": 1281
+    },
+    "constants.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/constants.json",
+      "original_sha256": "ff506b7b3b84b104eecf578801aab2f6ec683b31a79bcd2e86b63d1012aca7fc",
+      "original_bytes": 468777,
+      "sha256": "fb6486720136412d62f7bc0ebd8775fcdbae0b9c8ee2d40e38e4d727bbddc7b6",
+      "bytes": 31159
+    },
+    "constants.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/constants.log",
+      "original_sha256": "9fba0c093fef17dbbf84af9e6ac37c806385e79bd30263b38a5f2defee6774bd",
+      "original_bytes": 233,
+      "sha256": "84b5a1be7da4ab99c9afe3ddab85836c6b5ff841b9f2973ab3d49277a717dfc4",
+      "bytes": 192
+    },
+    "callable-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/callable-command.json",
+      "original_sha256": "1af9f6401efa18a80a9581de08ca451251555b90f732d593426de646d93f37b0",
+      "original_bytes": 1278,
+      "sha256": "1af9f6401efa18a80a9581de08ca451251555b90f732d593426de646d93f37b0",
+      "bytes": 1278
+    },
+    "callable.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/callable.json",
+      "original_sha256": "0cf016297c1ec10bead41e4cd3c8d68a1bf0795d1c7255e002191de8dfeda320",
+      "original_bytes": 490081,
+      "sha256": "4aec81568561a64e67093056dbc0ca1caeb9bda6887c09d6a69daa1e140071d8",
+      "bytes": 34342
+    },
+    "callable.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/callable.log",
+      "original_sha256": "83939b08f0c8e1ccde3516643b53b51d103be5b391ae17e33080bef3c6ace3ba",
+      "original_bytes": 233,
+      "sha256": "673da5df6d84d51cd8b17c1de2af8212441e784e2c708a3f9e1918df27543988",
+      "bytes": 192
+    },
+    "types-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/types-command.json",
+      "original_sha256": "a92482054b1eb8bf9ce61c9126cf670e9d8c9c6b9261ac7e6fc1ab9f62e9f1ff",
+      "original_bytes": 1264,
+      "sha256": "a92482054b1eb8bf9ce61c9126cf670e9d8c9c6b9261ac7e6fc1ab9f62e9f1ff",
+      "bytes": 1264
+    },
+    "types.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/types.json",
+      "original_sha256": "67b48df83d0a758aedb90d55d5d584a2681cb3b847c2c3e07d064af7e7269335",
+      "original_bytes": 366244,
+      "sha256": "265c41ea796f694aa16fdaef8bd5263271810ef7bb174527be29e173282bf5b3",
+      "bytes": 26414
+    },
+    "types.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/types.log",
+      "original_sha256": "9242e6750e8472a1b37abc4d6aab82487e3b936cfe4cb379fffb17fe6076b76b",
+      "original_bytes": 233,
+      "sha256": "52530ac4d4841de0020fe589e57b4f52e1436e5fb4b1f2929a2f62f6af1439de",
+      "bytes": 192
+    },
+    "intrinsics-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/intrinsics-command.json",
+      "original_sha256": "ec5d647530a5601c96ba2c3d8a22c6b890fbe968f41fa905b29e32fc66b06dc9",
+      "original_bytes": 1278,
+      "sha256": "ec5d647530a5601c96ba2c3d8a22c6b890fbe968f41fa905b29e32fc66b06dc9",
+      "bytes": 1278
+    },
+    "intrinsics.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/intrinsics.json",
+      "original_sha256": "c7d890dec80ccb3333fa52d5ad4e648249dbbab0405f1a2a7a3034f0b2d478c5",
+      "original_bytes": 532634,
+      "sha256": "9cfc43738688899c97c552d43a355e2b3e5023690ab7b081025685248bf7e7fb",
+      "bytes": 35047
+    },
+    "intrinsics.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/intrinsics.log",
+      "original_sha256": "076d45b626b2ee82663251f145ebe840ef4187e4d0da4156b6772c984e0f613a",
+      "original_bytes": 233,
+      "sha256": "5d65d6e5612faab55918cd1dcc898eae04e75d1f1ce41c4deb16f54336ecf9a0",
+      "bytes": 192
+    },
+    "generated-profile-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/generated-profile-command.json",
+      "original_sha256": "ce45b20d933f8948521b60c27c2e68644ec2585a200e3bda257284eaa622a01b",
+      "original_bytes": 1307,
+      "sha256": "ce45b20d933f8948521b60c27c2e68644ec2585a200e3bda257284eaa622a01b",
+      "bytes": 1307
+    },
+    "generated-profile.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/generated-profile.json",
+      "original_sha256": "8fb977ea66d054a57077d412b3398c3d6517b79119da14934400cda77c4e6673",
+      "original_bytes": 166962,
+      "sha256": "664edd9b18ac484cdc46df84a04af1db456d253b29ff3de8ca3bf2bde35f829b",
+      "bytes": 15777
+    },
+    "generated-profile.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/generated-profile.log",
+      "original_sha256": "1dfdca2d1dddfcb33dda8af37fa2d59e7732d79ccb7fc1d6461c839dbbad3764",
+      "original_bytes": 176,
+      "sha256": "a98b9d96436ede4f24d84de28872047676a6ad45ba77a25f52adab93113e0173",
+      "bytes": 158
+    },
+    "main-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/main-command.json",
+      "original_sha256": "b01305d1f47ccdc2859bf1340476ddfef601cce95f9d353995f10a71401c9909",
+      "original_bytes": 1291,
+      "sha256": "b01305d1f47ccdc2859bf1340476ddfef601cce95f9d353995f10a71401c9909",
+      "bytes": 1291
+    },
+    "main.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/main.json",
+      "original_sha256": "34adbd9381011b21d5e1f0437730b6d63365241194412b313d844b6d9281e7bf",
+      "original_bytes": 3723529,
+      "sha256": "a14bd2e4c7e84297ca23db6a69b4f254f50a0e2c0fbd5f17e76cccdef99f96b3",
+      "bytes": 294678
+    },
+    "main.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/main.log",
+      "original_sha256": "d8b8446755e0b22237e360c3f20a976bf6877312e76b8fe76a28218d331ccd29",
+      "original_bytes": 146,
+      "sha256": "b742f75974f87278be35490697414c294e74ccbd23c1c9a5ff7bdc672eda4eca",
+      "bytes": 143
+    },
+    "generated-artifacts.tar.gz": {
+      "sha256": "34403474d4914644a5119eab0ae2e0b9de3775475ed994b4e73172513e9846a6",
+      "bytes": 487096,
+      "files": 109,
+      "source_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/generated-profile-files-1imd1_ws",
+      "file_manifest": "generated-profile.json.gz: files"
+    }
+  },
+  "encoding": "Raw receipts/logs preserved exactly with deterministic gzip; no whitespace normalization"
+}

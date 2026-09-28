@@ -55,11 +55,187 @@ def compiler_identity(receipt):
     return {key: value[key] for key in ['sha256', 'particle']}
 
 
-def rust_evidence(path, tests, counts):
+COUNT_KEYS = ('passed', 'failed', 'ignored', 'filtered_out')
+
+
+def sum_counts(rows):
+    return {key: sum(row[key] for row in rows) for key in COUNT_KEYS}
+
+
+def archive_bytes(directory, row, path_key='path', encoding_key='encoding'):
+    need(row[encoding_key] == 'gzip', 'gate log encoding')
+    path = bound(directory, row, path_key, 'stored_sha256')
+    with gzip.open(path, 'rb') as stream:
+        raw = stream.read(16 * 1024 * 1024 + 1)
+    need(len(raw) <= 16 * 1024 * 1024, 'gate log size bound')
+    need(hashlib.sha256(raw).hexdigest() == row['raw_sha256'], 'decompressed gate log differs')
+    return raw
+
+
+def gate_targets(root, directory, gate):
+    capture = gate['cargo_metadata']
+    need(capture['argv'] == ['cargo', 'metadata', '--format-version', '1', '--no-deps', '--locked', '--offline'],
+         'metadata command differs')
+    for file, key in [('Cargo.toml', 'cargo_toml_sha256'), ('Cargo.lock', 'cargo_lock_sha256')]:
+        need(sha(root / file) == capture[key], 'Cargo input changed: ' + file)
+    metadata = json.loads(archive_bytes(directory, capture))
+    prefix = capture['cwd'].replace('\\', '/').rstrip('/') + '/'
+    packages = [p for p in metadata['packages'] if p['manifest_path'].replace('\\', '/') == prefix + 'Cargo.toml']
+    need(len(packages) == 1 and metadata['workspace_default_members'] == [packages[0]['id']],
+         'metadata does not describe the complete default package')
+    targets = {}
+    for target in packages[0]['targets']:
+        kind = target['kind'][0]
+        if kind not in ('lib', 'bin', 'test'):
+            continue
+        source = target['src_path'].replace('\\', '/')
+        need(source.startswith(prefix), 'metadata target source escapes package')
+        source = source[len(prefix):]
+        need(relative(root, source).is_file(), 'metadata target source missing')
+        if target['test']:
+            targets[kind + ':' + target['name']] = source
+        if kind == 'lib' and target['doctest']:
+            targets['doc:' + target['name']] = source
+    need(set(targets) == set(gate['coverage']['metadata_targets']) and
+         len(targets) == len(gate['coverage']['metadata_targets']), 'metadata target coverage differs')
+    # Auto-discovered integration targets must also match the current checkout.
+    need({v for k, v in targets.items() if k.startswith('test:')} ==
+         {p.relative_to(root).as_posix() for p in (root / 'tests').glob('*.rs')}, 'integration target set changed')
+    return targets
+
+
+def log_suites(raw, targets):
+    text = re.sub(r'\x1b\[[0-9;]*m', '', raw.decode('utf-8'))
+    need(not re.search(r'^\s*warning(?:\[.*?\])?:', text, re.M), 'Rust warning in gate log')
+    headers = list(re.finditer(r'^\s*(?:Running (?:unittests )?([^\n]+?) \([^\n]*\)|Doc-tests ([\w-]+))\s*$', text, re.M))
+    suites = []
+    for index, header in enumerate(headers):
+        if header[2]:
+            candidates = ['doc:' + header[2]]
+        else:
+            source = header[1].replace('\\', '/')
+            candidates = [key for key, value in targets.items() if value == source and not key.startswith('doc:')]
+        need(len(candidates) == 1 and candidates[0] in targets, 'unknown or ambiguous logged test target')
+        tail = text[header.end():headers[index + 1].start() if index + 1 < len(headers) else len(text)]
+        summaries = re.findall(r'^test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored; (\d+) measured; (\d+) filtered out;', tail, re.M)
+        need(len(summaries) == 1, 'missing, failed or repeated suite summary')
+        passed, failed, ignored, measured, filtered = map(int, summaries[0])
+        need(failed == measured == filtered == 0, 'failed or filtered Rust suite')
+        cases = re.findall(r'^test (.+?) \.\.\. (ok|ignored(?:,.*)?|FAILED)$', tail, re.M)
+        # Concurrent diagnostic stderr can interleave individual case lines.
+        # Full-suite counts come from the terminal libtest summary; the selected
+        # mapped cases are independently required by rust_evidence below.
+        need(len({name for name, _ in cases}) == len(cases) and
+             sum(state == 'ok' for _, state in cases) <= passed and
+             sum(state.startswith('ignored') for _, state in cases) <= ignored,
+             'test names disagree with suite summary')
+        suites.append(dict(target=candidates[0], passed=passed, failed=failed, ignored=ignored, filtered_out=filtered))
+    need(suites and len({s['target'] for s in suites}) == len(suites), 'missing or reused logged test target')
+    return suites
+
+
+def command_targets(command, targets):
+    argv = command['argv']
+    need(argv[:5] == ['cargo', 'test', '--release', '--locked', '--offline'] and
+         argv.count('--') == 1, 'unexpected Rust gate command/filter')
+    separator = argv.index('--')
+    arguments = argv[separator + 1:]
+    need(len(arguments) == len(set(arguments)) and
+         sum(bool(re.fullmatch(r'--test-threads=[1-9][0-9]*', arg)) for arg in arguments) == 1 and
+         all(arg == '--nocapture' or re.fullmatch(r'--test-threads=[1-9][0-9]*', arg) for arg in arguments),
+         'unexpected Rust gate command/filter')
+    selected, options, index = [], argv[5:separator], 0
+    while index < len(options):
+        option = options[index]
+        if option in ('--lib', '--bins', '--doc'):
+            prefix = {'--lib': 'lib:', '--bins': 'bin:', '--doc': 'doc:'}[option]
+            selected.extend(t for t in targets if t.startswith(prefix))
+        else:
+            need(option == '--test' and index + 1 < len(options), 'unsupported Rust target selector')
+            index += 1
+            selected.append('test:' + options[index])
+        index += 1
+    need(set(selected) == set(command['targets']) and len(selected) == len(set(selected)) == len(command['targets']) and
+         set(selected) <= set(targets), 'command/target binding differs')
+    return set(selected)
+
+
+def split_gate(root, directory, gate, mapping):
+    need(gate['status'] == 'passed' and gate['checks'] == {'warnings': 0, 'failures': 0, 'source_unchanged': True},
+         'split Rust gate not green')
+    need(gate.get('committed_sources_verified') is True, 'committed gate sources not verified')
+    need(gate['committed_source_revision'] == mapping['source_revision'] and
+         gate['source_inventory_sha256'] == mapping['inventory']['sha256'], 'gate/source binding differs')
+    need(sha(relative(directory, gate['source_inventory_path'])) == gate['source_inventory_sha256'], 'gate inventory changed')
+    sources = {row['logical_path']: row for row in gate['sources']}
+    need(len(sources) == len(gate['sources']) and set(sources) == set(mapping['sources']), 'gate source set differs')
+    for name, row in sources.items():
+        expected = mapping['sources'][name]
+        need(row['path'] == expected['path'] and row['sha256'] == expected['sha256'] and
+             row['bytes'] == relative(root, row['path']).stat().st_size, 'gate source identity differs')
+    source_map = {name: {k: row[k] for k in ('sha256', 'bytes')} for name, row in sources.items()}
+    need(hashlib.sha256(json.dumps(source_map, sort_keys=True, separators=(',', ':')).encode()).hexdigest() ==
+         gate['source_map_sha256'], 'source map digest differs')
+    targets = gate_targets(root, directory, gate)
+    ids, paths, hashes, covered, latest, logs = set(), set(), set(), set(), {}, []
+    required = {p.relative_to(root).as_posix() for p in (root / 'tests').rglob('*') if p.is_file()}
+    required |= {'Cargo.toml', 'Cargo.lock', 'lib/std/compiler/nox/lexer.tri'}
+    versions, used_versions = {}, set()
+    for version in gate.get('source_versions', []):
+        key = (version['source_path'], version['raw_sha256'], version['superseded_by_command'])
+        need(key not in versions, 'duplicate test source version')
+        versions[key] = archive_bytes(directory, version)
+    buckets = {'primary': [], 'supplemental': []}
+    for command in gate['commands']:
+        need(command['id'] not in ids and command['raw_log'] not in paths and command['raw_sha256'] not in hashes,
+             'reused Rust command or log')
+        ids.add(command['id']); paths.add(command['raw_log']); hashes.add(command['raw_sha256'])
+        need(type(command['exit_code']) is int and command['exit_code'] == 0, 'failed Rust subcommand')
+        need(command['cwd'] == gate['cargo_metadata']['cwd'] and set(command['env']) == {'CARGO_TARGET_DIR'}, 'command environment differs')
+        selected = command_targets(command, targets)
+        kind = command['kind']
+        need(kind in buckets, 'unknown command accounting kind')
+        need(not (covered & selected) if kind == 'primary' else selected <= covered, 'duplicate primary or unbound supplemental targets')
+        if kind == 'primary':
+            covered.update(selected)
+        raw = archive_bytes(directory, command, 'raw_log', 'log_encoding')
+        suites = log_suites(raw, targets)
+        need(suites == command['suite_results'] and {s['target'] for s in suites} == selected, 'logged target coverage differs')
+        counts = sum_counts(suites)
+        need(counts == command['counts'], 'command counts differ')
+        buckets[kind].append(counts); logs.append(raw)
+        need(required <= set(command['source_hashes']), 'test input source bindings incomplete')
+        for path, identity in command['source_hashes'].items():
+            if path in latest and latest[path] != identity:
+                need(kind == 'supplemental' and any(targets[t] == path for t in selected), 'source changed without matching full-target rerun')
+                key = (path, latest[path], command['id'])
+                need(key in versions, 'superseded test source is not retained')
+                used_versions.add(key)
+            latest[path] = identity
+    need(used_versions == set(versions), 'unbound historical test source version')
+    for path, identity in latest.items():
+        need(sha(relative(root, path)) == identity, 'gate test source changed: ' + path)
+    coverage = gate['coverage']
+    need(covered == set(targets) == set(coverage['covered_targets']) and coverage['missing_targets'] == [], 'incomplete primary target coverage')
+    primary, supplemental = (sum_counts(buckets[k]) for k in ('primary', 'supplemental'))
+    observed = sum_counts([primary, supplemental])
+    need(gate['counts'] == dict(primary=primary, supplemental=supplemental, observed=observed, unique=primary), 'gate totals double-count or differ')
+    need(coverage['unique_registered_tests'] == sum(primary[k] for k in ('passed', 'failed', 'ignored')) and
+         coverage['observed_test_executions'] == observed['passed'] + observed['failed'], 'execution/registration counts differ')
+    combined = gate['combined_log']
+    need(combined['concatenation_only'] is True and combined['ordered_commands'] == [c['id'] for c in gate['commands']] and
+         combined['ordered_raw_logs'] == [c['raw_log'] for c in gate['commands']], 'combined log provenance differs')
+    need(archive_bytes(directory, combined) == b''.join(logs), 'combined log is not exact command concatenation')
+    return primary, len(covered), b''.join(raw for raw, command in zip(logs, gate['commands']) if command['kind'] == 'primary')
+
+
+def rust_evidence(path, tests, counts, primary_raw=None):
     """Read complete selected test binaries; do not infer full Cargo exit status."""
     if path is None:
         return {'status': 'not supplied', 'missing_test_count': len(tests)}
-    if path.suffix == '.gz':
+    if primary_raw is not None:
+        text = primary_raw.decode('utf-8')
+    elif path.suffix == '.gz':
         with gzip.open(path, 'rt') as stream:
             text = stream.read()
     else:
@@ -120,15 +296,26 @@ def validate(root, mapping, inventory, log_path=None, require_rust=False):
         need(row['source_blake3'] == module['source_blake3'], f'inventory identity differs: {name}')
         need(source.stat().st_size == module['source_bytes'], f'source length differs: {name}')
     evidence_meta = mapping['rust_evidence']
-    gate = read(bound(root, evidence_meta, 'gate_receipt', 'gate_receipt_sha256'))
-    need(gate['status'] == 'passed' and gate['exit_code'] == 0 and
-         gate['failed'] == 0 and gate['rust_warnings'] == 0, 'full Rust gate not green')
-    need(gate['source_commit'] == mapping['source_revision'] and
-         gate['source_inventory_sha256'] == meta['sha256'], 'gate/source binding differs')
-    need(gate['command'] == evidence_meta['command'], 'gate command differs')
-    for key in ['completed_suites', 'passed', 'ignored', 'failed', 'rust_warnings',
-                'log_sha256', 'decompressed_log_sha256']:
-        need(gate[key] == evidence_meta[key], f'gate evidence differs: {key}')
+    gate_path = bound(root, evidence_meta, 'gate_receipt', 'gate_receipt_sha256')
+    gate, primary_raw = read(gate_path), None
+    if gate.get('schema') == 'trident/split-rust-gate/v1':
+        need(evidence_meta.get('schema') == gate['schema'] and 'command' not in evidence_meta, 'split gate schema/command metadata')
+        counts, suites, primary_raw = split_gate(root, gate_path.parent, gate, mapping)
+        need(evidence_meta['command_ids'] == [c['id'] for c in gate['commands']] and
+             evidence_meta['counts'] == gate['counts'], 'split command/count metadata differs')
+        expected = dict(completed_suites=suites, passed=counts['passed'], ignored=counts['ignored'], failed=0,
+                        rust_warnings=0, log_sha256=gate['combined_log']['stored_sha256'],
+                        decompressed_log_sha256=gate['combined_log']['raw_sha256'])
+    else:
+        need('schema' not in gate, 'unknown Rust gate schema')
+        need(gate['status'] == 'passed' and gate['exit_code'] == 0 and
+             gate['failed'] == 0 and gate['rust_warnings'] == 0, 'full Rust gate not green')
+        need(gate['source_commit'] == mapping['source_revision'] and
+             gate['source_inventory_sha256'] == meta['sha256'], 'gate/source binding differs')
+        need(gate['command'] == evidence_meta['command'], 'gate command differs')
+        expected = gate
+    for key in ['completed_suites', 'passed', 'ignored', 'failed', 'rust_warnings', 'log_sha256', 'decompressed_log_sha256']:
+        need(expected[key] == evidence_meta[key], f'gate evidence differs: {key}')
     archive = bound(root, evidence_meta, 'log', 'log_sha256')
     with gzip.open(archive, 'rb') as stream:
         raw_sha = hashlib.sha256(stream.read()).hexdigest()
@@ -211,14 +398,14 @@ def validate(root, mapping, inventory, log_path=None, require_rust=False):
             known_only_calls(inv, name, row)
     for ref in mapping['required_regressions'].values():
         installed(ref, True)
-    evidence = rust_evidence(log_path, tests, mapping['rust_evidence']['suite_counts'])
+    evidence = rust_evidence(log_path, tests, mapping['rust_evidence']['suite_counts'], primary_raw)
     if require_rust:
         need(evidence['status'] == 'selected suites passed',
              'selected Rust suites not complete and green: ' + json.dumps(evidence))
     return {'status': 'mapping integrity passed', 'features': len(inv['features']),
             'modules': len(inv['modules']), 'rust_test_references': len(tests),
             'selected_installed_cases': len(selected), 'historical_receipts': len(runners),
-            'rust_evidence': evidence, 'acceptance': 'SH3 feature criterion met for reviewed map; SH4/SH5, C2 corpus and fixed point remain open'}
+            'rust_evidence': evidence, 'acceptance': 'SH3 feature criterion met for reviewed map; SH4/SH5, C2/C3 corpora and fixed point are not checked by this mapping'}
 
 
 def main():

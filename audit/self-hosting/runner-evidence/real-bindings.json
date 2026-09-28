@@ -1,0 +1,107 @@
+{
+  "status": "passed",
+  "sh6_accepted": false,
+  "scope": "Actual compiler-step and C2 corpus binding checks only; no clean repetitions, C3 corpus or platform acceptance",
+  "runner_sha256": "805af512ad48b99fc77b2e476ef6b1e67e7068ca4c4304a59a366c06110cb0f1",
+  "checker_sha256": "e39a6c06a2224a0b4b34ad13e9f7511a74b5c9988b70074523e2a3f82a5c1baa",
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/runner-evidence/check-real-bindings.py",
+    "--measurements",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/runner-evidence/real-bindings.json"
+  ],
+  "steps": {
+    "c1": {
+      "path": "body-scale-c1.dag",
+      "bytes": 9706396,
+      "sha256": "4b8276068704063eb13e5555bca872372d2975b4ac71cf93edc03273222327b6"
+    },
+    "c2": {
+      "path": "body-scale-closure-20b-files-wnfaub83/result.dag",
+      "bytes": 9681676,
+      "sha256": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0"
+    },
+    "c3": {
+      "path": "c2-to-c3-20b-files-vgt4vpb1/result.dag",
+      "bytes": 9681676,
+      "sha256": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0"
+    },
+    "inventory": {
+      "path": "body-scale-inventory.json",
+      "bytes": 356739,
+      "sha256": "c121df82df67e1672e83cfc30b94a9161cde551b1be1890ff1e075c070ef2ea9"
+    },
+    "step2": {
+      "path": "body-scale-closure-20b.json",
+      "bytes": 190236,
+      "sha256": "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f"
+    },
+    "step3": {
+      "path": "c2-to-c3-20b.json",
+      "bytes": 189277,
+      "sha256": "d4dc01016d06cf738b932fda35a803833bd53d2ba240fb0cdd6db32235b2162a"
+    },
+    "fixed_point": {
+      "path": "body-scale-fixed-point.json",
+      "bytes": 93919,
+      "sha256": "efc9f4d6cad6923c0d366d407b30e069475a0567f8a080e1cc2570e7daf1fa48"
+    }
+  },
+  "compiler_bytes": 9681676,
+  "tools": {
+    "joy": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+    "inventory": "fd55f00bf4488a5681887aed72fce9680c5c272ca934987dd724221bc27707f6"
+  },
+  "c2_corpora": {
+    "main": {
+      "receipt": {
+        "path": "c2-corpus/main.json",
+        "bytes": 3733144,
+        "sha256": "67c62ea0eaf173c9bc28efa162700e75e0ab59e3fac5d22a87c6b6143ad92cf7"
+      },
+      "observations": 402
+    },
+    "constants": {
+      "receipt": {
+        "path": "c2-corpus/constants.json",
+        "bytes": 469557,
+        "sha256": "c5cc3f33792c10e55ef1e80dce258651c9c8b6b7ad49b147fda9723033d3f3cb"
+      },
+      "observations": 31
+    },
+    "callable": {
+      "receipt": {
+        "path": "c2-corpus/callable.json",
+        "bytes": 490851,
+        "sha256": "a6ca5227560e819ff6d343a3a9682b14c415ab420bd580290224a3c0933992ad"
+      },
+      "observations": 32
+    },
+    "types": {
+      "receipt": {
+        "path": "c2-corpus/types.json",
+        "bytes": 366834,
+        "sha256": "a66bfe2d69d561ac4aad1744a847cca402976853711429117f94b0ee7ca55582"
+      },
+      "observations": 24
+    },
+    "intrinsics": {
+      "receipt": {
+        "path": "c2-corpus/intrinsics.json",
+        "bytes": 533574,
+        "sha256": "829fdf1263b71d12061575bf72037a30e3c609214f03ee80a72d4eaf2a0da6a5"
+      },
+      "observations": 37
+    },
+    "generated-profile": {
+      "receipt": {
+        "path": "c2-corpus/generated-profile.json",
+        "bytes": 166359,
+        "sha256": "30e5a5b9330ddb9a997524befc02d9b501a8df4af20fbdc108afc1e0e3e4a6b5"
+      },
+      "observations": 21
+    }
+  }
+}

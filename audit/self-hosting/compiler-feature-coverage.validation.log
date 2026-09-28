@@ -10,8 +10,24 @@ test_no_test_log_cannot_satisfy_strict_execution_requirement (__main__.CoverageG
 test_rejection_case_cannot_stand_in_for_executed_positive (__main__.CoverageGuards.test_rejection_case_cannot_stand_in_for_executed_positive) ... ok
 test_reviewed_map_binds_real_sources_and_historical_case_records (__main__.CoverageGuards.test_reviewed_map_binds_real_sources_and_historical_case_records) ... ok
 test_unknown_case_cannot_pass (__main__.CoverageGuards.test_unknown_case_cannot_pass) ... ok
+test_changed_current_source_is_rejected (__main__.SplitGateGuards.test_changed_current_source_is_rejected) ... ok
+test_changed_raw_log_or_raw_digest_is_rejected (__main__.SplitGateGuards.test_changed_raw_log_or_raw_digest_is_rejected) ... ok
+test_command_test_filter_is_not_complete_target_coverage (__main__.SplitGateGuards.test_command_test_filter_is_not_complete_target_coverage) ... ok
+test_committed_source_verification_must_be_explicitly_true (__main__.SplitGateGuards.test_committed_source_verification_must_be_explicitly_true) ... ok
+test_concat_manifest_cannot_hide_missing_bytes (__main__.SplitGateGuards.test_concat_manifest_cannot_hide_missing_bytes) ... ok
+test_diagnostic_interleaving_preserves_terminal_suite_counts (__main__.SplitGateGuards.test_diagnostic_interleaving_preserves_terminal_suite_counts) ... ok
+test_double_counted_unique_total_is_rejected (__main__.SplitGateGuards.test_double_counted_unique_total_is_rejected) ... ok
+test_failed_subcommand_cannot_be_masked_by_green_totals (__main__.SplitGateGuards.test_failed_subcommand_cannot_be_masked_by_green_totals) ... ok
+test_incomplete_failed_filtered_or_repeated_suite_is_rejected (__main__.SplitGateGuards.test_incomplete_failed_filtered_or_repeated_suite_is_rejected) ... ok
+test_libtest_output_and_thread_options_do_not_filter_tests (__main__.SplitGateGuards.test_libtest_output_and_thread_options_do_not_filter_tests) ... ok
+test_missing_per_command_source_binding_is_rejected (__main__.SplitGateGuards.test_missing_per_command_source_binding_is_rejected) ... ok
+test_missing_primary_target_cannot_pass (__main__.SplitGateGuards.test_missing_primary_target_cannot_pass) ... ok
+test_omitting_target_from_metadata_and_commands_cannot_hide_it (__main__.SplitGateGuards.test_omitting_target_from_metadata_and_commands_cannot_hide_it) ... ok
+test_reusing_a_log_or_primary_target_is_rejected (__main__.SplitGateGuards.test_reusing_a_log_or_primary_target_is_rejected) ... ok
+test_reviewed_test_source_change_requires_matching_supplemental_target (__main__.SplitGateGuards.test_reviewed_test_source_change_requires_matching_supplemental_target) ... ok
+test_supplemental_execution_is_observed_but_not_counted_twice (__main__.SplitGateGuards.test_supplemental_execution_is_observed_but_not_counted_twice) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.165s
+Ran 28 tests in 0.303s
 
 OK

@@ -86,8 +86,13 @@ diagnostics; their measurements remain in the owning byte-discard, function-sort
 alias and export-row receipts. A wording-only coverage-checker test failure
 was corrected before commit; its raw output is retained in
 `coverage-status-wording-failure.log.gz`.
-The [feature coverage map](../compiler-feature-coverage.md) binds all used
-constructs to positive/rejection evidence and this completed Rust gate.
+The [frozen S0 feature map](feature-coverage-s0.json) binds all used
+constructs to positive/rejection evidence and this completed Rust gate. Its
+original report and validation are retained as `feature-coverage-s0.md.gz`,
+`feature-coverage-s0.validation.json` and `feature-coverage-s0.validation.log`.
+These preserve the map at `0fe4054`; relative report links refer to its original
+`audit/self-hosting/` location. The current map may describe a later source
+snapshot and must not replace these historical bindings.
 
 Earlier [10-billion-budget failure](../full-bootstrap-compacting/README.md)
 and [body-stage localization](../../../../nox/audit/prefix-frontier/README.md)

@@ -1,26 +1,26 @@
 # Compiler inventory to semantic evidence
 
 This is a coverage map for the frozen production-intended source at
-`b991d901e6585a40bedd0e0a3d4382c2ad3d89c1`. It maps all 51 inventory feature
+`77213171d39b88c5f41221912251cc4813ac2b11`. It maps all 51 inventory feature
 kinds to existing positive and rejection cases. The SH3 feature-evidence
 criterion is met for this documented subset after review against the source,
 canonical subset and named tests. This does not establish SH4/SH5 or C2 corpus
 acceptance. The current frozen-source Rust gate passed.
 
-The exact [inventory](body-scale/inventory.json) contains 94 modules,
-484 functions, 369,820 source bytes and 8,722 lines. Its SHA256 is
-`c121df82df67e1672e83cfc30b94a9161cde551b1be1890ff1e075c070ef2ea9`.
+The exact [inventory](lexer-frame-chunks/inventory.json) contains 94 modules,
+484 functions, 370,544 source bytes and 8,731 lines. Its SHA256 is
+`d35d263c7f9f27cbe7ea760a34393105ae8140dc6ab84d484151b6fe04960571`.
 The inventory covers all parsed declarations in the transitive canonical
 source closure; it does not infer types, resolve calls or establish reachability.
 It was independently rechecked without a build using the following metadata-only
 command at the same source revision; the checker binary hash is in the map.
 
 ```sh
-../target-root/release/examples/selfhost_inventory --root . --entry compiler/nox/main.tri --output audit/self-hosting/body-scale/inventory.json --check
+../target-probe/release/examples/selfhost_inventory --root . --entry compiler/nox/main.tri --output audit/self-hosting/lexer-frame-chunks/inventory.json --check
 ```
 
 The [machine map](compiler-feature-coverage.json) binds all 94 actual source
-SHA256 values, their declared inventory BLAKE3 values, 63 named Rust test
+SHA256 values, their declared inventory BLAKE3 values, 65 named Rust test
 references, eight historical installed receipts and 145 selected installed
 observations. Counts below come from that inventory and the named receipts,
 not a new compiler run. SHA256 checks detect drift; this checker does not
@@ -32,6 +32,13 @@ Each feature key has its exact count and at least one semantic group. Each
 group has positive and rejection Rust tests plus named installed observations.
 The map holds complete test names, paths and source hashes; the following
 are representative installed case names, qualified by receipt group.
+
+Only the lexer differs from the [archived S0 map](body-scale/feature-coverage-s0.json).
+All 51 feature kinds and intrinsic declarations remain unchanged. The added
+nested loop and direct token records use already mapped loop mutation/return,
+qualified constructors, typed constants and checked conversions. Two additional
+Rust component tests cover token equivalence and bounded trivia scanning;
+they do not add semantic observations to the historical installed corpus.
 
 | Group | Inventory constructs | Positive example | Rejection example |
 |---|---|---|---|
@@ -70,14 +77,22 @@ Rust `tests/native_compiler.rs` builds C1 through the Rust native backend, runs
 that artifact inside nox, then checks guest output. Positive tests selected for
 the semantic groups execute emitted programs; some also compare the Rust seed
 or independent formulas. Component tests run host-built guest fixtures and
-are labelled separately. The map's strict log check requires all 188 tests in
-that binary and all eight `native_intrinsic_abi` tests to complete unfiltered,
-with the selected names passing. It does not infer the exit status of the
-whole Cargo command. The [body-scale gate receipt](body-scale/gates.json) records exit 0 for
-`CARGO_TARGET_DIR=../target-root cargo test --release --locked --offline -- --test-threads=4`
-at the same source revision: 45 suites, 1,195 passed, five ignored, zero failed
-and zero Rust warnings. The map binds that receipt plus compressed and
-decompressed log hashes. The strict check finds all 63 mapped tests passing.
+are labelled separately. The strict log check requires all 188 tests in that binary, all eight
+`native_intrinsic_abi` tests and both `native_lexer_frames` tests to complete
+unfiltered, with all 65 selected names passing. The [complete split gate](lexer-frame-chunks/full-gate.json)
+retains the actual commands: one invocation for the compiler and lexer targets,
+one for the remaining library/binary/integration targets and one for doctests.
+Their 46 primary targets contain 1,197 passing tests and five existing ignores,
+with zero failures and Rust warnings. A separately identified lexer rerun adds
+two passing executions after review of newline-at-chunk-end vectors; the
+unique test count remains 1,197.
+
+The checker derives target coverage from retained Cargo metadata, verifies
+command selectors and terminal summaries, binds retained test-source revisions,
+and checks each raw log plus their exact concatenation. The recorded execution
+base remains `0fe4054` with explicit source hashes; committed source `7721317`
+was subsequently verified against all 94 source blobs. The gate records both
+identities. No single Cargo invocation is invented for the combined result.
 
 The following installed receipts all used historical Rust-seeded C1 SHA256
 `4aed7fc83be96156fcb65c3bbb369c192ad27f894ab78a030e3588056a66d112`
@@ -101,8 +116,11 @@ previous output. It does not claim those old temporary artifact files survive.
 
 These counts are observations with different scopes, not a count of independent
 semantic programs. The main 402 observations exclude the other seven runners.
-No completed run of these suites using an actual self-produced C2 is retained
-here. Provided-compiler routing work is separate from successful execution.
+These historical C1 receipts keep their original identities. The earlier S0
+actual [C2 corpus](c2-corpus/README.md), [C3 corpus](c3-corpus/README.md) and
+[fixed point](fixed-point/README.md) are separate completed measurements.
+The current S1 scanner source requires its own bootstrap and supplied-compiler
+evidence; this feature map does not infer that acceptance from S0.
 
 ## Explicit limits and pending work
 
@@ -111,7 +129,8 @@ here. Provided-compiler routing work is separate from successful execution.
   by SH5 separately. Syntax keys still collapse inferred
   types, nominal owner identities, dotted variable/place paths and interactions.
   They do not prove every source occurrence compiles. The separate
-  [complete C1(S) run](body-scale/README.md) now succeeds on this exact source.
+  [earlier complete C1(S) run](body-scale/README.md) describes S0. The
+  [progress ledger](../self-hosting-progress.md) tracks S1 acceptance separately.
   Historical barriers remain documented in the
   [frontier](full-bootstrap-frontier.md) and [compacting run](full-bootstrap-compacting/README.md).
 - `requires`/`ensures` mean balanced lexical metadata in this native subset.
@@ -141,7 +160,7 @@ From the Trident repository root:
 
 ```sh
 python3 audit/self-hosting/compiler-feature-coverage.py
-python3 audit/self-hosting/compiler-feature-coverage.py --rust-log audit/self-hosting/body-scale/full-tests.log.gz --require-rust-pass
+python3 audit/self-hosting/compiler-feature-coverage.py --rust-log audit/self-hosting/lexer-frame-chunks/full-rust.log.gz --require-rust-pass
 PYTHONDONTWRITEBYTECODE=1 python3 -W error audit/self-hosting/compiler-feature-coverage.test.py
 ```
 
@@ -154,9 +173,11 @@ inventory or current source/test hash fails until its coverage is reviewed.
 `--inventory PATH` supports an independently generated future inventory; it must
 match the reviewed hash. Do not merely refresh that hash to bypass new features.
 
-At `b991d901e6585a40bedd0e0a3d4382c2ad3d89c1`, the third command passed all
-12 focused guards; [the log](compiler-feature-coverage.validation.log) is retained.
+With the above S1 source bindings, the third command passed all 28 focused
+guards; [the log](compiler-feature-coverage.validation.log) is retained.
 They reject missing features/cases, changed source/test/receipt hashes, a negative
 case substituted for positive execution, missing/newly-called known-only
-intrinsics, and absent/incomplete/filtered Rust logs. Synthetic log data tests
-parsing only and is never claimed as compiler execution evidence.
+intrinsics, absent/incomplete/filtered Rust logs, missing or duplicate primary
+targets, failed subcommands, changed log bytes, unbound source changes, absent
+committed-source verification and reruns incorrectly counted as unique tests.
+Synthetic log data tests parsing only; actual gate logs establish execution.

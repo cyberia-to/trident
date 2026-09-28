@@ -1,0 +1,192 @@
+{
+  "scope": "prepare-only; no clean guest repetition or six-platform acceptance",
+  "measured_runner_sha256": "da16d35ea85a297b22dc6c03e607110065c90e341f6f1545265478619af3836d",
+  "inventory_sha256": "c121df82df67e1672e83cfc30b94a9161cde551b1be1890ff1e075c070ef2ea9",
+  "c1_sha256": "4b8276068704063eb13e5555bca872372d2975b4ac71cf93edc03273222327b6",
+  "post_prepare_source_checks": [
+    {
+      "repository": "trident",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "0fe4054c7f9c9dc0f88e853a16289a3358ccb7ab\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "joy",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "2878f4b17dfedf237c6110d7d411bb4824e65103\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "nox",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "f8047c22cc6075d5171c0fbe520174e78e94ccb6\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "hemera",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "a931a0a8e7ed369852ce0f8bc6451a59745ee692\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "strata",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "zheng",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "b54b209b91b8bf99c2975c4c24493a2411c23079\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "bbg",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "1d39975ad199b48c350fa4cc011cbf6f289480ee\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "lens",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "17cafe91431977b738e5b72361187cd01ad93638\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    },
+    {
+      "repository": "neuron",
+      "head_command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "head_stdout": "fd24e768d623604b67e20b4b93fa8e82c83ac373\n",
+      "status_command": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "status_stdout": ""
+    }
+  ],
+  "invocation": [
+    "python3",
+    "audit/self-hosting/bootstrap-runner.py",
+    "--prepare-only",
+    "--target",
+    "aarch64-apple-darwin",
+    "--work",
+    "../bootstrap-prepare-work",
+    "--output",
+    "../measurements/bootstrap-prepare",
+    "--pins-json",
+    "{\"trident\":\"0fe4054c7f9c9dc0f88e853a16289a3358ccb7ab\",\"joy\":\"2878f4b17dfedf237c6110d7d411bb4824e65103\",\"nox\":\"f8047c22cc6075d5171c0fbe520174e78e94ccb6\",\"hemera\":\"a931a0a8e7ed369852ce0f8bc6451a59745ee692\",\"strata\":\"d2eb1763b8caf04e6c7647ac6fe99761519c2ef9\",\"zheng\":\"b54b209b91b8bf99c2975c4c24493a2411c23079\",\"bbg\":\"1d39975ad199b48c350fa4cc011cbf6f289480ee\",\"lens\":\"17cafe91431977b738e5b72361187cd01ad93638\",\"neuron\":\"fd24e768d623604b67e20b4b93fa8e82c83ac373\"}"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+  "archives": {
+    "bootstrap-runner.measured.py.gz": {
+      "sha256": "2ecedb53a1d975f1cb7a20fb10ec7899eb56927e102b4e6d831cf13978c5ac9d",
+      "decompressed_sha256": "da16d35ea85a297b22dc6c03e607110065c90e341f6f1545265478619af3836d"
+    },
+    "prepare-command-members.json.gz": {
+      "sha256": "13b542bc31ef438fa83374a5ba6bf723f9edaffd5f6491b445846c527f48cb96",
+      "decompressed_sha256": "69d4e27d1dad82c8f70c2741710b01c8197c7058ef27b26df8d1480cb84833ed"
+    },
+    "prepare-commands.tar.gz": {
+      "sha256": "b4d47fbf59be91578c2736a3a0c2106851f83c730606eb25f07e27f1ac6d1eea",
+      "decompressed_sha256": "84642bf4ba020df07c1cd2921b90cfb532909c3d98545c626309baeaf19586d1"
+    },
+    "prepare-inventory.json.gz": {
+      "sha256": "26bd8a50d9f95027390f0a18c111ae4b07164b09d8e01476e66a10d7a51661c0",
+      "decompressed_sha256": "c121df82df67e1672e83cfc30b94a9161cde551b1be1890ff1e075c070ef2ea9"
+    },
+    "prepare-receipt.json.gz": {
+      "sha256": "6cb07e7de42aa23c8e253ddec49b54f0c617be9dfb3587095ebadc477d67a869",
+      "decompressed_sha256": "325aaac4f56f0796fb9cde809cf96b50216156e29e18ba0c849583d6efa003de"
+    },
+    "measured-to-final.patch.gz": {
+      "sha256": "5f70b36ce541e5d5a0cca522f644a53075bb01d4755e9a27e611ead8a7ee89c1",
+      "decompressed_sha256": "3eca5e80cb2450727445907a5fa517d814d21b25f18f15a3bd741d2dfb69c098"
+    }
+  }
+}
