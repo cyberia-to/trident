@@ -68,23 +68,27 @@ demonstrates execution; proofs of dynamic compilation remain SH7/SH8 work.
 
 ## Rebuild the complete frozen compiler
 
-This path needs Python 3.10 or later, the supplied C2, installed Joy and the
-coordinated source archive. It requires no Rust toolchain, Cargo, seed compiler
-or inventory executable. Preparation checks exact bytes; Joy executes all
-source-language work inside the supplied compiler.
+This path needs Python 3.10 or later, the supplied C2 and its verified kit
+metadata, installed Joy and the matching Trident source tree. A standalone
+Trident checkout or source archive is sufficient; the Trident directory from
+a coordinated source archive is another option. Preparation verifies all 94
+frozen source files by their exact bytes. No Rust toolchain, Cargo, seed
+compiler, inventory executable, Trisha or Neptune installation is needed.
+Joy executes all source-language work inside the supplied compiler.
 The preparer reproduces frozen S1 only. Edited-source development uses a
 separate explicit JOB1 package manifest with its own declared inputs and limits.
 
-Unpack the checksum-verified source archive and portable kit. Obtain the
+Prepare the matching Trident source tree and unpack the checksum-verified
+portable kit. Obtain the
 `kit.json` SHA256 from the verified kit/distribution metadata; preserve that
 expected digest independently of files being checked. Set `kit_digest` to it,
 then prepare a fresh directory (its parent must already exist):
 
 ```sh
-python3 /absolute/cyber-source/trident/scripts/prepare-selfhost-source.py \
+python3 /absolute/trident-source/scripts/prepare-selfhost-source.py \
   --kit /absolute/trident-selfhost \
   --kit-manifest-sha256 "$kit_digest" \
-  --source-root /absolute/cyber-source/trident \
+  --source-root /absolute/trident-source \
   --output /absolute/selfbuild
 ```
 
@@ -136,3 +140,10 @@ admission's compiler/job particles must match execution's program/input
 particles, with compiler-job status `success`. This run establishes its own
 self-reproduction result; the native matrix/corpus acceptance and SH7/SH8
 compilation proofs have separate gates.
+
+The source-bound preparation and execution evidence is retained in
+[the supplied-compiler audit](../../audit/self-hosting/lexer-bootstrap/supplied-compiler/README.md).
+Its helper source is commit `98c5897aafde1072c692e0c1373d30f40f917e0d`,
+with SHA-256 `4f2381880f7da77265ed562cb99bc0e7bcad4c5f7df28f8c62bf7a37f55c3711`.
+Later guide and test portability clarifications do not change that helper or
+the frozen compiler sources used by the measurement.

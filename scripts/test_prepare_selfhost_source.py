@@ -189,15 +189,22 @@ class Preparation(unittest.TestCase):
         self.assertEqual(set(self.source.rglob('*')), before)
 
     def test_source_and_parent_symlinks_reject(self):
+        def symlink(path, target, **kwargs):
+            try:
+                path.symlink_to(target, **kwargs)
+            except OSError as error:
+                if getattr(error, 'winerror', None) == 1314:
+                    self.skipTest('Windows symlink privilege is unavailable (WinError 1314)')
+                raise
         source_file = self.source / 'compiler/nox/main.tri'
         saved = source_file.read_bytes()
         source_file.unlink()
-        source_file.symlink_to(ROOT / 'compiler/nox/main.tri')
+        symlink(source_file, ROOT / 'compiler/nox/main.tri')
         self.rejected('symlink')
         source_file.unlink()
         source_file.write_bytes(saved)
         link = self.root / 'linked'
-        link.symlink_to(self.source, target_is_directory=True)
+        symlink(link, self.source, target_is_directory=True)
         with self.assertRaisesRegex(ValueError, 'symlink'):
             P.prepare(self.kit, self.source, link / 'output', self.pin(), True)
         self.assertFalse((self.source / 'output').exists())

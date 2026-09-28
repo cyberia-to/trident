@@ -1,0 +1,94 @@
+{
+  "schema": "trident/supplied-compiler-retention/v1",
+  "status": "retained",
+  "source_revision": "98c5897aafde1072c692e0c1373d30f40f917e0d",
+  "execution_status": "passed",
+  "archive": {
+    "path": "evidence.tar.gz",
+    "bytes": 8376032,
+    "sha256": "da8fc8f1015877d55355ae137f60a744a7f2e166453ee9af1905e176ed34986a"
+  },
+  "members": 284,
+  "raw_bytes": 44102285,
+  "stored_contents": 146,
+  "exact_original_byte_comparison": true,
+  "gzip_mtime": 0,
+  "tar_mtime": 0,
+  "compression": "deterministic gzip; identical raw files share ordinary tar hardlinks",
+  "execution_source_capture": {
+    "scripts/prepare-selfhost-source.py": {
+      "bytes": 12799,
+      "sha256": "4f2381880f7da77265ed562cb99bc0e7bcad4c5f7df28f8c62bf7a37f55c3711"
+    },
+    "scripts/test_prepare_selfhost_source.py": {
+      "bytes": 11380,
+      "sha256": "3e029f1bd1565afd91c2e27f752e8bc7d3909ebda1daeaa4798d41467940f20e"
+    },
+    "scripts/fixtures/selfhost-kit-metadata.tar.gz": {
+      "bytes": 18261,
+      "sha256": "53d2a69ae6525334ae951947709264c83b3097194eb8f8c23b2e9f6c86864890"
+    },
+    "docs/guides/self-hosted-compilation.md": {
+      "bytes": 6405,
+      "sha256": "02863e1cc85455b429387a75dbb2fd5f125f851fa9b06897da09ee3a50918674"
+    },
+    "reference/self-hosting-jobs.md": {
+      "bytes": 25379,
+      "sha256": "c1e3e6783ed6bc3582bd25f0a82330407da50ec93fe7fa92cbfe90388971b2b4"
+    },
+    ".github/workflows/selfhost-bootstrap.yml": {
+      "bytes": 4550,
+      "sha256": "8c5eb9323dfca39213fde8fdfdfc3976e248e56654a0a9568469ec413fd773d4"
+    }
+  },
+  "delivery_source_capture": {
+    "scripts/prepare-selfhost-source.py": {
+      "bytes": 12799,
+      "sha256": "4f2381880f7da77265ed562cb99bc0e7bcad4c5f7df28f8c62bf7a37f55c3711"
+    },
+    "scripts/test_prepare_selfhost_source.py": {
+      "bytes": 11702,
+      "sha256": "625553777cf2df5cf778ddb870f2714dfe7b1b6f171663fe5442d3c01b235dfd"
+    },
+    "scripts/fixtures/selfhost-kit-metadata.tar.gz": {
+      "bytes": 18261,
+      "sha256": "53d2a69ae6525334ae951947709264c83b3097194eb8f8c23b2e9f6c86864890"
+    },
+    "docs/guides/self-hosted-compilation.md": {
+      "bytes": 7107,
+      "sha256": "0ddfe2b371f92923f125810f0527e99ad66f6f45d7f16327521c87b165a382e1"
+    },
+    "reference/self-hosting-jobs.md": {
+      "bytes": 25379,
+      "sha256": "c1e3e6783ed6bc3582bd25f0a82330407da50ec93fe7fa92cbfe90388971b2b4"
+    },
+    ".github/workflows/selfhost-bootstrap.yml": {
+      "bytes": 4550,
+      "sha256": "8c5eb9323dfca39213fde8fdfdfc3976e248e56654a0a9568469ec413fd773d4"
+    }
+  },
+  "preparation": {
+    "bytes": 12494,
+    "sha256": "c121adc68d26a0799d5c4fc1301528ae0a7714e4ca16357983aecd581ff4859e"
+  },
+  "execution": {
+    "bytes": 51414,
+    "sha256": "b245c51efb4afb5db7babc356f64987b1daf5805343a00edb2b59e4abd493159"
+  },
+  "postinstall": {
+    "bytes": 5530,
+    "sha256": "3a173dd32299d3e2869c56059dccc4d32cb99f965542fb3926d473d38c43071a"
+  },
+  "fixture": {
+    "path": "scripts/fixtures/selfhost-kit-metadata.tar.gz",
+    "bytes": 18261,
+    "sha256": "53d2a69ae6525334ae951947709264c83b3097194eb8f8c23b2e9f6c86864890"
+  },
+  "raw_fixture_origin": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/selfhost-kit/rehearsal-1/kit",
+  "external_joy": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/coordinated-soft3-release-3/candidate \u043f\u0440\u043e\u0431\u0435\u043b/bin/joy",
+    "bytes": 5233200,
+    "sha256": "4035bca898e760666206f445c939c784ea248bff4f82c2c4f0a75254c3c48885"
+  },
+  "scope": "Historical rehearsal transport and one guest self-build; no accepted-kit positive, matrix/corpus/proof closure"
+}
