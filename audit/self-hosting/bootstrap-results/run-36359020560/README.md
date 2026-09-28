@@ -1,8 +1,9 @@
 # Clean native bootstrap: run 36359020560
 
-Partial acceptance: both Windows x64 and Linux ARM64 repetitions pass. This
-receipt retains four of the twelve required native repetitions; SH6 remains open until all six
-platforms and the aggregate pass. No compilation proof is claimed.
+Partial acceptance: macOS ARM64, Linux ARM64 and both Windows architectures
+pass, with two clean repetitions each. This receipt retains eight of the
+twelve required repetitions; Linux x64, Intel macOS and the aggregate remain
+required. SH6 stays open. No compilation proof is claimed.
 
 [GitHub run](https://github.com/cyberia-to/trident/actions/runs/36359020560),
 attempt `1`, Trident head `c17bd0371c11746f46e20222c48cae2ab08be79d`.
@@ -69,15 +70,63 @@ passed the frozen runner again. `linux-arm/files.json` binds the original
 command logs, direct GitHub job responses, worker measurements and independent
 inspection, including the four-report comparison.
 
+## macOS ARM64
+
+Both clean native repetitions pass with the same S1 inventory, JOB1, C1 and
+actual C2/C3 identities as the retained local reference. Each actual C2 and C3
+passes all six corpora (547 observations / 1816 commands); both native Cargo
+builds in each repetition have zero Rust warnings. All non-time execution
+fields match the local S1 reports.
+
+| Repetition | GitHub job | Artifact | C1→C2 worker seconds | C2→C3 worker seconds |
+|---|---|---|---:|---:|
+| 1 | `108732342677` | `10948746458` | 2363.548077 | 1849.651108 |
+| 2 | `108732342696` | `10949130160` | 2391.814686 | 2032.208015 |
+
+Original ZIP SHA-256 values are
+`a9f051d06df289108c0d89f46a324441aa2f5c196c84c291091a546fb6a8203d`
+and `64172d08f8cd4e589b1f8bca9f48c07d4abe51f96aa64d118fc381c196b62982`
+for repetitions 1 and 2. Each retains 7277 files: 99905168 and 99905187 raw
+bytes respectively. Restored file sets and bytes match the original ZIPs
+exactly; the frozen runner and supplemental S1 checks pass on those restored
+trees. `mac-arm/files.json` binds the raw command logs, direct GitHub job
+responses and independent inspection.
+
+## Windows ARM64
+
+Both clean native repetitions pass with the same S1 inventory, JOB1, C1 and
+actual C2/C3 identities as the retained local reference. Each actual C2 and C3
+passes all six corpora (547 observations / 1816 commands); both native Cargo
+builds in each repetition have zero Rust warnings. All non-time execution
+fields match the local S1 reports.
+
+| Repetition | GitHub job | Artifact | C1→C2 worker seconds | C2→C3 worker seconds |
+|---|---|---|---:|---:|
+| 1 | `108732342678` | `10948457612` | 2328.567972 | 2075.316887 |
+| 2 | `108732342643` | `10949180243` | 2319.241064 | 2073.750926 |
+
+Original ZIP SHA-256 values are
+`c0d56d37c48eab5c806a0d5a2ae19ff13948c5a15b3be25d6bff08375c16d17b`
+and `676d15b9009fbe0b9cb962da2b91a4e4c8ea621fc220304e29797ec0757ed10c`
+for repetitions 1 and 2. Each retains 7277 files: 100045655 and 100045653 raw
+bytes respectively. Restored file sets and bytes match the original ZIPs
+exactly; the frozen runner and supplemental S1 checks pass on those restored
+trees. `windows-arm/files.json` binds the raw command logs, direct GitHub job
+responses and independent inspection.
+
 ## Retention and replay
 
 `platform-store/` uses the reviewed [raw artifact store](../archive-tool/README.md).
 Its current index SHA-256 is
-`5dc79680d80b8cc9ed5f9d3627145df7e62d05c9f455edd07521d06c42e1a24b`.
+`a051ca5805a7fa980d8911a24dcbd494b25f89bdcd5a93f32ccc79330b55e189`.
 The Windows import commands report 7277 file members in each ZIP: 100042334 raw bytes
 for repetition 1 and 100042030 for repetition 2. Restored file sets and bytes
 matched both original ZIPs. The unchanged frozen runner then checked each
 restored tree's complete manifest, compiler chain, fixed point and corpora.
+
+All eight restored reports also pass the unchanged runner’s cross-platform
+comparison. This is a partial comparison; the twelve-report matrix gate
+remains required.
 
 Exact import/restore command arrays and output streams, intermediate index
 snapshots, direct job API responses, raw job logs and validation results are
