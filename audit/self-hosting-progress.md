@@ -110,8 +110,8 @@ Bounded NoTrace compaction is merged into `release/0.4`: nox
 [PR23](https://github.com/cyberia-to/nox/pull/23) and Joy
 [PR20](https://github.com/cyberia-to/joy/pull/20). Joy's explicit worker ceiling
 is extended by [PR21](https://github.com/cyberia-to/joy/pull/21), with default
-limits unchanged; its [receipt](../../joy/audit/compiler-work-budget/README.md)
-records the boundary checks. [Nox phase localization](../../nox/audit/prefix-frontier/README.md)
+limits unchanged; its [receipt](https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/compiler-work-budget/README.md)
+records the boundary checks. [Nox phase localization](https://github.com/cyberia-to/nox/blob/2f09ca3c3f18ae470365310cca8db5208eda75c6/audit/prefix-frontier/README.md)
 is retained in [PR24](https://github.com/cyberia-to/nox/pull/24).
 Earlier Trident scaling merged in [PR109](https://github.com/cyberia-to/trident/pull/109).
 Alias/export lookup changes, complete C1(S) and audit tooling merged in
@@ -257,7 +257,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 - [x] SH1 Joy raw transport slice: [PR5](https://github.com/cyberia-to/joy/pull/5),
   complete noun execution/publication with NoTrace;85 workspace tests passed.
 - [x] SH1 Joy compiler-job slice: production JOB1/RES1 admission and binding,
-  [PR9](https://github.com/cyberia-to/joy/pull/9), [receipt](../../joy/audit/self-hosting/compiler-jobs.md).
+  [PR9](https://github.com/cyberia-to/joy/pull/9), [receipt](https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/self-hosting/compiler-jobs.md).
 - [x] SH1 explicit compiler-profile seed export and source-guest JOB1/RES1 execution:
   [combined SH1 receipt](self-hosting/native-compiler-profile.md).
 - [x] SH2 source-package driver: exact files to JOB1, with no host language stages;
@@ -335,8 +335,9 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
   structured entry validation, complete JOB1-bound RES1 and executed generated programs;
   [combined acceptance](self-hosting/generated-compiler-profiles.md).
 - [x] Joy explicit compiler arena and deadline: accepted [PR13](https://github.com/cyberia-to/joy/pull/13),
-  [combined boundary evidence](../../joy/audit/explicit-compiler-arena-combined.md).
-  That delivery preserves defaults and its reduction ceiling; complete source scale remains open.
+  [combined boundary evidence](https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/explicit-compiler-arena-combined.md).
+  That delivery preserved defaults and its reduction ceiling; complete source
+  scale was still open at that checkpoint and is now accepted for frozen S1.
 - [x] SH3 exact intrinsic declarations, ABI validation and final callable identity;
   [installed acceptance and preserved boundaries](self-hosting/guest-intrinsics.md).
 - [x] SH4 indexed-read increment: original 61–64-bit record writes fit the same
@@ -360,10 +361,11 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
   [ordering measurements](self-hosting/function-sort-scale.md) and
   [frozen complete-source frontier](self-hosting/full-bootstrap-frontier.md).
 - [x] SH4 bounded nox compaction and explicit Joy worker policy;
-  [runtime accounting/root review](../../nox/audit/sequential-compaction/README.md)
-  and [installed Joy boundaries](../../joy/audit/self-hosting-compaction/README.md).
+  [runtime accounting/root review](https://github.com/cyberia-to/nox/blob/2f09ca3c3f18ae470365310cca8db5208eda75c6/audit/sequential-compaction/README.md)
+  and [installed Joy boundaries](https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/self-hosting-compaction/README.md).
 - [x] SH4 exact discovery component with canonical output and successful gas
-  preserved under compaction; complete compilation remains open.
+  preserved under compaction. Complete compilation was still open at that
+  checkpoint; the S1 SH4 acceptance above supplies the later complete result.
 - [x] Supplied compiler routing (`8467b2c`) and retained fixed-point checks
   (`e306dc4`); [routing evidence](self-hosting/compiler-routing/README.md) and
   [checker evidence](self-hosting/fixed-point-checker/README.md). Partial real
@@ -404,10 +406,12 @@ Rust seed extensions, nox/Joy runtime transport, compiler port and bootstrap
 hardening. It is not measured remaining work or a promise. The concrete
 SH6 six-target matrix is required regardless of this initial estimate.
 
-The complete C1(S) build now measures 1471089704 worker microseconds on the
-reference host, with bounded resident memory; see the exact command and revisions
-in the body-scale receipt. This supplies a baseline for subsequent full-build
-runs, not a wall-time estimate for corpus, clean builds or CI. SH6 acceptance
+The historical S0 `b991d901` C1(S) build measured 1471089704 worker microseconds
+on the reference host, with bounded resident memory; the exact command and
+revisions are retained in the [body-scale receipt](self-hosting/body-scale/README.md).
+The current S1 build is measured separately above. These observations supply
+baselines for subsequent full-build runs, not wall-time estimates for corpus,
+clean builds or CI. SH6 acceptance
 and the frozen distribution rehearsal are now complete; final native compilation-proof acceptance remains.
 The original broad estimate is historical.
 The native public relation and actual compiler pilots are accepted at SH7.
@@ -458,7 +462,7 @@ to 64K in the current roadmap; historical receipt temperatures remain unchanged.
 | 2026-09-27 | Exact intrinsics `be9676d` | [Acceptance](self-hosting/guest-intrinsics.md); original width-65 case recovers, exact resource recalibration and earlier failures retained; full closure returns capacity diagnostic |
 | 2026-09-27 | Independent source bytes `40a86de` | [Acceptance](self-hosting/source-capacity.md); exact earlier closure admitted, 100M reduction failure before RES1; 64 KiB fixed-arena boundary retained |
 | 2026-09-27 | Byte/path/sort scaling through `713f457` | [Frontier](self-hosting/full-bootstrap-frontier.md); exact discovery succeeds at larger explicit limits, append-only all-body arena failure and rejected lexer regression retained |
-| 2026-09-27 | Opt-in nox/Joy compaction | [Nox](../../nox/audit/sequential-compaction/README.md), [Joy](../../joy/audit/self-hosting-compaction/README.md); merged components, whole self-build remains open |
+| 2026-09-27 | Opt-in nox/Joy compaction | [Nox](https://github.com/cyberia-to/nox/blob/2f09ca3c3f18ae470365310cca8db5208eda75c6/audit/sequential-compaction/README.md), [Joy](https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/self-hosting-compaction/README.md); merged components, whole self-build remains open |
 | 2026-09-27 | Supplied-compiler runner `8467b2c`, checker `e306dc4` | [Routing](self-hosting/compiler-routing/README.md), [checker](self-hosting/fixed-point-checker/README.md); partial real probes, no C2/C3 corpus or fixed-point acceptance |
 | 2026-09-27 | Full compacting C1(S), retained at `90ac882` | [Failure](self-hosting/full-bootstrap-compacting/README.md); execution-budget rejection, bounded resident storage, no C2 |
 | 2026-09-27 | Alias/export lookup through `b991d901`, explicit Joy `2878f4b` | [Complete C1(S)](self-hosting/body-scale/README.md) produces actual C2; [SH3 feature map](self-hosting/compiler-feature-coverage.md) reviewed, corpus/fixed point pending |
@@ -476,7 +480,7 @@ Joy `06aac01` removed its private Trisha/Triton adapter and dependency closure.
 Trident `7b1d4c0` isolated foreign target resources behind `external-targets`;
 Joy disables that feature and Trisha `aa25e32` enables it explicitly. Native
 compiler source and profiles stayed unchanged. The
-[owner receipt](../../joy/audit/soft3-only/README.md) preserves compatibility,
+[owner receipt](https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/soft3-only/README.md) preserves compatibility,
 installed profile acceptance and unchanged C1/artifact identities. At that
 revision secret execution and public Zheng certificates remained supported,
 while private/zero-knowledge proving was unavailable. Native compiler proof
