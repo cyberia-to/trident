@@ -1,0 +1,47 @@
+{
+  "status": "passed-permanent-status-repair-probes",
+  "observed_ns": 1790974970969654000,
+  "manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/sources.json",
+    "bytes": 16156,
+    "sha256": "bf91f93950dbd885a339d0f9f45b63e15a542327a3421e9ce73692618f98e6ec"
+  },
+  "original_real_curl": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-peer-review/partial-403.json",
+    "bytes": 846,
+    "sha256": "466a0b2a56eec31d80cb3684b330032e0a897ce189a41e7f2bec68e7c52dd231"
+  },
+  "original_timeout": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-peer-review/permission-timeout-cd2/receipt.json",
+    "bytes": 3921,
+    "sha256": "ed2c3f593b9cef31b31423cde620176ca084c6f21b85e1cf8ecd09d05ea5b40f"
+  },
+  "corrected_actual_timeout": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-peer-review/permission-timeout-2/receipt.json",
+    "bytes": 4030,
+    "sha256": "96a2d82d3a7f5d6f97c34dfb66eae13e6f4cc4304308d376aeaed6843ec4ad8e"
+  },
+  "corrected_sources_match_final": true,
+  "classified_http_cases": {
+    "transport_codes": [
+      18,
+      28
+    ],
+    "permanent": [
+      401,
+      403,
+      404,
+      418
+    ],
+    "retryable": [
+      408,
+      429,
+      500,
+      502,
+      503,
+      504,
+      null
+    ]
+  },
+  "scope": "Replayed actual original partial403 result through corrected policy; authenticated corrected actual403+timeout to exact final source; additional pure boundary matrix. No new external HTTP/auth/native."
+}

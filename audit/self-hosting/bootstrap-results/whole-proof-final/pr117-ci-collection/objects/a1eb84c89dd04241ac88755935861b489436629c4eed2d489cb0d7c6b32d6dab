@@ -1,0 +1,94 @@
+"""Explicit curl attempts; all byte streams and waits are bounded and retained."""
+import os,selectors,subprocess,sys,time,traceback
+from pathlib import Path
+from collection_common import ROOT,PROFILE,RATE,MIB,identity,save,sources,require
+import http_policy as policy
+sys.path.insert(0,str(ROOT.parents[1]/'whole-retention-adoption'))
+from transport import stop
+
+class RetryableTransport(Exception):pass
+
+class Transport:
+    def __init__(self,out,curl,budget,receipt,token,allowed,source_check=sources):
+        self.out=out;self.curl=curl;self.budget=budget;self.receipt=receipt;self.config=policy.token_config(token);self.allowed=allowed;self.source_check=source_check;self.expected_sources=source_check();self.timeout=1200
+        self.env={'PATH':'/usr/bin:/bin:/usr/sbin:/sbin','LANG':'C'}
+    def persist(self):save(self.out/'receipt.json',self.receipt,self.budget)
+    def command(self,label,endpoint,maximum,body=False):
+        require(endpoint in self.allowed,'exact admitted GET endpoint');require(self.source_check()==self.expected_sources,'unchanged reviewed source')
+        require(identity(self.curl['path'])=={k:self.curl[k] for k in ('bytes','sha256')},'exact curl executable');require(type(maximum) is int and 0<maximum<=1024**3,'bounded body')
+        require(not any(c['name']==label for c in self.receipt['commands']),'exclusive attempt label');self.budget.reconcile('before-command:'+label);self.budget.fast(maximum+MIB+65536)
+        output=self.out/(label+('.zip' if body else '.json'));error=self.out/(label+'.stderr');header=self.out/(label+'.headers');read_fd=write_fd=None
+        public_args=[('/dev/fd/HEADER' if a=='/dev/fd/0' else a) for a in policy.argv(self.curl['path'],endpoint,body,0)]
+        row=dict(name=label,command=public_args,endpoint=endpoint,private_stdin='existing Github Authorization header; not retained',environment=self.env,started_ns=time.time_ns(),stdout_limit=maximum,stderr_limit=MIB,header_limit=65536,timeout_seconds=self.timeout,body_read_rate=RATE if body else None);self.receipt['commands'].append(row);self.persist()
+        child=None;sel=None;failure=None;tick=time.monotonic();counts={'stdout':0,'stderr':0,'headers':0};limits={'stdout':maximum,'stderr':MIB,'headers':65536}
+        try:
+            read_fd,write_fd=os.pipe();args=policy.argv(self.curl['path'],endpoint,body,write_fd)
+            with output.open('xb') as stdout,error.open('xb') as stderr,header.open('xb') as headers:
+                streams={'stdout':stdout,'stderr':stderr,'headers':headers}
+                child=subprocess.Popen(args,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,pass_fds=(write_fd,),start_new_session=True,env=self.env)
+                child.adoption_owned_group=child.pid;row.update(pid=child.pid,owned_group=child.pid);os.close(write_fd);write_fd=None
+                child.stdin.write(self.config);child.stdin.close()
+                sel=selectors.DefaultSelector();sel.register(child.stdout,selectors.EVENT_READ,'stdout');sel.register(child.stderr,selectors.EVENT_READ,'stderr');sel.register(read_fd,selectors.EVENT_READ,'headers')
+                while child.poll() is None or sel.get_map():
+                    self.budget.fast();elapsed=time.monotonic()-tick
+                    if elapsed>self.timeout:raise TimeoutError('per-command transport deadline')
+                    for key,_ in sel.select(timeout=0.1):
+                        kind=key.data;allowance=65536
+                        if body and kind=='stdout':allowance=min(65536,max(0,int(elapsed*RATE)+65536-counts[kind]))
+                        if allowance==0:continue
+                        data=os.read(key.fd,allowance)
+                        if not data:sel.unregister(key.fileobj);continue
+                        permitted=min(len(data),max(0,limits[kind]-counts[kind]));self.budget.charge(permitted);streams[kind].write(data[:permitted]);counts[kind]+=len(data);require(counts[kind]<=limits[kind],'hard '+kind+' cap')
+                    if body:time.sleep(0.01)
+                row['exit_code']=child.wait()
+            response=policy.headers(header.read_bytes(),complete=row['exit_code']==0);row['http']=dict(statuses=response['statuses'],status=response['status'])
+            row['classification_time_ns']=time.time_ns();delay=policy.retry(row['exit_code'],response,now=row['classification_time_ns']/1e9);row['retry_delay_seconds']=delay
+            if row['exit_code']!=0:
+                if delay is not None:raise RetryableTransport('classified curl transport/HTTP failure')
+                raise ValueError('permanent curl transport/HTTP failure')
+            require(response['status']==200,'successful complete HTTP200 response')
+        except TimeoutError as exception:
+            row.update(error=traceback.format_exc(),timeout_classification=True)
+            try:
+                response=policy.headers(header.read_bytes());row['http']=dict(statuses=response['statuses'],status=response['status']);row['classification_time_ns']=time.time_ns()
+                delay=policy.retry(28,response,now=row['classification_time_ns']/1e9);row.update(retryable=delay is not None,retry_delay_seconds=delay)
+                failure=RetryableTransport(str(exception)) if delay is not None else ValueError('permanent HTTP status at transport deadline')
+            except BaseException as classification:
+                row.update(classification_error=traceback.format_exc(),retryable=False);failure=classification
+        except BaseException as exception:
+            failure=exception;row.update(error=traceback.format_exc(),retryable=isinstance(exception,RetryableTransport))
+        finally:
+            try:row['cleanup']=stop(child,force_group=failure is not None)
+            except BaseException:row['cleanup_error']=traceback.format_exc();failure=ValueError('owned command cleanup failed')
+            if sel is not None:sel.close()
+            for fd in (read_fd,write_fd):
+                if fd is not None:os.close(fd)
+            if child is not None:
+                if child.stdin and not child.stdin.closed:child.stdin.close()
+                child.stdout.close();child.stderr.close();row['exit_code']=child.returncode
+            row.update(ended_ns=time.time_ns(),elapsed_monotonic_seconds=time.monotonic()-tick)
+            for kind,path in [('stdout',output),('stderr',error),('headers',header)]:
+                if path.exists():row[kind]=identity(path)
+            try:self.budget.reconcile('after-command:'+label);self.persist()
+            except BaseException as exception:
+                row['evidence_error']=traceback.format_exc()
+                if failure is None:failure=exception
+        if failure is not None:raise failure
+        return output
+    def wait(self,label,delay):
+        require(type(delay) is int and 60<=delay<=120,'bounded declared backoff');row=dict(after_attempt=label,seconds=delay,started_ns=time.time_ns());self.receipt['backoffs'].append(row);self.persist();tick=time.monotonic()
+        while time.monotonic()-tick<delay:self.budget.fast();time.sleep(min(0.2,max(0,delay-(time.monotonic()-tick))))
+        row.update(ended_ns=time.time_ns(),elapsed_monotonic_seconds=time.monotonic()-tick);self.persist()
+    def get(self,label,endpoint,maximum,body=False,expected=None):
+        prior=self.receipt['prior_attempts'].get(label,[]) if body else []
+        entry=dict(name=label,kind='body' if body else 'metadata',prior_attempts=prior,attempts=[],cumulative_attempts=list(prior),status='running');self.receipt['requests'].append(entry);self.persist()
+        for number in (1,2,3):
+            name=f'{label}-attempt-{number}';entry['attempts'].append(name);entry['cumulative_attempts'].append(dict(scope='v4',name=name));self.persist()
+            try:path=self.command(name,endpoint,maximum,body)
+            except RetryableTransport:
+                row=self.receipt['commands'][-1];entry['status']='transport-failure-retained';require(not any(k in row for k in ('cleanup_error','evidence_error')),'complete failure evidence and quiescence before retry');self.persist()
+                if number==3:raise
+                self.wait(name,row['retry_delay_seconds']);continue
+            if expected is not None:require(identity(path)==expected,'exact complete original authenticated body identity')
+            entry.update(status='passed',successful_command=name,path=str(path),identity=identity(path));self.persist();return path,name
+        raise AssertionError('finite attempts exhausted')

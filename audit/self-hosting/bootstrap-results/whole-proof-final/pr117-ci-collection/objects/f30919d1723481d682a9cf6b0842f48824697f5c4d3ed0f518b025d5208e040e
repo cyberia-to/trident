@@ -1,0 +1,37 @@
+"""Obtain the existing credential locally; stdout is bounded memory-only secret data."""
+import os,selectors,subprocess,time,traceback
+from pathlib import Path
+from collection_common import identity,MIB,require
+from transfer import stop
+from http_policy import token_config
+
+def credential(out,gh,budget,receipt):
+    require(identity(gh['path'])=={k:gh[k] for k in ('bytes','sha256')},'exact gh authentication executable')
+    env={k:v for k,v in os.environ.items() if k in ('HOME','USER','LOGNAME','GH_TOKEN','GITHUB_TOKEN','GH_CONFIG_DIR')};env.update(PATH='/usr/bin:/bin:/usr/sbin:/sbin',GH_HOST='github.com',GH_PROMPT_DISABLED='1',GH_PAGER='cat')
+    args=[gh['path'],'auth','token','--hostname','github.com'];row=dict(command=args,started_ns=time.time_ns(),stdout='credential in bounded memory only; never retained or hashed',stdout_limit=4096,stderr_limit=MIB,timeout_seconds=30,environment_keys=sorted(env));receipt['credential']=row
+    budget.fast(MIB);error=out/'credential.stderr';child=None;sel=None;failure=None;secret=bytearray();count=0;tick=time.monotonic()
+    try:
+        with error.open('xb') as stderr:
+            child=subprocess.Popen(args,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True,env=env);child.adoption_owned_group=child.pid;row.update(pid=child.pid,owned_group=child.pid)
+            sel=selectors.DefaultSelector();sel.register(child.stdout,selectors.EVENT_READ,'secret');sel.register(child.stderr,selectors.EVENT_READ,'stderr')
+            while child.poll() is None or sel.get_map():
+                budget.fast();require(time.monotonic()-tick<=30,'local credential command deadline')
+                for key,_ in sel.select(timeout=0.1):
+                    data=os.read(key.fd,4096)
+                    if not data:sel.unregister(key.fileobj);continue
+                    if key.data=='secret':require(len(secret)+len(data)<=4096,'bounded credential stdout');secret.extend(data)
+                    else:
+                        permitted=min(len(data),max(0,MIB-count));budget.charge(permitted);stderr.write(data[:permitted]);count+=len(data);require(count<=MIB,'bounded credential stderr')
+            row['exit_code']=child.wait();require(row['exit_code']==0 and count==0,'quiet successful local credential access')
+        token=bytes(secret).strip();token_config(token);row['valid_credential_observed']=True
+    except BaseException as exception:failure=exception;row['error']=traceback.format_exc()
+    finally:
+        try:row['cleanup']=stop(child,force_group=failure is not None)
+        except BaseException:row['cleanup_error']=traceback.format_exc();failure=ValueError('credential child cleanup failed')
+        if sel is not None:sel.close()
+        if child is not None:child.stdout.close();child.stderr.close();row['exit_code']=child.returncode
+        row.update(ended_ns=time.time_ns(),elapsed_monotonic_seconds=time.monotonic()-tick)
+        if error.exists():row['stderr']=identity(error)
+        budget.reconcile('after-local-credential')
+    if failure is not None:raise failure
+    return token

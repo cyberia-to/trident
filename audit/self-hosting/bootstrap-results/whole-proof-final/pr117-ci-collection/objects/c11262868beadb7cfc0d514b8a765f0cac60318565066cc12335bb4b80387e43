@@ -1,0 +1,156 @@
+{
+  "schema": "trident/pr117-owner-offline-replay-launch/v1",
+  "status": "passed-owner-original-matrix-replay",
+  "started_ns": 1790978620757983000,
+  "admission": {
+    "inputs": {
+      "wrapper": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/launch-completed.json",
+        "bytes": 1412,
+        "sha256": "06067ffeff87a2fa609a81d7f6f73cba123de0dd4160407f3700fe6cf53f828c"
+      },
+      "collection": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/completed/receipt.json",
+        "bytes": 263807,
+        "sha256": "04f600b77c69d5206b59f8a84e339c4ea9eef17a40c64fe89884a5849f79bba0"
+      },
+      "accounting": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/completed/final-accounting.json",
+        "bytes": 592,
+        "sha256": "83f35b30744c79ddc55c2312d9dd9cae6284a7953428dd758eaddefef1775639"
+      }
+    },
+    "selected": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/selection.json",
+      "bytes": 1158,
+      "sha256": "d3e6f2d2dc3431ad4cdc6c1ae36447cb192e704e855c519a49e1cad60b98aa76"
+    },
+    "launcher_review": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/root-review.json",
+      "bytes": 22127,
+      "sha256": "2e6ac027067567529e2d5aab6008789de5046620b9bbf1579896c2aab98e24b9"
+    },
+    "launcher_sources": {
+      "bytes": 18464,
+      "sha256": "184cd1fa0077db9f92af7a3e8b92551dae340f17a7072bfc5699eca2c5d0c480"
+    },
+    "collector_sources": {
+      "bytes": 16156,
+      "sha256": "5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf"
+    },
+    "collector_review": {
+      "bytes": 20776,
+      "sha256": "1f46cf59a522b5b3aa1ab36fbd7b821bb9fce6f09cd204a10ad348b4b36d6fee"
+    },
+    "checker": {
+      "bytes": 10597,
+      "sha256": "bef444fd5f892279246e29e399c183bc814a733d049c94855c4f682ad40931d2"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 118928,
+      "sha256": "12bed4523661307059b879b9b54e77a73176e9d27d27a0e40363271d8f0668ba"
+    }
+  },
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/replay.py",
+    "--collection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+    "--git-repo",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-1"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1",
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "limits": {
+    "replay_seconds": 1200,
+    "owned_output_bytes": 33554432,
+    "log_bytes": 1048576,
+    "shared_bytes": 3221225472,
+    "free_floor_bytes": 8589934592
+  },
+  "original_scope_bytes": [
+    246936574,
+    739859831,
+    414501072,
+    8205,
+    4541,
+    1026986783
+  ],
+  "peer_preparation_bytes": 159833,
+  "owner_preparation_bytes": 82942,
+  "scope": "Retained original native-matrix replay; no network, compiler, proof, corpus or transport rerun",
+  "pid": 22525,
+  "owned_group": 22525,
+  "peak_output_bytes": 174065,
+  "exit_code": 0,
+  "replay": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-1/receipt.json",
+    "bytes": 29142,
+    "sha256": "966a24ed7e33a57e3a9ad06ed9965cb173b1ed624e405127e8a7add18a02d641"
+  },
+  "final_scope_bytes": [
+    246936574,
+    739859831,
+    414501072,
+    8205,
+    4541,
+    1026986783
+  ],
+  "source_and_prerequisites_unchanged": true,
+  "final_owned_bytes": 202442,
+  "safe_summary": {
+    "origin": {
+      "run_id": "37002840888",
+      "run_attempt": "1",
+      "head_sha": "10772124836b68a2df011c912b5776b2454a511f"
+    },
+    "compiler_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+    "source_pins": {
+      "joy": "ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+      "nox": "f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+      "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+      "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+      "zheng": "b54b209b91b8bf99c2975c4c24493a2411c23079",
+      "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+      "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+      "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+      "trident": "10772124836b68a2df011c912b5776b2454a511f"
+    },
+    "native_producers": 12,
+    "native_corpus_jobs": 24,
+    "observations_per_corpus_job": 547
+  },
+  "archive_count": 38,
+  "cleanup": {
+    "group": 22525,
+    "signals": [],
+    "group_empty": true
+  },
+  "ended_ns": 1790978681231312000,
+  "elapsed_monotonic_seconds": 59.058066292025615,
+  "stdout": {
+    "bytes": 275,
+    "sha256": "7b7908b5566a7ee327dfb8b2cb8cad7e335be39ec723a0368eb6ccdd3b79d908"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

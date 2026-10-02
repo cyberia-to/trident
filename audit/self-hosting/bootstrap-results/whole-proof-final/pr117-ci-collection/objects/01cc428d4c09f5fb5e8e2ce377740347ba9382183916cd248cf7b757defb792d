@@ -1,0 +1,37 @@
+{
+  "status": "passed-source-preparation",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_owner"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1",
+  "started_ns": 1790978132948167000,
+  "ended_ns": 1790978133112547000,
+  "exit_code": 0,
+  "source_manifest": {
+    "bytes": 18464,
+    "sha256": "184cd1fa0077db9f92af7a3e8b92551dae340f17a7072bfc5699eca2c5d0c480"
+  },
+  "source_count": 82,
+  "sources_unchanged": true,
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 1362,
+    "sha256": "b3c194060b301be20ea0842aac7f3ad31b77cfcae29ba4fcbedc73b6081cb7a5"
+  },
+  "peer_runner_diff": {
+    "bytes": 8990,
+    "sha256": "cfb659af99f30efb0d5e73e075d5db6cb3704afbec9573ff10832bf411c70a31"
+  },
+  "actual_replay_executed": false,
+  "network_actions": 0
+}

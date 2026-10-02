@@ -1,0 +1,105 @@
+{
+  "status": "observed-permission-timeout-policy",
+  "outcome": "RetryableTransport",
+  "error": "per-command transport deadline",
+  "source": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/transfer.py": {
+      "bytes": 7920,
+      "sha256": "2cefe4d81a5dc4189ec926fd155b614480d7e541c11a21b0f0bfef4e13a29d59"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/http_policy.py": {
+      "bytes": 3827,
+      "sha256": "0ccc8203112454948ca24250dd851a0bd3e4f5f1e85cb0e5d752076c0e004ae3"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/validate.py": {
+      "bytes": 11130,
+      "sha256": "5318e7d493014518a1b6e98e210fc0ea1f4f5353a3ab667f4b017388c13da9e7"
+    }
+  },
+  "receipt": {
+    "commands": [
+      {
+        "name": "fixture",
+        "command": [
+          "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/tmpj_dv00ac/fake-curl",
+          "-q",
+          "--silent",
+          "--show-error",
+          "--fail-with-body",
+          "--http1.1",
+          "--proto",
+          "=https",
+          "--proto-redir",
+          "=https",
+          "--disallow-username-in-url",
+          "--location",
+          "--max-redirs",
+          "3",
+          "--connect-timeout",
+          "60",
+          "--max-time",
+          "1200",
+          "--retry",
+          "0",
+          "--config",
+          "-",
+          "--dump-header",
+          "/dev/fd/HEADER",
+          "--header",
+          "Accept: application/vnd.github+json",
+          "--header",
+          "X-GitHub-Api-Version: 2022-11-28",
+          "--user-agent",
+          "trident-pr117-readonly-archive-v4",
+          "--limit-rate",
+          "262144",
+          "--url",
+          "https://api.github.com/repos/cyberia-to/trident/actions/artifacts/7/zip"
+        ],
+        "endpoint": "repos/cyberia-to/trident/actions/artifacts/7/zip",
+        "private_stdin": "existing Github Authorization header; not retained",
+        "environment": {
+          "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+          "LANG": "C"
+        },
+        "started_ns": 1790974686548013000,
+        "stdout_limit": 100,
+        "stderr_limit": 1048576,
+        "header_limit": 65536,
+        "timeout_seconds": 0.15,
+        "body_read_rate": 262144,
+        "pid": 46561,
+        "owned_group": 46561,
+        "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/transfer.py\", line 34, in command\n    if elapsed>self.timeout:raise TimeoutError('per-command transport deadline')\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: per-command transport deadline\n",
+        "retryable": true,
+        "retry_delay_seconds": 60,
+        "cleanup": {
+          "group": 46561,
+          "signals": [
+            "TERM"
+          ],
+          "group_empty": true
+        },
+        "exit_code": -15,
+        "ended_ns": 1790974686858112000,
+        "elapsed_monotonic_seconds": 0.3098894160357304,
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "headers": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "requests": [],
+    "backoffs": [],
+    "prior_attempts": {}
+  },
+  "scope": "One local fake subprocess emits403 then sleeps; timeout0.15s, no network/real credential, actual owned group cleanup."
+}

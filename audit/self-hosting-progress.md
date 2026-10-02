@@ -85,6 +85,18 @@ preserves every raw platform file with a shared byte store and exact path
 manifests. Its real Intel roundtrip and 19 corruption/boundary guards pass;
 storage validation supplies no additional platform acceptance.
 
+The later Windows audit-path correction in [PR117](https://github.com/cyberia-to/trident/pull/117)
+passed all 37 jobs of [original run37002840888, attempt1](https://github.com/cyberia-to/trident/actions/runs/37002840888)
+at `10772124836b68a2df011c912b5776b2454a511f`. The [retained collection and two offline replays](self-hosting/bootstrap-results/whole-proof-final/pr117-ci-collection/README.md)
+bind all 37 original artifact ZIPs and attempt logs, twelve producers, twenty-four
+corpus jobs with 547 observations each, and the same `76a07c08` compiler. All
+replay fields agree except timestamps and the replay output path. Earlier failed downloads, both recovered
+curl failures and the first peer launch's pre-spawn interpreter-path rejection
+remain retained. Exact-tree review accepted merge
+`8da6f8f6efb3eafb4697f3ce7da74e059d18e02e` into `release/0.4`.
+This matrix retains its original Rust1.95 profile; the accepted Rust1.89 package
+rehearsal and pending SH8 proof acceptance keep their own source-bound gates.
+
 Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
 Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
 `fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0`.

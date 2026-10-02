@@ -1,0 +1,29 @@
+{
+  "schema": "trident/public-evidence-exclusion/v1",
+  "reason": "Compiled Python cache is local history, not reviewed public text. Original cache and rejected stage remain unchanged.",
+  "compiled_cache": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/__pycache__/admission.cpython-314.pyc",
+    "bytes": 13817,
+    "sha256": "a8606ae30201c655de8201af7f830be56d78853370c059d091b50b355be3a0ff",
+    "public_body_copied": false
+  },
+  "superseded_delivery": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery",
+    "manifest": {
+      "bytes": 48728,
+      "sha256": "07d2fe48ef496deabc485fa12315d9316dd8821f95eeda2d085bea4265c03543"
+    },
+    "original_map": {
+      "bytes": 159807,
+      "sha256": "1ae43954feba40f36cdc2cdd4366d273af1ea650227f052fcffbfa3059728fc3"
+    }
+  },
+  "readiness_references_only": [
+    {
+      "bytes": 2424748,
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/helper-tooling-readiness-15fa/tracked.stdout",
+      "reason": "Redundant 2.4 MB full immutable-Git path inventory retained locally; its command/output identity and maximum path result are in commands/review. Do not recopy the full listing into the small final CI audit.",
+      "sha256": "d739e64104bccae053bb94d09ed91ea76aa1e0ccfe036bd6775d48ae95bff183"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "started_ns": 1790978619175848000,
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/run.py",
+    "--selection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/selection.json",
+    "--review",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/root-review.json",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1",
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "sources": {
+    "bytes": 18464,
+    "sha256": "184cd1fa0077db9f92af7a3e8b92551dae340f17a7072bfc5699eca2c5d0c480"
+  },
+  "review": {
+    "bytes": 22127,
+    "sha256": "2e6ac027067567529e2d5aab6008789de5046620b9bbf1579896c2aab98e24b9"
+  },
+  "selection": {
+    "bytes": 1158,
+    "sha256": "d3e6f2d2dc3431ad4cdc6c1ae36447cb192e704e855c519a49e1cad60b98aa76"
+  },
+  "pid": 22393,
+  "exit_code": 0,
+  "ended_ns": 1790978682661824000,
+  "sources_unchanged": true,
+  "stdout": {
+    "bytes": 304,
+    "sha256": "aa05889060962c95593b5e2daa28cca45747ac5bb31f57ad92510db563d61785"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "receipt.json": {
+    "bytes": 5788,
+    "sha256": "c11262868beadb7cfc0d514b8a765f0cac60318565066cc12335bb4b80387e43"
+  }
+}

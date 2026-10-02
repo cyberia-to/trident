@@ -1,0 +1,69 @@
+{
+  "status": "passed-public-text-retained-byte-validation",
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2/verify-retained.py",
+    "--originals"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2",
+  "started_ns": 1790980730272971000,
+  "map": {
+    "bytes": 177494,
+    "sha256": "fe18e89655b990c75a44f910e2500499be5235a126c1b8daa5b732a229118fb0"
+  },
+  "verifier": {
+    "bytes": 3127,
+    "sha256": "7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446"
+  },
+  "privacy": {
+    "bytes": 2554,
+    "sha256": "f4a0196d4568122c937b38cf171547a756edf7ec23ef25ac3ba0807192e4b782"
+  },
+  "exit_code": 0,
+  "result": {
+    "status": "passed-retained-byte-validation",
+    "original_files": 493,
+    "original_bytes": 3131077,
+    "unique_objects": 264,
+    "stored_object_bytes": 2381886,
+    "originals_checked": true,
+    "map": {
+      "bytes": 177494,
+      "sha256": "fe18e89655b990c75a44f910e2500499be5235a126c1b8daa5b732a229118fb0"
+    },
+    "inspection": "Credential-pattern, signed-URL, process-table and parsed nonempty raw_stdout checks passed. No original code was executed."
+  },
+  "all_public_files_utf8": true,
+  "strong_privacy_passed": true,
+  "jsonl": [
+    {
+      "path": "objects/f0b5c8f00a1ee9b2dc678ee0d557eb09fb15a4325c9f4e2319892723e870103e",
+      "bytes": 1772,
+      "sha256": "f0b5c8f00a1ee9b2dc678ee0d557eb09fb15a4325c9f4e2319892723e870103e",
+      "lines": 15,
+      "each_line_passed": true
+    }
+  ],
+  "only_removed_prior_original": {
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/__pycache__/admission.cpython-314.pyc",
+    "bytes": 13817,
+    "sha256": "a8606ae30201c655de8201af7f830be56d78853370c059d091b50b355be3a0ff",
+    "stored": "objects/a8606ae30201c655de8201af7f830be56d78853370c059d091b50b355be3a0ff"
+  },
+  "all_other_prior_mappings_equal": true,
+  "original_cache_and_stage_unchanged": true,
+  "ended_ns": 1790980730623710000,
+  "streams": {
+    "validation-final.stdout": {
+      "bytes": 422,
+      "sha256": "f6d3d37556c8ae24f6c9948063178c19efeca745ec19a9afbb74c7fbf36cb4a7"
+    },
+    "validation-final.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

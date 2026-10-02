@@ -1,0 +1,94 @@
+"""Retain already-completed PR117 acceptance and merge metadata, without executing it."""
+import hashlib
+import importlib.util
+import json
+import re
+import stat
+import time
+from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
+
+R = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
+D = R / 'whole-proof-ci/pr117-v4-delivery'
+spec = importlib.util.spec_from_file_location('retained', D / 'verify-retained.py')
+v = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(v)
+
+
+def save(path, value, exclusive=False):
+    with path.open('x' if exclusive else 'w') as stream:
+        stream.write(json.dumps(value, indent=2) + '\n')
+
+
+def inspect(path, raw):
+    v.require(stat.S_ISREG(path.lstat().st_mode), 'ordinary source')
+    v.require(len(raw) <= 2 * 1024 * 1024, 'small public metadata only')
+    v.require(not v.SECRET.search(raw), 'credential-shaped payload')
+    v.require(len(v.PROCESS.findall(raw)) < 3, 'private full-host process table')
+    for url in re.findall(rb'https?://[^\s\"<>]+', raw):
+        keys = {key.lower() for key in parse_qs(urlsplit(url.decode()).query)}
+        v.require(not keys.intersection({'sig', 'signature', 'token', 'access_token',
+                  'x-amz-signature', 'x-amz-security-token', 'x-goog-signature'}),
+                  'signed or credential-bearing URL')
+    if path.suffix == '.json':
+        v.inspect_json(json.loads(raw))
+
+
+snap = D / 'intermediate-result-1'
+snap.mkdir()
+preserved = {}
+for name in ('retained-files.json', 'final-preparation.json', 'README.md',
+             'final-references-only.json'):
+    source = D / name
+    raw = source.read_bytes()
+    with (snap / name).open('xb') as stream:
+        stream.write(raw)
+    preserved[name] = v.identity(source)
+save(snap / 'receipt.json', dict(status='preserved-pre-merge-result-stage',
+     time_ns=time.time_ns(), validation='No final retained-byte verification had yet run on this intermediate extension.',
+     files=preserved), True)
+
+rows = {row['original']: row for row in json.loads((D / 'retained-files.json').read_text())}
+selected = list(snap.iterdir()) + [Path(__file__)]
+for name in ('trident-pr117-replay-acceptance', 'trident-pr117-ready',
+             'trident-pr117-merge-wrapper', 'trident-proof-acceptance-pr117',
+             'helper-pr117-source-equivalence'):
+    selected.extend(sorted((R / 'integration' / name).iterdir()))
+install = R / 'whole-proof-helper-v4/postinstall-final-delivery-preparation'
+selected.extend(install / name for name in ('run.py', 'receipt.json', 'started.json', 'stdout', 'stderr'))
+for path in selected:
+    raw = path.read_bytes()
+    inspect(path, raw)
+    identity = dict(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+    row = dict(original=str(path), **identity, stored='objects/' + identity['sha256'])
+    if str(path) in rows:
+        v.require(rows[str(path)] == row, 'previously retained original unchanged')
+    obj = D / row['stored']
+    if not obj.exists():
+        with obj.open('xb') as stream:
+            stream.write(raw)
+    v.require(v.identity(obj) == identity and v.identity(path) == identity, 'exact original and copy')
+    rows[str(path)] = row
+save(D / 'retained-files.json', list(rows.values()))
+
+actual = json.loads((D / 'final-preparation.json').read_text())
+actual.update(status='prepared-complete-original-ci-evidence-and-merge', time_ns=time.time_ns(),
+              files=len(rows), original_bytes=sum(x['bytes'] for x in rows.values()),
+              objects=len({x['stored'] for x in rows.values()}),
+              stored_bytes=sum((D / p).stat().st_size for p in {x['stored'] for x in rows.values()}))
+actual['integration'] = {
+    name: dict(path=str(R / 'integration' / directory / 'receipt.json'),
+               **v.identity(R / 'integration' / directory / 'receipt.json'))
+    for name, directory in (
+        ('acceptance', 'trident-pr117-replay-acceptance'),
+        ('ready', 'trident-pr117-ready'),
+        ('merge_wrapper', 'trident-pr117-merge-wrapper'),
+        ('merge', 'trident-proof-acceptance-pr117'),
+        ('product_source_equivalence', 'helper-pr117-source-equivalence'))}
+actual['merge'] = json.loads((R / 'integration/trident-proof-acceptance-pr117/receipt.json').read_text())['merge']
+actual['fresh_install'] = dict(path=str(install / 'receipt.json'), **v.identity(install / 'receipt.json'))
+actual['retained_map'] = v.identity(D / 'retained-files.json')
+save(D / 'final-preparation.json', actual)
+(D / '.gitattributes').write_text('* -text\n')
+print(json.dumps(dict(status='prepared-public-extension', files=actual['files'],
+                     objects=actual['objects'], map=actual['retained_map'])))

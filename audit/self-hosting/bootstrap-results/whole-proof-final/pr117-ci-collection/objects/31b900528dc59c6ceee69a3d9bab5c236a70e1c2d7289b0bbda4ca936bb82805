@@ -1,0 +1,85 @@
+"""Offline ownership, terminal admission and primary-failure tests only."""
+import copy,json,os,signal,sys,tempfile,unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+import admission as a
+import run
+
+def fixture():
+    ids={k:dict(bytes=10+n,sha256=str(n)*64) for n,k in enumerate(('collection','accounting'))};authorized=dict(command=[str(a.PYTHON),'-B','-W','error',str(a.COLLECTOR/'collect.py')])
+    wrapper=dict(status='passed',exit_code=0,sources_unchanged=True,command=authorized['command'],cwd=str(a.COLLECTOR),source_manifest=a.SOURCE,review=a.REVIEW,started_ns=1,ended_ns=4,**{'completed/receipt.json':ids['collection'],'completed/final-accounting.json':ids['accounting']})
+    collection=dict(schema='trident/exact-attempt-actions-collection-completion/v4',status='passed-completion',run=int(a.ORIGIN['run_id']),attempt=1,head=a.ORIGIN['head_sha'],review=a.REVIEW,started_ns=2,ended_ns=3)
+    return wrapper,collection,ids,authorized
+
+class OwnerTests(unittest.TestCase):
+    def test_terminal_control(self):a.check_terminal(*fixture())
+    def test_false_terminal_and_bindings_rejected(self):
+        mutations=[(0,'status','running'),(0,'exit_code',1),(0,'sources_unchanged',False),(0,'command',['echo','passed']),(0,'cwd','/tmp'),(0,'source_manifest',{}),(0,'review',{}),(0,'completed/receipt.json',{}),(0,'completed/final-accounting.json',{}),(1,'status','failed'),(1,'attempt',2),(1,'head','f'*40),(1,'review',{}),(1,'ended_ns',5)]
+        for component,key,value in mutations:
+            with self.subTest(key=key):
+                values=copy.deepcopy(fixture());values[component][key]=value
+                with self.assertRaises(ValueError):a.check_terminal(*values)
+    def setup_roots(self,root):
+        owner=root.parent/(root.name+'-result');peer=root/'peer';peer.mkdir()
+        return owner,peer
+    def test_root_wrapper_alias_counted_once_and_result_included(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner,peer=self.setup_roots(root);owner.mkdir();(root/'source').write_bytes(b'x'*3);(owner/'result').write_bytes(b'x'*7)
+            with patch.object(run,'ROOT',root),patch.object(run,'OWNER_WRAPPER',root),patch.object(run,'OWNER',owner),patch.object(run,'PEER',peer),patch.object(run,'SCOPES',()):
+                self.assertEqual(run.owned_size(),10);self.assertEqual(run.shared_size(),10)
+            (owner/'result').unlink();owner.rmdir()
+    def test_atomic_receipt_reserves_external_result(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner,peer=self.setup_roots(root);owner.mkdir();(owner/'result').write_bytes(b'x'*90)
+            with patch.object(run,'ROOT',root),patch.object(run,'OWNER',owner),patch.object(run,'PEER',peer),patch.object(run,'SCOPES',()),patch.dict(run.LIMITS,owned_output_bytes=100):
+                with self.assertRaisesRegex(ValueError,'combined owner'):run.save(root/'receipt.json',dict(status='passed'))
+                self.assertFalse((root/'receipt.json').exists())
+            (owner/'result').unlink();owner.rmdir()
+    def test_atomic_replacement_keeps_old_receipt_on_cap(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner,peer=self.setup_roots(root);path=root/'receipt.json';path.write_bytes(b'x'*90)
+            with patch.object(run,'ROOT',root),patch.object(run,'OWNER',owner),patch.object(run,'PEER',peer),patch.object(run,'SCOPES',()),patch.dict(run.LIMITS,owned_output_bytes=100):
+                with self.assertRaisesRegex(ValueError,'combined owner'):run.save(path,dict(status='passed'))
+                self.assertEqual(path.read_bytes(),b'x'*90);self.assertFalse(path.with_suffix('.next').exists())
+    def test_shared_ceiling_includes_all_disjoint_scopes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=Path(directory);root=base/'wrapper';root.mkdir();owner=base/'result';peer=base/'peer';peer.mkdir();prior=base/'old';prior.mkdir();(prior/'old').write_bytes(b'x'*90)
+            with patch.object(run,'ROOT',root),patch.object(run,'OWNER',owner),patch.object(run,'PEER',peer),patch.object(run,'SCOPES',(prior,)),patch.dict(run.LIMITS,shared_bytes=100):
+                with self.assertRaisesRegex(ValueError,'shared ceiling'):run.save(root/'receipt.json',dict(status='passed'))
+    def test_bad_admission_never_starts_child(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner,peer=self.setup_roots(root)
+            with patch.object(run,'ROOT',root),patch.object(run,'OWNER_WRAPPER',root),patch.object(run,'OWNER',owner),patch.object(run,'admit',side_effect=ValueError('not terminal')),patch.object(run.subprocess,'Popen') as spawn:
+                with self.assertRaisesRegex(ValueError,'not terminal'):run.run(root/'selection',root/'review',root)
+                spawn.assert_not_called();self.assertFalse((root/'receipt.json').exists())
+    def test_existing_result_prevents_replay(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner=root/'existing';owner.mkdir()
+            with patch.object(run,'ROOT',root),patch.object(run,'OWNER_WRAPPER',root),patch.object(run,'OWNER',owner),patch.object(run.subprocess,'Popen') as spawn:
+                with self.assertRaisesRegex(ValueError,'fresh fixed'):run.run(root/'selection',root/'review',root)
+                spawn.assert_not_called()
+    def test_dangling_output_link_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner=root/'result';owner.symlink_to(root/'absent')
+            with patch.object(run,'OWNER',owner):
+                with self.assertRaisesRegex(ValueError,'ordinary absent'):run.size_tree(owner)
+    def test_actual_signals_restore_handlers(self):
+        for number in (signal.SIGTERM,signal.SIGINT):
+            old=run.install_handlers()
+            try:
+                with self.assertRaises(InterruptedError):os.kill(os.getpid(),number)
+            finally:run.restore_handlers(old)
+    def test_primary_error_persisted_before_cleanup_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);owner,peer=self.setup_roots(root)
+            def stop(child,force_group):
+                record=json.loads((root/'receipt.json').read_text());self.assertEqual(record['status'],'failed');self.assertIn('primary spawn',record['error']);self.assertIsNone(child);self.assertTrue(force_group);raise RuntimeError('secondary cleanup')
+            old=list(sys.path)
+            try:
+                with patch.object(run,'ROOT',root),patch.object(run,'OWNER_WRAPPER',root),patch.object(run,'OWNER',owner),patch.object(run,'PEER',peer),patch.object(run,'R2',root),patch.object(run,'SCOPES',()),patch.object(run,'admit',return_value={}),patch.object(run.shutil,'disk_usage',return_value=SimpleNamespace(free=100*run.GIB)),patch.object(run.subprocess,'Popen',side_effect=ValueError('primary spawn')),patch.dict(sys.modules,{'transport':SimpleNamespace(stop=stop)}):
+                    with self.assertRaisesRegex(ValueError,'primary spawn'):run.run(root/'selection',root/'review',root)
+            finally:sys.path[:]=old
+            value=json.loads((root/'receipt.json').read_text());self.assertEqual(value['status'],'failed');self.assertIn('primary spawn',value['error']);self.assertIn('secondary cleanup',value['cleanup_error'])
+
+if __name__=='__main__':unittest.main()

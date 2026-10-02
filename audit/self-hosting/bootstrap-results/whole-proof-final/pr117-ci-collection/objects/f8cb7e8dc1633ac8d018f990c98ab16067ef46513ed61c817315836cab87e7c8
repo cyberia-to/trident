@@ -1,0 +1,12 @@
+{
+  "status": "preserved-test-fixture-failure",
+  "observed_ns": 1790975233052579000,
+  "failed_test": "test_known_permanent_http_timeout_stops_without_retry",
+  "observed": [
+    "401 and404 counted2 attempts",
+    "403 exhausted3 attempts with RetryableTransport",
+    "27 total tests,2 failed subcases and1errored subcase"
+  ],
+  "scope": "Original raw unittest output is preserved. TemporaryDirectory command/header records were removed by fixture; a missing header before fixed startup deadline is an inference from fixture/source, not directly retained observation. No production-failure or scheduling-cause claim. Actual independently retained known403-header timeout rejects correctly under exact final production source.",
+  "source_snapshot": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/preparation/superseded-bf91f939"
+}

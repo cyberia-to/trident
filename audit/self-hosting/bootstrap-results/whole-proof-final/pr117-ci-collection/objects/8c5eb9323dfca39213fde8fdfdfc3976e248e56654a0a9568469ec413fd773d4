@@ -1,0 +1,113 @@
+name: SH6 native bootstrap
+
+on:
+  pull_request:
+    branches: [release/0.4]
+    paths-ignore:
+      - '**/*.md'
+      - 'audit/self-hosting/lexer-bootstrap/**'
+      - 'audit/self-hosting/bootstrap-results/**'
+      - 'scripts/prepare-selfhost-source.py'
+      - 'scripts/test_prepare_selfhost_source.py'
+      - 'scripts/fixtures/selfhost-kit-metadata.tar.gz'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    name: Bootstrap ${{ matrix.platform.target }} repeat ${{ matrix.repeat }}
+    strategy:
+      fail-fast: false
+      matrix:
+        repeat: [1, 2]
+        platform:
+          - target: aarch64-apple-darwin
+            runner: macos-15
+            architecture: arm64
+          - target: x86_64-apple-darwin
+            runner: macos-15-intel
+            architecture: x64
+          - target: aarch64-unknown-linux-gnu
+            runner: ubuntu-24.04-arm
+            architecture: arm64
+          - target: x86_64-unknown-linux-gnu
+            runner: ubuntu-24.04
+            architecture: x64
+          - target: aarch64-pc-windows-msvc
+            runner: windows-11-arm
+            architecture: arm64
+          - target: x86_64-pc-windows-msvc
+            runner: windows-2022
+            architecture: x64
+    uses: ./.github/workflows/selfhost-bootstrap-repeat.yml
+    with:
+      target: ${{ matrix.platform.target }}
+      runner: ${{ matrix.platform.runner }}
+      architecture: ${{ matrix.platform.architecture }}
+      repeat: ${{ matrix.repeat }}
+      head-sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      pins-json: >-
+        {"trident":"${{ github.event.pull_request.head.sha || github.sha }}",
+        "joy":"ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+        "nox":"f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+        "hemera":"a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+        "strata":"d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+        "zheng":"b54b209b91b8bf99c2975c4c24493a2411c23079",
+        "bbg":"1d39975ad199b48c350fa4cc011cbf6f289480ee",
+        "lens":"17cafe91431977b738e5b72361187cd01ad93638",
+        "neuron":"fd24e768d623604b67e20b4b93fa8e82c83ac373"}
+
+  compare:
+    name: Compare twelve native self-builds and twenty-four compiler corpora
+    needs: bootstrap
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      BOOTSTRAP_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      BOOTSTRAP_RESULT: ${{ needs.bootstrap.result }}
+      BOOTSTRAP_PINS: >-
+        {"trident":"${{ github.event.pull_request.head.sha || github.sha }}",
+        "joy":"ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+        "nox":"f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+        "hemera":"a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+        "strata":"d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+        "zheng":"b54b209b91b8bf99c2975c4c24493a2411c23079",
+        "bbg":"1d39975ad199b48c350fa4cc011cbf6f289480ee",
+        "lens":"17cafe91431977b738e5b72361187cd01ad93638",
+        "neuron":"fd24e768d623604b67e20b4b93fa8e82c83ac373"}
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: bootstrap-phase-*-repeat-*-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/phase-results
+      - name: Require all original producer and corpus evidence
+        if: always()
+        run: >-
+          python audit/self-hosting/bootstrap-phases.py --phase matrix
+          --matrix "$RUNNER_TEMP/phase-results"
+          --output "$RUNNER_TEMP/matrix-comparison"
+      - name: Require every native phase job to finish successfully
+        if: always()
+        run: test "$BOOTSTRAP_RESULT" = success
+      - name: Retain aggregate acceptance or missing-phase failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bootstrap-phase-matrix-comparison-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/matrix-comparison
+          if-no-files-found: error
+          compression-level: 6
+          retention-days: 14

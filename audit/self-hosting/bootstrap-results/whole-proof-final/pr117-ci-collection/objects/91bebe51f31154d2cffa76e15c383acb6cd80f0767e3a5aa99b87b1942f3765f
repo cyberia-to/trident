@@ -1,0 +1,75 @@
+# Independent retained PR117 matrix replay
+
+Version 2 is a new sibling scope. The original dce695 launcher and its failed
+pre-spawn invocation stay unchanged at `pr117-completion-v4-independent-replay`.
+The actual owner wrapper invoked the exact selected Cellar executable; the
+frozen inner receipt recorded `sys.executable` via the installed Homebrew opt
+symlink. This adapter requires that reported absolute path to resolve to the
+exact selected Cellar executable and its SHA256; every remaining argument is
+still exact. No cause for Python's path choice is inferred. Preparation retains
+a tiny actual interpreter observation under the same quiet environment.
+
+This prepared launcher is inactive until the current v4 collector and its
+owner's frozen offline replay have both completed successfully. It never
+downloads, calls authentication, executes a native artifact, or reruns a
+compiler/prover/corpus. It writes only this new sibling directory, outside the
+collector's six charged historical scopes. No original is copied or modified.
+
+The accepted collector source map is
+`5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf`
+(72 identities, 16,156-byte map). Root source-review gate is
+`1f46cf59a522b5b3aa1ab36fbd7b821bb9fce6f09cd204a10ad348b4b36d6fee`.
+The immutable original Actions coordinate is run `37002840888`, attempt `1`,
+head `10772124836b68a2df011c912b5776b2454a511f`.
+
+Before launch, a new selection JSON names the exact current identities of
+`v4/launch-completed.json`, `v4/completed/receipt.json`,
+`v4/completed/final-accounting.json`, and
+`pr117-completion-v4-owner-replay-1/receipt.json`. The schema is
+`trident/pr117-peer-replay-selection/v1`, with those four path/bytes/SHA256
+references at `inputs.{wrapper,collection,accounting,owner}`. No selection
+exists while the collector is running. A separate root review must bind the
+complete launcher source manifest before any execution.
+
+`run.py --selection selection.json --review root-review.json --output <this-directory>/run-1`
+uses the exact selected Python 3.14 executable to invoke the already reviewed
+`v4/replay.py --collection <v4> --git-repo <R2>/final-integration/trident
+--output <this-directory>/run-1/replay`.
+The output must be new. The exact argv/environment is retained by the launcher.
+Git reads only five blobs from the pinned original commit; replacement objects,
+lazy fetching, global configuration and prompts are disabled. No credential
+environment is inherited. Historical admission's isolated Python child still
+uses its frozen empty-PATH environment.
+
+The frozen checker rehashes all 37 original artifact ZIPs plus attempt logs,
+their decoded member inventories and retained bytes. It replays the exact
+committed native checker against 12 producer jobs and 24 generation corpus
+jobs, then checks the original aggregate's 36 receipts and canonical compiler
+SHA256. All earlier failed transports remain failed; 22 previously completed
+archives retain their original attempt attribution, with 15 fresh artifact
+readbacks and the original attempt log in v4. The native matrix's original
+Rust 1.95 profile remains distinct from the final package's Rust 1.89 profile.
+
+The new replay uses the existing 1200-second per-command bound and 8GiB free
+floor. Before spawning it, all six current collector/historical scope sizes,
+both completed owner replay and its separate wrapper/log directory, this peer
+preparation, the entire original failed peer preparation, and an additional
+32MiB output reservation must fit
+the unchanged 3GiB physical ceiling. No feasibility is asserted before that
+actual measurement. The replay retains only its small JSON summary, five
+committed source/workflow blobs, historical-admission small streams and outer
+logs, with no copied ZIP/member tree. A 32MiB per-file OS limit, 32MiB sampled
+aggregate output guard, 1MiB hard outer stream limits and final aggregate
+checks constrain its output. The wrapper receipt itself is capped at 1MiB.
+Every wrapper save counts both the old receipt and its atomic replacement
+against the 32MiB/3GiB ceilings and free floor. The sampled child-output guard
+leaves 2MiB for the two terminal receipt buffers. SIGTERM/SIGINT raise a bounded
+exception; repeated signals are ignored only while owned cleanup/final
+retention runs, then prior handlers are restored. Failure retention is attempted
+before owned-group cleanup; cleanup and persistence failures remain separate.
+
+The peer report exposes only source/receipt identities, native coordinates,
+counts and outcome. Private HTTP headers, signed redirect URLs and raw
+process diagnostics stay in their original local scopes. This is native
+matrix evidence replay, with no assertion that SH8 or owner publication is
+complete.

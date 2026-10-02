@@ -1,0 +1,43 @@
+{
+  "status": "passed-root-frozen-source-tests",
+  "source_manifest": {
+    "bytes": 16156,
+    "sha256": "5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf"
+  },
+  "started_ns": 1790975244275887000,
+  "commands": [
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "-v",
+        "test_http",
+        "test_tls",
+        "test_accounting"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+      "exit_code": 0,
+      "elapsed_seconds": 12.536078749981243,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 3543,
+        "sha256": "a7b613924a06a731937d94bb807ab783a7fb90ad130e12fc56e455f9cac07647"
+      }
+    }
+  ],
+  "inherited_test_evidence": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/root-validation-2/receipt.json",
+    "bytes": 1770,
+    "sha256": "43e0751fc9bb5021d1427619b8973e16b20485f799577544be9113d785aa6a13"
+  },
+  "inherited_reuse_reason": "Only current test_http fixture changed; original19 test source closure and all production bytes remain identical to independently tested bf91.",
+  "sources_unchanged": true,
+  "ended_ns": 1790975256845049000
+}

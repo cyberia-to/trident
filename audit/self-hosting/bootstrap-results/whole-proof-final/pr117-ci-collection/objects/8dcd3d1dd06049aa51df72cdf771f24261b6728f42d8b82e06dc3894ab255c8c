@@ -1,0 +1,41 @@
+{
+  "status": "passed-read-only22-admission",
+  "archives": 22,
+  "member_files": 51620,
+  "prior_failed": [
+    {
+      "scope": "v3",
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1-attempt-1"
+    },
+    {
+      "scope": "v3",
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1-attempt-2"
+    }
+  ],
+  "elapsed_seconds": 26.59608433302492,
+  "prior16": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-W",
+      "error",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/prior16.py"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v3",
+    "environment": {
+      "PATH": "",
+      "LANG": "C"
+    },
+    "started_ns": 1790973751226352000,
+    "ended_ns": 1790973763343821000,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 29255,
+      "sha256": "da83242e2fb1bd7b1bd08e91bcdb872981555795ba3d2535dbdeb262826640ae"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

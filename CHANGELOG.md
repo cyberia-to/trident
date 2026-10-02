@@ -1,7 +1,7 @@
 # Changelog
 
-Kelvin versioning: versions count down toward 0K (frozen forever).
-Lower is colder. Colder is more stable.
+Package releases use SemVer. Kelvin temperatures in the roadmap describe
+maturity and do not change package versions.
 
 ## Unreleased — native self-hosting on soft3
 

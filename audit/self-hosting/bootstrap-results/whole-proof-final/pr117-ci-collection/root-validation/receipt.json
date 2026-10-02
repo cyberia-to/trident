@@ -1,0 +1,44 @@
+{
+  "status": "passed-public-original-ci-archive-copy",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/pr117-ci-collection/verify-retained.py",
+    "--originals"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/pr117-ci-collection",
+  "started_ns": 1790980983621972000,
+  "ended_ns": 1790980983818212000,
+  "exit_code": 0,
+  "source_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2/delivery-files.json",
+    "bytes": 56377,
+    "sha256": "856cf06a43154025a245de30e7d6d1d6214e687d621268c1f5476742224a6c50"
+  },
+  "source_handoff": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/delivery-receipt.json",
+    "bytes": 1365,
+    "sha256": "a4a249695d1326b20ab49c910beaeb800f113c5da206553d396fe41db63f1809"
+  },
+  "source_stage_files": 301,
+  "source_stage_bytes": 3192475,
+  "extra_validation_files": 14,
+  "retained_originals": 493,
+  "all_copied_bytes_match": true,
+  "strong_public_text_checks_passed": true,
+  "exact_jsonl_lines_checked": 15,
+  "compiled_cache_body_absent": true,
+  "stdout": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/pr117-ci-collection/root-validation/stdout",
+    "bytes": 422,
+    "sha256": "f6d3d37556c8ae24f6c9948063178c19efeca745ec19a9afbb74c7fbf36cb4a7"
+  },
+  "stderr": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/pr117-ci-collection/root-validation/stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scope": "Original native PR117 replay/merge and preparation/readiness evidence. No native rerun, private header body, cache body or SH8 acceptance."
+}

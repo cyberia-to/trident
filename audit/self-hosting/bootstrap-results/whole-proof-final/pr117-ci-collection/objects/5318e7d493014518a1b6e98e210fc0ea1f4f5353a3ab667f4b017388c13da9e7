@@ -1,0 +1,89 @@
+"""Offline replay of every reference, private HTTP observation and cumulative attempt."""
+from pathlib import Path
+from budget import Budget
+from collection_common import *
+from history import admit as history_admit
+from metadata import admit as metadata_admit,same,asset,FIELDS,RUN_FIELDS
+import http_policy as policy
+
+def admit(root,check_output):
+    require(root.resolve()==ROOT,'exact new completion scope');data=root/'completed';r=load(data/'receipt.json')
+    require(r['schema']=='trident/exact-attempt-actions-collection-completion/v4' and r['status']=='passed-completion' and not (data/'terminal-failure.json').exists(),'actual complete v4 without terminal failure')
+    require((r['run'],r['attempt'],r['head'])==(RUN,1,HEAD) and r['sources']==sources() and r['profile']==PROFILE,'exact run/source/profile')
+    require(r['review']==identity(ROOT/'independent-review.json'),'exact launch review');selected=tools();require(r['toolchain']==identity(ROOT/'toolchain.json') and all(r[name]=={k:selected[name][k] for k in ('path','bytes','sha256')} for name in ('gh','curl','python')),'exact selected executable observations')
+    require(0<r['ended_ns']-r['started_ns']<=7200*10**9,'finite original collection interval')
+    budget=Budget(SCOPES);prior=history_admit(check_output,budget);require(r['prior_attempts']==prior['prior_attempts'] and r['gh']==prior['gh'],'complete prior attempts and credential source')
+    require(r['history']['v3']==prior['history']['v3'],'failed original v3 remains failed')
+    require(set(r['history']['all_files'])=={str(p) for p in PRIOR},'all prior scopes referenced exactly once')
+    inventory=data/'inventories';expected_refs=set()
+    for n,(name,wanted) in enumerate(prior['history']['all_files'].items()):
+        label=f'prior-scope-{n}';expected_refs.add(label+'.json');require(referenced(r['history']['all_files'][name],inventory,label)==wanted,'exact complete prior scope inventory')
+    require(set(r['member_maps'])==set(r['archives']),'exact member reference union');members={}
+    for name,ref in r['member_maps'].items():expected_refs.add(name+'.json');members[name]=referenced(ref,inventory,name)
+    require({p.name for p in inventory.iterdir()}==expected_refs and all(p.is_file() and not p.is_symlink() for p in inventory.iterdir()),'closed inventory directory membership')
+    recorded=r['history']['prior16'];fresh=prior['history']['prior16']
+    require(recorded['command']==fresh['command'] and recorded['cwd']==fresh['cwd'] and recorded['environment']==fresh['environment'] and recorded['exit_code']==0,'exact isolated historical replay command')
+    require(recorded['stdout']==fresh['stdout']==identity(data/'prior16.stdout') and recorded['stderr']==fresh['stderr']==identity(data/'prior16.stderr'),'fresh historical admission agrees byte-for-byte')
+    require(r['started_ns']<=recorded['started_ns']<=recorded['ended_ns']<=r['ended_ns'] and recorded['ended_ns']-recorded['started_ns']<=120*10**9,'bounded local historical admission')
+    auth=r['credential'];require(auth['command']==[r['gh']['path'],'auth','token','--hostname','github.com'] and auth['exit_code']==0 and auth['valid_credential_observed'] is True and auth['stdout_limit']==4096 and auth['stderr_limit']==MIB and auth['timeout_seconds']==30,'local bounded credential observation')
+    require(auth['stderr']==identity(data/'credential.stderr') and auth['stderr']['bytes']==0 and not any(k in auth for k in ('error','cleanup_error','evidence_error')),'quiet original credential command')
+    require(r['started_ns']<=auth['started_ns']<=auth['ended_ns']<=r['ended_ns'] and 0<=auth['elapsed_monotonic_seconds']<=31,'credential interval')
+    require(auth['cleanup'].get('status')=='leader-complete' or auth['cleanup'].get('group_empty') is True,'credential child completion')
+    requests=r['requests'];require(len(requests)==35 and len({q['name'] for q in requests})==35,'exact35 required requests')
+    assets={a['name']:a for a in prior['assets']};missing=sorted(set(assets)-set(prior['archives']));require(len(missing)==15,'exact15 missing artifacts')
+    expected=[('admission-run',f'actions/runs/{RUN}/attempts/1',8*MIB,False),('admission-jobs',f'actions/runs/{RUN}/attempts/1/jobs?per_page=100',8*MIB,False),('admission-artifacts',f'actions/runs/{RUN}/artifacts?per_page=100',8*MIB,False)]
+    for name in missing:
+        a=assets[name];expected.extend([(name+'-metadata',f"actions/artifacts/{a['id']}",4*MIB,False),(name,f"actions/artifacts/{a['id']}/zip",a['size_in_bytes'],True)])
+    expected.extend([('attempt-1-logs',f'actions/runs/{RUN}/attempts/1/logs',256*MIB,True),('attempt-after',f'actions/runs/{RUN}/attempts/1',4*MIB,False)])
+    require([q['name'] for q in requests]==[e[0] for e in expected],'ordered exact original request set')
+    rows=r['commands'];require(len(rows)<=105 and len({c['name'] for c in rows})==len(rows) and [c['name'] for c in rows]==[n for q in requests for n in q['attempts']],'no unlisted or omitted attempt')
+    require(all(a['ended_ns']<=b['started_ns'] for a,b in zip(rows,rows[1:])),'serial actual commands')
+    by_name={c['name']:c for c in rows};backoffs=[];success={}
+    for q,(label,endpoint,maximum,body) in zip(requests,expected):
+        earlier=r['prior_attempts'].get(label,[]) if body else []
+        require(q['kind']==('body' if body else 'metadata') and q['status']=='passed' and q['prior_attempts']==earlier,'distinct request and historical provenance')
+        require(1<=len(q['attempts'])<=3 and q['attempts']==[f'{label}-attempt-{n}' for n in range(1,len(q['attempts'])+1)],'finite ordered new attempts')
+        require(q['cumulative_attempts']==earlier+[dict(scope='v4',name=n) for n in q['attempts']],'complete cumulative attempt history')
+        for index,name in enumerate(q['attempts']):
+            row=by_name[name];expected_argv=[('/dev/fd/HEADER' if a=='/dev/fd/0' else a) for a in policy.argv(r['curl']['path'],'repos/'+REPO+'/'+endpoint,body,0)]
+            require(row['command']==expected_argv and row['endpoint']=='repos/'+REPO+'/'+endpoint and row['environment']=={'PATH':'/usr/bin:/bin:/usr/sbin:/sbin','LANG':'C'},'fixed credential-free curl argv/environment')
+            require(row['private_stdin']=='existing Github Authorization header; not retained' and row['stdout_limit']==maximum and row['stderr_limit']==MIB and row['header_limit']==65536 and row['timeout_seconds']==1200 and row['body_read_rate']==(RATE if body else None),'exact physical attempt bounds')
+            require(r['started_ns']<=row['started_ns']<=row['ended_ns']<=r['ended_ns'] and 0<=row['elapsed_monotonic_seconds']<=1230,'bounded actual attempt interval')
+            require(not any(k in row for k in ('cleanup_error','evidence_error')),'complete attempt evidence and cleanup')
+            path=data/(name+('.zip' if body else '.json'));header=data/(name+'.headers')
+            for key,f,maximum_bytes in [('stdout',path,maximum),('stderr',data/(name+'.stderr'),MIB),('headers',header,65536)]:require(identity(f)==row[key] and row[key]['bytes']<=maximum_bytes,'all raw command streams exact and bounded')
+            final=index==len(q['attempts'])-1
+            if final:
+                parsed=policy.headers(header.read_bytes(),complete=True);require(row['exit_code']==0 and 'error' not in row and parsed['status']==200,'only complete HTTP200 attempt accepted')
+                require(row['http']==dict(statuses=parsed['statuses'],status=parsed['status']),'raw final HTTP status binding')
+                require(row['cleanup'].get('status')=='leader-complete' or row['cleanup'].get('group_empty') is True,'completed successful child')
+                require(q['successful_command']==name and q['path']==str(path) and q['identity']==row['stdout'],'successful request identity');success[label]=path
+            else:
+                require('error' in row and row['retryable'] is True and row['cleanup'].get('group_empty') is True,'failed attempt retained and quiescent before retry')
+                if 'per-command transport deadline' in row['error'] and row['elapsed_monotonic_seconds']>=1200 and row['exit_code']<0:delay=60
+                else:
+                    parsed=policy.headers(header.read_bytes());require(row['started_ns']<=row['classification_time_ns']<=row['ended_ns'],'HTTP classification timestamp');delay=policy.retry(row['exit_code'],parsed,now=row['classification_time_ns']/1e9);require(delay is not None,'independently classified retryable failure')
+                    require(row['http']==dict(statuses=parsed['statuses'],status=parsed['status']),'failed raw HTTP status binding')
+                require(row['retry_delay_seconds']==delay,'exact retry delay');backoffs.append((name,delay,q['attempts'][index+1]))
+    require(len(r['backoffs'])==len(backoffs),'complete recorded backoffs')
+    for row,(name,delay,next_name) in zip(r['backoffs'],backoffs):
+        require(row['after_attempt']==name and row['seconds']==delay and row['elapsed_monotonic_seconds']>=delay,'declared observed backoff')
+        require(by_name[name]['ended_ns']<=row['started_ns']<=row['ended_ns']<=by_name[next_name]['started_ns'],'backoff ordered before next command')
+    fresh={n:load(success['admission-'+n]) for n in ('run','jobs','artifacts')};fresh_assets=metadata_admit(fresh['run'],fresh['jobs'],fresh['artifacts']);same(fresh['run'],fresh['jobs'],fresh_assets,prior['run'],prior['jobs'],prior['assets'])
+    after=load(success['attempt-after']);require(all(after[k]==prior['run'][k] for k in RUN_FIELDS),'final exact original attempt')
+    require(set(r['archives'])==set(assets)|{'attempt-1-logs'},'complete37 plus logs union')
+    for name,wanted in prior['archives'].items():require(r['archives'][name]==wanted and members[name]==prior['members'][name],'all22 reused archives remain exactly attributed')
+    for name in missing+['attempt-1-logs']:
+        path=success[name];wanted=r['archives'][name];require(wanted['storage']==dict(zip=str(path),tree=str(data/name)) and wanted['command_ref']==dict(scope='v4',name=path.stem) and {k:wanted[k] for k in ('bytes','sha256')}==identity(path),'owned successful body storage')
+        if name in assets:
+            a=assets[name];require(wanted['metadata']==a and identity(path)==asset(a),'same authenticated original ZIP digest');require(all(load(success[name+'-metadata'])[k]==a[k] for k in FIELDS),'direct original asset metadata')
+    from accounting import check
+    labels=['initial','after-local-credential']
+    for q in requests:
+        for name in q['attempts']:labels.extend(['before-command:'+name,'after-command:'+name])
+        if q['kind']=='body':labels.extend(['before-extract:'+q['name'],'after-extract:'+q['name']])
+    labels.append('final')
+    final=load(data/'final-accounting.json');prior_sizes=[sum(v['bytes'] for v in prior['history']['all_files'][str(path)].values()) for path in PRIOR]
+    check(r['accounting'],final,identity(data/'receipt.json'),(data/'final-accounting.json').stat().st_size,r['started_ns'],r['ended_ns'],labels,prior_sizes)
+    budget.reconcile('after-offline-admission');r['members']=members
+    return r
