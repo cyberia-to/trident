@@ -1,0 +1,135 @@
+{
+  "schema": "trident/whole-proof-attack-command/v1",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+    "verify-artifact",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+    "--input",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+    "--proof",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/rechain.joysc",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/rechain.output",
+    "--budget",
+    "100000000",
+    "--arena-nodes",
+    "100000000",
+    "--frames",
+    "65536",
+    "--artifact-bytes",
+    "16777216",
+    "--artifact-nodes",
+    "196608",
+    "--artifact-depth",
+    "4096",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "1000000000",
+    "--time-ms",
+    "300000",
+    "--proof-bytes",
+    "1073741824",
+    "--proof-decoded-bytes",
+    "2147483648",
+    "--proof-records",
+    "100000000",
+    "--proof-steps",
+    "200000000",
+    "--proof-cache-slots",
+    "65536"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/attempts/verify-rechain",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 330,
+    "cpu": 330,
+    "rss": 6442450944,
+    "file": 67108864
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 5864,
+    "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+  },
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag": {
+      "bytes": 21055,
+      "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/rechain.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    }
+  },
+  "expected_exit": 0,
+  "metadata": {
+    "expected_error": null
+  },
+  "started_ns": 1790934414131196000,
+  "sampled_peak_rss_bytes": 237731840,
+  "pid": 44149,
+  "latest_sample": {
+    "time_ns": 1790934416180967000,
+    "elapsed": 2.049758874985855,
+    "processes": [
+      {
+        "pid": 44149,
+        "rss_bytes": 237731840
+      }
+    ],
+    "rss_bytes": 237731840,
+    "owned_bytes": 8738545,
+    "free_bytes": 49049157632
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 2.941744666954037,
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag": {
+      "bytes": 21055,
+      "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/rechain.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    }
+  },
+  "ended_ns": 1790934417082633000,
+  "files": {
+    "stdout": {
+      "bytes": 2116,
+      "sha256": "5c342750a3e995148a95b22bf3979d75a3efcf60cc3ab25226e607165f443a65"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resources.jsonl": {
+      "bytes": 579,
+      "sha256": "5b9f342f6473239476ed28931739c72697b6c67f6296f2f936c920d4a3ffa30d"
+    }
+  }
+}
