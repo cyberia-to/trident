@@ -1,0 +1,25 @@
+"""Read-only actual historical replay; no native proof command or network."""
+from pathlib import Path
+import json,sys,time,traceback
+from prior_pins_v5 import ROOT,BASE,identity,load
+from prior_cases_v5 import review,admit_v4_c2_cost
+OUT=ROOT/sys.argv[1];OUT.mkdir()
+sources={p.name:identity(p) for p in sorted(ROOT.iterdir()) if p.is_file() and (p.name.startswith('prior_') and p.suffix=='.py' or p.name in ('replay_prior_v5.py','test_prior_v5.py','prior-v4-evidence.json','PRIOR-ADMISSION.md'))}
+(OUT/'sources').mkdir()
+for name in sources:(OUT/'sources'/name).write_bytes((ROOT/name).read_bytes())
+report=dict(status='running',command=[sys.executable,*sys.argv],cwd=str(ROOT),started_ns=time.time_ns(),sources=sources,results={});tick=time.monotonic()
+try:
+ for g in (1,2):
+  proof=BASE/f'whole-proof/attempts/c{g}-selfbuild-1/proof.joysc';verifier=BASE/f'whole-proof/attempts/c{g}-fresh-verification-1'
+  expected=load(verifier/'stdout')['verification']
+  result=review(BASE,g,proof,verifier,expected)
+  p=OUT/f'c{g}.json';p.write_text(json.dumps(result,indent=2)+'\n');report['results'][f'c{g}']=identity(p)
+ result=admit_v4_c2_cost(BASE,proof,verifier,expected)
+ p=OUT/'c2-cost.json';p.write_text(json.dumps(result,indent=2)+'\n');report['results']['c2-cost']=identity(p)
+ assert all(identity(ROOT/n)==v for n,v in sources.items());report['status']='passed'
+except BaseException:
+ report['status']='failed';report['error']=traceback.format_exc();raise
+finally:
+ report.update(ended_ns=time.time_ns(),elapsed_monotonic_seconds=time.monotonic()-tick)
+ (OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+print(json.dumps(dict(status=report['status'],results=report['results'])))

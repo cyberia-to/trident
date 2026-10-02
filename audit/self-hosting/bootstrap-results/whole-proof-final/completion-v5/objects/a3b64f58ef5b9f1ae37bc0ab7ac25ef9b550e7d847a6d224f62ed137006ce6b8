@@ -1,0 +1,64 @@
+"""Authenticate the unchanged v4 source closure before importing its pure checker."""
+import hashlib
+import importlib
+import json
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parent
+BASE = ROOT.parent
+MANIFEST_SHA = '4d7cb7f1f3db2eec9f543b1ee530c143b21c5ca2dfc25502802be21d06715419'
+REVIEW_SHA = 'b76e95090bd06e2fe0e77de2b5e1d2c032ca15d58dcda6cd6b7cfb63e834aaf2'
+
+
+def require(condition, reason):
+    if not condition:
+        raise ValueError(reason)
+
+
+def identity(path):
+    path = Path(path)
+    require(path.is_file() and not path.is_symlink(), 'ordinary immutable evidence file')
+    with path.open('rb') as stream:
+        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+    return dict(bytes=path.stat().st_size, sha256=digest)
+
+
+def load(path):
+    return json.loads(Path(path).read_text())
+
+
+def same(path, expected):
+    require(identity(path) == {k: expected[k] for k in ('bytes', 'sha256')}, 'immutable identity: ' + str(path))
+
+
+def reference(path):
+    return dict(path=str(path), **identity(path))
+
+
+def source_closure(base):
+    root = base / 'whole-proof-attacks-completion-v4'
+    require(identity(root/'sources.json')['sha256'] == MANIFEST_SHA
+            and identity(root/'independent-review.json')['sha256'] == REVIEW_SHA, 'exact reviewed v4 source closure')
+    manifest, review = load(root/'sources.json'), load(root/'independent-review.json')
+    require(len(manifest) == 49 and review['status'] == 'passed-source-review'
+            and review['sources'] == manifest, 'complete original source review')
+    for name, expected in manifest.items():
+        require(Path(name).is_relative_to(base), 'source below exact immutable family')
+        same(Path(name), expected)
+    return manifest
+
+
+source_closure(BASE)
+sys.path.insert(0, str(BASE/'whole-proof-attacks-completion-v4'))
+LEGACY = importlib.import_module('prior_cases_v4')
+from prior_primitives_v4 import C, ERRORS, v3_pins
+from prior_replay_v4 import command_samples
+
+
+def evidence_pins(base):
+    entries = load(ROOT/'prior-v4-evidence.json')
+    for name, expected in entries.items():
+        require(not Path(name).is_absolute() and '..' not in Path(name).parts, 'relative historical evidence pin')
+        same(base/name, expected)
+    return entries

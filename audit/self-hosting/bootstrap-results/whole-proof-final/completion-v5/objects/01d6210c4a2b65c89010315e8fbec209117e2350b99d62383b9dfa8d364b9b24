@@ -1,0 +1,314 @@
+"""Sequential capacity admission with immutable per-generation and per-case receipts."""
+import contextlib
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import time
+import ownership
+
+ROOT=Path(__file__).resolve().parent
+BASE=ROOT.parent
+PLAN=json.loads((ROOT/"plan.json").read_text())
+ROOTS={int(g):BASE/p for g,p in PLAN["roots"].items()}
+RETAINED_ROOTS=tuple(BASE/p for p in PLAN["retained_scopes"])
+NEW=("cost","valid-output-payload","valid-output-topology","valid-output-payload-rebound","valid-output-topology-rebound","omit-terminal","drop-first","swap-first-two","omit-completion","truncate-last-byte","trailing-byte")
+GIB,MIB=1024**3,1024**2
+
+
+def require(value,message):
+    if not value:raise ValueError(message)
+
+
+def load(path):return json.loads(Path(path).read_text())
+
+
+def stop_requested():return (ROOT/'stop.json').exists()
+
+
+def fail(reason,detail=None):
+    try:
+        with (ROOT/'stop.json').open('x') as stream:
+            json.dump(dict(reason=reason,detail=detail,pid=os.getpid(),time_ns=time.time_ns()),stream)
+            stream.flush();os.fsync(stream.fileno())
+    except FileExistsError:pass
+
+
+def admission_path(generation):
+    require(type(generation) is int and generation in ROOTS,'known generation')
+    return ROOT/f'admission-c{generation}.json'
+
+
+def case_names(generation):return NEW if generation==1 else NEW[1:]
+
+
+def permit_path(generation,name=None):
+    require(generation in ROOTS and (name is None or name in case_names(generation)),'known capacity scope')
+    return ROOT/'capacity'/f'c{generation}-{name or "generation"}.json'
+
+
+def exclusive_write(path,value):
+    require(not Path(path).exists(),'fresh immutable receipt required')
+    # All callers hold accounting or uniquely own this capacity/admission name.
+    with Path(path).open('x') as stream:
+        json.dump(value,stream,indent=2);stream.write('\n');stream.flush();os.fsync(stream.fileno())
+    fd=os.open(Path(path).parent,os.O_RDONLY)
+    try:os.fsync(fd)
+    finally:os.close(fd)
+
+
+def inventory_unlocked():
+    result={}
+    for root in (*RETAINED_ROOTS,*ROOTS.values(),ROOT):
+        for path in files(root):
+            try:result[str(path)]=path.stat().st_size
+            except FileNotFoundError:
+                if '.pending-' not in path.name:raise
+    return result
+
+
+def inventory():
+    with accounting():return inventory_unlocked()
+
+
+def reservation(existing,generation,free):
+    mutant=PLAN['proofs'][str(generation)]['bytes']+PLAN['mutant_growth_ceiling_bytes']
+    growth=mutant+PLAN['canonical_and_output_bucket_per_generation']+2*PLAN['metadata_bucket_per_generation']
+    total=sum(existing.values())+growth
+    floor=max(growth+PLAN['free_floor_bytes'],mutant+10*GIB)
+    reasons=[]
+    if total>PLAN['shared_disk_bytes']:reasons.append('shared-owned-reservation')
+    if free<floor:reasons.append('physical-free-reservation')
+    return dict(generation=generation,existing_bytes=sum(existing.values()),mutant_bytes=mutant,
+                growth_bytes=growth,reservation_bytes=total,free_bytes=free,required_free_bytes=floor,
+                accepted=not reasons,reasons=reasons)
+
+
+def active(generation):
+    value=load(ROOT/'active-generation.json')
+    require(value['status']=='active' and value['generation']==generation
+            and value['admission']==identity(admission_path(generation)),'only exact currently admitted generation')
+    return value
+
+
+def admitted(scope):
+    matches=[g for g,p in ROOTS.items() if p==Path(scope).resolve()]
+    require(len(matches)==1,'known suite scope');g=matches[0]
+    end=time.monotonic()+30
+    while True:
+        require(not stop_requested() and time.monotonic()<end,'generation admission unavailable')
+        with accounting():
+            if admission_path(g).exists() and (ROOT/'active-generation.json').exists():
+                value=load(admission_path(g));state=load(ROOT/'active-generation.json')
+                if (state['status']=='active' and state['generation']==g and
+                        state['admission']==identity(admission_path(g))):break
+        time.sleep(.1)
+    require(value['pid']==os.getppid() and value['children']=={str(g):os.getpid()},'registered direct coordinator child')
+    require(not stop_requested(),'shared stop');active(g)
+    return g
+
+
+def capacity_reference(generation,attempt):
+    prefixes=[f'whole-c{generation}-construct-',f'whole-c{generation}-verify-']
+    names=[attempt[len(p):] for p in prefixes if attempt.startswith(p)]
+    require(len(names)==1 and names[0] in case_names(generation),'only selected fresh mutation attempts')
+    path=permit_path(generation,names[0]);value=load(path)
+    require(value['status']=='passed-capacity-admission' and value['generation']==generation and value['case']==names[0]
+            and value['admission']==identity(admission_path(generation)) and value['reservation']['accepted'] is True,
+            'exact per-mutation measured capacity permit')
+    return dict(path=str(path),**identity(path))
+
+
+def authorize_native(generation,attempt,argv,kind=None):
+    require(not stop_requested(),'shared stop before native command');active(generation)
+    expected_kind='helper' if attempt.startswith(f'whole-c{generation}-construct-') else 'verify'
+    require(kind in (None,expected_kind),'correct native command kind')
+    require(argv and Path(argv[0]).is_absolute(),'absolute native executable')
+    return capacity_reference(generation,attempt)
+
+
+def register_native(generation,attempt,argv):
+    admission=load(admission_path(generation))
+    require(admission['children']=={str(generation):os.getppid()} and os.getpgrp()==os.getpid(),
+            'native process belongs to this admitted suite and owns its session')
+    authorize_native(generation,attempt,argv)
+    record=ownership.bind(os.getpid())
+    record.update(parent=os.getppid(),argv=argv,attempt=attempt,generation=generation,
+                  coordinator=admission['pid'],registered_ns=time.time_ns())
+    directory=ROOT/'native-processes';directory.mkdir(exist_ok=True)
+    with accounting(exclusive=True):
+        record['capacity_permit']=authorize_native(generation,attempt,argv)
+        exclusive_write(directory/(attempt+'.json'),record)
+
+
+def wait_capacity(generation,name=None,coordinator_pid=None,outer_deadline=None):
+    if name is not None:
+        require(admitted(ROOTS[generation])==generation,'caller owns this generation');active(generation)
+        coordinator_pid=load(admission_path(generation))['pid']
+        outer_deadline=load(admission_path(generation))['outer_deadline_monotonic']
+    else:require(coordinator_pid==os.getpid(),'only coordinator admits a generation')
+    require(type(outer_deadline) in (int,float),'original schedule deadline required')
+    directory=ROOT/'capacity';directory.mkdir(exist_ok=True)
+    path=permit_path(generation,name);log=path.with_suffix('.jsonl')
+    require(not path.exists() and not log.exists(),'one fresh capacity observation sequence; no retry')
+    started=time.monotonic();civil=time.time_ns();count=0;last=None
+    with log.open('x') as stream:
+        while True:
+            require(not stop_requested(),'shared stop during capacity wait')
+            require(time.monotonic()<outer_deadline,'original outer schedule deadline during capacity wait')
+            if name is not None:active(generation)
+            # This actual inventory includes every surviving old and new file.
+            # No unlink receipt or projected future deletion subtracts bytes.
+            with accounting(exclusive=True):
+                current=inventory_unlocked();free=shutil.disk_usage(ROOT).free
+                last=reservation(current,generation,free)
+            elapsed=time.monotonic()-started
+            observed=dict(time_ns=time.time_ns(),elapsed_seconds=elapsed,reservation=last)
+            text=json.dumps(observed)+'\n'
+            require(stream.tell()+len(text.encode())<=PLAN['per_stream_log_bytes'],'bounded capacity observation log')
+            stream.write(text);stream.flush();count+=1
+            if last['accepted'] and elapsed<=PLAN['capacity_wait_seconds']:
+                os.fsync(stream.fileno())
+                record=dict(status='passed-capacity-admission',generation=generation,case=name,
+                            started_ns=civil,ended_ns=time.time_ns(),elapsed_seconds=elapsed,
+                            deadline_seconds=PLAN['capacity_wait_seconds'],sample_interval_seconds=PLAN['capacity_sample_seconds'],
+                            outer_deadline_monotonic=outer_deadline,
+                            observations=count,reservation=last,plan=identity(ROOT/'plan.json'),
+                            admission=identity(admission_path(generation)) if name is not None else None,
+                            logs=dict(path=str(log),**identity(log)))
+                exclusive_write(path,record)
+                return record
+            if elapsed>=PLAN['capacity_wait_seconds']:
+                os.fsync(stream.fileno())
+                failed=dict(status='failed-capacity-admission',generation=generation,case=name,started_ns=civil,
+                            ended_ns=time.time_ns(),elapsed_seconds=elapsed,observations=count,reservation=last,
+                            deadline_seconds=PLAN['capacity_wait_seconds'],reason='capacity-wait-wall',
+                            plan=identity(ROOT/'plan.json'),outer_deadline_monotonic=outer_deadline,
+                            logs=dict(path=str(log),**identity(log)))
+                exclusive_write(path.with_suffix('.failed.json'),failed)
+                raise ValueError('actual capacity wait exhausted; no native command started')
+            # Monitor the original aggregate bounds while waiting for physical
+            # capacity. Capacity waiting never extends a native command clock.
+            sample({},coordinator_pid)
+            time.sleep(PLAN['capacity_sample_seconds'])
+
+
+def reclaim(path):
+    path=Path(path).resolve()
+    matches=[g for g,root in ROOTS.items() if path.parent==root/f'whole-c{g}']
+    require(len(matches)==1 and admitted(ROOTS[matches[0]])==matches[0],'only caller mutation may retire')
+    g=matches[0]
+    require(path.name in {f'certificate-{n}.joysc' for n in case_names(g)},'exact selected mutation file')
+    with accounting(exclusive=True):
+        require(not stop_requested(),'preserve partial after stop');active(g)
+        path.unlink()
+
+
+def sample(baseline,coordinator_pid):
+    sizes=inventory();generations={};reason=None;all_mutants=[]
+    for g,root in ROOTS.items():
+        work=root/f'whole-c{g}'
+        dynamic={Path(p):n for p,n in sizes.items() if Path(p).is_relative_to(root) and p not in baseline}
+        mutants={str(p):n for p,n in dynamic.items() if p.parent==work and p.suffix=='.joysc'}
+        dags={str(p):n for p,n in dynamic.items() if p.parent==work and p.suffix=='.dag'}
+        metadata=sum(dynamic.values())-sum(mutants.values())-sum(dags.values())
+        generations[str(g)]=dict(mutants=mutants,canonical_output_bytes=sum(dags.values()),metadata_bytes=metadata)
+        all_mutants.extend(mutants)
+        if any(n>PLAN['proofs'][str(g)]['bytes']+PLAN['mutant_growth_ceiling_bytes'] for n in mutants.values()):reason='generation-mutant-reservation'
+        if sum(dags.values())>PLAN['canonical_and_output_bucket_per_generation']:reason=reason or 'generation-output-reservation'
+        if any(n>(32*MIB if Path(p).name=='rechain.dag' else 16*MIB) for p,n in dags.items()):reason=reason or 'individual-canonical-output'
+        if metadata>PLAN['metadata_bucket_per_generation']:reason=reason or 'generation-metadata-reservation'
+    if len(all_mutants)>1:reason=reason or 'one-mutation-across-generations'
+    metadata=sum(n for p,n in sizes.items() if Path(p).is_relative_to(ROOT) and (p not in baseline or Path(p).is_relative_to(ROOT/'run-1')))
+    if metadata>PLAN['metadata_bucket_per_generation']:reason=reason or 'coordinator-metadata-reservation'
+    processes=process_snapshot(coordinator_pid);rss=sum(p['rss_kib']*1024 for p in processes)
+    free=shutil.disk_usage(ROOT).free;total=sum(sizes.values())
+    if total>PLAN['shared_disk_bytes']:reason=reason or 'shared-owned-disk'
+    if free<PLAN['free_floor_bytes']:reason=reason or 'shared-free-disk'
+    if rss>PLAN['combined_sampled_rss_bytes']:reason=reason or 'shared-rss'
+    result=dict(time_ns=time.time_ns(),owned_bytes=total,free_bytes=free,rss_bytes=rss,
+                processes=processes,generations=generations,coordinator_metadata_bytes=metadata,reason=reason)
+    if reason:fail(reason,result)
+    return result
+
+def identity(path):
+    path = Path(path)
+    if not stat.S_ISREG(path.lstat().st_mode):
+        raise ValueError('regular file required: ' + str(path))
+    with path.open('rb') as stream:
+        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+    return dict(bytes=path.stat().st_size, sha256=digest)
+
+def write(path, value):
+    path = Path(path)
+    temporary = path.with_name(path.name + '.pending-' + str(os.getpid()))
+    with temporary.open('x') as stream:
+        stream.write(json.dumps(value, indent=2) + '\n')
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+
+@contextlib.contextmanager
+def accounting(exclusive=False):
+    with (ROOT / 'accounting.lock').open('a+') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
+        yield
+
+def files(scope):
+    for directory, dirs, names in os.walk(scope):
+        dirs[:] = [d for d in dirs if d != 'target-helper']
+        for d in dirs:
+            if (Path(directory) / d).is_symlink():
+                raise ValueError('symlink directory in owned scope')
+        for name in names:
+            path = Path(directory) / name
+            try:
+                mode = path.lstat().st_mode
+            except FileNotFoundError:
+                if '.pending-' in name:
+                    continue
+                raise
+            if not stat.S_ISREG(mode):
+                raise ValueError('nonregular owned file: ' + str(path))
+            yield path
+
+def process_snapshot(root_pid):
+    with accounting(exclusive=True):
+        all_rows = ownership.snapshot()
+        selected = {root_pid}
+        while True:
+            larger = selected | {r['pid'] for r in all_rows if r['ppid'] in selected}
+            if larger == selected:
+                break
+            selected = larger
+        for path in sorted((ROOT / 'native-processes').glob('*.json')):
+            retired = path.with_suffix('.retired')
+            if retired.exists():
+                continue
+            record = json.loads(path.read_text())
+            if record['coordinator'] != root_pid:
+                raise ValueError('foreign coordinator process registration')
+            observed_path = path.with_suffix('.observed')
+            if observed_path.exists():
+                observed = json.loads(observed_path.read_text())
+                if any(observed[k] != record[k] for k in ('pid', 'pgid', 'started')):
+                    raise ValueError('process membership binding changed')
+                record = observed
+            result = ownership.observe(record, all_rows)
+            write(observed_path, record)
+            if result['status'] == 'empty':
+                write(retired, dict(time_ns=time.time_ns(), original=identity(path),
+                                    final_observation=result))
+            elif result['status'] == 'unbound':
+                fail('native-process-identity-changed', dict(record=record, observation=result))
+            else:
+                selected.update(row['pid'] for row in result['members'])
+        return [r for r in all_rows if r['pid'] in selected]

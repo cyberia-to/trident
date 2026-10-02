@@ -1,0 +1,96 @@
+"""Adversarial failed-schedule/selected-case admission; no native workload."""
+import copy
+import json
+from pathlib import Path
+import unittest
+from prior_pins_v5 import BASE, load
+import prior_cases_v5 as cases
+import prior_transitions_v5 as transitions
+import prior_schedule_v5 as schedule
+from prior_quiescence_v5 import birth, classify
+
+
+class PriorTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.suite=load(BASE/'whole-proof-attacks-v4-c2/whole-c2/receipt.json')
+        cls.ready=load(BASE/'whole-proof-attacks-v4-c2/whole-c2/prelude-complete.json')
+        cls.admitted=load(BASE/'whole-proof-attacks-v4-c2/whole-c2/retained-cost-admission.json')
+        shared=BASE/'whole-proof-attacks-completion-v4'
+        cls.before,cls.unlinked,cls.final=(load(shared/p) for p in ('retained-cost-retirement-before.json','retained-cost-retirement-unlinked.json','retained-cost-retirement.json'))
+        cls.run,cls.admission,cls.native=(load(shared/p) for p in ('run-1/receipt.json','admission.json','native-processes/whole-c2-verify-cost.json'))
+
+    def test_actual_prior_snapshot_identity(self):
+        self.assertEqual(transitions.prelude_snapshot(self.suite),self.ready['suite_receipt'])
+        self.assertEqual(self.ready['suite_receipt']['sha256'],'f02d9209623d94db0cedc04388c129173757f2bb9fa03c668c7f1c3e764a73d6')
+        self.assertNotEqual(self.suite['status'],'passed-completion')
+        self.assertNotIn('immutable_inputs_after',self.suite)
+
+    def test_selected_exact_cost_and_old_eligibility(self):
+        prior=self.suite['prior_cases']
+        self.assertEqual(cases.suite_contract(self.suite,prior),self.ready['rejection'])
+        changes=[lambda s:s.update(status='passed-completion'),lambda s:s.update(generation=1),
+                 lambda s:s['original_proof'].update(sha256='0'*64),lambda s:s['profile'].update(steps=1),
+                 lambda s:s['prior_cases'].update(status='failed'),lambda s:s.update(immutable_inputs_after={}),
+                 lambda s:s.pop('input_error'),lambda s:s.update(error='another failure'),
+                 lambda s:s['rejections'].append(copy.deepcopy(s['rejections'][0])),lambda s:s['rejections'].clear(),
+                 lambda s:s['rejections'][0].update(name='continuation'),lambda s:s['rejections'][0].update(error='format mismatch'),
+                 lambda s:s['rejections'][0]['certificate'].update(sha256='0'*64),
+                 lambda s:s['rejections'][0]['recipe'].update(construction_reused=False)]
+        for change in changes:
+            s=copy.deepcopy(self.suite);change(s)
+            with self.subTest(change=change),self.assertRaises((ValueError,KeyError)):cases.suite_contract(s,prior)
+
+    def test_failed_suite_snapshot_cannot_erase_new_cases(self):
+        for change in (lambda s:s.update(status='running'),lambda s:s.update(immutable_inputs_after={}),
+                       lambda s:s['rejections'].append(copy.deepcopy(s['rejections'][0]))):
+            s=copy.deepcopy(self.suite);change(s)
+            with self.assertRaises(ValueError):transitions.prelude_snapshot(s)
+        s=copy.deepcopy(self.suite);s['rejections'][0]['error']='another error'
+        self.assertNotEqual(transitions.prelude_snapshot(s),self.ready['suite_receipt'])
+
+    def retirement(self,b,u,f):
+        transitions.retirement_contract(b,u,f,self.admitted,Path(self.final['path']))
+
+    def test_actual_retirement_without_access_to_deleted_body(self):
+        self.retirement(self.before,self.unlinked,self.final)
+        self.assertTrue(self.final['removed']);self.assertEqual(self.final['charged_bytes'],0)
+
+    def test_retirement_identity_order_and_failed_history(self):
+        changes=[lambda b,u,f:f.update(status='failed'),lambda b,u,f:f.update(removed=False),
+                 lambda b,u,f:f.update(charged_bytes=1),lambda b,u,f:f['identity'].update(sha256='0'*64),
+                 lambda b,u,f:f.update(failed_original_verification_remains_failed=False),
+                 lambda b,u,f:f.update(completed_ns=b['time_ns']-1),lambda b,u,f:b['stat'].update(st_ino=1),
+                 lambda b,u,f:u.update(charged_bytes=0),lambda b,u,f:b.update(removed=True)]
+        for change in changes:
+            b,u,f=map(copy.deepcopy,(self.before,self.unlinked,self.final));change(b,u,f)
+            with self.subTest(change=change),self.assertRaises(ValueError):self.retirement(b,u,f)
+
+    def test_actual_cleanup_does_not_imply_suite_success(self):
+        schedule.cleanup_contract(self.run,self.admission,self.native)
+        self.assertEqual(self.run['status'],'failed')
+        self.assertEqual(self.run['children_final']['2']['exit_code'],1)
+
+    def test_cleanup_false_empty_or_wrong_birth_rejected(self):
+        changes=[lambda r:r['cleanup'].update(status='failed'),lambda r:r.update(cleanup_error='error'),
+                 lambda r:r['cleanup']['groups'].clear(),lambda r:r['cleanup']['groups'][0]['binding'].update(started='changed'),
+                 lambda r:r['cleanup']['groups'][0].update(final=dict(status='owned',members=[])),
+                 lambda r:r['cleanup']['groups'][0]['events'][-1].update(observation=dict(status='owned',members=[])),
+                 lambda r:r['cleanup']['groups'][0]['events'][-1].update(time_ns=r['ended_ns']+1)]
+        for change in changes:
+            r=copy.deepcopy(self.run);change(r)
+            with self.subTest(change=change),self.assertRaises((ValueError,IndexError)):schedule.cleanup_contract(r,self.admission,self.native)
+
+    def test_fresh_birth_aware_quiescence(self):
+        cutoff=birth('Fri Oct  2 17:00:00 2026');owners={10:'Fri Oct  2 16:00:00 2026'}
+        okay=classify(b'10 10 Fri Oct  2 17:00:03 2026\n11 11 Fri Oct  2 16:00:00 2026\n',owners,cutoff,cutoff+4*10**9)
+        self.assertEqual(len(okay['overlaps']),1)
+        self.assertTrue(okay['no_live_original_owners'])
+        for raw in (b'10 10 Fri Oct  2 16:00:00 2026\n',b'11 10 Fri Oct  2 16:00:00 2026\n',
+                    b'10 10 Fri Oct  2 17:00:02 2026\n',b'10 10 Fri Oct  2 17:00:05 2026\n',
+                    b'10 10 malformed\n',b'10 10 Fri Oct  2 17:00:03 2026\n10 20 Fri Oct  2 17:00:03 2026\n',b''):
+            with self.subTest(raw=raw),self.assertRaises(ValueError):classify(raw,owners,cutoff,cutoff+4*10**9)
+        self.assertTrue(classify(b'11 10 Fri Oct  2 17:00:03 2026\n',owners,cutoff,cutoff+4*10**9)['no_live_original_owners'])
+
+
+if __name__=='__main__':unittest.main()

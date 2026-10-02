@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/replay_prior_v5.py", line 15, in <module>
+    result=review(BASE,g,proof,verifier,expected)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/prior_cases_v5.py", line 14, in review
+    return LEGACY.review(base,generation,proof,original_verifier,expected)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior_cases_v4.py", line 44, in review
+    prior = original_admission(base, generation, Path(proof), Path(original_verifier), expected)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior_cases_v4.py", line 24, in original_admission
+    return module.review(base, generation, proof, verifier, expected)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/prior_cases.py", line 29, in review
+    C.require(proof == whole / f"attempts/c{number}-selfbuild-1/proof.joysc" and
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              verifier == whole / f"attempts/c{number}-fresh-verification-1",
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              "caller uses canonical successful generation paths")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v2/check.py", line 63, in require
+    raise ValueError(message)
+ValueError: caller uses canonical successful generation paths

@@ -1,0 +1,331 @@
+"""Pure ownership mocks and tiny capacity fixtures; no native proof workload."""
+import contextlib
+import copy
+import errno
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+from types import SimpleNamespace
+import unittest
+from unittest.mock import Mock,patch
+import ownership
+import resources
+import run
+
+
+def row(pid,group=50,born="original",state="S"):
+    return dict(pid=pid,pgid=group,started=born,state=state,ppid=1,rss_kib=10)
+
+
+class CapacityTests(unittest.TestCase):
+    def setUp(self):
+        self.stack=contextlib.ExitStack();self.addCleanup(self.stack.close)
+        self.root=Path(self.stack.enter_context(tempfile.TemporaryDirectory())).resolve()
+        self.plan=copy.deepcopy(resources.PLAN);self.plan['capacity_wait_seconds']=2
+        (self.root/'plan.json').write_text(json.dumps(self.plan))
+        self.stack.enter_context(patch.object(resources,'ROOT',self.root))
+        self.stack.enter_context(patch.object(resources,'ROOTS',{1:self.root/'suite1',2:self.root/'suite2'}))
+        self.stack.enter_context(patch.object(resources,'PLAN',self.plan))
+        self.clock=0
+        self.stack.enter_context(patch.object(resources.time,'monotonic',side_effect=lambda:self.clock))
+        self.stack.enter_context(patch.object(resources.time,'sleep',side_effect=self.advance))
+        self.stack.enter_context(patch.object(resources,'sample',return_value={'reason':None}))
+        self.stack.enter_context(patch.object(resources,'inventory_unlocked',return_value={'retained':1024}))
+        self.full=resources.reservation({'retained':1024},1,100*resources.GIB)
+
+    def advance(self,seconds):self.clock+=seconds
+
+    def run_wait(self,frees,generation=1):
+        with patch.object(resources.shutil,'disk_usage',side_effect=[SimpleNamespace(free=x) for x in frees]):
+            return resources.wait_capacity(generation,coordinator_pid=os.getpid(),outer_deadline=1000)
+
+    def test_actual_free_success_first_observation(self):
+        r=self.run_wait([self.full['required_free_bytes']])
+        self.assertEqual('passed-capacity-admission',r['status']);self.assertEqual(1,r['observations'])
+        self.assertEqual(1024,r['reservation']['existing_bytes'])
+
+    def test_delayed_physical_space_observed_then_admitted(self):
+        floor=self.full['required_free_bytes'];r=self.run_wait([floor-1,floor-1,floor])
+        self.assertEqual(3,r['observations']);self.assertEqual(2,r['elapsed_seconds'])
+        rows=[json.loads(x) for x in resources.permit_path(1).with_suffix('.jsonl').read_text().splitlines()]
+        self.assertEqual([False,False,True],[x['reservation']['accepted'] for x in rows])
+
+    def test_no_projection_credit_before_physical_observation(self):
+        floor=self.full['required_free_bytes']
+        with self.assertRaisesRegex(ValueError,'capacity wait exhausted'):self.run_wait([floor-1]*3)
+        self.assertFalse(resources.permit_path(1).exists())
+        failure=resources.load(resources.permit_path(1).with_suffix('.failed.json'))
+        self.assertEqual('failed-capacity-admission',failure['status']);self.assertEqual(3,failure['observations'])
+
+    def test_capacity_permit_is_never_retried(self):
+        self.run_wait([self.full['required_free_bytes']])
+        with self.assertRaisesRegex(ValueError,'one fresh capacity'):self.run_wait([self.full['required_free_bytes']])
+
+    def test_current_inventory_recomputed_each_observation(self):
+        floor=self.full['required_free_bytes']
+        with patch.object(resources,'inventory_unlocked',side_effect=[{'retained':1024},{'retained':2048}]):
+            result=self.run_wait([floor-1,floor])
+        self.assertEqual(2048,result['reservation']['existing_bytes'])
+
+    def test_outer_schedule_not_extended_by_capacity_wait(self):
+        with patch.object(resources.shutil,'disk_usage',return_value=SimpleNamespace(free=10*resources.GIB)):
+            with self.assertRaisesRegex(ValueError,'outer schedule deadline'):
+                resources.wait_capacity(1,coordinator_pid=os.getpid(),outer_deadline=1)
+        self.assertFalse(resources.permit_path(1).exists())
+
+    def test_shared_stop_refuses_capacity(self):
+        resources.fail('fixture')
+        with self.assertRaisesRegex(ValueError,'shared stop'):self.run_wait([100*resources.GIB])
+
+    def test_physical_extra_ten_gib_headroom_preserved(self):
+        for g in (1,2):
+            r=resources.reservation({'old':1},g,100*resources.GIB)
+            self.assertEqual(max(r['growth_bytes']+8*resources.GIB,r['mutant_bytes']+10*resources.GIB),r['required_free_bytes'])
+
+    def test_only_active_generation_mutant_reserved(self):
+        r=resources.reservation({'old':1},1,100*resources.GIB)
+        self.assertEqual(self.plan['proofs']['1']['bytes']+32*resources.MIB,r['mutant_bytes'])
+        self.assertEqual(r['mutant_bytes']+112*resources.MIB+512*resources.MIB,r['growth_bytes'])
+
+    def test_existing_retained_bytes_cannot_be_dropped(self):
+        r=resources.reservation({'old':26*resources.GIB},1,100*resources.GIB)
+        self.assertFalse(r['accepted']);self.assertIn('shared-owned-reservation',r['reasons'])
+
+
+class AuthorizationTests(unittest.TestCase):
+    def setUp(self):
+        self.stack=contextlib.ExitStack();self.addCleanup(self.stack.close)
+        self.root=Path(self.stack.enter_context(tempfile.TemporaryDirectory())).resolve()
+        self.stack.enter_context(patch.object(resources,'ROOT',self.root))
+        self.stack.enter_context(patch.object(resources,'ROOTS',{1:self.root/'suite1',2:self.root/'suite2'}))
+        (self.root/'capacity').mkdir()
+        self.activate(1)
+
+    def activate(self,g):
+        if not resources.admission_path(g).exists():resources.exclusive_write(resources.admission_path(g),{'generation':g,'fixture':True})
+        resources.write(self.root/'active-generation.json',dict(status='active',generation=g,admission=resources.identity(resources.admission_path(g))))
+
+    def permit(self,g,name):
+        resources.exclusive_write(resources.permit_path(g,name),dict(status='passed-capacity-admission',generation=g,case=name,
+                 admission=resources.identity(resources.admission_path(g)),reservation={'accepted':True}))
+
+    def test_active_exact_mutation_permit(self):
+        self.permit(1,'cost');resources.authorize_native(1,'whole-c1-construct-cost',['/helper'],'helper')
+        resources.authorize_native(1,'whole-c1-verify-cost',['/joy'],'verify')
+
+    def test_missing_case_permit_blocks_native(self):
+        with self.assertRaises(FileNotFoundError):resources.authorize_native(1,'whole-c1-construct-cost',['/helper'],'helper')
+
+    def test_previous_generation_cannot_run(self):
+        self.permit(1,'cost');self.activate(2)
+        with self.assertRaisesRegex(ValueError,'currently admitted'):resources.authorize_native(1,'whole-c1-construct-cost',['/helper'],'helper')
+
+    def test_next_generation_cannot_run_early(self):
+        self.activate(2);self.permit(2,'omit-terminal');self.activate(1)
+        with self.assertRaisesRegex(ValueError,'currently admitted'):resources.authorize_native(2,'whole-c2-construct-omit-terminal',['/helper'],'helper')
+
+    def test_c2_cost_cannot_be_reexecuted(self):
+        self.activate(2)
+        with self.assertRaisesRegex(ValueError,'selected fresh'):resources.authorize_native(2,'whole-c2-verify-cost',['/joy'],'verify')
+
+    def test_changed_immutable_admission_rejects_permit(self):
+        self.permit(1,'cost');resources.write(resources.admission_path(1),{'changed':True})
+        with self.assertRaises(ValueError):resources.authorize_native(1,'whole-c1-construct-cost',['/helper'],'helper')
+
+    def test_wrong_command_kind_rejects(self):
+        self.permit(1,'cost')
+        with self.assertRaisesRegex(ValueError,'command kind'):resources.authorize_native(1,'whole-c1-construct-cost',['/helper'],'verify')
+
+    def test_unfinished_quiescent_state_rejects(self):
+        self.permit(1,'cost');state=resources.load(self.root/'active-generation.json');state['status']='quiescent';resources.write(self.root/'active-generation.json',state)
+        with self.assertRaises(ValueError):resources.authorize_native(1,'whole-c1-construct-cost',['/helper'],'helper')
+
+    def test_old_admission_not_overwritten_for_second_generation(self):
+        original=resources.admission_path(1).read_bytes();self.activate(2)
+        self.assertEqual(original,resources.admission_path(1).read_bytes())
+
+    def test_guard_starts_no_native_without_capacity(self):
+        source=run.BASE/'whole-proof-attacks-v5-c1/guard.py'
+        spec=importlib.util.spec_from_file_location('v5_guard_fixture',source)
+        guard=importlib.util.module_from_spec(spec);spec.loader.exec_module(guard)
+        with patch.object(resources,'admitted',return_value=1),patch.object(guard.subprocess,'Popen') as launch:
+            with self.assertRaises(FileNotFoundError):guard.run('whole-c1-construct-cost',['/helper'],'helper',[])
+        launch.assert_not_called()
+
+    def test_registration_rechecks_stop_under_accounting_lock(self):
+        self.permit(1,'cost')
+        resources.write(resources.admission_path(1),dict(pid=99,children={'1':123}))
+        self.activate(1)
+        permit=resources.load(resources.permit_path(1,'cost'));permit['admission']=resources.identity(resources.admission_path(1))
+        resources.write(resources.permit_path(1,'cost'),permit)
+        def bind(_pid):
+            resources.fail('late-stop')
+            return dict(pid=50,pgid=50,started='fixture',members={'50':'fixture'})
+        with patch.object(resources.os,'getppid',return_value=123),patch.object(resources.os,'getpgrp',return_value=50),\
+                patch.object(resources.os,'getpid',return_value=50),patch.object(ownership,'bind',side_effect=bind):
+            with self.assertRaisesRegex(ValueError,'shared stop'):
+                resources.register_native(1,'whole-c1-construct-cost',['/helper'])
+        self.assertFalse((self.root/'native-processes/whole-c1-construct-cost.json').exists())
+
+
+class ScopeTests(unittest.TestCase):
+    def test_all_prior_leases_present(self):
+        names={str(p.relative_to(run.BASE)) for p in run.lease_paths()}
+        for v in (2,3,4):
+            for g in (1,2):self.assertIn(f'whole-proof-attacks-v{v}-c{g}/whole-suite.lock',names)
+        self.assertIn('whole-proof-attacks/whole-suite.lock',names)
+        self.assertIn('whole-proof-attacks-completion-v4/coordinator.lock',names)
+
+    def test_original_caps_unchanged(self):
+        old=resources.load(run.BASE/'whole-proof-attacks-completion-v4/plan.json')
+        for key in ('shared_disk_bytes','free_floor_bytes','combined_sampled_rss_bytes','mutant_growth_ceiling_bytes',
+                    'canonical_and_output_bucket_per_generation','metadata_bucket_per_generation','per_stream_log_bytes',
+                    'readiness_seconds','outer_schedule_seconds'):
+            self.assertEqual(old[key],resources.PLAN[key])
+        self.assertEqual([1,2],resources.PLAN['generation_order'])
+
+    def test_all_v4_scopes_still_charged(self):
+        self.assertTrue({'whole-proof-attacks-v4-c1','whole-proof-attacks-v4-c2','whole-proof-attacks-completion-v4'}<=set(resources.PLAN['retained_scopes']))
+
+    def test_one_mutant_across_both_generations(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);roots={g:root/f'c{g}' for g in (1,2)}
+            sizes={str(p/f'whole-c{g}/certificate-cost.joysc'):1 for g,p in roots.items()}
+            with patch.object(resources,'ROOT',root/'controller'),patch.object(resources,'ROOTS',roots),\
+                    patch.object(resources,'inventory',return_value=sizes),patch.object(resources,'process_snapshot',return_value=[]),\
+                    patch.object(resources.shutil,'disk_usage',return_value=SimpleNamespace(free=100*resources.GIB)),patch.object(resources,'fail') as failure:
+                result=resources.sample({},123)
+            self.assertEqual('one-mutation-across-generations',result['reason']);failure.assert_called_once()
+
+    def test_no_old_path_can_be_reclaimed(self):
+        with self.assertRaisesRegex(ValueError,'caller mutation'):
+            resources.reclaim(run.BASE/'whole-proof-attacks-v4-c2/whole-c2/certificate-cost.joysc')
+
+
+class OwnershipTests(unittest.TestCase):
+    def binding(self):
+        return dict(pid=50, pgid=50, started='original', members={'50': 'original'})
+
+    def test_reused_identifier_never_becomes_owned(self):
+        self.assertEqual('unbound', ownership.observe(self.binding(), [row(50, born='later')])['status'])
+
+    def test_known_descendant_keeps_leaderless_group_bound(self):
+        record = self.binding()
+        self.assertEqual('owned', ownership.observe(record, [row(50), row(51)])['status'])
+        self.assertEqual('owned', ownership.observe(record, [row(51)])['status'])
+
+    def test_unknown_leaderless_group_is_not_adopted(self):
+        self.assertEqual('unbound', ownership.observe(self.binding(), [row(51)])['status'])
+
+    def test_empty_is_observed(self):
+        self.assertEqual('empty', ownership.observe(self.binding(), [row(60, group=60)])['status'])
+
+    def test_unbound_group_never_signalled(self):
+        with patch.object(ownership, 'snapshot', return_value=[row(50, born='later')]), \
+                patch.object(ownership.os, 'killpg') as signal:
+            result = ownership.stop_group(self.binding(), grace=0, final_wait=0)
+        signal.assert_not_called()
+        self.assertEqual('failed', result['status'])
+
+    def test_permission_error_is_retained_and_not_success(self):
+        with patch.object(ownership, 'snapshot', return_value=[row(50, state='Z')]), \
+                patch.object(ownership.os, 'killpg', side_effect=PermissionError(errno.EPERM, 'denied')):
+            result = ownership.stop_group(self.binding(), grace=0, final_wait=0)
+        self.assertEqual('failed', result['status'])
+        self.assertEqual([errno.EPERM, errno.EPERM], [r['errno'] for r in result['events'] if 'errno' in r])
+
+    def test_empty_after_permission_error_is_separate_observation(self):
+        with patch.object(ownership, 'snapshot', side_effect=[[row(50)], []]), \
+                patch.object(ownership.os, 'killpg', side_effect=PermissionError(errno.EPERM, 'denied')):
+            result = ownership.stop_group(self.binding(), grace=0, final_wait=0)
+        self.assertEqual('passed', result['status'])
+        self.assertEqual(errno.EPERM, next(r['errno'] for r in result['events'] if 'errno' in r))
+
+    def test_one_cleanup_failure_does_not_skip_other_groups(self):
+        records = {1: self.binding(), 2: dict(pid=80, pgid=80, started='other')}
+        children = {1: SimpleNamespace(pid=50), 2: SimpleNamespace(pid=80)}
+        with tempfile.TemporaryDirectory() as temp, patch.object(run, 'ROOT', Path(temp)), \
+                patch.object(resources, 'ROOT', Path(temp)), \
+                patch.object(ownership, 'stop_child', side_effect=[PermissionError('first'), {'status': 'passed'}]) as stop:
+            result = run.stop_all(children, records)
+        self.assertEqual(2, stop.call_count)
+        self.assertEqual('failed', result['status'])
+        self.assertEqual('passed', result['groups'][1]['status'])
+
+    def test_malformed_registry_does_not_skip_known_child(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(run, 'ROOT', Path(temp)), \
+                patch.object(resources, 'ROOT', Path(temp)), \
+                patch.object(ownership, 'stop_child', return_value={'status': 'passed'}) as stop:
+            registry = Path(temp) / 'native-processes'
+            registry.mkdir()
+            (registry / 'broken.json').write_text('{')
+            child = SimpleNamespace(pid=50)
+            result = run.stop_all({1: child}, {1: self.binding()})
+        stop.assert_called_once_with(child, self.binding())
+        self.assertEqual('failed', result['status'])
+        self.assertEqual('passed', result['groups'][1]['status'])
+
+    def test_late_native_registration_is_swept_after_suites(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(run, 'ROOT', Path(temp)), \
+                patch.object(resources, 'ROOT', Path(temp)):
+            registry = Path(temp) / 'native-processes'
+            registry.mkdir()
+            def late(_child, _binding):
+                resources.write(registry / 'late.json', self.binding())
+                return dict(status='passed')
+            with patch.object(ownership, 'stop_child', side_effect=late), \
+                    patch.object(ownership, 'stop_group', return_value={'status': 'passed'}) as stop:
+                result = run.stop_all({1: SimpleNamespace(pid=80)}, {1: dict(pid=80, pgid=80, started='other')})
+        stop.assert_called_once()
+        self.assertEqual('after-suite-shutdown', result['groups'][-1]['sweep'])
+        self.assertEqual('passed', result['status'])
+
+    def test_unbound_started_child_is_still_handled(self):
+        child = Mock(pid=50)
+        child.poll.return_value = None
+        live = dict(row(50), ppid=ownership.os.getpid())
+        with patch.object(ownership, 'snapshot', return_value=[live]), \
+                patch.object(ownership, 'stop_group', return_value={'status': 'passed'}) as stop:
+            result = ownership.stop_child(child)
+        self.assertTrue(result['binding_recovered_from_live_direct_child'])
+        self.assertEqual(stop.call_args.args[0]['started'], 'original')
+
+    def test_snapshot_failure_only_signals_owned_direct_child(self):
+        child = Mock(pid=50)
+        child.poll.return_value = None
+        with patch.object(ownership, 'snapshot', side_effect=OSError('snapshot unavailable')), \
+                patch.object(ownership.os, 'killpg') as signal_group:
+            result = ownership.stop_child(child)
+        child.terminate.assert_called_once()
+        signal_group.assert_not_called()
+        self.assertEqual('failed', result['status'])
+
+    def test_finished_child_without_binding_is_not_claimed_never_started(self):
+        child = Mock(pid=50, returncode=0)
+        child.poll.return_value = 0
+        result = ownership.stop_child(child)
+        self.assertEqual('failed', result['status'])
+        self.assertTrue(result['binding_missing'])
+
+    def test_snapshot_failure_with_original_binding_still_cleans_direct_child(self):
+        child = Mock(pid=50)
+        child.poll.return_value = None
+        with patch.object(ownership, 'snapshot', side_effect=OSError('snapshot unavailable')), \
+                patch.object(ownership.os, 'killpg') as signal_group:
+            result = ownership.stop_child(child, self.binding())
+        child.terminate.assert_called_once()
+        signal_group.assert_not_called()
+        self.assertEqual('failed', result['status'])
+        self.assertFalse(result['binding_missing'])
+
+    def test_process_inventory_is_bounded_and_utc(self):
+        with patch.object(ownership.subprocess, 'check_output', return_value='50 1 50 10 S Fri Oct  2 12:00:00 2026\n') as ps:
+            ownership.snapshot()
+        self.assertEqual(15, ps.call_args.kwargs['timeout'])
+        self.assertEqual('UTC', ps.call_args.kwargs['env']['TZ'])
+
+
+if __name__=='__main__':unittest.main()
