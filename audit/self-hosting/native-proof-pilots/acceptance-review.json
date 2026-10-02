@@ -1,0 +1,85 @@
+{
+  "schema": "trident/sh7-doc-acceptance-independent-review/v1",
+  "status": "passed",
+  "time_utc": "2026-10-02T03:26:51.314521+00:00",
+  "review_scope": "Read-only changed roadmap/ledger/plan and normative SH7/SH8 scope against retained pilot/historical dynamic receipts and previously reviewed production relation. Independently checked all 637 small-package indexed files and selected command/report bindings. No new proof execution, no full 602 MB archive byte replay, no SH8 proof consumed, no root-owned source writes.",
+  "source_files": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/.claude/plans/native-compiler-arena.md": {
+      "bytes": 2831,
+      "sha256": "ea976148479f9a5af127785edf673c2897c90dceb485ccef752b02761ffeb09c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting-progress.md": {
+      "bytes": 46630,
+      "sha256": "2b506921ff5ee1ade6e4a4c77e34ff1d171f2cb46d51f5b983ec7e00d5a094b4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/reference/self-hosting.md": {
+      "bytes": 63539,
+      "sha256": "fc9e7be1b936b5df2331f914ca05aa8a90c2049419db7517360a169a212564ec"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting-2026-09-23/soft3-runtime-probes.json": {
+      "bytes": 648,
+      "sha256": "d927efa724a339f675b0fc484a6eb1f90ba1dabeb5e14e63dcdffef667b47ed5"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/README.md": {
+      "bytes": 5474,
+      "sha256": "d4dbced0d16dfb3108211063db3f1102ac862a9b5f3fb197029f9b952918cf91"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/pilot-report.md": {
+      "bytes": 7615,
+      "sha256": "7cd16f9690cd2f0fe18101a9f0ffb12f1b24b325a8324d9e3098e26f63709c1a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/pilot-summary.json": {
+      "bytes": 21263,
+      "sha256": "cacbcd13b2aa9736a65d82a8b778c02ab1bb74e8ecff2b9c460d2981a59a33cd"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/root-review.json": {
+      "bytes": 3575,
+      "sha256": "3655658672547f14190eb2ea0e02988e01aa596c84d4cb44ee1ff05bd57fcc63"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/independent-review.json": {
+      "bytes": 5058,
+      "sha256": "9e1320fbee599089deb0224b34c8c322d6cbf71e0e87d29bbdba6dc889ce8be8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/historical-dynamic/main.rs": {
+      "bytes": 1529,
+      "sha256": "6e8c5706adadb35f521baedc317acc20b16dcb521e9ae22323d09a7fce7a5bfe"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/historical-dynamic/receipts/execution/receipt.json": {
+      "bytes": 7900,
+      "sha256": "a364351aa3d992ca3bc9e042a6872cff0a3763c4cb131b0fef199105252a58d4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/pilot-receipts.tar.gz": {
+      "bytes": 1382879,
+      "sha256": "325c98956a448bfd29115f2760794897e2457783cb1312b0561db58882fb249b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/certificate/joy/specs/structured-certificates.md": {
+      "bytes": 10069,
+      "sha256": "0a349f91e59983f574e8a45de4abd45799b158997631f9d0f0f18c9e97b3c313"
+    }
+  },
+  "checker": {
+    "bytes": 6993,
+    "sha256": "4a08111a4e3554bf861cf86fccfa1754035c5bfa7aa07ce1f46c1eded024b3e2"
+  },
+  "checks": {
+    "small_package_file_hashes_verified": 637,
+    "summary_matches_original_package": true,
+    "positive_pilots_and_fresh_verified_fields": 5,
+    "accepted_controls": 3,
+    "rejected_mutations": 24,
+    "long_pilot_metrics_and_two_collections_match": true,
+    "exact_historical_dynamic_probe_receipts": true
+  },
+  "findings": [],
+  "acceptance_reasoning": [
+    "Existing SH7 criteria permit a declared full-witness public relation; this delivery changes no acceptance criterion and cites actual SH3/SH4 workloads.",
+    "Five pilots use the complete accepted C2; they are not represented as complete self-build proofs. Separate fresh-process verifier reports bind the same compiler/job/result/cost.",
+    "Adversarial coverage includes rebuilt contexts and canonical wrong outputs with rebound terminals, so output-binding claims are not based only on malformed codecs.",
+    "The historical dynamic formula and public input are exact; production proof/verifier/run receipts report output42, charge6 and 406 proof bytes.",
+    "Disclosure, physical-resource non-attestation and non-preservation/succinctness limits agree with Joy structured certificate contract.",
+    "SH8 remains explicitly open for both complete frozen self-builds, fresh verification, exact output equality and their adversarial tests."
+  ],
+  "pending_external_evidence": [
+    "Root-owned large archive upload/download receipt remains pending as explicitly stated in the reviewed README. This review does not claim completed remote retention or authorize promotion/tag creation."
+  ]
+}
