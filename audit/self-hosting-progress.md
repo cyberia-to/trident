@@ -18,7 +18,7 @@ S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
 corpora. SH7 now accepts the production native public compiler profile through
 [actual C2 pilots and independent review](self-hosting/native-proof-pilots/README.md).
 The complete SH7 archive has [verified durable retention](self-hosting/native-proof-pilots/durable-retention/README.md), including independently downloaded parts, full archive reconstruction and both acceptance-commit install attempts.
-Both complete self-build certificates and fresh positive verification now pass, as do the [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md). SH8 remains open for final adversarial acceptance and durable evidence closure.
+Both complete self-build certificates and fresh positive verification now pass, as do the [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md). Their complete byte-equivalence retention is accepted in Trisha [PR25](https://github.com/cyberia-to/trisha/pull/25), merged as `fbea3cef9a4139075e529c319ff75488ed5df625`. The [retained audit](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md) binds all 22 ordered parts, both complete digests, independent replay and the original failed local attempt. SH8 remains open for final adversarial acceptance and its evidence integration.
 
 S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
 484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
@@ -166,7 +166,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Closed — frozen S1 reproducible native bootstrap | [Original CI and independently replayed artifacts](self-hosting/bootstrap-results/run-36382085561/README.md): twelve bootstrap repetitions, twenty-four actual corpora, six platforms; original aggregate passed |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Closed — native public compiler profile on actual SH3/SH4 pilots | [Complete retained proofs, independent review and dynamic-apply check](self-hosting/native-proof-pilots/README.md); full witness and unattested host resources declared |
-| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — complete positive proof/corpus runs passed; final adversarial and durable-retention gates pending | [Proof-extracted C2/C3 and corpus evidence](self-hosting/whole-proof-corpus-v2-result/README.md); [sequential remaining-case preparation](self-hosting/bootstrap-results/whole-proof-final/completion-v5/README.md), with earlier failed attempts preserved |
+| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — complete positive proof/corpus runs and byte-equivalence retention passed; final adversarial/checker acceptance pending | [Proof-extracted C2/C3 and corpus evidence](self-hosting/whole-proof-corpus-v2-result/README.md); Trisha [PR25 retention](https://github.com/cyberia-to/trisha/pull/25); [sequential remaining-case preparation](self-hosting/bootstrap-results/whole-proof-final/completion-v5/README.md), with earlier failed attempts preserved |
 
 The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-integration/README.md) bind the reviewed source trees to the actual merge commits for Joy PR22/23, Trident PR112/113/114 and Trisha PR18/19. All seven are merged into `release/0.4`. The accepted kit and direct self-build instructions are available there; master and release publication remain outside this delivery.
 
@@ -363,7 +363,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
 | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
-| Complete self-build proof acceptance | Zheng + Joy / SH8 | [Complete positive proof/corpus evidence passes](self-hosting/whole-proof-corpus-v2-result/README.md); final adversarial replay and durable evidence closure remain required |
+| Complete self-build proof acceptance | Zheng + Joy / SH8 | [Complete positive proof/corpus evidence passes](self-hosting/whole-proof-corpus-v2-result/README.md); complete byte retention accepted in Trisha PR25; final adversarial/checker acceptance remains required |
 
 ## Baseline evidence
 
