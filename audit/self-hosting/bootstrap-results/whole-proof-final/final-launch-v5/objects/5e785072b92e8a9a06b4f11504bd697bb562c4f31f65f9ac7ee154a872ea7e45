@@ -1,0 +1,80 @@
+{
+  "status": "passed-independent-offline-review",
+  "started_ns": 1790969151711255000,
+  "sources": {
+    "when_ready.py": {
+      "bytes": 7264,
+      "sha256": "d56faf9f89f6cb4ecad6b13a23c7cc596b3857dc11cd675c7ddf477dff3564e8"
+    },
+    "test_when_ready.py": {
+      "bytes": 4842,
+      "sha256": "f67e10db3d42483bde4055f50b26870a7c2d375d4979623420eb9ae1b5f38c06"
+    }
+  },
+  "probes": [
+    {
+      "name": "stable-success",
+      "status": "passed",
+      "mocked_launches": 1,
+      "caught": null
+    },
+    {
+      "name": "native-nonzero",
+      "status": "failed-checker",
+      "mocked_launches": 1,
+      "caught": "Blocked"
+    },
+    {
+      "name": "changed-terminal-after-check",
+      "status": "failed-checker",
+      "mocked_launches": 1,
+      "caught": "Blocked"
+    },
+    {
+      "name": "checker-timeout",
+      "status": "failed-checker",
+      "mocked_launches": 1,
+      "caught": "TimeoutExpired"
+    },
+    {
+      "name": "readiness-timeout",
+      "status": "blocked-prerequisite",
+      "mocked_launches": 0,
+      "caught": "Blocked"
+    },
+    {
+      "name": "changed-source-before-launch",
+      "status": "blocked-prerequisite",
+      "mocked_launches": 0,
+      "caught": "Blocked"
+    }
+  ],
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_when_ready"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-launch-v5",
+  "exit_code": 0,
+  "existing_tests": 6,
+  "sources_unchanged": true,
+  "checker_source_manifest": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584",
+  "checker_review": "eeaba901de02584018eb0d4b5f4ceac978c738349b0d4ff2468a9f58f2cf4897",
+  "scope": "Six original tests plus six mock-only main lifecycle probes. Actual source gate hashed read-only. No actual watcher/checker/native launch, process signal, network or deletion.",
+  "ended_ns": 1790969151808453000,
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 958,
+      "sha256": "4728a058b1043299ba1cf69811b3086a0f1d900c839ebe571227e7e002396c69"
+    }
+  }
+}
