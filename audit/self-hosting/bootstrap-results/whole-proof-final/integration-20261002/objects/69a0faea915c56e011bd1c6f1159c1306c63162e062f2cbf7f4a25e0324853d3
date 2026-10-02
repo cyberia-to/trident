@@ -1,0 +1,101 @@
+"""Source-equivalent postcommit install from accepted paths and warm fingerprints."""
+import hashlib,json,os,re,shutil,signal,subprocess,time,traceback
+from pathlib import Path
+HERE=Path(__file__).resolve().parent
+LANE=HERE.parent;BASE=LANE.parent;REPO=LANE/'trisha'
+ACCEPTED=BASE/'final-distribution/local-macos-final-rust189'
+FAMILY=ACCEPTED/'temporary/cyber-candidate'
+SOURCE=FAMILY/'unpacked/cyber-source'
+TARGET=FAMILY/'candidate/build/trisha'
+OUT=HERE/'postinstall';OUT.mkdir()
+PREFIX=OUT/'installed'
+def identity(path):
+    with path.open('rb') as src:digest=hashlib.file_digest(src,'sha256').hexdigest()
+    return dict(bytes=path.stat().st_size,sha256=digest)
+def load(path):return json.loads(path.read_text())
+def ref(path):return dict(path=str(path),**identity(path))
+def size(path):return sum(p.stat().st_size for p in path.rglob('*') if p.is_file())
+def save():
+    (OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+report=dict(status='prepared',started_ns=time.time_ns(),driver=ref(Path(__file__)),scope='Fresh-prefix postcommit installation from unchanged source-equivalent accepted archive paths using its existing warm target; not a build from new worktree paths.',commands=[])
+child=None
+try:
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO).decode().strip()
+    assert head=='5a8e386aa1228c6c37603811f1cfda219d281665'
+    assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=REPO)
+    report['delivery_head']=head
+    impact=load(REPO/'audit/whole-retention-byte-closure/source-equivalence.json')
+    for name,wanted in impact['runtime_files_exact'].items():
+        assert identity(REPO/name)==identity(SOURCE/'trisha'/name)==wanted
+    report['source_equivalence']=ref(REPO/'audit/whole-retention-byte-closure/source-equivalence.json')
+    report['accepted_candidate']=ref(ACCEPTED/'release-results/candidate.json')
+    report['source_manifest']=ref(SOURCE/'sources.json')
+    assert report['source_manifest']['sha256']=='9334dead92b990a12acf16a2565aeb762a07311dfc2c3d6cb896c0490dc5926e'
+    manifests=load(SOURCE/'sources.json');vendor=load(SOURCE/'vendor-sources.json')
+    report['sibling_revisions']={v['repository']:v['commit'] for v in manifests}
+    skipped={'audit','docs','reference','roadmap','.github','.claude'}
+    inputs={}
+    for repository in manifests:
+        for row in repository['files']:
+            if row['type']=='file' and Path(row['path']).parts[0] not in skipped:
+                p=SOURCE/repository['repository']/row['path']
+                wanted={k:row[k] for k in ('bytes','sha256')};assert identity(p)==wanted;inputs[str(p)]=wanted
+    for row in vendor:
+        if row['type']=='file':
+            p=SOURCE/'trisha/.vendor'/row['path'];wanted={k:row[k] for k in ('bytes','sha256')};assert identity(p)==wanted;inputs[str(p)]=wanted
+    report['rechecked_build_input_count']=len(inputs)
+    report['vendor_manifest']=ref(SOURCE/'vendor-sources.json')
+    tools=load(ACCEPTED/'release-results/toolchain-paths.json')
+    env=os.environ.copy()
+    removed={k:env.pop(k) for k in list(env) if k.startswith(('RUST','CARGO_BUILD_RUST','CARGO_PROFILE_')) or k in ('CARGO_ENCODED_RUSTFLAGS','CARGO_BUILD_TARGET')}
+    bindir=str(Path(tools['cargo']['path']).parent)
+    env.update(PATH=bindir+os.pathsep+os.environ.get('PATH',''),RUSTC=tools['rustc']['path'],RUSTDOC=tools['rustdoc']['path'],RUSTFLAGS='',CARGO_TARGET_DIR=str(TARGET),CARGO_BUILD_JOBS='2',RUSTUP_TOOLCHAIN='1.89.0')
+    report['environment_overrides']={k:env[k] for k in ('PATH','RUSTC','RUSTDOC','RUSTFLAGS','CARGO_TARGET_DIR','CARGO_BUILD_JOBS','RUSTUP_TOOLCHAIN')}
+    report['removed_environment_keys']=sorted(removed)
+    report['tools']={}
+    for name in ('rustc','cargo','rustdoc'):
+        p=Path(tools[name]['path']);assert identity(p)['sha256']==tools[name]['sha256']
+        version=subprocess.check_output([str(p),'-vV'],env=env).decode()
+        assert '1.89.0' in version and 'host: aarch64-apple-darwin' in version
+        report['tools'][name]=dict(path=str(p),version=version,**identity(p))
+    start_size=size(TARGET);free=shutil.disk_usage(OUT).free
+    assert free>=10*1024**3 and not PREFIX.exists()
+    report.update(target=str(TARGET),target_bytes_before=start_size,free_bytes_before=free,guard=dict(wall_seconds=120,minimum_free_bytes=8*1024**3,maximum_target_growth_bytes=64*1024**2,abort_on_any_compiling_line=True))
+    argv=[tools['cargo']['path'],'install','--path',str(SOURCE/'trisha/cli'),'--locked','--offline','--force','--root',str(PREFIX)]
+    report['install_command']=dict(argv=argv,cwd=str(SOURCE/'trisha'))
+    save();started=time.monotonic()
+    with (OUT/'stdout').open('xb') as stdout,(OUT/'stderr').open('xb') as stderr:
+        child=subprocess.Popen(argv,cwd=SOURCE/'trisha',env=env,stdout=stdout,stderr=stderr,start_new_session=True)
+        report['pid']=child.pid;save()
+        while child.poll() is None:
+            text=(OUT/'stderr').read_text(errors='replace')
+            if re.search(r'^\s*Compiling\s',text,re.M):raise RuntimeError('warm-install refused: compilation would invalidate accepted fingerprint reuse')
+            if time.monotonic()-started>120:raise RuntimeError('bounded warm-install deadline')
+            if shutil.disk_usage(OUT).free<8*1024**3:raise RuntimeError('shared free-space floor')
+            if size(TARGET)-start_size>64*1024**2:raise RuntimeError('bounded warm target growth')
+            time.sleep(.1)
+        assert child.returncode==0
+    report.update(exit_code=child.returncode,elapsed_seconds=time.monotonic()-started)
+    text=(OUT/'stdout').read_text()+(OUT/'stderr').read_text()
+    assert not re.search(r'(^|\n)\s*(warning:|warning\[|Compiling\s)',text)
+    binary=PREFIX/'bin/trisha';report['installed_binary']=ref(binary)
+    assert report['installed_binary']['sha256']=='fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f'
+    v=subprocess.run([str(binary),'--version'],env=env,capture_output=True,check=True)
+    (OUT/'version.stdout').write_bytes(v.stdout);(OUT/'version.stderr').write_bytes(v.stderr)
+    assert not v.stderr
+    report['commands'].append(dict(argv=[str(binary),'--version'],exit_code=0,stdout=identity(OUT/'version.stdout'),stderr=identity(OUT/'version.stderr')))
+    assert all(identity(Path(p))==wanted for p,wanted in inputs.items())
+    assert all(identity(REPO/n)==w for n,w in impact['runtime_files_exact'].items())
+    report.update(status='passed-source-equivalent-warm-install',source_inputs_unchanged=True,target_bytes_after=size(TARGET),free_bytes_after=shutil.disk_usage(OUT).free)
+except BaseException:
+    report.update(status='failed-or-deferred-install',error=traceback.format_exc())
+    if child is not None and child.poll() is None:
+        assert os.getpgid(child.pid)==child.pid
+        os.killpg(child.pid,signal.SIGTERM)
+        try:child.wait(timeout=10)
+        except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=10)
+        report['owned_child_stopped']=dict(pid=child.pid,exit_code=child.returncode)
+    raise
+finally:
+    report.update(ended_ns=time.time_ns(),files={p.name:identity(p) for p in OUT.iterdir() if p.is_file() and p.name!='receipt.json'})
+    save();print(json.dumps(dict(status=report['status'],receipt=ref(OUT/'receipt.json'))))

@@ -1,0 +1,7 @@
+{
+  "status": "failed-root-check",
+  "error": "AssertionError: target_bytes_after == target_bytes_before",
+  "target_bytes_before": 345000177,
+  "target_bytes_after": 345000145,
+  "explanation": "Root added an unnecessary exact-size equality. Reviewed guard permits bounded cache changes; the actual target shrank by32 bytes. Original install passed and is unchanged."
+}

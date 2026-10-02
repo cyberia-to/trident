@@ -1,0 +1,126 @@
+[
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "26",
+      "--repo",
+      "cyberia-to/trisha",
+      "--json",
+      "state,isDraft,headRefOid,baseRefOid,baseRefName,mergeable,statusCheckRollup"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "repos/cyberia-to/trisha/git/ref/heads/release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "fbea3cef9a4139075e529c319ff75488ed5df625",
+      "fbea3cef9a4139075e529c319ff75488ed5df625"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-tree",
+      "--write-tree",
+      "fbea3cef9a4139075e529c319ff75488ed5df625",
+      "0b8d784fbc49bba55c37bcdee8851e35072ab413"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "--method",
+      "PUT",
+      "repos/cyberia-to/trisha/pulls/26/merge",
+      "-f",
+      "merge_method=merge",
+      "-f",
+      "sha=0b8d784fbc49bba55c37bcdee8851e35072ab413"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "9e1af832543a21def306dac84ff918cbb823653d^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-list",
+      "--parents",
+      "-n",
+      "1",
+      "9e1af832543a21def306dac84ff918cbb823653d"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "26",
+      "--repo",
+      "cyberia-to/trisha",
+      "--json",
+      "state,headRefOid,baseRefName,mergeCommit"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "exit_code": 0
+  }
+]

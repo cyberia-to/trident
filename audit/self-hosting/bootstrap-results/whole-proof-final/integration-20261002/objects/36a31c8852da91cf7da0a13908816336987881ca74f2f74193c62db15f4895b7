@@ -1,0 +1,61 @@
+{
+  "status": "passed-documentation-validation",
+  "observed_utc": "2026-10-02T20:00:09.077236+00:00",
+  "base": "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+  "superseded_proposal": {
+    "finding": "Root attributes are frozen by separate readback source closure. Move all new rules to observation-directory attributes.",
+    "files": {
+      "path": "review-1/files.json",
+      "bytes": 1710,
+      "sha256": "6eb1ba3de4046bef1175bdd76e9fd3d8520702f8c7fb119bfd64b2e46fd9ad3b"
+    },
+    "patch": {
+      "path": "review-1/proposal.patch",
+      "bytes": 7253,
+      "sha256": "1f423896b7caf4d8cd570e2b2eced0249c7fdfa8d4cea1633a60d3bbc5d643e7"
+    },
+    "receipt": {
+      "path": "review-1/receipt.json",
+      "bytes": 1587,
+      "sha256": "f18d8ff221587020f5fbe468ddbc253421a3890cf280b36b602fd5f111d201b4"
+    }
+  },
+  "preserved_validation_failure": {
+    "path": "review-2/receipt.json",
+    "bytes": 741,
+    "sha256": "49fd5ee159ae0fd93b7b54a786b2c64bb20954d840cd9c29a594e4010d772571"
+  },
+  "root_gitattributes": {
+    "unchanged_from_base": true,
+    "bytes": 6493,
+    "sha256": "e89a50238159213213525f56aeed30ac83c3277d0e57ecc92ca2ff44de8cdf46",
+    "readback_revision": "97795590613e625b6be43c5e73afff4ab87009cd",
+    "readback_sha256": "af6a00d6c19673a3c654c2de92d97a153ae7d0d112235c798c553f17b9099173",
+    "integration_rule": "No root attribute diff in this branch; retain9779559 additions when integrating that branch."
+  },
+  "checks": [
+    "Exact four tracked documentation and six new observation paths",
+    "Nine non-root original proposal files unchanged; directory-local attributes are the sole new proposal bytes",
+    "Root .gitattributes equals95899 base exactly",
+    "Original API hashes and release/tag/draft identities",
+    "Historical index and source734/final audit bodies preserved",
+    "Four directory-local raw attributes resolve text:unset",
+    "Local Markdown targets",
+    "git diff --check",
+    "Targeted credential scan"
+  ],
+  "local_links_checked": 48,
+  "file_count": 10,
+  "total_bytes": 51011,
+  "files": {
+    "path": "review-3/files.json",
+    "bytes": 1740,
+    "sha256": "97b1866ab0dd880cf567887761985bb4a43b43fd86ec79ce43fa37ac88d8dddf"
+  },
+  "patch": {
+    "path": "review-3/proposal.patch",
+    "bytes": 6665,
+    "sha256": "a849cf839075223c30d3f688967025c6e38994b3fe22e3362c1f1c7f08b2d4d5"
+  },
+  "scope": "Uncommitted documentation only; no push/build/native run, frozen source-manifest/selector change or GitHub mutation."
+}

@@ -1,0 +1,85 @@
+{
+  "status": "passed-root-delivery-review",
+  "head": "5a8e386aa1228c6c37603811f1cfda219d281665",
+  "tree": "e5cf922cac70f272904845f6de634fea05ff3085",
+  "checks": [
+    {
+      "name": "originals",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "audit/whole-retention-byte-closure/check.py",
+        "--originals"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+      "exit_code": 0,
+      "elapsed_seconds": 0.29464637499768287,
+      "stdout": {
+        "bytes": 444,
+        "sha256": "e03b0b92d942f0e090a9222d454d65eca42d90a44afa0f6b56e0e2535316b7a9"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "tests",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/whole-retention-byte-closure",
+        "-p",
+        "test_delivery.py",
+        "-v"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6153619579854421,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 1128,
+        "sha256": "8741113f8c6e283a29ca30ec0be9a4b58e1717079403fe8770fcb223ee77327f"
+      }
+    },
+    {
+      "name": "diff",
+      "command": [
+        "git",
+        "diff",
+        "97795590613e625b6be43c5e73afff4ab87009cd",
+        "HEAD",
+        "--check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+      "exit_code": 0,
+      "elapsed_seconds": 0.03705091599840671,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "review": [
+    "Read complete curated checker, privacy checks,11 regression tests, publicREADME and pinnedactualclosure.",
+    "All77 selected originals and38sourcebindings rechecked;510runtimeinputs checkedagainstacceptedsource.",
+    "Preliminary merge with95899 produces exactheadtree and preservesall38 frozenchecking sourceidentities.",
+    "Original privatefullhost/signedURL payloads excluded bycuratedinventory/scans; completebody evidence remains independentlyretained."
+  ],
+  "scope": "Deliverypacket integrity only; no new proofwork orSH8acceptance. Postcommit source-equivalent installation separately required."
+}
