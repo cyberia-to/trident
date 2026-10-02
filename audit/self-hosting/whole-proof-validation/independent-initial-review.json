@@ -1,0 +1,63 @@
+{
+  "schema": "trident/whole-proof-attack-suite-source-review/v1",
+  "status": "blocked-pending-fix",
+  "reviewed_utc": "2026-10-02T03:49:22.466750+00:00",
+  "source": {
+    "whole_suite.py": {
+      "bytes": 13622,
+      "sha256": "65acbc20993403fdf8dc732ffc0c9faa83fafc75bef19c436e60a94ba97962fb"
+    },
+    "guard.py": {
+      "bytes": 5864,
+      "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+    },
+    "plan.md": {
+      "bytes": 6842,
+      "sha256": "692938a0b639275629660ee3b17a35180d35f0c9bfda4073fa91d2d5b7b594a1"
+    },
+    "helper/mutation.rs": {
+      "bytes": 8521,
+      "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+    },
+    "helper/main.rs": {
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    "helper-build-2/receipt.json": {
+      "bytes": 2887,
+      "sha256": "1fa8c0de27e502c609142f74a5e856925c8f306230ec3fa4e5e0e3f25f5ca7dd"
+    },
+    "fixture-check/receipt.json": {
+      "bytes": 4914,
+      "sha256": "c0f138dcb0d67d38bd13be7cbab179503e9f7bb9cbbcf7c7c07206b6716680db"
+    },
+    "root-helper-review-validation.json": {
+      "bytes": 580,
+      "sha256": "6a950e048c6f1f73d10dbae0f0f424476a022f2b2be2aef3221bb343e21bb402"
+    }
+  },
+  "scope": "Read-only source review of whole_suite.py and guard.py integration with plan.md and previously tested helper interface. No whole certificate read or replayed; no root sources edited.",
+  "findings": [
+    {
+      "id": "sidecar-collision",
+      "severity": "blocking",
+      "location": "whole_suite.py reusable temporary.joysc; helper/mutation.rs terminal sidecar creation",
+      "description": "Every valid-output mutation creates temporary.dag using create_new. Suite removes only temporary.joysc after success. Second output mutation fails on existing sidecar before intended verifier rejection.",
+      "recommended": "Use unique per-case payload path while preserving one live full payload; retain unique bounded sidecars, or explicitly preserve/rename each successful sidecar. Keep both on unexpected failure."
+    }
+  ],
+  "checked": [
+    "Requires complete successful same-generation producer and fresh verifier receipts before reading the proof.",
+    "Rehashes exact production binary, frozen preparation/profile, input copies and original proof; verifies same certificate and complete semantic report fields.",
+    "Two controls include explicitly reused original actual fresh verification and required byte-identical rechain with new production verification.",
+    "Matrix enumerates ten context/semantic binding attacks plus eight semantic and five framing cases (23 expected rejects).",
+    "Every negative requires exit 1, empty stdout, specific expected error substring, unchanged protected output.",
+    "One nonblocking global filesystem lock covers both generations and entire execution.",
+    "Guard assigns owned process group, timeout/RSS/disk sampled limits, hard CPU/file limits; terminates only owned process group.",
+    "Unexpected construction or verification failure leaves the full mutation and logs intact. Cleanup occurs only after successful classified verification and receipt save."
+  ],
+  "limitations": [
+    "Source review only; successful whole-proof eligibility and complete 23-case runtime results remain unobserved.",
+    "Existing helper fixture receipt reviewed but not rerun; helper implementation was read only where needed to check suite integration."
+  ]
+}
