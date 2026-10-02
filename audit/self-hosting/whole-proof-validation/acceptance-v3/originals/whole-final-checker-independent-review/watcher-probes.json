@@ -1,0 +1,24 @@
+{
+  "before": {
+    "status": "running-checker",
+    "checker_launched": true,
+    "original_failure_preserved": false,
+    "cleanup_failure_retained": false,
+    "propagated_exception": {
+      "type": "RuntimeError",
+      "message": "synthetic cleanup failure"
+    },
+    "actual_child_launched": false
+  },
+  "after": {
+    "status": "failed-checker",
+    "checker_launched": true,
+    "original_failure_preserved": true,
+    "cleanup_failure_retained": true,
+    "propagated_exception": {
+      "type": "TimeoutExpired",
+      "message": "Command 'synthetic-checker-not-launched' timed out after 3600 seconds"
+    },
+    "actual_child_launched": false
+  }
+}

@@ -1,0 +1,1852 @@
+{
+  "schema": "trident/frozen-final-checker-retention/v1",
+  "status": "retained-and-readback-checked",
+  "created_ns": 1790940066151551000,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/retain-acceptance-v3.py"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+  "repository_revision": "20f2375199945f215106287bf999290a29b313e3",
+  "scope": "Frozen final checker, preparation, historical source snapshots, offline tests and source reviews only. Live watcher/orchestration outputs excluded. No final SH8 acceptance or durable whole-proof claim.",
+  "source": {
+    "bytes": 6696,
+    "sha256": "5a733e74522fbfaa657b55a124c0b5f240f1f42990c10d7081c1f8b40237f63f"
+  },
+  "original_base": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002",
+  "source_manifest": {
+    "bytes": 2855,
+    "sha256": "3bb3470f75daa39c263a0b36cc9b1b9f0a891b19669aaf6aa263fcebbad68e96"
+  },
+  "independent_review": {
+    "bytes": 10016,
+    "sha256": "4e7c65de21545a6efc1cb0f1aeb898bfad81c8ecb37540d4c122a7a04211a752"
+  },
+  "root_launch_review": {
+    "bytes": 3397,
+    "sha256": "9e1fec7e10835702faf7f9f67c3a10544d7ac9a9de84737ad017f55ce530f134"
+  },
+  "original_inputs_unchanged": true,
+  "files": {
+    "final-integration/retain-acceptance-v3.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/retain-acceptance-v3.py",
+      "original": {
+        "bytes": 6696,
+        "sha256": "5a733e74522fbfaa657b55a124c0b5f240f1f42990c10d7081c1f8b40237f63f"
+      },
+      "stored_path": "originals/final-integration/retain-acceptance-v3.py",
+      "stored": {
+        "bytes": 6696,
+        "sha256": "5a733e74522fbfaa657b55a124c0b5f240f1f42990c10d7081c1f8b40237f63f"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-replay-1/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-replay-1/receipt.json",
+      "original": {
+        "bytes": 43375,
+        "sha256": "94e4345e26c01dda4bb58b20e7d4bb00258d0335b8c5fdfc72b823f30d30c55a"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-replay-1/receipt.json",
+      "stored": {
+        "bytes": 43375,
+        "sha256": "94e4345e26c01dda4bb58b20e7d4bb00258d0335b8c5fdfc72b823f30d30c55a"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-replay-1/tests.stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-replay-1/tests.stderr",
+      "original": {
+        "bytes": 4785,
+        "sha256": "eb9a7ce39df14294ec8e6233df08f74eb8b0f41028ba29e73d3777bbb64cc46c"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-replay-1/tests.stderr.gz",
+      "stored": {
+        "bytes": 1028,
+        "sha256": "5273fbc55acc0933a077e92646e5d67ce6b3d4b92b40913623d40d0e034edea9"
+      },
+      "encoding": "gzip"
+    },
+    "whole-final-checker-independent-review/final-replay-1/tests.stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-replay-1/tests.stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-replay-1/tests.stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-final-checker-independent-review/final-snapshot/PLAN.md": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/PLAN.md",
+      "original": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/PLAN.md",
+      "stored": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/cases.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/cases.py",
+      "original": {
+        "bytes": 15437,
+        "sha256": "06bb9e311d27acde1be274c716b5f5991ebd2504c2674e2412c26303c290a14b"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/cases.py",
+      "stored": {
+        "bytes": 15437,
+        "sha256": "06bb9e311d27acde1be274c716b5f5991ebd2504c2674e2412c26303c290a14b"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/check.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/check.py",
+      "original": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/check.py",
+      "stored": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/common.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/common.py",
+      "original": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/common.py",
+      "stored": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/history.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/history.py",
+      "original": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/history.py",
+      "stored": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/pins.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/pins.json",
+      "original": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/pins.json",
+      "stored": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/positive.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/positive.py",
+      "original": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/positive.py",
+      "stored": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/preparation-3.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/preparation-3.json",
+      "original": {
+        "bytes": 5479,
+        "sha256": "81c403cd4d1d690b1c2a56656be28613f6f220e41ba80ff885dcf1b123a32ef7"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/preparation-3.json",
+      "stored": {
+        "bytes": 5479,
+        "sha256": "81c403cd4d1d690b1c2a56656be28613f6f220e41ba80ff885dcf1b123a32ef7"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/quiescence.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/quiescence.py",
+      "original": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/quiescence.py",
+      "stored": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/review_prior_resources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/review_prior_resources.py",
+      "original": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/review_prior_resources.py",
+      "stored": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/schedule.py",
+      "original": {
+        "bytes": 10138,
+        "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/schedule.py",
+      "stored": {
+        "bytes": 10138,
+        "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/sources.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/sources.json",
+      "original": {
+        "bytes": 2855,
+        "sha256": "3bb3470f75daa39c263a0b36cc9b1b9f0a891b19669aaf6aa263fcebbad68e96"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/sources.json",
+      "stored": {
+        "bytes": 2855,
+        "sha256": "3bb3470f75daa39c263a0b36cc9b1b9f0a891b19669aaf6aa263fcebbad68e96"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/test_checker.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/test_checker.py",
+      "original": {
+        "bytes": 17398,
+        "sha256": "171f519f9afa42f3674e64b78a5b5126535e25fbff00080cfdc7d20d8fe04fb7"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/test_checker.py",
+      "stored": {
+        "bytes": 17398,
+        "sha256": "171f519f9afa42f3674e64b78a5b5126535e25fbff00080cfdc7d20d8fe04fb7"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/test_when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/test_when_ready.py",
+      "original": {
+        "bytes": 4823,
+        "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/test_when_ready.py",
+      "stored": {
+        "bytes": 4823,
+        "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/final-snapshot/when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/final-snapshot/when_ready.py",
+      "original": {
+        "bytes": 7250,
+        "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/final-snapshot/when_ready.py",
+      "stored": {
+        "bytes": 7250,
+        "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/findings-first.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/findings-first.json",
+      "original": {
+        "bytes": 2027,
+        "sha256": "8c07261cfd1b1116884d717ca955810071e3a3a77cc073d6bf70176022b3ee62"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/findings-first.json",
+      "stored": {
+        "bytes": 2027,
+        "sha256": "8c07261cfd1b1116884d717ca955810071e3a3a77cc073d6bf70176022b3ee62"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/PLAN.md": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/PLAN.md",
+      "original": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/PLAN.md",
+      "stored": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/cases.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/cases.py",
+      "original": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/cases.py",
+      "stored": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/check.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/check.py",
+      "original": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/check.py",
+      "stored": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/common.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/common.py",
+      "original": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/common.py",
+      "stored": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/history.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/history.py",
+      "original": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/history.py",
+      "stored": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/pins.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/pins.json",
+      "original": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/pins.json",
+      "stored": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/positive.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/positive.py",
+      "original": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/positive.py",
+      "stored": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/preparation.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/preparation.json",
+      "original": {
+        "bytes": 4964,
+        "sha256": "74b6c47be3c002ca87c2439d1af58103c3ed68c918475b44647b5326302cdb86"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/preparation.json",
+      "stored": {
+        "bytes": 4964,
+        "sha256": "74b6c47be3c002ca87c2439d1af58103c3ed68c918475b44647b5326302cdb86"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/quiescence.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/quiescence.py",
+      "original": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/quiescence.py",
+      "stored": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/review_prior_resources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/review_prior_resources.py",
+      "original": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/review_prior_resources.py",
+      "stored": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/schedule.py",
+      "original": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/schedule.py",
+      "stored": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/sources.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/sources.json",
+      "original": {
+        "bytes": 2854,
+        "sha256": "999b67d11deb4ee6c057371fd4deaf2ce6ecfe43d30c88aa3c988721a2359f28"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/sources.json",
+      "stored": {
+        "bytes": 2854,
+        "sha256": "999b67d11deb4ee6c057371fd4deaf2ce6ecfe43d30c88aa3c988721a2359f28"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/test_checker.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/test_checker.py",
+      "original": {
+        "bytes": 14428,
+        "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/test_checker.py",
+      "stored": {
+        "bytes": 14428,
+        "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/test_when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/test_when_ready.py",
+      "original": {
+        "bytes": 3455,
+        "sha256": "3e3371664e20395f8a2cf4accfe66b5320f2128214d3007e38b4c8c47ade0e85"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/test_when_ready.py",
+      "stored": {
+        "bytes": 3455,
+        "sha256": "3e3371664e20395f8a2cf4accfe66b5320f2128214d3007e38b4c8c47ade0e85"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/first-snapshot/when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/first-snapshot/when_ready.py",
+      "original": {
+        "bytes": 7018,
+        "sha256": "26cdf2db3497a521968c95f9eb79dbfa6c49dd132ba46a3ffc47af21040f75d1"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/first-snapshot/when_ready.py",
+      "stored": {
+        "bytes": 7018,
+        "sha256": "26cdf2db3497a521968c95f9eb79dbfa6c49dd132ba46a3ffc47af21040f75d1"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/independent-review.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/independent-review.json",
+      "original": {
+        "bytes": 10016,
+        "sha256": "4e7c65de21545a6efc1cb0f1aeb898bfad81c8ecb37540d4c122a7a04211a752"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/independent-review.json",
+      "stored": {
+        "bytes": 10016,
+        "sha256": "4e7c65de21545a6efc1cb0f1aeb898bfad81c8ecb37540d4c122a7a04211a752"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/probe_schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/probe_schedule.py",
+      "original": {
+        "bytes": 5195,
+        "sha256": "b19470bcc183ff26eb1a9c69414d947ccfa19e68b1caf4207abc9a825aa0f5ee"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/probe_schedule.py",
+      "stored": {
+        "bytes": 5195,
+        "sha256": "b19470bcc183ff26eb1a9c69414d947ccfa19e68b1caf4207abc9a825aa0f5ee"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/probe_watcher.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/probe_watcher.py",
+      "original": {
+        "bytes": 2700,
+        "sha256": "7594a24421af3a18915b9a26b3476121be02db1c9a2f83ba4ceff87457269444"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/probe_watcher.py",
+      "stored": {
+        "bytes": 2700,
+        "sha256": "7594a24421af3a18915b9a26b3476121be02db1c9a2f83ba4ceff87457269444"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/schedule-probes-final.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/schedule-probes-final.json",
+      "original": {
+        "bytes": 658,
+        "sha256": "50c39db7b5019bd0af519a325fdb484ec4be2dfb6018269837d242b6cbfc4ca7"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/schedule-probes-final.json",
+      "stored": {
+        "bytes": 658,
+        "sha256": "50c39db7b5019bd0af519a325fdb484ec4be2dfb6018269837d242b6cbfc4ca7"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/schedule-probes-first.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/schedule-probes-first.json",
+      "original": {
+        "bytes": 325,
+        "sha256": "35b12350af7410b44c3b6ad932188705eafe14d6b854245fb3f142748854f36e"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/schedule-probes-first.json",
+      "stored": {
+        "bytes": 325,
+        "sha256": "35b12350af7410b44c3b6ad932188705eafe14d6b854245fb3f142748854f36e"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/validate_sources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/validate_sources.py",
+      "original": {
+        "bytes": 5925,
+        "sha256": "2d29be050de2b0751ec461a6a63c46ef2daba84109eb2e858460cdeb8273f09f"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/validate_sources.py",
+      "stored": {
+        "bytes": 5925,
+        "sha256": "2d29be050de2b0751ec461a6a63c46ef2daba84109eb2e858460cdeb8273f09f"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-independent-review/watcher-probes.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-independent-review/watcher-probes.json",
+      "original": {
+        "bytes": 663,
+        "sha256": "c3e2e93e642466419f5b4b72cb37b5a5dd9301d78a891fca7101ba73f367baad"
+      },
+      "stored_path": "originals/whole-final-checker-independent-review/watcher-probes.json",
+      "stored": {
+        "bytes": 663,
+        "sha256": "c3e2e93e642466419f5b4b72cb37b5a5dd9301d78a891fca7101ba73f367baad"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-root-launch-review.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-root-launch-review.json",
+      "original": {
+        "bytes": 3397,
+        "sha256": "9e1fec7e10835702faf7f9f67c3a10544d7ac9a9de84737ad017f55ce530f134"
+      },
+      "stored_path": "originals/whole-final-checker-root-launch-review.json",
+      "stored": {
+        "bytes": 3397,
+        "sha256": "9e1fec7e10835702faf7f9f67c3a10544d7ac9a9de84737ad017f55ce530f134"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-root-review/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-root-review/receipt.json",
+      "original": {
+        "bytes": 3773,
+        "sha256": "0f3e1127088de2cdb545443a636d96df6bdc3666ed86184ea3797a1348237d45"
+      },
+      "stored_path": "originals/whole-final-checker-root-review/receipt.json",
+      "stored": {
+        "bytes": 3773,
+        "sha256": "0f3e1127088de2cdb545443a636d96df6bdc3666ed86184ea3797a1348237d45"
+      },
+      "encoding": "identity"
+    },
+    "whole-final-checker-root-review/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-root-review/stderr",
+      "original": {
+        "bytes": 4785,
+        "sha256": "6db71d943c79e622d26d879cead06223ab3a4823e01606b696e9a46a08988188"
+      },
+      "stored_path": "originals/whole-final-checker-root-review/stderr.gz",
+      "stored": {
+        "bytes": 1028,
+        "sha256": "5067deb489079b50f437a894b9d40d40bb10acaebfb6a23ff1995d0e3fb3cb28"
+      },
+      "encoding": "gzip"
+    },
+    "whole-final-checker-root-review/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-root-review/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-final-checker-root-review/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/PLAN.md": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/PLAN.md",
+      "original": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/PLAN.md",
+      "stored": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/actual-prior-resources-1.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/actual-prior-resources-1.json",
+      "original": {
+        "bytes": 2797,
+        "sha256": "b63a71fd191d46d471380904494f4c59590c328d35827d5d53a32b06c9d73d0c"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/actual-prior-resources-1.json",
+      "stored": {
+        "bytes": 2797,
+        "sha256": "b63a71fd191d46d471380904494f4c59590c328d35827d5d53a32b06c9d73d0c"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/actual-prior-resources-2.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/actual-prior-resources-2.json",
+      "original": {
+        "bytes": 21448,
+        "sha256": "3ce8e456f1f894061367c67f63be52647b7568c796284c9089cac42202f3305f"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/actual-prior-resources-2.json",
+      "stored": {
+        "bytes": 21448,
+        "sha256": "3ce8e456f1f894061367c67f63be52647b7568c796284c9089cac42202f3305f"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/actual-transition-review-1.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/actual-transition-review-1.json",
+      "original": {
+        "bytes": 24631,
+        "sha256": "6136c761a60f1d630bfeb113f7a5f59fa4e19ffbb3546bd50fdd5028fc58b814"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/actual-transition-review-1.json",
+      "stored": {
+        "bytes": 24631,
+        "sha256": "6136c761a60f1d630bfeb113f7a5f59fa4e19ffbb3546bd50fdd5028fc58b814"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/actual-transition-review-2.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/actual-transition-review-2.json",
+      "original": {
+        "bytes": 24631,
+        "sha256": "873a0ab3d4a299995dc703b76d3cdf221258772c17d4d2ba9fdccea16ae2c27e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/actual-transition-review-2.json",
+      "stored": {
+        "bytes": 24631,
+        "sha256": "873a0ab3d4a299995dc703b76d3cdf221258772c17d4d2ba9fdccea16ae2c27e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/cases.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/cases.py",
+      "original": {
+        "bytes": 15437,
+        "sha256": "06bb9e311d27acde1be274c716b5f5991ebd2504c2674e2412c26303c290a14b"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/cases.py",
+      "stored": {
+        "bytes": 15437,
+        "sha256": "06bb9e311d27acde1be274c716b5f5991ebd2504c2674e2412c26303c290a14b"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/check.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/check.py",
+      "original": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/check.py",
+      "stored": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/common.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/common.py",
+      "original": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/common.py",
+      "stored": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/draft-source-inventory-1.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/draft-source-inventory-1.json",
+      "original": {
+        "bytes": 1139,
+        "sha256": "0e2693677899720e7f6420792f570a0636c0edb9cfefdac694f4a86a5f006e85"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/draft-source-inventory-1.json",
+      "stored": {
+        "bytes": 1139,
+        "sha256": "0e2693677899720e7f6420792f570a0636c0edb9cfefdac694f4a86a5f006e85"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/history.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/history.py",
+      "original": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/history.py",
+      "stored": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/independent-review.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/independent-review.json",
+      "original": {
+        "bytes": 10016,
+        "sha256": "4e7c65de21545a6efc1cb0f1aeb898bfad81c8ecb37540d4c122a7a04211a752"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/independent-review.json",
+      "stored": {
+        "bytes": 10016,
+        "sha256": "4e7c65de21545a6efc1cb0f1aeb898bfad81c8ecb37540d4c122a7a04211a752"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-1/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-1/receipt.json",
+      "original": {
+        "bytes": 1516,
+        "sha256": "aab91f6a7057d95ce4646fe2e045bdb59aa6158c3675ffb86aacc873641c8fbd"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-1/receipt.json",
+      "stored": {
+        "bytes": 1516,
+        "sha256": "aab91f6a7057d95ce4646fe2e045bdb59aa6158c3675ffb86aacc873641c8fbd"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-1/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-1/stderr",
+      "original": {
+        "bytes": 1947,
+        "sha256": "36955ecd3d0866a61f2a2252b4b01684e1eb35ed7cba17312d42b4d267732345"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-1/stderr.gz",
+      "stored": {
+        "bytes": 491,
+        "sha256": "c2ab7d3d0e1f6da5a328af230d52b01e39e8511c2bd3a6a28b0ab0f0bb0b2281"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-1/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-1/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-1/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-2/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-2/receipt.json",
+      "original": {
+        "bytes": 1517,
+        "sha256": "a143d7d83b63676d604613fcec05c5d09d01a01bb91f9aca5124670fa429c7b1"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-2/receipt.json",
+      "stored": {
+        "bytes": 1517,
+        "sha256": "a143d7d83b63676d604613fcec05c5d09d01a01bb91f9aca5124670fa429c7b1"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-2/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-2/stderr",
+      "original": {
+        "bytes": 2587,
+        "sha256": "48205fa86e0631ce45c6ef22b719add45ad6f51477bd029c510a41dbfada3302"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-2/stderr.gz",
+      "stored": {
+        "bytes": 610,
+        "sha256": "11b605d09dc03cff8e3e334ad1963e1eac228a64fdfcfb1c85cb4b99400e4a34"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-2/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-2/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-2/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-3/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-3/receipt.json",
+      "original": {
+        "bytes": 1649,
+        "sha256": "ea71cbd872d9f81d905aed40c3f4b4ae6e2a1709ce15fe7f74f02cc63791abe8"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-3/receipt.json",
+      "stored": {
+        "bytes": 1649,
+        "sha256": "ea71cbd872d9f81d905aed40c3f4b4ae6e2a1709ce15fe7f74f02cc63791abe8"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-3/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-3/stderr",
+      "original": {
+        "bytes": 2825,
+        "sha256": "9ffad22172e189635fb6ef0adbd385f5619188ad73a860ae736f0907d4246bc0"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-3/stderr.gz",
+      "stored": {
+        "bytes": 643,
+        "sha256": "3f3ca8ccf0a8d72a3a610975855c4995be2067bf7059c50dfe3b7a21a5cde474"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-3/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-3/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-3/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-4/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-4/receipt.json",
+      "original": {
+        "bytes": 1929,
+        "sha256": "4daa1e53d7076763c620ae7c3601ce702065ec7aceaa3ed67e114eefac63e85f"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-4/receipt.json",
+      "stored": {
+        "bytes": 1929,
+        "sha256": "4daa1e53d7076763c620ae7c3601ce702065ec7aceaa3ed67e114eefac63e85f"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-4/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-4/stderr",
+      "original": {
+        "bytes": 3241,
+        "sha256": "351ed97ff51d2d8aae94cc0d071358ef14ebdf1fe7344fdcc686ec10b93e4f90"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-4/stderr.gz",
+      "stored": {
+        "bytes": 733,
+        "sha256": "6f326e2f7ea38f7dfae4ba763cc7535680e88512a6a15ccd4c90d68fccc34924"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-4/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-4/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-4/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-5/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-5/receipt.json",
+      "original": {
+        "bytes": 1929,
+        "sha256": "8fc1b75306ce4a07c09549b47f5cb13f7d9bc8b78339e8bff7844927874b1c62"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-5/receipt.json",
+      "stored": {
+        "bytes": 1929,
+        "sha256": "8fc1b75306ce4a07c09549b47f5cb13f7d9bc8b78339e8bff7844927874b1c62"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-5/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-5/stderr",
+      "original": {
+        "bytes": 3355,
+        "sha256": "4620eacb743b984e5171b43698ce9971bf4e5f339a2d66c467765cab3ce8d36f"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-5/stderr.gz",
+      "stored": {
+        "bytes": 752,
+        "sha256": "7a37e07e6d5b4e6ad3846c99fdf0bec837393b6cb5013b8b225c55d89b95f461"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-5/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-5/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-5/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final/receipt.json",
+      "original": {
+        "bytes": 2241,
+        "sha256": "9667b1b3d9fcf9475f53dbf7425a9898d6558538e21ad5dc32115e3a94f503cf"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final/receipt.json",
+      "stored": {
+        "bytes": 2241,
+        "sha256": "9667b1b3d9fcf9475f53dbf7425a9898d6558538e21ad5dc32115e3a94f503cf"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-final/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final/stderr",
+      "original": {
+        "bytes": 4063,
+        "sha256": "1b246d053cc900b9cda61775b06cec133abab0bec5cd3b5e4f219773def1278f"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final/stderr.gz",
+      "stored": {
+        "bytes": 901,
+        "sha256": "135c5605945092b9b8c4a7b0b598c16c1ca114890d5df56b4eb0fdb752e511ad"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-2/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-2/receipt.json",
+      "original": {
+        "bytes": 2241,
+        "sha256": "996a71fce5006460017af883ba24e4545a1b89abd0be97d4e9e703d9e21cbd07"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-2/receipt.json",
+      "stored": {
+        "bytes": 2241,
+        "sha256": "996a71fce5006460017af883ba24e4545a1b89abd0be97d4e9e703d9e21cbd07"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-2/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-2/stderr",
+      "original": {
+        "bytes": 4215,
+        "sha256": "d7cc8b24174f5a23c0317e165ce827b4ade7ddcf4255641dcc4853c0c3c58f15"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-2/stderr.gz",
+      "stored": {
+        "bytes": 937,
+        "sha256": "533d6f3b7e338c582793a4e8cd7e058dee280c62323dcc2924490b8fd26f0fe7"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-2/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-2/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-2/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-3/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-3/receipt.json",
+      "original": {
+        "bytes": 2241,
+        "sha256": "bedd28fb0fc989908bba7d225ef9bfdf038fe7830b3403af2c3f7f7fc6c1b26b"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-3/receipt.json",
+      "stored": {
+        "bytes": 2241,
+        "sha256": "bedd28fb0fc989908bba7d225ef9bfdf038fe7830b3403af2c3f7f7fc6c1b26b"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-3/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-3/stderr",
+      "original": {
+        "bytes": 4473,
+        "sha256": "62b31cf04d6643ff9ca947838c5e121242b30d3fb26514ac7d8426faf5a821f4"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-3/stderr.gz",
+      "stored": {
+        "bytes": 975,
+        "sha256": "f4e987ee5e0825445081edfa27242c370cda24efe0110288e8a42d18670fdc15"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-3/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-3/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-3/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-4/receipt.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-4/receipt.json",
+      "original": {
+        "bytes": 2253,
+        "sha256": "3e7d9ac59afa2584e09ae3fca7c97eeca9146c5c945886b7d9631eaa76d691ed"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-4/receipt.json",
+      "stored": {
+        "bytes": 2253,
+        "sha256": "3e7d9ac59afa2584e09ae3fca7c97eeca9146c5c945886b7d9631eaa76d691ed"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-4/stderr": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-4/stderr",
+      "original": {
+        "bytes": 4785,
+        "sha256": "6849b492b34da0e335043cb0cf91f0cd9cd9aff8115111a142e1d77c7901103d"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-4/stderr.gz",
+      "stored": {
+        "bytes": 1028,
+        "sha256": "f50f081429fae70a1629eb580f21f79184b7f42f78cd15aea931201eb24a9c02"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/offline-tests-final-4/stdout": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/offline-tests-final-4/stdout",
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/offline-tests-final-4/stdout.gz",
+      "stored": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "encoding": "gzip"
+    },
+    "whole-proof-final-review-v3/pins.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/pins.json",
+      "original": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/pins.json",
+      "stored": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/positive.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/positive.py",
+      "original": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/positive.py",
+      "stored": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/preparation-2.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/preparation-2.json",
+      "original": {
+        "bytes": 5421,
+        "sha256": "c715676a1b206f242bbe031957bd399291e0e9361001ab8a9b1bd332c934a3a1"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/preparation-2.json",
+      "stored": {
+        "bytes": 5421,
+        "sha256": "c715676a1b206f242bbe031957bd399291e0e9361001ab8a9b1bd332c934a3a1"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/preparation-3.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/preparation-3.json",
+      "original": {
+        "bytes": 5479,
+        "sha256": "81c403cd4d1d690b1c2a56656be28613f6f220e41ba80ff885dcf1b123a32ef7"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/preparation-3.json",
+      "stored": {
+        "bytes": 5479,
+        "sha256": "81c403cd4d1d690b1c2a56656be28613f6f220e41ba80ff885dcf1b123a32ef7"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/preparation.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/preparation.json",
+      "original": {
+        "bytes": 4964,
+        "sha256": "74b6c47be3c002ca87c2439d1af58103c3ed68c918475b44647b5326302cdb86"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/preparation.json",
+      "stored": {
+        "bytes": 4964,
+        "sha256": "74b6c47be3c002ca87c2439d1af58103c3ed68c918475b44647b5326302cdb86"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/quiescence.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/quiescence.py",
+      "original": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/quiescence.py",
+      "stored": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/PLAN.md": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/PLAN.md",
+      "original": {
+        "bytes": 2214,
+        "sha256": "458fb8559f8993d3a215b9ee3e96195d547e6086da3ac78a5559652ff7bd8958"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/PLAN.md",
+      "stored": {
+        "bytes": 2214,
+        "sha256": "458fb8559f8993d3a215b9ee3e96195d547e6086da3ac78a5559652ff7bd8958"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/actual-prior-resources-1.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/actual-prior-resources-1.json",
+      "original": {
+        "bytes": 2797,
+        "sha256": "b63a71fd191d46d471380904494f4c59590c328d35827d5d53a32b06c9d73d0c"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/actual-prior-resources-1.json",
+      "stored": {
+        "bytes": 2797,
+        "sha256": "b63a71fd191d46d471380904494f4c59590c328d35827d5d53a32b06c9d73d0c"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/cases.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/cases.py",
+      "original": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/cases.py",
+      "stored": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/check.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/check.py",
+      "original": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/check.py",
+      "stored": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/common.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/common.py",
+      "original": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/common.py",
+      "stored": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/files.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/files.json",
+      "original": {
+        "bytes": 1389,
+        "sha256": "0df74e828026b4006330b3d57677e2f6188ae0c331290cedd6508e746948260d"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/files.json",
+      "stored": {
+        "bytes": 1389,
+        "sha256": "0df74e828026b4006330b3d57677e2f6188ae0c331290cedd6508e746948260d"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/history.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/history.py",
+      "original": {
+        "bytes": 12234,
+        "sha256": "fd8b04b0358265856b697ac9fc7c10f207430a09f57af28b6d174a372392a032"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/history.py",
+      "stored": {
+        "bytes": 12234,
+        "sha256": "fd8b04b0358265856b697ac9fc7c10f207430a09f57af28b6d174a372392a032"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/pins.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/pins.json",
+      "original": {
+        "bytes": 68,
+        "sha256": "cc8654af9796bbcdde532a9ddfb82646f22de82cf6f5b13eb10c3a85bce778d5"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/pins.json",
+      "stored": {
+        "bytes": 68,
+        "sha256": "cc8654af9796bbcdde532a9ddfb82646f22de82cf6f5b13eb10c3a85bce778d5"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/positive.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/positive.py",
+      "original": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/positive.py",
+      "stored": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/review_prior_resources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/review_prior_resources.py",
+      "original": {
+        "bytes": 2245,
+        "sha256": "8f8c881e323389307a8c3812c8745ee017fb91a56bc1eee2b0f5565151a3da14"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/review_prior_resources.py",
+      "stored": {
+        "bytes": 2245,
+        "sha256": "8f8c881e323389307a8c3812c8745ee017fb91a56bc1eee2b0f5565151a3da14"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/schedule.py",
+      "original": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/schedule.py",
+      "stored": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/prior-resources-first/test_checker.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/prior-resources-first/test_checker.py",
+      "original": {
+        "bytes": 12962,
+        "sha256": "a1352ac833c852cd6973f7c13690c248467dceee2f26a6ffcd445df4e795227e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/prior-resources-first/test_checker.py",
+      "stored": {
+        "bytes": 12962,
+        "sha256": "a1352ac833c852cd6973f7c13690c248467dceee2f26a6ffcd445df4e795227e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/PLAN.md": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/PLAN.md",
+      "original": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/PLAN.md",
+      "stored": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/cases.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/cases.py",
+      "original": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/cases.py",
+      "stored": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/check.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/check.py",
+      "original": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/check.py",
+      "stored": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/common.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/common.py",
+      "original": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/common.py",
+      "stored": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/history.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/history.py",
+      "original": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/history.py",
+      "stored": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/pins.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/pins.json",
+      "original": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/pins.json",
+      "stored": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/positive.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/positive.py",
+      "original": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/positive.py",
+      "stored": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/preparation-2.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/preparation-2.json",
+      "original": {
+        "bytes": 5421,
+        "sha256": "c715676a1b206f242bbe031957bd399291e0e9361001ab8a9b1bd332c934a3a1"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/preparation-2.json",
+      "stored": {
+        "bytes": 5421,
+        "sha256": "c715676a1b206f242bbe031957bd399291e0e9361001ab8a9b1bd332c934a3a1"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/quiescence.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/quiescence.py",
+      "original": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/quiescence.py",
+      "stored": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/review_prior_resources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/review_prior_resources.py",
+      "original": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/review_prior_resources.py",
+      "stored": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/schedule.py",
+      "original": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/schedule.py",
+      "stored": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/sources.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/sources.json",
+      "original": {
+        "bytes": 2854,
+        "sha256": "016cd79f62d884809a9341f455b8588d0f43a03af171f5111f39006e0cf7de4a"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/sources.json",
+      "stored": {
+        "bytes": 2854,
+        "sha256": "016cd79f62d884809a9341f455b8588d0f43a03af171f5111f39006e0cf7de4a"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/test_checker.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/test_checker.py",
+      "original": {
+        "bytes": 14428,
+        "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/test_checker.py",
+      "stored": {
+        "bytes": 14428,
+        "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/test_when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/test_when_ready.py",
+      "original": {
+        "bytes": 4823,
+        "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/test_when_ready.py",
+      "stored": {
+        "bytes": 4823,
+        "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/when_ready.py",
+      "original": {
+        "bytes": 7250,
+        "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/schedule-initial-016cd79f/when_ready.py",
+      "stored": {
+        "bytes": 7250,
+        "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/PLAN.md": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/PLAN.md",
+      "original": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/PLAN.md",
+      "stored": {
+        "bytes": 2820,
+        "sha256": "4ed14a51f323c8265124b8e930ec7c34d09a6995f8fa9a2795f90ee216fa379e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/cases.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/cases.py",
+      "original": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/cases.py",
+      "stored": {
+        "bytes": 15066,
+        "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/check.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/check.py",
+      "original": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/check.py",
+      "stored": {
+        "bytes": 2690,
+        "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/common.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/common.py",
+      "original": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/common.py",
+      "stored": {
+        "bytes": 2691,
+        "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/history.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/history.py",
+      "original": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/history.py",
+      "stored": {
+        "bytes": 14208,
+        "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/pins.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/pins.json",
+      "original": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/pins.json",
+      "stored": {
+        "bytes": 5269,
+        "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/positive.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/positive.py",
+      "original": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/positive.py",
+      "stored": {
+        "bytes": 9961,
+        "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/preparation.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/preparation.json",
+      "original": {
+        "bytes": 4964,
+        "sha256": "74b6c47be3c002ca87c2439d1af58103c3ed68c918475b44647b5326302cdb86"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/preparation.json",
+      "stored": {
+        "bytes": 4964,
+        "sha256": "74b6c47be3c002ca87c2439d1af58103c3ed68c918475b44647b5326302cdb86"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/quiescence.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/quiescence.py",
+      "original": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/quiescence.py",
+      "stored": {
+        "bytes": 4369,
+        "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/review_prior_resources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/review_prior_resources.py",
+      "original": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/review_prior_resources.py",
+      "stored": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/schedule.py",
+      "original": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/schedule.py",
+      "stored": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/sources.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/sources.json",
+      "original": {
+        "bytes": 2854,
+        "sha256": "999b67d11deb4ee6c057371fd4deaf2ce6ecfe43d30c88aa3c988721a2359f28"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/sources.json",
+      "stored": {
+        "bytes": 2854,
+        "sha256": "999b67d11deb4ee6c057371fd4deaf2ce6ecfe43d30c88aa3c988721a2359f28"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/test_checker.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/test_checker.py",
+      "original": {
+        "bytes": 14428,
+        "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/test_checker.py",
+      "stored": {
+        "bytes": 14428,
+        "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/test_when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/test_when_ready.py",
+      "original": {
+        "bytes": 3455,
+        "sha256": "3e3371664e20395f8a2cf4accfe66b5320f2128214d3007e38b4c8c47ade0e85"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/test_when_ready.py",
+      "stored": {
+        "bytes": 3455,
+        "sha256": "3e3371664e20395f8a2cf4accfe66b5320f2128214d3007e38b4c8c47ade0e85"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/when_ready.py",
+      "original": {
+        "bytes": 7018,
+        "sha256": "26cdf2db3497a521968c95f9eb79dbfa6c49dd132ba46a3ffc47af21040f75d1"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review-snapshots/watcher-initial-999b67d1/when_ready.py",
+      "stored": {
+        "bytes": 7018,
+        "sha256": "26cdf2db3497a521968c95f9eb79dbfa6c49dd132ba46a3ffc47af21040f75d1"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/review_prior_resources.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/review_prior_resources.py",
+      "original": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/review_prior_resources.py",
+      "stored": {
+        "bytes": 2529,
+        "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/schedule.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/schedule.py",
+      "original": {
+        "bytes": 10138,
+        "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/schedule.py",
+      "stored": {
+        "bytes": 10138,
+        "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/sources.json": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/sources.json",
+      "original": {
+        "bytes": 2855,
+        "sha256": "3bb3470f75daa39c263a0b36cc9b1b9f0a891b19669aaf6aa263fcebbad68e96"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/sources.json",
+      "stored": {
+        "bytes": 2855,
+        "sha256": "3bb3470f75daa39c263a0b36cc9b1b9f0a891b19669aaf6aa263fcebbad68e96"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/test_checker.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/test_checker.py",
+      "original": {
+        "bytes": 17398,
+        "sha256": "171f519f9afa42f3674e64b78a5b5126535e25fbff00080cfdc7d20d8fe04fb7"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/test_checker.py",
+      "stored": {
+        "bytes": 17398,
+        "sha256": "171f519f9afa42f3674e64b78a5b5126535e25fbff00080cfdc7d20d8fe04fb7"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/test_when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/test_when_ready.py",
+      "original": {
+        "bytes": 4823,
+        "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/test_when_ready.py",
+      "stored": {
+        "bytes": 4823,
+        "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+      },
+      "encoding": "identity"
+    },
+    "whole-proof-final-review-v3/when_ready.py": {
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/when_ready.py",
+      "original": {
+        "bytes": 7250,
+        "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+      },
+      "stored_path": "originals/whole-proof-final-review-v3/when_ready.py",
+      "stored": {
+        "bytes": 7250,
+        "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+      },
+      "encoding": "identity"
+    }
+  },
+  "delivery_files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "README.md": {
+      "bytes": 3276,
+      "sha256": "b8c474ef2f9c39ded295886ef52469be734706dd822526f038b3a0a392604b1e"
+    },
+    "check_delivery.py": {
+      "bytes": 3653,
+      "sha256": "59466f8f9675ca114d2c64b3080354bbab4f4aa1b29e52b6b5e432f8cb0c6e67"
+    }
+  },
+  "totals": {
+    "files": 138,
+    "original_bytes": 830968,
+    "stored_bytes": 799253
+  },
+  "exclusions": [
+    "whole-proof-final-review-v3/orchestration/**",
+    "whole-proof-final-review-v3/watcher-launch/**",
+    "**/__pycache__/**",
+    "**/*.pyc",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/reclamation-failure-observation/stdout"
+  ]
+}
