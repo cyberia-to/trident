@@ -1,0 +1,16 @@
+[package]
+name = "whole-proof-mutator"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "whole-proof-mutator"
+path = "main.rs"
+
+[dependencies]
+joy-rs = { path = "../../production-install/joy/rs" }
+hemera = { package = "cyber-hemera", path = "../../production-install/hemera/rs" }
+nox = { package = "cyber-nox", path = "../../production-install/nox/rs" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+miniz_oxide = "0.8"

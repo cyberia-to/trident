@@ -1,0 +1,1027 @@
+{
+  "schema": "trident/whole-binding-constructor-fixture/v1",
+  "status": "passed",
+  "scope": "Accepted SH7 aggregate fixture only; no whole certificate consumed, no SH8 acceptance",
+  "sources": {
+    "bytes": 4395,
+    "sha256": "39cf35aa9c092e32b4620870ec520cf4c0f981b2da6bb51e9714bb9d807cc460"
+  },
+  "controls": [
+    {
+      "name": "original",
+      "certificate": {
+        "bytes": 8662132,
+        "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": null,
+      "protected_output": null,
+      "receipt": "attempts/verify-original/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "rechain",
+      "certificate": {
+        "bytes": 8662132,
+        "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": null,
+      "protected_output": null,
+      "receipt": "attempts/verify-rechain/receipt.json",
+      "passed": true
+    }
+  ],
+  "bindings": [
+    {
+      "mode": "compiler",
+      "context": [
+        "5dad67d86e586f4e0949e5517fc94fd298dc0ed4aaee216eabb826a69e1af7ca",
+        "9a0a270f5f476c687e5925893cd1c8162662325bc159ad2abc88408f8b62883f",
+        "75143a0e4a6c6ec0b85dba1f4105b442e676f7c969817f42f3ad2da96bd604e6",
+        "1",
+        "100000000",
+        "65536"
+      ],
+      "admission": {
+        "compiler_particle": "5dad67d86e586f4e0949e5517fc94fd298dc0ed4aaee216eabb826a69e1af7ca",
+        "entry_function": "main",
+        "entry_module": "sample",
+        "job_particle": "75143a0e4a6c6ec0b85dba1f4105b442e676f7c969817f42f3ad2da96bd604e6",
+        "limits": {
+          "arena_nodes": 100000000,
+          "artifact_bytes": 16777216,
+          "artifact_depth": 4096,
+          "artifact_nodes": 196608,
+          "diagnostics": 16,
+          "evaluator_frames": 65536,
+          "modules": 32,
+          "reductions": 100000000,
+          "sequence_length": 65536,
+          "source_bytes": 4096,
+          "validation_visits": 16777216
+        },
+        "modules": [
+          {
+            "logical_path": "bank.values",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "b070ce18a5763c19bd00ad2caea153f350dd22d55f0298c58f700c3a97d2fcef",
+            "source_bytes": 136,
+            "source_particle": "a9d3f3cc7752813e1f9ba6dd067847f9ec02b0c2b0d3f0d5edf1dbe7916e2fa4"
+          },
+          {
+            "logical_path": "sample",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "86a38ac479b9b7dd96a9d0d9407be8836ba534d126812572d41e5375cebcab48",
+            "source_bytes": 242,
+            "source_particle": "b1a6d59daa3098eabbcd7fa8386955e0c83c1d14eb1d7e09453dfedf977b6f2a"
+          }
+        ],
+        "options": {
+          "cfg_flags": [],
+          "input_profile": 0,
+          "optimization": 0,
+          "output_profile": 0,
+          "target": 0
+        },
+        "package_particle": "c76527491ec3c721150dfee67c362ed318353f05e14ca1ba5fcfb1cf50edc166",
+        "validation_visits": 432
+      },
+      "source_changes": [],
+      "direct": {
+        "name": "binding-compiler",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+        },
+        "program": {
+          "bytes": 9715917,
+          "sha256": "5728e07a37e111f88166c471ad338f8947b74dfdc842ed1ffa9fa0886c005fda"
+        },
+        "job": {
+          "bytes": 21055,
+          "sha256": "e87015aa39f075d865e69fefbd4b973bb1613c5f3da94bbf81ae8d8af24f56b8"
+        },
+        "expected_error": "format/context mismatch",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-binding-compiler/receipt.json",
+        "passed": true
+      },
+      "rebound": {
+        "name": "rebound-compiler",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "d231da4cfbd1bce3fd075d00bf5eab2c6dd8ba2b8ead4cb0e5d3ff125c8c08f0"
+        },
+        "program": {
+          "bytes": 9715917,
+          "sha256": "5728e07a37e111f88166c471ad338f8947b74dfdc842ed1ffa9fa0886c005fda"
+        },
+        "job": {
+          "bytes": 21055,
+          "sha256": "e87015aa39f075d865e69fefbd4b973bb1613c5f3da94bbf81ae8d8af24f56b8"
+        },
+        "expected_error": "semantic record: Key",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-rebound-compiler/receipt.json",
+        "passed": true
+      }
+    },
+    {
+      "mode": "source",
+      "context": [
+        "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+        "640d5b12876458d7169e9e082960976d5cd240d78368934fe9e4cd044b3aeb9f",
+        "1",
+        "100000000",
+        "65536"
+      ],
+      "admission": {
+        "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "entry_function": "main",
+        "entry_module": "sample",
+        "job_particle": "640d5b12876458d7169e9e082960976d5cd240d78368934fe9e4cd044b3aeb9f",
+        "limits": {
+          "arena_nodes": 100000000,
+          "artifact_bytes": 16777216,
+          "artifact_depth": 4096,
+          "artifact_nodes": 196608,
+          "diagnostics": 16,
+          "evaluator_frames": 65536,
+          "modules": 32,
+          "reductions": 100000000,
+          "sequence_length": 65536,
+          "source_bytes": 4096,
+          "validation_visits": 16777216
+        },
+        "modules": [
+          {
+            "logical_path": "bank.values",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "b070ce18a5763c19bd00ad2caea153f350dd22d55f0298c58f700c3a97d2fcef",
+            "source_bytes": 136,
+            "source_particle": "a9d3f3cc7752813e1f9ba6dd067847f9ec02b0c2b0d3f0d5edf1dbe7916e2fa4"
+          },
+          {
+            "logical_path": "sample",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "3562428c0e35530c3055f0a137a0bca7d1c5e856c54e2cd3495c9cb9e58ab6cd",
+            "source_bytes": 242,
+            "source_particle": "75389d3c310f097b979fffff0296af9227d917c7830dbe353f78b506560398a1"
+          }
+        ],
+        "options": {
+          "cfg_flags": [],
+          "input_profile": 0,
+          "optimization": 0,
+          "output_profile": 0,
+          "target": 0
+        },
+        "package_particle": "9117fc5b3319d9aed436c775913eec869ad55a13fe868a3e51f0bc39509c1864",
+        "validation_visits": 432
+      },
+      "source_changes": [
+        {
+          "module": "sample",
+          "original": {
+            "bytes": 242,
+            "sha256": "6dee04a2d458297951b4879e17414942b7d05036e06a554ca437c083a3519fa6"
+          },
+          "altered": {
+            "bytes": 242,
+            "sha256": "25ee3d99128d9f1a1b1fb66740b00c615e86d197a541411fe228608e1725eccd"
+          }
+        }
+      ],
+      "direct": {
+        "name": "binding-source",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21055,
+          "sha256": "af38e80ef88c2639b13c94ecaf2889016427f7efd9971f84b0ba9941527a3b95"
+        },
+        "expected_error": "format/context mismatch",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-binding-source/receipt.json",
+        "passed": true
+      },
+      "rebound": {
+        "name": "rebound-source",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "182161b6dfa409acc37f2d6f23b6b3c2f1649e053207821f87d5243d63cddc32"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21055,
+          "sha256": "af38e80ef88c2639b13c94ecaf2889016427f7efd9971f84b0ba9941527a3b95"
+        },
+        "expected_error": "semantic record: Key",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-rebound-source/receipt.json",
+        "passed": true
+      }
+    },
+    {
+      "mode": "dependency",
+      "context": [
+        "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+        "a64bcda445e34da5b743e7e8ab17d3a9743f744dacb255850b0546a63a66b298",
+        "1",
+        "100000000",
+        "65536"
+      ],
+      "admission": {
+        "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "entry_function": "main",
+        "entry_module": "sample",
+        "job_particle": "a64bcda445e34da5b743e7e8ab17d3a9743f744dacb255850b0546a63a66b298",
+        "limits": {
+          "arena_nodes": 100000000,
+          "artifact_bytes": 16777216,
+          "artifact_depth": 4096,
+          "artifact_nodes": 196608,
+          "diagnostics": 16,
+          "evaluator_frames": 65536,
+          "modules": 32,
+          "reductions": 100000000,
+          "sequence_length": 65536,
+          "source_bytes": 4096,
+          "validation_visits": 16777216
+        },
+        "modules": [
+          {
+            "logical_path": "bank.values",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "2a78124a675a2d03df87b4aab6b8ac806a1fc781b644dc85e4a2d717d570fd25",
+            "source_bytes": 136,
+            "source_particle": "4d883eea213531f91839c56e4d72b1751e929357294eb1a0256a52ce22a59a0d"
+          },
+          {
+            "logical_path": "sample",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "86a38ac479b9b7dd96a9d0d9407be8836ba534d126812572d41e5375cebcab48",
+            "source_bytes": 242,
+            "source_particle": "b1a6d59daa3098eabbcd7fa8386955e0c83c1d14eb1d7e09453dfedf977b6f2a"
+          }
+        ],
+        "options": {
+          "cfg_flags": [],
+          "input_profile": 0,
+          "optimization": 0,
+          "output_profile": 0,
+          "target": 0
+        },
+        "package_particle": "0d727d6c32e9baa26646da3e43c5e387847d084cd3062269e1a92751a8595b8d",
+        "validation_visits": 432
+      },
+      "source_changes": [
+        {
+          "module": "bank.values",
+          "original": {
+            "bytes": 136,
+            "sha256": "2b2cf7cc4be328185e4e7a2a1a6baa43fec6a2c9d8540e5ca0e7804ca36ff473"
+          },
+          "altered": {
+            "bytes": 136,
+            "sha256": "c1f758af30d4f12c74da2a7cf804638fdcfa59d689bfac39b59d64a6a07c2408"
+          }
+        }
+      ],
+      "direct": {
+        "name": "binding-dependency",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21055,
+          "sha256": "2c5ac97b23cc7fc41c0593d6e86879e2f51f912a8a98bed9c14260b7281099f3"
+        },
+        "expected_error": "format/context mismatch",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-binding-dependency/receipt.json",
+        "passed": true
+      },
+      "rebound": {
+        "name": "rebound-dependency",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "13cc4a28cad1e2972719260ed410cfdcbfcbae36b28727cf60340671c5548319"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21055,
+          "sha256": "2c5ac97b23cc7fc41c0593d6e86879e2f51f912a8a98bed9c14260b7281099f3"
+        },
+        "expected_error": "semantic record: Key",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-rebound-dependency/receipt.json",
+        "passed": true
+      }
+    },
+    {
+      "mode": "cfg",
+      "context": [
+        "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+        "563c90d4fdf219ec01bb455e33351d6ec9422362591b71b19cd43f7db80521f2",
+        "1",
+        "100000000",
+        "65536"
+      ],
+      "admission": {
+        "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "entry_function": "main",
+        "entry_module": "sample",
+        "job_particle": "563c90d4fdf219ec01bb455e33351d6ec9422362591b71b19cd43f7db80521f2",
+        "limits": {
+          "arena_nodes": 100000000,
+          "artifact_bytes": 16777216,
+          "artifact_depth": 4096,
+          "artifact_nodes": 196608,
+          "diagnostics": 16,
+          "evaluator_frames": 65536,
+          "modules": 32,
+          "reductions": 100000000,
+          "sequence_length": 65536,
+          "source_bytes": 4096,
+          "validation_visits": 16777216
+        },
+        "modules": [
+          {
+            "logical_path": "bank.values",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "b070ce18a5763c19bd00ad2caea153f350dd22d55f0298c58f700c3a97d2fcef",
+            "source_bytes": 136,
+            "source_particle": "a9d3f3cc7752813e1f9ba6dd067847f9ec02b0c2b0d3f0d5edf1dbe7916e2fa4"
+          },
+          {
+            "logical_path": "sample",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "86a38ac479b9b7dd96a9d0d9407be8836ba534d126812572d41e5375cebcab48",
+            "source_bytes": 242,
+            "source_particle": "b1a6d59daa3098eabbcd7fa8386955e0c83c1d14eb1d7e09453dfedf977b6f2a"
+          }
+        ],
+        "options": {
+          "cfg_flags": [
+            "whole_proof_changed"
+          ],
+          "input_profile": 0,
+          "optimization": 0,
+          "output_profile": 0,
+          "target": 0
+        },
+        "package_particle": "c76527491ec3c721150dfee67c362ed318353f05e14ca1ba5fcfb1cf50edc166",
+        "validation_visits": 451
+      },
+      "source_changes": [],
+      "direct": {
+        "name": "binding-cfg",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 22174,
+          "sha256": "2074a26fc89058ad338a68d9c6977cde3b2e472db2ed3fc98f41f0e18d454d9f"
+        },
+        "expected_error": "format/context mismatch",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-binding-cfg/receipt.json",
+        "passed": true
+      },
+      "rebound": {
+        "name": "rebound-cfg",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "8c621eabe833e8d1cbc6172b6a375e9ef3013eccb7cdc61fb43b46317ea4d7d0"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 22174,
+          "sha256": "2074a26fc89058ad338a68d9c6977cde3b2e472db2ed3fc98f41f0e18d454d9f"
+        },
+        "expected_error": "semantic record: Key",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-rebound-cfg/receipt.json",
+        "passed": true
+      }
+    },
+    {
+      "mode": "job-limit",
+      "context": [
+        "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+        "52b85339707b4cc6647f6c65e0faad5358961792d18440ab7073b2e39f64666e",
+        "1",
+        "99999999",
+        "65536"
+      ],
+      "admission": {
+        "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "entry_function": "main",
+        "entry_module": "sample",
+        "job_particle": "52b85339707b4cc6647f6c65e0faad5358961792d18440ab7073b2e39f64666e",
+        "limits": {
+          "arena_nodes": 100000000,
+          "artifact_bytes": 16777216,
+          "artifact_depth": 4096,
+          "artifact_nodes": 196608,
+          "diagnostics": 16,
+          "evaluator_frames": 65536,
+          "modules": 32,
+          "reductions": 99999999,
+          "sequence_length": 65536,
+          "source_bytes": 4096,
+          "validation_visits": 16777216
+        },
+        "modules": [
+          {
+            "logical_path": "bank.values",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "b070ce18a5763c19bd00ad2caea153f350dd22d55f0298c58f700c3a97d2fcef",
+            "source_bytes": 136,
+            "source_particle": "a9d3f3cc7752813e1f9ba6dd067847f9ec02b0c2b0d3f0d5edf1dbe7916e2fa4"
+          },
+          {
+            "logical_path": "sample",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "86a38ac479b9b7dd96a9d0d9407be8836ba534d126812572d41e5375cebcab48",
+            "source_bytes": 242,
+            "source_particle": "b1a6d59daa3098eabbcd7fa8386955e0c83c1d14eb1d7e09453dfedf977b6f2a"
+          }
+        ],
+        "options": {
+          "cfg_flags": [],
+          "input_profile": 0,
+          "optimization": 0,
+          "output_profile": 0,
+          "target": 0
+        },
+        "package_particle": "c76527491ec3c721150dfee67c362ed318353f05e14ca1ba5fcfb1cf50edc166",
+        "validation_visits": 432
+      },
+      "source_changes": [],
+      "direct": {
+        "name": "binding-job-limit",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21096,
+          "sha256": "0bb9d116ce4b05caf9fbd2f96bc9758e18d402337bf4d34cf800ed23df6bc736"
+        },
+        "expected_error": "format/context mismatch",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-binding-job-limit/receipt.json",
+        "passed": true
+      },
+      "rebound": {
+        "name": "rebound-job-limit",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "101131f18360b6346109b0123039bdd1c14750eb4edf2ae8b18228d9dbb3936f"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21096,
+          "sha256": "0bb9d116ce4b05caf9fbd2f96bc9758e18d402337bf4d34cf800ed23df6bc736"
+        },
+        "expected_error": "semantic record: Key",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-rebound-job-limit/receipt.json",
+        "passed": true
+      }
+    },
+    {
+      "mode": "job-frames",
+      "context": [
+        "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+        "93fbbb1da86484678109d57184d11b413b375c872ec5129b0d018f470f4ef3b0",
+        "1",
+        "100000000",
+        "65535"
+      ],
+      "admission": {
+        "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "entry_function": "main",
+        "entry_module": "sample",
+        "job_particle": "93fbbb1da86484678109d57184d11b413b375c872ec5129b0d018f470f4ef3b0",
+        "limits": {
+          "arena_nodes": 100000000,
+          "artifact_bytes": 16777216,
+          "artifact_depth": 4096,
+          "artifact_nodes": 196608,
+          "diagnostics": 16,
+          "evaluator_frames": 65535,
+          "modules": 32,
+          "reductions": 100000000,
+          "sequence_length": 65536,
+          "source_bytes": 4096,
+          "validation_visits": 16777216
+        },
+        "modules": [
+          {
+            "logical_path": "bank.values",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "b070ce18a5763c19bd00ad2caea153f350dd22d55f0298c58f700c3a97d2fcef",
+            "source_bytes": 136,
+            "source_particle": "a9d3f3cc7752813e1f9ba6dd067847f9ec02b0c2b0d3f0d5edf1dbe7916e2fa4"
+          },
+          {
+            "logical_path": "sample",
+            "origin_name": "sh3-pilot",
+            "origin_version": "1",
+            "particle": "86a38ac479b9b7dd96a9d0d9407be8836ba534d126812572d41e5375cebcab48",
+            "source_bytes": 242,
+            "source_particle": "b1a6d59daa3098eabbcd7fa8386955e0c83c1d14eb1d7e09453dfedf977b6f2a"
+          }
+        ],
+        "options": {
+          "cfg_flags": [],
+          "input_profile": 0,
+          "optimization": 0,
+          "output_profile": 0,
+          "target": 0
+        },
+        "package_particle": "c76527491ec3c721150dfee67c362ed318353f05e14ca1ba5fcfb1cf50edc166",
+        "validation_visits": 432
+      },
+      "source_changes": [],
+      "direct": {
+        "name": "binding-job-frames",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21096,
+          "sha256": "fffff671946963cbc512489c6dd7ac5fa74554f19607fc458dad8e62cfe50602"
+        },
+        "expected_error": "format/context mismatch",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-binding-job-frames/receipt.json",
+        "passed": true
+      },
+      "rebound": {
+        "name": "rebound-job-frames",
+        "certificate": {
+          "bytes": 8662132,
+          "sha256": "75297516046af6b993e81d510567e8131b0db4b48d0e4fc9a6a420fe3234b4b2"
+        },
+        "program": {
+          "bytes": 9691488,
+          "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+        },
+        "job": {
+          "bytes": 21096,
+          "sha256": "fffff671946963cbc512489c6dd7ac5fa74554f19607fc458dad8e62cfe50602"
+        },
+        "expected_error": "semantic record: Key",
+        "protected_output": {
+          "bytes": 39,
+          "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+        },
+        "receipt": "attempts/verify-rebound-job-frames/receipt.json",
+        "passed": true
+      }
+    }
+  ],
+  "mutations": [
+    {
+      "name": "continuation",
+      "certificate": {
+        "bytes": 8662131,
+        "sha256": "6ad92c1df5620f9d042981f1ccd505e3d649f5d970c76cf0ba4e0ffa24188234"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "semantic record: Key",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-continuation/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "generation",
+      "certificate": {
+        "bytes": 8662133,
+        "sha256": "74603ef15874f17c2521b71d9ab77aa3f45c8f417f2d05372a6264c453fc46de"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "semantic record: Cache",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-generation/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "cost",
+      "certificate": {
+        "bytes": 8662132,
+        "sha256": "4c7b40e5abb28f36290b01f1c2d9c84faf989662cfb00fca34105dee4e79f0cb"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "semantic terminal: Claim",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-cost/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "valid-output-payload",
+      "certificate": {
+        "bytes": 8662152,
+        "sha256": "5fdc58855e015cd86a4d1145f67b4c97e5ca0001583d7c7c42fa41af78e323b4"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate result identity mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-valid-output-payload/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "valid-output-topology",
+      "certificate": {
+        "bytes": 8662149,
+        "sha256": "06f21bb5758e8fa468c1dd9b9ad860dfb1ba75be498898eed524aa197de846f4"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate result identity mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-valid-output-topology/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "valid-output-payload-rebound",
+      "certificate": {
+        "bytes": 8662120,
+        "sha256": "59108c9d5a96e5c19a7291da330672e8634578a3d5d8336adbe24d007c97e0af"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "semantic terminal: Claim",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-valid-output-payload-rebound/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "valid-output-topology-rebound",
+      "certificate": {
+        "bytes": 8662119,
+        "sha256": "a4b940062effb3e8ff1b2d8969b5c66612adb96ad1059230a396949d74eeefcc"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "semantic terminal: Claim",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-valid-output-topology-rebound/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "omit-terminal",
+      "certificate": {
+        "bytes": 8656330,
+        "sha256": "cfe6d29bdcbbc76754bd4389a56ea494ffa55a2ab4fe610fd1684c5a247299d0"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate read: failed to fill whole buffer",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-omit-terminal/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "drop-first",
+      "certificate": {
+        "bytes": 8635244,
+        "sha256": "6b81321e6e5330050d7705a725d0410ca4e37ace7710269d4e441ca0c1a94301"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate frame order/chain mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-drop-first/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "swap-first-two",
+      "certificate": {
+        "bytes": 8662132,
+        "sha256": "341efce7344b56b1ca0afb3e1f21cfc863ad5e416b8b5e49db9d05b6e62c5fc2"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate frame order/chain mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-swap-first-two/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "omit-completion",
+      "certificate": {
+        "bytes": 8662050,
+        "sha256": "697f93b91fbd35dd859c601a10f9d00348c0a24031e24c2e8a71fc7b5e797123"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate completion: failed to fill whole buffer",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-omit-completion/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "truncate-last-byte",
+      "certificate": {
+        "bytes": 8662131,
+        "sha256": "511f55ab5d4aeb9e2a6b5d066c919ecbd3b34b818f49c8bb5cf7ed8ecc8a6e6c"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate completion: failed to fill whole buffer",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-truncate-last-byte/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "trailing-byte",
+      "certificate": {
+        "bytes": 8662133,
+        "sha256": "4af8256487a7afe9a9eab8aa2efaebbe2b58d1d4e4d05fdee03b6f4ac752a240"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21055,
+        "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+      },
+      "expected_error": "certificate completion: certificate trailing bytes",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-trailing-byte/receipt.json",
+      "passed": true
+    }
+  ],
+  "regressions": [
+    {
+      "name": "old-hardcoded-job-limit",
+      "certificate": {
+        "bytes": 8662132,
+        "sha256": "5125c12b612620e5974546fafdaf26415226b12501a003a0f19a99b2985ba989"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21096,
+        "sha256": "0bb9d116ce4b05caf9fbd2f96bc9758e18d402337bf4d34cf800ed23df6bc736"
+      },
+      "expected_error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-old-hardcoded-job-limit/receipt.json",
+      "passed": true
+    },
+    {
+      "name": "old-hardcoded-job-frames",
+      "certificate": {
+        "bytes": 8662132,
+        "sha256": "14d3e28affa0f79cbdbcb5e3993973725cac481c135022e641b695b96532255a"
+      },
+      "program": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "job": {
+        "bytes": 21096,
+        "sha256": "fffff671946963cbc512489c6dd7ac5fa74554f19607fc458dad8e62cfe50602"
+      },
+      "expected_error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      },
+      "receipt": "attempts/verify-old-hardcoded-job-frames/receipt.json",
+      "passed": true
+    }
+  ],
+  "unchanged_inputs": true,
+  "original_matrix_rejections": 23,
+  "added_frame_coordinate_rejections": 2,
+  "old_hardcoded_reproductions": 2
+}

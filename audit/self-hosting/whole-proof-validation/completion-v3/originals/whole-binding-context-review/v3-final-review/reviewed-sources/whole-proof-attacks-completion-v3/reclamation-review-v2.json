@@ -1,0 +1,47 @@
+{
+  "status": "passed-reclamation-source-review",
+  "sources": {
+    "reclaim_completed_v2.py": {
+      "bytes": 12110,
+      "sha256": "4426d18f9eb5c77629c6ead577c42e0d5468ce5591d0756dc81ce63a65be5026"
+    },
+    "reclamation-plan.json": {
+      "bytes": 1135,
+      "sha256": "68649b2c6c771286e89728ffdc9581096302000e88eab9269ae42e4043a36c37"
+    }
+  },
+  "scope": "Root independent review of separate birth-aware action after original safe PID-reuse refusal; no full-proof acceptance claim.",
+  "reviewed_ns": 1790937353191113000,
+  "preparation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/tests/reclamation-v2-preparation.json",
+    "bytes": 3361,
+    "sha256": "f16bc21e6611213fd24c4993b338ad2600f4fbab6e8a7a819e8439d64b7a66ab"
+  },
+  "validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-reclamation-v2-root-review/receipt.json",
+    "bytes": 5420,
+    "sha256": "d97050ca412d295cc418c955fd4568542f467068c6f04fd2ea6024ccd5362887"
+  },
+  "checks": [
+    "Exact unlink/journal functions retain original reviewed bytes and both failure-path tests pass against this new module.",
+    "UTC C-locale process birth parser distinguishes numerical PID reuse only strictly after the original observed empty-group shutdown plus two seconds; old, leaderless, mixed, future and ambiguous births fail closed.",
+    "Native registrations and retired markers remain bound to original shutdown; actual host snapshots independently exercise the process classifier without signalling.",
+    "Original failed action, source and review remain exact; new action path and absolute invocation have independent provenance.",
+    "Only the hardcoded classified complete temporary can be removed after full held-descriptor digest/inode checks and durable pre-unlink evidence; both unfinished partials remain exact."
+  ],
+  "preserved_v1": {
+    "reclaim_completed.py": {
+      "bytes": 8667,
+      "sha256": "56a6858bb81e2e2a4471653dc246502a692d4253a352310dbbf46460a58a4d84"
+    },
+    "reclamation-review.json": {
+      "bytes": 3522,
+      "sha256": "8109fc53771e2a4bc6134456948f1def29ed1f85d8efda95b0672cbf3b982cd6"
+    },
+    "reclamation-action/receipt.json": {
+      "bytes": 1303,
+      "sha256": "ed888e87cb4fc88ddc0f724f77afc7e9565309b8f54620e0d776a864f1120cbd"
+    }
+  },
+  "test_count": 75
+}

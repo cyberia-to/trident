@@ -1,0 +1,173 @@
+{
+  "schema": "trident/parallel-whole-proof-orchestration/v2",
+  "status": "failed",
+  "started_ns": 1790919157877585000,
+  "plan": {
+    "bytes": 1297,
+    "sha256": "dfd87e0764823d7fa92bfd7ddf1b0c8577395b0f3446ae5944ed7f0b6897691d"
+  },
+  "generations": [
+    {
+      "generation": 1,
+      "status": "running",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole_suite.py",
+        "--generation",
+        "1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1",
+      "pid": 59933
+    },
+    {
+      "generation": 2,
+      "status": "running",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/whole_suite.py",
+        "--generation",
+        "2"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2",
+      "pid": 59934
+    }
+  ],
+  "sampled_peak_rss_bytes": 1715437568,
+  "source": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/run.py": {
+      "bytes": 13191,
+      "sha256": "afb9483e8110232cb5e2aab74d42f458bb6c6980e372d332148dbb0da654de5e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/resources.py": {
+      "bytes": 9091,
+      "sha256": "f72f551af33663a57d2add5bec56d757c6807ff56d15cf8018b35d2685feedeb"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/plan.json": {
+      "bytes": 1297,
+      "sha256": "dfd87e0764823d7fa92bfd7ddf1b0c8577395b0f3446ae5944ed7f0b6897691d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/transition.json": {
+      "bytes": 15361,
+      "sha256": "aef3f4e5c6926c8085267d28b48dda73e0ad384b8cf5111976c6fecaca4b6371"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/copied-inputs.json": {
+      "bytes": 630641,
+      "sha256": "de7a08fbe4eeb054d6c5b5d4580c585649723d789104a4e8658e3d9e42262bf3"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/guard.py": {
+      "bytes": 7542,
+      "sha256": "c838811be6b59fd49be02933d46794895b87a9888c7325209e2b5703847543cc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/guard.py": {
+      "bytes": 7542,
+      "sha256": "c838811be6b59fd49be02933d46794895b87a9888c7325209e2b5703847543cc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    }
+  },
+  "independent_review": {
+    "bytes": 5927,
+    "sha256": "3b00626300adafb83c62516a394e432fa0ef6fbb16e69823836f4a983ffcc29d"
+  },
+  "admission_reservation_bytes": 25026943990,
+  "admission_existing_bytes": 1373457187,
+  "admission_free_bytes": 52257824768,
+  "latest_sample": {
+    "time_ns": 1790933413343298000,
+    "owned_bytes": 12870541107,
+    "free_bytes": 53413371904,
+    "rss_bytes": 64192512,
+    "processes": [
+      {
+        "pid": 35164,
+        "ppid": 59933,
+        "pgid": 35164,
+        "rss_kib": 1984
+      },
+      {
+        "pid": 36032,
+        "ppid": 59873,
+        "pgid": 59873,
+        "rss_kib": 1712
+      },
+      {
+        "pid": 59873,
+        "ppid": 32509,
+        "pgid": 59873,
+        "rss_kib": 18736
+      },
+      {
+        "pid": 59933,
+        "ppid": 59873,
+        "pgid": 59933,
+        "rss_kib": 19056
+      },
+      {
+        "pid": 59934,
+        "ppid": 59873,
+        "pgid": 59934,
+        "rss_kib": 21200
+      }
+    ],
+    "generations": {
+      "1": {
+        "mutants": {
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole-c1/certificate-rebound-job-limit.joysc": 874201137
+        },
+        "canonical_output_bytes": 19384170,
+        "metadata_bytes": 2087863
+      },
+      "2": {
+        "mutants": {
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/whole-c2/certificate-rebound-job-limit.joysc": 10569174820
+        },
+        "canonical_output_bytes": 19384209,
+        "metadata_bytes": 2094323
+      }
+    },
+    "coordinator_metadata_bytes": 10757692,
+    "reason": null
+  },
+  "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/run.py\", line 208, in execute\n    raise RuntimeError('shared failure: ' + (ROOT / 'stop.json').read_text())\nRuntimeError: shared failure: {\"reason\": \"suite-failed\", \"detail\": {\"generation\": 2, \"exit_code\": 1}, \"pid\": 59873, \"time_ns\": 1790933413767683000}\n",
+  "children_final": {
+    "1": {
+      "pid": 59933,
+      "exit_code": 1
+    },
+    "2": {
+      "pid": 59934,
+      "exit_code": 1
+    }
+  },
+  "ended_ns": 1790933425827383000,
+  "files": {
+    "c1.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "c1.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "c2.stderr": {
+      "bytes": 1297,
+      "sha256": "1d6ad5894abd3b62ce0a395402077705110e6943520cbd3923f19a1a4c1efb8f"
+    },
+    "c2.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resources.jsonl": {
+      "bytes": 9391591,
+      "sha256": "16e0b5ba90ebc2edfbbf896526205c1c5e3b1a0ef9e879b6f235278addb40759"
+    }
+  }
+}

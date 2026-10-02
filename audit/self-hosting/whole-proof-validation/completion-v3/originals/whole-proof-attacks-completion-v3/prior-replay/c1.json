@@ -1,0 +1,284 @@
+{
+  "schema": "trident/prior-complete-proof-cases/v1",
+  "status": "passed-selected-cases",
+  "scope": "Case-level replay only; immutable enclosing v2 suite remains failed; no fresh case execution",
+  "generation": 1,
+  "original_suite": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole-c1/receipt.json",
+    "bytes": 539049,
+    "sha256": "e18fd1e2fcbe57d0abf81bf7dc8a2696560638304648fb47aae3490deaa62c7f"
+  },
+  "original_checker": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v2/check.py",
+    "bytes": 32726,
+    "sha256": "503bb17b57ec2141788f1536b1750e875b5d1f8b108751e40e30d58ab2658c9c"
+  },
+  "original_proof": {
+    "bytes": 11977015727,
+    "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+  },
+  "profile": {
+    "wire_bytes": 25769803776,
+    "decoded_bytes": 103079215104,
+    "records": 12000000000,
+    "steps": 16000000000,
+    "cache_slots": 262144,
+    "host_flags": [
+      "--arena-nodes",
+      "1000000000",
+      "--budget",
+      "20000000000",
+      "--frames",
+      "65536",
+      "--time-ms",
+      "7200000",
+      "--validation-visits",
+      "16777216",
+      "--resident-nodes",
+      "3145728",
+      "--collection-work",
+      "10000000000"
+    ],
+    "outer_wall_seconds": 7500,
+    "sampled_rss_bytes": 6442450944,
+    "attempt_disk_bytes": 32212254720,
+    "minimum_free_start_bytes": 51539607552,
+    "expected_artifact_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+    "status": "prepared; no full proof started",
+    "scope": "Separate bounded public certificate profile over unchanged accepted complete SH6 jobs and compilers. Guest limits and host deadline retain SH6 values. No automatic retry or bound increase."
+  },
+  "controls": [
+    {
+      "name": "original-fresh-verification",
+      "reused_existing_actual_control": true,
+      "receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-fresh-verification-1/receipt.json",
+      "receipt_identity": {
+        "bytes": 33088,
+        "sha256": "fda7a195b2b8716746f9084a5cc45453176285889b1cb08d4f548c70e696f3c4"
+      },
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "output": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      }
+    },
+    {
+      "name": "rechain",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "recipe": {
+        "mode": "rechain",
+        "context": [],
+        "certificate": {
+          "bytes": 11977015727,
+          "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+        },
+        "construction_receipt": "attempts/whole-c1-construct-rechain/receipt.json"
+      },
+      "verification_receipt": "attempts/whole-c1-verify-rechain/receipt.json"
+    }
+  ],
+  "rejections": [
+    {
+      "name": "binding-compiler",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "recipe": null,
+      "verification_receipt": "attempts/whole-c1-verify-binding-compiler/receipt.json",
+      "error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "rebound-compiler",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "ce17abb9fcfef3dc63f58b8fcebd10a99e3e8e091aa18d02f34dad5b2754bc95"
+      },
+      "recipe": {
+        "mode": "rebind",
+        "context": [
+          "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+          "b9454107f6296f21febd6e68dd98b1b108cc31e195acdad7fe1fb9246f422d36",
+          "1",
+          "20000000000",
+          "65536"
+        ],
+        "certificate": {
+          "bytes": 11977015727,
+          "sha256": "ce17abb9fcfef3dc63f58b8fcebd10a99e3e8e091aa18d02f34dad5b2754bc95"
+        },
+        "construction_receipt": "attempts/whole-c1-construct-rebound-compiler/receipt.json"
+      },
+      "verification_receipt": "attempts/whole-c1-verify-rebound-compiler/receipt.json",
+      "error": "semantic record: Key",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "binding-source",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "recipe": null,
+      "verification_receipt": "attempts/whole-c1-verify-binding-source/receipt.json",
+      "error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "rebound-source",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "581bc5bfd145f85cf34f848e62d7bb2b85e774ccbd357dd3723b30bfc810a52c"
+      },
+      "recipe": {
+        "mode": "rebind",
+        "context": [
+          "5dad67d86e586f4e0949e5517fc94fd298dc0ed4aaee216eabb826a69e1af7ca",
+          "9a0a270f5f476c687e5925893cd1c8162662325bc159ad2abc88408f8b62883f",
+          "54fe5fd1e6258f1e2b605bf0fbf27827f66f8061bacb155d233b481bba0a90ca",
+          "1",
+          "20000000000",
+          "65536"
+        ],
+        "certificate": {
+          "bytes": 11977015727,
+          "sha256": "581bc5bfd145f85cf34f848e62d7bb2b85e774ccbd357dd3723b30bfc810a52c"
+        },
+        "construction_receipt": "attempts/whole-c1-construct-rebound-source/receipt.json"
+      },
+      "verification_receipt": "attempts/whole-c1-verify-rebound-source/receipt.json",
+      "error": "semantic record: Key",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "binding-dependency",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "recipe": null,
+      "verification_receipt": "attempts/whole-c1-verify-binding-dependency/receipt.json",
+      "error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "rebound-dependency",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "72164f4f68b565c350721ed77f736ced18e95d36c157e7914f1776b3ba3d0890"
+      },
+      "recipe": {
+        "mode": "rebind",
+        "context": [
+          "5dad67d86e586f4e0949e5517fc94fd298dc0ed4aaee216eabb826a69e1af7ca",
+          "9a0a270f5f476c687e5925893cd1c8162662325bc159ad2abc88408f8b62883f",
+          "16f7d2e03bc4f5848a8e02ec9f4eedbd4b6c72c2a595afbd20f5f3903744661d",
+          "1",
+          "20000000000",
+          "65536"
+        ],
+        "certificate": {
+          "bytes": 11977015727,
+          "sha256": "72164f4f68b565c350721ed77f736ced18e95d36c157e7914f1776b3ba3d0890"
+        },
+        "construction_receipt": "attempts/whole-c1-construct-rebound-dependency/receipt.json"
+      },
+      "verification_receipt": "attempts/whole-c1-verify-rebound-dependency/receipt.json",
+      "error": "semantic record: Key",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "binding-cfg",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "recipe": null,
+      "verification_receipt": "attempts/whole-c1-verify-binding-cfg/receipt.json",
+      "error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "rebound-cfg",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "82c75668e72ba2752af854401dbf07592cef9464d029bca9a51b0b907912b8c1"
+      },
+      "recipe": {
+        "mode": "rebind",
+        "context": [
+          "5dad67d86e586f4e0949e5517fc94fd298dc0ed4aaee216eabb826a69e1af7ca",
+          "9a0a270f5f476c687e5925893cd1c8162662325bc159ad2abc88408f8b62883f",
+          "ae7056629c8a42da7aef64a1588fe9a1141ff0e0ae24922b6b96f55208830d49",
+          "1",
+          "20000000000",
+          "65536"
+        ],
+        "certificate": {
+          "bytes": 11977015727,
+          "sha256": "82c75668e72ba2752af854401dbf07592cef9464d029bca9a51b0b907912b8c1"
+        },
+        "construction_receipt": "attempts/whole-c1-construct-rebound-cfg/receipt.json"
+      },
+      "verification_receipt": "attempts/whole-c1-verify-rebound-cfg/receipt.json",
+      "error": "semantic record: Key",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    },
+    {
+      "name": "binding-job-limit",
+      "certificate": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "recipe": null,
+      "verification_receipt": "attempts/whole-c1-verify-binding-job-limit/receipt.json",
+      "error": "format/context mismatch",
+      "protected_output": {
+        "bytes": 39,
+        "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+      }
+    }
+  ],
+  "index": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole-c1/index.json",
+    "bytes": 1245,
+    "sha256": "7570ae25b842bba24625446b02ed1b1e93963cf17b6c61d7b2480b157ea2b91c"
+  },
+  "result": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole-c1/result.dag",
+    "bytes": 9692331,
+    "sha256": "3eb9fe94f9262095afafdb157857c0d04587f5f16f71071fae07db77d04c7c45"
+  }
+}
