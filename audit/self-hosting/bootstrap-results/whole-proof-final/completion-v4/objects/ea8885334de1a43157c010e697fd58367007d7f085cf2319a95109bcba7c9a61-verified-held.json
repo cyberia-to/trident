@@ -1,0 +1,115 @@
+{
+  "status": "verified-unlinked-inode-still-held",
+  "started_ns": 1790958820139343000,
+  "unlink_performed": true,
+  "released_owned_bytes": 0,
+  "charged_duplicate_bytes": 11901028947,
+  "original_failure_status_unchanged": true,
+  "bindings": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/safe_files.py": {
+      "bytes": 6998,
+      "sha256": "252456573630b5c74058b20bd7453954c6844df84ffacd1ee93ca49e8a1768b9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/processes.py": {
+      "bytes": 3212,
+      "sha256": "9925c6543e6e6d664465b4c5c8cf48e9cbdc18c666e75a4c3d382fda72a3c49a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/prepare.py": {
+      "bytes": 8304,
+      "sha256": "65a051943ef729b4ab7b057ea8fcdb245f60f22c242afb0ff61422e86769bf1f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/reclaim.py": {
+      "bytes": 9152,
+      "sha256": "8cd17af001d8fc89f1dac8a2781d33a416acb642f35c741509f1b1176469d951"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/reconstruct.py": {
+      "bytes": 3056,
+      "sha256": "ec1aa8f96774543ab5d744b9b42f822bfc671ddbd1b18661c562a4fbe28c2e08"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/test_reclamation.py": {
+      "bytes": 13935,
+      "sha256": "bdb8ec9d67a93b1a4da52b4e9226f7f9da06c102690cda48c18c979792bc4562"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/PLAN.md": {
+      "bytes": 5327,
+      "sha256": "50a04594290c0006bfe8634f5dd645906201d08d1c358dc6af653fead32c8b40"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/review.json": {
+      "bytes": 1526,
+      "sha256": "c696dcb4fdd7ca952ff513ce964a6df29672aa94e6e096a9249a444891ac9158"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/sources.json": {
+      "bytes": 880,
+      "sha256": "0734c103f8dec872296e8a1baaf57af2f4a44c68c30cb6fc1a8dcb9d09d35535"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4/plan.json": {
+      "bytes": 63004,
+      "sha256": "a0b802db80cee7cbeac1b8bafdb60d0d98d661f3471bf39258bf61be10fd78b1"
+    }
+  },
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "reclaim.py",
+    "--review-sha256",
+    "c696dcb4fdd7ca952ff513ce964a6df29672aa94e6e096a9249a444891ac9158"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-prefix-reclamation-v4",
+  "before": {
+    "original": {
+      "bytes": 11977015727,
+      "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+    },
+    "prefix": {
+      "bytes": 11901028947,
+      "sha256": "a4108874af7f843bb86e89442c5ca4071a638d45c3d24b8aa7f20fa1f96b95ed"
+    },
+    "duplicate": {
+      "bytes": 11901028947,
+      "sha256": "a4108874af7f843bb86e89442c5ca4071a638d45c3d24b8aa7f20fa1f96b95ed"
+    }
+  },
+  "original_state": {
+    "st_dev": 16777229,
+    "st_ino": 258383230,
+    "st_mode": 33188,
+    "st_nlink": 1,
+    "st_size": 11977015727,
+    "st_mtime_ns": 1790915926513600619,
+    "st_ctime_ns": 1790915926523159617,
+    "st_birthtime": 1790909248.476234
+  },
+  "duplicate_state": {
+    "st_dev": 16777229,
+    "st_ino": 259240946,
+    "st_mode": 33188,
+    "st_nlink": 1,
+    "st_size": 11901028947,
+    "st_mtime_ns": 1790956221187966793,
+    "st_ctime_ns": 1790956221187966793,
+    "st_birthtime": 1790942982.3791296
+  },
+  "unlinked_state": {
+    "st_dev": 16777229,
+    "st_ino": 259240946,
+    "st_mode": 33188,
+    "st_nlink": 0,
+    "st_size": 11901028947,
+    "st_mtime_ns": 1790956221187966793,
+    "st_ctime_ns": 1790958849321016902,
+    "st_birthtime": 1790942982.3791296
+  },
+  "after": {
+    "original": {
+      "bytes": 11977015727,
+      "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+    },
+    "prefix": {
+      "bytes": 11901028947,
+      "sha256": "a4108874af7f843bb86e89442c5ca4071a638d45c3d24b8aa7f20fa1f96b95ed"
+    },
+    "duplicate": {
+      "bytes": 11901028947,
+      "sha256": "a4108874af7f843bb86e89442c5ca4071a638d45c3d24b8aa7f20fa1f96b95ed"
+    }
+  }
+}
