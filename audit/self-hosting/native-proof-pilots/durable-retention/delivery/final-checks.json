@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "time_ns": 1790918883058935000,
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "audit/self-hosting/native-proof-pilots/durable-retention/check_retention.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+      "exit_code": 0,
+      "source": {
+        "bytes": 6250,
+        "sha256": "1f63dd3ed947b3c7a7c669e3888ed073196d252e7781317086da713ecaf4862d"
+      },
+      "outputs": {
+        "stdout": {
+          "bytes": 243,
+          "sha256": "d4f08ed7fbe9ae646aef88aab5771ad2d7d75827105c04174410e5ce549a5985"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "audit/self-hosting/native-proof-pilots/durable-retention/delivery/check_delivery.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+      "exit_code": 0,
+      "source": {
+        "bytes": 3115,
+        "sha256": "d08f685ae53f250ec6e2bd4b28a5e6070217c5c57fc87640564ec42206e77ae2"
+      },
+      "outputs": {
+        "stdout": {
+          "bytes": 5529,
+          "sha256": "48f5309b9ce50c0fcc98fa749c6f68e766cb40c94deab7adec4bfdf8321bb964"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ]
+}

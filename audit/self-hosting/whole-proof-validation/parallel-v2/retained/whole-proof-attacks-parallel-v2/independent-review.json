@@ -1,0 +1,102 @@
+{
+  "schema": "trident/parallel-whole-proof-independent-review/v2",
+  "status": "passed-source-review",
+  "reviewed_utc": "2026-10-02T05:32:18.733274+00:00",
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/run.py": {
+      "bytes": 13191,
+      "sha256": "afb9483e8110232cb5e2aab74d42f458bb6c6980e372d332148dbb0da654de5e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/resources.py": {
+      "bytes": 9091,
+      "sha256": "f72f551af33663a57d2add5bec56d757c6807ff56d15cf8018b35d2685feedeb"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/plan.json": {
+      "bytes": 1297,
+      "sha256": "dfd87e0764823d7fa92bfd7ddf1b0c8577395b0f3446ae5944ed7f0b6897691d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/transition.json": {
+      "bytes": 15361,
+      "sha256": "aef3f4e5c6926c8085267d28b48dda73e0ad384b8cf5111976c6fecaca4b6371"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/copied-inputs.json": {
+      "bytes": 630641,
+      "sha256": "de7a08fbe4eeb054d6c5b5d4580c585649723d789104a4e8658e3d9e42262bf3"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/guard.py": {
+      "bytes": 7542,
+      "sha256": "c838811be6b59fd49be02933d46794895b87a9888c7325209e2b5703847543cc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/guard.py": {
+      "bytes": 7542,
+      "sha256": "c838811be6b59fd49be02933d46794895b87a9888c7325209e2b5703847543cc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    }
+  },
+  "source_manifest": {
+    "bytes": 1988,
+    "sha256": "5653eb70fc7acf6c4fe7651e4d6da8251a4039f01ef866d68543470df21dcef2"
+  },
+  "scope": "Independent read-only source review and source/input identity replay. No whole certificate contents read, copied or executed; no coordinator or validation suite launched by this reviewer.",
+  "findings": [],
+  "resolved_findings": [
+    "Persistent native-process birth/group registration occurs before executable startup.",
+    "Accounting lock encloses process snapshot and registry inspection, preventing premature retirement of a newly registered live group.",
+    "Registered groups remain accounted after reparenting or leader exit; shutdown binds stable member birth/group identity, escalates TERM/KILL, rescans and records an empty final process observation.",
+    "Caller generation admission governs mutation reclamation.",
+    "Final shared sample precedes passed status.",
+    "Admission preserves both explicit free-space requirements and includes all retained original evidence plus both live mutation/output/metadata reservations within unchanged26GiB.",
+    "Copied helper/input/preparation bytes and original bytes are checked against the reviewed copy manifest before admission."
+  ],
+  "independent_static_checks": {
+    "source_manifest_files": 9,
+    "copied_input_entries_replayed": 2160,
+    "copied_input_logical_bytes": 213988428,
+    "python_sources_ast_parsed": true,
+    "both_generation_guard_and_suite_bytes_identical": true,
+    "unchanged_negative_cases_per_generation": 23,
+    "unchanged_controls_per_generation": 2
+  },
+  "reviewed_root_tests": {
+    "execution": "Executed by root; reviewer read source and retained stderr, did not rerun.",
+    "tests": 8,
+    "elapsed_seconds": 25.127,
+    "files": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-tooling-delivery-review/test_parallel_v2.py": {
+        "bytes": 9166,
+        "sha256": "c986af704937ecd20c346b16145dcec0b774743ff194b66a7b30078e1ebca7db"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-tooling-delivery-review/parallel-v2-tests-5.stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-tooling-delivery-review/parallel-v2-tests-5.stderr": {
+        "bytes": 1159,
+        "sha256": "c1dc27c88f9c8b4f5ce070dbcbde78dbd91a455850030035f5d4f2f5b444ecda"
+      }
+    },
+    "coverage": [
+      "Actual expected rejection is accepted without resource failure.",
+      "Actual log overflow fails and preserves bounded logs.",
+      "Cross-generation reclamation is rejected.",
+      "Shared stop retains owned mutation.",
+      "Second concurrent mutant in one generation fails shared reservation.",
+      "Shared accounting includes both allowed mutants and retained original partial.",
+      "Actual registered native group survives parent exit and is terminated.",
+      "Actual registered leaderless group survives leader exit and is terminated."
+    ]
+  },
+  "limitations": [
+    "Source-review approval permits root to launch this distinct schedule; actual two-generation adversarial acceptance remains pending.",
+    "Per-command limits and both positive controls/all23 rejections remain unchanged; helper file ceilings and bounded logs are stricter.",
+    "Physical RSS and disk observations remain sampled; proof semantic validity is separately checked by the unchanged production verifier.",
+    "Original v1 interruption evidence and partial file remain retained and charged; no previous negative success is inherited."
+  ]
+}

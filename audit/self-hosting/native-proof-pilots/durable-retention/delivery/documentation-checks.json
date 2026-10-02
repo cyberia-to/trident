@@ -1,0 +1,109 @@
+{
+  "status": "passed",
+  "base_revision": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "scope": "All local links in new audit README and added Markdown links; unchanged production source/manifest/lock; plan line budget and helper syntax; whitespace.",
+  "local_links": [
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "../README.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "../README.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "provenance.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "remote-parts-manifest.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-review.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "root-review/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "root-review/command.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "root-review/initial-invocation.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-audit.tar.gz"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-audit-manifest.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "package-command-result.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-1/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-2/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-1/install.stderr"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-2/install.stderr"
+    },
+    {
+      "source": "reference/roadmap.md",
+      "target": "../audit/self-hosting/native-proof-pilots/durable-retention/README.md"
+    },
+    {
+      "source": "audit/self-hosting-progress.md",
+      "target": "self-hosting/native-proof-pilots/durable-retention/README.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/README.md",
+      "target": "durable-retention/README.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/README.md",
+      "target": "initial-transport/receipt.json"
+    }
+  ],
+  "plan_lines": 1000,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "production_paths_unchanged": [
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "Cargo.toml",
+    "Cargo.lock"
+  ]
+}

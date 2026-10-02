@@ -1,0 +1,53 @@
+{
+  "status": "passed",
+  "base_commit": "e57f2b4c6c6b7128e1cbbf80a77a0ccfcc8d33d7",
+  "argv": [
+    "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+    "check",
+    "--locked",
+    "--offline"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/corpus-path-fix/trident",
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "-D warnings",
+    "RUSTDOCFLAGS": "-D warnings",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "exit_code": 0,
+  "warning_lines": [],
+  "elapsed_seconds": 2.5977914159884676,
+  "scope": "Actual Rust1.89 check with existing warm cache; complete previous suite referenced by unchanged-production impact check.",
+  "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+  "executables": {
+    "cargo": {
+      "path": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+      "bytes": 28655992,
+      "sha256": "798a97c06e6fc3a63f1b7e3141f87e515e6bc8da1527bc32e19ba27d86bb89c5"
+    },
+    "rustc": {
+      "path": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+      "bytes": 414776,
+      "sha256": "af4a9eb303553510e9d74220636dc4b21f8574ddeab73741bf6b892adc49c21c"
+    },
+    "rustdoc": {
+      "path": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+      "bytes": 11456472,
+      "sha256": "1e65fe1796464bbe73ee53231852d8a779f144e8825c2711819435e0aad2213e"
+    }
+  },
+  "logs": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 1094,
+      "sha256": "c14e8ecb2625b2f5c77fe4d5547cd2ac9fa9f34cd1a32351fd9487e02b32b4fd"
+    }
+  }
+}

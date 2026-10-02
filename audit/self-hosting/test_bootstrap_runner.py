@@ -17,6 +17,14 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class BootstrapBoundaries(unittest.TestCase):
+    def test_tracked_paths_fit_native_windows_checkout(self):
+        # Leave room for the hosted runner's checkout prefix under MAX_PATH.
+        # Nested retained copies previously failed before any Windows test ran.
+        root = SCRIPT.parents[2]
+        paths = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode('utf-8').split('\0')
+        oversized = [name for name in paths if len(name.encode('utf-16-le')) // 2 > 200]
+        self.assertEqual(oversized, [], 'retained audit paths must fit native Windows checkout')
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name)

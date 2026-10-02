@@ -96,10 +96,13 @@ small enough to retain completely in this directory.
 criteria, original small-package bytes, positive/adversarial reports and exact
 historical dynamic probe. It reports no findings.
 
-Remote archive retention is in progress through the existing unpublished
-rehearsal draft. The [initial single-file transfer](initial-transport/receipt.json)
+The complete archive has [verified remote retention](durable-retention/README.md)
+through ordered parts in the existing unpublished rehearsal draft. Every part
+matches its server digest and independent download; ordered reconstruction
+matches the complete archive above. A separate root replay also passes.
+The [initial single-file transfer](initial-transport/receipt.json)
 was stopped after slow upload made its declared transfer deadline impractical;
-its failure remains recorded. Ordered chunk transport is separate follow-up.
-Large payloads remain complete in the locally reviewed archive.
-Final transport evidence must bind server asset digests and independently
-downloaded archive bytes; tag creation and release promotion belong to the owner.
+its failure remains recorded alongside the completed chunk transport.
+The draft remains unpublished and its candidate tag absent. The follow-up also
+retains both actual acceptance-commit install attempts, including the initial
+PATH warning and corrected warning-free result. SH8 remains a separate gate.

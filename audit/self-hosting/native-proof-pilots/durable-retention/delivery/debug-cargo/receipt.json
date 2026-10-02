@@ -1,0 +1,79 @@
+{
+  "schema": "trident/sh7-retention-cargo-gates/v1",
+  "status": "failed",
+  "base_commit": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "-D warnings",
+    "RUSTDOCFLAGS": "-D warnings",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "versions": {
+    "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+    "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\nrelease: 1.89.0\ncommit-hash: c24e1064277fe51ab72011e2612e556ac56addf7\ncommit-date: 2025-06-23\nhost: aarch64-apple-darwin\nlibgit2: 1.9.0 (sys:0.20.2 vendored)\nlibcurl: 8.7.1 (sys:0.4.80+curl-8.12.1 system ssl:(SecureTransport) LibreSSL/3.3.6)\nssl: OpenSSL 3.5.0 8 Apr 2025\nos: Mac OS 26.4.1 [64-bit]\n"
+  },
+  "cache_scope": "Reuse accepted warm Cargo target; no fresh-build timing claim.",
+  "commands": [
+    {
+      "name": "check",
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+      "started_utc": "2026-10-02T04:35:23.474611+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 17.050493749964517,
+      "logs": {
+        "stdout": {
+          "path": "check.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "check.stderr",
+          "bytes": 4135,
+          "sha256": "19641fefb6e66af37d43bb79bdf44d393ddf7b0bf94c8cfdb074a6f4f7f65c77"
+        }
+      },
+      "warning_lines": []
+    },
+    {
+      "name": "test",
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--",
+        "--test-threads",
+        "2"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+      "started_utc": "2026-10-02T04:35:40.525949+00:00",
+      "exit_code": 101,
+      "elapsed_seconds": 405.9869409169769,
+      "logs": {
+        "stdout": {
+          "path": "test.stdout",
+          "bytes": 58114,
+          "sha256": "0efee20b53833d316e5454f417d108ae80c915e0ce2c43bb76fd325f67443b83"
+        },
+        "stderr": {
+          "path": "test.stderr",
+          "bytes": 178714,
+          "sha256": "c9c882ffc185f92123a9a896306abf213f64a98570090016a86389783eeb93b8"
+        }
+      },
+      "warning_lines": []
+    }
+  ],
+  "error": "RuntimeError('gate failed: test')"
+}

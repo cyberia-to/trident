@@ -1,0 +1,20 @@
+{
+  "status": "observed-wrapper-warning",
+  "scope": "Outer inline invocation telemetry only; all actual unit/fixture child logs retained separately and warning-free",
+  "command_python": "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "source_expression": "hashlib.file_digest(p.open('rb'),'sha256').hexdigest()",
+  "diagnostic": "ResourceWarning: unclosed file <_io.BufferedReader ...> emitted during file finalization after unit and actual child completion",
+  "affected_wrapper_identity_reads": [
+    "Python executable",
+    "unit.stdout",
+    "unit.stderr",
+    "Python executable",
+    "actual.stdout",
+    "actual.stderr"
+  ],
+  "child_exit_codes": {
+    "unit": 0,
+    "actual": 0
+  },
+  "repair": "Final evidence replay uses with-managed file handles; no child rerun, source change or status reclassification."
+}

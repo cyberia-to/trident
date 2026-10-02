@@ -1,0 +1,479 @@
+{
+  "schema": "trident/completed-mutant-classification/v1",
+  "status": "passed-readonly-classification",
+  "created_ns": 1790934889851190000,
+  "scope": "one completed reproducible owned C2 temporary; future reclamation review only",
+  "sources": {
+    "compare.py": {
+      "bytes": 6183,
+      "sha256": "99bdb68d70165d1392e9c8adbe24d58e6c7c1d2a0aea66feb7e7b756d10f0695"
+    },
+    "retain.py": {
+      "bytes": 8219,
+      "sha256": "5c338ac54a81297b744ceabca123ae6a313012fb72a1819f2ba9c5db985830b5"
+    }
+  },
+  "comparison": {
+    "bytes": 3008,
+    "sha256": "79cc410fbc2666c67fd3c112e31508060a8c6c454ae323ed5fef054c157290de"
+  },
+  "retained": {
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/observation.json": {
+      "bytes": 1388,
+      "sha256": "99280702592d1d7e21eab334297cfebe7a21271eda831becba345117933bbb7e"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-parallel-v2/run-1/receipt.json.gz": {
+      "bytes": 1692,
+      "sha256": "28a39973fefcb29d28e7154bef8b7b92cd8184d72f68839f1717637b3d992560"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-parallel-v2/stop.json.gz": {
+      "bytes": 118,
+      "sha256": "8e58fd1aff03fe398d4a635e835119dfad7957ddab48e8a7f95477d50ee8b95f"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/receipt.json.gz": {
+      "bytes": 1772,
+      "sha256": "b84029f61563514c72b86d9668a0e3660452785f26d9da67c9cb6742f6a00ddc"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/resources.jsonl.gz": {
+      "bytes": 2095,
+      "sha256": "f8330f0c86249b3cdc47490e3ad1726be23ba6c822460ab0d9f62b1451e339ec"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/stderr.gz": {
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/stdout.gz": {
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/whole-c1/receipt.json.gz": {
+      "bytes": 26368,
+      "sha256": "128b8aa0aba90a2c1b9a6785f2a8a9fe240e119befb42ee2c351ad696f70f6ac"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/receipt.json.gz": {
+      "bytes": 1463,
+      "sha256": "e1b945d4b0b8b6a48851784cd4edc57e3b2e0a8d2d4bd1e4e085d1ab0bb9ef12"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/resources.jsonl.gz": {
+      "bytes": 24298,
+      "sha256": "7fb619bbdecfc63a2568eb219d2f5ba2b8ae6ef7ca059c0d0feec0b6dda35991"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/stderr.gz": {
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/stdout.gz": {
+      "bytes": 202,
+      "sha256": "5773895b2816f55ba650992ab84e604aa40fd6e7528b9babacd3f2b48aff44f3"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/receipt.json.gz": {
+      "bytes": 1560,
+      "sha256": "fca7fb944a19f8d05afa01765a580993e68f6619b0ee90235cbd8d4a191687a7"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/resources.jsonl.gz": {
+      "bytes": 178,
+      "sha256": "1f03f40d1971171ef7b2e2f0e1640022e92ad206e90e3838750063dc88e74c7c"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/stderr.gz": {
+      "bytes": 82,
+      "sha256": "cbbaa061caa5cf21c6a0fd3084118e317e49dcba8d83586fbca298a3080d7d3b"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/stdout.gz": {
+      "bytes": 20,
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/whole-c2/receipt.json.gz": {
+      "bytes": 26380,
+      "sha256": "709147ce8a9dc5c16022982b7bcab21085536d13dfdac465d11e75f1cb04e189"
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-final-review-v2/orchestration/receipt.json.gz": {
+      "bytes": 569,
+      "sha256": "9a8616cfe403244c98f8e4f150c67e0237c6cfe76e9e30181c4bc2017b9adaab"
+    },
+    "production-install/joy/rs/structured/certificate/admission.rs": {
+      "bytes": 4120,
+      "sha256": "243c967811e6a2028d091a82663848552596fa866b5c5adfd14f8eb2c9b06efc"
+    },
+    "production-install/joy/rs/structured/certificate/transport/reader.rs": {
+      "bytes": 4740,
+      "sha256": "cdb20eb6eefe9316160c0f2e1c41722fa64fc6e2260ff7fbeb8ec7300b5c8589"
+    },
+    "production-install/joy/rs/structured/certificate/transport/tests.rs": {
+      "bytes": 8592,
+      "sha256": "72cc3f94c88d5b0610633cf6ef4ac949a710de32155c085ed8a101f3a71f56b3"
+    },
+    "production-install/joy/rs/structured/certificate/transport/writer.rs": {
+      "bytes": 4726,
+      "sha256": "d60cf341dd6bcd4553cda492a0139a6386515522bb58be49440c36b7454ed95f"
+    },
+    "production-install/joy/rs/structured/certificate/transport.rs": {
+      "bytes": 3126,
+      "sha256": "eac8dd88c711b0a65c398b0ff513859933197238100ed7c81bfee9c70b6ddab4"
+    },
+    "production-install/joy/rs/structured/certificate/types.rs": {
+      "bytes": 2137,
+      "sha256": "825ed4c59db8395fc31955bfcfe2bf756a13a6fe42e6cba320cf550e019d4483"
+    },
+    "whole-proof-attacks-parallel-v2/plan.json": {
+      "bytes": 1297,
+      "sha256": "dfd87e0764823d7fa92bfd7ddf1b0c8577395b0f3446ae5944ed7f0b6897691d"
+    },
+    "whole-proof-attacks-parallel-v2/resources.py": {
+      "bytes": 9091,
+      "sha256": "f72f551af33663a57d2add5bec56d757c6807ff56d15cf8018b35d2685feedeb"
+    },
+    "whole-proof-attacks-parallel-v2/run-1/receipt.json": {
+      "bytes": 6199,
+      "sha256": "51c5343701842f694cc00335939d63b6d7bfddc17f74305111a0a20a6274cf2a"
+    },
+    "whole-proof-attacks-parallel-v2/run.py": {
+      "bytes": 13191,
+      "sha256": "afb9483e8110232cb5e2aab74d42f458bb6c6980e372d332148dbb0da654de5e"
+    },
+    "whole-proof-attacks-parallel-v2/shutdown.json": {
+      "bytes": 90,
+      "sha256": "fbfe3cf3a9893e96dbd7df5b504f3f5410c1cfff550f0d960abe991a28041661"
+    },
+    "whole-proof-attacks-parallel-v2/sources.json": {
+      "bytes": 1988,
+      "sha256": "5653eb70fc7acf6c4fe7651e4d6da8251a4039f01ef866d68543470df21dcef2"
+    },
+    "whole-proof-attacks-parallel-v2/stop.json": {
+      "bytes": 117,
+      "sha256": "dbf542db93c13df005b83a03ff2735c50618a455af77c4aa8a015d57a05c103f"
+    },
+    "whole-proof-attacks-parallel-v2/transition.json": {
+      "bytes": 15361,
+      "sha256": "aef3f4e5c6926c8085267d28b48dda73e0ad384b8cf5111976c6fecaca4b6371"
+    },
+    "whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/receipt.json": {
+      "bytes": 4879,
+      "sha256": "be2aa65b2efcc6dd96cf5de711cb4325df219661a154067aa37c70ac71e72d3b"
+    },
+    "whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/resources.jsonl": {
+      "bytes": 18100,
+      "sha256": "c9fa3fb17d7fb157368c13c8120e4646d849cf164a7e79cd06e574377babad34"
+    },
+    "whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole-proof-attacks-v2-c1/whole-c1/receipt.json": {
+      "bytes": 539049,
+      "sha256": "e18fd1e2fcbe57d0abf81bf7dc8a2696560638304648fb47aae3490deaa62c7f"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/receipt.json": {
+      "bytes": 4832,
+      "sha256": "523ec78c1b0f413237e6c4a97b2037e081b5c93cdb463465dde304ccb522fde2"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/resources.jsonl": {
+      "bytes": 224609,
+      "sha256": "79016e3f25f238d371511f1c080de8fd03fb11a3c8a2c3dca2839fed1817d13f"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/stdout": {
+      "bytes": 254,
+      "sha256": "e4d3da7c06725c98415c30e1ef5f053aed6bf09139338e187b139d5df5303a0b"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/receipt.json": {
+      "bytes": 5632,
+      "sha256": "0beca2fcb2fe585370a0150bb367f4e4c2ebdeb6ff5447a9f7a849a4a99cf3a7"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/resources.jsonl": {
+      "bytes": 330,
+      "sha256": "4edfa03e6a7f9263484afbabb6301bd4d42754f10598b4648af0fe83b27db857"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/stderr": {
+      "bytes": 83,
+      "sha256": "ff7cc4c7cf1d4f38554ccf251501f67b89d7c06e3058478441dc52b2484433f8"
+    },
+    "whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "whole-proof-attacks-v2-c2/guard.py": {
+      "bytes": 7542,
+      "sha256": "c838811be6b59fd49be02933d46794895b87a9888c7325209e2b5703847543cc"
+    },
+    "whole-proof-attacks-v2-c2/helper/Cargo.lock": {
+      "bytes": 31586,
+      "sha256": "2299f3838b9f37294145498a34790a8b57169f0f7e0ecd527f3617eb8e8fc205"
+    },
+    "whole-proof-attacks-v2-c2/helper/Cargo.toml": {
+      "bytes": 442,
+      "sha256": "f3c0f91ea813d13c073da1ea6fae72f4f011091d50236740637d104bd2b700ed"
+    },
+    "whole-proof-attacks-v2-c2/helper/frames.rs": {
+      "bytes": 9870,
+      "sha256": "4c60cd5d95c0162172c44214fefc10c0ddd025d5077f1041c4abb7c45f8a4063"
+    },
+    "whole-proof-attacks-v2-c2/helper/index.rs": {
+      "bytes": 5361,
+      "sha256": "00e3f4f40e5a09f8aaa3230526881810475a3c0923115f7bc5efda0362d585f8"
+    },
+    "whole-proof-attacks-v2-c2/helper/main.rs": {
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    "whole-proof-attacks-v2-c2/helper/mutation.rs": {
+      "bytes": 8521,
+      "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+    },
+    "whole-proof-attacks-v2-c2/helper/noun.rs": {
+      "bytes": 4114,
+      "sha256": "bd64a225ca4703b9720775897565db4858629992eb644abcf2a1c7c68bdae0c8"
+    },
+    "whole-proof-attacks-v2-c2/preparation.json": {
+      "bytes": 491418,
+      "sha256": "566fb26095b63950ed4ded6c79f80b6f78d8083d76eead197bd6156f105db3e8"
+    },
+    "whole-proof-attacks-v2-c2/whole-c2/index.json": {
+      "bytes": 1248,
+      "sha256": "aa45340be4991b1083d019023e4b7a44c6cb82a0b9880f597d268f8b42faec1e"
+    },
+    "whole-proof-attacks-v2-c2/whole-c2/receipt.json": {
+      "bytes": 539000,
+      "sha256": "c9ea6ce6e095e45a94c7a6a22cd1f9a2556de8ef809cecabcb32fa26e2b3378f"
+    },
+    "whole-proof-attacks-v2-c2/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    },
+    "whole-proof-final-review-v2/orchestration/receipt.json": {
+      "bytes": 1565,
+      "sha256": "fcb124367dcf607ad549bb40a1dee493c63174f263857a069e67e3ed1aad725a"
+    }
+  },
+  "archive_replay": {
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-parallel-v2/run-1/receipt.json.gz": {
+      "packed": {
+        "bytes": 1692,
+        "sha256": "28a39973fefcb29d28e7154bef8b7b92cd8184d72f68839f1717637b3d992560"
+      },
+      "original": {
+        "bytes": 6199,
+        "sha256": "51c5343701842f694cc00335939d63b6d7bfddc17f74305111a0a20a6274cf2a"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-parallel-v2/stop.json.gz": {
+      "packed": {
+        "bytes": 118,
+        "sha256": "8e58fd1aff03fe398d4a635e835119dfad7957ddab48e8a7f95477d50ee8b95f"
+      },
+      "original": {
+        "bytes": 117,
+        "sha256": "dbf542db93c13df005b83a03ff2735c50618a455af77c4aa8a015d57a05c103f"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/receipt.json.gz": {
+      "packed": {
+        "bytes": 1772,
+        "sha256": "b84029f61563514c72b86d9668a0e3660452785f26d9da67c9cb6742f6a00ddc"
+      },
+      "original": {
+        "bytes": 4879,
+        "sha256": "be2aa65b2efcc6dd96cf5de711cb4325df219661a154067aa37c70ac71e72d3b"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/resources.jsonl.gz": {
+      "packed": {
+        "bytes": 2095,
+        "sha256": "f8330f0c86249b3cdc47490e3ad1726be23ba6c822460ab0d9f62b1451e339ec"
+      },
+      "original": {
+        "bytes": 18100,
+        "sha256": "c9fa3fb17d7fb157368c13c8120e4646d849cf164a7e79cd06e574377babad34"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/stderr.gz": {
+      "packed": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/attempts/whole-c1-construct-rebound-job-limit/stdout.gz": {
+      "packed": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c1/whole-c1/receipt.json.gz": {
+      "packed": {
+        "bytes": 26368,
+        "sha256": "128b8aa0aba90a2c1b9a6785f2a8a9fe240e119befb42ee2c351ad696f70f6ac"
+      },
+      "original": {
+        "bytes": 539049,
+        "sha256": "e18fd1e2fcbe57d0abf81bf7dc8a2696560638304648fb47aae3490deaa62c7f"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/receipt.json.gz": {
+      "packed": {
+        "bytes": 1463,
+        "sha256": "e1b945d4b0b8b6a48851784cd4edc57e3b2e0a8d2d4bd1e4e085d1ab0bb9ef12"
+      },
+      "original": {
+        "bytes": 4832,
+        "sha256": "523ec78c1b0f413237e6c4a97b2037e081b5c93cdb463465dde304ccb522fde2"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/resources.jsonl.gz": {
+      "packed": {
+        "bytes": 24298,
+        "sha256": "7fb619bbdecfc63a2568eb219d2f5ba2b8ae6ef7ca059c0d0feec0b6dda35991"
+      },
+      "original": {
+        "bytes": 224609,
+        "sha256": "79016e3f25f238d371511f1c080de8fd03fb11a3c8a2c3dca2839fed1817d13f"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/stderr.gz": {
+      "packed": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-construct-rebound-job-limit/stdout.gz": {
+      "packed": {
+        "bytes": 202,
+        "sha256": "5773895b2816f55ba650992ab84e604aa40fd6e7528b9babacd3f2b48aff44f3"
+      },
+      "original": {
+        "bytes": 254,
+        "sha256": "e4d3da7c06725c98415c30e1ef5f053aed6bf09139338e187b139d5df5303a0b"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/receipt.json.gz": {
+      "packed": {
+        "bytes": 1560,
+        "sha256": "fca7fb944a19f8d05afa01765a580993e68f6619b0ee90235cbd8d4a191687a7"
+      },
+      "original": {
+        "bytes": 5632,
+        "sha256": "0beca2fcb2fe585370a0150bb367f4e4c2ebdeb6ff5447a9f7a849a4a99cf3a7"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/resources.jsonl.gz": {
+      "packed": {
+        "bytes": 178,
+        "sha256": "1f03f40d1971171ef7b2e2f0e1640022e92ad206e90e3838750063dc88e74c7c"
+      },
+      "original": {
+        "bytes": 330,
+        "sha256": "4edfa03e6a7f9263484afbabb6301bd4d42754f10598b4648af0fe83b27db857"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/stderr.gz": {
+      "packed": {
+        "bytes": 82,
+        "sha256": "cbbaa061caa5cf21c6a0fd3084118e317e49dcba8d83586fbca298a3080d7d3b"
+      },
+      "original": {
+        "bytes": 83,
+        "sha256": "ff7cc4c7cf1d4f38554ccf251501f67b89d7c06e3058478441dc52b2484433f8"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/stdout.gz": {
+      "packed": {
+        "bytes": 20,
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+      },
+      "original": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-attacks-v2-c2/whole-c2/receipt.json.gz": {
+      "packed": {
+        "bytes": 26380,
+        "sha256": "709147ce8a9dc5c16022982b7bcab21085536d13dfdac465d11e75f1cb04e189"
+      },
+      "original": {
+        "bytes": 539000,
+        "sha256": "c9ea6ce6e095e45a94c7a6a22cd1f9a2556de8ef809cecabcb32fa26e2b3378f"
+      }
+    },
+    "final-integration/trident/audit/self-hosting/bootstrap-results/final-tooling-integration/negative-v2-stop/whole-proof-final-review-v2/orchestration/receipt.json.gz": {
+      "packed": {
+        "bytes": 569,
+        "sha256": "9a8616cfe403244c98f8e4f150c67e0237c6cfe76e9e30181c4bc2017b9adaab"
+      },
+      "original": {
+        "bytes": 1565,
+        "sha256": "fcb124367dcf607ad549bb40a1dee493c63174f263857a069e67e3ed1aad725a"
+      }
+    }
+  },
+  "partials": {
+    "whole-proof-attacks/whole-c2/certificate-rechain.joysc": {
+      "bytes": 920494713,
+      "inode": 258591480,
+      "mtime_ns": 1790917744423362159,
+      "content_read": false,
+      "unchanged_and_still_charged": true
+    },
+    "whole-proof-attacks-v2-c1/whole-c1/certificate-rebound-job-limit.joysc": {
+      "bytes": 878826753,
+      "inode": 258932477,
+      "mtime_ns": 1790933413786919115,
+      "content_read": false,
+      "unchanged_and_still_charged": true
+    }
+  },
+  "classification": {
+    "original_proof": {
+      "bytes": 10569174820,
+      "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+    },
+    "completed_mutant": {
+      "bytes": 10569174820,
+      "sha256": "2f6ce311471e969b92d2d23fda33077bfe7bd3895fe2d415c8e6e0c08b94a4ae"
+    },
+    "constructor_exit": 0,
+    "verifier_exit": 1,
+    "actual_error": "error: execution error: certificate transport: certificate format/context mismatch",
+    "intended_error": "semantic record: Key",
+    "recipe_budget": 20000000000,
+    "admitted_job_budget": 19999999999,
+    "original_suite_status": "failed",
+    "intended_semantic_case_status": "failed",
+    "recorded_distinct_rejections": 9,
+    "recorded_controls": 2,
+    "complete_payload_and_nonchain_header_equality": true,
+    "original_and_mutant_whole_sha256_rechecked": true,
+    "hemera_chain_rechecked": false,
+    "evaluator_executed": false
+  },
+  "disposition": {
+    "eligible_for_separately_reviewed_poststop_transition": true,
+    "existing_v2_reclaim_refuses_stop": true,
+    "existing_v2_sources_and_failed_receipts_must_remain_immutable": true,
+    "failed_case_must_not_be_counted_as_semantic_rejection": true,
+    "retain_exact_original_proof_recipe_helper_inputs_sources_and_failed_logs": true,
+    "future_transition_must_recheck_exact_path_inode_size_sha256_and_no_live_owners": true,
+    "only_completed_c2_mutant_may_be_named": true,
+    "deletion_performed": false,
+    "original_files_modified": false,
+    "incomplete_partials_must_remain_charged": true,
+    "v3_composite_acceptance_requires_explicit_prior_result_provenance": true
+  }
+}

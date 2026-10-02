@@ -1,0 +1,23 @@
+{
+  "status": "changes-requested-followup",
+  "reviewed_utc": "2026-10-02T05:26:45.287044+00:00",
+  "scope": "Read-only source review; no launch or certificate execution. Root corrections in progress.",
+  "findings": [
+    {
+      "id": "registration-retirement-snapshot-race",
+      "detail": "Take ps and registrations consistently: a registration created after ps but before lock acquisition must not be retired as an absent group."
+    },
+    {
+      "id": "leaderless-group-termination",
+      "detail": "Shutdown must signal known registered groups with surviving members after leader exit, using member birth identities. Volatile command text changes across preexec/exec and cannot alone establish different process identity."
+    },
+    {
+      "id": "copied-input-closure-admission",
+      "detail": "Replay copied-inputs.json identities before admission; adapted guard/suite use current source manifest. Include helper binary otherwise excluded from target-helper inventory."
+    },
+    {
+      "id": "preserve-proposed-admission-free-minimum",
+      "detail": "Earlier reviewed parallel proposal required both mutant ceilings plus10GiB free. Preserve that explicit admission minimum alongside reserved-growth plus8GiB steady floor."
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "schema": "trident/whole-proof-attack-command/v1",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+    "verify-artifact",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+    "--input",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/job-frames/job.dag",
+    "--proof",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/binding-job-frames.output",
+    "--budget",
+    "100000000",
+    "--arena-nodes",
+    "100000000",
+    "--frames",
+    "65536",
+    "--artifact-bytes",
+    "16777216",
+    "--artifact-nodes",
+    "196608",
+    "--artifact-depth",
+    "4096",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "1000000000",
+    "--time-ms",
+    "300000",
+    "--proof-bytes",
+    "1073741824",
+    "--proof-decoded-bytes",
+    "2147483648",
+    "--proof-records",
+    "100000000",
+    "--proof-steps",
+    "200000000",
+    "--proof-cache-slots",
+    "65536",
+    "--force"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/attempts/verify-binding-job-frames",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 330,
+    "cpu": 330,
+    "rss": 6442450944,
+    "file": 67108864
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 5864,
+    "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+  },
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/job-frames/job.dag": {
+      "bytes": 21096,
+      "sha256": "fffff671946963cbc512489c6dd7ac5fa74554f19607fc458dad8e62cfe50602"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/binding-job-frames.output": {
+      "bytes": 39,
+      "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+    }
+  },
+  "expected_exit": 1,
+  "metadata": {
+    "expected_error": "format/context mismatch"
+  },
+  "started_ns": 1790934449731742000,
+  "sampled_peak_rss_bytes": 203538432,
+  "pid": 44277,
+  "latest_sample": {
+    "time_ns": 1790934450761643000,
+    "elapsed": 1.029895875020884,
+    "processes": [
+      {
+        "pid": 44277,
+        "rss_bytes": 203538432
+      }
+    ],
+    "rss_bytes": 203538432,
+    "owned_bytes": 61022000,
+    "free_bytes": 48977281024
+  },
+  "exit_code": 1,
+  "elapsed_seconds": 1.2683754169847816,
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/job-frames/job.dag": {
+      "bytes": 21096,
+      "sha256": "fffff671946963cbc512489c6dd7ac5fa74554f19607fc458dad8e62cfe50602"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/binding-job-frames.output": {
+      "bytes": 39,
+      "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+    }
+  },
+  "ended_ns": 1790934451010038000,
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 83,
+      "sha256": "ff7cc4c7cf1d4f38554ccf251501f67b89d7c06e3058478441dc52b2484433f8"
+    },
+    "resources.jsonl": {
+      "bytes": 389,
+      "sha256": "a9a8115fdb8340327bc2f51be48850e105dc8b361fe9853db4266926544faa35"
+    }
+  }
+}

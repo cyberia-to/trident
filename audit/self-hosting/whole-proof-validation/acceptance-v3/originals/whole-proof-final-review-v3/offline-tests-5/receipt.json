@@ -1,0 +1,64 @@
+{
+  "scope": "offline synthetic checker contract tests; no actual final acceptance execution",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-Werror",
+    "-m",
+    "unittest",
+    "-v",
+    "test_checker"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3",
+  "started_ns": 1790937371819924000,
+  "elapsed_seconds": 0.125082,
+  "exit_code": 0,
+  "sources": {
+    "cases.py": {
+      "bytes": 15066,
+      "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+    },
+    "check.py": {
+      "bytes": 2690,
+      "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+    },
+    "common.py": {
+      "bytes": 2691,
+      "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+    },
+    "history.py": {
+      "bytes": 13871,
+      "sha256": "c533d05a0a532f3f41940a1bc6a2455d0ee63eaca6ff7a779feb1126ab173667"
+    },
+    "positive.py": {
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "quiescence.py": {
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "review_prior_resources.py": {
+      "bytes": 2529,
+      "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+    },
+    "schedule.py": {
+      "bytes": 8355,
+      "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+    },
+    "test_checker.py": {
+      "bytes": 14428,
+      "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+    }
+  },
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 3355,
+      "sha256": "4620eacb743b984e5171b43698ce9971bf4e5f339a2d66c467765cab3ce8d36f"
+    }
+  }
+}

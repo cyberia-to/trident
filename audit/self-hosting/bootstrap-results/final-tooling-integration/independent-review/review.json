@@ -1,0 +1,213 @@
+{
+  "schema": "independent/final-selfhost-tooling-integration-review/v1",
+  "status": "passed",
+  "commit": "dc6700ce3552e9f5e0f27d81600162f62b26382c",
+  "index_tree": "27228fb1b10997fecffc34c037ab63db42b08a29",
+  "parents": [
+    "87e2909f6ab2dfc01a97add0fe0402cbd9cd838c",
+    "01e45e55ef9f68eaeccca270dd0bb00bc58a4bba",
+    "2f1a575a6fbc0704c268f1ae21667830a3c996df"
+  ],
+  "scope": "Independent read-only combined integration identity, plan, receipt and CRLF review; exact committed tree equals previously reviewed staged index. No new full Rust suite/native matrix/proof acceptance executed.",
+  "findings": [],
+  "checks": [
+    "All12257 tracked paths/modes/blob identities match the exact reviewed branch union. Only .claude/plans/native-compiler-arena.md is a custom resolved override; no unresolved index stages or unstaged changes were present during snapshot validation.",
+    "The resolved six-line plan and26 .claude Markdown files total exactly1000lines. It preserves SH6/SH7 acceptance provenance, explicitly leaves SH8 conditional on complete adversarial/retention gates, separates local6e0ec4d proofs from Joydd61 runtime, records failed transport and unchanged resource policies, and states frozen PR-head/separate evidence-only followup ordering.",
+    "The two SH6 workflows and three phase implementation files equal bbcd7e45 bytes. Production src/lib/compiler/catalog/silicon/tests/Cargo/build inputs match protected inventorya63b62ba. The invoked generated-profile helper and its two focused tests equal exactly reviewed2f1a575. No computational cases, Joy commands, pins, resource caps or workflow filters were changed.",
+    "All ten precommit command exits and every20 recorded stdout/stderr identities match their receipt. Actual Python gate results, checker results, actionlint and diff check are green.",
+    "Fresh actual cargo check --release --workspace --locked --offline used absoluteRust1.89 cargo/RUSTC/RUSTDOC and zero warnings. Its raw logs match. The original unchanged full Rust suite is explicitly reused, not relabeled fresh; original log hashes and1231passed/0failed/5ignored counts independently replayed.",
+    "Actual nox/hemera/strata worktrees are clean, at the same exact revisions and resolved paths used by the inherited full suite. No new Rust test suite was launched by this review.",
+    "Independent actual combined metadata Git/compiler-selection tests passed21/21 with Python3.14 -B -W error. Root separately retained its14 additional selection tests; these are not counted as distinct coverage.",
+    "CRLF rules remain exact reviewed01e45e55 rules. Actual git core.autocrlf=true filters preserve all78 hash-bound audit inputs;82 materialized inputs pass both corpus-result and prior-corpus delivery checkers. This is filter simulation on macOS, not native Windows execution.",
+    "The fresh-prefix postcommit install receipt passes for exactdc6700ce,41.2316s, zero warnings, explicitly warm cache. Actual installed tool/binary sizes and hashes match its receipt.",
+    "No SH8 completion, remote byte equivalence, final package acceptance or new native matrix success is claimed by this delivery. Those gates remain independently required."
+  ],
+  "notes": [
+    "Review began during merge; root committed the same staged tree before the read-only reviewer reached its old-HEAD assertion. That harmless synchronization refusal is retained in initial-attempt.json and original script. The final check binds exact commit/tree and all three parents.",
+    "Root plans a same-line wording clarification identifying the whole-validation branch as includinge57f2b4. Both01e45e55 and2f1a575 already descend frome57; the current wording has no executable effect. Any subsequent audit/plan commit has a new tree outside this exact binding and should retain a precise delta.",
+    "The plan says source readback/native distribution are separate gates, which does not claim unfinished readback. Current source-reproduction receipt was observed passed for73b50e/run36987731030; native package gate results remain separate."
+  ],
+  "evidence": {
+    "final/review_checks.py": {
+      "bytes": 5345,
+      "sha256": "2b89287bc49cea5ef2894b3029ec629f78a5f5e3539d7afb3def82b49a26ebf4"
+    },
+    "final/focused.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/identity-review.json": {
+      "bytes": 879,
+      "sha256": "bb6911bd3fe7bc7a24a9dd91af47c5e529c43516b62248d4a922b46efdafd164"
+    },
+    "final/focused.json": {
+      "bytes": 526,
+      "sha256": "019dc174ba23e91c0768fa8b085d0b5861f63a2d4d7cd6419e4bc7e13ba75778"
+    },
+    "final/focused.stderr": {
+      "bytes": 120,
+      "sha256": "96631c0ed376fb80135f812d3a927cd48d4082951b310ccc2c2ba4eae84b62dc"
+    },
+    "final/index-stage.z": {
+      "bytes": 2114524,
+      "sha256": "7d7bf88a56d51e578c80ace1349338573c9c7915f3684b8796d85b9e37738832"
+    },
+    "final/dependency-identity.json": {
+      "bytes": 946,
+      "sha256": "3e3720b83dfba3f813525741cf42ad16f6b8f3a9769fd5487cd9be9d1b9f0baa"
+    },
+    "final/source/.gitattributes": {
+      "bytes": 317,
+      "sha256": "9e3fa98c332b37d345500d9184293a2535d1b7975f9ffc1c092845b287b0123b"
+    },
+    "final/crlf/prepared.stdout": {
+      "bytes": 221,
+      "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+    },
+    "final/crlf/prepared.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/crlf/result.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/crlf/result.stdout": {
+      "bytes": 1135,
+      "sha256": "e35f3670d3a6c6c44c1fb2bef6c94ad9b98db5f03e0750a23de59ef1a25287da"
+    },
+    "final/crlf/receipt.json": {
+      "bytes": 57227,
+      "sha256": "c9588cbe65f5841e96167dc1da6261ad69c73a19261764c1b6c095ab42d73c1a"
+    },
+    "final/retained/postinstall-merge/stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/postinstall-merge/stderr": {
+      "bytes": 1676,
+      "sha256": "2e25909a74b82fe1983a7f7c86e4f66a2fe6a6ae53cb069d37432a5ec6ffb194"
+    },
+    "final/retained/postinstall-merge/receipt.json": {
+      "bytes": 3418,
+      "sha256": "fadfa7fda138191f80dd098408ce54572c6b99e79ac26c7ed150377bfa57606a"
+    },
+    "final/retained/rust-source-and-check/stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/rust-source-and-check/stderr": {
+      "bytes": 2882,
+      "sha256": "6e365b268b2eecf5666f0c28f67064b8b47b64eb94890a51904b0f379327bba0"
+    },
+    "final/retained/rust-source-and-check/rustdoc-version.stdout": {
+      "bytes": 196,
+      "sha256": "ede1778259883fc1cb1fa13e5dad16841dec1d24a2eb3bf76f273feb63db2b29"
+    },
+    "final/retained/rust-source-and-check/rustc-version.stdout": {
+      "bytes": 192,
+      "sha256": "a3138eb77dfe19d4cdb1d83ceb7c34944715564062936cf209d247cbf5208fae"
+    },
+    "final/retained/rust-source-and-check/receipt.json": {
+      "bytes": 2646,
+      "sha256": "fe122ed837aefa81e31b80ccc4e2dc6683e378d0b70b3e639ecd2cf87beb3a52"
+    },
+    "final/retained/rust-source-and-check/cargo-version.stdout": {
+      "bytes": 335,
+      "sha256": "930ba319a4044e5620604b209d876301cf1bfb05212aed1d0f68381d3fc6c81e"
+    },
+    "final/retained/precommit/parallel-preparation.stdout": {
+      "bytes": 227,
+      "sha256": "7d2ccc6ff1a3ba4f736503967951e8f4e36758bf07c44080240d567e57d3e86b"
+    },
+    "final/retained/precommit/bootstrap-phase.stderr": {
+      "bytes": 117,
+      "sha256": "77d4a0708937daf568234db9b5cac2f3c59d51999bc0f1b3653228d13a735fe6"
+    },
+    "final/retained/precommit/actionlint.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/sh7-retention.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/sh7-retention.stdout": {
+      "bytes": 5529,
+      "sha256": "48f5309b9ce50c0fcc98fa749c6f68e766cb40c94deab7adec4bfdf8321bb964"
+    },
+    "final/retained/precommit/bootstrap-phase.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/actionlint.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/parallel-preparation.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/corpus-preparation.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/corpus-delivery.stdout": {
+      "bytes": 1134,
+      "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+    },
+    "final/retained/precommit/diff-check.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/metadata-git.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/corpus-checker-tests.stderr": {
+      "bytes": 115,
+      "sha256": "94d7dda9f4bb485fa6ae4a828411c9a566199d6416b123f5548799ad72af3028"
+    },
+    "final/retained/precommit/bootstrap-runner.stdout": {
+      "bytes": 296,
+      "sha256": "5ff07990f1f1215193e8def3375bf973bb7fe271b1bae54b8250f7bc84a19526"
+    },
+    "final/retained/precommit/bootstrap-runner.stderr": {
+      "bytes": 171,
+      "sha256": "b5401538d1f6ce6d734f2a5b6bd5aa03bd0a0baacef68260a04813d712937a02"
+    },
+    "final/retained/precommit/corpus-checker-tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/metadata-git.stderr": {
+      "bytes": 105,
+      "sha256": "2192356ca954d9e8920a6cb11ec4f8e94ab850b755fecc8c8fc0e800335c5139"
+    },
+    "final/retained/precommit/corpus-delivery.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/retained/precommit/corpus-preparation.stdout": {
+      "bytes": 221,
+      "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+    },
+    "final/retained/precommit/receipt.json": {
+      "bytes": 5572,
+      "sha256": "5493bdda9ae02c42fd8e4e09f56531a8aa2ba09d196dc990898e77386f26bf1f"
+    },
+    "final/retained/precommit/diff-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final/source/audit/self-hosting/check-generated-compiler-profile.py": {
+      "bytes": 19854,
+      "sha256": "6e932595eb575a3eeace39a9aee681a26656f3863022b45e34290cd32214797b"
+    },
+    "final/source/.claude/plans/native-compiler-arena.md": {
+      "bytes": 4456,
+      "sha256": "0a0655903a6b8ea841d0eb428fd396b6441f9abab06495f974b723ba9e78019b"
+    }
+  },
+  "reviewed_at_ns": 1790933595502208000
+}

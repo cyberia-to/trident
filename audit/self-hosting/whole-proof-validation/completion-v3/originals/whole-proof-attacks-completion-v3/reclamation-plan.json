@@ -1,0 +1,29 @@
+{
+  "scope": "Separately reviewed post-stop classification, then reclaim only the complete wrong-context C2 temporary; original failed evidence and partials remain untouched. No negative test is accepted by reclamation.",
+  "target": "whole-proof-attacks-v2-c2/whole-c2/certificate-rebound-job-limit.joysc",
+  "identity": {
+    "bytes": 10569174820,
+    "sha256": "2f6ce311471e969b92d2d23fda33077bfe7bd3895fe2d415c8e6e0c08b94a4ae"
+  },
+  "state": {
+    "device": 16777229,
+    "inode": 258880453,
+    "bytes": 10569174820,
+    "mtime_ns": 1790933386940363902,
+    "ctime_ns": 1790933386940363902
+  },
+  "classification": {
+    "bytes": 23245,
+    "sha256": "9e62e057cc9e63932b482d9c306aa09fe8f894c0124434eb363f638700282c5b"
+  },
+  "retained_partials": {
+    "whole-proof-attacks/whole-c2/certificate-rechain.joysc": {
+      "bytes": 920494713,
+      "sha256": "3aa4ea4bc79ace206166c23952c104d22effb69fd0b80bd9a4d32b834f1477a1"
+    },
+    "whole-proof-attacks-v2-c1/whole-c1/certificate-rebound-job-limit.joysc": {
+      "bytes": 878826753,
+      "sha256": "5adc09f6d706e9c001b350a7d962f3902ec51cc065ea6670f7524429ce0837fb"
+    }
+  }
+}

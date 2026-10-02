@@ -1,0 +1,54 @@
+{
+  "schema": "whole-proof-two-generation-schedule-source-assessment-v1",
+  "status": "numerically-feasible-conditional-on-reviewed-coordination",
+  "recorded_utc": "2026-10-02T05:04:31.968118+00:00",
+  "scope": "Read-only feasibility assessment. No schedule implemented or launched; no existing source modified and no certificate contents read.",
+  "proof_sizes_parent_reported": [
+    11977015727,
+    10569174820
+  ],
+  "mutant_ceilings_bytes": [
+    12010570159,
+    10602729252
+  ],
+  "reserved_per_generation": {
+    "sidecars_bytes": 83886080,
+    "positive_output_bytes": 33554432,
+    "logs_and_index_bytes": 16777216
+  },
+  "combined_reserve_bytes": 22881734867,
+  "unchanged_owned_disk_cap_bytes": 27917287424,
+  "remaining_for_current_scope_bytes": 5035552557,
+  "live_stat_observation": {
+    "owned_root": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks",
+    "excluded_directory": "target-helper",
+    "files": 1309,
+    "bytes": 229721898,
+    "host_free_bytes": 58985512960,
+    "racing_snapshot_not_admission": true
+  },
+  "requirements": [
+    "Prove the original scheduler and its complete child process group quiescent before parallel reservations. Preserve original attempts and explicitly record transition.",
+    "Account retained v1 and v2 owned files under one unchanged shared cap. A new directory does not reset the budget.",
+    "Reserve both stricter per-mutant ceilings atomically and enforce each while bytes are written.",
+    "Use coordinator and per-generation leases; stale leases must not permit overlapping live owners.",
+    "Measure combined RSS of both process groups against unchanged12GiB combined allowance and preserve per-command6GiB caps.",
+    "Failed or unclassified retained payloads continue consuming capacity and block admission when necessary.",
+    "Review exact provenance adapter/checker changes: current accepted checker pins v1 paths and sources. Reusing completed v1 evidence must remain explicit and cannot duplicate actual invocations.",
+    "Treat contention timeouts as failures; no automatic cap increase or retries."
+  ],
+  "source_identities": {
+    "whole-proof-attacks/whole_suite.py": {
+      "bytes": 13622,
+      "sha256": "65acbc20993403fdf8dc732ffc0c9faa83fafc75bef19c436e60a94ba97962fb"
+    },
+    "whole-proof-attacks/guard.py": {
+      "bytes": 5864,
+      "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+    },
+    "whole-proof-final-review/check.py": {
+      "bytes": 23686,
+      "sha256": "7f53ee6ae5c094f9a9eddf10a9ee1c071be3909377840aec6e2f8770b3fabeb1"
+    }
+  }
+}

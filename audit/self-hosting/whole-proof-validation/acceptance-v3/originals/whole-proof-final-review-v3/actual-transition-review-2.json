@@ -1,0 +1,433 @@
+{
+  "scope": "actual read-only reclamation transition replay; no composite SH8 acceptance",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-c",
+    "history.transition(base, shared)"
+  ],
+  "sources": {
+    "check.py": {
+      "bytes": 2690,
+      "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+    },
+    "positive.py": {
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "cases.py": {
+      "bytes": 15066,
+      "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+    },
+    "common.py": {
+      "bytes": 2691,
+      "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+    },
+    "quiescence.py": {
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "review_prior_resources.py": {
+      "bytes": 2529,
+      "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+    },
+    "schedule.py": {
+      "bytes": 8355,
+      "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+    },
+    "test_checker.py": {
+      "bytes": 14428,
+      "sha256": "974ac1cd10bf8831cd47273126fbe39749764032a98c5c0769928092a96e3f6e"
+    },
+    "history.py": {
+      "bytes": 14208,
+      "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+    }
+  },
+  "started_ns": 1790937511825585000,
+  "status": "passed-transition-replay-only",
+  "result": {
+    "receipt": {
+      "bytes": 60481,
+      "sha256": "497a39329cc9b6e7bc4de733cb5aa8d106cd09fa953ea45883990e690e2c7ecc"
+    },
+    "reclamation": {
+      "bytes": 23035,
+      "sha256": "3b00f028e9bf93d633c4392bebea029d7182bc43d53637b9c0668530c52ab5b4"
+    },
+    "retained_first_refusal": {
+      "bytes": 1303,
+      "sha256": "ed888e87cb4fc88ddc0f724f77afc7e9565309b8f54620e0d776a864f1120cbd"
+    },
+    "quiescence": {
+      "command": [
+        "/bin/ps",
+        "-axo",
+        "pid=,pgid=,lstart="
+      ],
+      "environment": {
+        "TZ": "UTC",
+        "LC_ALL": "C",
+        "LANG": "C"
+      },
+      "checked_groups": [
+        1492,
+        1592,
+        6201,
+        6445,
+        12499,
+        12560,
+        12706,
+        16940,
+        17037,
+        17123,
+        22064,
+        22326,
+        22506,
+        29245,
+        29313,
+        29367,
+        32146,
+        32202,
+        32272,
+        34992,
+        35082,
+        35164,
+        35976,
+        41988,
+        42044,
+        42122,
+        59873,
+        59933,
+        59934,
+        60591,
+        60597,
+        68139,
+        70003,
+        72569,
+        72727,
+        73904,
+        84604,
+        87231
+      ],
+      "original_owner_records": {
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/admission.json": {
+          "bytes": 415,
+          "sha256": "5bdb401226e9bdbed88544c49492ef46e8b6c945676d1828b7076f9eea1fa5a4"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/shutdown.json": {
+          "bytes": 90,
+          "sha256": "fbfe3cf3a9893e96dbd7df5b504f3f5410c1cfff550f0d960abe991a28041661"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-compiler.json": {
+          "bytes": 1079,
+          "sha256": "06a1a365a9d8ae65e7e18b48c39e6a0e5b6eb8723fd5ef6b300186b968a04d08"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-compiler.retired": {
+          "bytes": 20,
+          "sha256": "2265bfdf5db9a0f6a9512d5710014617896fa77b2f8d91c61536fedf4808395c"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-dependency.json": {
+          "bytes": 1256,
+          "sha256": "5990d786c3b64fbf2802b12df7396670412feee322eededc325d06ea4c0e357b"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-dependency.retired": {
+          "bytes": 20,
+          "sha256": "80feda7f5b6601b830397e8cea51cfe3091510bbd74825ffa3fda6e3262b6e0c"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-compiler.json": {
+          "bytes": 1272,
+          "sha256": "e72d0377b4dd508d2ca00edbff82c22e55b09cb0dc15fed8c1f1fe359b24e765"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-compiler.retired": {
+          "bytes": 20,
+          "sha256": "8da850b984d77522d042017462960cffbfb3513ca952e0a2d2b30d6d05b1a44e"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-cfg.json": {
+          "bytes": 1071,
+          "sha256": "9297301b895eef3bccf7cead26ffd3570fbe89b33c0318a75c0ea059d1dc9db9"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-cfg.retired": {
+          "bytes": 20,
+          "sha256": "61b70bd1d02ed45c5c2d28e4f305e50112b7ac837bed8cef5683987a8e1832d2"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-cfg.json": {
+          "bytes": 1235,
+          "sha256": "2bd123fedfe781faf0cd28fc89577c7f0cc7fff0fbef8a414f366a862f1f2d13"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-cfg.retired": {
+          "bytes": 20,
+          "sha256": "b91f07a3a8b49b34c753c6a93ad64c41f289128815a3f05f5c75c1300bbdc741"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-cfg.json": {
+          "bytes": 1252,
+          "sha256": "93ec4e4db185fa441002c1f44c6b385ea43b33f7fd18d9ad0b11ed355852a8c8"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-cfg.retired": {
+          "bytes": 20,
+          "sha256": "853c4bf2f626e7f252dd2fec20e6180c2ea7fd5373a67f4729a8536a53c9aca5"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rechain.json": {
+          "bytes": 831,
+          "sha256": "e5476cc7293be0de9355062dbfc4d651302fdeb30b9c6a2fa7350a9610887c23"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rechain.retired": {
+          "bytes": 20,
+          "sha256": "646ff8f71a4aef118e0d451750db550985225f5c32114d5679030c7fa1cfbc13"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-job-limit.json": {
+          "bytes": 1253,
+          "sha256": "76f3d03fa26f4831065e977d53c707a6f06dd436d9165fe539c2ab1d8e55fe0b"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-job-limit.retired": {
+          "bytes": 20,
+          "sha256": "09434e03d206914d9fa4406d37a46634aa7b3abf5e3adf89c25c40a5defb4f8f"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-compiler.json": {
+          "bytes": 1272,
+          "sha256": "4cc248465a7e760fd3e4b87cf3b1ba6d67ee63988ef09ccd3688b3b9909186e3"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-compiler.retired": {
+          "bytes": 20,
+          "sha256": "387ef96a0bdf938d98e2d44e0c72b406a24f5d97ed56385b2493dd65be6ba610"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rechain.json": {
+          "bytes": 831,
+          "sha256": "d3c888ed7d4abdabdbc00944c5c170d89cbc0412d7d3166e3b21b1351ea529d1"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rechain.retired": {
+          "bytes": 20,
+          "sha256": "84d0d407ea96b2ecac3f8c85e6aaa3ff14d72cbd1ee658430fd74b8353c88fcf"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-dependency.json": {
+          "bytes": 1085,
+          "sha256": "0d0c459f2b430a3abb3d0fa8b23613c64cccac8281bf2d7a178dbabdd623d242"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-dependency.retired": {
+          "bytes": 20,
+          "sha256": "b5fa05a7397a67a6b38154ee70cbbd66777a867d0b09df3ac01c5be14896c58c"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-compiler.json": {
+          "bytes": 1248,
+          "sha256": "9c64cfb18cc942fbe0d10cbde6a5f25328322752dca017510c75bc1067611049"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-compiler.retired": {
+          "bytes": 20,
+          "sha256": "a3b540590cba6c6796a2d3a5b717af222d51eaa42c6af3fa8909091b77c9ff7f"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-source.json": {
+          "bytes": 1077,
+          "sha256": "7afd29a2c76656433be5d6f136619f94a848ff87e6caaab8a36aa2a85c1ba56f"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-source.retired": {
+          "bytes": 20,
+          "sha256": "e2027a9b9c690c15404991134a151be88d74ddf711c00a0eacb86345b6f468b7"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-dependency.json": {
+          "bytes": 1085,
+          "sha256": "7323744402450ef5b064c7192ca425f3985d0fbb353c8bcc7c2f579c8f95ede6"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-dependency.retired": {
+          "bytes": 20,
+          "sha256": "8056804681170759006fede2f6653d34e7c6889522ff0c35d2b3361cfb2e8e70"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-dependency.json": {
+          "bytes": 1280,
+          "sha256": "32c6838a605d1b068d1f640fbac40457195af4b7ce07d65f683d3758164c4fb3"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-dependency.retired": {
+          "bytes": 20,
+          "sha256": "fac6bd5896b1b1b7bc22e9ab941d3036ce3f75714a4e47a0ed9fc26a6d6b7bdd"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-source.json": {
+          "bytes": 1264,
+          "sha256": "2835ae2f1461e52e0362b4edb35efe62503c6a50e227524d03dc88d1cc3bac1d"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-source.retired": {
+          "bytes": 20,
+          "sha256": "b0c2cfdaed77ac6234ecf109ad828ca34812d38326b134bd9918dfd04999f622"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-index.json": {
+          "bytes": 745,
+          "sha256": "fafd9381700f91b959f26c520682627680b617e11f3c1fd0d982d1af68888d63"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-index.retired": {
+          "bytes": 20,
+          "sha256": "53dc09ebe6d751dd36a8102ec88115dd8450aec0c115f89635d4b9a92fa6ad5c"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-cfg.json": {
+          "bytes": 1252,
+          "sha256": "3c27d8bb5b35904b407b109634b33bb90dfa6c81bb44db93ad1eb62d3118b608"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-cfg.retired": {
+          "bytes": 20,
+          "sha256": "bcf51ddbc6580d4876ff514b3492eb1c30c4b5a4f9dbbbddce11b7edadd8b214"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-cfg.json": {
+          "bytes": 1235,
+          "sha256": "82ceee55805af055f4a3c3d74b320c61f68516f1838065d234143e07fc302d89"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-cfg.retired": {
+          "bytes": 20,
+          "sha256": "efb719705c2cd5b501185e3918c2d1193e0e236dd9fa827666c7cd02e3dd56b6"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-compiler.json": {
+          "bytes": 1079,
+          "sha256": "47d87c20bdb16ae4e885599d2cef8b9b415482403c102af61fc51167d53276db"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-compiler.retired": {
+          "bytes": 20,
+          "sha256": "d0066492799b825191e681ad20f0471b03b7eb1a530d7e48d724024654f34798"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-compiler.json": {
+          "bytes": 1248,
+          "sha256": "6f498ee9d55ac885ed72fc2a87327d20e4efe58997b1d6deeb23e01ddb459deb"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-compiler.retired": {
+          "bytes": 20,
+          "sha256": "12a980b3101d5fc3e4b517c4f2a57040d5795ef340bddd708af9ee6243bec815"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-source.json": {
+          "bytes": 1244,
+          "sha256": "aa73fcd7cdc3b0921f10aac12b7bc7f1703b91efec218f84850cf64aff87f2df"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-source.retired": {
+          "bytes": 20,
+          "sha256": "94158297e40fd6b45a1254d346a5aa8653e0659e28b7b9153f7f887d09fe9dea"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-index.json": {
+          "bytes": 745,
+          "sha256": "b55e7cac3595af167254b1a0ce928d109a66b449013f0affa815fb21c603d08b"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-index.retired": {
+          "bytes": 20,
+          "sha256": "c28d86fc76a8c49f495e717f8c9f6eb58118877bddbed41069babc0276a5eb13"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-job-limit.json": {
+          "bytes": 1083,
+          "sha256": "2b6cec88ad79512d8ba5e14f13215b402a5892c9517497b17f190e4c72b2e52f"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-construct-rebound-job-limit.retired": {
+          "bytes": 20,
+          "sha256": "bc8fe2f58ac361618a2c60dc8cc65d0e74be589d888cbacb17fbcfc4676d10c2"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-dependency.json": {
+          "bytes": 1280,
+          "sha256": "d7b8fb48982719e2c26713b1a532d1ee688dd85265cd3e23935bf1c029720d88"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-dependency.retired": {
+          "bytes": 20,
+          "sha256": "e7d0c13bbe5e0f1694a226d0f5ff52dab3ca2296e56874945323b197336f6734"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-source.json": {
+          "bytes": 1077,
+          "sha256": "99d23c0e5f456971ed75600b15ad1367f14675fc8ec98a2ff178cac09271378b"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-source.retired": {
+          "bytes": 20,
+          "sha256": "f6f3028595e7ac68f3609052e60518c645ed354798bc365d7d807f4ea6e47c5a"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-cfg.json": {
+          "bytes": 1071,
+          "sha256": "a852ce3c55ced3a4c612bf39c6d125f47ddafa1e23b71719950eaca206138331"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-cfg.retired": {
+          "bytes": 20,
+          "sha256": "b655e73f19a292c4845ae9149183ced6a4d634a2c2ba13812f90dcd749b2b14a"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-job-limit.json": {
+          "bytes": 1276,
+          "sha256": "0144881eef1f9193d2012065b6eb86bd20748d26ff34549e3a4bccbdf4e2d650"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rebound-job-limit.retired": {
+          "bytes": 20,
+          "sha256": "e58fcbc91b87755ddf897e6840671e900616c09d2323f81695792e4bf57824c7"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-source.json": {
+          "bytes": 1244,
+          "sha256": "e17bb3da7ef7650ee77fe47505a5f9b50a4199537ed80650caef5e986f718dd7"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-source.retired": {
+          "bytes": 20,
+          "sha256": "0a8c87126be770cd258855466b5f1574cb0119d229800ad97dc23bee7aeda970"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-dependency.json": {
+          "bytes": 1256,
+          "sha256": "51d56278c6cc6435a8732c66b1ea4839c875290565ac6fd676bdc15e498963ce"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-binding-dependency.retired": {
+          "bytes": 20,
+          "sha256": "1b4272021b3e163254d9f0329343060ef2a9842fd471651ec7ca3493b167c344"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rechain.json": {
+          "bytes": 1232,
+          "sha256": "6d8b6ec97346f664751bd643000c02cf0c10b1cf7a2413bdc10a5b053b8efc29"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rechain.retired": {
+          "bytes": 20,
+          "sha256": "c99223a53daeb1c083ea283e912630a0f0e1493e556b15aa21b583e377e7ce4b"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-job-limit.json": {
+          "bytes": 1083,
+          "sha256": "44278b59892303bd52e9eb8d19515806569bbdd20647942a130382440add4a7b"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-construct-rebound-job-limit.retired": {
+          "bytes": 20,
+          "sha256": "4ce09089f536a1de8889bd00b1427aaf5e17489c66067293a04193ec96d2686c"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-source.json": {
+          "bytes": 1264,
+          "sha256": "225dbabc48d65e65cb3a741079920bc7036a81610f2f7baf3835727466ae83e5"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-rebound-source.retired": {
+          "bytes": 20,
+          "sha256": "345f7dad1e5a4dedc0b7198e979a9ef6f28877e90dc8ae2b1fb86089589af0ef"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rechain.json": {
+          "bytes": 1232,
+          "sha256": "908f605022fd86b1959fd984b8c6dd1c66c89bea7cd44c71ae67b22378bff9cc"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c2-verify-rechain.retired": {
+          "bytes": 20,
+          "sha256": "f8f5983398c8a4ad4d06769c52a9da72dad7ff97cd4915e9283c2795c330504a"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-job-limit.json": {
+          "bytes": 1253,
+          "sha256": "fe434ab0a4cd18164e400f90583292fba7164c72e245e85bea4b7bf2ee87bed8"
+        },
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/native-processes/whole-c1-verify-binding-job-limit.retired": {
+          "bytes": 20,
+          "sha256": "7c6d3b32324a4b07d4ee338d5c57be19084cc2dadc23999ebbdd4b065733f2e1"
+        }
+      },
+      "stdout": {
+        "bytes": 22755,
+        "sha256": "db70e551847c5466b0b00f20bca65fda990b04c913013f71da86ff8bd24eb163"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "snapshot_rows": 555,
+      "overlapping_rows": [],
+      "reused_rows": [],
+      "rounding_margin_ns": 2000000000,
+      "shutdown_ns": 1790933425826238000,
+      "observed_ns": 1790937362599686000,
+      "no_live_prior_owners": true
+    },
+    "original_v2_status": "failed",
+    "classified_failed_case_accepted": false,
+    "retained_partial_mutants": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/certificate-rechain.joysc": {
+        "bytes": 920494713,
+        "sha256": "3aa4ea4bc79ace206166c23952c104d22effb69fd0b80bd9a4d32b834f1477a1"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole-c1/certificate-rebound-job-limit.joysc": {
+        "bytes": 878826753,
+        "sha256": "5adc09f6d706e9c001b350a7d962f3902ec51cc065ea6670f7524429ce0837fb"
+      }
+    }
+  },
+  "ended_ns": 1790937514189440000
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "whole-proof-final-v2-checker-independent-review-v1",
+  "status": "changes-requested-initial-version",
+  "source_sha256": "f064eacad269a349c4648a0d6d02d07e3b8077e9e0dac5e9eaef40c1aef0a67c",
+  "scope": "Source review only; no final gate or whole certificate execution.",
+  "findings": [
+    {
+      "id": "derive-shared-admission-formula",
+      "detail": "Recompute reservation and free-space minimum from baseline bytes and exact plan buckets."
+    },
+    {
+      "id": "final-sample-not-in-timed-peak",
+      "detail": "Do not require final RSS<=timed-loop peak; active coordinator does not update that peak with its final sample."
+    },
+    {
+      "id": "complete-generation-sample-buckets",
+      "detail": "Require both generation buckets for every shared sample."
+    }
+  ],
+  "snapshot_attempt": "An expected-SHA guard rejected the first snapshot attempt because root had already updated source to the corrected version. AssertionError was retained in tool output; no source or review files were written by that failed attempt."
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "whole-proof-final-v2-checker-independent-review-v1",
+  "status": "passed-source-review",
+  "reviewed_utc": "2026-10-02T05:48:46.987121+00:00",
+  "source": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v2-independent/source-503bb17b57ec2141788f1536b1750e875b5d1f8b108751e40e30d58ab2658c9c.py",
+    "bytes": 32726,
+    "sha256": "503bb17b57ec2141788f1536b1750e875b5d1f8b108751e40e30d58ab2658c9c"
+  },
+  "prior_review": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v2-independent/initial-review.json",
+    "sha256": "bd3577b1f02b9e0049ab6a5b9c2758cfbd00dc566d16afd828189202b963039c"
+  },
+  "scope": "Independent source/delta review against acceptedv1 checker7f53ee6ae5c094f9a9eddf10a9ee1c071be3909377840aec6e2f8770b3fabeb1 and exact approved active parallel/corpusv2 sources. AST parsed. No acceptance checker, corpus, verifier or full certificate executed or consumed.",
+  "findings": [],
+  "resolved_findings": [
+    "Admission recomputes baseline existing bytes, both mutation ceilings and exact output/metadata buckets; verifies both strict free-space requirements.",
+    "Every shared sample requires both generation buckets and all reviewed bounds.",
+    "Final RSS is independently bounded and included in returned maximum without incorrectly requiring it to be part of the active coordinator timed-loop peak."
+  ],
+  "preserved_checks": [
+    "Same original complete producer and fresh-verifier receipts, semantic coordinates and exact C2/C3 output bytes.",
+    "Same two controls and all23 request/semantic/framing rejection cases, each with exact argv, recipe, input identities, expected error, protected output and complete command log inventory.",
+    "V2 guard resources/admission and pre-exec native registrations match actual approved source; registered groups must have retirement evidence.",
+    "Actual shared reservation, timed resource samples, final sample and original interrupted v1 partial are checked separately.",
+    "V2 corpus exact six inputs include absolute Git and retain empty PATH; actual metadata commands, corrected fixture pin and all547 observations per generation remain bound.",
+    "Both independent launch reviews and complete source manifests are pinned."
+  ],
+  "limitations": [
+    "Source review is complete; actual acceptance replay must await all active negative suites and corpora finishing successfully.",
+    "Physical resource fields remain host observations, separate from semantic proof claims."
+  ]
+}

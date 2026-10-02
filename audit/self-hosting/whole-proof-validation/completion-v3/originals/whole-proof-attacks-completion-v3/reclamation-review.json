@@ -1,0 +1,69 @@
+{
+  "status": "passed-reclamation-source-review",
+  "scope": "Source-only review of the single separately classified complete C2 temporary transition; no action executed, no semantic rejection accepted by reclamation, no SH8 completion claim.",
+  "sources": {
+    "reclaim_completed.py": {
+      "bytes": 8667,
+      "sha256": "56a6858bb81e2e2a4471653dc246502a692d4253a352310dbbf46460a58a4d84"
+    },
+    "reclamation-plan.json": {
+      "bytes": 1135,
+      "sha256": "68649b2c6c771286e89728ffdc9581096302000e88eab9269ae42e4043a36c37"
+    }
+  },
+  "findings": [],
+  "resolved_findings": [
+    "Fsync newly created output/root directory entries and receipt directory before unlink, in addition to receipt file data.",
+    "Record the actual unlink event immediately through after_unlink before target-directory fsync, preserving removed=True if that later operation fails."
+  ],
+  "checks": [
+    "Hardcoded sole target and expected complete identity; independently reviewed classification and comparison bind that inode and full original failure.",
+    "All58 original and retained metadata identities checked independently; current target inode/timestamps/single link match plan; action repeats full target hash under its held no-follow descriptor.",
+    "Exclusive prior-scope locks, retired native registrations, actual bounded process inventory and original empty-group shutdown; no signals, overwrite, retry, or original-proof deletion.",
+    "Both unfinished partials hashed before/after; original failed suite/logs/recipes remain untouched; action status never substitutes for semantic case acceptance.",
+    "Exact regular canonical target path, no-follow open, initial single link, complete digest and inode/time checks before/after durable callback; unlink only this owned path.",
+    "Irreversible unlink event recorded before post-unlink sync; subsequent errors retain failed status and truthful removed flag."
+  ],
+  "validation": {
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "-B",
+      "-W",
+      "error",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3",
+    "exit_code": 0,
+    "tests": 53,
+    "reclamation_tests": 10,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 6867,
+      "sha256": "372e4e75ff1af54322c21c943c8f5f5bb5aac22dd640fd9408140c88ed022686"
+    },
+    "test_source": {
+      "bytes": 5320,
+      "sha256": "ba22fe14d8d65355cd79e25a09794e2377bbf02dc9879acb9ec167ff55e4f704"
+    }
+  },
+  "independent_retained_check": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/reclamation-retained-check.json",
+    "bytes": 752,
+    "sha256": "0bd823f9f2027633b2b24239d90c2a5ccad97361ea7d6ace7ecb91e37cc3a725"
+  },
+  "limitations": [
+    "Reclamation tests touch tiny isolated temporary files only; no actual target deletion occurred in this review.",
+    "The separate classification reports complete compressed-payload equality and full hashes, explicitly no Hemera recomputation or evaluator execution.",
+    "Source review relies on the explicit single-writer ownership/locks; it is not a defense against arbitrary hostile host filesystem mutation."
+  ]
+}

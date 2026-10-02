@@ -1,0 +1,30 @@
+{
+  "status": "observed-failed-no-removal",
+  "command": [
+    "/bin/ps",
+    "-axo",
+    "pid=,pgid=,lstart=,command="
+  ],
+  "exit_code": 0,
+  "observed_ns": 1790936668184937000,
+  "action": {
+    "bytes": 1303,
+    "sha256": "ed888e87cb4fc88ddc0f724f77afc7e9565309b8f54620e0d776a864f1120cbd"
+  },
+  "action_source": {
+    "bytes": 8667,
+    "sha256": "56a6858bb81e2e2a4471653dc246502a692d4253a352310dbbf46460a58a4d84"
+  },
+  "target_still_present": true,
+  "files": {
+    "stdout": {
+      "bytes": 144630,
+      "sha256": "d3b5a63378806d38b407f5eb7476880f26caf872d4afc12ef072ec7e1d774bbc"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scope": "Read-only diagnosis: numeric historical native PID/PGID84604 now belongs to a later macOS daemon; no signal, deletion, retry or cap change."
+}

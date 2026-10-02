@@ -1,0 +1,127 @@
+{
+  "schema": "trident/composite-final-checker-preparation/v1",
+  "status": "prepared-awaiting-independent-review",
+  "prepared_ns": 1790938087259115000,
+  "source_manifest": {
+    "bytes": 2854,
+    "sha256": "999b67d11deb4ee6c057371fd4deaf2ce6ecfe43d30c88aa3c988721a2359f28"
+  },
+  "source_files": 13,
+  "pins": {
+    "bytes": 5269,
+    "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+  },
+  "verified_source_pins": 73,
+  "python": {
+    "path": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "version": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "executable": {
+      "bytes": 52448,
+      "sha256": "2477b47fa3ae65b9574eb18a15edb364e96948eaa1875ad3f1c80d780efc9c12"
+    }
+  },
+  "tests": {
+    "bytes": 2241,
+    "sha256": "9667b1b3d9fcf9475f53dbf7425a9898d6558538e21ad5dc32115e3a94f503cf"
+  },
+  "actual_prior_resources": {
+    "bytes": 21448,
+    "sha256": "3ce8e456f1f894061367c67f63be52647b7568c796284c9089cac42202f3305f"
+  },
+  "actual_transition": {
+    "bytes": 24631,
+    "sha256": "873a0ab3d4a299995dc703b76d3cdf221258772c17d4d2ba9fdccea16ae2c27e"
+  },
+  "retained_initial_resource_review_failure": {
+    "bytes": 2797,
+    "sha256": "b63a71fd191d46d471380904494f4c59590c328d35827d5d53a32b06c9d73d0c"
+  },
+  "readiness": {
+    "all_passed": false,
+    "checker_launched": false,
+    "watcher_launched": false,
+    "observed": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-selfbuild-1/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 32523,
+          "sha256": "0b8b4bffdff1c96c2a826998e1875b6b03879d4880a0f59016f272e06d59520d"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-fresh-verification-1/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 33088,
+          "sha256": "fda7a195b2b8716746f9084a5cc45453176285889b1cb08d4f548c70e696f3c4"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 32521,
+          "sha256": "ec7375ff87efbeff6edd68bdb981331015b88efc66c76c4a2991de68740e0563"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-fresh-verification-1/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 33085,
+          "sha256": "79bab81b5762b29d8f5d66423227ea41ad11049251ed81590c673525990e2233"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c1/whole-c1/receipt.json": {
+        "status": "running",
+        "required": "passed-completion",
+        "identity": {
+          "bytes": 277332,
+          "sha256": "06aa3574872ee1765f6e37ec91228ef8b1b7da25bacd795d691ceedf5a221e37"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/receipt.json": {
+        "status": "running",
+        "required": "passed-completion",
+        "identity": {
+          "bytes": 277332,
+          "sha256": "99ee1b350485f9fedfbb5d43d809a17fbdc7b20cb86411660aacdb93e3513a6d"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/run-1/receipt.json": {
+        "status": "running",
+        "required": "passed",
+        "identity": {
+          "bytes": 10822,
+          "sha256": "2ee38fa4c883841103c4859b6fe5f221d5fb9f1b8d413565dad783d790051002"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-corpus-v2/orchestration/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 4142,
+          "sha256": "d0f109e76653e5b7d7df405cf092ea7469759797528147023f6acc6050e06dc5"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-corpus-v2/c2/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 13549,
+          "sha256": "aea39e12456d188bccad4f3e60d88863977b6b551ea68cc5ab7ca9a110228b28"
+        }
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-corpus-v2/c3/receipt.json": {
+        "status": "passed",
+        "required": "passed",
+        "identity": {
+          "bytes": 13549,
+          "sha256": "72190b6ca0e6d9220bb4927b50834ab1b259062949873fb14704750cf5101329"
+        }
+      }
+    }
+  },
+  "scope": "Preparation only. Separate checker source review and explicit watcher launch remain required; no full acceptance result."
+}

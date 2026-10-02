@@ -1,0 +1,18 @@
+{
+  "status": "failed",
+  "started_ns": 1790920209862864000,
+  "checker_sha256": "503bb17b57ec2141788f1536b1750e875b5d1f8b108751e40e30d58ab2658c9c",
+  "independent_review_sha256": "0cb51c3c43f7de218d885f9d67dadd64ea1b0c81d63e96e108cabd4e79b5155e",
+  "runtime_timeout_seconds": 3600,
+  "readiness_timeout_seconds": 86400,
+  "observed_statuses": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-selfbuild-1/receipt.json": "passed",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-fresh-verification-1/receipt.json": "passed",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/receipt.json": "passed",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-fresh-verification-1/receipt.json": "passed",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/run-1/receipt.json": "failed",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-corpus-v2/orchestration/receipt.json": "passed"
+  },
+  "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v2/when_ready.py\", line 54, in main\n    raise ValueError(\"an actual SH8 gate failed; final acceptance checker was not launched\")\nValueError: an actual SH8 gate failed; final acceptance checker was not launched\n",
+  "ended_ns": 1790933451070749000
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "trident/sh7-retention-release-test/v2",
+  "status": "passed",
+  "argv": [
+    "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+    "test",
+    "--release",
+    "--workspace",
+    "--locked",
+    "--offline",
+    "--",
+    "--test-threads",
+    "8"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "-D warnings",
+    "RUSTDOCFLAGS": "-D warnings",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "versions": {
+    "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\nrelease: 1.89.0\ncommit-hash: c24e1064277fe51ab72011e2612e556ac56addf7\ncommit-date: 2025-06-23\nhost: aarch64-apple-darwin\nlibgit2: 1.9.0 (sys:0.20.2 vendored)\nlibcurl: 8.7.1 (sys:0.4.80+curl-8.12.1 system ssl:(SecureTransport) LibreSSL/3.3.6)\nssl: OpenSSL 3.5.0 8 Apr 2025\nos: Mac OS 26.4.1 [64-bit]\n",
+    "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n"
+  },
+  "base_commit": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "driver": {
+    "bytes": 5747,
+    "sha256": "f513fa860401bedf30209781ab862b244ab1c75b80bf589eea3d82749b875079"
+  },
+  "environment_receipt": {
+    "bytes": 3232,
+    "sha256": "3322f82725098a60d2abbb28415ce5a17c486bc4e7c0bdc0711e2d16abe01641"
+  },
+  "wall_seconds": 1800,
+  "sampled_group_rss_limit_bytes": 4294967296,
+  "sample_interval_seconds": 2,
+  "scope": "Full unchanged workspace coverage; existing target directory; 8 test threads. Earlier partial attempts retained separately. Rust validation bounds only; proof caps unchanged.",
+  "started_ns": 1790917391122366000,
+  "pid": 49394,
+  "sampled_peak_group_rss_bytes": 4216520704,
+  "exit_code": 0,
+  "elapsed_seconds": 1166.2028887079796,
+  "warning_lines": [],
+  "files": {
+    "stdout": {
+      "bytes": 96069,
+      "sha256": "41501be2c6b0f86a4daf85bf0bf05ca55c252fd19150be88b037a6e5e9bbf846"
+    },
+    "stderr": {
+      "bytes": 546176,
+      "sha256": "f5a0a742b041c03da81b38952956c78bde9879e08c493d65cc7a99569dbd0ae7"
+    },
+    "resources.jsonl": {
+      "bytes": 108882,
+      "sha256": "9585ad78f9269318bdb84abbc1c1160a5e3efb6fec4d6fa1a2ac97456e48dc81"
+    }
+  },
+  "ended_ns": 1790918557330232000
+}
