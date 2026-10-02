@@ -5,10 +5,13 @@ SH0–SH8 define native nox/Joy compiler milestones and Zheng proof gates.
 Use the [progress ledger](../audit/self-hosting-progress.md) for current work
 and acceptance evidence. Kelvin stages below are the broader historical vision.
 
-Current coordinated source candidate versions are Trident 0.3, Trisha 0.3 and
-Joy 0.5 with compiler API 3. Historical milestones below retain their original
-versions. Registry installation is not validated for this candidate; use the
-coordinated source archive while the [registry packaging blockers](../audit/release-version-closure.md) remain open.
+The accepted distribution rehearsal uses Trident 0.3, Trisha 0.3 and Joy 0.5
+with compiler API 3. Its [six-platform package evidence](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md)
+binds the frozen coordinated source archive. `release/0.4` names the integration
+branch; version bumps and public promotion remain separate owner steps.
+Historical milestones below retain their original versions. Registry
+installation remains unvalidated; the [Cargo closure review](../audit/release-version-closure.md)
+records that separate packaging scope and its historical checkpoints.
 
 
 Trident exists to write [CORE](https://cyber.page/core-spec/) — Conserved Observable Reduction

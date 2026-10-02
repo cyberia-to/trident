@@ -3,6 +3,28 @@
 Kelvin versioning: versions count down toward 0K (frozen forever).
 Lower is colder. Colder is more stable.
 
+## Unreleased — native self-hosting on soft3
+
+1. Run the frozen Trident compiler through Joy on nox and reproduce its output
+   byte for byte across successive compiler generations. The accepted
+   [SH0–SH6 bootstrap and compiler corpora](audit/self-hosting-progress.md)
+   cover native macOS, Linux and Windows on ARM64 and x64.
+2. Deliver a [portable compiler kit and source-job workflow](docs/guides/self-hosted-compilation.md).
+   The supplied compiler performs the language work, so an installed Joy can
+   compile fresh programs and the frozen compiler sources from the same kit.
+3. Bind compiler, source package, options, output and execution cost through
+   Joy's native Zheng certificate route. [SH7 accepts the public compiler
+   profile](audit/self-hosting/native-proof-pilots/README.md); complete positive
+   self-build proofs and extracted-compiler corpora pass. Final adversarial
+   acceptance remains tracked under SH8. This profile discloses its witness;
+   private or succinct compiler proofs and semantic preservation have separate
+   requirements.
+4. Validate the coordinated source archive and installed packages through the
+   [six-platform distribution rehearsal](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md),
+   including package readback, native consumers and compiler-kit execution.
+   The tested package versions remain Trident0.3 / Trisha0.3 / Joy0.5; a new
+   version and public release require their own owner-controlled steps.
+
 ## 0.3.0 — 2026-09-16
 
 Coordinated release: **Trident 0.3.0**, compiler API **3**, with Trisha
