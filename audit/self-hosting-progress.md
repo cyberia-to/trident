@@ -18,7 +18,7 @@ S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
 corpora. SH7 now accepts the production native public compiler profile through
 [actual C2 pilots and independent review](self-hosting/native-proof-pilots/README.md).
 The complete SH7 archive has [verified durable retention](self-hosting/native-proof-pilots/durable-retention/README.md), including independently downloaded parts, full archive reconstruction and both acceptance-commit install attempts.
-SH8 still requires both complete self-build certificates and their adversarial checks.
+Both complete self-build certificates and fresh positive verification now pass, as do the [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md). SH8 remains open for final adversarial acceptance and durable evidence closure.
 
 S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
 484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
@@ -363,7 +363,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
 | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
-| Complete self-build proof acceptance | Zheng + Joy / SH8 | [SH7 actual pilots and original dynamic probe now pass](self-hosting/native-proof-pilots/README.md); both complete self-build certificates and their fresh positive/adversarial verification remain required |
+| Complete self-build proof acceptance | Zheng + Joy / SH8 | [Complete positive proof/corpus evidence passes](self-hosting/whole-proof-corpus-v2-result/README.md); final adversarial replay and durable evidence closure remain required |
 
 ## Baseline evidence
 
@@ -396,7 +396,7 @@ The complete C1(S) build now measures 1471089704 worker microseconds on the
 reference host, with bounded resident memory; see the exact command and revisions
 in the body-scale receipt. This supplies a baseline for subsequent full-build
 runs, not a wall-time estimate for corpus, clean builds or CI. SH6 acceptance
-is now complete; distribution delivery and native compilation proofs remain.
+and the frozen distribution rehearsal are now complete; final native compilation-proof acceptance remains.
 The original broad estimate is historical.
 The native public relation and actual compiler pilots are accepted at SH7.
 Complete SH8 runs retain the original self-build inputs and declared bounds;

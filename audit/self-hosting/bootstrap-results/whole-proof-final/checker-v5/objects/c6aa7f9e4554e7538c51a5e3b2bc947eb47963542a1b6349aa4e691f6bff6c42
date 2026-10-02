@@ -1,0 +1,59 @@
+"""Replay the exact duplicate-prefix retirement from retained bytes."""
+from pathlib import Path
+from common import COST,require,load,same,reference
+from quiescence import birth
+
+
+def prefix(base):
+    root = base/'whole-prefix-reclamation-v4'
+    plan,final,before = (load(root/p) for p in ('plan.json','action-1/final.json','action-1/before-unlink.json'))
+    require(final['status'] == 'passed-reclaimed-exact-duplicate' and final['unlink_performed'] is True
+            and final['released_owned_bytes'] == 11901028947 and final['charged_duplicate_bytes'] == 0
+            and final['original_failure_status_unchanged'] is True and final['signals_sent'] == [], 'exact successful duplicate-prefix transition')
+    require(final['before'] == final['after'] == dict(original=plan['recipe']['original'],
+            prefix=plan['recipe']['prefix'],duplicate=plan['recipe']['prefix']), 'full original and duplicate prefix identities')
+    require(final['original_state'] == plan['original']['state'] and final['duplicate_state'] == plan['target']['state']
+            and final['duplicate_state']['st_nlink'] == 1 and final['unlinked_state']['st_nlink'] == 0,
+            'exact original and unlinked duplicate inode')
+    for k in ('st_dev','st_ino','st_mode','st_size','st_mtime_ns','st_birthtime'):
+        require(final['duplicate_state'][k] == final['unlinked_state'][k], 'stable held duplicate '+k)
+    require(before['status'] == 'validated-before-unlink' and before['unlink_performed'] is False
+            and before['charged_duplicate_bytes'] == 11901028947 and before['released_owned_bytes'] == 0
+            and before['bindings'] == final['bindings'] and before['before'] == final['before'], 'durable charged prefix before-state')
+    for path,value in final['bindings'].items(): same(Path(path),value)
+    target = Path(plan['target']['path'])
+    require(target == base/'whole-proof-attacks-v3-c1/whole-c1/certificate-cost.joysc'
+            and not target.exists() and not target.is_symlink(), 'only declared duplicate absent')
+    same(Path(plan['original']['path']),plan['recipe']['original'])
+    for item in plan['retained']:
+        same(Path(item['source']),item['identity']);same(root/item['copy'],item['identity'])
+    for item in plan['protected']:
+        if Path(item['path']) == base/'whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc':
+            require(item['identity'] == COST, 'later C2 retirement is separate exact transition')
+        else: same(Path(item['path']),item['identity'])
+    for item in plan['registrations']:
+        same(Path(item['path']),item['identity'])
+        require(load(Path(item['path'])) == item['record'], 'all original owner registration bytes')
+    observations = []
+    for n in (1,2):
+        q = load(root/f'action-1/quiescence-{n}.json')
+        require(q['command'] == ['/bin/ps','-axo','pid=,ppid=,pgid=,lstart='] and q['returncode'] == 0
+                and q['signals_sent'] == [] and q['cutoff_ns'] == plan['quiescence_cutoff_ns'], 'actual private birth-aware observations')
+        refs=q['raw_private'];raw=Path(refs['stdout']['local_only_path']).read_bytes()
+        for value in refs.values():same(Path(value['local_only_path']),value)
+        require(refs['stderr']['bytes'] == 0, 'clean raw process observation')
+        seen,reused=set(),[]
+        for line in raw.decode('ascii').splitlines():
+            fields=line.strip().split(None,3);require(len(fields)==4,'complete birth row')
+            pid,parent,group=map(int,fields[:3]);born=birth(fields[3])
+            require(pid>0 and pid not in seen and born<=q['observed_ns'],'unique current birth');seen.add(pid)
+            if {pid,parent,group} & set(plan['owners']):
+                require(born>q['cutoff_ns']+2_000_000_000,'no live old owner/descendant')
+                reused.append(dict(pid=pid,ppid=parent,pgid=group,birth_ns=born))
+        require(seen and q['snapshot_rows']==len(seen) and q['reused']==reused and q['no_live_prior_owner'] is True,
+                'replayed exact prefix quiescence classification')
+        require(final['started_ns']<=q['started_ns']<=q['observed_ns']<=final['ended_ns'],'action observation interval')
+        observations.append(reference(root/f'action-1/quiescence-{n}.json'))
+    first,second=(load(root/f'action-1/quiescence-{n}.json') for n in (1,2))
+    require(second['started_ns']-first['observed_ns'] >= 2_000_000_000,'two separated birth observations')
+    return dict(action=reference(root/'action-1/final.json'),observations=observations,private_process_bytes_included=False)
