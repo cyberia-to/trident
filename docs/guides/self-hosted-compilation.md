@@ -73,7 +73,13 @@ profile in the self-hosting contract.
 
 The ordinary `joy build` command invokes the Rust seed compiler. Select the
 `pack-job` → `run-artifact` sequence above to compile with C2. This guide
-demonstrates execution; proofs of dynamic compilation remain SH7/SH8 work.
+demonstrates execution. Joy also implements `prove-artifact` and
+`verify-artifact` for public ART1/JOB1/RES1 programs with computed continuations
+and variable result shapes. Its [structured certificate contract](https://github.com/cyberia-to/joy/blob/dd61df9128f6da1f97d4698f45f154f05312fe51/specs/structured-certificates.md)
+specifies independent Zheng verification, full public witness disclosure and
+the resource bounds. Complete self-build proof acceptance and final durable
+retention remain open under [SH8](../../reference/self-hosting.md#sh8-proved-self-compilation);
+follow the [acceptance ledger](../../audit/self-hosting-progress.md) for workload evidence.
 
 
 ## Rebuild the complete frozen compiler
