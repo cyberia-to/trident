@@ -1,0 +1,39 @@
+{
+  "status": "preserved-failed-full-admission",
+  "recorded_ns": 1790962586023426000,
+  "original_controller_status": "failed",
+  "original_controller": {
+    "bytes": 23112,
+    "sha256": "89d7640ae3206e4a5d5b6acad0ca365e43459eac4742278508bfeece76c114fc"
+  },
+  "original_stop": {
+    "bytes": 890,
+    "sha256": "b1f53720210ae1dd585c442c094c3811027bceb59f6a49608a7a5375a0771dc3"
+  },
+  "original_shutdown": {
+    "bytes": 6330,
+    "sha256": "a586e0fb7bc05ba84cba2cc6901a86f219d0f697d5b0d3aa4cb493bb2ef69a8d"
+  },
+  "original_retirement": {
+    "bytes": 1350,
+    "sha256": "add32aef886ffc131b6f3b57d3acf7b7bb6b07eb5b4059de7a4646f63d8428e5"
+  },
+  "selected_c2_verifier": {
+    "bytes": 7252,
+    "sha256": "37ece12c34ab47367e84a8e48e73aa019c2b58e439986bfd21b8a06214ef6ffb"
+  },
+  "selected_c2_verifier_status": "passed",
+  "selected_c2_verifier_monotonic_seconds": 1663.367451541999,
+  "required_free_bytes": 33350717651,
+  "last_original_sample": {
+    "time_ns": 1790962106213066000,
+    "free_bytes": 26034974720
+  },
+  "later_observed_free_bytes": 36560261120,
+  "interpretation": "Controller rejected actual full reservation after exact diagnostic retirement. Its failing reservation did not retain its precise free-byte reading; the last earlier sample and this separate later observation must not be substituted for that missing reading. Later free space is greater. Root planning wrongly assumed immediate physical-space availability from a logical file retirement. No filesystem cause is asserted.",
+  "original_suite_states": {
+    "1": "input-changed",
+    "2": "input-changed"
+  },
+  "next": "Distinct sequential V5 preparation: one globally active mutant, actual bounded admission wait before each mutation, same original command/shared caps, explicit selected C2 cost reuse. No original rerun or result change."
+}
