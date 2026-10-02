@@ -1,0 +1,236 @@
+{
+  "scope": "Actual C3 semantic corpora only; clean repeat, platforms and proofs are separate",
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/collect.py",
+    "--input",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c3-corpus"
+  ],
+  "launch_revision": "4bbe399c85a5c5ef50e40791cc5f8da79e929071",
+  "compiler_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+  "binary_sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "all_source_hashes_unchanged": true,
+  "results": {
+    "constants": {
+      "observations": 31,
+      "commands": 140,
+      "reference_builds": 31,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-constants-cli.json",
+      "historical_receipt_sha256": "80114f1a2a410f97b679e88f7f86e95a70ce7f54533f9cc18eeed7e788186919"
+    },
+    "callable": {
+      "observations": 32,
+      "commands": 148,
+      "reference_builds": 32,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-callable-cli.json",
+      "historical_receipt_sha256": "743c3695bea3e356c5b6a148215913ebf30ee21c527c5fa1249be00cf644f59a"
+    },
+    "types": {
+      "observations": 24,
+      "commands": 110,
+      "reference_builds": 24,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-types-cli.json",
+      "historical_receipt_sha256": "54bae2410582342dde5e6cf2aec4b5d917f3b5f1b0daf4246aed0cad4c66f2bc"
+    },
+    "intrinsics": {
+      "observations": 37,
+      "commands": 157,
+      "reference_builds": 28,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-intrinsic-cli.json",
+      "historical_receipt_sha256": "aabbd2eba8bef1a5be420719b8cee066f2d229d7018012b3790f321832b6b8bc"
+    },
+    "generated-profile": {
+      "observations": 21,
+      "commands": 64,
+      "reference_builds": 4,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-profile-cli.json",
+      "historical_receipt_sha256": "c924415985c8b26b3389d99208bd1736dd80ccfa2dfc1c7a5d778bdc77955fb5"
+    },
+    "main": {
+      "observations": 402,
+      "commands": 1197,
+      "reference_builds": 0,
+      "compiler_seed_builds": 0,
+      "historical_case_sources_and_expectations_equal": true,
+      "historical_receipt": "audit/self-hosting/source-capacity-full-cli.json",
+      "historical_receipt_sha256": "0ca59568f9df90254ed90cc34e6909e75900055eabf266eff13fc3bd9576900c"
+    }
+  },
+  "evidence": {
+    "inputs.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/inputs.json",
+      "original_sha256": "f13efccf2b13dddf8c6b12ef1827430188e86e742f1b44849d33c9cc06f6f69e",
+      "original_bytes": 16127,
+      "sha256": "f13efccf2b13dddf8c6b12ef1827430188e86e742f1b44849d33c9cc06f6f69e",
+      "bytes": 16127
+    },
+    "summary.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/summary.json",
+      "original_sha256": "0b5d0b5d7fff006e44ca2518ed9818a35b6241ec5b5735311935b772c6e49257",
+      "original_bytes": 8889,
+      "sha256": "0b5d0b5d7fff006e44ca2518ed9818a35b6241ec5b5735311935b772c6e49257",
+      "bytes": 8889
+    },
+    "run.py.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/run.py",
+      "original_sha256": "dedd157aedac77af3688dd864492f7329d0ea779f3c4a36733949b139db696a5",
+      "original_bytes": 4740,
+      "sha256": "a4458443bc23c6fc8614781ba42b65f5ca0281d42979b1d7386fa3368e58ba27",
+      "bytes": 1976
+    },
+    "collect.py.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/collect.py",
+      "original_sha256": "e796fec34e2e3ba4c84517ba9ca7919aebf14037a6013bd62e1a562ac1e84c40",
+      "original_bytes": 5674,
+      "sha256": "f9b763d350744a36fa259b8d3a3c29c10130702e146f8f90b02b96fafb6229e9",
+      "bytes": 1987
+    },
+    "constants-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/constants-command.json",
+      "original_sha256": "5aa0c6ff40523500f9b4c63d3d5fd5a4cfc61cb4f2121fbc33828d65a5557b2a",
+      "original_bytes": 1325,
+      "sha256": "5aa0c6ff40523500f9b4c63d3d5fd5a4cfc61cb4f2121fbc33828d65a5557b2a",
+      "bytes": 1325
+    },
+    "constants.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/constants.json",
+      "original_sha256": "6407ddd6e1452479dccb611e5fae03179b13f0eab801233bd7daaba70b4fa592",
+      "original_bytes": 469167,
+      "sha256": "150cbac869918a6fca9844f277e115159db6fd38c3f422d7c4e68338266844f5",
+      "bytes": 31213
+    },
+    "constants.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/constants.log",
+      "original_sha256": "99ccfe49db79b2214a31eecf953ddbf10d593569c6897a2d4bac6cd0dbc567cc",
+      "original_bytes": 233,
+      "sha256": "5cc017d85f9b16812ee62520ec57b3fdffbb63f193b40fd1a4f7d5ef5d73d004",
+      "bytes": 192
+    },
+    "callable-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/callable-command.json",
+      "original_sha256": "b84fa5e2f62e45fb74508a7e9401614d3d3cc1026a82ee74181930c28fbffb2f",
+      "original_bytes": 1321,
+      "sha256": "b84fa5e2f62e45fb74508a7e9401614d3d3cc1026a82ee74181930c28fbffb2f",
+      "bytes": 1321
+    },
+    "callable.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/callable.json",
+      "original_sha256": "4ba6edd92b0e057ba06916ad9381a141f1632545ab5e05bb5648f619ea4b644d",
+      "original_bytes": 490466,
+      "sha256": "cc3da9233ea90a6d741e6bc0cb10095f2068553c6592f4b3dd4577b310d10b42",
+      "bytes": 34274
+    },
+    "callable.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/callable.log",
+      "original_sha256": "d01af549a6d2e8bd8b8da3d4cdfde83ed754864adf1896782c70d118fac6615f",
+      "original_bytes": 233,
+      "sha256": "aca1a0c2bfc93bb7f4ceed1ded86bb6b2658cb7067ecef5e322498052e66a4db",
+      "bytes": 192
+    },
+    "types-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/types-command.json",
+      "original_sha256": "0bfb0b78a0c1da2e41c4d20a2ab20e9029cf69c85a11d63d961a89ea08df9802",
+      "original_bytes": 1308,
+      "sha256": "0bfb0b78a0c1da2e41c4d20a2ab20e9029cf69c85a11d63d961a89ea08df9802",
+      "bytes": 1308
+    },
+    "types.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/types.json",
+      "original_sha256": "d022c58c9a3f0c59adff99c4f8f0d84f5edaca1b89a7137c2c4e64659ae690eb",
+      "original_bytes": 366539,
+      "sha256": "0f461adafd9db42ae41af7a035e1759c48677931a64d1e438e1287bb5e1c4325",
+      "bytes": 26368
+    },
+    "types.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/types.log",
+      "original_sha256": "86d7492f4e9a4511766345d302be4bea488754817ab935c1f6b8319d7468684c",
+      "original_bytes": 233,
+      "sha256": "7ca8c3aaaac1be854fe5b626207bb45716a486088b378813fe6407a8cb4a4f15",
+      "bytes": 192
+    },
+    "intrinsics-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/intrinsics-command.json",
+      "original_sha256": "168f7e33a909d027b942e1ecbd4a6c789d002277fd9463a76f06b4c5a801c63e",
+      "original_bytes": 1322,
+      "sha256": "168f7e33a909d027b942e1ecbd4a6c789d002277fd9463a76f06b4c5a801c63e",
+      "bytes": 1322
+    },
+    "intrinsics.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/intrinsics.json",
+      "original_sha256": "51fc84741f3f5f64c5cacfcfb450718484fd491252389cdc3527eeb5abf12d1b",
+      "original_bytes": 533104,
+      "sha256": "725b68ab4f64891ad15e51aeb9f974623346c98c9c53ade0eae4958fd71cfa91",
+      "bytes": 35038
+    },
+    "intrinsics.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/intrinsics.log",
+      "original_sha256": "93bedd07ca0c015279e0ade9d1b3d462e4ae54cf20134fe5d99a849b1f156040",
+      "original_bytes": 233,
+      "sha256": "b20cff3a094bc90239cc2042d609ca5ef57aced840f4e90fe005f840d83be572",
+      "bytes": 192
+    },
+    "generated-profile-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile-command.json",
+      "original_sha256": "ce08e6381ac6c18420c8c42c0cc9ef0f6baee1e1f9950042e43c107b2ecd7644",
+      "original_bytes": 1351,
+      "sha256": "ce08e6381ac6c18420c8c42c0cc9ef0f6baee1e1f9950042e43c107b2ecd7644",
+      "bytes": 1351
+    },
+    "generated-profile.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile.json",
+      "original_sha256": "f7f49bc1b006301d091bf45c9725e5211ba22c99adfae1eb98cecbba88c8d6d2",
+      "original_bytes": 168334,
+      "sha256": "d0ceb52e03038204a1113e4663869396841000a789e069bef2530d10c6c9e10f",
+      "bytes": 15365
+    },
+    "generated-profile.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile.log",
+      "original_sha256": "9ffa622854b685b08b9f76310889d0489e6b6935d9c8996e9cd085e20b63d471",
+      "original_bytes": 185,
+      "sha256": "2e175a8a92563d09cc21b3a9eb760792a3be97c7b275178e012fca5fcae02000",
+      "bytes": 165
+    },
+    "main-command.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/main-command.json",
+      "original_sha256": "9bb56d3a071e03b754123e13ac40109ed8ac24a180ed07388faf50b344bdf6ac",
+      "original_bytes": 1335,
+      "sha256": "9bb56d3a071e03b754123e13ac40109ed8ac24a180ed07388faf50b344bdf6ac",
+      "bytes": 1335
+    },
+    "main.json.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/main.json",
+      "original_sha256": "a6bd2dd9feee28fcb2e228107fed1673a040d75e39a2e7aa0cdcb31c35565f0a",
+      "original_bytes": 3728301,
+      "sha256": "60e1862568ca1aac9f4d51d902cb1e4ead056c7d80bead4e3ba463d12d91b1be",
+      "bytes": 294531
+    },
+    "main.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/main.log",
+      "original_sha256": "ee5847207881e2a3d1d091c6485dbafef14d6c4dbca01eea3d385ccb5b3d9b52",
+      "original_bytes": 155,
+      "sha256": "a6024b82b9bca1f83bb076c0ae58df03574722b120f23ba3bd9513b6414cad61",
+      "bytes": 149
+    },
+    "generated-artifacts.tar.gz": {
+      "sha256": "91f04866e10293d720bb7ba9d0262c4462b9c81835742c9e4583ee09c4341056",
+      "bytes": 487087,
+      "files": 109,
+      "source_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile-files-1sjg5bdq",
+      "file_manifest": "generated-profile.json.gz: files"
+    }
+  },
+  "encoding": "Raw receipts/logs preserved exactly with deterministic gzip; no whitespace normalization"
+}

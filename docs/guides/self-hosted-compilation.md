@@ -6,11 +6,21 @@ its output. The supported language subset and larger self-build procedure are
 specified in [Self-Hosting](../../reference/self-hosting.md); current platform
 acceptance is recorded in [the ledger](../../audit/self-hosting-progress.md).
 
-Use the Joy `release/0.4` development implementation with `pack-job` and
-`run-artifact` support; this rehearsal used commit `ec83bd8d`. The installed
-`joy` must be on your command path.
+Use the Joy `release/0.4` implementation with `pack-job` and `run-artifact`
+support. The installed `joy` must be on your command path. The accepted kit
+and installed/unpacked runtime checks are recorded in the
+[actual delivery audit](https://github.com/cyberia-to/trisha/blob/c66c2da3da0d5b1da55f09be533a4d664d585bb2/audit/selfhost-kit/accepted/README.md).
 
 ## Prepare the compiler and source package
+
+The current accepted [portable C2 kit](https://github.com/cyberia-to/trisha/raw/c66c2da3da0d5b1da55f09be533a4d664d585bb2/audit/selfhost-kit/accepted/selfhost-kit.tar.gz)
+is retained with its original evidence. Its archive SHA256 is
+`a3052d95c3de6d622157988a8e74826b2f0140724a634298458c3d75f6b508bd`;
+the unpacked `kit.json` SHA256 is
+`4096a513d439adda55e62731f461ff0a7a72fa0c85d79292090be048b7f55ae8`.
+The kit carries the compiler and provenance; obtain Joy separately from the
+compatible `release/0.4` build. Its accepted status covers the frozen S1 compiler
+matrix. The coordinated 0.4 release remains subject to its distribution gates.
 
 An accepted coordinated distribution includes `share/trident-selfhost/`.
 Verify the distribution and kit archive checksums before using their contents.

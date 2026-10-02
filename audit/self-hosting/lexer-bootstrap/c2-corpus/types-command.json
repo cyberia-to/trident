@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/check-guest-type-imports.py",
+    "--joy",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/types.json"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+  "start": "2026-09-27T21:46:25.691376+00:00",
+  "expected_observations": 24,
+  "status": "finished",
+  "receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/types.json",
+  "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/types.log",
+  "exit_code": 0,
+  "end": "2026-09-27T21:47:53.554860+00:00",
+  "elapsed_nanoseconds": 87861544250,
+  "log_sha256": "86d7492f4e9a4511766345d302be4bea488754817ab935c1f6b8319d7468684c",
+  "receipt_sha256": "026524518694829b20abc8862ad49f86035ea2f98daf86c4fbedde49e9e0cc9a",
+  "receipt_status": "passed",
+  "commands": 110,
+  "observations": 24
+}

@@ -1,0 +1,183 @@
+{
+  "schema": "trident/release-0.4-component-integration/v1",
+  "utc": "2026-09-28T04:14:10.608164+00:00",
+  "scope": "Integrated SH7 capture foundation and draft relation design; frozen SH6 pins and proof acceptance unchanged",
+  "commands": [
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "25",
+        "--repo",
+        "cyberia-to/nox",
+        "--json",
+        "state,mergedAt,mergeCommit,headRefOid,baseRefName,url"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox-observer",
+      "exit_code": 0,
+      "stdout": "{\"baseRefName\":\"release/0.4\",\"headRefOid\":\"84e35daab2a9af066c5d8ec85f73837083fbc1df\",\"mergeCommit\":{\"oid\":\"172811b7746cdcd6ab198a3ed976dc6c19f55d5b\"},\"mergedAt\":\"2026-09-28T04:12:48Z\",\"state\":\"MERGED\",\"url\":\"https://github.com/cyberia-to/nox/pull/25\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox-observer",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "From https://github.com/cyberia-to/nox\n * branch            release/0.4 -> FETCH_HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "origin/release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox-observer",
+      "exit_code": 0,
+      "stdout": "172811b7746cdcd6ab198a3ed976dc6c19f55d5b\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "84e35daab2a9af066c5d8ec85f73837083fbc1df^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox-observer",
+      "exit_code": 0,
+      "stdout": "4bef9cc00c16fe9e3816f6f847e423b500c47bdf\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "172811b7746cdcd6ab198a3ed976dc6c19f55d5b^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox-observer",
+      "exit_code": 0,
+      "stdout": "4bef9cc00c16fe9e3816f6f847e423b500c47bdf\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox-observer",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "37",
+        "--repo",
+        "cyberia-to/zheng",
+        "--json",
+        "state,mergedAt,mergeCommit,headRefOid,baseRefName,url"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-proof-plan",
+      "exit_code": 0,
+      "stdout": "{\"baseRefName\":\"release/0.4\",\"headRefOid\":\"72d6630015b11a041101ac2fb201c016fd1bd048\",\"mergeCommit\":{\"oid\":\"c753f5ae055d3f4a43847877521f119d3b40dd39\"},\"mergedAt\":\"2026-09-28T03:56:14Z\",\"state\":\"MERGED\",\"url\":\"https://github.com/cyberia-to/zheng/pull/37\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-proof-plan",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "From https://github.com/cyberia-to/zheng\n * branch            release/0.4 -> FETCH_HEAD\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "origin/release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-proof-plan",
+      "exit_code": 0,
+      "stdout": "c753f5ae055d3f4a43847877521f119d3b40dd39\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "72d6630015b11a041101ac2fb201c016fd1bd048^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-proof-plan",
+      "exit_code": 0,
+      "stdout": "9d186233286f32ca163929872ac272f1f4a67150\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "c753f5ae055d3f4a43847877521f119d3b40dd39^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-proof-plan",
+      "exit_code": 0,
+      "stdout": "9d186233286f32ca163929872ac272f1f4a67150\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng-proof-plan",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "components": {
+    "nox": {
+      "pr": {
+        "baseRefName": "release/0.4",
+        "headRefOid": "84e35daab2a9af066c5d8ec85f73837083fbc1df",
+        "mergeCommit": {
+          "oid": "172811b7746cdcd6ab198a3ed976dc6c19f55d5b"
+        },
+        "mergedAt": "2026-09-28T04:12:48Z",
+        "state": "MERGED",
+        "url": "https://github.com/cyberia-to/nox/pull/25"
+      },
+      "source_head": "84e35daab2a9af066c5d8ec85f73837083fbc1df",
+      "merge": "172811b7746cdcd6ab198a3ed976dc6c19f55d5b",
+      "tree": "4bef9cc00c16fe9e3816f6f847e423b500c47bdf"
+    },
+    "zheng": {
+      "pr": {
+        "baseRefName": "release/0.4",
+        "headRefOid": "72d6630015b11a041101ac2fb201c016fd1bd048",
+        "mergeCommit": {
+          "oid": "c753f5ae055d3f4a43847877521f119d3b40dd39"
+        },
+        "mergedAt": "2026-09-28T03:56:14Z",
+        "state": "MERGED",
+        "url": "https://github.com/cyberia-to/zheng/pull/37"
+      },
+      "source_head": "72d6630015b11a041101ac2fb201c016fd1bd048",
+      "merge": "c753f5ae055d3f4a43847877521f119d3b40dd39",
+      "tree": "9d186233286f32ca163929872ac272f1f4a67150"
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "scope": "Local frozen S1 follow-up; clean repetitions/platforms remain separate",
+  "status": "passed",
+  "script_sha256": "a3bd52c63e8c6036d8f96f3de1e47385ad57d050eae3ca9d7daf93315297851a",
+  "commands": {
+    "c2-to-c3": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/probe-native-closure.py",
+        "--joy",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--inventory",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-inventory.json",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3.json",
+        "--budget",
+        "20000000000",
+        "--arena-nodes",
+        "1000000000",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000",
+        "--emit",
+        "program"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "status": "completed",
+      "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3.log",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 1255853401042,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "c2-corpus-launcher": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/run.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "status": "completed",
+      "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus-launcher.log",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 1270258391333,
+      "log_sha256": "a042a81724e8032f39ddcfefb9b88a34808e478ff8c89d54c023addcc7ebe31f"
+    },
+    "c2-source-scale": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/check.py",
+        "--joy",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "--joy-sha256",
+        "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--compiler-sha256",
+        "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+        "--producer-receipt",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2.json",
+        "--producer-receipt-sha256",
+        "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale.json"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "status": "completed",
+      "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale.log",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 88070032125,
+      "log_sha256": "2d07cc2022d0c0a93b1d930a101fd81d9386ea271a688353e80afa15d88a38ed"
+    },
+    "fixed-point": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/check-selfhost-fixed-point.py",
+        "--first",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2.json",
+        "--second",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3.json",
+        "--inventory-checker",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_inventory",
+        "--joy",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-fixed-point.json"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "status": "completed",
+      "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-fixed-point.log",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 5855895916,
+      "log_sha256": "5b127259156c188a1e4c775a895992dc384539b2c9db4ee051b3bff7b90833cf"
+    },
+    "c3-corpus-launcher": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/run.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+      "status": "completed",
+      "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus-launcher.log",
+      "exit_code": 0,
+      "elapsed_nanoseconds": 1185965660791,
+      "log_sha256": "a04efc9405b2364f3f1c09191d8daa02d463f86546a8180fab72c5092440b9e7"
+    }
+  },
+  "first_receipt_sha256": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+  "compiler_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+}

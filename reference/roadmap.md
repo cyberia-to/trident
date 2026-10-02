@@ -40,7 +40,7 @@ CORE            256K         64K
 vm spec          32K         16K
 language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun            128K        128K      ← S0 fixed point/corpora pass; S1 scanner scale repaired, clean six-platform reproduction pending
+Noun             64K        128K      ← S1 reproducible self-hosting accepted on six native platforms (SH6)
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
@@ -90,7 +90,7 @@ Noun        AST→Noun optimized: subject sharing, dead axis elimination, parall
 cyber stack ✓ nox executor integration (trident build → .nox → nox execute → trace) — joy, 0.2.0
 cyber stack ✓ zheng prover integration (trace → zheng prove → proof) — joy, 0.2.0
 cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
-compiler    ◐ Prototype stages in .tri; lowering integration/self-compilation open
+compiler    ◐ Historical RAM/TIR prototype stages; that pipeline's lowering integration/self-compilation remain open
               lexer (824) → parser (2,723) → typecheck (1,502) →
               codegen (1,979) → optimize (733) → lower (1,121) →
               pipeline (313)
@@ -107,10 +107,10 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ◐ Native compiler coverage and measured scale accepted (SH3–SH4); S0 fixed point and both corpora pass; current S1 supplied-compiler acceptance and six-platform clean bootstrap remain (SH5–SH6)
+Noun        ✓ Frozen S1 reproducible self-compilation accepted (SH3–SH6): exact C2/C3 and both corpora on six native platforms; compilation proofs remain SH7/SH8
 cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
-compiler    ◐ Prototype pipeline emits TIR; lower wiring and self-compilation open
+compiler    ◐ RAM/TIR prototype emits TIR; that pipeline's lower wiring and self-compilation remain open
 std.*       23 std.skill.* shipped
 os.*        3+ OS namespaces operational (incl. os.cyber.*)
 tooling     Web playground: compile .tri in browser
@@ -132,7 +132,7 @@ language    Protocols: compile-time structural typing, grammar frozen
 TIR         TIROp set stable (5+ OS, 1 VM per type prove op set complete)
 Noun        Native compiler data/collection contract specified and implemented (SH0–SH1)
 cyber stack nox VM spec frozen, zheng prover stable
-compiler    ◐ Prototype pipeline in Trident — lower wiring + self-compilation open
+compiler    ◐ RAM/TIR prototype in Trident — that pipeline's lower wiring and self-compilation remain open
 std.*       #[requires]/#[ensures] contracts on all public functions
 os.*        Per-OS namespace governance established
 AI          Proven training: gradient computation inside proof

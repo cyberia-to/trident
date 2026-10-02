@@ -6,22 +6,17 @@
 
 ```nu
 # Build
-trident build <file>                    # Compile to target assembly
-trident build <file> --target neptune   # OS target → derives TRITON
-trident build <file> --target ethereum  # OS target → derives EVM
-trident build <file> --target linux     # OS target → derives x86-64
-trident build <file> --target triton    # Bare VM target (no OS)
-trident build <file> --target miden     # Bare VM → .masm
+trident build <file>                    # Compile to nox (default)
+trident build <file> --target nox       # Explicit nox reference ABI
+trident build <file> --target cyber     # nox package described by Joy
+trident build <file> --target neptune   # Delegate to installed Trisha
+trident build <file> --target triton    # Delegate to installed Trisha
 trident build <file> --engine triton    # VM target (geeky register)
 trident build <file> --terrain triton   # VM target (gamy register)
 trident build <file> --network neptune  # OS target (geeky register)
 trident build <file> --union neptune    # OS target (gamy register)
 trident build <file> --costs            # Print cost analysis
-trident build <file> --hotspots         # Top cost contributors
-trident build <file> --hints            # Optimization hints (H0001-H0004)
-trident build <file> --annotate         # Per-line cost annotations
-trident build <file> --save-costs <json>  # Save cost report to JSON
-trident build <file> --compare <json>   # Compare against baseline costs
+trident build <file> --profile release # Select compilation cfg profile
 trident build <file> -o <out>           # Custom output path
 
 # Check
@@ -48,14 +43,6 @@ trident test <file> --union neptune     # OS target (gamy register)
 trident audit <file>                    # Verify #[requires]/#[ensures]
 trident audit <file> --z3              # Formal verification via Z3
 
-# Docs
-trident doc <file>                      # Generate documentation
-trident doc <file> -o <docs.md>         # Generate to file
-trident doc <file> --engine triton      # VM target (geeky register)
-trident doc <file> --terrain triton     # VM target (gamy register)
-trident doc <file> --network neptune    # OS target (geeky register)
-trident doc <file> --union neptune      # OS target (gamy register)
-
 # Package
 trident package <file>                  # Compile + hash + produce .deploy/ artifact
 trident package <file> --target neptune # Package for specific OS/VM target
@@ -63,8 +50,8 @@ trident package <file> --engine triton    # VM target (geeky register)
 trident package <file> --terrain triton   # VM target (gamy register)
 trident package <file> --network neptune  # OS target (geeky register)
 trident package <file> --union neptune    # OS target (gamy register)
-trident package <file> --vimputer main    # Chain instance (geeky register)
-trident package <file> --state main       # Chain instance (gamy register)
+trident package <file> --vimputer main  # Rejected: state-specific packaging unavailable
+trident package <file> --state main     # Same unsupported state selection
 trident package <file> -o <dir>         # Output to custom directory
 trident package <file> --audit          # Run verification before packaging
 trident package <file> --dry-run        # Show what would be produced
@@ -76,8 +63,8 @@ trident run <file> --engine triton      # VM target (geeky register)
 trident run <file> --terrain triton     # VM target (gamy register)
 trident run <file> --network neptune    # OS target (geeky register)
 trident run <file> --union neptune      # OS target (gamy register)
-trident run <file> --vimputer main      # Chain instance (geeky register)
-trident run <file> --state main         # Chain instance (gamy register)
+trident run <file> --vimputer state.json  # State input interpreted by the warrior
+trident run <file> --state state.json  # State input interpreted by the warrior
 trident run <file> --input-values 1,2,3 # Public input field elements
 trident run <file> --secret 42          # Secret/divine input values
 
@@ -88,8 +75,8 @@ trident prove <file> --engine triton    # VM target (geeky register)
 trident prove <file> --terrain triton   # VM target (gamy register)
 trident prove <file> --network neptune  # OS target (geeky register)
 trident prove <file> --union neptune    # OS target (gamy register)
-trident prove <file> --vimputer main    # Chain instance (geeky register)
-trident prove <file> --state main       # Chain instance (gamy register)
+trident prove <file> --vimputer state.json  # State input interpreted by the warrior
+trident prove <file> --state state.json  # State input interpreted by the warrior
 trident prove <file> --output proof.bin # Write proof to file
 trident prove <file> --input-values 1,2 # Public input for proof
 
@@ -100,8 +87,8 @@ trident verify <proof> --engine triton    # VM target (geeky register)
 trident verify <proof> --terrain triton   # VM target (gamy register)
 trident verify <proof> --network neptune  # OS target (geeky register)
 trident verify <proof> --union neptune    # OS target (gamy register)
-trident verify <proof> --vimputer main    # Chain instance (geeky register)
-trident verify <proof> --state main       # Chain instance (gamy register)
+trident verify <proof> --vimputer state.json  # State input interpreted by the warrior
+trident verify <proof> --state state.json  # State input interpreted by the warrior
 
 # Deploy
 trident deploy <file>                   # Compile, package, deploy to registry
@@ -110,8 +97,8 @@ trident deploy <file> --engine triton    # VM target (geeky register)
 trident deploy <file> --terrain triton   # VM target (gamy register)
 trident deploy <file> --network neptune  # OS target (geeky register)
 trident deploy <file> --union neptune    # OS target (gamy register)
-trident deploy <file> --vimputer main    # Chain instance (geeky register)
-trident deploy <file> --state main       # Chain instance (gamy register)
+trident deploy <file> --vimputer main   # Rejected: registry publication has no state selection
+trident deploy <file> --state main      # Same unsupported state selection
 trident deploy <file> --registry <url>  # Deploy to specific registry
 trident deploy <file> --audit           # Audit before deploying
 trident deploy <file> --dry-run         # Show what would be deployed
@@ -153,6 +140,20 @@ trident generate <spec.tri>             # Generate scaffold from spec
 trident lsp                             # Start LSP server
 ```
 
+`build` accepts a source file or a directory containing `trident.toml`. A
+directory selects the manifest entry; an explicit source file remains the
+entry while inheriting project settings. Target selection uses the explicit
+flag, then the project target, then `nox`. Output defaults to the selected
+target's extension; `--costs` reports nox reductions or requests the installed
+stack warrior's cost report. Catalog declarations alone do not implement a
+compiler backend. Triton/Neptune require the `external-targets` feature;
+builds also require an installed Trisha provider. Discovery accepts that
+provider's descriptor or an explicit offline descriptor.
+
+For compilation by the native self-built compiler, use Joy's `pack-job` and
+`run-artifact` commands described in the
+[self-built compiler guide](../docs/guides/self-hosted-compilation.md).
+
 `trident check` prints compiler diagnostics to stderr and exits with status1
 when source discovery, parsing or type checking fails. Successful checks print
 `OK: <input>` and exit with status0.
@@ -177,7 +178,7 @@ plus a *universal* shorthand for backward compatibility.
 |----------|-------|------|-----------|----------|
 | **VM** | `--engine <name>` | `--terrain <name>` | `--target <name>` | Which VM to compile for |
 | **OS** | `--network <name>` | `--union <name>` | `--target <name>` | Which OS layer to bind |
-| **Chain** | `--vimputer <name>` | `--state <name>` | *(deploy only)* | Which chain instance to deploy to |
+| **State** | `--vimputer <value>` | `--state <value>` | — | State selection passed to the warrior |
 
 **Resolution rules:**
 
@@ -187,15 +188,17 @@ plus a *universal* shorthand for backward compatibility.
 - The geeky and gamy names are interchangeable — `--engine triton` and
   `--terrain triton` mean the same thing. Choose whichever register
   vocabulary your team prefers.
-- When both VM and OS registers are provided, the OS's declared VM must
-  match the explicit VM register (or an error is raised).
-- The chain register (`--vimputer` / `--state`) is only available on
-  deployment commands (`deploy`, `package`, `run`, `prove`, `verify`).
-  It selects a specific chain instance within the resolved OS.
+- Choose one of `--engine`, `--terrain`, `--network` or `--union` per command;
+  these flags are mutually exclusive. A supplied register flag overrides
+  `--target`.
+- The state register (`--vimputer` / `--state`) is exposed by `deploy`,
+  `package`, `run`, `prove` and `verify`. Runtime commands pass the selection
+  to the warrior, which owns its meaning and validation. `package` and
+  `deploy` currently reject explicit state selection.
 
-**Compilation commands** (`build`, `check`, `test`, `doc`) accept the
-VM and OS registers (4 flags). **Deployment commands** (`deploy`,
-`package`, `run`, `prove`, `verify`) accept all three registers (6 flags).
+**Compilation commands** (`build`, `check`, `test`) accept the
+VM and OS registers (4 flags). The other commands listed above expose
+the state flags too, subject to their command-specific support.
 
 ---
 
@@ -203,33 +206,33 @@ VM and OS registers (4 flags). **Deployment commands** (`deploy`,
 
 Trident is the weapon. **Warriors** wield it on specific battlefields.
 
-`run`, `prove`, and `verify` delegate to external **warrior** binaries.
+`run`, `prove`, `verify`, and stack-target `build` delegate to external warrior binaries.
 Each warrior is specialized for a target VM+OS combination, bringing the
 heavy dependencies (provers, VMs, chain clients) that Trident stays clean of.
 
-Resolution order for finding a warrior:
+The registered owner is Joy for `nox`/`cyber` and Trisha for
+`triton`/`neptune` when external targets are enabled. Executable discovery
+searches PATH for `trident-<target>`, then `trident-<owner>`, then `<owner>`
+(including the platform executable suffix). The same provider supplies
+`describe --target <name>` and receives delegated commands.
 
-1. Look for `trident-<target>` on PATH
-2. Check the target's `[warrior]` config in `vm/<target>/target.toml`
-3. If target is an OS, check the underlying VM's warrior config
-
-If no warrior is found, Trident compiles the program and prints installation
-guidance. Warriors are installed separately (e.g. `cargo install trident-trisha`).
+Target packages declare supported commands. An explicit
+`TRIDENT_TARGET_PACKAGES` directory supplies bounded JSON descriptors for
+offline discovery; delegation additionally checks the installed provider's
+compilation identity against that package. A missing provider or unsupported
+command fails with a nonzero exit. Joy installation guidance names
+`cargo install cyber-joy`; Trisha guidance points to its release artifacts.
 
 ### Target Resolution
 
-`--target <name>` (universal register) resolves as:
+`nox` has a built-in reference terrain ABI. Other registered targets obtain
+terrain and optional union data from their owner's validated target package.
+Unregistered catalog entries cannot provide an executable implementation.
+The selected name follows the register precedence above.
 
-1. Is `<name>` an OS? → load `UnionConfig` from `os/<name>/target.toml`, derive VM from `vm` field
-2. Is `<name>` a VM? → load `TerrainConfig` from `vm/<name>/target.toml`, no OS (bare compilation)
-3. Neither → error: unknown target
-
-When explicit registers are used instead of `--target`:
-
-1. `--engine <name>` / `--terrain <name>` → load `TerrainConfig` from `vm/<name>/target.toml`
-2. `--network <name>` / `--union <name>` → load `UnionConfig` from `os/<name>/target.toml`
-3. `--vimputer <name>` / `--state <name>` → select chain instance within the resolved OS
-4. If both VM and OS registers are given, the OS's declared `vm` field must match the VM register
+`run`, `prove` and `verify` forward a selected state value to the installed
+provider. For example, Joy's state input is a JSON file path on its supported
+nox/cyber targets. Use the provider's command contract for that input.
 
 See [targets.md](targets.md) for the full target registry.
 

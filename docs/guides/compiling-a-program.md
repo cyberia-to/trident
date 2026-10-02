@@ -1,441 +1,160 @@
-# 🔧 Compiling a Program
+# Compiling a Program
 
-This guide covers everything about the Trident compilation process: how source code becomes Triton Assembly, how to invoke the compiler, how to read errors, and how to analyze proving cost before you ever run a program. It is the second stage of the Trident lifecycle (Writing -> Compiling -> Running -> Deploying -> Generating Proofs -> Verifying Proofs).
+`trident build` compiles `.tri` source with the Rust frontend. The default
+target is nox, which produces a noun formula for Joy. Triton builds use the
+installed Trisha runtime to produce Triton Assembly (TASM).
 
-> **Two targets, two proof systems.** Since 0.2.0 the default target is
-> **nox** (the soft3 stack): `trident build` emits `.nox`, and the
-> **joy** warrior runs, proves and verifies it — a **zheng** proof
-> (SuperSpartan + Brakedown + HyperNova folding), verified without
-> re-execution. Triton VM and its STARK remain fully supported via
-> `--target triton` and the trisha warrior. On the default target the
-> whole chain is:
->
-> ```
-> trident build hello.tri                 # hello.nox
-> trident prove hello.tri --secret 7,13   # hello.zheng (via joy, ~14 ms, 20 KB)
-> trident verify hello.zheng              # Verification: PASS (zheng proof)
-> ```
->
-> `trident run/prove/verify` delegate to the warrior registered for the
-> target. The Triton-specific material below stays accurate for
-> `--target triton`; zheng's construction lives in the zheng repo
-> (`specs/superspartan.md`, `accumulator.md`, `decider.md`).
+To compile source with the self-built C2 compiler running inside Joy/nox,
+follow [Self-Built Compiler](self-hosted-compilation.md). That path uses an
+explicit source package and the supported [native compiler subset](../../reference/self-hosting.md#native-compiler-subset-contract).
 
-## 🔧 The Compilation Pipeline
+## Build a source file
 
-Trident compiles `.tri` source files directly to a nox formula (default target) or to [TASM](https://triton-vm.org/spec/) (Triton Assembly, `--target triton`). The pipeline has six stages:
-
-```trident
-source (.tri)
-  |
-  v
-Lexer        -- tokenize source into a stream of lexemes
-  |
-  v
-Parser       -- build an AST from the token stream
-  |
-  v
-Type Checker -- validate types, resolve names, detect recursion
-  |
-  v
-Emitter      -- walk the AST and produce TASM for each module
-  |
-  v
-Linker       -- mangle labels, stitch modules, emit entry point
-  |
-  v
-output (.tasm)
-```
-
-There is no optimization pass and no IR. Every language construct maps to a known instruction pattern. The compiler is a thin, auditable translation layer -- you can read the generated TASM and trace it back to the source line that produced it.
-
-This design is deliberate. In provable computation, predictability matters more than cleverness. If you can read the source, you can reason about the proof.
-
-## 🔧 Building with `trident build`
-
-### Basic Usage
-
-Compile a single file:
-
-```nu
+```sh
 trident build main.tri
 ```
 
-Output:
+For a standalone source file with no project target setting, this writes
+`main.nox` and prints `Compiled -> main.nox` to stderr. Select the target and
+output path explicitly when needed:
 
-```text
-Compiled -> main.nox
+```sh
+trident build main.tri --target nox -o program.nox
 ```
 
-The default output file replaces the `.tri` extension with the target's extension (`.nox` by default, `.tasm` with `--target triton`). To specify a different path:
+The `.nox` file contains the textual noun formula. To retain program metadata
+in a bundle for Joy, use its ordinary Rust-backed build command:
 
-```nu
-trident build main.tri -o output/program.tasm
+```sh
+joy build main.tri --emit bundle -o main.bundle.json
 ```
 
-### Project Builds
+A bundle, a textual `.nox` formula and a structured ART1 artifact are distinct
+formats. The C2 guide uses ART1 with `joy run-artifact`; it documents the
+required compiler and input artifacts.
 
-If your project has a `trident.toml`, you can point `trident build` at the project directory instead of a specific file:
+## Build a project
 
-```nu
-trident build .
-```
-
-The compiler reads `trident.toml`, finds the entry point, resolves all module dependencies, and produces a single linked `.tasm` file named after the project:
-
-```text
-Compiled -> my_project.tasm
-```
-
-You can also pass any `.tri` file inside a project directory. If the compiler finds a `trident.toml` in the file's directory or any ancestor, it builds the full project:
-
-```nu
-trident build src/main.tri    # finds trident.toml, builds whole project
-```
-
-### Output File Contents
-
-The generated `.tasm` file is a complete Triton Assembly program. For multi-module projects, the linker produces a single file with:
-
-1. An entry point that calls the program's `main` function and halts
-2. Each module's functions with mangled labels (e.g., `helpers__double:`)
-3. Comments marking module boundaries
-
-```tasm
-    call my_app__main
-    halt
-
-// === module: helpers ===
-helpers__double:
-    dup 0
-    add
-    return
-
-// === module: my_app ===
-my_app__main:
-    read_io 1
-    call helpers__double
-    write_io 1
-    return
-```
-
-## ✅ Type Checking with `trident check`
-
-To validate a program without producing any output file, use `trident check`:
-
-```nu
-trident check main.tri
-```
-
-Output on success:
-
-```text
-OK: main.tri
-```
-
-On failure, the compiler prints diagnostics and exits with a non-zero status code. This makes `check` useful in CI pipelines and editor integrations:
-
-```nu
-# CI: fail the build if any type errors exist
-trident check .
-```
-
-The `check` command resolves modules the same way `build` does -- it type-checks all dependencies in topological order. You can also request a cost report without emitting TASM:
-
-```nu
-trident check main.tri --costs
-```
-
-## ⚠️ Understanding Errors
-
-Trident uses [ariadne](https://crates.io/crates/ariadne) to render diagnostics with source spans, color-coded severity, and contextual help. A typical error looks like:
-
-```text
-error: binary operator '+' requires matching types, got Field and Bool
-  --> main.tri:5:21
-   |
- 5 |     let z: Field = x + y
-   |                     ^^^^^
-   |
-  help: ensure both operands have the same type
-```
-
-### Error Categories
-
-Lexer errors catch invalid characters and missing syntax before parsing begins. For example, using `-` instead of `sub(a, b)` or `/` instead of `/%`:
-
-```text
-error: unexpected '-'; Trident has no subtraction operator
-  help: use the `sub(a, b)` function instead of `a - b`
-```
-
-Parser errors report structural problems: missing declarations, unmatched braces, exceeded nesting depth.
-
-Type errors are the most common. They include type mismatches in operations, assignments, and return types; undefined variables and functions; arity mismatches; and immutability violations.
-
-Control flow errors catch missing `bounded` annotations on for loops, non-exhaustive `match` statements, and unreachable code after `return`.
-
-Module errors report missing module files, circular dependencies, and duplicate definitions.
-
-Recursion detection is a dedicated pass. Trident prohibits all recursion (direct and indirect) because Triton VM requires deterministic trace lengths:
-
-```text
-error: recursive function call detected: main -> foo -> main
-  help: Trident does not allow recursion; use `for` loops instead
-```
-
-For the complete list of every error message with explanations and fixes, see the [Error Catalog](../../reference/errors.md).
-
-## ⚡ Cost Analysis at Compile Time
-
-Trident can estimate proving cost statically -- without executing the program. This is possible because all loop bounds are known at compile time and there is no recursion.
-
-### The Six Triton VM Tables
-
-Proving cost depends on six Triton VM execution tables. See [Optimization Guide](optimization.md) for the full table model and reduction strategies.
-
-### Proving Cost Analysis
-
-The compiler provides four cost analysis flags:
-
-```nu
-trident build main.tri --costs      # table heights
-trident build main.tri --hotspots   # top cost contributors  
-trident build main.tri --hints      # optimization suggestions
-trident build main.tri --annotate   # per-line cost annotations
-```
-
-Use `--save-costs` and `--compare` to track improvements. See the [Optimization Guide](optimization.md) for interpretation and reduction strategies.
-
-## 📦 Multi-Module Compilation
-
-### Module Resolution
-
-When the compiler encounters a `use` statement, it resolves the module name to a file path using these search paths in order:
-
-| Module prefix | Search path | Example |
-|---|---|---|
-| `std.*` | Standard library directory (`std/`) | `use std.crypto.merkle` resolves to `std/crypto/merkle.tri` |
-| `os.<union>.*` | Extension library directory (`os/`) | `use os.neptune.xfield` resolves to `os/neptune/xfield.tri` |
-| (no prefix) | Project root directory | `use helpers` resolves to `helpers.tri` |
-| (dotted) | Project root, nested | `use crypto.sponge` resolves to `crypto/sponge.tri` |
-
-The standard library directory is found by searching (in order):
-
-1. The `TRIDENT_STDLIB` environment variable
-2. `std/` relative to the compiler binary
-3. `std/` in the current working directory
-
-The extension directory follows the same pattern using `TRIDENT_OSLIB` and `os/`.
-
-### Dependency Order
-
-The compiler discovers all reachable modules by scanning `use` statements, then type-checks them in topological order (dependencies before dependents). If a circular dependency is detected, compilation fails:
-
-```trident
-error: circular dependency detected involving module 'a'
-  help: break the cycle by extracting shared definitions into a separate module
-```
-
-### Label Mangling
-
-The linker mangles all function labels with the module name to prevent collisions. A function `verify` in module `crypto.sponge` becomes `crypto_sponge__verify` in the linked output. Cross-module calls are rewritten to use the mangled names.
-
-### Project Configuration
-
-A `trident.toml` at the project root configures the build:
+A directory input selects the entry declared in `trident.toml`:
 
 ```toml
 [project]
 name = "my_project"
 version = "0.1.0"
-entry = "main.tri"
+entry = "src/main.tri"
+target = "nox"
 
 [targets.debug]
-flags = ["debug", "verbose"]
+flags = ["debug"]
 
 [targets.release]
 flags = ["release"]
 ```
 
-| Field | Purpose |
-|---|---|
-| `name` | Project name (used for output file naming) |
-| `version` | Project version |
-| `entry` | Entry point file (default: `main.tri`) |
-| `target` | VM target (optional, overrides `--target` default) |
-
-Profile-specific flags enable conditional compilation with `cfg` attributes. Use `--profile` to select which flag set is active:
-
-```nu
+```sh
+trident build .
 trident build . --profile release
 ```
 
-## 🎯 Targeting VMs
+The compiler discovers modules reachable from the selected entry. For nox,
+the default output is `my_project.nox` in the project root. `entry` defaults
+to `main.tri` when omitted. An explicit `--target` overrides the project
+target; otherwise the project setting applies, falling back to nox.
 
-Trident's compiler is parameterized by a `TerrainConfig` that defines every
-target-specific constant: stack depth, digest width, hash rate, field prime,
-cost tables, and output extension. The first target is Triton VM.
+Passing a file inside the project keeps that file as the entry. The enclosing
+manifest supplies settings and dependencies:
 
-### Target Selection Flags
-
-The compiler provides several flags for selecting the compilation target:
-
-```nu
-# Engine selects the execution VM (instruction set, field, stack model)
-trident build main.tri --engine triton
-
-# Terrain selects the hardware/VM profile (cost model, lowering path)
-trident build main.tri --terrain triton
-
-# Union selects the OS / network (runtime APIs, state model)
-trident build main.tri --network neptune
-# --network is an alias for --union:
-trident build main.tri --union neptune
-
-# Combine them for full control
-trident build main.tri --engine triton --terrain triton --union neptune
+```sh
+trident build src/other.tri --target nox -o other.nox
 ```
 
-The `--target` flag still works as a backward-compatible universal register,
-setting engine, terrain, and union simultaneously when they share a name:
+`--profile` selects conditional-compilation flags, including a matching
+`[targets.<profile>]` section. It is not an optimization-level switch.
 
-```nu
-trident build main.tri --target triton    # equivalent to --engine triton --terrain triton --union neptune
+## Check source and resolve modules
+
+```sh
+trident check main.tri
+trident check . --target nox
 ```
 
-The `--target` flag selects a `TerrainConfig` by name. The built-in `triton` config sets:
+`check` resolves and type-checks the reachable modules without writing a
+compiled artifact. Success prints `OK: <input>` to stderr; discovery, parsing
+or type errors produce diagnostics and a nonzero exit status. Use the same
+target and profile for checking and building. Checking source does not run
+the program or establish that it can be proved.
 
-| Parameter | Value |
-|---|---|
-| Architecture | Stack machine |
-| Field prime | 2^64 - 2^32 + 1 (Goldilocks) |
-| Stack depth | 16 |
-| Digest width | 5 field elements |
-| Extension field degree | 3 |
-| Hash rate | 10 field elements |
-| Output extension | `.tasm` |
-| Cost tables | processor, hash, u32, op_stack, ram, jump_stack |
+Imports use dotted module names. Local modules are resolved relative to the
+entry file's directory: `use crypto.sponge` names `crypto/sponge.tri` there.
+Explicit project dependencies and locked dependency paths also participate
+in resolution. Imported declarations must match their requested module
+owners; dependency cycles fail compilation.
 
-Custom targets can be defined as TOML files in the `vm/` directory. The compiler searches for `vm/{name}.toml` relative to the compiler binary and the working directory. A custom target file specifies the same parameters:
+The compiler embeds its owned library sources, whose repository locations
+include `lib/std/` and `lib/vm/`. Target packages supply their own intrinsic
+and runtime modules. Custom libraries belong in explicit dependencies;
+ambient `TRIDENT_STDLIB` or `TRIDENT_OSLIB` overrides are not the current
+library-selection interface. In particular, `os.neptune.*` belongs to
+Trisha's Neptune package and requires the `neptune` target.
 
-```toml
-[target]
-name = "custom_vm"
-display_name = "Custom VM"
-architecture = "stack"
-output_extension = ".casm"
+See [Programs and Modules](../../reference/language.md#1-programs-and-modules)
+for import and visibility rules, and the [Error Catalog](../../reference/errors.md)
+for diagnostic explanations.
 
-[field]
-prime = "2^31 - 1"
-limbs = 1
+## What the compiler produces
 
-[stack]
-depth = 32
-spill_ram_base = 0
+The Rust frontend resolves modules, parses source, checks types and
+specializes concrete generic uses before target lowering. The two implemented
+paths have different representations:
 
-[hash]
-digest_width = 4
-rate = 8
+- **nox:** Trident lowers checked AST modules directly into noun formulas.
+- **Triton:** Trident builds typed TIR and applies its TIR optimizations;
+  Trisha legalizes operations, renders instructions and links the modules
+  into TASM.
 
-[extension_field]
-degree = 0
+The [IR reference](../../reference/ir.md) describes those boundaries.
+Available intrinsics and lowering support come from the selected target
+package. A target catalog entry alone does not implement a backend.
 
-[cost]
-tables = ["cycles", "memory"]
+## Triton-specific builds
+
+With a compatible `trisha` installed on the command path:
+
+```sh
+trident build main.tri --target triton -o main.tasm
+trident build main.tri --target neptune -o main-neptune.tasm
 ```
 
-The architecture field (`stack` or `register`) determines how the emitter generates code. Stack architectures (like Triton VM) use direct emission; register architectures would require a lightweight IR. Currently only stack-based targets are supported.
+`triton` selects the bare VM package; `neptune` also supplies its OS-specific
+modules. They are separate selections. The Trident CLI delegates these
+builds to Trisha, which emits a linked TASM program with an entry point and
+module-qualified function labels.
 
-## 🎨 Formatting
+Use one target selector per command. `--engine` and `--terrain` name VM
+selections; `--network` and `--union` name OS selections. These four flags
+are mutually exclusive. `--target` is the common shorthand.
 
-`trident fmt` reformats source files to the canonical Trident style. It parses the file, preserves comments, and re-emits the AST with consistent indentation and spacing:
+## Inspect compilation cost
 
-```nu
-trident fmt main.tri          # format in place
-trident fmt src/              # format all .tri files recursively
+```sh
+trident build main.tri --target nox --costs
+trident check main.tri --target nox --costs
 ```
 
-Output:
+For nox, `--costs` analyzes the emitted formula and reports a reduction model
+and structural counts. Branch-dependent work is reported as a range. This
+is static analysis, not a measurement of execution time, proof time or
+proof size.
 
-```text
-Formatted: main.tri
-Already formatted: helpers.tri
-```
+For Triton, `trident build main.tri --target triton --costs` delegates the
+report to Trisha's AET-table model, whose current build report analyzes the
+entry source alone. `trident check --costs` reports the nox model only and
+prints a note for stack targets. Use the runtime's own measurements when
+evaluating execution or proving performance.
 
-Use `--check` mode in CI to verify formatting without modifying files. It exits with status 1 if any file would change:
+## Next steps
 
-```nu
-trident fmt --check .
-```
-
-```text
-OK: main.tri
-would reformat: helpers.tri
-```
-
-Hidden directories and `target/` are automatically skipped during recursive formatting.
-
-## ✅ Testing
-
-Annotate test functions with `#[test]`. Test functions take no arguments and return no value:
-
-```trident
-program my_app
-
-fn add(a: Field, b: Field) -> Field {
-    a + b
-}
-
-#[test]
-fn test_add() {
-    assert(add(2, 3) == 5)
-}
-```
-
-Run tests with:
-
-```nu
-trident test main.tri
-```
-
-Output:
-
-```text
-running 1 test
-  test test_add ... ok (cc=8, hash=0, u32=0)
-
-test result: ok. 1 passed; 0 failed
-```
-
-The test runner compiles each test function and reports pass/fail along with cost metrics. For project builds, it discovers `#[test]` functions across all modules:
-
-```nu
-trident test .
-```
-
-## 📦 Packaging and Deployment
-
-Once a program compiles and passes tests, package it for deployment:
-
-```nu
-trident package main.tri         # produce .deploy/ artifact
-trident deploy main.tri          # package + deploy to registry
-```
-
-`trident package` produces a `.deploy/` directory containing the compiled
-TASM, cost report, content hash, and any attached audit certificates.
-`trident deploy` packages and then publishes the artifact to the registry,
-where it is identified by its [content-addressed hash](../explanation/content-addressing.md).
-
----
-
-## 🔗 See Also
-
-- [Language Reference](../../reference/language.md) -- Types, operators, builtins, grammar
-- [Error Catalog](../../reference/errors.md) -- Every error message explained with fixes
-- [Optimization Guide](optimization.md) -- Cost reduction strategies for all six tables
-
-## 🚀 Next Step
-
-[Running a Program](running-a-program.md) -- execute your compiled program (joy on nox, Triton VM on `--target triton`).
+- [Running a Program](running-a-program.md)
+- [Self-Built Compiler](self-hosted-compilation.md)
+- [Language Reference](../../reference/language.md)
+- [Warrior API](../../reference/warrior-api.md)
