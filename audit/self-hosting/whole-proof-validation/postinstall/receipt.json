@@ -1,0 +1,51 @@
+{
+  "schema": "trident/whole-proof-tools-postcommit-install/v1",
+  "status": "passed",
+  "commit": "669be7eea641740a5f2265f64da85bfd8e007a30",
+  "command": [
+    "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+    "install",
+    "--path",
+    ".",
+    "--root",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-acceptance-postinstall/installed",
+    "--locked",
+    "--offline",
+    "--force"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-acceptance/trident",
+  "environment": {
+    "PATH": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-acceptance-postinstall/installed/bin:/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall-2/installed/bin:/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/Library/Application Support/Zed/external_agents/registry/npx/codex-acp/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/codex-path:/Users/master/.grok/bin:/Users/master/.local/bin:/Users/master/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/master/.grok/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pkg/env/active/bin:/opt/pmk/env/global/bin:/opt/homebrew/bin:/Users/master/.codex/tmp/arg0/codex-arg00dVQaB:/Users/master/Library/Application Support/Zed/external_agents/registry/npx/codex-acp/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/codex-path:/Users/master/.cargo/bin:/Users/master/.foundry/bin:/Users/master/.foundry/bin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "clean_before": "",
+  "exit_code": 0,
+  "elapsed_seconds": 41.334412583033554,
+  "status_after": "",
+  "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+  "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\n",
+  "warning_lines": [],
+  "binaries": {
+    "trident": {
+      "bytes": 9089056,
+      "sha256": "e56839ba60fc8a15ba2a6502776e874ca2d59398c1fa2dded8bd3412bd253788"
+    },
+    "trident-lsp": {
+      "bytes": 6637024,
+      "sha256": "73939a000fa8ad89f550431aeec8b0be8c0203afa4ddd3a4c219c3d49bc51deb"
+    }
+  },
+  "logs": {
+    "install.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "install.stderr": {
+      "bytes": 1658,
+      "sha256": "ad01bb4a9a1fc9badb2a74b885b83b771b304e9d9e02412d46cc00e614f33bc3"
+    }
+  }
+}

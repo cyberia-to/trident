@@ -1,0 +1,95 @@
+{
+  "schema": "trident/whole-proof-helper-build/v1",
+  "source_family": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install",
+  "env": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustfmt",
+        "--edition",
+        "2021",
+        "main.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/helper",
+      "exit_code": 0,
+      "elapsed_seconds": 0.020368084020446986
+    },
+    {
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "generate-lockfile",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/helper",
+      "exit_code": 0,
+      "elapsed_seconds": 0.14777029101969674
+    },
+    {
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/helper",
+      "exit_code": 0,
+      "elapsed_seconds": 53.78373808297329
+    },
+    {
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/helper",
+      "exit_code": 0,
+      "elapsed_seconds": 0.9878064160002396
+    }
+  ],
+  "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\nrelease: 1.89.0\ncommit-hash: c24e1064277fe51ab72011e2612e556ac56addf7\ncommit-date: 2025-06-23\nhost: aarch64-apple-darwin\nlibgit2: 1.9.0 (sys:0.20.2 vendored)\nlibcurl: 8.7.1 (sys:0.4.80+curl-8.12.1 system ssl:(SecureTransport) LibreSSL/3.3.6)\nssl: OpenSSL 3.5.0 8 Apr 2025\nos: Mac OS 26.4.1 [64-bit]\n",
+  "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+  "sources": {
+    "Cargo.lock": {
+      "bytes": 31586,
+      "sha256": "2299f3838b9f37294145498a34790a8b57169f0f7e0ecd527f3617eb8e8fc205"
+    },
+    "Cargo.toml": {
+      "bytes": 442,
+      "sha256": "f3c0f91ea813d13c073da1ea6fae72f4f011091d50236740637d104bd2b700ed"
+    },
+    "frames.rs": {
+      "bytes": 9870,
+      "sha256": "4c60cd5d95c0162172c44214fefc10c0ddd025d5077f1041c4abb7c45f8a4063"
+    },
+    "index.rs": {
+      "bytes": 5293,
+      "sha256": "b08fd3a8064f6dc156ba41643631272f1693894c2a57976b55f915787460d416"
+    },
+    "main.rs": {
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    "mutation.rs": {
+      "bytes": 8521,
+      "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+    },
+    "noun.rs": {
+      "bytes": 4114,
+      "sha256": "bd64a225ca4703b9720775897565db4858629992eb644abcf2a1c7c68bdae0c8"
+    }
+  },
+  "binary": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator",
+    "bytes": 724240,
+    "sha256": "7aa12693b1a8654036d7498f089db99ea97a00a863c246d53a69c012abf6a8e8"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "whole-proof-final-checker-source-review-v1",
+  "status": "passed-source-review",
+  "reviewed_utc": "2026-10-02T04:50:27.440905+00:00",
+  "source": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-independent/source-7f53ee6ae5c094f9a9eddf10a9ee1c071be3909377840aec6e2f8770b3fabeb1.py",
+    "bytes": 23686,
+    "sha256": "7f53ee6ae5c094f9a9eddf10a9ee1c071be3909377840aec6e2f8770b3fabeb1"
+  },
+  "prior_review": {
+    "path": "review-ba64c5f4.json",
+    "sha256": "eae2daca197c4120b883eb2ea04760422495e42155b90c07c173e159b4e06f7d"
+  },
+  "scope": "Final source delta review after complete preceding source review. AST parsed. Final checker not executed; no full certificate read, copied or executed.",
+  "findings": [],
+  "resolved": [
+    "Exact five corpus input identities are now required and rehashed.",
+    "Construction inputs are hashed before the case loop, compared against every command receipt, and actually rehashed after the loop. This removes repeated whole-proof reads without removing any case or command binding.",
+    "Rechain and final summary reuse the before/after-checked original proof identity."
+  ],
+  "unchanged_reviewed_contract": [
+    "Two generations each require a successful complete production proof and separate fresh verification with all accepted logical coordinates and exact C2/C3 artifact identity.",
+    "Two controls per generation include explicit original-control reuse and one real rechain verification.",
+    "All 23 named rejection cases bind original proof, exact helper and verifier commands, expected context, input identities, full log inventories and intended errors.",
+    "All four canonical regenerated output sidecars are required.",
+    "Corpus evidence requires all six unchanged scripts and 547 observations per extracted compiler, exact compiler path, pinned fixtures and empty-PATH child invocation.",
+    "Review declares public complete-witness scope and does not imply release publication or broader semantic claims."
+  ],
+  "limitations": [
+    "Runtime evidence validation remains pending root execution after all jobs complete.",
+    "This receipt certifies source review only; it is not whole-proof acceptance.",
+    "No root source edits or compiler/verifier executions performed."
+  ]
+}

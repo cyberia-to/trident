@@ -1,0 +1,67 @@
+{
+  "status": "passed-delivery-review",
+  "reviewed_utc": "2026-10-02T05:58:33.035678+00:00",
+  "base_commit": "f50f689f240d59eb2f266a68cc1c1df27e5592a2",
+  "scope": "Read-only prepared-delivery review: exact complete original failed corpus, retained source/review identities, fixture Git pins, scheduler failure chronology, README links and claim scope. The already independently reviewed full acceptance checker was hash-bound; no new full semantic-checker audit or active acceptance/proof execution.",
+  "findings": [],
+  "archive": {
+    "files": 3241,
+    "logical_bytes": 15989819,
+    "compressed_bytes": 3634107,
+    "sha256": "fd22445b088056736e212d457c2c3d64220d5169ba7edb211f32cbc0e9087ad4",
+    "complete_external_original_directory_matched": true
+  },
+  "copied_corpus_prepared_files": 12,
+  "copied_acceptance_source_review_files": 15,
+  "fixture_revision": "2f1a575a6fbc0704c268f1ae21667830a3c996df",
+  "final_checker_sha256": "503bb17b57ec2141788f1536b1750e875b5d1f8b108751e40e30d58ab2658c9c",
+  "checks": [
+    "Delivered check_delivery.py passed independently with assertions enabled.",
+    "Every failed archive member matches the complete original failed directory; actual commands exit0,0,0,0,0,1 and final helper has only failed Git metadata command and zero observations.",
+    "All27 copied source/review files match their recorded original path identities; eight corpus source files match exact2f1 Git objects; seven unchanged helpers also match e57.",
+    "Reviewed v2 checker matches its immutable independent snapshot and review; old scheduler failed without a checker command.",
+    "All six local README links resolve; no SH8 or replacement corpus success claim; active measurements remain external unchanged."
+  ],
+  "limitations": [
+    "Prepared source retention is complete; new corpus, parallel negative-suite and full final acceptance remain separate active gates.",
+    "This review did not run any scheduler, compiler, verifier, final acceptance checker or consume full certificate payloads."
+  ],
+  "reviewed_file_map": {
+    "bytes": 8612,
+    "sha256": "f5ecc0f3da9363f0b7ba7f8a4cbbe60f8968a4446988e8530de61e2452a96a4d"
+  },
+  "identity_replay": {
+    "bytes": 1079,
+    "sha256": "096a2f532ffb462d05e4576bc278936c4abd3a1a38f1ff58f91076ec54917277"
+  },
+  "delivery_command": {
+    "bytes": 481,
+    "sha256": "b7161c9efc13e8402d08905ec642571c20304d7857da2c40ab0ea7b698402efa"
+  },
+  "links": [
+    {
+      "source": "audit/self-hosting/whole-proof-validation/corpus-v2/README.md",
+      "target": "original-corpus-v1-failed.tar.gz"
+    },
+    {
+      "source": "audit/self-hosting/whole-proof-validation/corpus-v2/README.md",
+      "target": "original-files.json"
+    },
+    {
+      "source": "audit/self-hosting/whole-proof-validation/corpus-v2/README.md",
+      "target": "prepared/whole-proof-corpus-v2/independent-review.json"
+    },
+    {
+      "source": "audit/self-hosting/whole-proof-validation/acceptance-v2/README.md",
+      "target": "retained/whole-proof-final-review-v2/check.py"
+    },
+    {
+      "source": "audit/self-hosting/whole-proof-validation/acceptance-v2/README.md",
+      "target": "retained/whole-proof-final-review-v2-independent/final-review.json"
+    },
+    {
+      "source": "audit/self-hosting/whole-proof-validation/acceptance-v2/README.md",
+      "target": "files.json"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "trident/parallel-whole-proof-validation/v2",
+  "status": "prepared-not-launched",
+  "generations": [
+    1,
+    2
+  ],
+  "roots": {
+    "1": "whole-proof-attacks-v2-c1",
+    "2": "whole-proof-attacks-v2-c2"
+  },
+  "original_scope": "whole-proof-attacks",
+  "proofs": {
+    "1": {
+      "bytes": 11977015727,
+      "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+    },
+    "2": {
+      "bytes": 10569174820,
+      "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+    }
+  },
+  "shared_disk_bytes": 27917287424,
+  "free_floor_bytes": 8589934592,
+  "combined_sampled_rss_bytes": 12884901888,
+  "mutant_growth_ceiling_bytes": 33554432,
+  "canonical_and_output_bucket_per_generation": 117440512,
+  "metadata_bucket_per_generation": 268435456,
+  "per_stream_log_bytes": 1048576,
+  "readiness_seconds": 15500,
+  "outer_schedule_seconds": 86400,
+  "scope": "Same2controls23rejections per generation. Distinct schedule uses two generation processes; original interrupted attempt and partial payload remain unchanged and charged to shared disk. Original proof/profile/individual time/CPU/RSS/wire caps unchanged; helper file ceilings are stricter. No skipped cases, automated retries, inherited negative successes or release claim."
+}

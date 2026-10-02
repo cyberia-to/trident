@@ -1,0 +1,101 @@
+{
+  "schema": "trident/whole-proof-attack-command/v1",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator",
+    "mutate",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/rechain.joysc",
+    "rechain"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/attempts/fixture-construct-rechain",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 1800,
+    "cpu": 1800,
+    "rss": 1073741824,
+    "file": 25769869312
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 5864,
+    "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+  },
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json": {
+      "bytes": 1222,
+      "sha256": "4d55c8a7fe2683b26fce2d67786c99228fb463aac4be90de5b71e075cef9520e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    }
+  },
+  "expected_exit": 0,
+  "metadata": null,
+  "started_ns": 1790911403136393000,
+  "sampled_peak_rss_bytes": 1851392,
+  "pid": 93783,
+  "latest_sample": {
+    "time_ns": 1790911404209000000,
+    "elapsed": 1.072599416016601,
+    "processes": [
+      {
+        "pid": 93783,
+        "rss_bytes": 1851392
+      }
+    ],
+    "rss_bytes": 1851392,
+    "owned_bytes": 115843858,
+    "free_bytes": 82401927168
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 1.193528082978446,
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json": {
+      "bytes": 1222,
+      "sha256": "4d55c8a7fe2683b26fce2d67786c99228fb463aac4be90de5b71e075cef9520e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    }
+  },
+  "ended_ns": 1790911404333872000,
+  "files": {
+    "stdout": {
+      "bytes": 242,
+      "sha256": "81f596f7a9c002b1987f8ed9709b59c036123918ceefe343610495828c5534ad"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resources.jsonl": {
+      "bytes": 385,
+      "sha256": "62be322fab6893c3b164cc5e4cc0a266b5166b08781fdb77d54076d480e4efe9"
+    }
+  }
+}

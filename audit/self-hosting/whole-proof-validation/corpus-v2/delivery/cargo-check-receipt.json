@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "command": [
+    "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+    "check",
+    "--workspace",
+    "--locked",
+    "--offline"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+  "revision": "f50f689f240d59eb2f266a68cc1c1df27e5592a2",
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "-D warnings",
+    "RUSTDOCFLAGS": "-D warnings",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "actual_rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+  "scope": "Fresh cargo check for corpus/final-review evidence delivery; Rust tests inherited only from the retained exact-source equivalence.",
+  "started_ns": 1790920607020617000,
+  "exit_code": 0,
+  "elapsed_seconds": 0.549326165986713,
+  "warning_lines": [],
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 72,
+      "sha256": "9c73735a1033f44f00ea48e15c38d73843ff5a391557aac653bd81d564a34b5f"
+    }
+  }
+}

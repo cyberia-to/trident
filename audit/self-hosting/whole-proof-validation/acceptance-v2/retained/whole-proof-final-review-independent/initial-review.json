@@ -1,0 +1,49 @@
+{
+  "schema": "whole-proof-final-checker-source-review-v1",
+  "status": "changes-requested",
+  "reviewed_utc": "2026-10-02T04:42:33.608822+00:00",
+  "source": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-independent/source-0db3623703f97c9af6b3052393b1900166515352f51a1190ce5cfefe805bf77e.py",
+    "bytes": 14321,
+    "sha256": "0db3623703f97c9af6b3052393b1900166515352f51a1190ce5cfefe805bf77e"
+  },
+  "scope": "Read-only source review. Final checker not executed; no full certificate read or copied.",
+  "findings": [
+    {
+      "id": "case-recipe-command-binding",
+      "severity": "material",
+      "detail": "Named negative cases are not bound to their expected compiler/JOB, construction mode/context, generation, original proof/index/noun/helper identity or exact verifier/construction paths. A same-error command/recipe can be relabelled under multiple names, and recipe=None can skip construction evidence.",
+      "requested": "Derive exact expected argv and recipe requirements for each case, require canonical sidecars for all four valid-output cases, and validate construction stdout source_sha256/mode/wire_bytes against original and recorded mutant identities."
+    },
+    {
+      "id": "required-log-membership",
+      "severity": "material",
+      "detail": "files() accepts an arbitrary subset; required stdout/stderr/resources log membership is not checked before response/error parsing.",
+      "requested": "Require the command inventory keys that every producer/verifier/guard writes, then hash those files. Bind exact positive command argv/profile/environment as well as action/generation."
+    },
+    {
+      "id": "fresh-rechain-observation-field",
+      "severity": "minor",
+      "detail": "semantic() drops prover_observations for rechain too, so unexpected prover observations in a fresh verifier response are ignored.",
+      "requested": "Require prover_observations absent in rechain, as already required for the original fresh verification; elapsed_micros remains appropriately omitted."
+    },
+    {
+      "id": "corpus-provenance-and-path-binding",
+      "severity": "material",
+      "detail": "The corpus checker ignores fixture_revision, Joy fixture revision and runtime_environment; command validation is only count/status. corpus_identity binds compiler bytes but not the requested extracted compiler path.",
+      "requested": "Bind pinned fixtures/vector identity, exact six child argv and empty PATH, and invoke corpus_result or require the actual compiler_path equals the extracted compiler."
+    }
+  ],
+  "positive_checks": [
+    "Versioned successful producer/fresh verifier responses and exact accepted program/input/output/charge/compiler-response coordinates are compared.",
+    "Logical peak and expanded steps map to accepted SH6 coordinates.",
+    "Exact C2/C3 compiler identity is compared across both generations.",
+    "Original fresh verification is explicitly reused, rather than counted as another invocation.",
+    "Successfully deleted temporary payloads are not required to exist; their actual verifier input hashes can be checked against saved recipes and construction evidence.",
+    "Pinned bootstrap import executes no compiler/verifier; evidence_files manifest excludes final receipt files."
+  ],
+  "limitations": [
+    "Source review only; final runtime evidence remains pending.",
+    "No source edits made; root owns corrections and final execution."
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "schema": "trident/whole-proof-tool-fixture-check/v1",
+  "status": "passed",
+  "scope": "New helper against unchanged accepted SH7 aggregate certificate, no whole self-build certificate consumed",
+  "source_proof": {
+    "bytes": 8662132,
+    "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+  },
+  "helper": {
+    "bytes": 724240,
+    "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+  },
+  "driver": {
+    "bytes": 5755,
+    "sha256": "e9892f07584c86d22b657b4dc07f45b9f056d864c0139d6e6a7addca6d436fb8"
+  },
+  "cases": [
+    {
+      "mode": "rechain",
+      "expected_exit": 0,
+      "identity": {
+        "bytes": 8662132,
+        "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+      },
+      "receipt": "attempts/fixture-verify-rechain/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "continuation",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662131,
+        "sha256": "6ad92c1df5620f9d042981f1ccd505e3d649f5d970c76cf0ba4e0ffa24188234"
+      },
+      "receipt": "attempts/fixture-verify-continuation/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "generation",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662133,
+        "sha256": "74603ef15874f17c2521b71d9ab77aa3f45c8f417f2d05372a6264c453fc46de"
+      },
+      "receipt": "attempts/fixture-verify-generation/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "cost",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662132,
+        "sha256": "4c7b40e5abb28f36290b01f1c2d9c84faf989662cfb00fca34105dee4e79f0cb"
+      },
+      "receipt": "attempts/fixture-verify-cost/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "valid-output-payload",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662152,
+        "sha256": "5fdc58855e015cd86a4d1145f67b4c97e5ca0001583d7c7c42fa41af78e323b4"
+      },
+      "receipt": "attempts/fixture-verify-valid-output-payload/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "valid-output-topology",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662149,
+        "sha256": "06f21bb5758e8fa468c1dd9b9ad860dfb1ba75be498898eed524aa197de846f4"
+      },
+      "receipt": "attempts/fixture-verify-valid-output-topology/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "valid-output-payload-rebound",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662120,
+        "sha256": "59108c9d5a96e5c19a7291da330672e8634578a3d5d8336adbe24d007c97e0af"
+      },
+      "receipt": "attempts/fixture-verify-valid-output-payload-rebound/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "valid-output-topology-rebound",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662119,
+        "sha256": "a4b940062effb3e8ff1b2d8969b5c66612adb96ad1059230a396949d74eeefcc"
+      },
+      "receipt": "attempts/fixture-verify-valid-output-topology-rebound/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "omit-terminal",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8656330,
+        "sha256": "cfe6d29bdcbbc76754bd4389a56ea494ffa55a2ab4fe610fd1684c5a247299d0"
+      },
+      "receipt": "attempts/fixture-verify-omit-terminal/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "drop-first",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8635244,
+        "sha256": "6b81321e6e5330050d7705a725d0410ca4e37ace7710269d4e441ca0c1a94301"
+      },
+      "receipt": "attempts/fixture-verify-drop-first/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "swap-first-two",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662132,
+        "sha256": "341efce7344b56b1ca0afb3e1f21cfc863ad5e416b8b5e49db9d05b6e62c5fc2"
+      },
+      "receipt": "attempts/fixture-verify-swap-first-two/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "omit-completion",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662050,
+        "sha256": "697f93b91fbd35dd859c601a10f9d00348c0a24031e24c2e8a71fc7b5e797123"
+      },
+      "receipt": "attempts/fixture-verify-omit-completion/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "truncate-last-byte",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662131,
+        "sha256": "511f55ab5d4aeb9e2a6b5d066c919ecbd3b34b818f49c8bb5cf7ed8ecc8a6e6c"
+      },
+      "receipt": "attempts/fixture-verify-truncate-last-byte/receipt.json",
+      "passed": true
+    },
+    {
+      "mode": "trailing-byte",
+      "expected_exit": 1,
+      "identity": {
+        "bytes": 8662133,
+        "sha256": "4af8256487a7afe9a9eab8aa2efaebbe2b58d1d4e4d05fdee03b6f4ac752a240"
+      },
+      "receipt": "attempts/fixture-verify-trailing-byte/receipt.json",
+      "passed": true
+    }
+  ],
+  "index_overflow_rejected": true
+}

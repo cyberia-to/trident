@@ -1,0 +1,55 @@
+{
+  "base": "5b68e00af9d0e41f8a181471a74e8b01f174f1d9",
+  "observed_ns": 1790926201679582000,
+  "status": "confirmed-byte-changing-Windows-checkout",
+  "commands": [
+    {
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/files.json",
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        "HEAD:audit/self-hosting/whole-proof-corpus-v2-result/files.json"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "exit_code": 0,
+      "blob": {
+        "bytes": 2805571,
+        "sha256": "566b8fb950c84f629ef5a47a9eb5eb653e600f78769af78936ec796ce7ae2a5b"
+      },
+      "filtered": {
+        "bytes": 2839228,
+        "sha256": "ddbfd35e42b3bde9aebb3ca8103ad1a52b6868e5c522fd1c936f5afba4defece"
+      },
+      "stderr": "",
+      "retained_filtered": "files.json.filtered.gz",
+      "different": true
+    },
+    {
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared-files.json",
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        "HEAD:audit/self-hosting/whole-proof-validation/corpus-v2/prepared-files.json"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "exit_code": 0,
+      "blob": {
+        "bytes": 3909,
+        "sha256": "7fb109ee6c3d23a0dd6d08de94e966ab41c74fb4a8843cde779d57fbb3b11357"
+      },
+      "filtered": {
+        "bytes": 3971,
+        "sha256": "c553b48c84b82994198755f341895b6db1a98bf6c664104a447c4b1f3810c6ac"
+      },
+      "stderr": "",
+      "retained_filtered": "prepared-files.json.filtered.gz",
+      "different": true
+    }
+  ]
+}
