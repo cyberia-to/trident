@@ -1,8 +1,14 @@
 # Complete self-build certificate validation tools
 
-Status: prepared and reviewed. This delivery records the validation tools and
+Original v1 delivery: prepared and reviewed. The separately reviewed
+[parallel v2 schedule](parallel-v2/README.md) preserves the original interrupted
+attempt and all semantic cases. Full SH8 acceptance remains open.
+
+This original delivery records the validation tools and
 their existing-pilot checks. Complete C1/C2 self-build proof acceptance remains
-open; no complete self-build certificate has been consumed by these tools yet.
+open. At the original v1 delivery time, these tools had consumed no complete
+self-build certificate. The later v1 execution completed the whole C2 index
+before its explicit interruption; v2 retains that result separately.
 
 The source inputs are the unchanged accepted SH6 compiler package from Trident
 `77213171d39b88c5f41221912251cc4813ac2b11`. The tested production Joy source is

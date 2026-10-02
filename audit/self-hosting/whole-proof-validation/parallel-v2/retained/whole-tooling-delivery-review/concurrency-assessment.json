@@ -1,0 +1,48 @@
+{
+  "schema": "whole-proof-negative-schedule-source-assessment-v1",
+  "status": "retain-original-sequential-v1",
+  "recorded_utc": "2026-10-02T04:30:15.161775+00:00",
+  "scope": "Read-only planning assessment. No scheduler/helper/source edit, certificate read, case execution or scheduling change.",
+  "decision": "Root retained the original sequential v1 scheduler; v2 concurrency would add resource and coordination work without requiring evidence changes midflight.",
+  "source_hashes": {
+    "guard.py": {
+      "bytes": 5864,
+      "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+    },
+    "whole_suite.py": {
+      "bytes": 13622,
+      "sha256": "65acbc20993403fdf8dc732ffc0c9faa83fafc75bef19c436e60a94ba97962fb"
+    },
+    "plan.md": {
+      "bytes": 6842,
+      "sha256": "692938a0b639275629660ee3b17a35180d35f0c9bfda4073fa91d2d5b7b594a1"
+    },
+    "helper/mutation.rs": {
+      "bytes": 8521,
+      "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+    },
+    "helper/frames.rs": {
+      "bytes": 9870,
+      "sha256": "4c60cd5d95c0162172c44214fefc10c0ddd025d5077f1041c4abb7c45f8a4063"
+    },
+    "helper/noun.rs": {
+      "bytes": 4114,
+      "sha256": "bd64a225ca4703b9720775897565db4858629992eb644abcf2a1c7c68bdae0c8"
+    }
+  },
+  "semantic_assessment": "The two complete generation suites are independent if every existing case, verifier invocation, expected rejection, protected-output check, immutable identity and explicitly reused original control is preserved.",
+  "resource_findings": [
+    "Existing helper file cap24GiB+64KiB is global;64KiB is not a proven per-original mutation-growth bound. Recompressed frames and rewritten terminal nouns may expand further.",
+    "The proposed stricter per-mutant min(original+32MiB,24GiB+64KiB) cap would require enforcement during writes; exceeding it would leave an unexecuted construction/resource failure, not a successful intended semantic rejection.",
+    "Disk reservations must include initial indexed result.dag up to16MiB per generation, in addition to four16MiB regenerated sidecars, positive extracted output, sentinels, indexes, logs and all existing retained bytes.",
+    "Two independent free-space checks do not provide atomic shared capacity reservation. Coordinator admission/lease and per-generation lifetime locks would be needed; the waiting v1 scheduler must not become a third writer.",
+    "Existing owned_bytes traversal can race with a concurrent unlink between is_file and stat; shared accounting or race-safe scanning would be required.",
+    "Two6GiB sampled process-group caps do not establish a hard12GiB host RSS ceiling. A coherent shared sample/stop path would be needed, and host-observation wording must remain explicit.",
+    "Shared resource failure must stop both owned process groups, preserve both partials and classify remaining cases unexecuted. Prior unexplained payloads must never be silently reclaimed.",
+    "Verifier24GiB wire allowance remains unchanged even if helper construction permits global slack. CPU/IO/hash contention can worsen existing deadlines; no automatic timeout increase/retry is justified."
+  ],
+  "limitations": [
+    "Actual complete proof sizes and concurrent throughput were not measured by this assessment.",
+    "No v2 implementation or launch was authorized or performed; the original sequential scheduler remains selected."
+  ]
+}
