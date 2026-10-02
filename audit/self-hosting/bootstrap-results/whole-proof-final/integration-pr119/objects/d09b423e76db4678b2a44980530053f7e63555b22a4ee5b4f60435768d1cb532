@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "command": [
+    "git",
+    "switch",
+    "-c",
+    "docs/0.4-full-selfbuild-acceptance",
+    "28c982c0ff4fa9572f63778688a2763e0ed2878e"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+  "started_ns": 1790981443001974000,
+  "ended_ns": 1790981443039107000,
+  "exit_code": 0,
+  "previous_head": "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50",
+  "new_base": "28c982c0ff4fa9572f63778688a2763e0ed2878e",
+  "changed_files": [
+    "docs/guides/self-hosted-compilation.md"
+  ],
+  "frozen_final_collector_archive_maps_preserved": {
+    "audit/self-hosting/bootstrap-results/whole-proof-final/completion-v5/retained-files.json": {
+      "bytes": 25484,
+      "sha256": "723c08b2d7df332229ee75edeec26e801693a26da45a4cc7c0cc114255482739"
+    },
+    "audit/self-hosting/bootstrap-results/whole-proof-final/checker-v5/retained-files.json": {
+      "bytes": 57503,
+      "sha256": "74bf12dd9b7b1e4959af59379f3236025210068f379e3c06783c7a3d94b7d3c9"
+    },
+    "audit/self-hosting/bootstrap-results/whole-proof-final/final-launch-v5/retained-files.json": {
+      "bytes": 5141,
+      "sha256": "7c7c821f7326414bf7711a02b08c5e5e60077f3dd16dc885f9b584983d37c976"
+    },
+    "audit/self-hosting/bootstrap-results/whole-proof-final/integration-20261002/retained-files.json": {
+      "bytes": 50193,
+      "sha256": "24766e8b58b81e52db45ae1f1d01dc19ee9f05bab46ee3ca879e4846a32e13ad"
+    }
+  },
+  "scope": "New feature branch in the existing isolated owned worktree, from accepted release/0.4 merge. Live native proof/controller sources remain unchanged."
+}
