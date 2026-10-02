@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "scope": "Actual remaining changed compiler-selection tests; separate from seven metadata tests in precommit",
+  "revision": "dc6700ce3552e9f5e0f27d81600162f62b26382c",
+  "command": [
+    "python3",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "audit/self-hosting",
+    "-p",
+    "test_compiler_selection.py"
+  ],
+  "exit_code": 0,
+  "finished": "2026-10-02T09:28:42.424233+00:00",
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 113,
+      "sha256": "c238e138384d4be690a4ea8c6d8462d70df525b549214677ace53213f0643a53"
+    }
+  }
+}
