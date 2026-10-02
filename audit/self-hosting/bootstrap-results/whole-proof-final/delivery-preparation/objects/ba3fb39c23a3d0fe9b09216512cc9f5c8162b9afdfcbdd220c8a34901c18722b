@@ -1,0 +1,160 @@
+{
+  "checked_files": 9,
+  "checkout_files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "README.md": {
+      "bytes": 619,
+      "sha256": "90cc214833981b797b0cf92e19221a10fdb9f22e234858be4a46130eb6ddd41b"
+    },
+    "collector-source.json": {
+      "bytes": 182,
+      "sha256": "6c3aa7748709f542dcb075d5b80866e52b965ac0bc9adc1abffc72812b7ca1c2"
+    },
+    "dependencies.json": {
+      "bytes": 280,
+      "sha256": "2649226ef83cb38afbf154634fcb0bad1010cf99dd50d2e5850f6606d6bcbf61"
+    },
+    "objects/5b6b3b84d0969ccbfeb89b4bd30ef063b0d13a4633e86a4f0a83678f616088e0": {
+      "bytes": 38,
+      "sha256": "5b6b3b84d0969ccbfeb89b4bd30ef063b0d13a4633e86a4f0a83678f616088e0"
+    },
+    "receipt.json": {
+      "bytes": 1978,
+      "sha256": "1f1f11766d9e165b8931ee5e938847d2c5ce94f8eb5d3c7d0729a487bce9318c"
+    },
+    "retained-files.json": {
+      "bytes": 365,
+      "sha256": "86fb43c046c1ba1132d4fa9d32101465bb82a2dabe00978da9709beb0aac3a9d"
+    },
+    "summary.json": {
+      "bytes": 40,
+      "sha256": "ee67ed2333e7a6905d03b7955403862b22fe76e17c9a4167c8fba223cf732e21"
+    },
+    "verify-retained.py": {
+      "bytes": 3127,
+      "sha256": "7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446"
+    }
+  },
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/git",
+        "-c",
+        "core.autocrlf=true",
+        "-c",
+        "core.safecrlf=false",
+        "init",
+        "-q"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/validation-final-5/checkout-probe/synthetic-packet",
+      "exit_code": 0,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "-c",
+        "core.autocrlf=true",
+        "-c",
+        "core.safecrlf=false",
+        "add",
+        "--",
+        ".gitattributes",
+        "README.md",
+        "collector-source.json",
+        "dependencies.json",
+        "objects/5b6b3b84d0969ccbfeb89b4bd30ef063b0d13a4633e86a4f0a83678f616088e0",
+        "receipt.json",
+        "retained-files.json",
+        "summary.json",
+        "verify-retained.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/validation-final-5/checkout-probe/synthetic-packet",
+      "exit_code": 0,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "-c",
+        "core.autocrlf=true",
+        "-c",
+        "core.safecrlf=false",
+        "checkout-index",
+        "--all",
+        "--prefix=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/validation-final-5/checkout-probe/checkout/"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/validation-final-5/checkout-probe/synthetic-packet",
+      "exit_code": 0,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "original_files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "README.md": {
+      "bytes": 619,
+      "sha256": "90cc214833981b797b0cf92e19221a10fdb9f22e234858be4a46130eb6ddd41b"
+    },
+    "collector-source.json": {
+      "bytes": 182,
+      "sha256": "6c3aa7748709f542dcb075d5b80866e52b965ac0bc9adc1abffc72812b7ca1c2"
+    },
+    "dependencies.json": {
+      "bytes": 280,
+      "sha256": "2649226ef83cb38afbf154634fcb0bad1010cf99dd50d2e5850f6606d6bcbf61"
+    },
+    "objects/5b6b3b84d0969ccbfeb89b4bd30ef063b0d13a4633e86a4f0a83678f616088e0": {
+      "bytes": 38,
+      "sha256": "5b6b3b84d0969ccbfeb89b4bd30ef063b0d13a4633e86a4f0a83678f616088e0"
+    },
+    "receipt.json": {
+      "bytes": 1978,
+      "sha256": "1f1f11766d9e165b8931ee5e938847d2c5ce94f8eb5d3c7d0729a487bce9318c"
+    },
+    "retained-files.json": {
+      "bytes": 365,
+      "sha256": "86fb43c046c1ba1132d4fa9d32101465bb82a2dabe00978da9709beb0aac3a9d"
+    },
+    "summary.json": {
+      "bytes": 40,
+      "sha256": "ee67ed2333e7a6905d03b7955403862b22fe76e17c9a4167c8fba223cf732e21"
+    },
+    "verify-retained.py": {
+      "bytes": 3127,
+      "sha256": "7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446"
+    }
+  },
+  "scope": "Synthetic temporary test packet only. Actual Git checkout, no commit or real final collection. Every receipt.files identity and packet receipt itself preserved.",
+  "source_manifest": {
+    "bytes": 1637,
+    "sha256": "1f11435b9b42bcab782669e113c22452c4f3a85e32f1a34b4231ff2ab81c1c3e"
+  },
+  "status": "passed-synthetic-autocrlf-checkout"
+}

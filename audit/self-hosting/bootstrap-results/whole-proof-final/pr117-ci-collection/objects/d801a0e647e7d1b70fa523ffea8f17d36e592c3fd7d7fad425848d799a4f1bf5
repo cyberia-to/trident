@@ -1,0 +1,19 @@
+import hashlib,json,subprocess,time
+from pathlib import Path
+OUT=Path(__file__).resolve().parent;ROOT=OUT.parent
+manifest=ROOT/'sources.json';raw=manifest.read_bytes();assert hashlib.sha256(raw).hexdigest()=='cd2d58e2c0f0ac022295b9d679d1441376e849cfd41db0307f27f1b7e1731b25'
+pins=json.loads(raw)
+def identity(p):
+ with p.open('rb') as f:h=hashlib.file_digest(f,'sha256').hexdigest()
+ return dict(bytes=p.stat().st_size,sha256=h)
+def check():
+ for n,w in pins.items():assert identity(Path(n))==w,n
+check();report=dict(status='running',source_manifest=identity(manifest),started_ns=time.time_ns(),commands=[])
+for name,cwd,modules in [('current',ROOT,['test_http','test_tls','test_accounting']),('inherited',ROOT.parent/'pr117-completion-v3',['test_completion'])]:
+ argv=[json.loads((ROOT/'toolchain.json').read_text())['python']['path'],'-B','-W','error','-m','unittest','-v',*modules]
+ with (OUT/(name+'.stdout')).open('xb') as stdout,(OUT/(name+'.stderr')).open('xb') as stderr:
+  started=time.monotonic();p=subprocess.run(argv,cwd=cwd,stdout=stdout,stderr=stderr,timeout=120)
+ row=dict(argv=argv,cwd=str(cwd),exit_code=p.returncode,elapsed_seconds=time.monotonic()-started,stdout=identity(OUT/(name+'.stdout')),stderr=identity(OUT/(name+'.stderr')));report['commands'].append(row)
+ (OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+ assert p.returncode==0,name
+check();report.update(status='passed-root-frozen-source-tests',sources_unchanged=True,ended_ns=time.time_ns());(OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(dict(status=report['status'],receipt=identity(OUT/'receipt.json'))))

@@ -1,0 +1,137 @@
+{
+  "status": "passed",
+  "repository": "trident",
+  "pr": 117,
+  "base_ref": "release/0.4",
+  "base": "51a01de04f38f693b6bc571d972c821ead875f70",
+  "head": "10772124836b68a2df011c912b5776b2454a511f",
+  "merge": "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e",
+  "expected_tree": "80b03cd8790e048a5b5539544fafb654056792b0",
+  "actual_tree": "80b03cd8790e048a5b5539544fafb654056792b0",
+  "commands": [
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "117",
+        "--repo",
+        "cyberia-to/trident",
+        "--json",
+        "state,isDraft,headRefOid,baseRefOid,baseRefName,mergeable,statusCheckRollup"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trident/git/ref/heads/release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "da0d1a59cd8208fab96f219ccedef29122d5221a",
+        "51a01de04f38f693b6bc571d972c821ead875f70"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "FETCH_HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-tree",
+        "--write-tree",
+        "51a01de04f38f693b6bc571d972c821ead875f70",
+        "10772124836b68a2df011c912b5776b2454a511f"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "--method",
+        "PUT",
+        "repos/cyberia-to/trident/pulls/117/merge",
+        "-f",
+        "merge_method=merge",
+        "-f",
+        "sha=10772124836b68a2df011c912b5776b2454a511f"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "origin",
+        "release/0.4"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e^{tree}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-list",
+        "--parents",
+        "-n",
+        "1",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "gh",
+        "pr",
+        "view",
+        "117",
+        "--repo",
+        "cyberia-to/trident",
+        "--json",
+        "state,headRefOid,baseRefName,mergeCommit"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+      "exit_code": 0
+    }
+  ]
+}

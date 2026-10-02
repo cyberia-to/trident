@@ -1,0 +1,124 @@
+"""Prerequisite falsification only: never invoke a collector or replay."""
+import copy
+import json
+from pathlib import Path
+import tempfile
+import unittest
+
+from admission import (COLLECTOR, GIT_REPO, OWNER, PYTHON, ORIGIN, COMPILER, SOURCE,
+                       REVIEW, check_terminal, check_outer_streams, load, identity)
+
+
+def fixture():
+    ids = {k: dict(bytes=10 + n, sha256=str(n) * 64)
+           for n, k in enumerate(('collection', 'accounting', 'checker'))}
+    authorized = dict(command=[str(PYTHON), '-B', '-W', 'error', str(COLLECTOR / 'collect.py')])
+    wrapper = dict(status='passed', exit_code=0, sources_unchanged=True,
+                   command=authorized['command'], cwd=str(COLLECTOR), source_manifest=SOURCE,
+                   review=REVIEW, started_ns=1, ended_ns=4,
+                   **{'completed/receipt.json': ids['collection'],
+                      'completed/final-accounting.json': ids['accounting']})
+    collection = dict(schema='trident/exact-attempt-actions-collection-completion/v4',
+                      status='passed-completion', run=int(ORIGIN['run_id']), attempt=1,
+                      head=ORIGIN['head_sha'], review=REVIEW, started_ns=2, ended_ns=3)
+    owner = dict(schema='trident/original-native-phase-matrix-replay-completion/v4',
+                 status='passed-original-matrix-replay-completion', origin=ORIGIN,
+                 collection=ids['collection'], final_accounting=ids['accounting'],
+                 native_producers=12, native_corpus_jobs=24, phases=list(range(36)),
+                 archives={str(n): {} for n in range(38)}, compiler_sha256=COMPILER,
+                 reused_original_archives=5, reused_v2_archives=11, reused_v3_archives=6,
+                 continuation_original_archives=15, checker=ids['checker'],
+                 command=[str(PYTHON), str(COLLECTOR / 'replay.py'), '--collection', str(COLLECTOR),
+                          '--git-repo', str(GIT_REPO), '--output', str(OWNER)],
+                 started_ns=5, ended_ns=6)
+    return wrapper, collection, owner, ids, authorized
+
+
+class AdmissionTests(unittest.TestCase):
+    def test_actual_v4_wrapper_underscore_fields(self):
+        wanted = {'outer.stdout': dict(bytes=1, sha256='a' * 64),
+                  'outer.stderr': dict(bytes=0, sha256='b' * 64)}
+        wrapper = dict(outer_stdout=wanted['outer.stdout'], outer_stderr=wanted['outer.stderr'])
+        seen = []
+        def identify(path):
+            self.assertEqual(path.parent, COLLECTOR)
+            seen.append(path.name)
+            return wanted[path.name]
+        check_outer_streams(wrapper, identify)
+        self.assertEqual(seen, ['outer.stdout', 'outer.stderr'])
+        with self.assertRaises(KeyError):
+            check_outer_streams(wanted, identify)
+
+    def test_positive_synthetic_terminal_pair(self):
+        check_terminal(*fixture())
+
+    def refused(self, component, key, value, expected):
+        values = copy.deepcopy(fixture())
+        values[component][key] = value
+        with self.assertRaisesRegex(ValueError, expected):
+            check_terminal(*values)
+
+    def test_running_wrapper(self):
+        self.refused(0, 'status', 'running', 'wrapper terminal success')
+
+    def test_failed_collector_cannot_relabel(self):
+        self.refused(1, 'status', 'failed', 'collector completed successfully')
+
+    def test_same_run_wrong_attempt(self):
+        self.refused(1, 'attempt', 2, 'exact collected original run')
+
+    def test_owner_must_finish(self):
+        self.refused(2, 'status', 'running', 'successful frozen replay')
+
+    def test_owner_must_follow_terminal_wrapper(self):
+        self.refused(2, 'started_ns', 3, 'precedes completed owner replay')
+
+    def test_owner_binds_same_accounting(self):
+        self.refused(2, 'final_accounting', dict(bytes=1, sha256='e' * 64), 'same completed collection')
+
+    def test_wrapper_binds_actual_collection(self):
+        self.refused(0, 'completed/receipt.json', dict(bytes=1, sha256='a' * 64), 'wrapper binds completed')
+
+    def test_owner_all_native_coordinates(self):
+        self.refused(2, 'native_corpus_jobs', 23, 'complete native matrix')
+
+    def test_no_missing_logs(self):
+        self.refused(2, 'archives', {str(n): {} for n in range(37)}, 'complete native matrix')
+
+    def test_no_relabelled_historical_bodies(self):
+        self.refused(2, 'reused_v3_archives', 5, 'distinct original archive provenance')
+
+    def test_owner_cannot_run_new_checker(self):
+        self.refused(2, 'checker', dict(bytes=1, sha256='f' * 64), 'owner used frozen replay checker')
+
+    def test_owner_exact_argv(self):
+        self.refused(2, 'command', ['echo', 'passed'], 'actual owner frozen replay argv')
+
+    def test_owner_same_compiler(self):
+        self.refused(2, 'compiler_sha256', 'f' * 64, 'same native self-host compiler')
+
+    def test_changed_source_gate(self):
+        self.refused(0, 'source_manifest', dict(bytes=1, sha256='f' * 64), 'collector accepted source')
+
+    def test_nonzero_wrapper_rejected(self):
+        self.refused(0, 'exit_code', 1, 'wrapper terminal success')
+
+    def test_duplicate_json_keys(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'receipt.json'
+            path.write_text('{"status":"failed","status":"passed"}')
+            with self.assertRaisesRegex(ValueError, 'unique JSON keys'):
+                load(path)
+
+    def test_symlink_identity_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'real'
+            path.write_text(json.dumps({'status': 'passed'}))
+            link = Path(directory) / 'link'
+            link.symlink_to(path)
+            with self.assertRaisesRegex(ValueError, 'ordinary evidence file'):
+                identity(link)
+
+
+if __name__ == '__main__':
+    unittest.main()

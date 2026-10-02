@@ -1,0 +1,51 @@
+"""Independent synthetic observed-ledger contradictions; no collector invocation."""
+import copy,sys,unittest
+from pathlib import Path
+SOURCE=Path(sys.argv[1]).resolve()
+sys.path.insert(0,str(SOURCE))
+del sys.argv[1]
+from accounting import check
+from collection_common import SCOPES
+
+class PeerAccounting(unittest.TestCase):
+    def setUp(self):
+        self.labels=['initial','final'];self.prior=[10]*(len(SCOPES)-1)
+        self.ident={'bytes':1000,'sha256':'a'*64}
+        self.rows=[{'label':name,'scan':n,'time_ns':100+n,'scope_bytes':self.prior+[100+n],'bytes':sum(self.prior)+100+n} for n,name in enumerate(self.labels,1)]
+        self.data={'peak_bytes':1000,'scans':2,'reconciliations':self.rows}
+        self.final={'schema':'trident/collection-completion-final-accounting/v1','receipt':self.ident,'record_bytes':200,'observed_before_record':600,'final_scope_bytes':800,'peak_charged_before_record':1200,'reconciliation':{'label':'after-final-receipt','scan':3,'time_ns':121,'scope_bytes':self.prior+[600-sum(self.prior)],'bytes':600}}
+    def verify(self):
+        check(self.data,self.final,self.ident,200,100,120,self.labels,self.prior)
+    def test_positive(self):self.verify()
+    def test_negative_count(self):
+        self.rows[0]['scope_bytes'][-1]=-1;self.rows[0]['bytes']=sum(self.rows[0]['scope_bytes'])
+        with self.assertRaisesRegex(ValueError,'nonnegative integer scope'):self.verify()
+    def test_boolean_peak(self):
+        self.data['peak_bytes']=True
+        with self.assertRaisesRegex(ValueError,'integer charged peak'):self.verify()
+    def test_changed_prior_scope(self):
+        self.rows[0]['scope_bytes'][0]+=1;self.rows[0]['bytes']+=1
+        with self.assertRaisesRegex(ValueError,'immutable old-scope'):self.verify()
+    def test_out_of_order_time(self):
+        self.rows[1]['time_ns']=100
+        with self.assertRaisesRegex(ValueError,'ordered in-run'):self.verify()
+    def test_duplicate_scan(self):
+        self.rows[1]['scan']=1
+        with self.assertRaisesRegex(ValueError,'consecutive observed'):self.verify()
+    def test_wrong_operation(self):
+        self.rows[1]['label']='before-network-unlisted'
+        with self.assertRaisesRegex(ValueError,'operation sequence'):self.verify()
+    def test_underreported_peak(self):
+        self.data['peak_bytes']=1
+        with self.assertRaisesRegex(ValueError,'under charged peak'):self.verify()
+    def test_final_changed_receipt(self):
+        self.final['receipt']={'bytes':1000,'sha256':'b'*64}
+        with self.assertRaisesRegex(ValueError,'final receipt'):self.verify()
+    def test_final_early_time(self):
+        self.final['reconciliation']['time_ns']=119
+        with self.assertRaisesRegex(ValueError,'follows receipt completion'):self.verify()
+    def test_final_wrong_sum(self):
+        self.final['reconciliation']['scope_bytes'][-1]-=1
+        with self.assertRaisesRegex(ValueError,'final actual scope sum'):self.verify()
+
+if __name__=='__main__':unittest.main()

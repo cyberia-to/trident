@@ -1,0 +1,24 @@
+test_actual_attempt_timeouts_are_bounded_and_quiescent (test_completion.CompletionTests.test_actual_attempt_timeouts_are_bounded_and_quiescent) ... ok
+test_actual_retry_retains_failed_partial_then_success (test_completion.CompletionTests.test_actual_retry_retains_failed_partial_then_success) ... ok
+test_boundary_reconciliation_detects_external_growth (test_completion.CompletionTests.test_boundary_reconciliation_detects_external_growth) ... ok
+test_cleanup_failure_prevents_retry (test_completion.CompletionTests.test_cleanup_failure_prevents_retry) ... ok
+test_disk_preflight_starts_no_attempt (test_completion.CompletionTests.test_disk_preflight_starts_no_attempt) ... ok
+test_expired_total_budget_starts_no_child (test_completion.CompletionTests.test_expired_total_budget_starts_no_child) ... ok
+test_hash_failure_is_not_retried (test_completion.CompletionTests.test_hash_failure_is_not_retried) ... ok
+test_many_small_members_have_only_two_inventory_scans (test_completion.CompletionTests.test_many_small_members_have_only_two_inventory_scans) ... ok
+test_mid_expansion_failure_preserves_partial (test_completion.CompletionTests.test_mid_expansion_failure_preserves_partial) ... ok
+test_oversize_partial_is_bounded_and_not_retried (test_completion.CompletionTests.test_oversize_partial_is_bounded_and_not_retried) ... ok
+test_two_actual_failures_no_third_launch (test_completion.CompletionTests.test_two_actual_failures_no_third_launch) ... ok
+test_whole_expansion_refused_before_target (test_completion.CompletionTests.test_whole_expansion_refused_before_target) ... ok
+test_actual_two_failures_preserve_three_prior_attempts (test_completion.HistoryTests.test_actual_two_failures_preserve_three_prior_attempts) ... ok
+test_historical_failure_requires_empty_group_and_raw_bytes (test_completion.HistoryTests.test_historical_failure_requires_empty_group_and_raw_bytes) ... ok
+test_history_attempts_cannot_silently_change_asset (test_completion.HistoryTests.test_history_attempts_cannot_silently_change_asset) ... ok
+test_missing_prior_failure_is_rejected (test_completion.HistoryTests.test_missing_prior_failure_is_rejected) ... ok
+test_review_gate_precedes_output_or_transport (test_completion.HistoryTests.test_review_gate_precedes_output_or_transport) ... ok
+test_duplicate_original_inventory_is_explicitly_rejected (test_completion.ReceiptRepresentationTests.test_duplicate_original_inventory_is_explicitly_rejected) ... ok
+test_original_tree_remains_required_after_lossless_deduplication (test_completion.ReceiptRepresentationTests.test_original_tree_remains_required_after_lossless_deduplication) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 6.561s
+
+OK

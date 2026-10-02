@@ -1,0 +1,25 @@
+"""Replay strict physical-ledger observations without accepting impossible values."""
+from collection_common import require,GIB,SCOPES
+
+def integer(value,minimum=0):return type(value) is int and value>=minimum
+
+def check(accounting,final,receipt_identity,final_bytes,started,ended,labels,prior_sizes):
+    samples=accounting['reconciliations'];require(integer(started) and integer(ended) and started<=ended,'ordered accounting interval')
+    require(integer(accounting['peak_bytes']) and accounting['peak_bytes']<=3*GIB,'nonnegative integer charged peak')
+    require(integer(accounting['scans'],1) and accounting['scans']==len(samples)==len(labels),'complete consecutive scan count')
+    require([row['label'] for row in samples]==labels,'exact accounting operation sequence')
+    previous=started
+    for number,row in enumerate(samples,1):
+        require(integer(row['scan'],1) and row['scan']==number,'consecutive observed scan IDs')
+        require(integer(row['time_ns']) and previous<=row['time_ns']<=ended,'ordered in-run resource timestamps');previous=row['time_ns']
+        require(len(row['scope_bytes'])==len(SCOPES) and all(integer(n) for n in row['scope_bytes']),'nonnegative integer scope counts')
+        require(row['scope_bytes'][:-1]==prior_sizes,'all immutable old-scope bytes charged')
+        require(integer(row['bytes']) and row['bytes']==sum(row['scope_bytes'])<=accounting['peak_bytes'],'exact sample sum under charged peak')
+    require(final['schema']=='trident/collection-completion-final-accounting/v1' and final['receipt']==receipt_identity,'final receipt identity')
+    for key in ('record_bytes','final_scope_bytes','observed_before_record','peak_charged_before_record'):require(integer(final[key]),'nonnegative final accounting fields')
+    require(final['record_bytes']==final_bytes<=4096 and final['final_scope_bytes']==final['observed_before_record']+final_bytes<=3*GIB,'exact bounded final record accounting')
+    require(accounting['peak_bytes']<=final['peak_charged_before_record']<=3*GIB and final['observed_before_record']<=final['peak_charged_before_record'],'final charged peak consistency')
+    last=final['reconciliation'];require(last['label']=='after-final-receipt' and last['scan']==len(samples)+1 and integer(last['scan'],1),'final expected scan')
+    require(integer(last['time_ns']) and ended<=last['time_ns'],'final observation follows receipt completion')
+    require(len(last['scope_bytes'])==len(SCOPES) and all(integer(n) for n in last['scope_bytes']) and last['scope_bytes'][:-1]==prior_sizes,'final immutable-scope accounting')
+    require(integer(last['bytes']) and last['bytes']==sum(last['scope_bytes'])==final['observed_before_record'],'exact final actual scope sum')

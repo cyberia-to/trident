@@ -1,0 +1,45 @@
+{
+  "status": "passed-documentation-validation-with-explicit-incoming-link",
+  "observed_utc": "2026-10-02T20:16:33.615589+00:00",
+  "base": "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+  "previous_review": {
+    "path": "review-3/receipt.json",
+    "bytes": 2489,
+    "sha256": "36a31c8852da91cf7da0a13908816336987881ca74f2f74193c62db15f4895b7"
+  },
+  "change_from_prior": "Only audit/README.md: accepted byte-retention audit link; SH8 adversarial/final-checker acceptance remains separate.",
+  "checks": [
+    "All other nine proposed file identities equalreview-3",
+    "Root .gitattributes unchanged from95899 base",
+    "Original historical index unchanged",
+    "Exactfour tracked/six new paths",
+    "OriginalAPIbytes and directory-local-text attributes intact",
+    "48 existinglinks plus1 anticipatedlink bound to exact incomingcommit",
+    "git diff --check",
+    "Targeted credential scan"
+  ],
+  "incoming_link": [
+    {
+      "from_file": "audit/README.md",
+      "target": "whole-retention-byte-closure/README.md",
+      "commit": "5a8e386aa1228c6c37603811f1cfda219d281665",
+      "relative_path": "audit/whole-retention-byte-closure/README.md",
+      "bytes": 5128,
+      "sha256": "7147879617545da1b1d1b80b10df403acada1bd387642c2e59684c3d46a531ed",
+      "condition": "Incoming byte-retention branch must be merged before these docs are integrated."
+    }
+  ],
+  "file_count": 10,
+  "total_bytes": 51152,
+  "files": {
+    "path": "review-4/files.json",
+    "bytes": 1740,
+    "sha256": "b9c05afdb7aad8e2fec796dda138039748c44a1137264e92336d2a6f2e2015a2"
+  },
+  "patch": {
+    "path": "review-4/proposal.patch",
+    "bytes": 6808,
+    "sha256": "b95f6e5d3f665fb0172918706e4109249a154308e2e0afe12d054a4a4e31093e"
+  },
+  "scope": "Uncommitted docs only; incoming link validated against5a8e worktree/Git blob; no build/run/push/source-manifest change."
+}

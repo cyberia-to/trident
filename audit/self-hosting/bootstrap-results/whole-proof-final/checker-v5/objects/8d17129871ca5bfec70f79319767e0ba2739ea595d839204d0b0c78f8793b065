@@ -1,0 +1,45 @@
+"""Run only isolated checker fixtures against an unchanged frozen source map."""
+import argparse
+import ast
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+
+ROOT=Path(__file__).resolve().parent
+
+
+def identity(path):
+    with path.open('rb') as stream:value=hashlib.file_digest(stream,'sha256').hexdigest()
+    return dict(bytes=path.stat().st_size,sha256=value)
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True)
+    args=parser.parse_args();args.output.mkdir()
+    sources=json.loads((ROOT/'sources.json').read_text())
+    before={name:identity(ROOT/name) for name in sources}
+    if before!=sources:raise ValueError('frozen checker source changed')
+    for p in ROOT.glob('*.py'):ast.parse(p.read_text(),filename=str(p))
+    command=[sys.executable,'-B','-W','error','-m','unittest','-v','test_checker','test_native','test_selected','test_schedule_replay']
+    started=time.time_ns()
+    with (args.output/'stdout').open('xb') as stdout,(args.output/'stderr').open('xb') as stderr:
+        result=subprocess.run(command,cwd=ROOT,stdout=stdout,stderr=stderr,timeout=60)
+    after={name:identity(ROOT/name) for name in sources}
+    text=(args.output/'stderr').read_text();match=re.search(r'Ran (\d+) tests in ',text)
+    passed=result.returncode==0 and match is not None and text.rstrip().endswith('OK') and before==after==sources
+    report=dict(status='passed-offline-adversarial-tests' if passed else 'failed',command=command,cwd=str(ROOT),
+                exit_code=result.returncode,tests=int(match[1]) if match else None,
+                source_manifest=identity(ROOT/'sources.json'),sources=sources,sources_unchanged=before==after==sources,
+                started_ns=started,ended_ns=time.time_ns(),
+                logs={name:identity(args.output/name) for name in ('stdout','stderr')},
+                scope='Synthetic fixtures and pure checker functions only. No final acceptance run, native proof workload, host process signals or original payload deletion.')
+    with (args.output/'receipt.json').open('x') as stream:json.dump(report,stream,indent=2);stream.write('\n')
+    print(json.dumps({k:report[k] for k in ('status','exit_code','tests','source_manifest')}))
+    if not passed:raise SystemExit(1)
+
+
+if __name__=='__main__':main()

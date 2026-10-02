@@ -1,0 +1,47 @@
+{
+  "status": "prepared-not-executed",
+  "observed_ns": 1790972629810872000,
+  "files": {
+    "install.py": {
+      "bytes": 9297,
+      "sha256": "f606de73fc1bfa31cac4c85270f01d0fb793ebddf96826d19fba7b51809e07a4"
+    },
+    "source-equivalence.json": {
+      "bytes": 1059371,
+      "sha256": "d9aeb78f31383f2da238f30f48eaa090e7e200c0f9104c3675443525aaa426b0"
+    },
+    "documents.json": {
+      "bytes": 250,
+      "sha256": "156bbf4c8f3699afb12283c7b93f697171e80f850b980da718477ccf591625a6"
+    },
+    "review-2.json": {
+      "bytes": 3255,
+      "sha256": "9683c3f2bc0920bf23e46b1fb586f9efa412f5795574f67306720e8ce596b77c"
+    },
+    "documents.patch": {
+      "bytes": 3954,
+      "sha256": "d117446564d168d75efdf4f9ca6caa58d3bcff7bc246652ac0e6117150367494"
+    }
+  },
+  "checks": [
+    "Python compile() syntax passed without executing installer",
+    "git diff --check passed",
+    "repository diff exactly CHANGELOG.md + README.md",
+    "source-equivalence preparation rehashed120 Joy +3243 archive build inputs"
+  ],
+  "target": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/candidate/build/joy",
+  "target_bytes_observed": 345000177,
+  "free_bytes_observed": 23731949568,
+  "invocation_after_commit": [
+    "python3",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/validation/install.py",
+    "--head",
+    "<exact-reviewed-docs-commit>",
+    "--out",
+    "postinstall-1"
+  ],
+  "scope": "No cargo/native execution, commit or push in Joy. Root owns edits/commit and authorizes install after source review."
+}

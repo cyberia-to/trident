@@ -1,0 +1,42 @@
+"""Preserve both failed attempts, their raw resources and later quiescence."""
+import json
+from pathlib import Path
+from common import require,load,same,identity,reference,files
+import legacy_history
+import legacy_schedule
+from historical_quiescence import review_quiescence
+
+
+def review(base):
+    original=legacy_history.prior_schedule(base)
+    shared=base/'whole-proof-attacks-completion-v3'
+    transition=legacy_history.transition(base,shared)
+    plan,run,admission,baseline=(load(shared/p) for p in ('plan.json','run-1/receipt.json','admission.json','baseline.json'))
+    legacy_schedule.resource_contract(plan)
+    require(run['status']=='failed' and run.get('cleanup_error') and run.get('error')
+            and all(v['exit_code'] is None for v in run['children_final'].values()),'v3 failed incomplete cleanup stays failed')
+    stop=load(shared/'stop.json')
+    require(stop['reason']=='wall' and stop['detail']==dict(attempt='whole-c1-construct-cost'),'exact failed original helper deadline')
+    review,manifest=load(shared/'independent-review.json'),load(shared/'sources.json')
+    require(review['status']=='passed-source-review' and review['sources']==manifest==run['source'],'failed run original source unchanged')
+    for p,value in manifest.items():same(Path(p),value)
+    for key,name in (('plan','plan.json'),('independent_review','independent-review.json')):same(shared/name,run[key])
+    same(shared/'plan.json',admission['plan']);same(shared/'sources.json',admission['source_manifest'])
+    existing,total,floor=legacy_schedule.reservation(plan,baseline)
+    require(run['admission_existing_bytes']==existing and run['admission_reservation_bytes']==admission['reservation_bytes']==total<=26*1024**3
+            and run['admission_free_bytes']==admission['free_bytes']>=floor,'original v3 reservation and headroom')
+    for p,value in baseline['immutable'].items():
+        if Path(p) in (shared/'coordinator.stdout',shared/'coordinator.stderr'):
+            require(value['bytes']==0 and identity(Path(p))['bytes']<=1024**2,'bounded originally empty wrapper stream')
+        else:same(Path(p),value)
+    files(shared/'run-1',run['files'])
+    count=peak=0;last=None
+    with (shared/'run-1/resources.jsonl').open() as stream:
+        while line:=stream.readline(4*1024**2+1):
+            require(len(line)<=4*1024**2,'bounded original v3 resource record');row=json.loads(line)
+            legacy_schedule.sample(row,plan,base,version=3);legacy_schedule.sample_time(row,run,last)
+            last=row;count+=1;peak=max(peak,row['rss_bytes'])
+    require(count>0 and peak==run['sampled_peak_rss_bytes'] and last==run['latest_sample'],'complete failed-run samples and peak')
+    return dict(v2=original,v2_transition=transition,v3=dict(status='failed',receipt=reference(shared/'run-1/receipt.json'),
+                original_stop=reference(shared/'stop.json'),cleanup_status='failed',samples=count,
+                sampled_peak_rss_bytes=peak,later_quiescence=review_quiescence(base)))

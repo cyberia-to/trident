@@ -1,0 +1,17 @@
+{
+  "status": "failed-validation-driver-expectation",
+  "command": [
+    "git",
+    "diff",
+    "--no-index",
+    "--check",
+    "--",
+    "/dev/null",
+    ".gitattributes"
+  ],
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "",
+  "error": "Validation asserted zero only. git diff --no-index uses exit1 for ordinary added-file differences, even with no whitespace diagnostics.",
+  "correction": "Accept ordinary difference exit0/1 only when both diagnostic streams are empty. No archived bytes or attribute rules changed."
+}

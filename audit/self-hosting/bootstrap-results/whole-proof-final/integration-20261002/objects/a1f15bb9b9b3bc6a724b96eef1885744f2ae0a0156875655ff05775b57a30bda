@@ -1,0 +1,63 @@
+{
+  "status": "prepared-not-executed",
+  "scope": "Source-equivalent fresh-prefix warm installation after reviewed documentation commit; no native compilation permitted. Accepted source paths are used so Cargo fingerprints stay unchanged.",
+  "source_guard_original": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/delivery-validation/install-2.py",
+    "bytes": 7345,
+    "sha256": "41513a041cb8e9649fda6e41c79cfbd485f18eeaf5e7300ef4d3861a322f9500"
+  },
+  "source_guard_copy": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/install-preparation/original-install-2.py",
+    "bytes": 7345,
+    "sha256": "41513a041cb8e9649fda6e41c79cfbd485f18eeaf5e7300ef4d3861a322f9500"
+  },
+  "prior_success_receipt": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/delivery-validation/postinstall-2/receipt.json",
+    "bytes": 8181,
+    "sha256": "e20bab6e82c310a5d0dea7eba50770f06f427b4642e1465212ba97b1aeb78ccc"
+  },
+  "runtime_equivalence_map": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/install-preparation/source-equivalence-original.json",
+    "bytes": 69366,
+    "sha256": "009db17b7f94758903f533da493ea2ea5036b670aabefc4df34a7c13eb954d0d"
+  },
+  "actual_runtime_files_compared": 510,
+  "current_docs_base": "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+  "proposed_driver": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/install-preparation/install.py",
+    "bytes": 7620,
+    "sha256": "550920594c386615249fea92c6d6a82b91444b64385d69f814bf3f65eef776f1"
+  },
+  "command": [
+    "python3",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/install-preparation/install.py",
+    "--reviewed-head",
+    "<root-reviewed documentation commit>"
+  ],
+  "admission_and_caps": {
+    "clean_committed_delivery": true,
+    "before_free_bytes": 10737418240,
+    "runtime_free_bytes": 8589934592,
+    "wall_seconds": 120,
+    "maximum_target_growth_bytes": 67108864,
+    "abort_on_compiling_or_warning": true,
+    "cargo_build_jobs": 2,
+    "native_toolchain": "Rust/Cargo/rustdoc1.89.0aarch64-apple-darwin",
+    "expected_binary_sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+  },
+  "adaptations": [
+    "Own output/repository family determined from driver path",
+    "Required explicit reviewed full Git head replaces fixed noun delivery commit",
+    "Original510-file source-equivalence map copied byte-for-byte and SHA-bound"
+  ],
+  "postconditions": [
+    "Original3243 accepted build input bytes rechecked before/after",
+    "Fresh installed Trisha byte-identical to accepted binary",
+    "Actual tool paths/hashes/native versions and command streams retained",
+    "Owned warm-install child group cleaned on failure"
+  ],
+  "no_install_started": true
+}

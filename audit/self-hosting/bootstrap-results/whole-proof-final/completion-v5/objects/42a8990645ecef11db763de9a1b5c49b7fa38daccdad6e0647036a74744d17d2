@@ -1,0 +1,76 @@
+{
+  "status": "passed-runner-source-review",
+  "runner_sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/run.py": {
+      "bytes": 12722,
+      "sha256": "6dec3d960107b298b747bd648a552fa7792a128bf70cedef0f9dac64f3f96a89"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/resources.py": {
+      "bytes": 15880,
+      "sha256": "01d6210c4a2b65c89010315e8fbec209117e2350b99d62383b9dfa8d364b9b24"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/ownership.py": {
+      "bytes": 5188,
+      "sha256": "3f717fcf6811d05cce08b9372348e32b69170bb7f4d4ff810b5dfece04466943"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/plan.json": {
+      "bytes": 1977,
+      "sha256": "9910fd595e8723b3f6366ce4bc347f648ef7139800bf0a1ad4d83001d8e225ff"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/PLAN.md": {
+      "bytes": 3814,
+      "sha256": "9be852c5ffc044a2b164887812d7181da09af1e7891b89bc53217af6a77ec07d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/test_schedule.py": {
+      "bytes": 19218,
+      "sha256": "bd619047df3974533e194968287bb4630d45b1c20c0932c77813bcac1111b9b9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v5-c1/guard.py": {
+      "bytes": 8107,
+      "sha256": "42db4fb74c8d2cdc1c420a0dfb456a0bc51b158d7c4128cb09ab60b44ba17786"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v5-c1/whole_suite.py": {
+      "bytes": 14333,
+      "sha256": "eca5cb4b2aeabb58a29fbbc0a4e6a583347ef316493e0faf979b92ee1a741ab0"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v5-c2/guard.py": {
+      "bytes": 8107,
+      "sha256": "42db4fb74c8d2cdc1c420a0dfb456a0bc51b158d7c4128cb09ab60b44ba17786"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v5-c2/whole_suite.py": {
+      "bytes": 14333,
+      "sha256": "6487b72474d5be5d2a6777ae0c71c190dbf570a17fa480d4f1c6e9bd130883d6"
+    }
+  },
+  "source_manifest": {
+    "bytes": 2212,
+    "sha256": "4e6fef44f9805fbb340ccb52f8e751623fe66f19c2809828b4e7ed0810fb112f"
+  },
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_schedule"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5",
+  "exit_code": 0,
+  "started_ns": 1790964294461525000,
+  "ended_ns": 1790964294596344000,
+  "tests": 41,
+  "logs": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 5303,
+      "sha256": "bd5939aa23258a104b8fa4bbb67b8d114d19773c6312ae9c6de9d37722516e63"
+    }
+  },
+  "review": "Root read complete runner/resources/suite code, exact guard delta and ownership byte-copy source; independently ran41 isolated fixtures. Serial generation quiescence, immutable admission and precise per-case permits, native preexec locked authorization, actual600s bounded reservation wait, no projected deletion, originalcaps preserved. Prior-admission modules and full manifest not yet frozen/reviewed; this partial source review does not authorize launch.",
+  "findings": []
+}

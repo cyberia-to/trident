@@ -1,0 +1,80 @@
+--- /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/when_ready.py	2026-10-02 10:51:01
++++ /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-launch-v5/when_ready.py	2026-10-02 19:17:13
+@@ -12,9 +12,7 @@
+ 
+ ROOT = Path(__file__).resolve().parent
+ BASE = ROOT.parent
+-SOURCE_NAMES = ('PLAN.md','pins.json','common.py','positive.py','cases.py','schedule.py',
+-                'history.py','quiescence.py','check.py','when_ready.py','test_checker.py',
+-                'test_when_ready.py','review_prior_resources.py')
++CHECKER_ROOT = BASE / 'whole-proof-final-review-v5'
+ 
+ 
+ class Blocked(ValueError):
+@@ -39,17 +37,17 @@
+     require(identity(review_path)['sha256'] == review_sha, 'explicit independent checker review identity')
+     manifest, review = json.loads(manifest_path.read_text()),json.loads(review_path.read_text())
+     require(review['status'] == 'passed-source-review' and review['sources'] == manifest, 'exact independent checker review')
+-    require(set(manifest) == {str(root/name) for name in SOURCE_NAMES}, 'complete checker and watcher source closure')
++    require(set(manifest) == {p.name for p in root.glob('*.py')} | {'PLAN.md','pins.json','adaptation.json'}, 'complete checker source closure')
+     for name, expected in manifest.items():
+-        require(identity(Path(name)) == expected, 'reviewed checker source changed: '+name)
++        require(identity(root/name) == expected, 'reviewed checker source changed: '+name)
+     return manifest
+ 
+ 
+ def prerequisites(base):
+     paths = {base/f'whole-proof/attempts/c{g}-{stage}-1/receipt.json':'passed'
+              for g in (1,2) for stage in ('selfbuild','fresh-verification')}
+-    paths.update({base/f'whole-proof-attacks-v3-c{g}/whole-c{g}/receipt.json':'passed-completion' for g in (1,2)})
+-    paths[base/'whole-proof-attacks-completion-v3/run-1/receipt.json']='passed'
++    paths.update({base/f'whole-proof-attacks-v5-c{g}/whole-c{g}/receipt.json':'passed-completion' for g in (1,2)})
++    paths[base/'whole-proof-attacks-completion-v5/run-1/receipt.json']='passed'
+     paths[base/'whole-proof-corpus-v2/orchestration/receipt.json']='passed'
+     paths.update({base/f'whole-proof-corpus-v2/c{g}/receipt.json':'passed' for g in (2,3)})
+     return paths
+@@ -97,7 +95,7 @@
+     args=parser.parse_args()
+     output=ROOT/'orchestration'
+     output.mkdir()
+-    report=dict(schema='trident/composite-final-review-watcher/v1',status='waiting',
++    report=dict(schema='trident/composite-final-review-watcher/v5',status='waiting',
+                 started_ns=time.time_ns(),command=[sys.executable,*sys.argv],cwd=os.getcwd(),
+                 source_manifest_sha256=args.source_manifest_sha256,independent_review_sha256=args.review_sha256,
+                 readiness_timeout_seconds=86400,runtime_timeout_seconds=3600,poll_seconds=30,
+@@ -111,7 +109,7 @@
+     signal.signal(signal.SIGINT,cancel)
+     began=time.monotonic()
+     try:
+-        report['reviewed_sources']=source_gate(ROOT,args.source_manifest_sha256,args.review_sha256)
++        report['reviewed_sources']=source_gate(CHECKER_ROOT,args.source_manifest_sha256,args.review_sha256)
+         paths=prerequisites(BASE)
+         previous=None
+         while True:
+@@ -125,20 +123,21 @@
+             if time.monotonic()-began>86400:
+                 raise Blocked('actual prerequisite readiness deadline; checker was not launched')
+             time.sleep(30)
+-        source_gate(ROOT,args.source_manifest_sha256,args.review_sha256)
++        source_gate(CHECKER_ROOT,args.source_manifest_sha256,args.review_sha256)
+         require(observe(paths) == states, 'stable actual prerequisite identities before launch')
+-        command=[sys.executable,'-B',str(ROOT/'check.py'),'--base',str(BASE),'--output',str(output/'final-review.json')]
++        require(not (BASE/'whole-proof-attacks-completion-v5/stop.json').exists(), 'stopped V5 coordinator cannot launch')
++        command=[sys.executable,'-B','-W','error',str(CHECKER_ROOT/'check.py'),'--base',str(BASE),'--output',str(output/'final-review.json')]
+         environment={'PATH':'','LANG':'C','PYTHONDONTWRITEBYTECODE':'1'}
+         with (output/'stdout').open('xb') as out,(output/'stderr').open('xb') as err:
+-            child=subprocess.Popen(command,cwd=ROOT,env=environment,stdout=out,stderr=err,start_new_session=True)
++            child=subprocess.Popen(command,cwd=CHECKER_ROOT,env=environment,stdout=out,stderr=err,start_new_session=True)
+             report.update(status='running-checker',checker_launched=True,checker_command=command,
+-                          checker_cwd=str(ROOT),checker_environment=environment,pid=child.pid)
++                          checker_cwd=str(CHECKER_ROOT),checker_environment=environment,pid=child.pid)
+             save()
+             code=child.wait(timeout=3600)
+         report['exit_code']=code
+         require(code == 0 and json.loads((output/'final-review.json').read_text())['status'] == 'passed-composite-replay',
+                 'actual final checker did not pass')
+-        source_gate(ROOT,args.source_manifest_sha256,args.review_sha256)
++        source_gate(CHECKER_ROOT,args.source_manifest_sha256,args.review_sha256)
+         require(observe(paths) == states, 'actual gate receipts unchanged during final replay')
+         report['status']='passed'
+     except BaseException:

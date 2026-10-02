@@ -1,0 +1,36 @@
+{
+  "receipt": {
+    "bytes": 32403,
+    "sha256": "31e12a256c2455339187de8e7c44f69e8400c81c09a9710b67457eddf6a7edf7"
+  },
+  "measured": {
+    "catalog_entries": 15731,
+    "catalog_json_bytes": 6446226,
+    "metadata_read_bytes": 4308661,
+    "metadata_files_read": 71
+  },
+  "projection": {
+    "remaining_native_bundles": 32,
+    "observed_bundle_count": 10,
+    "max_observed_standalone_bundle_entries": 21,
+    "max_observed_standalone_bundle_catalog_bytes": 10139,
+    "max_observed_bundle_read_bytes": 12064,
+    "template_entries_added": 1311,
+    "projected_entries_before_unmodeled_metadata": 17714,
+    "remaining_catalog_entries": 2286,
+    "projected_catalog_bytes_before_unmodeled_metadata": 7245556,
+    "measured_streams": 28,
+    "measured_stream_bytes": 114252,
+    "max_observed_stream_bytes": 28221,
+    "projected_all94_stream_bytes": 1976838,
+    "projected_output_before_unmodeled_metadata": 9222394,
+    "projected_metadata_read_twice": 10159228,
+    "assumptions": [
+      "Every remaining native bundle contributes no more entries/read bytes/serialized catalog bytes than the largest observed standalone closed C1 bundle. Duplicate paths are deliberately overcounted in this estimate.",
+      "The two accepted historical prior-case result shapes and selected V4 cost result are each added once as conditional template contributions. Their future suite/JSON-pointer coordinates and contents can differ.",
+      "Every as-yet-unobserved public stream is no larger than the largest currently closed positive/native stdout/stderr stream. This is an assumption, not the1MiB per-stream cap.",
+      "Still unmodeled: final watcher/F5 result, completed controller/suite wrappers, remaining capacity/admission metadata, extra nested result identities, final source-gate reads, generated summary/receipt/map/readback overhead. Remaining margin must cover these actual future values.",
+      "All formulas are planning comparisons under unchanged CAPS; no terminal collector, proof body read, replay, new capacity or acceptance verdict is performed."
+    ]
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "schema": "trident/whole-proof-attack-command/v2",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+    "verify-artifact",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag",
+    "--input",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag",
+    "--proof",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag",
+    "--emit",
+    "program",
+    "--arena-nodes",
+    "1000000000",
+    "--budget",
+    "20000000000",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "7200000",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "10000000000",
+    "--proof-bytes",
+    "25769803776",
+    "--proof-decoded-bytes",
+    "103079215104",
+    "--proof-records",
+    "12000000000",
+    "--proof-steps",
+    "16000000000",
+    "--proof-cache-slots",
+    "262144",
+    "--force"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/attempts/whole-c2-verify-cost",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 7500,
+    "cpu": 7500,
+    "rss": 6442450944,
+    "file": 33554432
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 8013,
+    "sha256": "f41a53246d6ac9b002256e2fd5bbf9d6374c2369195c115f48d0db4d8253fc96"
+  },
+  "shared_profile": {
+    "bytes": 3177,
+    "sha256": "b2dc11c74388e8937f37eeee1e4bbfae45a5c96de57da24fd08bb9e8e572f180"
+  },
+  "shared_driver": {
+    "bytes": 10493,
+    "sha256": "a695897716d47a7757aa85820a4079e3229cae54c146c87d3070b59d3133835a"
+  },
+  "admission": {
+    "bytes": 593,
+    "sha256": "bf4196cbb75120e503014ea1e2964b809c85ce376c15c34adae5cdcde1793031"
+  },
+  "per_stream_log_bytes": 1048576,
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag": {
+      "bytes": 6762002,
+      "sha256": "3474e5583e7b3ac36bdd526435bb2ae584691774a009e29ca02407c22589f13d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc": {
+      "bytes": 10569174820,
+      "sha256": "246cf2d72b443d2b1e85e3b366936075107fc2387ffc741f0d3e08aa2878eb4d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag": {
+      "bytes": 39,
+      "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+    }
+  },
+  "expected_exit": 1,
+  "metadata": {
+    "generation": 2,
+    "expected_error": "semantic terminal: Claim"
+  },
+  "started_ns": 1790960434055498000,
+  "sampled_peak_rss_bytes": 761298944,
+  "pid": 95686,
+  "process_binding": {
+    "pid": 95686,
+    "pgid": 95686,
+    "started": "Fri Oct  2 17:00:34 2026    ",
+    "members": {
+      "95686": "Fri Oct  2 17:00:34 2026    "
+    },
+    "parent": 89763,
+    "argv": [
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+      "verify-artifact",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag",
+      "--input",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag",
+      "--proof",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc",
+      "--output",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag",
+      "--emit",
+      "program",
+      "--arena-nodes",
+      "1000000000",
+      "--budget",
+      "20000000000",
+      "--frames",
+      "65536",
+      "--time-ms",
+      "7200000",
+      "--validation-visits",
+      "16777216",
+      "--resident-nodes",
+      "3145728",
+      "--collection-work",
+      "10000000000",
+      "--proof-bytes",
+      "25769803776",
+      "--proof-decoded-bytes",
+      "103079215104",
+      "--proof-records",
+      "12000000000",
+      "--proof-steps",
+      "16000000000",
+      "--proof-cache-slots",
+      "262144",
+      "--force"
+    ],
+    "attempt": "whole-c2-verify-cost",
+    "coordinator": 89440,
+    "registered_ns": 1790960434071519000
+  },
+  "latest_sample": {
+    "time_ns": 1790962097433641000,
+    "elapsed": 1663.3522018339718,
+    "processes": [
+      {
+        "pid": 95686,
+        "rss_bytes": 0,
+        "started": "Fri Oct  2 17:00:34 2026    ",
+        "state": "?Es"
+      }
+    ],
+    "rss_bytes": 0,
+    "shared_stop": false
+  },
+  "exit_code": 1,
+  "elapsed_seconds": 1663.367451541999,
+  "final_group": {
+    "status": "empty",
+    "members": []
+  },
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag": {
+      "bytes": 6762002,
+      "sha256": "3474e5583e7b3ac36bdd526435bb2ae584691774a009e29ca02407c22589f13d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc": {
+      "bytes": 10569174820,
+      "sha256": "246cf2d72b443d2b1e85e3b366936075107fc2387ffc741f0d3e08aa2878eb4d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag": {
+      "bytes": 39,
+      "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+    }
+  },
+  "ended_ns": 1790962102097323000,
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 49,
+      "sha256": "6e4c51f61754f04819510c620a8f90b48c3fae579d91e5accd26207ee907f912"
+    },
+    "resources.jsonl": {
+      "bytes": 362879,
+      "sha256": "9a7916b1e0e7455711cfa70b3151576fd5bd6729926abbdf7886dfa448db5de4"
+    }
+  }
+}

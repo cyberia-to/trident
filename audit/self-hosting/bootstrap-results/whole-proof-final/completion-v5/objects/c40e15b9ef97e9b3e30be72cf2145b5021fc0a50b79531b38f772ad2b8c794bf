@@ -1,0 +1,34 @@
+"""Validate the frozen combined packet without launching native diagnostics."""
+import hashlib,json,subprocess,sys,time,traceback
+from pathlib import Path
+ROOT=Path(__file__).resolve().parent
+
+def identity(path):
+    p=Path(path)
+    with p.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()
+    return dict(bytes=p.stat().st_size,sha256=digest)
+
+def main():
+    out=ROOT/sys.argv[1];out.mkdir()
+    frozen=json.loads((ROOT/'sources.json').read_text())
+    assert all(identity(p)==v for p,v in frozen.items())
+    report=dict(status='running',sources=frozen,started_ns=time.time_ns(),commands=[])
+    try:
+        # Separate interpreters preserve the independently reviewed module namespace assumptions.
+        for name in ('test_schedule','test_prior_v5','test_integration'):
+            cmd=[sys.executable,'-B','-W','error','-m','unittest','-v',name]
+            with (out/f'{name}.stdout').open('xb') as stdout,(out/f'{name}.stderr').open('xb') as stderr:
+                child=subprocess.run(cmd,cwd=ROOT,stdout=stdout,stderr=stderr,timeout=180)
+            report['commands'].append(dict(command=cmd,cwd=str(ROOT),exit_code=child.returncode,
+                  stdout=identity(out/f'{name}.stdout'),stderr=identity(out/f'{name}.stderr')))
+            assert child.returncode==0,name
+        assert all(identity(p)==v for p,v in frozen.items())
+        report.update(status='passed-combined-preparation',sources_unchanged=True,
+                      scope='41 runner + 9 prior + 8 integration tests; no native proof command, process observation or deletion')
+    except BaseException:
+        report.update(status='failed',error=traceback.format_exc());raise
+    finally:
+        report['ended_ns']=time.time_ns()
+        (out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+
+if __name__=='__main__':main()

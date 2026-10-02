@@ -1,0 +1,100 @@
+"""Independent offline F5 review: exact source/pins, unit suite and semantic probes."""
+import copy
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent
+SOURCE = BASE / 'whole-proof-final-review-v5'
+
+
+def identity(path):
+    raw = Path(path).read_bytes()
+    return dict(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+
+
+def write(path, value):
+    with path.open('x') as stream:
+        json.dump(value, stream, indent=2)
+        stream.write('\n')
+
+
+def validate():
+    out = HERE / 'validation-1'
+    out.mkdir()
+    source = json.loads((SOURCE / 'sources.json').read_text())
+    report = dict(status='running', started_ns=time.time_ns(),
+                  driver=identity(__file__), interpreter=dict(path=sys.executable, **identity(sys.executable)),
+                  source_manifest=identity(SOURCE / 'sources.json'), sources=source)
+    assert report['source_manifest']['sha256'] == '9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584'
+    assert all(identity(SOURCE / p) == h for p, h in source.items())
+    old = json.loads((SOURCE / 'candidate-6ce30-preserved/sources.json').read_text())
+    report['superseded_changed_files'] = [p for p in source if source[p] != old[p]]
+    assert report['superseded_changed_files'] == ['test_selected.py']
+    pins = json.loads((SOURCE / 'pins.json').read_text())['files']
+    assert all(identity(BASE / p) == h for p, h in pins.items())
+    report['pins'] = dict(manifest=identity(SOURCE / 'pins.json'), count=len(pins), total_bytes=sum(h['bytes'] for h in pins.values()))
+    adaptation = json.loads((SOURCE / 'adaptation.json').read_text())
+    report['unchanged_from_f4'] = [p for p, h in adaptation['original_v4_files'].items() if p in source and source[p] == h]
+    argv = [sys.executable, '-B', '-W', 'error', '-m', 'unittest', '-v', 'test_checker', 'test_native', 'test_selected', 'test_schedule_replay']
+    start = time.time_ns()
+    with (out / 'stdout').open('xb') as stdout, (out / 'stderr').open('xb') as stderr:
+        command = subprocess.run(argv, cwd=SOURCE, stdout=stdout, stderr=stderr, timeout=120)
+    report['unit_command'] = dict(argv=argv, cwd=str(SOURCE), started_ns=start, ended_ns=time.time_ns(), exit_code=command.returncode,
+                                  stdout=identity(out / 'stdout'), stderr=identity(out / 'stderr'))
+    assert command.returncode == 0
+    assert b'Ran 80 tests' in (out / 'stderr').read_bytes() and (out / 'stderr').read_bytes().rstrip().endswith(b'OK')
+    sys.path.insert(0, str(SOURCE))
+    from test_schedule_replay import FullSchedule
+    import common
+    probes = []
+
+    def probe(name, mutate=None, expected=None):
+        fixture = FullSchedule('test_full_two_generation_replay')
+        fixture.setUp()
+        try:
+            if mutate:
+                mutate(fixture)
+                fixture.save()
+            try:
+                result = fixture.review()
+            except ValueError as error:
+                assert expected and expected in str(error), (name, expected, str(error))
+                probes.append(dict(name=name, outcome='rejected', error=str(error)))
+            else:
+                assert expected is None, (name, 'unexpected acceptance')
+                assert result['native_commands'] == 42 and result['capacity_permits'] == 23
+                probes.append(dict(name=name, outcome='accepted', native_commands=42, capacity_permits=23))
+        finally:
+            fixture.doCleanups()
+
+    probe('positive-complete-sequential')
+    probe('changed-final-child', lambda f: f.run['children_final']['2'].update(pid=999), 'exact successful suite command')
+    probe('latest-does-not-match-last-raw', lambda f: f.run.update(latest_sample=f.samples[0]), 'latest observation is the last timed sample')
+    probe('final-before-last-raw', lambda f: f.run.update(final_sample=f.sample(5019)), 'ordered resource sample')
+    probe('backward-raw-clock', lambda f: f.samples[1].update(time_ns=119), 'ordered resource sample')
+    probe('surviving-history-not-charged', lambda f: f.write(f.base / 'whole-proof-attacks/new-original.json', {'bytes': 1}), 'every surviving historical file')
+
+    def late_retirement(f):
+        p = f.shared / 'native-processes/whole-c1-verify-cost.retired'
+        row = common.load(p)
+        row['time_ns'] = 1101
+        f.write(p, row)
+
+    probe('retirement-after-generation-quiescence', late_retirement, 'actual empty native group before generation completion')
+    probe('unrelated-terminal-pid-reuse-positive', lambda f: f.run.update(final_sample=dict(f.sample(9999), processes=[dict(pid=987654, pgid=987654, ppid=0, rss_kib=1, started='Fri Oct  2 00:00:00 2026')])) )
+    report['semantic_probes'] = probes
+    assert all(identity(SOURCE / p) == h for p, h in source.items())
+    assert all(identity(BASE / p) == h for p, h in pins.items())
+    report.update(status='passed', ended_ns=time.time_ns(), source_and_pins_unchanged=True,
+                  scope='Offline source/pin authentication, 80 existing tests and eight independently selected synthetic schedule probes. No full acceptance, proof scan, process observation, native execution or live-source mutation.')
+    write(out / 'receipt.json', report)
+    print(json.dumps(dict(status=report['status'], receipt=str(out / 'receipt.json'), **identity(out / 'receipt.json'))))
+
+
+if __name__ == '__main__':
+    validate()

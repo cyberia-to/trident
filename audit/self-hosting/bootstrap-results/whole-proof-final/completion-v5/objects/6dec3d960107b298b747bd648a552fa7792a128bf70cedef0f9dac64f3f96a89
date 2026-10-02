@@ -1,0 +1,200 @@
+"""One sequential generation at a time with actual bounded physical capacity admission."""
+import contextlib
+import fcntl
+import json
+import os
+from pathlib import Path
+import selectors
+import signal
+import subprocess
+import sys
+import time
+import traceback
+import ownership
+import resources as shared
+
+ROOT,BASE,PLAN=shared.ROOT,shared.BASE,shared.PLAN
+require,load=shared.require,shared.load
+
+
+def lease_paths():
+    paths=[ROOT/'coordinator.lock',BASE/'whole-proof-attacks/whole-suite.lock',
+           BASE/'whole-proof-attacks-parallel-v2/coordinator.lock']
+    paths += [BASE/f'whole-proof-attacks-completion-v{v}/coordinator.lock' for v in (3,4)]
+    paths += [BASE/f'whole-proof-attacks-v{v}-c{g}/whole-suite.lock' for v in (2,3,4) for g in (1,2)]
+    return paths
+
+
+def terminal_generation(generation,child,binding,output):
+    require(child.wait(timeout=5)==0,'generation exited successfully')
+    root=shared.ROOTS[generation];suite=load(root/f'whole-c{generation}/receipt.json')
+    require(suite['status']=='passed-completion' and suite['generation']==generation
+            and len(suite['prior_cases']['controls'])==2 and len(suite['prior_cases']['rejections'])==12
+            and [r['name'] for r in suite['rejections']]==list(shared.case_names(generation)),
+            'complete generation-specific selected/fresh matrix')
+    require(ownership.observe(binding)['status']=='empty','generation group actually empty')
+    shared.process_snapshot(os.getpid())
+    records=[]
+    for path in sorted((ROOT/'native-processes').glob(f'whole-c{generation}-*.json')):
+        record=load(path);observed=path.with_suffix('.observed')
+        if observed.exists():record=load(observed)
+        require(ownership.observe(record)['status']=='empty' and path.with_suffix('.retired').exists(),
+                'all generation native groups observed empty before next launch')
+        records.append(path.stem)
+    expected={f'whole-c{generation}-{action}-{name}' for action in ('construct','verify') for name in shared.case_names(generation)}
+    require(set(records)==expected,'exact generation native attempt inventory')
+    require(not list((root/f'whole-c{generation}').glob('certificate-*.joysc')),
+            'completed generation has no remaining temporary mutation')
+    with shared.accounting(exclusive=True):
+        shared.active(generation)
+        shared.write(ROOT/'active-generation.json',dict(status='quiescent',generation=generation,
+                     admission=shared.identity(shared.admission_path(generation)),time_ns=time.time_ns()))
+    result=dict(generation=generation,status='passed',exit_code=0,
+                suite_receipt=shared.identity(root/f'whole-c{generation}/receipt.json'),
+                native_attempts=sorted(expected),quiescent_ns=time.time_ns(),
+                logs={name:shared.identity(output/f'c{generation}.{name}') for name in ('stdout','stderr')})
+    shared.exclusive_write(ROOT/f'completed-c{generation}.json',result)
+    return result
+
+
+def execute():
+    output=ROOT/'run-1';output.mkdir()
+    started=time.monotonic();outer_deadline=started+PLAN['outer_schedule_seconds']
+    report=dict(schema='trident/complete-proof-missing-cases-orchestration/v5',status='prepared',
+                started_ns=time.time_ns(),plan=shared.identity(ROOT/'plan.json'),
+                generations=[],sampled_peak_rss_bytes=0,phase='source-admission')
+    children,bindings={},{}
+    def save():shared.write(output/'receipt.json',report)
+    save()
+    try:
+        manifest=load(ROOT/'sources.json');review=load(ROOT/'independent-review.json')
+        require(review['status']=='passed-source-review' and review['sources']==manifest,
+                'exact independent frozen source review required')
+        require(all(shared.identity(p)==v for p,v in manifest.items()),'reviewed source inputs unchanged')
+        require(PLAN['generation_order']==[1,2],'explicit sequential generation order')
+        for g,root in shared.ROOTS.items():
+            require(not (root/'attempts').exists() and not (root/f'whole-c{g}').exists(), 'fresh generation scope')
+        baseline=shared.inventory()
+        immutable={p:shared.identity(p) for p in baseline if any(Path(p).is_relative_to(old) for old in shared.RETAINED_ROOTS)}
+        shared.exclusive_write(ROOT/'baseline.json',dict(files=baseline,immutable=immutable,declared_historical_retirements={}))
+        report.update(status='running',source=manifest,independent_review=shared.identity(ROOT/'independent-review.json'))
+        save()
+        with (output/'resources.jsonl').open('x') as samples:
+            for generation in PLAN['generation_order']:
+                require(not shared.stop_requested() and time.monotonic()<outer_deadline,'schedule healthy before next generation')
+                if generation==2:require(load(ROOT/'completed-c1.json')['status']=='passed','C1 quiescent completion precedes C2')
+                report.update(phase='waiting-for-generation-capacity',active_generation=generation);save()
+                permit=shared.wait_capacity(generation,coordinator_pid=os.getpid(),outer_deadline=outer_deadline)
+                require(not shared.stop_requested() and time.monotonic()<outer_deadline,'capacity wait within original schedule')
+                root=shared.ROOTS[generation]
+                command=[sys.executable,'-B',str(root/'whole_suite.py'),'--generation',str(generation)]
+                child=subprocess.Popen(command,cwd=root,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                                       env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'),start_new_session=True)
+                children[generation]=child;bindings[generation]=ownership.bind(child.pid)
+                admission=dict(pid=os.getpid(),generation=generation,children={str(generation):child.pid},
+                               suite_binding=bindings[generation],reservation=permit['reservation'],
+                               capacity=shared.identity(shared.permit_path(generation)),
+                               plan=shared.identity(ROOT/'plan.json'),source_manifest=shared.identity(ROOT/'sources.json'),
+                               time_ns=time.time_ns(),outer_deadline_monotonic=outer_deadline)
+                with shared.accounting(exclusive=True):
+                    shared.exclusive_write(shared.admission_path(generation),admission)
+                    shared.write(ROOT/'active-generation.json',dict(status='active',generation=generation,
+                                 admission=shared.identity(shared.admission_path(generation)),time_ns=time.time_ns()))
+                row=dict(generation=generation,status='running',command=command,cwd=str(root),pid=child.pid,
+                         binding=bindings[generation],admission=shared.identity(shared.admission_path(generation)))
+                report['generations'].append(row);report['phase']='executing-generation';save()
+                with contextlib.ExitStack() as opened:
+                    selector=selectors.DefaultSelector();opened.callback(selector.close)
+                    for name,pipe in (('stdout',child.stdout),('stderr',child.stderr)):
+                        opened.callback(pipe.close)
+                        stream=opened.enter_context((output/f'c{generation}.{name}').open('xb'))
+                        os.set_blocking(pipe.fileno(),False);selector.register(pipe,selectors.EVENT_READ,stream)
+                    next_sample=0
+                    while child.poll() is None or selector.get_map():
+                        for key,_ in selector.select(timeout=.2):
+                            chunk=os.read(key.fileobj.fileno(),65536)
+                            if not chunk:selector.unregister(key.fileobj);key.fileobj.close();continue
+                            remaining=PLAN['per_stream_log_bytes']-key.data.tell()
+                            key.data.write(chunk[:max(remaining,0)]);key.data.flush()
+                            if len(chunk)>remaining:shared.fail('suite-log-bytes',key.data.name)
+                        now=time.monotonic()
+                        if now>=next_sample:
+                            next_sample=now+1;sample=shared.sample(baseline,os.getpid())
+                            samples.write(json.dumps(sample)+'\n');samples.flush()
+                            report['sampled_peak_rss_bytes']=max(report['sampled_peak_rss_bytes'],sample['rss_bytes'])
+                            report['latest_sample']=sample;save()
+                        if child.poll() is not None and child.returncode!=0:shared.fail('suite-failed',dict(generation=generation,exit_code=child.returncode))
+                        if now>outer_deadline:shared.fail('schedule-wall')
+                        require(not shared.stop_requested(),'shared failure during sequential generation')
+                row.update(terminal_generation(generation,child,bindings[generation],output));save()
+            report['final_sample']=shared.sample(baseline,os.getpid())
+            require(not shared.stop_requested() and time.monotonic()<=outer_deadline,'final original resource contract')
+            require(all(shared.identity(p)==v for p,v in immutable.items()),'all historical bytes unchanged')
+            require(all(shared.identity(p)==v for p,v in manifest.items()),'all frozen source bytes unchanged')
+            report.update(status='passed',phase='complete',inputs_unchanged=True,elapsed_seconds=time.monotonic()-started)
+    except BaseException:
+        error=traceback.format_exc();report.update(status='failed',error=error);save();shared.fail('coordinator-exception',error)
+        try:report['cleanup']=stop_all(children,bindings)
+        except BaseException:report['cleanup_error']=traceback.format_exc()
+        raise
+    finally:
+        report['children_final']={str(g):dict(pid=p.pid,exit_code=p.poll()) for g,p in children.items()}
+        report.update(ended_ns=time.time_ns(),files={p.name:shared.identity(p) for p in output.iterdir()
+                      if p.is_file() and p.name!='receipt.json' and '.pending-' not in p.name})
+        save()
+
+
+def cancelled(signum,_frame):raise InterruptedError('coordinator signal: '+str(signum))
+
+
+def main():
+    signal.signal(signal.SIGTERM,cancelled)
+    with contextlib.ExitStack() as locks:
+        for path in lease_paths():
+            handle=locks.enter_context(path.open('a+'));fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        require(not shared.stop_requested() and not (ROOT/'run-1').exists()
+                and not any(shared.admission_path(g).exists() for g in (1,2)),'one fresh v5 schedule only')
+        execute()
+
+
+def stop_all(children, bindings):
+    results = []
+    # Native groups first. Failure of one cleanup must not skip another group.
+    def native_sweep(label):
+        records = []
+        # This barrier covers a native registration already in preexec. The
+        # registration rechecks shared stop while holding the same lock.
+        with shared.accounting(exclusive=True):
+            for path in sorted((ROOT / 'native-processes').glob('*.json')):
+                try:
+                    record = load(path)
+                    observed = path.with_suffix('.observed')
+                    if observed.exists():
+                        later = load(observed)
+                        require(all(later[key] == record[key] for key in ('pid', 'pgid', 'started')),
+                                'observed process binding changed')
+                        record = later
+                    records.append(record)
+                except BaseException:
+                    results.append(dict(status='failed', sweep=label, registration=str(path), error=traceback.format_exc()))
+        for record in records:
+            try:
+                child = next((p for p in children.values() if p.pid == record['pid']), None)
+                result = ownership.stop_group(record, child)
+                results.append(dict(result, sweep=label))
+            except BaseException:
+                results.append(dict(status='failed', sweep=label, binding=record, error=traceback.format_exc()))
+    native_sweep('before-suite-shutdown')
+    for generation, child in children.items():
+        try:
+            results.append(ownership.stop_child(child, bindings.get(generation)))
+        except BaseException:
+            results.append(dict(status='failed', pid=child.pid, error=traceback.format_exc()))
+    native_sweep('after-suite-shutdown')
+    result = dict(status='passed' if all(row['status'] == 'passed' for row in results) else 'failed',
+                  groups=results, time_ns=time.time_ns())
+    shared.write(ROOT / 'shutdown.json', result)
+    return result
+
+
+if __name__=='__main__':main()

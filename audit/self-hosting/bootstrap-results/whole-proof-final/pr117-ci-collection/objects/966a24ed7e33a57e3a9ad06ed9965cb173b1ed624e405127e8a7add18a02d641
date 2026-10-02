@@ -1,0 +1,812 @@
+{
+  "schema": "trident/original-native-phase-matrix-replay-completion/v4",
+  "status": "passed-original-matrix-replay-completion",
+  "started_ns": 1790978622223654000,
+  "checker": {
+    "bytes": 10597,
+    "sha256": "bef444fd5f892279246e29e399c183bc814a733d049c94855c4f682ad40931d2"
+  },
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/replay.py",
+    "--collection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+    "--git-repo",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-1"
+  ],
+  "scope": "Complete original Actions metadata/ZIP/member receipt replay with the exact committed phase checker; no compiler, prover, native executable or corpus rerun; separate from SH7/SH8 proof acceptance",
+  "origin": {
+    "run_id": "37002840888",
+    "run_attempt": "1",
+    "head_sha": "10772124836b68a2df011c912b5776b2454a511f"
+  },
+  "collection": {
+    "bytes": 263807,
+    "sha256": "04f600b77c69d5206b59f8a84e339c4ea9eef17a40c64fe89884a5849f79bba0"
+  },
+  "reused_original_archives": 5,
+  "reused_v2_archives": 11,
+  "reused_v3_archives": 6,
+  "continuation_original_archives": 15,
+  "previous_failed_continuation": {
+    "receipt": {
+      "bytes": 22119153,
+      "sha256": "afcafa52769d5c44e47fc6db4c000bb909be96b4615af4e6527427d68938151b"
+    },
+    "terminal": {
+      "bytes": 1048576,
+      "sha256": "a5e895d319ae22859ca5cca55a237e89ef35765989eb342a1337492a9660ee3f"
+    },
+    "wrapper": {
+      "bytes": 1554,
+      "sha256": "3925358cac3f6c9c906d1b7e19d368d8b5871db17ec6c4ac2a232513faf719d0"
+    },
+    "status": "failed"
+  },
+  "cumulative_attempt_history": {
+    "bootstrap-phase-matrix-comparison-attempt-1": [
+      {
+        "scope": "original",
+        "name": "bootstrap-phase-matrix-comparison-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-c3-attempt-1": [
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-x86_64-apple-darwin-repeat-1-c3-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1": [
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1-attempt-1"
+      },
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1-attempt-2"
+      }
+    ],
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-c2-attempt-1": [
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-x86_64-apple-darwin-repeat-1-c2-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c3-attempt-1": [],
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c2-attempt-1": [],
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c3-attempt-1": [],
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-c2-attempt-1": [
+      {
+        "scope": "original",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-c2-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-producer-attempt-1": [],
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c2-attempt-1": [],
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-c3-attempt-1": [
+      {
+        "scope": "original",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-c3-attempt-1"
+      },
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-c3-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c3-attempt-1": [],
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c2-attempt-1": [],
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-producer-attempt-1": [
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-x86_64-apple-darwin-repeat-1-producer-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c2-attempt-1": [],
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-c2-attempt-1": [
+      {
+        "scope": "original",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-1-c2-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-c3-attempt-1": [
+      {
+        "scope": "original",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-1-c3-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c3-attempt-1": [],
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c2-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c2-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c3-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c3-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-producer-attempt-1": [],
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c3-attempt-1": [],
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c3-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c3-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c2-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c2-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c2-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c2-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c3-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c3-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1-attempt-1"
+      },
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1-attempt-2"
+      },
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1-attempt-3"
+      },
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c3-attempt-1": [
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c3-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-producer-attempt-1": [],
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-producer-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-producer-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-producer-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-producer-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-producer-attempt-1": [
+      {
+        "scope": "original",
+        "name": "bootstrap-phase-aarch64-apple-darwin-repeat-1-producer-attempt-1"
+      }
+    ],
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-producer-attempt-1": [],
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-producer-attempt-1": [],
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-producer-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-producer-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-producer-attempt-1": [
+      {
+        "scope": "v2",
+        "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-producer-attempt-1-attempt-1"
+      }
+    ],
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-producer-attempt-1": [
+      {
+        "scope": "v3",
+        "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-producer-attempt-1-attempt-1"
+      }
+    ],
+    "attempt-1-logs": []
+  },
+  "final_accounting": {
+    "bytes": 592,
+    "sha256": "83f35b30744c79ddc55c2312d9dd9cae6284a7953428dd758eaddefef1775639"
+  },
+  "original_metadata": {
+    "run": {
+      "bytes": 12780,
+      "sha256": "c3cc5495aef253f5d4846816c9a5f4518c182657e1169471bfcf191056f45550"
+    },
+    "jobs": {
+      "bytes": 112723,
+      "sha256": "10627dc383e839fc30b03a58adcea7e2e0d1c397b6b9cb2cfeb06653850943be"
+    },
+    "artifacts": {
+      "bytes": 28098,
+      "sha256": "c642aaa65ce67a923183db29a72f11c304bc6003d5d1af5b88b3b8dcb698e038"
+    }
+  },
+  "archives": {
+    "bootstrap-phase-matrix-comparison-attempt-1": {
+      "bytes": 2447,
+      "sha256": "c2fbd92f7848a9eabf2d6c2676746f3f3e96f0fc6121f7c77fabc5265834ef59",
+      "files": 2,
+      "decoded_bytes": 9079
+    },
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-c2-attempt-1": {
+      "bytes": 12840605,
+      "sha256": "1c850116d9f555ed6b08efdf6adbe61e954f681731fb4e71bf145a7ef7415045",
+      "files": 3390,
+      "decoded_bytes": 32335405
+    },
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-c3-attempt-1": {
+      "bytes": 12840461,
+      "sha256": "18eb7937e9034afde637f9b668062549005064043293b373bbcf77b015977a90",
+      "files": 3390,
+      "decoded_bytes": 32335409
+    },
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-producer-attempt-1": {
+      "bytes": 31692453,
+      "sha256": "5ff91ea66727311b498636fbdc287b70492c47d4c74a363b331bea2df72916c6",
+      "files": 594,
+      "decoded_bytes": 71782430
+    },
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-c2-attempt-1": {
+      "bytes": 12840296,
+      "sha256": "2c10ddd3d7e6a23fdd5ee1b9c1dd3316eb19c8f795b91b48bd093bb5eae05e5d",
+      "files": 3390,
+      "decoded_bytes": 32335048
+    },
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-c3-attempt-1": {
+      "bytes": 12840343,
+      "sha256": "d54f3259b74451031bed5bc64e24edfdcbd9e29e378618b574d5da9fdc4d02a1",
+      "files": 3390,
+      "decoded_bytes": 32335054
+    },
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-producer-attempt-1": {
+      "bytes": 31692256,
+      "sha256": "22c2889b87494907a0eddbf46b881805492eec0ce60399775f1809413c939034",
+      "files": 594,
+      "decoded_bytes": 71782080
+    },
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c2-attempt-1": {
+      "bytes": 12685902,
+      "sha256": "d39b3d7315c60f7bd940d367fe537a88fff9787589d9872ad6310dda33b6ef4f",
+      "files": 3390,
+      "decoded_bytes": 31779457
+    },
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c3-attempt-1": {
+      "bytes": 12685885,
+      "sha256": "9e874d680207b07b1ea74b95f91c965d54bde2813c9d299b760c7d9e5ab62dc3",
+      "files": 3390,
+      "decoded_bytes": 31779461
+    },
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-producer-attempt-1": {
+      "bytes": 31534057,
+      "sha256": "c0be4e80bf39115a919ea3ba9a8078a6480ec3f55080a43577d5d146c1a27f98",
+      "files": 594,
+      "decoded_bytes": 71176433
+    },
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c2-attempt-1": {
+      "bytes": 12687024,
+      "sha256": "18d0437c192778049e19021018d5d05cb938560e810af1913aa3c816d98fb636",
+      "files": 3390,
+      "decoded_bytes": 31782018
+    },
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c3-attempt-1": {
+      "bytes": 12687105,
+      "sha256": "83e796ea774f3f31f5e4030931a6e2c90bf51c06475b566eabe486c478ea132a",
+      "files": 3390,
+      "decoded_bytes": 31782016
+    },
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-producer-attempt-1": {
+      "bytes": 31535115,
+      "sha256": "bc384322c23542a04341bf5bee88c8f03e91f6f218681c458e4b555e6c9b7d88",
+      "files": 594,
+      "decoded_bytes": 71178991
+    },
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c2-attempt-1": {
+      "bytes": 12947106,
+      "sha256": "c1b064ca7f29b504b34db70e6b98cfa32c84d1c61fab790c31f20d39a3d5cc93",
+      "files": 3390,
+      "decoded_bytes": 32783380
+    },
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c3-attempt-1": {
+      "bytes": 12947340,
+      "sha256": "834ae05777fd1b7f237221db162628a74ba134f7f22436a192faf1b5a25a1821",
+      "files": 3390,
+      "decoded_bytes": 32783483
+    },
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-producer-attempt-1": {
+      "bytes": 31799507,
+      "sha256": "7a85e11e73d4c274762c5de01999c7ec87d090f6db8269747f37dbb833422ca8",
+      "files": 594,
+      "decoded_bytes": 72239172
+    },
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1": {
+      "bytes": 12947254,
+      "sha256": "bc64de4279f65fa365eede8164ef1b0586431ec5e868ec810866834081ec3cf5",
+      "files": 3390,
+      "decoded_bytes": 32783249
+    },
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c3-attempt-1": {
+      "bytes": 12947262,
+      "sha256": "86a644959915fb66a76940b358984b2da57c7e9c89a9b1d63210a40b31446e4d",
+      "files": 3390,
+      "decoded_bytes": 32783210
+    },
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-producer-attempt-1": {
+      "bytes": 31799480,
+      "sha256": "5f365060efca335504d48164a73ad3d2c3fa63448a94852a2600d71bfcf950b3",
+      "files": 594,
+      "decoded_bytes": 72238987
+    },
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-c2-attempt-1": {
+      "bytes": 12925739,
+      "sha256": "a957cc4f86a253520cad2243586927e461b41c0bda17f109ee98e42987eeeed8",
+      "files": 3390,
+      "decoded_bytes": 32728515
+    },
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-c3-attempt-1": {
+      "bytes": 12926113,
+      "sha256": "f3f7570aa3633018e9817b88c3b2f63c6b65efb381758e2b3c86562cc59ee936",
+      "files": 3390,
+      "decoded_bytes": 32728592
+    },
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-producer-attempt-1": {
+      "bytes": 31777634,
+      "sha256": "1eec35577f7a78811ad1d1fcacdfcd9fb79b56f25fccd032c8a8e72b84e5f88c",
+      "files": 594,
+      "decoded_bytes": 72175368
+    },
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1": {
+      "bytes": 12924917,
+      "sha256": "f6b577c0c7766388bac2a40b50f2f39276862c1e332905af1d0d3afb63dc0916",
+      "files": 3390,
+      "decoded_bytes": 32728473
+    },
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c3-attempt-1": {
+      "bytes": 12924779,
+      "sha256": "8e0741d64cd3243c9e6a666b0743d23ab6be05dad167bafccc0e5d349377ef1f",
+      "files": 3390,
+      "decoded_bytes": 32728446
+    },
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-producer-attempt-1": {
+      "bytes": 31776642,
+      "sha256": "ab8a6c4d9e0336e7fbac0fcec0a45fbedf623e249736effb332eeb7d7c7b302c",
+      "files": 594,
+      "decoded_bytes": 72175311
+    },
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c2-attempt-1": {
+      "bytes": 12768499,
+      "sha256": "5945b36dd0259e28638ec2e30fd8ad6bc5969921cb190eccc908df8bbb191864",
+      "files": 3390,
+      "decoded_bytes": 32570994
+    },
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c3-attempt-1": {
+      "bytes": 12768400,
+      "sha256": "f21d1dbff3562697dc130d9a226da9b526b2b7361130de2c559922ccae7ec77a",
+      "files": 3390,
+      "decoded_bytes": 32570995
+    },
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-producer-attempt-1": {
+      "bytes": 31616612,
+      "sha256": "c5dd7c9ae3146fb35d7d4097acc74de1f0741322ab00c322b848a5fba72c9bce",
+      "files": 594,
+      "decoded_bytes": 71968026
+    },
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c2-attempt-1": {
+      "bytes": 12769654,
+      "sha256": "72b9fae5384709e58a5b7ccc96cc6a8378b897b35a6710d3121c4f918d267f16",
+      "files": 3390,
+      "decoded_bytes": 32573556
+    },
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c3-attempt-1": {
+      "bytes": 12769732,
+      "sha256": "d2d4e2fcb265ac7e66e1d084526d9acd24a169c093301661777f34486ff2a55f",
+      "files": 3390,
+      "decoded_bytes": 32573752
+    },
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-producer-attempt-1": {
+      "bytes": 31617842,
+      "sha256": "00af7707c15644a22b9008e08458da8244fc0070ef222c66f8b1acb2a57df09d",
+      "files": 594,
+      "decoded_bytes": 71970587
+    },
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c2-attempt-1": {
+      "bytes": 13091686,
+      "sha256": "b599fe25c0619712065bde77068fea0befe71e8ef7e7e98b64711c0e93e59c1d",
+      "files": 3390,
+      "decoded_bytes": 33454454
+    },
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c3-attempt-1": {
+      "bytes": 13091651,
+      "sha256": "aeb028d21b0093eca4d17b6862fc73eb342de807d0f7cc271809cf58bc1ed5ec",
+      "files": 3390,
+      "decoded_bytes": 33454454
+    },
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-producer-attempt-1": {
+      "bytes": 31943859,
+      "sha256": "3d7bbde79a5ba890721bc0f7dbd7657bae333a45cc43bc87b03bfc8a59d295f4",
+      "files": 594,
+      "decoded_bytes": 72910389
+    },
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c2-attempt-1": {
+      "bytes": 13095510,
+      "sha256": "0183ec8ca9d3d4b408896a1a462e0bab2819c18c18127411c5883abd56b02bc5",
+      "files": 3390,
+      "decoded_bytes": 33453136
+    },
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c3-attempt-1": {
+      "bytes": 13095485,
+      "sha256": "c7057eb2e1520bf9fc3aada0ffe339d510dcadce99992ef14cd0e9fa9b05aa52",
+      "files": 3390,
+      "decoded_bytes": 33453114
+    },
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-producer-attempt-1": {
+      "bytes": 31947681,
+      "sha256": "a0ca2a56380b91f024c36cd1c3dad8aef18bc7e9e92588510c2cad009d77689e",
+      "files": 594,
+      "decoded_bytes": 72909066
+    },
+    "attempt-1-logs": {
+      "bytes": 341644,
+      "sha256": "2a47a0d70649a4f81c1cb1fc17cc63057dd9554d2880823213c66ebd6a180454",
+      "files": 74,
+      "decoded_bytes": 1466841
+    }
+  },
+  "phases": [
+    {
+      "name": "bootstrap-phase-aarch64-apple-darwin-repeat-1-c2-attempt-1",
+      "job_id": 110852039458,
+      "receipt": {
+        "bytes": 17830,
+        "sha256": "8d49935f92f478ec478bd813e49453c698afcdba9ae3fbdb977fc1f98ab903fe"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-apple-darwin-repeat-1-c3-attempt-1",
+      "job_id": 110852039560,
+      "receipt": {
+        "bytes": 17832,
+        "sha256": "ee1671c1ecfa94e4c9b8ea7dfc0cf79ec5a5abf1f6be16fefe48a35da762de0c"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-apple-darwin-repeat-1-producer-attempt-1",
+      "job_id": 110824241751,
+      "receipt": {
+        "bytes": 73910,
+        "sha256": "7214a3d1b62c0431f63117137e1d42c0862436b3645718a709eafd9c771e857c"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-c2-attempt-1",
+      "job_id": 110857852546,
+      "receipt": {
+        "bytes": 17828,
+        "sha256": "652dd37a6ea8a0223b4a3da874a8cf16e045f23b5945c5c22019d6c684953f1e"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-c3-attempt-1",
+      "job_id": 110857852314,
+      "receipt": {
+        "bytes": 17826,
+        "sha256": "3f048fe65b72c01671ecf4128b6aa3a077de23f5d29557fed1dee8a39e88aafa"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-apple-darwin-repeat-2-producer-attempt-1",
+      "job_id": 110824241789,
+      "receipt": {
+        "bytes": 73896,
+        "sha256": "c4897daf93f10de55022d2f8ad08265dd13b137f8241997c474e2abbd41551b1"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c2-attempt-1",
+      "job_id": 110849802077,
+      "receipt": {
+        "bytes": 17291,
+        "sha256": "3a16aaae77c19bb90d89794d8ffc1e5db3a15b0d0fb00d117076d5c0e8dbf353"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c3-attempt-1",
+      "job_id": 110849801971,
+      "receipt": {
+        "bytes": 17294,
+        "sha256": "d1e982fd1f43c7bd2d8768d03d877a29f0610427d41b43761105914924354803"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-producer-attempt-1",
+      "job_id": 110824241693,
+      "receipt": {
+        "bytes": 72914,
+        "sha256": "a69c7cfc228cc758375655413f778a5855b2bfb8bf4805fd804dba1b2200cf4a"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c2-attempt-1",
+      "job_id": 110849666287,
+      "receipt": {
+        "bytes": 17294,
+        "sha256": "2bc40e9327353318eada678106337d09722c3b6776ae79e60decaf929784b108"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c3-attempt-1",
+      "job_id": 110849666389,
+      "receipt": {
+        "bytes": 17291,
+        "sha256": "3cf2f3dfec243a56730e0da5126639284df123602f15d951236e84b85640383a"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-producer-attempt-1",
+      "job_id": 110824241965,
+      "receipt": {
+        "bytes": 72912,
+        "sha256": "42d15eba8051afe56d57f285a448f07dbb133f7a9f362e38033718347b449918"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c2-attempt-1",
+      "job_id": 110848456290,
+      "receipt": {
+        "bytes": 17684,
+        "sha256": "26a38bd7eb716e6493a5328a8b26f522286ba7d43cce09428ffb9eab2bb73f29"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c3-attempt-1",
+      "job_id": 110848456439,
+      "receipt": {
+        "bytes": 17688,
+        "sha256": "4d7ac9dc9d283c1c8fc363208df03c3630ad26aded29c9325fbea801ea8cab46"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-producer-attempt-1",
+      "job_id": 110824241704,
+      "receipt": {
+        "bytes": 73706,
+        "sha256": "221201803444721d84fe485c4f27483e0ebc3d56b353749dbd4ab12fd42b96c2"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1",
+      "job_id": 110848537246,
+      "receipt": {
+        "bytes": 17688,
+        "sha256": "9ae56a1d7778951d6326d90595290b6373ba946ff996cb90baf37d8716ffb1c6"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c3-attempt-1",
+      "job_id": 110848537250,
+      "receipt": {
+        "bytes": 17684,
+        "sha256": "2c57ef2c8920935191885d5696b8bafe747f909a37888fe26ea2d62ee03d7d6f"
+      }
+    },
+    {
+      "name": "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-producer-attempt-1",
+      "job_id": 110824241808,
+      "receipt": {
+        "bytes": 73705,
+        "sha256": "27b3ae69cf328d631fc42516a8d89121aa30828f073729ba778fdeaaba5a6705"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-1-c2-attempt-1",
+      "job_id": 110882805439,
+      "receipt": {
+        "bytes": 17837,
+        "sha256": "ef226635d301803692a53de94f33f081b953121c59cfd601e9f3b9f9cd90e310"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-1-c3-attempt-1",
+      "job_id": 110882805729,
+      "receipt": {
+        "bytes": 17837,
+        "sha256": "468f1810f9582c95105c17dbb65faa063b1326f17889a317669ce6585d1e7dab"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-1-producer-attempt-1",
+      "job_id": 110824241738,
+      "receipt": {
+        "bytes": 73929,
+        "sha256": "a33a580bf72cdc43dc6397a5173a2132e81c42bd9ea3c080feed0b102c47ba02"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1",
+      "job_id": 110884179907,
+      "receipt": {
+        "bytes": 17836,
+        "sha256": "1ab61a222df16c8259d0412d82ba13ddaf627987eff7837cb39f39cabb31ec26"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-c3-attempt-1",
+      "job_id": 110884179831,
+      "receipt": {
+        "bytes": 17834,
+        "sha256": "f336f3d73401866be18ec0359a1ea45428cd7a8e0908d0a4738f7dbf8692e066"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-apple-darwin-repeat-2-producer-attempt-1",
+      "job_id": 110824241727,
+      "receipt": {
+        "bytes": 73933,
+        "sha256": "7d548f9d9cfce2515390c8dad39b6e3ee29b1b6667a1aaed7d0e47f032b9f909"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c2-attempt-1",
+      "job_id": 110852643587,
+      "receipt": {
+        "bytes": 17285,
+        "sha256": "09b447e79562660ec52b1cd54de5c71c3f04d88ec2afa11124cec3e2523a6263"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c3-attempt-1",
+      "job_id": 110852643588,
+      "receipt": {
+        "bytes": 17292,
+        "sha256": "a4fc9b99bcd398dc703eab95e2285a2bf84cb6db5a715e77eaba7997e6777af9"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-producer-attempt-1",
+      "job_id": 110824241601,
+      "receipt": {
+        "bytes": 72892,
+        "sha256": "3cefda4e892bb3c0c9d0cb7805f230b5f73c7da3d6d66ead5b7272421b876793"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c2-attempt-1",
+      "job_id": 110854450354,
+      "receipt": {
+        "bytes": 17285,
+        "sha256": "63aba334926708915f8bd97615b020ebe1b378556d7f7f5661b7997463e970a5"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c3-attempt-1",
+      "job_id": 110854450394,
+      "receipt": {
+        "bytes": 17284,
+        "sha256": "9c7f435b7b36e150eb9e472077676d3b71edda3ca0cb6ef93f424fad2928f1b8"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-producer-attempt-1",
+      "job_id": 110824241600,
+      "receipt": {
+        "bytes": 72893,
+        "sha256": "587e9460f2f4b175f720fd39295ad21e13169678019d2c26e29caef71e67b631"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c2-attempt-1",
+      "job_id": 110864843012,
+      "receipt": {
+        "bytes": 17669,
+        "sha256": "b7c4342ff29c55dd789f3f65cfa87ca125e00c841128202aceffce0ef7546a9e"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c3-attempt-1",
+      "job_id": 110864843092,
+      "receipt": {
+        "bytes": 17668,
+        "sha256": "c4d4ca9b391086d948ef86b9a8259b388938888a080bf125428915c8ffb41a61"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-producer-attempt-1",
+      "job_id": 110824241432,
+      "receipt": {
+        "bytes": 73697,
+        "sha256": "355b3016f3ddfb66c51cb2d67b870cd0635b7b90c6ac1caa7ed8dda364b9ce80"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c2-attempt-1",
+      "job_id": 110860420510,
+      "receipt": {
+        "bytes": 17668,
+        "sha256": "612024bdb3f65a3d19f21271a1bdf80001a774662cb1b1c9438d622a253cd8af"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c3-attempt-1",
+      "job_id": 110860420748,
+      "receipt": {
+        "bytes": 17671,
+        "sha256": "22a4b97b4746446e5bd324f2d7450cd4a31f600e45022be64e0615f356e3c040"
+      }
+    },
+    {
+      "name": "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-producer-attempt-1",
+      "job_id": 110824241700,
+      "receipt": {
+        "bytes": 73694,
+        "sha256": "26dcd4d4beceef6572b0d657969f2be6ba31ca7565a9b2e26351733ed0224008"
+      }
+    }
+  ],
+  "compiler_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "source_pins": {
+    "joy": "ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+    "nox": "f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "zheng": "b54b209b91b8bf99c2975c4c24493a2411c23079",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "trident": "10772124836b68a2df011c912b5776b2454a511f"
+  },
+  "checker_sources": {
+    "bootstrap-runner.py": {
+      "command": [
+        "git",
+        "show",
+        "10772124836b68a2df011c912b5776b2454a511f:audit/self-hosting/bootstrap-runner.py"
+      ],
+      "identity": {
+        "bytes": 26768,
+        "sha256": "b1afcd9a51c4a92b5254ebb56bbcbe88f4ad81b9cdf98f607f2ff7140a7691fc"
+      }
+    },
+    "bootstrap-phases.py": {
+      "command": [
+        "git",
+        "show",
+        "10772124836b68a2df011c912b5776b2454a511f:audit/self-hosting/bootstrap-phases.py"
+      ],
+      "identity": {
+        "bytes": 9616,
+        "sha256": "31a43e0172dad9bebe5c27fcdc67cb19af72b9322d93089b552ec2044ac4d640"
+      }
+    },
+    "bootstrap_phase_checks.py": {
+      "command": [
+        "git",
+        "show",
+        "10772124836b68a2df011c912b5776b2454a511f:audit/self-hosting/bootstrap_phase_checks.py"
+      ],
+      "identity": {
+        "bytes": 11146,
+        "sha256": "8c438e3d625c56b27f5b9e1a43243e1f2377a8601c3fa159f9bcba98e25c1aa3"
+      }
+    }
+  },
+  "native_producers": 12,
+  "native_corpus_jobs": 24,
+  "observations_per_corpus_job": 547,
+  "ended_ns": 1790978678179284000
+}

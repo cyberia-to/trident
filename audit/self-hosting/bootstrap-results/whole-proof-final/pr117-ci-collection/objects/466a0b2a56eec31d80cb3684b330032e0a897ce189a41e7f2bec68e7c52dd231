@@ -1,0 +1,37 @@
+{
+  "status": "observed-loopback-partial-permission-response",
+  "argv": [
+    "/usr/bin/curl",
+    "-q",
+    "--silent",
+    "--show-error",
+    "--fail-with-body",
+    "--max-time",
+    "3",
+    "--dump-header",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-peer-review/partial-403.headers",
+    "--url",
+    "http://127.0.0.1:64677/"
+  ],
+  "exit_code": 18,
+  "http": {
+    "statuses": [
+      403
+    ],
+    "status": 403,
+    "fields": {
+      "server": [
+        "BaseHTTP/0.6 Python/3.14.5"
+      ],
+      "date": [
+        "Fri, 02 Oct 2026 20:55:41 GMT"
+      ],
+      "content-length": [
+        "100"
+      ]
+    }
+  },
+  "policy_retry_delay": 60,
+  "scope": "Fake local HTTP403 plus short body only, no credential or externalnetwork",
+  "observed_ns": 1790974541455329000
+}

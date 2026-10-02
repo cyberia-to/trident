@@ -1,0 +1,80 @@
+"""Retained admission results exercise the actual two suite matrix boundaries."""
+import copy
+import importlib.util
+import json
+from pathlib import Path
+import sys
+import unittest
+import resources
+
+ROOT=Path(__file__).resolve().parent
+BASE=ROOT.parent
+# Imports perform reviewed source authentication only; no process observation or native command.
+sys.path.insert(0,str(BASE/'whole-proof-attacks-v5-c1'))
+SUITES={}
+for g in (1,2):
+    spec=importlib.util.spec_from_file_location(f'combined_suite_{g}',BASE/f'whole-proof-attacks-v5-c{g}/whole_suite.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);SUITES[g]=module
+
+
+class IntegratedCases(unittest.TestCase):
+    def setUp(self):
+        self.prior={g:json.loads((ROOT/f'actual-2/c{g}.json').read_text()) for g in (1,2)}
+        self.selected=json.loads((ROOT/'actual-2/c2-cost.json').read_text())
+        self.fresh={g:[{'name':name,'error':error} for name,error in SUITES[g].MUTATIONS
+                       if g==1 or name!='cost'] for g in (1,2)}
+
+    def validate(self,g,selected='actual'):
+        if selected=='actual':selected=None if g==1 else self.selected
+        SUITES[g].validate_case_matrix(self.prior[g],self.fresh[g],selected,g)
+
+    def test_actual_prior_shapes_join_both_fresh_contracts(self):
+        for g in (1,2):
+            self.validate(g)
+            self.assertEqual(list(resources.case_names(g)),[r['name'] for r in self.fresh[g]])
+            names=[r['name'] for r in self.prior[g]['rejections']+self.fresh[g]]+(['cost'] if g==2 else [])
+            self.assertEqual(23,len(names));self.assertEqual(23,len(set(names)))
+
+    def test_selected_cost_does_not_repeat_as_fresh(self):
+        self.fresh[2].insert(0,copy.deepcopy(self.selected['rejection']))
+        with self.assertRaises(ValueError):self.validate(2)
+
+    def test_c1_must_execute_cost(self):
+        self.fresh[1]=self.fresh[1][1:]
+        with self.assertRaises(ValueError):self.validate(1)
+
+    def test_c1_cannot_borrow_selected_c2(self):
+        with self.assertRaises(ValueError):self.validate(1,self.selected)
+
+    def test_changed_original_failed_outcomes_are_rejected(self):
+        for field,status in [('original_suite','failed'),('original_suite','passed-completion'),('original_controller','passed')]:
+            with self.subTest(field=field,status=status):
+                selected=copy.deepcopy(self.selected);selected[field]['status']=status
+                with self.assertRaises(ValueError):self.validate(2,selected)
+
+    def test_selected_cost_identity_and_diagnostic_are_exact(self):
+        mutations=[('status','passed'),('generation',1),('name','continuation'),('schema','other')]
+        for key,value in mutations:
+            with self.subTest(key=key):
+                selected=copy.deepcopy(self.selected);selected[key]=value
+                with self.assertRaises(ValueError):self.validate(2,selected)
+        selected=copy.deepcopy(self.selected);selected['rejection']['error']='certificate claim: context digest mismatch'
+        with self.assertRaises(ValueError):self.validate(2,selected)
+
+    def test_historical_duplicate_or_missing_control_cannot_fill_matrix(self):
+        for g in (1,2):
+            original=copy.deepcopy(self.prior[g])
+            self.prior[g]['rejections'][-1]=self.prior[g]['rejections'][0]
+            with self.assertRaises(ValueError):self.validate(g)
+            self.prior[g]=original;self.prior[g]['controls'].pop()
+            with self.assertRaises(ValueError):self.validate(g)
+
+    def test_missing_reordered_and_duplicate_fresh_reject(self):
+        for g in (1,2):
+            original=copy.deepcopy(self.fresh[g])
+            for changed in (original[:-1],list(reversed(original)),original[:-1]+original[:1]):
+                self.fresh[g]=changed
+                with self.assertRaises(ValueError):self.validate(g)
+
+
+if __name__=='__main__':unittest.main()

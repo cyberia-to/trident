@@ -1,0 +1,80 @@
+"""Select actual historical cases without relabelling failed enclosing suites."""
+from pathlib import Path
+from prior_pins_v5 import (C, LEGACY, ERRORS, require, identity, load, same, reference,
+                          source_closure, evidence_pins, v3_pins)
+from prior_cases_v4 import PRIOR_NAMES, C2_COST
+import prior_native_v5 as native
+import prior_transitions_v5 as transitions
+import prior_schedule_v5 as schedule
+from prior_quiescence_v5 import observe
+
+
+def review(base,generation,proof,original_verifier,expected):
+    base=Path(base).resolve();source_closure(base)
+    return LEGACY.review(base,generation,proof,original_verifier,expected)
+
+
+def suite_contract(suite,prior):
+    require(suite['schema']=='trident/whole-self-build-certificate-completion/v4'
+            and suite['status']=='input-changed' and suite['generation']==2, 'original failed C2 suite stays failed')
+    require(suite['original_proof']==prior['original_proof'] and suite['profile']==prior['profile']
+            and suite['prior_cases']==prior, 'exact original proof eligibility and twelve-case lineage')
+    require('full admission unavailable' in suite['error'] and 'owned suite terminated: 15' in suite['input_error']
+            and 'immutable_inputs_after' not in suite, 'historical interrupted final inventory is not successful')
+    require([r['name'] for r in suite['rejections']]==['cost'], 'exact one selected historical cost rejection')
+    row=suite['rejections'][0]
+    require(row['certificate']==C2_COST and row['error']==ERRORS['cost']
+            and row['recipe']['mode']=='cost' and row['recipe']['construction_reused'] is True,
+            'correct specific complete cost mutation and semantic rejection')
+    return row
+
+
+def current_inputs(base,suite):
+    root=base/'whole-proof-attacks-v4-c2';previous=base/'whole-proof-attacks-v3-c2';helper=base/'whole-proof-helper-v4'
+    paths=[root/'whole_suite.py',root/'guard.py',previous/'preparation.json',helper/'build-1/receipt.json',
+           helper/'fixture-1/receipt.json',base/'whole-helper-digest-independent-review/independent-review.json',
+           base/'whole-proof-attacks-completion-v4/prior_cases_v4.py',base/'production-install/installed/bin/joy',
+           helper/'target-helper/release/whole-proof-mutator',helper/'helper/Cargo.toml',helper/'helper/Cargo.lock']
+    paths+=sorted((helper/'helper').glob('*.rs'))
+    paths += [p for p in sorted((previous/'inputs').rglob('*')) if p.is_file()]
+    require(set(map(str,paths))==set(suite['immutable_inputs_before']), 'independent complete original immutable inventory')
+    actual={str(p):identity(p) for p in paths}
+    require(actual==suite['immutable_inputs_before'], 'new current scan agrees with original before snapshot')
+    return actual
+
+
+def admit_v4_c2_cost(base,proof,original_verifier,expected):
+    base=Path(base).resolve();source_closure(base);evidence_pins(base)
+    observed_before=observe(base)
+    prior=review(base,2,proof,original_verifier,expected)
+    root=base/'whole-proof-attacks-v4-c2';work=root/'whole-c2';shared=base/'whole-proof-attacks-completion-v4'
+    suite_path=work/'receipt.json';suite=load(suite_path);row=suite_contract(suite,prior)
+    admission_path=work/'retained-cost-admission.json';admitted=load(admission_path)
+    require(row['recipe']==dict(mode='cost',construction_reused=True,admission=admitted), 'exact original construction-only admission')
+    construction=transitions.cost_construction(base,admitted,dict(proof=prior['original_proof']),v3_pins(base))
+    path=base/'whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc'
+    joy=base/'production-install/installed/bin/joy';frozen=base/'whole-proof-attacks-v3-c2/inputs/frozen'
+    compiler,job,output=frozen/'c2.dag',frozen/'c2-job.dag',work/'cost.dag'
+    inputs={str(p):identity(p) for p in (joy,compiler,job,output)};inputs[str(path)]=C2_COST
+    require(row['verification_receipt']=='attempts/whole-c2-verify-cost/receipt.json'
+            and row['protected_output']==identity(output), 'exact distinct verifier and protected output')
+    directory=root/'attempts/whole-c2-verify-cost'
+    argv=[joy,'verify-artifact',compiler,'--input',job,'--proof',path,'--output',output,'--emit','program',
+          *C.profile_flags(prior['profile']),'--force']
+    command=native.diagnostic(base,2,directory,argv,1,dict(generation=2,expected_error=ERRORS['cost']),inputs,'verify')
+    require((directory/'stdout').stat().st_size==0 and ERRORS['cost'] in (directory/'stderr').read_text(), 'actual specific rejection diagnostic')
+    retirement=transitions.cost_retirement(base,suite,admitted)
+    quiescence=schedule.review(base)
+    require(suite['started_ns']<=command['started_ns']<=command['ended_ns']<=suite['ended_ns'], 'actual cost within original failed suite')
+    actual=current_inputs(base,suite)
+    same(Path(proof),prior['original_proof']);evidence_pins(base);source_closure(base)
+    return dict(schema='trident/selected-v4-cost-rejection/v1',status='passed-selected-v4-cost',generation=2,name='cost',
+                scope='One completed cost rejection only; original suites input-changed and coordinator failed remain unchanged.',
+                rejection=row,original_proof=prior['original_proof'],profile=prior['profile'],
+                original_suite=dict(reference(suite_path),status='input-changed'),
+                original_controller=dict(quiescence['controller'],status='failed'),verification=reference(directory/'receipt.json'),
+                construction_admission=reference(admission_path),construction=construction,retirement=retirement,
+                prelude=reference(work/'prelude-complete.json'),prelude_snapshot=transitions.prelude_snapshot(suite),
+                current_immutable_inputs=actual,source_manifest=reference(shared/'sources.json'),quiescence=quiescence,
+                current_quiescence_before=observed_before,current_quiescence_after=observe(base),
+                old_verification_accepted=False,deleted_body_required=False,deletion_authorized=False)

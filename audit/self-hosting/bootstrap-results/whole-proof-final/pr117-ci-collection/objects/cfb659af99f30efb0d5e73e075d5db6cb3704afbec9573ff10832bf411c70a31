@@ -1,0 +1,139 @@
+--- /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/run.py
++++ /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/run.py
+@@ -1,4 +1,4 @@
+-"""One bounded, offline, fresh-output replay after both actual prerequisite passes."""
++"""One bounded, offline, fresh-output replay after actual terminal collector pass."""
+ import argparse
+ import json
+ import os
+@@ -12,7 +12,7 @@
+ import time
+ import traceback
+ 
+-from admission import (ROOT, R2, COLLECTOR, OWNER, OWNER_WRAPPER, GIT_REPO, PYTHON, SCOPES, ENV, MIB, GIB,
++from admission import (ROOT, R2, COLLECTOR, OWNER, OWNER_WRAPPER, PEER, GIT_REPO, PYTHON, SCOPES, ENV, MIB, GIB,
+                        admit, require, identity, reference, load, check_result)
+ 
+ LIMITS = dict(replay_seconds=1200, owned_output_bytes=32 * MIB, log_bytes=MIB,
+@@ -20,19 +20,28 @@
+ 
+ 
+ def size_tree(root):
++    if not root.exists() and root == OWNER:
++        require(not root.is_symlink(), 'ordinary absent owner output')
++        return 0
+     require(root.is_dir() and not root.is_symlink(), 'ordinary existing accounting scope')
+     paths = list(root.rglob('*'))
+     require(len(paths) <= 500000 and all(not p.is_symlink() for p in paths), 'bounded ordinary tree')
+     return sum(p.stat().st_size for p in paths if p.is_file())
+ 
+ 
++def owned_size():
++    return sum(size_tree(p) for p in dict.fromkeys((ROOT, OWNER)))
++
++def shared_size():
++    return sum(size_tree(p) for p in dict.fromkeys((*SCOPES, ROOT, OWNER, PEER)))
++
+ def save(path, value):
+     raw = (json.dumps(value, indent=2) + '\n').encode()
+-    require(len(raw) <= MIB, 'bounded peer wrapper receipt')
++    require(len(raw) <= MIB, 'bounded owner wrapper receipt')
+     # Both the old receipt and the atomic replacement coexist before rename.
+-    require(size_tree(path.parent) + len(raw) <= LIMITS['owned_output_bytes'],
+-            'wrapper atomic replacement fits peer output ceiling')
+-    shared_used = sum(size_tree(p) for p in (*SCOPES, OWNER, OWNER_WRAPPER, ROOT))
++    require(owned_size() + len(raw) <= LIMITS['owned_output_bytes'],
++            'wrapper atomic replacement fits combined owner output ceiling')
++    shared_used = shared_size()
+     require(shared_used + len(raw) <= LIMITS['shared_bytes'], 'wrapper atomic replacement fits shared ceiling')
+     require(shutil.disk_usage(ROOT).free >= LIMITS['free_floor_bytes'] + len(raw),
+             'wrapper replacement preserves free floor')
+@@ -45,7 +54,7 @@
+ 
+ 
+ def abort_signal(number, _frame):
+-    raise InterruptedError('peer replay received ' + signal.Signals(number).name)
++    raise InterruptedError('owner replay received ' + signal.Signals(number).name)
+ 
+ 
+ def install_handlers():
+@@ -61,27 +70,26 @@
+ 
+ 
+ def run(selection_path, review_path, output):
+-    require(output.parent == ROOT and not output.exists(), 'fresh peer-owned output directory')
++    require(output == ROOT == OWNER_WRAPPER and not OWNER.exists() and not OWNER.is_symlink() and not any((ROOT/name).exists() or (ROOT/name).is_symlink() for name in ('receipt.json','stdout','stderr')), 'fresh fixed owner result and wrapper logs')
+     # Admission reads only terminal small prerequisites and reviewed source files.
+     admitted = admit(selection_path, review_path)
+     original_scope_bytes = [size_tree(p) for p in SCOPES]
+-    owner_scope_bytes = [size_tree(p) for p in (OWNER, OWNER_WRAPPER)]
+-    peer_preparation_bytes = size_tree(ROOT)
+-    require(sum(original_scope_bytes + owner_scope_bytes) + peer_preparation_bytes + LIMITS['owned_output_bytes'] <= LIMITS['shared_bytes'],
+-            '3GiB shared ceiling includes peer reservation')
++    peer_preparation_bytes = size_tree(PEER)
++    owner_preparation_bytes = size_tree(ROOT)
++    require(sum(original_scope_bytes) + peer_preparation_bytes + owner_preparation_bytes + LIMITS['owned_output_bytes'] <= LIMITS['shared_bytes'],
++            '3GiB shared ceiling includes owner reservation')
+     require(shutil.disk_usage(ROOT).free >= LIMITS['free_floor_bytes'] + LIMITS['owned_output_bytes'],
+-            '8GiB free floor plus peer reservation')
+-    output.mkdir(mode=0o700)
++            '8GiB free floor plus owner reservation')
+     # Import only the already rehashed cleanup implementation; no transport method is invoked.
+     sys.path.insert(0, str(R2 / 'whole-retention-adoption'))
+     from transport import stop
+     args = [str(PYTHON), '-B', '-W', 'error', str(COLLECTOR / 'replay.py'),
+-            '--collection', str(COLLECTOR), '--git-repo', str(GIT_REPO), '--output', str(output / 'replay')]
+-    report = dict(schema='trident/pr117-independent-offline-replay-launch/v1', status='running',
++            '--collection', str(COLLECTOR), '--git-repo', str(GIT_REPO), '--output', str(OWNER)]
++    report = dict(schema='trident/pr117-owner-offline-replay-launch/v1', status='running',
+                   started_ns=time.time_ns(), admission=admitted, command=args, cwd=str(ROOT),
+                   environment=ENV, limits=LIMITS, original_scope_bytes=original_scope_bytes,
+                   peer_preparation_bytes=peer_preparation_bytes,
+-                  owner_scope_bytes=owner_scope_bytes,
++                  owner_preparation_bytes=owner_preparation_bytes,
+                   scope='Retained original native-matrix replay; no network, compiler, proof, corpus or transport rerun')
+     save(output / 'receipt.json', report)
+     child = None
+@@ -108,9 +116,9 @@
+                 require(time.monotonic() - tick <= LIMITS['replay_seconds'], 'offline replay deadline')
+                 require(shutil.disk_usage(ROOT).free >= LIMITS['free_floor_bytes'], '8GiB free floor')
+                 if time.monotonic() >= sample_tick:
+-                    used = size_tree(output)
++                    used = owned_size()
+                     # Keep two 1MiB receipt buffers available for terminal status.
+-                    require(used <= LIMITS['owned_output_bytes'] - 2 * MIB, 'peer output preserves terminal reserve')
++                    require(used <= LIMITS['owned_output_bytes'] - 2 * MIB, 'combined owner output preserves terminal reserve')
+                     report['peak_output_bytes'] = max(used, report.get('peak_output_bytes', 0))
+                     sample_tick = time.monotonic() + 0.5
+                 for key, _ in select.select(timeout=0.1):
+@@ -121,24 +129,22 @@
+                     available = max(0, LIMITS['log_bytes'] - counts[key.data])
+                     streams[key.data].write(raw[:available])
+                     counts[key.data] += len(raw)
+-                    require(counts[key.data] <= LIMITS['log_bytes'], 'bounded peer outer log')
++                    require(counts[key.data] <= LIMITS['log_bytes'], 'bounded owner outer log')
+             report['exit_code'] = child.wait()
+         require(report['exit_code'] == 0 and counts['stderr'] == 0, 'quiet successful frozen replay command')
+-        result = load(output / 'replay/receipt.json')
++        result = load(OWNER / 'receipt.json')
+         inputs = admitted['inputs']
+         check_result(result, {k: inputs['collection'][k] for k in ('bytes', 'sha256')},
+                      {k: inputs['accounting'][k] for k in ('bytes', 'sha256')})
+         require(result['checker'] == admitted['checker'], 'same frozen checker result')
+         require(admit(selection_path, review_path) == admitted, 'prerequisites and sources unchanged after replay')
+         final_scope_bytes = [size_tree(p) for p in SCOPES]
+-        final_owner_bytes = [size_tree(p) for p in (OWNER, OWNER_WRAPPER)]
+         require(final_scope_bytes == original_scope_bytes, 'original scope sizes unchanged')
+-        require(final_owner_bytes == owner_scope_bytes, 'completed owner replay sizes unchanged')
+-        require(size_tree(output) <= LIMITS['owned_output_bytes'], 'peer final output ceiling')
+-        require(sum(final_scope_bytes + final_owner_bytes) + size_tree(ROOT) <= LIMITS['shared_bytes'], 'shared final ceiling')
+-        report.update(status='passed-independent-original-matrix-replay', replay=reference(output / 'replay/receipt.json'),
++        require(owned_size() <= LIMITS['owned_output_bytes'], 'combined owner final output ceiling')
++        require(shared_size() <= LIMITS['shared_bytes'], 'shared final ceiling')
++        report.update(status='passed-owner-original-matrix-replay', replay=reference(OWNER / 'receipt.json'),
+                       final_scope_bytes=final_scope_bytes, source_and_prerequisites_unchanged=True,
+-                      final_owner_scope_bytes=final_owner_bytes,
++                      final_owned_bytes=owned_size(),
+                       safe_summary={k: result[k] for k in ('origin', 'compiler_sha256', 'source_pins',
+                                    'native_producers', 'native_corpus_jobs', 'observations_per_corpus_job')},
+                       archive_count=len(result['archives']))

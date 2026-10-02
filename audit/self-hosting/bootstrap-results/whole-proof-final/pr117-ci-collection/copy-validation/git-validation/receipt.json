@@ -1,0 +1,188 @@
+{
+  "status": "passed-exact-git-staging-and-crlf-replay",
+  "started_ns": 1790980809636311000,
+  "source_manifest": {
+    "bytes": 56377,
+    "sha256": "856cf06a43154025a245de30e7d6d1d6214e687d621268c1f5476742224a6c50"
+  },
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "commands": [
+    {
+      "label": "init",
+      "argv": [
+        "/usr/bin/git",
+        "init",
+        "--quiet",
+        "--initial-branch=audit-byte-check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/repo",
+      "started_ns": 1790980809636446000,
+      "exit_code": 0,
+      "ended_ns": 1790980809685115000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "config",
+      "argv": [
+        "/usr/bin/git",
+        "config",
+        "--local",
+        "core.autocrlf",
+        "true"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/repo",
+      "started_ns": 1790980809685302000,
+      "exit_code": 0,
+      "ended_ns": 1790980809705553000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "add",
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        ".gitattributes",
+        "COPY.md",
+        "PLAN.md",
+        "README.md",
+        "delivery-files.json",
+        "final-preparation.json",
+        "final-references-only.json",
+        "intermediate-result-1",
+        "objects",
+        "preparation.json",
+        "references-only.json",
+        "retained-files.json",
+        "static-1",
+        "superseded-v1",
+        "v2-reference-only.json",
+        "validation-final.json",
+        "validation-final.stderr",
+        "validation-final.stdout",
+        "validation-static.stderr",
+        "validation-static.stdout",
+        "verify-retained.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/repo",
+      "started_ns": 1790980809705929000,
+      "exit_code": 0,
+      "ended_ns": 1790980809892116000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/repo",
+      "started_ns": 1790980809892327000,
+      "exit_code": 0,
+      "ended_ns": 1790980809928823000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "attributes",
+      "argv": [
+        "/usr/bin/git",
+        "check-attr",
+        "text",
+        "whitespace",
+        "--",
+        "objects/cfb659af99f30efb0d5e73e075d5db6cb3704afbec9573ff10832bf411c70a31",
+        "objects/d3f06c8f02c30b2c598006da34ba4119072221f4e0f497e42ce5959e07ab7aee",
+        "objects/a03dcc874ff630fbf764260cf462855573fab4300c4bb7e82adef8dbf3d89e55"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/repo",
+      "started_ns": 1790980809928994000,
+      "exit_code": 0,
+      "ended_ns": 1790980809948944000,
+      "streams": {
+        "stdout": {
+          "bytes": 558,
+          "sha256": "412b6d4b85814f1b6aff5f03a2dd25a4c7a6501c69ba8de17ce41d91241e59fc"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "filtered-checkout",
+      "argv": [
+        "/usr/bin/git",
+        "checkout-index",
+        "--all",
+        "--prefix=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/filtered/"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery-v2-preparation/git-validation/repo",
+      "started_ns": 1790980809949131000,
+      "exit_code": 0,
+      "ended_ns": 1790980810026265000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "files": 301,
+  "total_bytes": 3192475,
+  "core_autocrlf": true,
+  "filtered_bytes_identical": true,
+  "original_stage_unchanged": true,
+  "maximum_target_utf16": 147,
+  "ended_ns": 1790980810075662000
+}

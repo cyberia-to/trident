@@ -1,0 +1,138 @@
+"""Create a separate exact-text delivery; preserve the rejected preparation."""
+import hashlib
+import importlib.util
+import json
+import shutil
+import stat
+import sys
+import time
+from pathlib import Path
+
+R = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
+W = R / 'whole-proof-ci'
+OLD = W / 'pr117-v4-delivery'
+NEW = W / 'pr117-v4-delivery-v2'
+PREP = Path(__file__).resolve().parent
+CACHE = 'a8606ae30201c655de8201af7f830be56d78853370c059d091b50b355be3a0ff'
+JSONL = 'f0b5c8f00a1ee9b2dc678ee0d557eb09fb15a4325c9f4e2319892723e870103e'
+sys.path.insert(0, str(R / 'whole-proof-final-delivery-preparation'))
+import privacy
+
+
+def identity(path):
+    assert stat.S_ISREG(path.lstat().st_mode)
+    raw = path.read_bytes()
+    return dict(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+
+
+def write_json(path, value):
+    with path.open('x') as out:
+        out.write(json.dumps(value, indent=2) + '\n')
+
+
+def public(raw):
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest == JSONL:
+        privacy.inspect_text(raw)
+        lines = raw.decode().splitlines()
+        assert len(lines) == 15 and all(lines)
+        for line in lines:
+            privacy.inspect(json.loads(line))
+    else:
+        privacy.public_bytes(raw)
+
+
+old_manifest = json.loads((OLD / 'delivery-files.json').read_text())
+assert {str(p.relative_to(OLD)) for p in OLD.rglob('*') if p.is_file()} == set(old_manifest['files']) | {'delivery-files.json'}
+assert all(identity(OLD / name) == value for name, value in old_manifest['files'].items())
+old_before = {str(p.relative_to(OLD)): identity(p) for p in OLD.rglob('*') if p.is_file()}
+rows = json.loads((OLD / 'retained-files.json').read_text())
+removed = [row for row in rows if row['sha256'] == CACHE]
+assert len(removed) == 1 and removed[0]['bytes'] == 13817
+assert removed[0]['original'].endswith('/__pycache__/admission.cpython-314.pyc')
+rows = {row['original']: row for row in rows if row['sha256'] != CACHE}
+assert len(rows) == 440
+NEW.mkdir()
+replaced = {'.gitattributes', 'README.md', 'COPY.md', 'retained-files.json',
+            'delivery-files.json', 'final-preparation.json', 'validation-final.json',
+            'validation-final.stdout', 'validation-final.stderr'}
+for source in sorted(OLD.rglob('*')):
+    if not source.is_file():
+        continue
+    relative = str(source.relative_to(OLD))
+    if relative == 'objects/' + CACHE or relative in replaced:
+        continue
+    raw = source.read_bytes()
+    public(raw)
+    destination = NEW / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open('xb') as out:
+        out.write(raw)
+
+superseded = NEW / 'superseded-v1'
+superseded.mkdir()
+for name in sorted(replaced):
+    with (superseded / name).open('xb') as out:
+        out.write((OLD / name).read_bytes())
+history = [OLD / name for name in sorted(replaced)]
+history += [W / 'pr117-v4-delivery-finalization/delivery-receipt.json',
+            W / 'pr117-v4-delivery-root-preflight-1/receipt.json', Path(__file__)]
+selection_path = R / 'integration/helper-tooling-readiness-15fa/retention.json'
+selection = json.loads(selection_path.read_text())
+assert len(selection['originals']) == 37
+history.append(selection_path)
+for selected in selection['originals']:
+    path = Path(selected['path'])
+    assert identity(path) == {key: selected[key] for key in ('bytes', 'sha256')}
+    history.append(path)
+for path in history:
+    raw = path.read_bytes()
+    assert len(raw) <= 2 * 1024 * 1024
+    public(raw)
+    ident = identity(path)
+    row = dict(original=str(path), **ident, stored='objects/' + ident['sha256'])
+    if str(path) in rows:
+        assert rows[str(path)] == row
+    target = NEW / row['stored']
+    if not target.exists():
+        with target.open('xb') as out:
+            out.write(raw)
+    assert identity(target) == identity(path) == ident
+    rows[str(path)] = row
+assert not any(row['original'].endswith('.pyc') or '/__pycache__/' in row['original'] for row in rows.values())
+write_json(NEW / 'retained-files.json', list(rows.values()))
+write_json(NEW / 'v2-reference-only.json', dict(
+    schema='trident/public-evidence-exclusion/v1',
+    reason='Compiled Python cache is local history, not reviewed public text. Original cache and rejected stage remain unchanged.',
+    compiled_cache=dict(path=removed[0]['original'], bytes=removed[0]['bytes'],
+                        sha256=CACHE, public_body_copied=False),
+    superseded_delivery=dict(path=str(OLD), manifest=identity(OLD / 'delivery-files.json'),
+                             original_map=identity(OLD / 'retained-files.json')),
+    readiness_references_only=selection['references_only']))
+attrs = '* -text\n'
+for digest in ('cfb659af99f30efb0d5e73e075d5db6cb3704afbec9573ff10832bf411c70a31',
+               'd3f06c8f02c30b2c598006da34ba4119072221f4e0f497e42ce5959e07ab7aee',
+               'a03dcc874ff630fbf764260cf462855573fab4300c4bb7e82adef8dbf3d89e55'):
+    assert (NEW / 'objects' / digest).is_file()
+    attrs += 'objects/' + digest + ' whitespace=-blank-at-eol\n'
+(NEW / '.gitattributes').write_text(attrs)
+(NEW / 'README.md').write_text((OLD / 'README.md').read_text() + '''
+This separate v2 delivery preserves the rejected first delivery and its root pre-copy failure. The sole removed public body is a 13,817-byte Python compiled cache; its exact identity remains in `v2-reference-only.json`, and the original cache is unchanged. Collector JSONL stdout remains byte-identical and each of its 15 JSON lines is independently inspected. Three exact raw diff/stderr objects retain their measured trailing whitespace with narrowly scoped Git attributes. The third is the newly included helper-readiness raw diff.
+
+`superseded-v1/` contains the prior 441-entry public map, delivery manifest, README, copy plan, preparation and validation without revising their historical results. The new retained map and validation govern this v2 delivery. The selected 37 small helper-readiness originals are retained; its full 2.4 MB immutable-Git path listing remains an identity-only reference. No executable cache body, complete native artifact or private HTTP header is included.
+''')
+(NEW / 'COPY.md').write_text((OLD / 'COPY.md').read_text() + '''
+Use this v2 directory in place of the rejected first delivery. Preserve the exact three object-specific whitespace attributes and the compiled-cache reference. The isolated Git staging check covers these raw bytes without normalizing them. The prior delivery stays unchanged at its original path and its manifests remain superseded evidence.
+''')
+assert {str(p.relative_to(OLD)): identity(p) for p in OLD.rglob('*') if p.is_file()} == old_before
+assert identity(Path(removed[0]['original'])) == {key: removed[0][key] for key in ('bytes', 'sha256')}
+write_json(NEW / 'final-preparation.json', dict(
+    status='prepared-public-text-delivery-v2', time_ns=time.time_ns(),
+    superseded_delivery=identity(OLD / 'delivery-files.json'),
+    original_cache_unchanged=True, original_stage_unchanged=True,
+    only_removed_prior_public_object=CACHE,
+    added_readiness_originals=37, jsonl_lines=15,
+    files=len(rows), objects=len({row['stored'] for row in rows.values()}),
+    retained_map=identity(NEW / 'retained-files.json'),
+    privacy_sources={str(p):identity(p) for p in (Path(privacy.__file__), Path(privacy.__file__).with_name('safe_io.py'))}))
+print(json.dumps(dict(status='prepared', files=len(rows), map=identity(NEW / 'retained-files.json'))))

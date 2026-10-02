@@ -1,0 +1,42 @@
+{
+  "status": "read-only-local-tool-inspection",
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/curl",
+        "--version"
+      ],
+      "started_ns": 1790971967390085000,
+      "ended_ns": 1790971967402583000,
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 413,
+        "sha256": "af4159f023ae249334d54979e312ece52ff43f7c0af0eb0d7029e02c6ece7cd4"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/curl",
+        "--manual"
+      ],
+      "started_ns": 1790971967402628000,
+      "ended_ns": 1790971967411257000,
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 272827,
+        "sha256": "97285ab9becbdd2b28072c8accb07523c79dd96893db0593c2b2842630efe862"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "earlier_optional_probe": "The prior /opt/homebrew/bin/curl --version command failed127: file absent. No network/auth/body probe.",
+  "official_reference": "https://curl.se/docs/manpage.html#-H",
+  "scope": "Current online manual cross-checked with actual installed curl8.7.1 manual; installed bytes authoritative"
+}

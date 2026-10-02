@@ -1,0 +1,33 @@
+"""Bounded safe ZIP expansion with one inventory reconciliation per boundary."""
+import hashlib
+from pathlib import PurePosixPath
+import stat
+import zipfile
+from budget import MIB,GIB,require
+
+
+def extract(path,target,remaining,budget):
+    budget.reconcile('before-extract:'+target.name)
+    with zipfile.ZipFile(path) as stream:
+        members=stream.infolist();declared=sum(x.file_size for x in members)
+        require(len(members)<=10000 and declared<=min(GIB,remaining),'bounded declared ZIP members and decoded bytes')
+        seen=set()
+        for entry in members:
+            name=entry.filename[:-1] if entry.is_dir() else entry.filename;p=PurePosixPath(name)
+            require(name and str(p)==name and not p.is_absolute() and '..' not in p.parts and '\\' not in name and ':' not in name and name not in seen,'unique safe member')
+            mode=entry.external_attr>>16;require(stat.S_IFMT(mode) in (0,stat.S_IFREG,stat.S_IFDIR),'regular archive member')
+            require(entry.file_size<=256*MIB,'per-member size');seen.add(name)
+        budget.fast(declared);target.mkdir();result={};written=0
+        for entry in members:
+            destination=target/entry.filename
+            if entry.is_dir():destination.mkdir(parents=True,exist_ok=True);continue
+            destination.parent.mkdir(parents=True,exist_ok=True);count=0;digest=hashlib.sha256()
+            with stream.open(entry) as source,destination.open('xb') as output:
+                while data:=source.read(MIB):
+                    count+=len(data);written+=len(data)
+                    require(count<=entry.file_size and written<=declared,'actual member and aggregate size cap')
+                    budget.charge(len(data));output.write(data);digest.update(data)
+            require(count==entry.file_size,'complete member');result[entry.filename]=dict(bytes=count,sha256=digest.hexdigest())
+        require(written==declared,'decoded inventory complete')
+    budget.reconcile('after-extract:'+target.name)
+    return result

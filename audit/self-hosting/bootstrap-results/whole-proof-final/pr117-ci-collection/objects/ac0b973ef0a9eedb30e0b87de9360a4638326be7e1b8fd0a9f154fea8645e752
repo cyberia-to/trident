@@ -1,0 +1,60 @@
+{
+  "status": "failed-before-output-and-child",
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/run.py",
+    "--selection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/selection.json",
+    "--review",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/root-review.json",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/run-1"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay",
+  "exit_code": 1,
+  "error": "ValueError: actual owner frozen replay argv",
+  "tool_chunk": "92c9ee",
+  "own_output_exists": false,
+  "source_manifest": {
+    "bytes": 1221,
+    "sha256": "dce6957da7280708650c8d2559701bbfbd73f2da12657523edd4076d902446b8"
+  },
+  "source_review": {
+    "bytes": 5036,
+    "sha256": "50a39e83c5f6d809ecd1373429d85c757fac26cb10d18aa0d9792656efb2fc8b"
+  },
+  "selection": {
+    "bytes": 1170,
+    "sha256": "fbd5bd104558418204a0a3c86bea3909f85f11271a52423eb7a65854ecdeabc8"
+  },
+  "owner_receipt": {
+    "bytes": 29142,
+    "sha256": "966a24ed7e33a57e3a9ad06ed9965cb173b1ed624e405127e8a7add18a02d641"
+  },
+  "actual_owner_command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/replay.py",
+    "--collection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+    "--git-repo",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-1"
+  ],
+  "reported_python": {
+    "path": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "resolved": "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "bytes": 52448,
+    "sha256": "2477b47fa3ae65b9574eb18a15edb364e96948eaa1875ad3f1c80d780efc9c12"
+  },
+  "expected_python": {
+    "path": "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "bytes": 52448,
+    "sha256": "2477b47fa3ae65b9574eb18a15edb364e96948eaa1875ad3f1c80d780efc9c12"
+  },
+  "observation_ns": 1790978964936267000,
+  "scope": "No replay child was created. Script failed during admit before output.mkdir; actual tool trace identifies this admission line. No original file edits or matrix replay."
+}

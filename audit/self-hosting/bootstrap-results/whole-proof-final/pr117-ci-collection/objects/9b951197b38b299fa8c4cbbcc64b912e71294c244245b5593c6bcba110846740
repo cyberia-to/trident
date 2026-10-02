@@ -1,0 +1,165 @@
+"""Offline peer-launch admission, independent of the collector's mutable state."""
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+R2 = ROOT.parents[1]
+COLLECTOR = ROOT.parent / 'pr117-completion-v4'
+OWNER = ROOT.parent / 'pr117-completion-v4-owner-replay-1'
+OWNER_WRAPPER = ROOT.parent / 'pr117-completion-v4-owner-replay-wrapper-1'
+OLD_PEER = ROOT.parent / 'pr117-completion-v4-independent-replay'
+GIT_REPO = R2 / 'final-integration/trident'
+PYTHON = Path('/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14')
+PYTHON_ID = dict(bytes=52448, sha256='2477b47fa3ae65b9574eb18a15edb364e96948eaa1875ad3f1c80d780efc9c12')
+MIB = 1024 ** 2
+GIB = 1024 ** 3
+SOURCE = dict(bytes=16156, sha256='5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf')
+REVIEW = dict(bytes=20776, sha256='1f46cf59a522b5b3aa1ab36fbd7b821bb9fce6f09cd204a10ad348b4b36d6fee')
+ORIGIN = dict(run_id='37002840888', run_attempt='1', head_sha='10772124836b68a2df011c912b5776b2454a511f')
+COMPILER = '76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8'
+SCOPES = tuple(ROOT.parent / name for name in (
+    'pr117-terminal', 'pr117-completion-v2', 'pr117-completion-v3',
+    'pr117-metadata-probe-1', 'pr117-connector-probe-1', 'pr117-completion-v4'))
+ENV = dict(PATH='/usr/bin:/bin', LANG='C', LC_ALL='C', PYTHONDONTWRITEBYTECODE='1',
+           GIT_NO_REPLACE_OBJECTS='1', GIT_NO_LAZY_FETCH='1', GIT_OPTIONAL_LOCKS='0',
+           GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null', GIT_TERMINAL_PROMPT='0')
+
+
+def require(value, reason):
+    if not value:
+        raise ValueError(reason)
+
+
+def identity(path):
+    path = Path(path)
+    require(path.is_file() and not path.is_symlink(), 'ordinary evidence file')
+    before = path.stat()
+    with path.open('rb') as stream:
+        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+    after = path.stat()
+    require((before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns) ==
+            (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns), 'stable evidence read')
+    return dict(bytes=after.st_size, sha256=digest)
+
+
+def load(path):
+    path = Path(path)
+    require(path.is_file() and not path.is_symlink() and path.stat().st_size <= 32 * MIB,
+            'bounded ordinary JSON')
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, 'unique JSON keys')
+            result[key] = value
+        return result
+    return json.loads(path.read_text(), object_pairs_hook=unique)
+
+
+def reference(path):
+    return dict(path=str(path), **identity(path))
+
+
+def plain(value):
+    return {key: value[key] for key in ('bytes', 'sha256')}
+
+
+def check_outer_streams(wrapper, identify=identity):
+    for name, field in (('outer.stdout', 'outer_stdout'), ('outer.stderr', 'outer_stderr')):
+        require(identify(COLLECTOR / name) == wrapper[field], 'unchanged collector outer stream')
+
+
+def source_closure():
+    require(identity(COLLECTOR / 'sources.json') == SOURCE, 'exact accepted collector source map')
+    require(identity(COLLECTOR / 'independent-review.json') == REVIEW, 'exact accepted root gate')
+    sources = load(COLLECTOR / 'sources.json')
+    require(len(sources) == 72, 'complete accepted source closure')
+    for name, wanted in sources.items():
+        require(Path(name).is_absolute() and identity(name) == wanted, 'unchanged accepted source')
+    tools = load(COLLECTOR / 'toolchain.json')
+    require(tools['python']['path'] == str(PYTHON) and identity(PYTHON) == plain(tools['python']),
+            'exact selected Python')
+    return sources
+
+
+def check_result(value, collection, accounting):
+    require(value['schema'] == 'trident/original-native-phase-matrix-replay-completion/v4'
+            and value['status'] == 'passed-original-matrix-replay-completion', 'successful frozen replay')
+    require(value['origin'] == ORIGIN, 'same original run and commit')
+    require(value['collection'] == collection and value['final_accounting'] == accounting,
+            'same completed collection and accounting')
+    require(value['native_producers'] == 12 and value['native_corpus_jobs'] == 24
+            and len(value['phases']) == 36 and len(value['archives']) == 38,
+            'complete native matrix and logs')
+    require(value['compiler_sha256'] == COMPILER, 'same native self-host compiler')
+    require(value['reused_original_archives'] == 5 and value['reused_v2_archives'] == 11
+            and value['reused_v3_archives'] == 6 and value['continuation_original_archives'] == 15,
+            'distinct original archive provenance')
+
+
+def check_owner_command(command, identify=identity):
+    require(isinstance(command, list) and command and isinstance(command[0], str)
+            and Path(command[0]).is_absolute(), 'absolute owner-reported interpreter')
+    # Python's recorded sys.executable may name the installed Homebrew symlink.
+    # Accept it only when it resolves to this exact selected executable and bytes.
+    resolved = Path(command[0]).resolve(strict=True)
+    require(resolved == PYTHON and identify(resolved) == PYTHON_ID,
+            'owner-reported interpreter resolves to exact selected executable')
+    require(command[1:] == [str(COLLECTOR / 'replay.py'),
+            '--collection', str(COLLECTOR), '--git-repo', str(GIT_REPO), '--output', str(OWNER)],
+            'actual owner frozen replay argv')
+
+
+def check_terminal(wrapper, collection, owner, ids, authorized):
+    """Pure checks; tests can exercise prerequisites without observing live evidence."""
+    require(wrapper['status'] == 'passed' and wrapper['exit_code'] == 0
+            and wrapper['sources_unchanged'] is True, 'collector wrapper terminal success')
+    require(wrapper['command'] == authorized['command'] and wrapper['cwd'] == str(COLLECTOR),
+            'exact authorized collector command')
+    require(wrapper['source_manifest'] == SOURCE and wrapper['review'] == REVIEW,
+            'collector accepted source and review')
+    require(wrapper['completed/receipt.json'] == ids['collection']
+            and wrapper['completed/final-accounting.json'] == ids['accounting'],
+            'wrapper binds completed files')
+    require(collection['schema'] == 'trident/exact-attempt-actions-collection-completion/v4'
+            and collection['status'] == 'passed-completion', 'collector completed successfully')
+    require((collection['run'], collection['attempt'], collection['head']) ==
+            (int(ORIGIN['run_id']), 1, ORIGIN['head_sha']), 'exact collected original run')
+    require(collection['review'] == REVIEW, 'collection launch review')
+    require(wrapper['started_ns'] <= collection['started_ns'] <= collection['ended_ns']
+            <= wrapper['ended_ns'] <= owner['started_ns'] <= owner['ended_ns'],
+            'terminal collector precedes completed owner replay')
+    check_result(owner, ids['collection'], ids['accounting'])
+    require(owner['checker'] == ids['checker'], 'owner used frozen replay checker')
+    check_owner_command(owner['command'])
+
+
+def admit(selection_path, review_path):
+    selection = load(selection_path)
+    require(selection['schema'] == 'trident/pr117-peer-replay-selection/v1', 'explicit terminal selection')
+    own = load(ROOT / 'sources.json')
+    review = load(review_path)
+    require(review['status'] == 'passed-source-review' and review['sources'] == own,
+            'reviewed peer launcher')
+    for name, wanted in own.items():
+        require(identity(name) == wanted, 'unchanged peer launcher source')
+    source_closure()
+    paths = dict(wrapper=COLLECTOR / 'launch-completed.json',
+                 collection=COLLECTOR / 'completed/receipt.json',
+                 accounting=COLLECTOR / 'completed/final-accounting.json',
+                 owner=OWNER / 'receipt.json')
+    require(set(selection['inputs']) == set(paths), 'exact four terminal prerequisite files')
+    ids = {}
+    for key, path in paths.items():
+        require(selection['inputs'][key] == reference(path), 'selected terminal prerequisite identity')
+        ids[key] = identity(path)
+    require(not (COLLECTOR / 'completed/terminal-failure.json').exists(), 'no terminal collection failure')
+    wrapper, collection, owner = [load(paths[k]) for k in ('wrapper', 'collection', 'owner')]
+    ids['checker'] = identity(COLLECTOR / 'replay.py')
+    authorized = load(COLLECTOR / 'independent-review.json')['authorized_launch']
+    check_terminal(wrapper, collection, owner, ids, authorized)
+    check_outer_streams(wrapper)
+    return dict(inputs={k: reference(p) for k, p in paths.items()},
+                selected=reference(selection_path), launcher_review=reference(review_path),
+                launcher_sources=identity(ROOT / 'sources.json'), collector_sources=SOURCE,
+                collector_review=REVIEW, checker=ids['checker'], git=reference('/usr/bin/git'))

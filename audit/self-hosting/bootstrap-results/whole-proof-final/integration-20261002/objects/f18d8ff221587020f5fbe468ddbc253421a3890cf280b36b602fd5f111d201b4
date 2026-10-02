@@ -1,0 +1,36 @@
+{
+  "status": "passed-documentation-validation",
+  "observed_utc": "2026-10-02T19:47:17.338704+00:00",
+  "base": "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+  "tracked_changed": [
+    ".gitattributes",
+    "README.md",
+    "audit/README.md",
+    "audit/final-host-ceiling-package/README.md",
+    "docs/reference/current-native-package.md"
+  ],
+  "new_files": [
+    "audit/delivery-status-20261002/README.md",
+    "audit/delivery-status-20261002/receipt.json",
+    "audit/delivery-status-20261002/request.json",
+    "audit/delivery-status-20261002/response.json",
+    "audit/delivery-status-20261002/stderr.log"
+  ],
+  "file_count": 10,
+  "total_bytes": 57662,
+  "checks": [
+    "Exact five tracked documentation/attribute paths and five new observation files",
+    "Original API request/response/stderr digests equal immutable command receipt",
+    "Published release and exact tag identity; separate unpublished draft identity",
+    "Original historical index is an unchanged suffix",
+    "Original final-package and source734 evidence/contract bodies unchanged",
+    "Raw observation Git attributes disable text conversion",
+    "All local Markdown targets exist with explicit Trident sibling mapping",
+    "git diff --check",
+    "Targeted credential scan"
+  ],
+  "local_links_checked": 48,
+  "patch_sha256": "1f423896b7caf4d8cd570e2b2eced0249c7fdfa8d4cea1633a60d3bbc5d643e7",
+  "files_sha256": "6eb1ba3de4046bef1175bdd76e9fd3d8520702f8c7fb119bfd64b2e46fd9ad3b",
+  "scope": "Documentation only; no commit, push, build, native execution, source/selector update or release mutation."
+}

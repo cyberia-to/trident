@@ -1,0 +1,120 @@
+"""Read-only exact-commit readiness replay; writes only this new review directory."""
+from pathlib import Path
+import collections
+import hashlib
+import json
+import subprocess
+import time
+
+ROOT=Path(__file__).resolve().parent
+BASE=ROOT.parent.parent
+REPO=BASE/'whole-proof-helper-v4/trident'
+OLD='10772124836b68a2df011c912b5776b2454a511f'
+HEAD='15fa1507598ace547d44970d4fe8530137464c0b'
+ORIGIN='8da6f8f6efb3eafb4697f3ce7da74e059d18e02e'
+ARCHIVE='audit/self-hosting/bootstrap-results/whole-proof-final/'
+
+
+def identity(data):return dict(bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+def put(name,value):
+    with (ROOT/name).open('xb') as f:f.write(value if isinstance(value,bytes) else (json.dumps(value,indent=2,sort_keys=True)+'\n').encode())
+commands=[]
+
+def git(label,*args,input=None,retain=True):
+    command=['/usr/bin/git',*args]
+    p=subprocess.run(command,cwd=REPO,input=input,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=30)
+    row=dict(label=label,command=command,cwd=str(REPO),exit_code=p.returncode,stdout=identity(p.stdout),stderr=identity(p.stderr))
+    if input is not None:row['stdin']=identity(input)
+    if retain:put(label+'.stdout',p.stdout);put(label+'.stderr',p.stderr)
+    else:row['stdout_storage']='identity only; original immutable Git objects remain authoritative, no repeated full object copy'
+    commands.append(row)
+    assert p.returncode==0,(label,p.stderr.decode())
+    return p.stdout
+
+
+def blob(path):return git('blob-'+hashlib.sha256(path.encode()).hexdigest()[:16],'show',HEAD+':'+path,retain=False)
+
+
+def main():
+    began=time.monotonic()
+    assert git('merge-base','merge-base',OLD,HEAD).decode().strip()==OLD
+    assert git('origin','rev-parse','origin/release/0.4').decode().strip()==ORIGIN
+    names=git('paths','diff','--name-only',OLD+'...'+HEAD).decode().splitlines()
+    status=git('name-status','diff','--name-status',OLD+'...'+HEAD).decode().splitlines()
+    git('diff-check','diff','--check',OLD+'...'+HEAD)
+    outside=[p for p in names if not p.startswith(ARCHIVE)]
+    assert len(names)==543 and len(outside)==6 and all(p.endswith('.md') for p in outside)
+    git('docs-diff','diff',OLD+'...'+HEAD,'--',*outside)
+    incoming=git('incoming','diff','--name-only',OLD+'..'+ORIGIN).decode().splitlines()
+    assert incoming==['docs/guides/self-hosted-compilation.md']
+    paths=['src','Cargo.toml','Cargo.lock','build.rs','lib','scripts','.github','.gitattributes']
+    trees={}
+    for path in paths:
+        values=git('tree-'+path.replace('/','_'),'rev-parse',OLD+':'+path,HEAD+':'+path).decode().splitlines()
+        assert len(values)==2 and values[0]==values[1]
+        trees[path]=values[0]
+    # Use immutable Git blobs, not the moving working tree; no Rust/native execution.
+    tracked=git('tracked','ls-tree','-r','HEAD' if False else HEAD).decode().splitlines()
+    blobs={line.split('\t',1)[1]:line.split()[2] for line in tracked if line.split()[1]=='blob'}
+    groups=collections.Counter(p[len(ARCHIVE):].split('/')[0] for p in names if p.startswith(ARCHIVE))
+    maps={};bindings=[];refs=[]
+    for name in sorted(groups):
+        path=ARCHIVE+name+'/retained-files.json'
+        if path not in blobs:continue
+        raw=blob(path);rows=json.loads(raw);stored=[]
+        for row in rows:
+            if 'stored' not in row:refs.append(dict(archive=name,reference=row));continue
+            destination=ARCHIVE+name+'/'+row['stored']
+            assert destination in blobs
+            bindings.append((destination,{k:row[k] for k in ('bytes','sha256')}));stored.append(row)
+        maps[name]=dict(path=path,identity=identity(raw),stored_entries=len(stored),original_rows=len(rows))
+    requests={blobs[p] for p,_ in bindings}
+    raw=git('archive-blob-batch','cat-file','--batch',input=('\n'.join(sorted(requests))+'\n').encode(),retain=False)
+    offset=0;verified={}
+    for requested in sorted(requests):
+        end=raw.index(b'\n',offset);oid,kind,size=raw[offset:end].decode().split();size=int(size)
+        assert oid==requested and kind=='blob'
+        data=raw[end+1:end+1+size];assert len(data)==size and raw[end+1+size:end+2+size]==b'\n'
+        verified[oid]=identity(data);offset=end+2+size
+    assert offset==len(raw)
+    assert all(verified[blobs[path]]==expected for path,expected in bindings)
+    assert len(bindings)==711 and len(maps)==9
+    helper=ARCHIVE+'helper-v4/'
+    review_raw=blob(helper+'independent-review/independent-review.json');review=json.loads(review_raw)
+    helper_map={r['original']:r for r in json.loads(blob(helper+'retained-files.json'))}
+    assert review['status']=='passed-source-review' and len(review['sources'])==7
+    assert all(verified[blobs[helper+helper_map[p]['stored']]]==v for p,v in review['sources'].items())
+    assert json.loads(blob(helper+'build-1/receipt.json'))['status']=='passed'
+    fixture=json.loads(blob(helper+'fixture-1/receipt.json'));assert fixture['status']=='passed' and len(fixture['cases'])==14 and all(v['status']=='passed' for v in fixture['cases'])
+    bootstrap=blob('.github/workflows/selfhost-bootstrap.yml').decode()
+    transport=blob('.github/workflows/selfhost-source-transport.yml').decode()
+    notify=blob('.github/workflows/notify-cyber.yml').decode()
+    assert "'**/*.md'" in bootstrap and "'audit/self-hosting/bootstrap-results/**'" in bootstrap
+    assert all(p.endswith('.md') or p.startswith('audit/self-hosting/bootstrap-results/') for p in names)
+    transport_paths=['.github/workflows/selfhost-source-transport.yml','audit/self-hosting/check-source-transport.py','scripts/prepare-selfhost-source.py','scripts/test_prepare_selfhost_source.py','scripts/fixtures/selfhost-kit-metadata.tar.gz']
+    assert not set(names)&set(transport_paths) and 'branches: [master, main]' in notify
+    merge_receipt=BASE/'integration/trident-proof-acceptance-pr117/receipt.json';merged=json.loads(merge_receipt.read_bytes())
+    assert merged['status']=='passed' and merged['head']==OLD and merged['merge']==ORIGIN
+    summary=dict(status='passed-read-only-increment-readiness-with-doc-corrections',base=OLD,head=HEAD,current_origin=ORIGIN,
+                 head_tree=git('head-tree','rev-parse',HEAD+'^{tree}').decode().strip(),
+                 changed_paths=543,archive_paths=537,markdown_paths=outside,archive_groups=dict(groups),
+                 unchanged_tree_or_blob_ids=trees,retained_maps=maps,stored_entries_rehashed=711,mismatches=[],reference_only_rows=refs,
+                 helper_review=identity(review_raw),helper_sources_equal_review=7,helper_recorded_rust_tests=10,
+                 helper_recorded_fixture_comparisons=14,helper_recorded_fresh_verifier_streams=28,
+                 incoming_preserve=incoming,longest_path_utf16=max(len(p.encode('utf-16-le'))//2 for p in blobs),
+                 checked_in_native_triggers='All exact diff paths are ignored by bootstrap; transport matches none; notify is default-branch push only. No native matrix expected from this increment.',
+                 pending_doc_corrections=[
+                    dict(path='.claude/plans/native-compiler-arena.md',lines=[7,27],finding='PR117 collection/replay/merge statements still future; update from actual original replay and merge8da6f8f6.'),
+                    dict(path='CHANGELOG.md',lines=[3,4],finding='Kelvin versioning opening conflates product SemVer with roadmap maturity.',proposal='Package releases use SemVer. Kelvin temperatures in the roadmap describe maturity and do not change package versions.'),
+                    dict(path='docs/guides/self-hosted-compilation.md',finding='Preserve current release/0.4 incoming guide; this is base integration, not a missing implementation.')],
+                 recommendation='After the pending CI evidence/status commit, retain incoming guide and exact-head validation/install. Ready/merge this separately scoped tooling/evidence increment; actual V5/F5 need not finish for preparation integration.',
+                 limitations='No SH8 or full0.4 readiness claim. Current ledger/CHANGELOG/preparation truthfully leave final adversarial/F5 acceptance open. This is a retained-byte/read-only replay, not new native/helper/proof tests. Runtime sources, versions, root attributes and workflow behavior are unchanged.',
+                 origin_merge_evidence=dict(path=str(merge_receipt),**identity(merge_receipt.read_bytes())),elapsed_seconds=time.monotonic()-began,
+                 source=identity(Path(__file__).read_bytes()))
+    put('commands.json',commands);put('review.json',summary)
+    files={p.name:identity(p.read_bytes()) for p in ROOT.iterdir() if p.is_file()}
+    put('files.json',files)
+    print(json.dumps({k:summary[k] for k in ('status','changed_paths','archive_paths','stored_entries_rehashed')}))
+
+
+if __name__=='__main__':main()

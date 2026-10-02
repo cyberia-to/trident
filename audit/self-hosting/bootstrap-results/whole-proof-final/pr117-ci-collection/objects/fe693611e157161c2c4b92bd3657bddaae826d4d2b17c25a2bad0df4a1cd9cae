@@ -1,0 +1,132 @@
+{
+  "status": "passed-offline-source-tests",
+  "started_ns": 1790974278189213000,
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/http_policy.py": {
+      "bytes": 3608,
+      "sha256": "eed168bd567500b8c61613237016ecdae3c4dcea536b1fbd61a9ce3f7b35c228"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/auth.py": {
+      "bytes": 3256,
+      "sha256": "7d845135da65c93dac402bcbe0874a0aa0e361c345129a3b0cd091201805d3e4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/collect.py": {
+      "bytes": 7120,
+      "sha256": "fab519ec62dc5ad024ed76d578dd7dc871055db9d1f9231909bf686337e8de3c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/accounting.py": {
+      "bytes": 2732,
+      "sha256": "0e82e155abcff18734994c2c9ddb8c7f7ff0da72ffbc6d6f92be395a89085874"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/metadata.py": {
+      "bytes": 2708,
+      "sha256": "7e6c37c6fb4b351f3ef6adddad7774d0bf45097e766da3a36e047ff051a59e56"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/budget.py": {
+      "bytes": 1791,
+      "sha256": "1e1b1b41d83c856fe7134a4252f54ab7c93ae066c4ed7431f8723717b3236d16"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/collection_common.py": {
+      "bytes": 3282,
+      "sha256": "4def6ea61d24953c7e21dc6b246fd14b51d8d2dab461aaa470bbce1d4d87240c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/prior16.py": {
+      "bytes": 912,
+      "sha256": "f17f08200501121cb89de90839d1d29c01fee1a4a583108e9d4937c6d057f2f7"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/transfer.py": {
+      "bytes": 7920,
+      "sha256": "2cefe4d81a5dc4189ec926fd155b614480d7e541c11a21b0f0bfef4e13a29d59"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/validate.py": {
+      "bytes": 11130,
+      "sha256": "5318e7d493014518a1b6e98e210fc0ea1f4f5353a3ab667f4b017388c13da9e7"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/replay.py": {
+      "bytes": 10597,
+      "sha256": "bef444fd5f892279246e29e399c183bc814a733d049c94855c4f682ad40931d2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/test_http.py": {
+      "bytes": 12467,
+      "sha256": "a33d7fb348cbd7c553d8cddf623b4fa775f78f5b240a71b58a3418c430d054c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/archive.py": {
+      "bytes": 2016,
+      "sha256": "e9d52642f524979505d070c801523d8699a009f8961d191b021552278690222f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/test_tls.py": {
+      "bytes": 4041,
+      "sha256": "c591853e70859a121ea10feec8331cc2148cd6ef487e41c4fa11adc62b6d24ed"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/project.py": {
+      "bytes": 8624,
+      "sha256": "05e05710cef532a4ac84125219c9ecbca50878d29dfe0438e854740f6e02005f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/test_accounting.py": {
+      "bytes": 2126,
+      "sha256": "8a407f792104287f823af8d58a95ec15f30324f3414dc98b46e8c7c7790eded9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/history.py": {
+      "bytes": 9280,
+      "sha256": "4277f8f5addf41798e8b21c32a30c3034c9a6e04d7e815c7ab482322d246614b"
+    }
+  },
+  "commands": [
+    {
+      "name": "owner-tests",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "-v",
+        "test_http",
+        "test_tls",
+        "test_accounting"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+      "timeout_seconds": 120,
+      "started_ns": 1790974278189232000,
+      "exit_code": 0,
+      "ended_ns": 1790974287063289000,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 3256,
+        "sha256": "1144669d741f1295839d9f6f2b0bccb36b4310588f67f5136d5c0ab1fad9be84"
+      }
+    },
+    {
+      "name": "peer-accounting",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-peer-review/test_peer_accounting.py",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+        "-v"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+      "timeout_seconds": 120,
+      "started_ns": 1790974287063575000,
+      "exit_code": 0,
+      "ended_ns": 1790974287141054000,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 932,
+        "sha256": "1ca692b64669bf3bb235f61c6c68eea6dc37b5dc1c58c0743f960e2299483035"
+      }
+    }
+  ],
+  "scope": "Synthetic commands/loopback HTTP+HTTPS fake-credential probes and independent accounting fixtures; no external HTTP or real credentials/native workload.",
+  "source_unchanged": true,
+  "ended_ns": 1790974287141787000
+}

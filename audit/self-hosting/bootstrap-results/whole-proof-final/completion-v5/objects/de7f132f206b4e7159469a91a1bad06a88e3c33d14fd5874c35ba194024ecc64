@@ -1,0 +1,109 @@
+{
+  "schema": "trident/whole-proof-v5-launch-contract/v1",
+  "status": "prepared-not-launched",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/run.py"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5",
+  "gate": "independent-review.json status passed-source-review and sources equal the complete sources.json; fresh run-1 and admissions; all original leases held",
+  "plan": {
+    "bytes": 1977,
+    "sha256": "9910fd595e8723b3f6366ce4bc347f648ef7139800bf0a1ad4d83001d8e225ff"
+  },
+  "runner_manifest": {
+    "bytes": 2212,
+    "sha256": "4e6fef44f9805fbb340ccb52f8e751623fe66f19c2809828b4e7ed0810fb112f"
+  },
+  "prior_manifest": {
+    "bytes": 1457,
+    "sha256": "509124e2fddf2a8fd3c90034c3bcc71dd741862830dab927e9dff15627884ed6"
+  },
+  "generation_order": [
+    1,
+    2
+  ],
+  "fresh_rejections": {
+    "1": 11,
+    "2": 10
+  },
+  "historical_rejections": {
+    "1": 12,
+    "2": 12
+  },
+  "selected_v4_cost": {
+    "1": 0,
+    "2": 1
+  },
+  "historical_controls_per_generation": 2,
+  "native_commands": 42,
+  "capacity_permits": 23,
+  "resource_contract": {
+    "schema": "trident/complete-proof-missing-cases/v5",
+    "status": "prepared-not-launched",
+    "generations": [
+      1,
+      2
+    ],
+    "roots": {
+      "1": "whole-proof-attacks-v5-c1",
+      "2": "whole-proof-attacks-v5-c2"
+    },
+    "original_scope": "whole-proof-attacks",
+    "proofs": {
+      "1": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "2": {
+        "bytes": 10569174820,
+        "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+      }
+    },
+    "shared_disk_bytes": 27917287424,
+    "free_floor_bytes": 8589934592,
+    "combined_sampled_rss_bytes": 12884901888,
+    "mutant_growth_ceiling_bytes": 33554432,
+    "canonical_and_output_bucket_per_generation": 117440512,
+    "metadata_bucket_per_generation": 268435456,
+    "per_stream_log_bytes": 1048576,
+    "readiness_seconds": 15500,
+    "outer_schedule_seconds": 86400,
+    "scope": "Sequential generation completion, original failed v2/v3/v4 records preserved. Twelve historical rejections per generation; separate selected v4 C2 cost rejection; C1 eleven and C2 ten fresh cases. One active mutation across both generations. Bounded actual capacity admission before each generation and mutation; no projected deletion credit or native retry.",
+    "retained_scopes": [
+      "whole-proof-attacks",
+      "whole-proof-attacks-v2-c1",
+      "whole-proof-attacks-v2-c2",
+      "whole-proof-attacks-parallel-v2",
+      "whole-proof-attacks-v3-c1",
+      "whole-proof-attacks-v3-c2",
+      "whole-proof-attacks-completion-v3",
+      "whole-proof-attacks-v4-c1",
+      "whole-proof-attacks-v4-c2",
+      "whole-proof-attacks-completion-v4"
+    ],
+    "fresh_rejections_per_generation": {
+      "1": 11,
+      "2": 10
+    },
+    "replayed_rejections_per_generation": 12,
+    "replayed_controls_per_generation": 2,
+    "selected_v4_cost_rejections": {
+      "1": 0,
+      "2": 1
+    },
+    "generation_order": [
+      1,
+      2
+    ],
+    "capacity_wait_seconds": 600,
+    "capacity_sample_seconds": 1
+  },
+  "clocks": "Each 600-second capacity wait consumes the original 86400-second monotonic outer schedule. Each actual helper keeps 1800 seconds wall/CPU, verifier 7500 seconds wall/CPU; no native retry.",
+  "original_outcomes": "Both v4 suites remain input-changed; v4 coordinator failed; only exact completed C2 cost rejection is admitted separately.",
+  "private_data": "Full prior process snapshots stay local. Public delivery retains identity references only.",
+  "authority": "Preparation packet only; no automatic launch, historical deletion, cap change, tag or publication."
+}

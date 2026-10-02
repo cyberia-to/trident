@@ -1,0 +1,73 @@
+{
+  "status": "passed-source-review",
+  "reviewed_ns": 1790977897896170000,
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/admission.py": {
+      "bytes": 8157,
+      "sha256": "c1fc0fefa5f40fd768f225c10b7dfae80d314f8686f3973f0cd675259bb66477"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/run.py": {
+      "bytes": 9900,
+      "sha256": "58a5f65b13348918149c0f6fd605b7513446bac078e669883a53c2f85327590d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/test_admission.py": {
+      "bytes": 5843,
+      "sha256": "0258300bc0b0fb89dc5c881ebb9e7a890f24a0d45c9e52d340549404a56d40d5"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/test_run.py": {
+      "bytes": 5032,
+      "sha256": "dc948d18f26ffcfd1113ec076048c6826b2387cdb514e99a87e83ad35726655d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/PLAN.md": {
+      "bytes": 4077,
+      "sha256": "f38db5c67cb280e9b179ae28d9439934b0cc3c86615125070a461a74bc9b9652"
+    }
+  },
+  "source_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/sources.json",
+    "bytes": 1221,
+    "sha256": "dce6957da7280708650c8d2559701bbfbd73f2da12657523edd4076d902446b8"
+  },
+  "root_tests": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/root-validation-2/receipt.json",
+    "bytes": 1172,
+    "sha256": "c061a2e1ecd519d47318c02f22b4cf9b056b60619b1aad44bbde45e19aac63c2"
+  },
+  "preparation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/preparation-3/receipt.json",
+    "bytes": 2774,
+    "sha256": "d90b55c86df554d480c34159eb23d8d3d5d931a1027978d62ca1fd7bf1c2ba9e"
+  },
+  "collector_source": {
+    "bytes": 16156,
+    "sha256": "5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf"
+  },
+  "collector_review": {
+    "bytes": 20776,
+    "sha256": "1f46cf59a522b5b3aa1ab36fbd7b821bb9fce6f09cd204a10ad348b4b36d6fee"
+  },
+  "collector_inputs_rehashed": 72,
+  "scope": "One independent offline replay only after actual full collector and owner replay success, using explicit four-file terminal selection.",
+  "checks": [
+    "Exact5 launcher inputs rehashed; fulladmission, bounded runner and both test modules read. Root24 tests passed including actual SIGTERM/SIGINT handler/restoration and exact v4 underscore wrapper fields.",
+    "Original failed candidate source packets and root23 result remain distinct; signal, accounting and wrapper-shape corrections change only this unlaunched peer preparation.",
+    "Collector72 source identities and selected tools match approved5530/1f46 gate. Exact immutable run37002840888 attempt1/head107721 coordinates required.",
+    "Admission requires explicit exact wrapper/main/final-accounting/owner result selection, terminal order, same frozenchecker and complete12producer/24corpus/38archive union before any output or child.",
+    "Output uses a fresh peer-owned directory; minimal credential-free Git environment disables replacement objects/lazy fetch/global config/prompts. No external network or native compiler/proof execution.",
+    "All six historical/current collector scopes, both completed owner output scopes and entire peer preparation participate in shared3GiB accounting; reserve32MiB and8GiB free before child.",
+    "Finite1200s child with1MiB logs,32MiB per-file limit and sampled aggregateguard. Every atomic wrapper replacement accounts old+new bytes under unchanged output/shared/free bounds.",
+    "Cancellation becomes exception; repeated cancellation cannot bypass bounded owned-group cleanup; original failure persists separately from cleanup failure.",
+    "After replay all selected prerequisites/source identities and originalscope sizes are checked again; terminal records bind exact generatedmatrix result."
+  ],
+  "remaining_findings": [],
+  "limitations": [
+    "Actual collector and owner replay are still running/pending; this gate is source review, not acceptance.",
+    "Aggregate child output is sampled; per-file and parent stream/replacement bounds are enforced independently.",
+    "SH8 full proof acceptance remains separate."
+  ],
+  "authorized_execution": {
+    "max_runs": 1,
+    "condition": "Exact admission selection passes only after collector and owner frozen replay both succeed",
+    "command": "run.py --selection selection.json --review root-review.json --output /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/run-1"
+  }
+}

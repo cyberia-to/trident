@@ -1,0 +1,63 @@
+"""Fresh read-only UTC birth observations; raw local snapshots stay private."""
+import datetime
+import hashlib
+from pathlib import Path
+import re
+from common import ROOT, require, identity, load, reference, same
+
+
+def birth(text):
+    require(re.fullmatch(r'[A-Z][a-z]{2} [A-Z][a-z]{2} +[0-9]{1,2} [0-9]{2}:[0-9]{2}:[0-9]{2} [0-9]{4}',text.strip()) is not None,
+            'exact C-locale UTC process birth')
+    d=datetime.datetime.strptime(text.strip(),'%a %b %d %H:%M:%S %Y').replace(tzinfo=datetime.timezone.utc)
+    require(d.strftime('%a')==text.split()[0], 'consistent UTC birth weekday')
+    return int(d.timestamp())*1_000_000_000
+
+
+def classify(raw,owners,cutoff,observed):
+    require(type(cutoff) is int and cutoff>0 and type(observed) is int and observed>=cutoff, 'ordered fresh process observation')
+    groups=set(owners);seen=set();overlaps=[]
+    for line in raw.decode('ascii').splitlines():
+        row=line.strip().split(maxsplit=2)
+        require(len(row)==3 and all(v.isascii() and v.isdecimal() for v in row[:2]), 'complete process birth row')
+        pid,pgid=map(int,row[:2]);started=birth(row[2])
+        require(pid>0 and pgid>=0 and pid not in seen, 'unique positive process identity')
+        seen.add(pid)
+        if pid in groups or pgid in groups:
+            require(started>cutoff+2_000_000_000 and started<=observed, 'original or ambiguous v4 process still live')
+            overlaps.append(dict(pid=pid,pgid=pgid,birth_utc=row[2],birth_ns=started,classification='reused-after-terminal-cleanup'))
+    require(seen, 'nonempty process observation')
+    return dict(process_rows=len(seen),overlaps=overlaps,no_live_original_owners=True,rounding_margin_ns=2_000_000_000)
+
+
+def retained_observation(base, recorded):
+    shared=base/'whole-proof-attacks-completion-v4';run=load(shared/'run-1/receipt.json');admission=load(shared/'admission.json')
+    require(run['status']=='failed' and run['cleanup']['status']=='passed','original failed run with completed cleanup')
+    owners={str(r['binding']['pid']):r['binding']['started'] for r in run['generations']}
+    native=load(shared/'native-processes/whole-c2-verify-cost.json');owners[str(native['pid'])]=native['started']
+    import json
+    for line in (shared/'run-1/resources.jsonl').read_text().splitlines():
+        for p in json.loads(line)['processes']:
+            if p['pid']==admission['pid']:
+                old=owners.setdefault(str(p['pid']),p['started'])
+                require(old==p['started'] and p['pgid']==admission['pid'],'actual original coordinator birth')
+    require(set(map(int,owners))=={admission['pid'],*admission['children'].values(),native['pid']},'all four original owners')
+    for value in owners.values():require(birth(value)<=run['ended_ns'],'owner born before original shutdown')
+    receipt=Path(recorded['receipt']['path'])
+    require(receipt.parent.parent==base/'whole-proof-attacks-completion-v5/prior-quiescence-observations'
+            and receipt.name=='receipt.json','exact private V5 observation scope')
+    same(receipt,recorded['receipt']);value=load(receipt)
+    require(recorded==dict(receipt=reference(receipt),**value),'retained observation exact serialized fields')
+    require(value['schema']=='trident/fresh-v4-prior-quiescence/v1' and value['status']=='observed-no-live-prior-owners'
+            and value['command']==['/bin/ps','-axo','pid=,pgid=,lstart=']
+            and value['environment_overrides']==dict(TZ='UTC',LC_ALL='C',LANG='C') and value['exit_code']==0
+            and value['owners']==owners and value['cutoff_ns']==run['ended_ns']
+            and run['ended_ns']<=value['started_ns']<=value['ended_ns'],'exact retained current birth observation')
+    require(value['original_run']==reference(shared/'run-1/receipt.json'),'original failure binding')
+    for key in ('stdout','stderr'):
+        path=receipt.parent/key;require(value[key]==reference(path),'exact private raw observation')
+    require(value['stderr']['bytes']==0 and value['stdout']['bytes']<=4*1024**2,'bounded clean private process streams')
+    raw=(receipt.parent/'stdout').read_bytes()
+    expected=classify(raw,{int(k):v for k,v in owners.items()},run['ended_ns'],value['ended_ns'])
+    require(all(value[k]==v for k,v in expected.items()),'independent retained birth classification')
+    return recorded

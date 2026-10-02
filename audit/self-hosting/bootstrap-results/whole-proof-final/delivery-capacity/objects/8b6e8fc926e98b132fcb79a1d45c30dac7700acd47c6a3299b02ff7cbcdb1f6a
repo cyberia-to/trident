@@ -1,0 +1,154 @@
+"""Small closed-metadata sizing only; never call the final collector or a native program."""
+import hashlib
+import json
+from pathlib import Path
+import sys
+import time
+
+ROOT=Path(__file__).resolve().parent
+BASE=ROOT.parent
+SOURCE=BASE/'whole-proof-final-delivery-preparation'
+sys.path.insert(0,str(SOURCE))
+from catalog import Catalog
+from collect import CAPS,locked_inputs
+from safe_io import Budget,digest,encoded,require
+
+MANIFEST='d2f216163f07add07ef7278d998656eccb2f1f60190322e085761191fa64f59f'
+V5='whole-proof-attacks-completion-v5'
+
+
+def identity(path):
+    p=Path(path);require(p.is_file() and not p.is_symlink(),'ordinary small metadata')
+    require(p.stat().st_size<=64*1024**2,'metadata cap')
+    return digest(p.read_bytes())
+
+
+def stage(c):
+    return dict(catalog_entries=len(c.rows),catalog_json_bytes=len(encoded(c.snapshot())),
+                metadata_read_bytes=c.budget.read_bytes,metadata_files_read=len(c.data))
+
+
+def base_catalog():
+    c=Catalog(BASE,Budget(CAPS));policy=json.loads((SOURCE/'policy.json').read_bytes())
+    locked_inputs(c,policy)
+    c.load(V5+'/baseline.json')
+    p=c.load('whole-proof/preparation.json')
+    c.file_map('whole-proof/inputs',p['files'],'whole-proof/preparation.json')
+    for g in (2,3):
+        directory=f'whole-proof-corpus-v2/c{g}'
+        row=c.load(directory+'/receipt.json')
+        require(row['status']=='passed','closed corpus metadata only')
+        name=directory+'/files.json'
+        c.file_map(directory,c.load(name,row['files'],references=False),name)
+    return c
+
+
+def load_bundle(c,name):
+    directory='whole-proof-attacks-v5-c1/attempts/'+name
+    row=c.load(directory+'/receipt.json')
+    require(row['status']=='passed' and row['inputs_before']==row['inputs_after'],
+            'already-terminal native command only')
+    c.file_map(directory,row['files'],directory+'/receipt.json')
+    for suffix in ('.json','.observed','.retired'):
+        c.load(V5+'/native-processes/'+name+suffix)
+    streams=[]
+    for kind in ('stdout','stderr'):
+        value=row['files'][kind]
+        path=BASE/directory/kind
+        require(path.is_file() and not path.is_symlink() and path.stat().st_size==value['bytes'],
+                'closed stream observed size matches receipt')
+        streams.append(dict(path=str(path.relative_to(BASE)),**{k:value[k] for k in ('bytes','sha256')}))
+    return streams
+
+
+def main():
+    started=time.time_ns();manifest=json.loads((SOURCE/'sources.json').read_bytes())
+    require(identity(SOURCE/'sources.json')['sha256']==MANIFEST,'exact frozen collector map')
+    for name,value in manifest.items():require(identity(SOURCE/name)==value,'unchanged frozen collector source')
+    result=dict(schema='trident/final-delivery-capacity-planning/v1',status='planning-only',
+                started_ns=started,source_manifest=identity(SOURCE/'sources.json'),sources=manifest,
+                caps=CAPS,stages={},closed_native_bundles=[],streams=[],templates={},
+                commands=[sys.executable,*sys.argv])
+    c=base_catalog();result['stages']['static_preview']=stage(c)
+    expected=json.loads((SOURCE/'validation-final-5/privacy-preview-summary.json').read_bytes())
+    require(len(c.rows)==expected['entries']==14654,'same prior static preview entry count')
+    result['existing_preview']=dict(path=str(SOURCE/'validation-final-5/privacy-preview-summary.json'),
+                                    **identity(SOURCE/'validation-final-5/privacy-preview-summary.json'))
+    for g in (1,2):
+        for action in ('selfbuild','fresh-verification'):
+            directory=f'whole-proof/attempts/c{g}-{action}-1'
+            row=c.load(directory+'/receipt.json')
+            require(row['status']=='passed','closed positive receipt only')
+            c.file_map(directory,row['files'],directory+'/receipt.json')
+            for kind in ('stdout','stderr'):
+                path=BASE/directory/kind;value=row['files'][kind]
+                require(path.stat().st_size==value['bytes'],'closed positive stream size')
+                result['streams'].append(dict(path=str(path.relative_to(BASE)),**{k:value[k] for k in ('bytes','sha256')}))
+    result['stages']['plus_closed_positive']=stage(c)
+    retired=sorted((BASE/V5/'native-processes').glob('whole-c1-*.retired'))
+    require(retired,'some already-retired C1 commands')
+    for path in retired:
+        name=path.name.removesuffix('.retired');before=stage(c)
+        streams=load_bundle(c,name);isolated=Catalog(BASE,Budget(CAPS));load_bundle(isolated,name)
+        result['closed_native_bundles'].append(dict(name=name,before=before,after=stage(c),
+                                                    standalone=stage(isolated)))
+        result['streams'].extend(streams)
+    # Capacity permits are closed immutable JSON; observation bodies are identities only.
+    cases={n['name'].split('-',3)[3] for n in result['closed_native_bundles']}
+    for name in ('generation',*sorted(cases)):
+        path=f'{V5}/capacity/c1-{name}.json';row=c.load(path)
+        require(row['status']=='passed-capacity-admission','closed capacity permit only')
+        c.add(path+'l',row['logs'],path)
+    # Generation launch admission is immutable once written; no running aggregate is read.
+    c.load(V5+'/admission-c1.json')
+    result['stages']['measured_closed_metadata']=stage(c)
+    # Already-accepted prelaunch result shapes supply an explicit conditional template.
+    # They are not the future actual suite or its final checker result.
+    for name in ('c1.json','c2.json','c2-cost.json'):
+        path=BASE/V5/'actual-2'/name
+        data=path.read_bytes();value=json.loads(data)
+        template=Catalog(BASE,Budget(CAPS));template.references(value,'projection:'+name)
+        result['templates'][name]=dict(original=dict(path=str(path),**digest(data)),
+                                        entries=len(template.rows),catalog_json_bytes=len(encoded(template.snapshot())),
+                                        treatment='historical shape template only; not future suite or checker measurement')
+    measured=result['stages']['measured_closed_metadata'];bundles=result['closed_native_bundles']
+    max_entries=max(x['standalone']['catalog_entries'] for x in bundles)
+    max_catalog=max(x['standalone']['catalog_json_bytes'] for x in bundles)
+    max_reads=max(x['standalone']['metadata_read_bytes'] for x in bundles)
+    remaining=42-len(bundles)
+    prior=sum(x['entries'] for x in result['templates'].values())
+    prior_bytes=sum(x['catalog_json_bytes'] for x in result['templates'].values())
+    prior_reads=sum(x['original']['bytes'] for x in result['templates'].values())
+    max_stream=max(x['bytes'] for x in result['streams'])
+    observed_streams=sum(x['bytes'] for x in result['streams'])
+    projected_entries=measured['catalog_entries']+remaining*max_entries+prior
+    projected_catalog=measured['catalog_json_bytes']+remaining*max_catalog+prior_bytes
+    projected_read_once=measured['metadata_read_bytes']+remaining*max_reads+prior_reads
+    projected_streams=observed_streams+(94-len(result['streams']))*max_stream
+    result['conditional_projection']=dict(remaining_native_bundles=remaining,
+        observed_bundle_count=len(bundles),max_observed_standalone_bundle_entries=max_entries,
+        max_observed_standalone_bundle_catalog_bytes=max_catalog,max_observed_bundle_read_bytes=max_reads,
+        template_entries_added=prior,projected_entries_before_unmodeled_metadata=projected_entries,
+        remaining_catalog_entries=CAPS['catalog_entries']-projected_entries,
+        projected_catalog_bytes_before_unmodeled_metadata=projected_catalog,
+        measured_streams=len(result['streams']),measured_stream_bytes=observed_streams,
+        max_observed_stream_bytes=max_stream,projected_all94_stream_bytes=projected_streams,
+        projected_output_before_unmodeled_metadata=projected_catalog+projected_streams,
+        projected_metadata_read_twice=2*projected_read_once,
+        assumptions=['Every remaining native bundle contributes no more entries/read bytes/serialized catalog bytes than the largest observed standalone closed C1 bundle. Duplicate paths are deliberately overcounted in this estimate.',
+          'The two accepted historical prior-case result shapes and selected V4 cost result are each added once as conditional template contributions. Their future suite/JSON-pointer coordinates and contents can differ.',
+          'Every as-yet-unobserved public stream is no larger than the largest currently closed positive/native stdout/stderr stream. This is an assumption, not the1MiB per-stream cap.',
+          'Still unmodeled: final watcher/F5 result, completed controller/suite wrappers, remaining capacity/admission metadata, extra nested result identities, final source-gate reads, generated summary/receipt/map/readback overhead. Remaining margin must cover these actual future values.',
+          'All formulas are planning comparisons under unchanged CAPS; no terminal collector, proof body read, replay, new capacity or acceptance verdict is performed.'])
+    # Rehash every small observed metadata file. No proof/binary/resource body is opened.
+    result['observed_metadata']={name:digest(data) for name,data in c.data.items()}
+    for name,value in result['observed_metadata'].items():require(identity(BASE/name)==value,'closed metadata stayed unchanged')
+    for name,value in manifest.items():require(identity(SOURCE/name)==value,'collector source stayed unchanged')
+    result.update(ended_ns=time.time_ns(),sources_unchanged=True,closed_metadata_unchanged=True,
+                  scope='Static and closed individual C1 metadata only; running suite/coordinator/F5 receipts excluded. Templates/projections explicitly conditional.')
+    out=ROOT/'receipt.json'
+    with out.open('xb') as stream:stream.write(encoded(result))
+    print(json.dumps(dict(receipt=identity(out),measured=measured,projection=result['conditional_projection']),indent=2))
+
+
+if __name__=='__main__':main()

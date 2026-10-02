@@ -1,0 +1,15 @@
+
+running 10 tests
+test frames::tests::newly_encoded_matching_header_still_requires_a_digest ... ok
+test frames::tests::completion_truncation_preserves_exact_original_prefix ... ok
+test frames::tests::corrupt_original_bytes_never_gain_authenticated_status ... ok
+test frames::tests::source_chain_corruption_is_refused ... ok
+test frames::tests::rebuilding_untouched_compressed_frames_is_byte_identical ... ok
+test frames::tests::public_compressor_output_is_reencoded_as_one_checked_frame ... ok
+test frames::tests::rebound_complete_chain_passes_public_transport_under_new_context ... ok
+test frames::tests::changed_sequence_rechains_authenticated_frames ... ok
+test frames::tests::changed_payload_rechains_every_following_original_frame ... ok
+test noun::tests::regenerated_payload_and_topology_are_canonical_new_nouns ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,138 @@
+"""Replay twelve historical cases; separately admit one construction, never a verdict.
+
+No native programs, mutation, deletion, process signals, or network operations.
+The original failed v2/v3 suites and interrupted cost verifier remain failed.
+"""
+import importlib.util
+from pathlib import Path
+from prior_primitives_v4 import C, require, identity, load, same, files, ERRORS, PRIOR, v3_pins
+from prior_replay_v4 import names, replay_rows, diagnostic
+from prior_quiescence_v4 import reference, review_quiescence, stable_hash, observe_current
+
+ADDITIONAL = ('rebound-job-limit', 'continuation', 'generation')
+PRIOR_NAMES = (*PRIOR, *ADDITIONAL)
+OLD_ADMISSION_SHA = '031896f4946cf459eb8ad30c189a98201428d01998d5350df179645113f67818'
+C2_COST = dict(bytes=10569174820, sha256='246cf2d72b443d2b1e85e3b366936075107fc2387ffc741f0d3e08aa2878eb4d')
+
+
+def original_admission(base, generation, proof, verifier, expected):
+    path = base / 'whole-proof-attacks-completion-v3/prior_cases.py'
+    require(identity(path)['sha256'] == OLD_ADMISSION_SHA, 'exact original selected-case admission source')
+    spec = importlib.util.spec_from_file_location('immutable_prior_v2_admission', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.review(base, generation, proof, verifier, expected)
+
+
+def suite_contract(suite, generation, prior):
+    require(type(generation) is int and generation in (1, 2), 'known whole generation')
+    require(suite['schema'] == 'trident/whole-self-build-certificate-completion/v3'
+            and suite['status'] == 'failed' and suite['generation'] == generation,
+            'original failed v3 suite remains failed')
+    require(suite['profile'] == prior['profile'] and suite['original_proof'] == prior['original_proof']
+            and suite['prior_cases'] == prior, 'v3 exact original eligibility and v2 provenance')
+    names(suite['rejections'], ADDITIONAL, 'additional v3 cases')
+    require('controls' not in suite and suite.get('error'), 'no fabricated fresh control or suite success')
+    require(suite['immutable_inputs_before'] == suite['immutable_inputs_after'], 'v3 immutable inputs before/after')
+
+
+def review(base, generation, proof, original_verifier, expected):
+    """Return controls, ordered 12 rows, original_v2/additional_v3, index/result."""
+    base = Path(base).resolve()
+    require(type(generation) is int and generation in (1, 2), 'known whole generation')
+    pins = v3_pins(base)
+    prior = original_admission(base, generation, Path(proof), Path(original_verifier), expected)
+    root = base / f'whole-proof-attacks-v3-c{generation}'
+    path = root / f'whole-c{generation}/receipt.json'
+    suite = load(path)
+    suite_contract(suite, generation, prior)
+    for source, value in suite['immutable_inputs_after'].items():
+        same(Path(source), value)
+    positive = dict(proof=prior['original_proof'], verification=expected)
+    old_index = replay_rows(base, generation, 2, [prior['controls'][1], *prior['rejections']], positive, pins)
+    require(old_index['index'] == prior['index'] and old_index['result'] == prior['result'], 'same original index/result')
+    v3_index = replay_rows(base, generation, 3, suite['rejections'], positive, pins, old_index)
+    rows = [*prior['rejections'], *suite['rejections']]
+    names(rows, PRIOR_NAMES, 'twelve distinct historical rejections')
+    commands = {}
+    for row in suite['rejections']:
+        for key, owner in (('verification_receipt', row), ('construction_receipt', row['recipe'])):
+            command_path = C.within(root, owner[key])
+            commands[str(command_path)] = identity(command_path)
+    return dict(schema='trident/prior-complete-proof-cases/v2', status='passed-selected-cases',
+                scope='Case-level replay only; both enclosing suites remain failed; no fresh case execution.',
+                generation=generation, original_proof=prior['original_proof'], profile=prior['profile'],
+                controls=prior['controls'], rejections=rows, original_v2=prior,
+                additional_v3=dict(suite=reference(path), status='failed', names=list(ADDITIONAL),
+                                   rejections=suite['rejections'], commands=commands, **v3_index),
+                index=prior['index'], result=prior['result'], quiescence=review_quiescence(base))
+
+
+def interrupted_verifier(root, base, proof_identity, profile):
+    """Authenticate interrupted command inputs only; never pass it as rejection."""
+    work = root / 'whole-c2'
+    directory = root / 'attempts/whole-c2-verify-cost'
+    path = directory / 'receipt.json'
+    row = load(path)
+    joy = base / 'production-install/installed/bin/joy'
+    compiler, job = (root / 'inputs/frozen' / name for name in ('c2.dag', 'c2-job.dag'))
+    certificate, output = work / 'certificate-cost.joysc', work / 'cost.dag'
+    inputs = {str(p): identity(p) for p in (joy, compiler, job, output)}
+    inputs[str(certificate)] = C2_COST
+    argv = [joy, 'verify-artifact', compiler, '--input', job, '--proof', certificate,
+            '--output', output, '--emit', 'program', *C.profile_flags(profile), '--force']
+    require(row['schema'] == 'trident/whole-proof-attack-command/v2'
+            and row['status'] == 'failed' and row['exit_code'] == -15 and row['expected_exit'] == 1
+            and row['resource_stop'] == 'shared-stop', 'old cost verifier is interrupted, not successful')
+    require(row['argv'] == list(map(str, argv)) and row['cwd'] == str(directory)
+            and row['environment'] == {'PATH': ''}
+            and row['metadata'] == dict(generation=2, expected_error=ERRORS['cost'])
+            and row['inputs_before'] == row['inputs_after'] == inputs, 'exact interrupted verifier provenance')
+    require(set(row['files']) == {'stdout', 'stderr', 'resources.jsonl'}, 'complete interrupted command streams')
+    files(directory, row['files'])
+    require(row['files']['stdout']['bytes'] == row['files']['stderr']['bytes'] == 0,
+            'interrupted verifier did not produce a terminal verdict')
+    require(C2_COST['bytes'] == proof_identity['bytes'], 'cost mutation retains complete source length')
+    return dict(receipt=reference(path), status='failed', exit_code=-15, resource_stop='shared-stop',
+                accepted_as_rejection=False, compiler=reference(compiler), job=reference(job),
+                protected_output=reference(output), expected_fresh_error=ERRORS['cost'])
+
+
+def admit_c2_cost(base, proof, original_verifier, expected):
+    """Admit exact retained construction for a NEW verifier; no retirement grant."""
+    base = Path(base).resolve()
+    prior = review(base, 2, proof, original_verifier, expected)
+    pins = v3_pins(base)
+    root = base / 'whole-proof-attacks-v3-c2'
+    work = root / 'whole-c2'
+    helper, index, noun = root/'target-helper/release/whole-proof-mutator', work/'index.json', work/'result.dag'
+    proof, certificate = Path(proof), work/'certificate-cost.joysc'
+    inputs = {str(p): identity(p) for p in (helper, index, noun)}
+    inputs[str(proof)] = prior['original_proof']
+    directory = root / 'attempts/whole-c2-construct-cost'
+    row = diagnostic(directory, [helper, 'mutate', proof, index, noun, certificate, 'cost'], 0,
+                     dict(generation=2, mode='cost'), inputs, 'helper', 3, pins)
+    built, indexed = load(directory/'stdout'), load(index)
+    require(built == dict(decoded_bytes=indexed['decoded_bytes'], fixed_changed_bytes=0,
+                         frames=indexed['frames'], mode='cost', source_records=indexed['records'],
+                         source_sha256=prior['original_proof']['sha256'], terminal_suffix_rebuilt=True,
+                         wire_bytes=C2_COST['bytes']), 'exact complete cost-construction output')
+    old_verify = interrupted_verifier(root, base, prior['original_proof'], prior['profile'])
+    current_before = observe_current(base)
+    actual = stable_hash(certificate, C2_COST)
+    current_after = observe_current(base)
+    # Historical absence plus stable inode is an admission observation, not ongoing ownership.
+    quiescence = review_quiescence(base)
+    return dict(schema='trident/retained-cost-construction-admission/v1', status='passed-construction-admission',
+                generation=2, name='cost', certificate=actual, original_proof=prior['original_proof'],
+                profile=prior['profile'], construction=reference(directory/'receipt.json'),
+                recipe=dict(mode='cost', context=[], certificate=C2_COST,
+                            construction_receipt=str(directory/'receipt.json')),
+                index=reference(index), result=reference(noun), helper=reference(helper),
+                interrupted_verification=old_verify, quiescence=quiescence,
+                current_quiescence_before=current_before, current_quiescence_after=current_after,
+                expected_fresh_error=ERRORS['cost'], fresh_verification_required=True,
+                accepted_as_rejection=False, deletion_authorized=False,
+                clock_observation=dict(monotonic_elapsed_seconds=row['elapsed_seconds'],
+                                       unix_elapsed_seconds=(row['ended_ns']-row['started_ns'])/1e9,
+                                       claim='Original monotonic guard result; civil elapsed time is reported separately.'))
