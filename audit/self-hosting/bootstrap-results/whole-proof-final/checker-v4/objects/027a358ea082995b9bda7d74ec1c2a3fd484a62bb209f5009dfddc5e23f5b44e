@@ -1,0 +1,94 @@
+"""Compose two old controls and exactly 9 v2 + 3 v3 + 11 v4 rejections."""
+from pathlib import Path
+from common import (require, identity, load, same, files, within, profile_flags,
+                    ERRORS, PRIOR, ADDITIONAL, NEW, COST, reference, case_partition)
+import historical
+import native
+import transitions
+
+
+def suite_contract(suite, number, prior, positive, profile):
+    require(suite['schema'] == 'trident/whole-self-build-certificate-completion/v4'
+            and suite['status'] == 'passed-completion' and suite['generation'] == number
+            and suite['original_proof'] == positive['proof'] and suite['profile'] == profile,
+            'successful exact v4 completion suite')
+    require(suite['prior_cases'] == prior and 'controls' not in suite and not suite.get('error')
+            and not suite.get('input_error'), 'explicit historical reuse with no hidden suite failure')
+    require(suite['immutable_inputs_before'] == suite['immutable_inputs_after'], 'immutable v4 suite inputs')
+    case_partition([r['name'] for r in prior['original_v2']['rejections']],
+                   [r['name'] for r in prior['additional_v3']['rejections']],
+                   [r['name'] for r in suite['rejections']])
+    require(len(prior['controls']) == 2 and [r['name'] for r in prior['controls']] ==
+            ['original-fresh-verification','rechain'], 'exact original two controls')
+
+
+def review(base, number, positive, pins):
+    root=base/f'whole-proof-attacks-v4-c{number}'
+    old=base/f'whole-proof-attacks-v3-c{number}'
+    work=root/f'whole-c{number}'
+    proof=base/f'whole-proof/attempts/c{number}-selfbuild-1/proof.joysc'
+    verifier=base/f'whole-proof/attempts/c{number}-fresh-verification-1'
+    profile=load(base/'whole-proof/profile.json')
+    prior=historical.review(base,number,proof,verifier,positive['verification'])
+    suite=load(work/'receipt.json')
+    suite_contract(suite,number,prior,positive,profile)
+    for path,value in suite['immutable_inputs_after'].items():same(Path(path),value)
+    helper=base/'whole-proof-helper-v4/target-helper/release/whole-proof-mutator'
+    index,noun=work/'index.json',work/'result.dag'
+    same(index,prior['index']);same(noun,prior['result'])
+    indexed=load(index)
+    require(indexed['source_sha256']==positive['proof']['sha256'] and indexed['source_bytes']==positive['proof']['bytes']
+            and indexed['records']==positive['verification']['records']
+            and indexed['decoded_bytes']==positive['verification']['transport']['decoded_bytes'],'complete original copied index')
+    frozen=old/'inputs/frozen'
+    files(frozen,load(base/'whole-proof/preparation.json')['files'])
+    compiler,job=frozen/f'c{number}.dag',frozen/f'c{number}-job.dag'
+    joy=base/'production-install/installed/bin/joy'
+    inputs={str(p):identity(p) for p in (helper,index,noun)};inputs[str(proof)]=positive['proof']
+    commands=[];cost_chain=None
+    for row in suite['rejections']:
+        name=row['name'];retained=number==2 and name=='cost'
+        certificate=(old/'whole-c2/certificate-cost.joysc' if retained else work/f'certificate-{name}.joysc')
+        output=work/(name+'.dag');directory=root/f'attempts/whole-c{number}-verify-{name}'
+        require(within(root,row['verification_receipt'])==directory/'receipt.json','distinct exact verifier receipt')
+        argv=[joy,'verify-artifact',compiler,'--input',job,'--proof',certificate,'--output',output,
+              '--emit','program',*profile_flags(profile),'--force']
+        actual_inputs={str(p):identity(p) for p in (joy,compiler,job)}
+        actual_inputs.update({str(certificate):row['certificate'],str(output):row['protected_output']})
+        native.diagnostic(base,number,directory,argv,1,dict(generation=number,expected_error=ERRORS[name]),actual_inputs,'verify')
+        require(row['error']==ERRORS[name] and (directory/'stdout').read_bytes()==b''
+                and ERRORS[name] in (directory/'stderr').read_text(),'specific actual negative without success stdout')
+        same(output,row['protected_output'])
+        recipe=row['recipe']
+        if retained:
+            admission=load(work/'retained-cost-admission.json')
+            require(row['certificate']==COST and recipe==dict(mode='cost',construction_reused=True,admission=admission),
+                    'only C2 cost construction is explicitly reused')
+            cost_chain=transitions.cost_construction(base,admission,positive,pins)
+            cost_chain['retirement']=transitions.cost_retirement(base,suite,admission)
+        else:
+            build=root/f'attempts/whole-c{number}-construct-{name}'
+            require(within(root,recipe['construction_receipt'])==build/'receipt.json'
+                    and recipe['certificate']==row['certificate'] and recipe['mode']==name and recipe['context']==[],
+                    'exact fresh constructed mutation')
+            native.diagnostic(base,number,build,[helper,'mutate',proof,index,noun,certificate,name],0,
+                              dict(generation=number,mode=name),inputs,'helper')
+            built=load(build/'stdout')
+            require(built['mode']==name and built['wire_bytes']==row['certificate']['bytes']
+                    and built['source_records']==indexed['records'],'actual new helper output dimensions')
+            if name in ('drop-first','swap-first-two','omit-completion','truncate-last-byte','trailing-byte'):
+                require(built['source_decoded_bytes']==indexed['decoded_bytes'],'framing source dimensions')
+            else:require(built['source_sha256']==positive['proof']['sha256'],'semantic whole source identity')
+            sidecar=name.startswith('valid-output-')
+            require(('canonical_output_sidecar' in recipe)==sidecar,'all required canonical sidecars')
+            if sidecar:
+                path=within(root,recipe['canonical_output_sidecar']['path'])
+                require(path==certificate.with_suffix('.dag'),'exact canonical output path');same(path,recipe['canonical_output_sidecar'])
+            require(not certificate.exists() and not certificate.is_symlink(),'completed owned temporary reclaimed')
+            commands.append(reference(build/'receipt.json'))
+        commands.append(reference(directory/'receipt.json'))
+    require({str(p):identity(p) for p in (helper,index,noun,proof)}==inputs,'proof/index/result/helper unchanged')
+    return dict(status='passed-case-replay',suite=reference(work/'receipt.json'),original_v2_status='failed',
+                original_v3_status='failed',reused_controls=2,reused_v2_rejections=list(PRIOR),
+                reused_v3_rejections=list(ADDITIONAL),fresh_v4_rejections=list(NEW),distinct_rejections=23,
+                actual_v4_commands=commands,c2_cost=cost_chain)
