@@ -1,0 +1,1508 @@
+{
+  "status": "passed",
+  "started_ns": 1790956985307757000,
+  "driver": {
+    "bytes": 4398,
+    "sha256": "f186b06d270c5d19ea2e1ce9c5c2a0f1b2530693755a55730c6baf3871b79f93"
+  },
+  "helper": {
+    "bytes": 724240,
+    "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7"
+  },
+  "joy": {
+    "bytes": 5635776,
+    "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+  },
+  "commands": [
+    {
+      "name": "rechain-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/rechain.joysc",
+        "rechain"
+      ],
+      "started_ns": 1790956985332594000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 1.1090873749926686,
+      "stdout": {
+        "bytes": 242,
+        "sha256": "81f596f7a9c002b1987f8ed9709b59c036123918ceefe343610495828c5534ad"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "rechain-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/rechain.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/rechain.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536"
+      ],
+      "started_ns": 1790956986452061000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 2.9284810419776477,
+      "stdout": {
+        "bytes": 2112,
+        "sha256": "46a792546106b671a922a8d02c61b624efd3edbed3f320efcaab759aa4f5603d"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "continuation-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/continuation.joysc",
+        "continuation"
+      ],
+      "started_ns": 1790956989384809000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 1.2037065830081701,
+      "stdout": {
+        "bytes": 247,
+        "sha256": "a0a1e04a5aa6cdf1b42065b66c3a5bd4acfac81bef81f6c360ae4f0380581768"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "continuation-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/continuation.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/continuation.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790956990599878000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 1.6849097909871489,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 45,
+        "sha256": "f90e392ec1736d6c8b54ee33a6c1645b1476a68f6beda50d37ba63482746d439"
+      }
+    },
+    {
+      "name": "generation-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/generation.joysc",
+        "generation"
+      ],
+      "started_ns": 1790956992289666000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 1.1722604580572806,
+      "stdout": {
+        "bytes": 245,
+        "sha256": "d6f80529f01e1f65836b8d419c61ad12c51f530d7980527d2f3a338c09909e70"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "generation-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/generation.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/generation.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790956993472699000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 1.6960157499997877,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 47,
+        "sha256": "0d2560eb950595af26294729d20b40e782398503901ef9af0928846be18fb1b3"
+      }
+    },
+    {
+      "name": "cost-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/cost.joysc",
+        "cost"
+      ],
+      "started_ns": 1790956995173714000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6126527080195956,
+      "stdout": {
+        "bytes": 238,
+        "sha256": "e67fc1b7bc011d6d2a75268cd0b7acf3dc8ee60da22db4c6d93ce88a0f124d57"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cost-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/cost.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/cost.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790956995797773000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.931498082994949,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 49,
+        "sha256": "6e4c51f61754f04819510c620a8f90b48c3fae579d91e5accd26207ee907f912"
+      }
+    },
+    {
+      "name": "valid-output-payload-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-payload.joysc",
+        "valid-output-payload"
+      ],
+      "started_ns": 1790956998734290000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6193359579774551,
+      "stdout": {
+        "bytes": 254,
+        "sha256": "6757a5f6bfa3b7bee74dabaa3c2122a6c625c1391c4d1f9796b3501a2bf67f44"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "valid-output-payload-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-payload.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-payload.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790956999365019000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.9389601669972762,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 61,
+        "sha256": "cf6ccc8868d3113450d0b6915c029ab40867d952ff753d71fbfd7b283794618d"
+      }
+    },
+    {
+      "name": "valid-output-topology-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-topology.joysc",
+        "valid-output-topology"
+      ],
+      "started_ns": 1790957002308152000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6631421659840271,
+      "stdout": {
+        "bytes": 255,
+        "sha256": "1104f56b308d4ad5577c8eca9b2ab7e3e2c2038d05d12a08ade94ffd06fb23cd"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "valid-output-topology-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-topology.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-topology.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957002982891000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.93242916604504,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 61,
+        "sha256": "cf6ccc8868d3113450d0b6915c029ab40867d952ff753d71fbfd7b283794618d"
+      }
+    },
+    {
+      "name": "valid-output-payload-rebound-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-payload-rebound.joysc",
+        "valid-output-payload-rebound"
+      ],
+      "started_ns": 1790957005920461000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6688419160200283,
+      "stdout": {
+        "bytes": 262,
+        "sha256": "7ba36d886a55699c2c1828f736c5fda356fda21626596b8a1c49c844b441eeb1"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "valid-output-payload-rebound-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-payload-rebound.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-payload-rebound.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957006600468000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.9481129170162603,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 49,
+        "sha256": "6e4c51f61754f04819510c620a8f90b48c3fae579d91e5accd26207ee907f912"
+      }
+    },
+    {
+      "name": "valid-output-topology-rebound-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-topology-rebound.joysc",
+        "valid-output-topology-rebound"
+      ],
+      "started_ns": 1790957009552999000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6184508749865927,
+      "stdout": {
+        "bytes": 263,
+        "sha256": "1f7fc9e8097ce335f2657b59203865e6a49d0f68a7460263c27a2e2af5404c6e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "valid-output-topology-rebound-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-topology-rebound.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/valid-output-topology-rebound.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957010182215000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.9304202500497922,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 49,
+        "sha256": "6e4c51f61754f04819510c620a8f90b48c3fae579d91e5accd26207ee907f912"
+      }
+    },
+    {
+      "name": "omit-terminal-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/omit-terminal.joysc",
+        "omit-terminal"
+      ],
+      "started_ns": 1790957013117171000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.610540583031252,
+      "stdout": {
+        "bytes": 247,
+        "sha256": "b299699873f8542687babc7b4b3c6d115a1cbad0460ea3c8196d0726b47706c2"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "omit-terminal-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/omit-terminal.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/omit-terminal.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957013739085000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.92404000001261,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 70,
+        "sha256": "9d54d72b05d6ac375324d22e8b75d28470ad4647cb77057501023e291df4b538"
+      }
+    },
+    {
+      "name": "drop-first-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/drop-first.joysc",
+        "drop-first"
+      ],
+      "started_ns": 1790957016668394000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.621268582995981,
+      "stdout": {
+        "bytes": 100,
+        "sha256": "d6cc0f2a67d3db74573e546c4ac8bd23f6f91ed051dabc76bb78fb2d85c3a11b"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "drop-first-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/drop-first.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/drop-first.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957017300394000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 1.262552209023852,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 81,
+        "sha256": "8b6dbbd4a5160febb14dbdff7b94cd82054a99b710db16a39acfe06815f71c01"
+      }
+    },
+    {
+      "name": "swap-first-two-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/swap-first-two.joysc",
+        "swap-first-two"
+      ],
+      "started_ns": 1790957018567396000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6137747499742545,
+      "stdout": {
+        "bytes": 104,
+        "sha256": "ca8b98c5310565e7dfd5143f9569cbdfb783c3756ec37c560f69daded722945d"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "swap-first-two-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/swap-first-two.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/swap-first-two.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957019192224000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 1.2584121670224704,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 81,
+        "sha256": "8b6dbbd4a5160febb14dbdff7b94cd82054a99b710db16a39acfe06815f71c01"
+      }
+    },
+    {
+      "name": "omit-completion-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/omit-completion.joysc",
+        "omit-completion"
+      ],
+      "started_ns": 1790957020455684000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6126336670131423,
+      "stdout": {
+        "bytes": 105,
+        "sha256": "d3b26c8c7be231fc842866f420954f9249a7063874d66c3f036133b54d07df89"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "omit-completion-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/omit-completion.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/omit-completion.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957021080298000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.9212919999845326,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 76,
+        "sha256": "dbbb42fbbce8eb7736edf29aae6b6a8d21763482627dbcff0ffa33f447e4612a"
+      }
+    },
+    {
+      "name": "truncate-last-byte-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/truncate-last-byte.joysc",
+        "truncate-last-byte"
+      ],
+      "started_ns": 1790957024006928000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6147953339968808,
+      "stdout": {
+        "bytes": 108,
+        "sha256": "79803146b22f5d5506aeb8cab2fbb305d47355b7bca5c4139e90fd4b89f0fac4"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "truncate-last-byte-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/truncate-last-byte.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/truncate-last-byte.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957024633169000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.96983887499664,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 76,
+        "sha256": "dbbb42fbbce8eb7736edf29aae6b6a8d21763482627dbcff0ffa33f447e4612a"
+      }
+    },
+    {
+      "name": "trailing-byte-construct",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "mutate",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/trailing-byte.joysc",
+        "trailing-byte"
+      ],
+      "started_ns": 1790957027607988000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 0,
+      "elapsed_seconds": 0.6643021670170128,
+      "stdout": {
+        "bytes": 103,
+        "sha256": "33ff3b12b2f24662d185f13aa2a76053cd3a41be8183f12f07894ade4e103825"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "trailing-byte-verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/trailing-byte.joysc",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/trailing-byte.result",
+        "--budget",
+        "100000000",
+        "--arena-nodes",
+        "100000000",
+        "--frames",
+        "65536",
+        "--artifact-bytes",
+        "16777216",
+        "--artifact-nodes",
+        "196608",
+        "--artifact-depth",
+        "4096",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "1000000000",
+        "--time-ms",
+        "300000",
+        "--proof-bytes",
+        "1073741824",
+        "--proof-decoded-bytes",
+        "2147483648",
+        "--proof-records",
+        "100000000",
+        "--proof-steps",
+        "200000000",
+        "--proof-cache-slots",
+        "65536",
+        "--force"
+      ],
+      "started_ns": 1790957028283284000,
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1",
+      "environment": {
+        "PATH": "",
+        "RUST_BACKTRACE": "0"
+      },
+      "timeout_seconds": 120,
+      "file_limit_bytes": 16777216,
+      "exit_code": 1,
+      "elapsed_seconds": 2.9796828749822453,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 75,
+        "sha256": "8a7d49736e9d91c85a0ac1e45300820182924726b09039311e558c7067d01dff"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "mode": "rechain",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662132,
+        "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+      },
+      "fresh_exit": 0
+    },
+    {
+      "mode": "continuation",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662131,
+        "sha256": "6ad92c1df5620f9d042981f1ccd505e3d649f5d970c76cf0ba4e0ffa24188234"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "generation",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662133,
+        "sha256": "74603ef15874f17c2521b71d9ab77aa3f45c8f417f2d05372a6264c453fc46de"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "cost",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662132,
+        "sha256": "4c7b40e5abb28f36290b01f1c2d9c84faf989662cfb00fca34105dee4e79f0cb"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-payload",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662152,
+        "sha256": "5fdc58855e015cd86a4d1145f67b4c97e5ca0001583d7c7c42fa41af78e323b4"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-topology",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662149,
+        "sha256": "06f21bb5758e8fa468c1dd9b9ad860dfb1ba75be498898eed524aa197de846f4"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-payload-rebound",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662120,
+        "sha256": "59108c9d5a96e5c19a7291da330672e8634578a3d5d8336adbe24d007c97e0af"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-topology-rebound",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662119,
+        "sha256": "a4b940062effb3e8ff1b2d8969b5c66612adb96ad1059230a396949d74eeefcc"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "omit-terminal",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8656330,
+        "sha256": "cfe6d29bdcbbc76754bd4389a56ea494ffa55a2ab4fe610fd1684c5a247299d0"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "drop-first",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8635244,
+        "sha256": "6b81321e6e5330050d7705a725d0410ca4e37ace7710269d4e441ca0c1a94301"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "swap-first-two",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662132,
+        "sha256": "341efce7344b56b1ca0afb3e1f21cfc863ad5e416b8b5e49db9d05b6e62c5fc2"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "omit-completion",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662050,
+        "sha256": "697f93b91fbd35dd859c601a10f9d00348c0a24031e24c2e8a71fc7b5e797123"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "truncate-last-byte",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662131,
+        "sha256": "511f55ab5d4aeb9e2a6b5d066c919ecbd3b34b818f49c8bb5cf7ed8ecc8a6e6c"
+      },
+      "fresh_exit": 1
+    },
+    {
+      "mode": "trailing-byte",
+      "status": "passed",
+      "exact_old_mutant": {
+        "bytes": 8662133,
+        "sha256": "4af8256487a7afe9a9eab8aa2efaebbe2b58d1d4e4d05fdee03b6f4ac752a240"
+      },
+      "fresh_exit": 1
+    }
+  ],
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json": {
+      "bytes": 1222,
+      "sha256": "4d55c8a7fe2683b26fce2d67786c99228fb463aac4be90de5b71e075cef9520e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag": {
+      "bytes": 21055,
+      "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7"
+    }
+  },
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/index.json": {
+      "bytes": 1222,
+      "sha256": "4d55c8a7fe2683b26fce2d67786c99228fb463aac4be90de5b71e075cef9520e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/inputs/compiler.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/cases/aggregate/job.dag": {
+      "bytes": 21055,
+      "sha256": "eac4f2eba6734f5a3f4f6ca6b63d3405a5eca894a683ca3a1ca6ca885e892c32"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7"
+    }
+  },
+  "ended_ns": 1790957031277588000
+}

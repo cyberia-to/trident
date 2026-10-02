@@ -1,0 +1,51 @@
+{
+  "schema": "whole-diagnostic-helper-authenticated-digest-design-review/v1",
+  "status": "concept-sound-implementation-review-pending",
+  "observed_unix_ns": 1790956650180903000,
+  "scope": "Read only the original frames.rs/mutation.rs and their index/main context. No old/frozen source, proof, cap or runtime profile edited; no test or expensive certificate construction performed by this initial review.",
+  "sources": [
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c1/helper/frames.rs",
+      "bytes": 9870,
+      "sha256": "4c60cd5d95c0162172c44214fefc10c0ddd025d5077f1041c4abb7c45f8a4063"
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c1/helper/mutation.rs",
+      "bytes": 8521,
+      "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c1/helper/main.rs",
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c1/helper/index.rs",
+      "bytes": 5361,
+      "sha256": "00e3f4f40e5a09f8aaa3230526881810475a3c0923115f7bc5efda0362d585f8"
+    }
+  ],
+  "argument": [
+    "Input::next already verifies original full frame digest over fixed domain, all50 header bytes and the exact stored payload, following sequence/backlink/kind/codec/size/budget checks; terminal additionally enforces EOF before returning the frame.",
+    "Represent original verified digest as a private Option or enum variant constructible only by this successful admission path. Frame header/payload/digest must be private with no mutable accessors. Newly encoded from_decoded/end frames carry no authenticated original digest even if provisional headers happen to match.",
+    "Output::emit preserves every existing allowance check, then constructs the exact emitted header by rewriting sequence and predecessor. Reusing the admitted digest is valid exactly when the entire emitted50-byte header equals the authenticated original header and payload has remained immutable.",
+    "When header differs or the frame was newly encoded, hash the same fixed frame domain and exact emitted header/payload. Feed the selected/computed digest to output and subsequent chain exactly as before. A changed context or earlier mutation forces suffix predecessor comparison to fail under the same digest-collision assumption already used by the format.",
+    "Reuse removes only redundant calculation of a value already authenticated from identical bytes. It does not skip original-frame validation, decode checks where originally invoked, source totals, tail/patch validation, EOF, storage limits or independent native verification. No speedup amount or whole workload completion follows from source review alone."
+  ],
+  "required_regressions": [
+    "Untouched compressed and uncompressed frames plus terminal reproduce exact original bytes and pass production Reader; prove that emission reused authenticated digests rather than secretly recomputing, using test-only per-thread digest-call counters or equivalent private instrumentation.",
+    "Rebound context produces bytes identical to an always-recompute reference, passes Reader under new context, and recomputes every affected header (first frame and suffix).",
+    "Insert/drop/reorder/duplicate frames and mutate a payload after an unchanged prefix: compare exact serialized bytes to the old always-recompute implementation; changed frame and every changed-backlink suffix rehash; untouched prefix reuses.",
+    "New Frame::from_decoded with zero context/first sequence deliberately makes its provisional header equal the final emitted header: it must still recompute and verify. Frame::end must similarly have no trusted zero digest.",
+    "Corrupt claimed digest and encoded payload independently while leaving header/order unchanged: Input::next rejects before an eligible original frame can be emitted. Preserve existing wrong chain/sequence, terminal/trailing input and cap rejection coverage.",
+    "Any replacement for mutation.rs direct header/digest accesses preserves exact malformed output, especially terminal truncate-last-byte, and preserves the intentional invalid framing behavior of drop/swap/omit/trailing modes.",
+    "Run old/new helpers on the same bounded real/synthetic accepted fixture, same index/result/context arguments for every supported mutation mode and all existing binding constructors; compare complete output bytes/sidecars and command outcomes. Keep original verifier semantic rejection expectations exact, without broadening to transport errors.",
+    "If measuring speed, use an explicitly bounded identical-source prefix/fixture and both helper identities; count skipped redundant hashes separately from wall time. Final same1800s full construction outcome is separate actual evidence, not inferred from a microbenchmark."
+  ],
+  "storage_review": {
+    "status": "conditional-plan-evidence-review-required",
+    "c1_prefix": "An actual entire byte-for-byte [0,n) equality check against an authenticated retained original proof, with separately recorded hashes and stable closed no-follow single-link inode/size/timestamps, can establish the failed temporary contains no unique bytes. Samples alone are insufficient. Keep all failed logs/receipts and deterministic reconstruction recipe requiring exact original whole identity before extracting n bytes. Require two exact owner quiescence observations and a durable before/after unlink transition. No deletion is authorized by this conceptual review.",
+    "c2_complete_mutant": "A new fresh negative verifier may consume the existing complete mutant only after full byte identity and exact successful construction/recipe/positive-source eligibility admission. Original interrupted verification remains interrupted; it contributes no successful rejection result.",
+    "caps": "No cap increase, original positive certificate deletion, shared-prefix source mutation or failed v3 suite status conversion."
+  }
+}

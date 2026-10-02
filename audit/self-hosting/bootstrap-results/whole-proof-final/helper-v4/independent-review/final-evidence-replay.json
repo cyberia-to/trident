@@ -1,0 +1,148 @@
+{
+  "status": "passed-read-only-evidence-replay",
+  "observed_unix_ns": 1790957302939150000,
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/Cargo.lock": {
+      "bytes": 31586,
+      "sha256": "2299f3838b9f37294145498a34790a8b57169f0f7e0ecd527f3617eb8e8fc205"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/Cargo.toml": {
+      "bytes": 442,
+      "sha256": "f3c0f91ea813d13c073da1ea6fae72f4f011091d50236740637d104bd2b700ed"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/frames.rs": {
+      "bytes": 15017,
+      "sha256": "9cf4fef3fd2d3f6141a85ba96b3d348b988665a79b4d13c8f271df48e2d04f2f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/index.rs": {
+      "bytes": 5361,
+      "sha256": "00e3f4f40e5a09f8aaa3230526881810475a3c0923115f7bc5efda0362d585f8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/main.rs": {
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/mutation.rs": {
+      "bytes": 8473,
+      "sha256": "05d7bd37fcbb48fbbe1b57d1a3c926c57d2639ceeb52282d5ede8544050f8002"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/noun.rs": {
+      "bytes": 4114,
+      "sha256": "bd64a225ca4703b9720775897565db4858629992eb644abcf2a1c7c68bdae0c8"
+    }
+  },
+  "build_binary": {
+    "bytes": 724240,
+    "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7"
+  },
+  "actual_fixture_cases": [
+    {
+      "mode": "rechain",
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64",
+      "fresh_exit": 0
+    },
+    {
+      "mode": "continuation",
+      "bytes": 8662131,
+      "sha256": "6ad92c1df5620f9d042981f1ccd505e3d649f5d970c76cf0ba4e0ffa24188234",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "generation",
+      "bytes": 8662133,
+      "sha256": "74603ef15874f17c2521b71d9ab77aa3f45c8f417f2d05372a6264c453fc46de",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "cost",
+      "bytes": 8662132,
+      "sha256": "4c7b40e5abb28f36290b01f1c2d9c84faf989662cfb00fca34105dee4e79f0cb",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-payload",
+      "bytes": 8662152,
+      "sha256": "5fdc58855e015cd86a4d1145f67b4c97e5ca0001583d7c7c42fa41af78e323b4",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-topology",
+      "bytes": 8662149,
+      "sha256": "06f21bb5758e8fa468c1dd9b9ad860dfb1ba75be498898eed524aa197de846f4",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-payload-rebound",
+      "bytes": 8662120,
+      "sha256": "59108c9d5a96e5c19a7291da330672e8634578a3d5d8336adbe24d007c97e0af",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "valid-output-topology-rebound",
+      "bytes": 8662119,
+      "sha256": "a4b940062effb3e8ff1b2d8969b5c66612adb96ad1059230a396949d74eeefcc",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "omit-terminal",
+      "bytes": 8656330,
+      "sha256": "cfe6d29bdcbbc76754bd4389a56ea494ffa55a2ab4fe610fd1684c5a247299d0",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "drop-first",
+      "bytes": 8635244,
+      "sha256": "6b81321e6e5330050d7705a725d0410ca4e37ace7710269d4e441ca0c1a94301",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "swap-first-two",
+      "bytes": 8662132,
+      "sha256": "341efce7344b56b1ca0afb3e1f21cfc863ad5e416b8b5e49db9d05b6e62c5fc2",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "omit-completion",
+      "bytes": 8662050,
+      "sha256": "697f93b91fbd35dd859c601a10f9d00348c0a24031e24c2e8a71fc7b5e797123",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "truncate-last-byte",
+      "bytes": 8662131,
+      "sha256": "511f55ab5d4aeb9e2a6b5d066c919ecbd3b34b818f49c8bb5cf7ed8ecc8a6e6c",
+      "fresh_exit": 1
+    },
+    {
+      "mode": "trailing-byte",
+      "bytes": 8662133,
+      "sha256": "4af8256487a7afe9a9eab8aa2efaebbe2b58d1d4e4d05fdee03b6f4ac752a240",
+      "fresh_exit": 1
+    }
+  ],
+  "commands_replayed": 28,
+  "original_reports": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/build-1/receipt.json": {
+      "bytes": 5077,
+      "sha256": "4e597955430f3c6c54c006421c0d843a3d9ed3a772632c5d778a47c3e59b62f6"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture-1/receipt.json": {
+      "bytes": 56493,
+      "sha256": "4c525d7206e22969080a8275a578c6a92f791dd85cfe01bab8791f316ccd0a18"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/fixture.py": {
+      "bytes": 4398,
+      "sha256": "f186b06d270c5d19ea2e1ce9c5c2a0f1b2530693755a55730c6baf3871b79f93"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/observe-prefix.py": {
+      "bytes": 3390,
+      "sha256": "bc3a28b184a962e7fe3ed333775c10f343dac5d9cd4352bcc066f60059dadc92"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/prefix-observation-1/receipt.json": {
+      "bytes": 2693,
+      "sha256": "bcaa65fc3f2c1303a2601b020f35cd99357a676559470b0d9f8fefe471b00eb2"
+    }
+  },
+  "scope": "Rehashed exact seven helper inputs, binary, build logs and all28 actual fixture command streams; compared all14 entire bounded old/new outputs and canonical sidecars. Prefix driver/receipt/copies/current stable stats and first/last samples reviewed; full11.9GB comparison is the original root observation, not newly repeated here. No build/test/proof/native verifier rerun, network, deletion or source mutation."
+}
