@@ -107,8 +107,8 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ✓ Frozen S1 reproducible self-compilation accepted (SH3–SH6): exact C2/C3 and both corpora on six native platforms; compilation proofs remain SH7/SH8
-cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
+Noun        ✓ Frozen S1 reproducible self-compilation accepted (SH3–SH6); SH7 native public compiler profile accepted on actual pilots; complete self-build proofs remain SH8
+cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; private dynamic compiler proof relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ◐ RAM/TIR prototype emits TIR; that pipeline's lower wiring and self-compilation remain open
 std.*       23 std.skill.* shipped
@@ -627,6 +627,7 @@ The authoritative implementation sequence and acceptance criteria are in
 - SH2: the native compiler emits a program that Joy executes correctly.
 - SH5: it compiles its complete own source into a usable next compiler.
 - SH6: repeated self-builds reach C2 == C3 and reproduce across the CPU targets.
+- SH7: the native public compiler proof profile covers the accepted compiler pilots; [durable evidence](../audit/self-hosting/native-proof-pilots/durable-retention/README.md) is retained.
 - SH8: native Zheng proofs bind the actual self-build inputs and outputs.
 
 Rust produces the initial C1 seed. C1 and then C2 execute on nox to build C2

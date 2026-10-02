@@ -17,6 +17,7 @@ byte-exact replay both pass. The earlier
 S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
 corpora. SH7 now accepts the production native public compiler profile through
 [actual C2 pilots and independent review](self-hosting/native-proof-pilots/README.md).
+The complete SH7 archive has [verified durable retention](self-hosting/native-proof-pilots/durable-retention/README.md), including independently downloaded parts, full archive reconstruction and both acceptance-commit install attempts.
 SH8 still requires both complete self-build certificates and their adversarial checks.
 
 S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,

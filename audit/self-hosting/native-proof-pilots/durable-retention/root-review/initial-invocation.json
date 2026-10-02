@@ -1,0 +1,17 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "verify_receipt.py",
+    "--run",
+    "run-1",
+    "--original",
+    "../sh7-retention/sh7-native-proof-pilots-fa0f99785b4f.tar.gz",
+    "--output",
+    "root-final-replay.json"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport",
+  "exit_code": 1,
+  "observed_error": "ValueError: original filename",
+  "scope": "Root invocation supplied an incorrect archive basename; checker refused before payload verification. Original archive and transport remained unchanged."
+}
