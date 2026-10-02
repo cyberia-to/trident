@@ -1,0 +1,101 @@
+{
+  "schema": "trident/whole-proof-attack-command/v1",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator",
+    "mutate",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/overflow-index.json",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/must-not-exist",
+    "rechain"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/attempts/fixture-reject-index-overflow",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 1800,
+    "cpu": 1800,
+    "rss": 1073741824,
+    "file": 25769869312
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 5864,
+    "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+  },
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/overflow-index.json": {
+      "bytes": 1234,
+      "sha256": "91076771b55ab501b0902b6969f861daa38d7a4fbe836aedadc1619259565fe8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    }
+  },
+  "expected_exit": 1,
+  "metadata": null,
+  "started_ns": 1790911452426546000,
+  "sampled_peak_rss_bytes": 0,
+  "pid": 94193,
+  "latest_sample": {
+    "time_ns": 1790911452441991000,
+    "elapsed": 0.015444459044374526,
+    "processes": [
+      {
+        "pid": 94193,
+        "rss_bytes": 0
+      }
+    ],
+    "rss_bytes": 0,
+    "owned_bytes": 229324999,
+    "free_bytes": 81921478656
+  },
+  "exit_code": 1,
+  "elapsed_seconds": 0.054841334000229836,
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/overflow-index.json": {
+      "bytes": 1234,
+      "sha256": "91076771b55ab501b0902b6969f861daa38d7a4fbe836aedadc1619259565fe8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/fixture-check/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    }
+  },
+  "ended_ns": 1790911452485130000,
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 59,
+      "sha256": "7b0c2d6d1fda3aaef5d2ed11787bf9899c05632d3d1dce24baf77a6915841a24"
+    },
+    "resources.jsonl": {
+      "bytes": 182,
+      "sha256": "dadf78a0742f513ca6127fa084e94ffdfff78c73364e5ce9421e31d6a11ea647"
+    }
+  }
+}
