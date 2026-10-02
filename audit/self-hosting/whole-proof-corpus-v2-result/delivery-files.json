@@ -1,5 +1,9 @@
 {
   "files": {
+    ".gitattributes": {
+      "bytes": 82,
+      "sha256": "4e23d42fd7e3bb0304120e8f7634fd48a82e472d68bbc6f5f070c46c200db99a"
+    },
     "README.md": {
       "bytes": 5229,
       "sha256": "769c41cfa5cfa77eebae0593c3e68a98ff628aaa86e0583f37308bada5433162"
@@ -39,6 +43,70 @@
     "check_relations.py": {
       "bytes": 13946,
       "sha256": "6948417508679d6d66ef8dfeb9bfed6f0d56a65bfe133c806589cd72f66da5e0"
+    },
+    "crlf/README.md": {
+      "bytes": 1803,
+      "sha256": "6fb7fbd11911cfbdffa7a9c5491838f109f32c842c2bc7a181f03fde5f7ee3c7"
+    },
+    "crlf/before.json": {
+      "bytes": 1786,
+      "sha256": "ac71b1460cf60f26259dfdefdbaef4c431d2ac7a54655b7e98c4c9498bbdd027"
+    },
+    "crlf/check_checkout.py": {
+      "bytes": 7564,
+      "sha256": "66d9763f05aecac4795931ac0ffa6ee67b8b677ac01871c1627f6d91a222b902"
+    },
+    "crlf/files.json.filtered.gz": {
+      "bytes": 240914,
+      "sha256": "47edae9ed3d1fe79ea8cb1c7ef5801bea70ba22fdaf82cc4c0279ed468fb0c71"
+    },
+    "crlf/prepared-files.json.filtered.gz": {
+      "bytes": 966,
+      "sha256": "97af629d8185eb44f8abdf8aa4f7fcd99db5fce463acf3f6e2438023e57d8fb9"
+    },
+    "crlf/validation/before-both-inventories.stderr": {
+      "bytes": 1101,
+      "sha256": "f1d04ece7caaf29e109cfb2c35761e79899ad92999536b457b72cca076ea18ac"
+    },
+    "crlf/validation/before-both-inventories.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crlf/validation/before-prepared-inventory.stderr": {
+      "bytes": 1146,
+      "sha256": "f5f24f35b38290d3282277cd5d060185aa77dd6d519f44bed22939039be11f39"
+    },
+    "crlf/validation/before-prepared-inventory.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crlf/validation/filtered-adversarial-tests.stderr": {
+      "bytes": 1963,
+      "sha256": "fc844fa1f0ea6651129f8987e9d3d97063d2eff3615d786734fc30ae61218461"
+    },
+    "crlf/validation/filtered-adversarial-tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crlf/validation/filtered-prior-checker.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crlf/validation/filtered-prior-checker.stdout": {
+      "bytes": 221,
+      "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+    },
+    "crlf/validation/filtered-result-checker.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "crlf/validation/filtered-result-checker.stdout": {
+      "bytes": 1135,
+      "sha256": "e35f3670d3a6c6c44c1fb2bef6c94ad9b98db5f03e0750a23de59ef1a25287da"
+    },
+    "crlf/validation/receipt.json": {
+      "bytes": 52215,
+      "sha256": "8bf8c5c23def6830991d0331e84e30e6d5685df029ed49863674bf793524d517"
     },
     "files.json": {
       "bytes": 2805571,
@@ -185,5 +253,5 @@
       "sha256": "9f2279a733481bb35a59b568270b75323eb024a3097a5c317b7296eb98629a03"
     }
   },
-  "scope": "All final audit files except this self-referential inventory; original archive and reviewed validation are unchanged."
+  "scope": "All final audit files except this self-referential inventory; original archive and reviewed validation are unchanged. CRLF metadata followup and its actual filter replay are included."
 }

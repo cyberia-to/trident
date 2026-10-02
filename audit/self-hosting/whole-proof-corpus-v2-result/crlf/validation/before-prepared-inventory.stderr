@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py", line 84, in <module>
+    print(json.dumps(check(originals=arguments.originals), indent=2, sort_keys=True))
+                     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py", line 58, in check
+    require(identity(prepared_raw) == manifest['prepared_inventory'], 'prepared source inventory')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py", line 16, in require
+    raise ValueError(message)
+ValueError: prepared source inventory
