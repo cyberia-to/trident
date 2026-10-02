@@ -9,8 +9,10 @@ remain separate reference-only comparisons.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 import time
@@ -35,6 +37,18 @@ def require(condition, message):
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def metadata_git(value):
+    if value is None:
+        found = shutil.which('git')
+        require(found is not None, 'Git metadata requires --git or TRIDENT_AUDIT_GIT when git is absent from PATH')
+        value = Path(found).absolute()
+    path = Path(value)
+    require(path.is_absolute(), '--git/TRIDENT_AUDIT_GIT must be an absolute executable path')
+    path = path.resolve(strict=True)
+    require(path.is_file() and os.access(path, os.X_OK), 'Git metadata path must name an executable file')
+    return path
 
 
 def decode(path):
@@ -87,15 +101,17 @@ def check_result(path, job, program):
 
 
 class Acceptance:
-    def __init__(self, binary, output, repo, selection):
+    def __init__(self, binary, output, repo, selection, git):
         self.binary, self.output, self.repo = binary, output, repo
         self.selection = selection
+        self.git = git
         output.parent.mkdir(parents=True, exist_ok=True)
         self.root = Path(tempfile.mkdtemp(prefix=output.stem + '-files-', dir=output.parent))
         self.report = dict(schema='trident/generated-compiler-profile/v1', status='running',
                            scope='generated bounded literal compiler; C2/self-hosting remains open',
                            artifact_directory=str(self.root), binary=str(binary),
-                           commands=[], observations=[], source_snapshots=[])
+                           commands=[], observations=[], source_snapshots=[],
+                           metadata_git=dict(path=str(git), sha256=sha(git)))
         self.flush()
 
     def flush(self):
@@ -132,6 +148,15 @@ class Acceptance:
     def observe(self, name, **values):
         self.report['observations'].append(dict(case=name, **values))
         self.flush()
+
+    def check_metadata_git(self):
+        require(sha(self.git) == self.report['metadata_git']['sha256'], 'Git metadata executable changed')
+
+    def metadata(self):
+        self.check_metadata_git()
+        self.report['revision'] = self.run(['rev-parse', 'HEAD'], executable=self.git)['stdout'].strip()
+        self.report['working_tree'] = self.run(['status', '--porcelain=v1'], executable=self.git)['stdout']
+        self.check_metadata_git()
 
     def snapshot(self, path, category):
         relative = path.relative_to(self.repo)
@@ -213,8 +238,7 @@ def exercise(a):
         a.snapshot(path, 'C1 disk source closure; installed binary pinned separately')
         for owner in re.findall(rb'^use\s+([A-Za-z_][A-Za-z_0-9.]*)', path.read_bytes(), re.M):
             pending.append(a.repo / 'lib' / (owner.decode().replace('.', '/') + '.tri'))
-    a.report['revision'] = a.run(['rev-parse', 'HEAD'], executable='git')['stdout'].strip()
-    a.report['working_tree'] = a.run(['status', '--porcelain=v1'], executable='git')['stdout']
+    a.metadata()
     a.compiler = a.selection.select(a.root / 'c1.dag', lambda path:
         a.run(['build', a.repo / 'compiler/nox/main.tri', '--emit', 'artifact',
                '--artifact-profile', 'compiler-job', '-o', path]))
@@ -317,9 +341,15 @@ def main():
     parser.add_argument('--joy', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--compiler', type=Path, help='use this producer ART1 unchanged; retain separate reference-only oracles')
+    parser.add_argument('--git', type=Path, default=os.environ.get('TRIDENT_AUDIT_GIT'),
+                        help='absolute Git metadata executable; defaults to TRIDENT_AUDIT_GIT, then PATH lookup')
     args = parser.parse_args()
+    try:
+        git = metadata_git(args.git)
+    except (OSError, AssertionError) as failure:
+        parser.error(str(failure))
     selection = CompilerSelection(args, parser)
-    a = Acceptance(selection.binary, args.output.resolve(), Path(__file__).resolve().parents[2], selection)
+    a = Acceptance(selection.binary, args.output.resolve(), Path(__file__).resolve().parents[2], selection, git)
     error = None
     try:
         a.report['binary_sha256_start'] = sha(a.binary)
@@ -334,6 +364,7 @@ def main():
             a.report['binary_sha256_end'] = sha(a.binary)
             require(a.report['binary_sha256_start'] == a.report['binary_sha256_end'], 'installed Joy changed')
             selection.check()
+            a.check_metadata_git()
             for source in a.report['source_snapshots']:
                 require(sha(Path(source['source'])) == source['sha256'], f"source changed: {source['source']}")
         except BaseException as failure:

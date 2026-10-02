@@ -35,6 +35,9 @@ class CompilerRouting(unittest.TestCase):
         self.root = Path(self.temporary.name).resolve()
         self.joy, self.compiler = self.root / 'joy', self.root / 'compiler.dag'
         self.joy.write_bytes(b'pinned mock Joy')
+        self.git = self.root / 'git'
+        self.git.write_bytes(b'pinned mock Git')
+        self.git.chmod(0o700)
         self.vectors = json.loads((HERE.parents[2] / 'joy/cli/tests/compiler_vectors.json').read_text())['files']
         self.compiler.write_bytes(bytes.fromhex(self.vectors['compiler']))
         self.original = self.compiler.read_bytes()
@@ -46,6 +49,8 @@ class CompilerRouting(unittest.TestCase):
                 '--output', str(output or self.output)]
         if provided:
             args += ['--compiler', str(compiler or self.compiler)]
+        if module is GENERATED:
+            args += ['--git', str(self.git)]
 
         def dispatch(command, **kwargs):
             self.commands.append(command)
@@ -231,7 +236,7 @@ class CompilerRouting(unittest.TestCase):
 
     def test_generated_profile_routes_first_compile_without_seed_build(self):
         def action(command):
-            if command[0] == 'git':
+            if command[0] == str(self.git):
                 return subprocess.CompletedProcess(command, 0, 'mock metadata\n', '')
             if command[1] == 'pack-job':
                 return self.complete_case(command)
@@ -244,27 +249,27 @@ class CompilerRouting(unittest.TestCase):
         receipt = json.loads(self.output.read_text())
         self.assertEqual(receipt['compiler_mode'], 'provided')
         self.assertEqual(receipt['status'], 'failed')
-        self.assertEqual([c[1] for c in self.commands if c[0] != 'git'], ['pack-job', 'run-artifact'])
+        self.assertEqual([c[1] for c in self.commands if c[0] != str(self.git)], ['pack-job', 'run-artifact'])
 
     def test_generated_profile_rejects_raw_input_without_fallback(self):
         self.compiler.write_bytes(bytes.fromhex(self.vectors['generated']))
         with self.assertRaises(SystemExit):
             self.invoke(GENERATED, lambda c: subprocess.CompletedProcess(c, 0, 'metadata\n', ''))
-        self.assertEqual([c[0] for c in self.commands], ['git', 'git'])
+        self.assertEqual([c[0] for c in self.commands], [str(self.git), str(self.git)])
         receipt = json.loads(self.output.read_text())
         self.assertIn('ART1 profile', receipt['failure'])
         self.assertEqual(receipt['status'], 'failed')
 
     def test_generated_default_mode_retains_one_compiler_build(self):
         def action(command):
-            if command[0] == 'git':
+            if command[0] == str(self.git):
                 return subprocess.CompletedProcess(command, 0, 'metadata\n', '')
             self.assertEqual(command[1], 'build')
             self.assertEqual(command[command.index('--artifact-profile') + 1], 'compiler-job')
             return self.result(command, error='intentional seed stop')
         with self.assertRaises(SystemExit):
             self.invoke(GENERATED, action, provided=False)
-        self.assertEqual([c[1] for c in self.commands if c[0] != 'git'], ['build'])
+        self.assertEqual([c[1] for c in self.commands if c[0] != str(self.git)], ['build'])
         self.assertEqual(json.loads(self.output.read_text())['compiler_mode'], 'seed-build')
 
 
