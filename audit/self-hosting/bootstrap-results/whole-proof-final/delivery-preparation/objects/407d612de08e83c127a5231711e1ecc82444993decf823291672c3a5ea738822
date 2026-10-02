@@ -1,0 +1,54 @@
+"""Independent bounded local fixtures; candidate supplied by exact reviewed path."""
+import os
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from safe_io import Budget, encoded
+from collect import CAPS
+from privacy import public_bytes
+
+
+class PeerTests(unittest.TestCase):
+    def test_headerless_two_column_actual_process_shape(self):
+        rows=b''.join(f'{p} 900 Fri Oct  2 21:00:00 2026\n'.encode() for p in (1001,1002,1003))
+        with self.assertRaisesRegex(ValueError, 'process'):
+            public_bytes(rows)
+
+    def test_process_shape_cannot_hide_in_json_string(self):
+        data=encoded(dict(note='1001 900 Fri Oct  2 21:00:00 2026\n'))
+        with self.assertRaisesRegex(ValueError, 'process'):
+            public_bytes(data)
+
+    def test_opaque_authorization_headers(self):
+        for header in ('Authorization','aUtHoRiZaTiOn','Proxy-Authorization'):
+            with self.subTest(header=header), self.assertRaisesRegex(ValueError, 'uthorization'):
+                public_bytes((header+': Bearer synthetic-opaque-secret\n').encode())
+
+    def test_plain_header_in_json_string(self):
+        with self.assertRaisesRegex(ValueError, 'uthorization'):
+            public_bytes(encoded(dict(note='Authorization: Basic synthetic-opaque-secret')))
+
+    def test_expected_cli_observation_still_public(self):
+        public_bytes(encoded(dict(ok=False, mode='cost', error='terminal: Claim', wire_bytes=123)))
+
+    def test_fifo_substitution_at_actual_open_is_nonblocking(self):
+        with tempfile.TemporaryDirectory() as name:
+            root=Path(name).resolve()
+            path=root/'input'
+            path.write_bytes(b'ordinary fixture')
+            actual=os.open
+            def replace_then_open(p, flags, *args, **kwargs):
+                self.assertEqual(Path(p), path)
+                self.assertTrue(flags & os.O_NONBLOCK)
+                path.unlink()
+                os.mkfifo(path)
+                return actual(p, flags, *args, **kwargs)
+            with patch('safe_io.os.open',side_effect=replace_then_open):
+                with self.assertRaisesRegex(ValueError,'regular input'):
+                    Budget(CAPS).read(path)
+
+
+if __name__=='__main__':
+    unittest.main()

@@ -1,0 +1,101 @@
+--- a/trident/audit/self-hosting-progress.md
++++ b/trident/audit/self-hosting-progress.md
+@@ -18,7 +18,7 @@
+ corpora. SH7 now accepts the production native public compiler profile through
+ [actual C2 pilots and independent review](self-hosting/native-proof-pilots/README.md).
+ The complete SH7 archive has [verified durable retention](self-hosting/native-proof-pilots/durable-retention/README.md), including independently downloaded parts, full archive reconstruction and both acceptance-commit install attempts.
+-Both complete self-build certificates and fresh positive verification now pass, as do the [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md). Their complete byte-equivalence retention is accepted in Trisha [PR25](https://github.com/cyberia-to/trisha/pull/25), merged as `fbea3cef9a4139075e529c319ff75488ed5df625`. The [retained audit](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md) binds all 22 ordered parts, both complete digests, independent replay and the original failed local attempt. SH8 remains open for final adversarial acceptance and its evidence integration.
++Both complete self-build certificates and fresh positive verification now pass, as do the [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md). Their complete byte-equivalence retention is accepted in Trisha [PR25](https://github.com/cyberia-to/trisha/pull/25), merged as `fbea3cef9a4139075e529c319ff75488ed5df625`. The [retained audit](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md) binds all 22 ordered parts, both complete digests, independent replay and the original failed local attempt. SH8 still pending — [ACTUAL_F5_VERDICT, ORIGINAL_RECEIPT_SHA, AND_FINAL_DELIVERY_LINK_REQUIRED].
+ 
+ S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
+ 484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
+@@ -166,7 +166,7 @@
+ | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
+ | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Closed — frozen S1 reproducible native bootstrap | [Original CI and independently replayed artifacts](self-hosting/bootstrap-results/run-36382085561/README.md): twelve bootstrap repetitions, twenty-four actual corpora, six platforms; original aggregate passed |
+ | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Closed — native public compiler profile on actual SH3/SH4 pilots | [Complete retained proofs, independent review and dynamic-apply check](self-hosting/native-proof-pilots/README.md); full witness and unattested host resources declared |
+-| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — complete positive proof/corpus runs and byte-equivalence retention passed; final adversarial/checker acceptance pending | [Proof-extracted C2/C3 and corpus evidence](self-hosting/whole-proof-corpus-v2-result/README.md); Trisha [PR25 retention](https://github.com/cyberia-to/trisha/pull/25); [sequential remaining-case preparation](self-hosting/bootstrap-results/whole-proof-final/completion-v5/README.md), with earlier failed attempts preserved |
++| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | SH8 still pending — [ACTUAL_V5_AND_F5_STATUS_REQUIRED] | [Proof-extracted C2/C3 and corpus evidence](self-hosting/whole-proof-corpus-v2-result/README.md); Trisha [PR25 retention](https://github.com/cyberia-to/trisha/pull/25); [sequential remaining-case preparation](self-hosting/bootstrap-results/whole-proof-final/completion-v5/README.md), with earlier failed attempts preserved |
+ 
+ The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-integration/README.md) bind the reviewed source trees to the actual merge commits for Joy PR22/23, Trident PR112/113/114 and Trisha PR18/19. All seven are merged into `release/0.4`. The accepted kit and direct self-build instructions are available there; master and release publication remain outside this delivery.
+ 
+@@ -204,8 +204,9 @@
+   memory, bounded dynamic derivations, collection snapshots and Joy dispatch.
+ - [x] Accept SH7 using actual frozen compiler SH3/SH4 workloads, independently
+   verified positive/adversarial certificates and measured resource limits.
+-- [ ] Prove both complete frozen self-builds under SH8, with fresh-process
+-  verification, exact C2/C3 output comparison and adversarial binding checks.
++- [ ] SH8 still pending — [AFTER_ACTUAL_F5_PASS: cite both exact proofs, fresh
++  verification, C2/C3 equality, 547 corpus observations each, and 23 rejections
++  per generation; link the reviewed final delivery packet].
+ 
+ Resolve language/protocol choices in their owner contracts before dependent
+ implementation. PRs target `release/0.4`; master remains outside this delivery.
+@@ -363,7 +364,7 @@
+ |---|---|---|
+ | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
+ | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
+-| Complete self-build proof acceptance | Zheng + Joy / SH8 | [Complete positive proof/corpus evidence passes](self-hosting/whole-proof-corpus-v2-result/README.md); complete byte retention accepted in Trisha PR25; final adversarial/checker acceptance remains required |
++| Complete self-build proof acceptance | Zheng + Joy / SH8 | [Complete positive proof/corpus evidence passes](self-hosting/whole-proof-corpus-v2-result/README.md); complete byte retention accepted in Trisha PR25; SH8 still pending — [FINAL_LOCAL_F5_RECEIPT_AND_STATUS_REQUIRED] |
+ 
+ ## Baseline evidence
+ 
+@@ -396,11 +397,11 @@
+ reference host, with bounded resident memory; see the exact command and revisions
+ in the body-scale receipt. This supplies a baseline for subsequent full-build
+ runs, not a wall-time estimate for corpus, clean builds or CI. SH6 acceptance
+-and the frozen distribution rehearsal are now complete; final native compilation-proof acceptance remains.
++and the frozen distribution rehearsal are now complete; SH8 still pending — [FINAL_LOCAL_ACCEPTANCE_STATUS_REQUIRED].
+ The original broad estimate is historical.
+ The native public relation and actual compiler pilots are accepted at SH7.
+ Complete SH8 runs retain the original self-build inputs and declared bounds;
+-their unfinished status supplies no completion estimate. Private/succinct
++SH8 still pending — [REPLACE_WITH_ACTUAL_SEPARATE_PROVER_VERIFIER_TIMES_AND_RESOURCES]. Private/succinct
+ compilation and semantic preservation remain separate claims.
+ 
+ ## Delivery history and retained receipts
+--- a/trident/reference/roadmap.md
++++ b/trident/reference/roadmap.md
+@@ -110,7 +110,7 @@
+ CORE        Transaction circuit, STARK verifier as CORE program
+ language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
+ TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
+-Noun        ✓ Frozen S1 reproducible self-compilation accepted (SH3–SH6); SH7 native public compiler profile accepted on actual pilots; complete self-build proofs remain SH8
++Noun        ✓ Frozen S1 reproducible self-compilation accepted (SH3–SH6); SH7 native public compiler profile accepted on actual pilots; SH8 still pending — [ACTUAL_FINAL_LOCAL_PROOF_ACCEPTANCE_LINK_REQUIRED]
+ cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; private dynamic compiler proof relations/live sync remain open
+ cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
+ compiler    ◐ RAM/TIR prototype emits TIR; that pipeline's lower wiring and self-compilation remain open
+--- a/trident/CHANGELOG.md
++++ b/trident/CHANGELOG.md
+@@ -16,7 +16,8 @@
+    Joy's native Zheng certificate route. [SH7 accepts the public compiler
+    profile](audit/self-hosting/native-proof-pilots/README.md); complete positive
+    self-build proofs and extracted-compiler corpora pass. Final adversarial
+-   acceptance remains tracked under SH8. This profile discloses its witness;
++   SH8 still pending — [ACTUAL_F5_ACCEPTANCE_AND_FINAL_AUDIT_LINK_REQUIRED].
++   This profile discloses its witness;
+    private or succinct compiler proofs and semantic preservation have separate
+    requirements.
+ 4. Validate the coordinated source archive and installed packages through the
+--- a/joy/README.md
++++ b/joy/README.md
+@@ -139,5 +139,5 @@
+ [implementation validation](audit/structured-certificates/README.md).
+ Both original whole self-build certificates have
+ [accepted byte-equivalence retention](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md).
+-Full self-build SH8 adversarial and final-checker acceptance remain open;
+-component validation covers its stated fixtures and source revisions.
++SH8 still pending — [ACTUAL_TRIDENT_FINAL_ACCEPTANCE_COMMIT_AND_AUDIT_LINK_REQUIRED].
++Component validation retains its stated fixtures and source revisions.
+--- a/trisha/audit/README.md
++++ b/trisha/audit/README.md
+@@ -13,8 +13,8 @@
+ 
+ The package retains its tested product versions and exact binary identities.
+ [Complete certificate byte-equivalence retention](whole-retention-byte-closure/README.md)
+-is accepted for both original self-build certificates. SH8 adversarial and
+-final-checker acceptance remain separate gates in Trident's
++is accepted for both original self-build certificates. SH8 still pending —
++[ACTUAL_FINAL_LOCAL_ACCEPTANCE_LINK_REQUIRED] in Trident's
+ [self-hosting ledger](../../trident/audit/self-hosting-progress.md).
+ Version/bump approval, default-branch release integration, tags, registry
+ publication and public promotion remain owner release steps. Draft evidence

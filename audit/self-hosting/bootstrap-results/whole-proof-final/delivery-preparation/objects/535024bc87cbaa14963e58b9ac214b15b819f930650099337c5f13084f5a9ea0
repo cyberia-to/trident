@@ -1,0 +1,93 @@
+{
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_delivery",
+    "test_shapes"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation",
+  "elapsed_seconds": 0.1774332919740118,
+  "exit_code": 0,
+  "files": {
+    "privacy-preview-summary.json": {
+      "bytes": 979,
+      "sha256": "22f9add1f39a170508d9fbde3f2f00bed7fa98cd4df3e7f52265a5ff9e0f85bd"
+    },
+    "stderr": {
+      "bytes": 3276,
+      "sha256": "490cf234af80e59e0fbf464612208af0bd5dbaf7e19feac61914cf9f93b9eec0"
+    },
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scope": "Synthetic metadata tests/static classification only. No collector/native launch, live edits, full proof/binary read, helper mutation, publication or acceptance.",
+  "source_manifest": {
+    "bytes": 1637,
+    "sha256": "425287e176cfe951d63780f1bb81ec1a661e97ca6ef98cc4ece4fca4da4e60cc"
+  },
+  "source_unchanged": true,
+  "sources": {
+    "PLAN.md": {
+      "bytes": 8916,
+      "sha256": "03b4f8ff0a82c6f405b47e8a465771b62ae253b308e9412f2b34919e3794ebe1"
+    },
+    "catalog.py": {
+      "bytes": 4910,
+      "sha256": "32c5fa7231710a6262840a6ea7bbe7371aea3d3d7e491ce528fc3ee70a37c57d"
+    },
+    "collect.py": {
+      "bytes": 11800,
+      "sha256": "ca27a6a3978637017e4361c5ec4d09f2992a41f2255ab422c023666f43bde6a8"
+    },
+    "contracts.py": {
+      "bytes": 8315,
+      "sha256": "9ec167040eff3ebba2a364b8d8266bfc4fa8f436455e41dc734ac6f7e3512603"
+    },
+    "docs-proposal.md": {
+      "bytes": 3030,
+      "sha256": "0fe3eb21e4f4b7ae0a38c72f3d78786c266fc042a2334dbc21583eda652a2acc"
+    },
+    "docs-proposal.patch": {
+      "bytes": 5377,
+      "sha256": "a2928a17f867fb20f31b52782a06937ba2029be7dc248215f897b138f55ba678"
+    },
+    "policy.json": {
+      "bytes": 3471,
+      "sha256": "f2da9f3b542c91119e8ca283cc014559b5843f530c0825004f4ebddbddd24afa"
+    },
+    "preview.py": {
+      "bytes": 1638,
+      "sha256": "08c952b3c1ebbb7a50360953ecc7f32a120e80a0d42df721a0eb5dad346f728b"
+    },
+    "privacy.py": {
+      "bytes": 2433,
+      "sha256": "6c07d776319d53dfdf31d4a78c16ecdcda4bca74dc79240cb74c2e448ce7219c"
+    },
+    "safe_io.py": {
+      "bytes": 4057,
+      "sha256": "97a2093fe626cb018d2cb52791990b8342ceb7754c8f9d17deb032973acea1a1"
+    },
+    "test_delivery.py": {
+      "bytes": 13271,
+      "sha256": "598e55d0ec03f45078a39bd288623602043629ff01cd67950389a53c9096eed9"
+    },
+    "test_shapes.py": {
+      "bytes": 4817,
+      "sha256": "9f0af0e29af4dec45cdd49e01a8fdca51bb20c80b2e205dfc75aa6e322ed853d"
+    },
+    "verify-retained.py": {
+      "bytes": 3127,
+      "sha256": "7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446"
+    }
+  },
+  "status": "passed-preparation-tests-only",
+  "tests": 30,
+  "whitespace_findings": []
+}

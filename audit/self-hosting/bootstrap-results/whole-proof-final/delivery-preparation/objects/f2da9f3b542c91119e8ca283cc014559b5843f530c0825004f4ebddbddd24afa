@@ -1,0 +1,84 @@
+{
+  "schema": "trident/final-delivery-policy/v1",
+  "status": "prepared-not-executed",
+  "base": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002",
+  "locked": {
+    "whole-proof-final-review-v5/sources.json": {
+      "bytes": 3716,
+      "sha256": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584"
+    },
+    "whole-proof-final-review-v5/independent-review.json": {
+      "bytes": 8220,
+      "sha256": "eeaba901de02584018eb0d4b5f4ceac978c738349b0d4ff2468a9f58f2cf4897"
+    },
+    "whole-proof-final-review-v5/pins.json": {
+      "bytes": 102513,
+      "sha256": "4f99cdbc559e2841987fc60013e5bf1217e44a2d2f288af0d32404a7613a0979"
+    },
+    "whole-proof-attacks-completion-v5/sources.json": {
+      "bytes": 41607,
+      "sha256": "32f57009374ce8b542202ebaf1a3b0b05ab171f7aaa0665a838be0204ba8912e"
+    },
+    "whole-proof-attacks-completion-v5/independent-review.json": {
+      "bytes": 45013,
+      "sha256": "448ab7a293431060f5de9cf945a54ba513e9eae38ffd20d75ecc3dca78a7af1b"
+    },
+    "whole-proof-attacks-completion-v5/plan.json": {
+      "bytes": 1977,
+      "sha256": "9910fd595e8723b3f6366ce4bc347f648ef7139800bf0a1ad4d83001d8e225ff"
+    },
+    "whole-proof-final-launch-v5/when_ready.py": {
+      "bytes": 7264,
+      "sha256": "d56faf9f89f6cb4ecad6b13a23c7cc596b3857dc11cd675c7ddf477dff3564e8"
+    },
+    "whole-proof-final-launch-v5/launch.py": {
+      "bytes": 2671,
+      "sha256": "0c836826bf994b33907e8b2cc2fa7d108d4d443da6b9a1ade08e969686441757"
+    },
+    "whole-proof-final-launch-v5/outer-started.json": {
+      "bytes": 1876,
+      "sha256": "f359e2fd571ef05a7cbea80f43ae8b71ea3eaec4ed0a9bafa0dd5ad241b67a04"
+    },
+    "whole-final-watcher-v5-independent-review/independent-review.json": {
+      "bytes": 3167,
+      "sha256": "c88253e59eb430e5a22d0680e2350134b20561d093b93720ca9dc1b7fc56bddb"
+    }
+  },
+  "caps": {
+    "wall_seconds": 120,
+    "individual_read_bytes": 67108864,
+    "total_read_bytes": 268435456,
+    "output_bytes": 67108864,
+    "catalog_entries": 20000,
+    "public_stream_bytes": 1048576
+  },
+  "proofs": {
+    "1": {
+      "bytes": 11977015727,
+      "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+    },
+    "2": {
+      "bytes": 10569174820,
+      "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+    }
+  },
+  "scope": "Reviewed collector creates a local metadata packet only after exact actual pass; full local receipts/process snapshots stay private, proofs/binaries excluded; no publish/automatic helper-tree write.",
+  "archive_maps": {
+    "whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/completion-v5": {
+      "bytes": 25484,
+      "sha256": "723c08b2d7df332229ee75edeec26e801693a26da45a4cc7c0cc114255482739"
+    },
+    "whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/checker-v5": {
+      "bytes": 57503,
+      "sha256": "74bf12dd9b7b1e4959af59379f3236025210068f379e3c06783c7a3d94b7d3c9"
+    },
+    "whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/final-launch-v5": {
+      "bytes": 5141,
+      "sha256": "7c7c821f7326414bf7711a02b08c5e5e60077f3dd16dc885f9b584983d37c976"
+    },
+    "whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/integration-20261002": {
+      "bytes": 50193,
+      "sha256": "24766e8b58b81e52db45ae1f1d01dc19ee9f05bab46ee3ca879e4846a32e13ad"
+    }
+  }
+}

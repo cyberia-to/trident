@@ -1,0 +1,36 @@
+--- previous/PLAN.md
++++ current/PLAN.md
+@@ -96 +96 @@
+-`verify-retained.py`, local `.gitattributes` (`objects/* -text`), README and the
++`verify-retained.py`, local `.gitattributes` (`* -text`, scoped to the NEW packet only), README and the
+@@ -128 +128,2 @@
+-reuse, deduplication and preserved failed partial packets. No collector launch
++reuse, deduplication and preserved failed partial packets. An actual synthetic Git
++`core.autocrlf=true` checkout preserves every SHA-bound packet file. No collector launch
+--- previous/collect.py
++++ current/collect.py
+@@ -140 +140 @@
+-        c.budget.write(output,'.gitattributes',b'objects/* -text\n')
++        c.budget.write(output,'.gitattributes',b'* -text\n')
+--- previous/test_delivery.py
++++ current/test_delivery.py
+@@ -4,0 +5 @@
++import subprocess
+@@ -208,0 +210,17 @@
++    def test_actual_autocrlf_checkout_preserves_every_packet_identity(self):
++        (self.root/'stream').write_bytes(b'line one\nline two\n')
++        packet_root=self.root/'packet'
++        result=packet(Catalog(self.root,self.b),{}, {'stream':digest((self.root/'stream').read_bytes())},
++                      packet_root,self.source,lambda:self.source)
++        expected=dict(result['files']);expected['receipt.json']=digest((packet_root/'receipt.json').read_bytes())
++        git='/usr/bin/git'
++        def run(*args):
++            return subprocess.run([git,'-c','core.autocrlf=true','-c','core.safecrlf=false',*args],
++                                  cwd=packet_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
++        run('init','-q')
++        run('add','--',*sorted(expected))
++        destination=self.root/'checkout';destination.mkdir()
++        run('checkout-index','--all','--prefix='+str(destination)+'/')
++        self.assertEqual({name:digest((destination/name).read_bytes()) for name in expected},expected)
++        self.assertEqual((destination/'.gitattributes').read_bytes(),b'* -text\n')
++

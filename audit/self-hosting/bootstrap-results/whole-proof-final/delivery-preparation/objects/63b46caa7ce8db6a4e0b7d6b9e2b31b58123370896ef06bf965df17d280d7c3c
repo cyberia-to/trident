@@ -1,0 +1,103 @@
+"""Identity-only dependency classification; no recursive directory/body collection."""
+import json
+from pathlib import Path
+from safe_io import require, exact_identity, relative, digest
+from privacy import classification
+
+
+class Catalog:
+    def __init__(self, base, budget):
+        self.base = Path(base)
+        self.budget = budget
+        self.rows = {}
+        self.data = {}
+        self.documents = {}
+        self.archived = {}
+
+    def name(self, path):
+        path = Path(path)
+        if path.is_absolute():
+            if path.is_relative_to(self.base):
+                return relative(path.relative_to(self.base).as_posix()).as_posix()
+            # External tools can be referenced by identity, never opened.
+            require('..' not in path.parts, 'canonical external reference')
+            return 'external:' + path.as_posix()
+        return relative(path.as_posix()).as_posix()
+
+    def add(self, name, value, provenance, observed=False):
+        self.budget.tick()
+        name = self.name(name) if not name.startswith('record:') else name
+        value = exact_identity(value)
+        require(len(self.rows) < self.budget.caps['catalog_entries'] or name in self.rows, 'catalog cap')
+        if name in self.rows:
+            row = self.rows[name]
+            require(exact_identity(row) == value, 'conflicting dependency identity: '+name)
+            row['observed_metadata_bytes'] |= observed
+            if provenance not in row['provenance']:
+                row['provenance'].append(provenance)
+        else:
+            self.rows[name] = dict(path=name, **value, classification=classification(name),
+                                  provenance=[provenance], observed_metadata_bytes=observed)
+        if name in self.archived and exact_identity(self.archived[name]) == value:
+            self.rows[name].update(classification='already-retained-reference', retained=self.archived[name]['retained'])
+        return self.rows[name]
+
+    def read(self, name, expected=None, maximum=None):
+        name = relative(name).as_posix()
+        if name not in self.data:
+            data = self.budget.read(self.base/name, maximum)
+            self.data[name] = data
+            self.add(name,digest(data),'collector-stable-metadata-read',True)
+        data = self.data[name]
+        require(expected is None or digest(data) == exact_identity(expected), 'input identity mismatch: '+name)
+        return data
+
+    def load(self, name, expected=None, references=True):
+        if name not in self.documents:
+            self.documents[name] = json.loads(self.read(name,expected))
+            if references:
+                self.references(self.documents[name],name)
+        elif expected is not None:
+            require(digest(self.data[name]) == exact_identity(expected),'cached identity mismatch')
+        return self.documents[name]
+
+    def references(self, value, origin, pointer=''):
+        """Classify all nested identities, never copy arbitrary nested values or follow paths."""
+        if isinstance(value, dict):
+            if 'bytes' in value and 'sha256' in value:
+                ref = value.get('path')
+                name = ref if isinstance(ref,str) and Path(ref).is_absolute() else 'record:'+origin+'#'+pointer
+                self.add(name,value,origin+'#'+pointer)
+            for key, child in value.items():
+                if isinstance(child,dict) and 'bytes' in child and 'sha256' in child and Path(key).is_absolute():
+                    self.add(key,child,origin+'#'+pointer)
+                    nested = {k:v for k,v in child.items() if k not in ('bytes','sha256','path')}
+                    self.references(nested,origin,pointer+'/'+key.replace('~','~0').replace('/','~1'))
+                else:
+                    self.references(child,origin,pointer+'/'+key.replace('~','~0').replace('/','~1'))
+        elif isinstance(value,list):
+            for i,child in enumerate(value):
+                self.references(child,origin,pointer+'/'+str(i))
+
+    def file_map(self, directory, mapping, provenance):
+        for name,value in mapping.items():
+            path = Path(directory)/relative(name)
+            self.add(path.as_posix(),value,provenance)
+
+    def archive(self, root, expected):
+        name = root+'/retained-files.json'
+        rows = self.load(name,expected)
+        require(isinstance(rows,list), 'existing archive map list')
+        # Existing objects are not reread or recopied. Their exact accepted map is the reference.
+        for row in rows:
+            value = exact_identity(row)
+            require(row['stored'] == 'objects/'+value['sha256'], 'canonical retained object')
+            original = self.name(row['original'])
+            record = dict(**value,retained=dict(map=name,object=root+'/'+row['stored']))
+            if original in self.archived:
+                require(exact_identity(self.archived[original]) == value, 'existing archive identity conflict')
+            self.archived[original] = record
+            self.add(original,value,name)
+
+    def snapshot(self):
+        return [self.rows[k] for k in sorted(self.rows)]

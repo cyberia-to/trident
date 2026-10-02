@@ -1,0 +1,31 @@
+"""Read-only static privacy classification; never calls collect.gather or emits acceptance."""
+from collections import Counter
+import json
+from pathlib import Path
+from catalog import Catalog
+from collect import CAPS,locked_inputs
+from safe_io import Budget,digest
+
+
+def preview(root):
+    policy=json.loads((root/'policy.json').read_bytes())
+    c=Catalog(Path(policy['base']),Budget(CAPS))
+    locked_inputs(c,policy)
+    # This baseline was frozen before V5 launched. Metadata only: zero body reads.
+    c.load('whole-proof-attacks-completion-v5/baseline.json')
+    prep=c.load('whole-proof/preparation.json')
+    c.file_map('whole-proof/inputs',prep['files'],'whole-proof/preparation.json')
+    for g in (2,3):
+        name=f'whole-proof-corpus-v2/c{g}/files.json'
+        row=c.load(f'whole-proof-corpus-v2/c{g}/receipt.json')
+        c.file_map(f'whole-proof-corpus-v2/c{g}',c.load(name,row['files'],references=False),name)
+    return dict(schema='trident/final-delivery-privacy-preview/v1',status='preparation-only-no-acceptance',
+                policy=digest((root/'policy.json').read_bytes()),entries=len(c.rows),
+                classifications=dict(Counter(r['classification'] for r in c.rows.values())),
+                read_bytes=c.budget.read_bytes,
+                note='Only locked source/review/map and original frozen baseline/corpus metadata read. No V5/F5 terminal verdict, proof/binary body, process table, native command, collection or helper-tree write.',
+                dependencies=c.snapshot())
+
+
+if __name__=='__main__':
+    print(json.dumps(preview(Path(__file__).resolve().parent),indent=2,sort_keys=True))
