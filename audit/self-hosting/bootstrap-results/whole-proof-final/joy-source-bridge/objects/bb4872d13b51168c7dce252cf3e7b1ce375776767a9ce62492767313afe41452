@@ -1,0 +1,777 @@
+{
+  "status": "passed",
+  "scope": "Bounded actual installed Joy host-deadline contract; no whole-compiler proof claim",
+  "joy": {
+    "bytes": 5635824,
+    "sha256": "d81d61c400148f7b674b4e1a471f6b828773416681d210ccdd34437431357bd9"
+  },
+  "source_provenance_sha256": "3c6f2ced084812e73f97c069169f83807fc5d389e54b581dd52f10982cd5b227",
+  "fixture": {
+    "bytes": 153091,
+    "sha256": "4b118cd9c9f20764e46b16676d4cb63599dc40c7e8f3a40a47c4fe5962f752ad"
+  },
+  "candidate_sha256": "f208f7f73d22e36f4ea46bbc6c7460a0b18ab7d3ef0be0f584d673c64ca9a2bb",
+  "script_sha256": "20c434ab117fe2e54e7e1a80e39f232fac4ef32f92803326bf9213e78fceebf7",
+  "helper_sha256": "5caa737b7c7b8b1fef0dd024a56e78f394273b8140b12a1832f29c8dad891a94",
+  "commands": [
+    {
+      "name": "prove-30000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "proof-30000",
+        "--time-ms",
+        "30000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "prove-30000.stdout",
+        "bytes": 1772,
+        "sha256": "a6d3647f670a2a6b70aa5ec6de3187bfa010445f28b1d2b32e59e7557d34759b"
+      },
+      "stderr": {
+        "path": "prove-30000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-30000-30000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-30000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "30000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-30000-30000.stdout",
+        "bytes": 1695,
+        "sha256": "65c3e1d64502fd406a195a1340af92d53ea36828fbf3aea9f90a1c2ae7dbf752"
+      },
+      "stderr": {
+        "path": "verify-30000-30000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-30000-7200000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-30000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "7200000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-30000-7200000.stdout",
+        "bytes": 1695,
+        "sha256": "6b12eb7ca13aafe72d3db38f1082607d48d0ac1909dc74baceb79cd800beb0f9"
+      },
+      "stderr": {
+        "path": "verify-30000-7200000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-30000-14400000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-30000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "14400000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-30000-14400000.stdout",
+        "bytes": 1695,
+        "sha256": "4b4bc05421104af466563901e7ab079b84804d647b5dbc10c6fc20a222144775"
+      },
+      "stderr": {
+        "path": "verify-30000-14400000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "prove-7200000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "proof-7200000",
+        "--time-ms",
+        "7200000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "prove-7200000.stdout",
+        "bytes": 1774,
+        "sha256": "01395b8b92bce0e61c2b7d6f541ca8cbb53e8aab0b7e2aac19efb643f463e371"
+      },
+      "stderr": {
+        "path": "prove-7200000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-7200000-30000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-7200000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "30000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-7200000-30000.stdout",
+        "bytes": 1695,
+        "sha256": "888bf397bc37f3b3b9c7100131f7b791a00a7cc5cc88da536b4d10994b700856"
+      },
+      "stderr": {
+        "path": "verify-7200000-30000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-7200000-7200000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-7200000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "7200000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-7200000-7200000.stdout",
+        "bytes": 1695,
+        "sha256": "a4e54c6d1dfb624d3c4f1bd09062a780f2fa6d7b7b0e87a19d933ca6bf555b6e"
+      },
+      "stderr": {
+        "path": "verify-7200000-7200000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-7200000-14400000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-7200000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "14400000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-7200000-14400000.stdout",
+        "bytes": 1695,
+        "sha256": "c8693f02d7708bce8a33f3a4a8d1e1d5dd221095602e98f2acc70d37134d5e17"
+      },
+      "stderr": {
+        "path": "verify-7200000-14400000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "prove-14400000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "proof-14400000",
+        "--time-ms",
+        "14400000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "prove-14400000.stdout",
+        "bytes": 1775,
+        "sha256": "7c158a5c1bb8d06cda352644299de00fa8c6a018628e2b2a80f4f399109e274d"
+      },
+      "stderr": {
+        "path": "prove-14400000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-14400000-30000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-14400000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "30000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-14400000-30000.stdout",
+        "bytes": 1695,
+        "sha256": "b341914bd356367850e06dd625085995876fb28586a3b0666ffcc2d3acb1ffba"
+      },
+      "stderr": {
+        "path": "verify-14400000-30000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-14400000-7200000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-14400000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "7200000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-14400000-7200000.stdout",
+        "bytes": 1695,
+        "sha256": "32b241a26f91afc1f9f07a06b1c4b0b886718773093a4c1266c358b6a880f73b"
+      },
+      "stderr": {
+        "path": "verify-14400000-7200000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify-14400000-14400000",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "proof-14400000",
+        "-o",
+        "compiled",
+        "--emit",
+        "program",
+        "--force",
+        "--time-ms",
+        "14400000",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "verify-14400000-14400000.stdout",
+        "bytes": 1695,
+        "sha256": "b6015a1f3864ff0e6a4756c4de90f872cc1e7dbe917a2f98a5b7a288ff03a24d"
+      },
+      "stderr": {
+        "path": "verify-14400000-14400000.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "compiled-program-run",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "run-artifact",
+        "compiled",
+        "--input",
+        "zero",
+        "-o",
+        "result"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "compiled-program-run.stdout",
+        "bytes": 645,
+        "sha256": "59801edcd7823e68d40eb87e403dbc57fc2aab6f58d6dd27c4477cc98722d066"
+      },
+      "stderr": {
+        "path": "compiled-program-run.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "prove-artifact-invalid-0",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "0",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "prove-artifact-invalid-0.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "prove-artifact-invalid-0.stderr",
+        "bytes": 62,
+        "sha256": "3e81b93bd0d1dc9d093ea03758fc9dced02548f7910f27486ee655650f86dda8"
+      }
+    },
+    {
+      "name": "prove-artifact-invalid-14400001",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "14400001",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "prove-artifact-invalid-14400001.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "prove-artifact-invalid-14400001.stderr",
+        "bytes": 62,
+        "sha256": "3e81b93bd0d1dc9d093ea03758fc9dced02548f7910f27486ee655650f86dda8"
+      }
+    },
+    {
+      "name": "prove-artifact-invalid-18446744073709551615",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "18446744073709551615",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "prove-artifact-invalid-18446744073709551615.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "prove-artifact-invalid-18446744073709551615.stderr",
+        "bytes": 62,
+        "sha256": "3e81b93bd0d1dc9d093ea03758fc9dced02548f7910f27486ee655650f86dda8"
+      }
+    },
+    {
+      "name": "verify-artifact-invalid-0",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "0",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000",
+        "--proof",
+        "proof-14400000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "verify-artifact-invalid-0.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "verify-artifact-invalid-0.stderr",
+        "bytes": 62,
+        "sha256": "3e81b93bd0d1dc9d093ea03758fc9dced02548f7910f27486ee655650f86dda8"
+      }
+    },
+    {
+      "name": "verify-artifact-invalid-14400001",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "14400001",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000",
+        "--proof",
+        "proof-14400000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "verify-artifact-invalid-14400001.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "verify-artifact-invalid-14400001.stderr",
+        "bytes": 62,
+        "sha256": "3e81b93bd0d1dc9d093ea03758fc9dced02548f7910f27486ee655650f86dda8"
+      }
+    },
+    {
+      "name": "verify-artifact-invalid-18446744073709551615",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "18446744073709551615",
+        "--resident-nodes",
+        "196608",
+        "--collection-work",
+        "100000000",
+        "--proof",
+        "proof-14400000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "verify-artifact-invalid-18446744073709551615.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "verify-artifact-invalid-18446744073709551615.stderr",
+        "bytes": 62,
+        "sha256": "3e81b93bd0d1dc9d093ea03758fc9dced02548f7910f27486ee655650f86dda8"
+      }
+    },
+    {
+      "name": "ordinary-prove-limit",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "ordinary-proof",
+        "--time-ms",
+        "300000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "ordinary-prove-limit.stdout",
+        "bytes": 1775,
+        "sha256": "991d7f806e08a3b9c2a367568e69ce537a23d07eabf1dc273c9c1394ff0253dc"
+      },
+      "stderr": {
+        "path": "ordinary-prove-limit.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "ordinary-verify-limit",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "--proof",
+        "ordinary-proof",
+        "-o",
+        "ordinary-result",
+        "--emit",
+        "program",
+        "--time-ms",
+        "300000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": {
+        "path": "ordinary-verify-limit.stdout",
+        "bytes": 1702,
+        "sha256": "25b5e31b94def0edf6b9cd5d1642d1a05f2e5b9847a4b461ae06db196215a663"
+      },
+      "stderr": {
+        "path": "ordinary-verify-limit.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "prove-artifact-ordinary-over-limit",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "prove-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "300001"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "prove-artifact-ordinary-over-limit.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "prove-artifact-ordinary-over-limit.stderr",
+        "bytes": 60,
+        "sha256": "85d67da7ff5871dc139a3b1245c8418df61c741348a0000c24d441da2e2222a7"
+      }
+    },
+    {
+      "name": "verify-artifact-ordinary-over-limit",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/measurements/host-ceiling-helper-candidate/bin/joy",
+        "verify-artifact",
+        "compiler",
+        "--input",
+        "job",
+        "-o",
+        "destination",
+        "--force",
+        "--time-ms",
+        "300001",
+        "--proof",
+        "ordinary-proof"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/root-host-ceiling-review",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": {
+        "path": "verify-artifact-ordinary-over-limit.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "verify-artifact-ordinary-over-limit.stderr",
+        "bytes": 60,
+        "sha256": "85d67da7ff5871dc139a3b1245c8418df61c741348a0000c24d441da2e2222a7"
+      }
+    }
+  ],
+  "accepted": 15,
+  "rejected": 8,
+  "proof_sha256": "683e6a9c7ed9f68ef0652dd07ee4b253098252e45966e152957980de307b33f0"
+}

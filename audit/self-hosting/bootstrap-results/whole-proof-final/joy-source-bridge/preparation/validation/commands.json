@@ -1,0 +1,181 @@
+[
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "-W",
+      "error",
+      "verify-retained.py",
+      "--originals"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/packet",
+    "exit_code": 0,
+    "stdout": {
+      "path": "0.stdout",
+      "bytes": 417,
+      "sha256": "efe46657d903858c88a35d90d5bf57e051e9b3a8d122c0ff7ac2384d72565fa3"
+    },
+    "stderr": {
+      "path": "0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "init",
+      "-q",
+      "--template="
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "1.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "config",
+      "core.autocrlf",
+      "true"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "2.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "joy-source-bridge/.gitattributes",
+      "joy-source-bridge/README.md",
+      "joy-source-bridge/objects/064a0bb97979a390fd476c41bdfd55513fdfc087e06233663eaf8318dcb00865",
+      "joy-source-bridge/objects/0d51bcaca3ad411865e2129479950bd4046961190080dd0f12bea593889e5e02",
+      "joy-source-bridge/objects/243c967811e6a2028d091a82663848552596fa866b5c5adfd14f8eb2c9b06efc",
+      "joy-source-bridge/objects/353807322daf28801ecc445fd30e5340796ddfb5e64bf32a0bf7586121ac8983",
+      "joy-source-bridge/objects/37ebc829132484d11432b0faa23d4c967b968b2526c7b1117259f997e0497e8a",
+      "joy-source-bridge/objects/4630f54e0e1532cd712a32957ce34e853010a7b277d64fa43aa71d11c16e2209",
+      "joy-source-bridge/objects/5a1ad276de45e34a47916571d11d87c3061a504f321aea998dee10b0ec81a2e5",
+      "joy-source-bridge/objects/627be415bcc1c6c1d649f0e0af8e4bcc7f490d5576b03a4e89f9e4de2659e973",
+      "joy-source-bridge/objects/63b357c689d1b7968a13f58db960c75a529be49d8fba0679ffa3db7e322c866b",
+      "joy-source-bridge/objects/645d45ef24d7a52fb559707b26a611d6ee165642c88fa694043c4e29824475c4",
+      "joy-source-bridge/objects/794881982c011a5e1b93e77f2e17d6b4d4e6fd443868b28246cbbedd1050165a",
+      "joy-source-bridge/objects/825ed4c59db8395fc31955bfcfe2bf756a13a6fe42e6cba320cf550e019d4483",
+      "joy-source-bridge/objects/87010f9467ad5fab46ea5857de1fb4377b07dbc49422e07ba076cffdf659ec60",
+      "joy-source-bridge/objects/997791aa9bda2c1ae6dda8b553cbccc800b8a2b6cbb08ff8ebaf2226e2514296",
+      "joy-source-bridge/objects/9c6a92c30d3c9877c6fa98b852b03ce6b394af8274619176b92512cf14e74f4f",
+      "joy-source-bridge/objects/9df6279059581325a3441d0afd2660e9e3c10d8f265ba525be3e930a29d96cd4",
+      "joy-source-bridge/objects/a46221a78e927c4389d42be8f50aebd0a4e3f5bdb06f8ca2ccfa2374afc91774",
+      "joy-source-bridge/objects/a68b366a64dec82b5474e32a5ab4cedff143f7083f38ba10f298f18426c08e60",
+      "joy-source-bridge/objects/ad057c18c0ef4e86fec6d6405f7cbcf87203132d38bdb64800a158095b7fe246",
+      "joy-source-bridge/objects/b54ff6882c5899306160157c104b8206a4ba8b4c77413b0dc29e128f2800774c",
+      "joy-source-bridge/objects/b7adbee9300d3136705270abf72081e95fc26ca810b0fff0a947e77201116447",
+      "joy-source-bridge/objects/bb4872d13b51168c7dce252cf3e7b1ce375776767a9ce62492767313afe41452",
+      "joy-source-bridge/objects/c0b468549849cd310acc9ef6ab10756864a393a61d6a8bd152e89b5f41486e49",
+      "joy-source-bridge/objects/c4ee9f37099d2155517278c6f0591f736c25ac7ba43d6d0ec10678e5a68becf3",
+      "joy-source-bridge/objects/d18d74a3e080eaa452ee95b038ac3b8c35ccbf9d93c54265a9aa66a49c616022",
+      "joy-source-bridge/objects/d572689388b53b575608ba305143733afba82536031b3895977644a60038e8bc",
+      "joy-source-bridge/objects/d91f300785062898b394ab6c17f9618d3facb329dc8280b14b8a4386adbe741c",
+      "joy-source-bridge/objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "joy-source-bridge/objects/e5ebdecdab93311790884a9dfd69ddc2ecdf7f8e5fdc4ffd246f503cbaa20e99",
+      "joy-source-bridge/objects/e72faa82cbd7f2a5ef82c2a7010cc7683e33f72616cb5f2a295399436165f348",
+      "joy-source-bridge/objects/e870d61efec2f900b98c3473a1871f2734a7084b39197934b2610440e61927ee",
+      "joy-source-bridge/objects/f17f4601ebe3d34a90168d173f6a7135cc8cb710d72dc4a7dae69acb05741408",
+      "joy-source-bridge/objects/f4e3c00fa899b76f9035d760ec8e69d63a4863b2ae637b63ce8eabdf176da939",
+      "joy-source-bridge/references.json",
+      "joy-source-bridge/retained-files.json",
+      "joy-source-bridge/verify-retained.py"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "3.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "3.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "4.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "4.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "write-tree"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "5.stdout",
+      "bytes": 41,
+      "sha256": "1aed5e90edc755c1d583e704cb0fae218ac85dcb631b2b22caba0785d4b23a86"
+    },
+    "stderr": {
+      "path": "5.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.autocrlf=true",
+      "checkout-index",
+      "--all",
+      "--prefix=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/checkout/"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-whole-proof-source-bridge-delivery/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "6.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "6.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]
