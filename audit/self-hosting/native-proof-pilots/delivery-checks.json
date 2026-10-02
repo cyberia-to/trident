@@ -1,0 +1,40 @@
+{
+  "schema": "trident/sh7-document-delivery-checks/v1",
+  "status": "passed",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--check",
+        "audit/self-hosting/native-proof-pilots/historical-dynamic/main.rs"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "scope": "Documentation/audit delivery; production Trident source and root manifest/lock unchanged from da0d1a59. Actual SH7 tests and runtime component/native gates are independently retained in linked owner receipts.",
+  "checks": [
+    "Python audit-helper syntax",
+    "Markdown local targets in acceptance README and normative contract",
+    "1000-line plan budget",
+    "Rust fixture formatting",
+    "git whitespace"
+  ],
+  "initial_link_check": "Existing ../../soft3/specs/execution-model.md reference initially unresolved in new isolated worktree family; added read-only sibling symlink, then all targets resolved. No documentation link changed.",
+  "historical_dynamic_production_check_sha256": "a364351aa3d992ca3bc9e042a6872cff0a3763c4cb131b0fef199105252a58d4",
+  "production_joy_test_receipt": "https://github.com/cyberia-to/joy/blob/6e0ec4d8440e2521df08f442d64f54e667044716/audit/structured-certificates/README.md",
+  "native_matrix_commit": "79f5ba880ddf1a7699aee60a316fe4e23ca27ca2"
+}

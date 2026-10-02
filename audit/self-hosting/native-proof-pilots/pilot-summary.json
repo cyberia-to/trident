@@ -1,0 +1,509 @@
+{
+  "schema": "trident/actual-compiler-proof-pilots/v1",
+  "status": "passed",
+  "scope": "Actual accepted complete C2 on bounded SH3 and SH4 workloads; subject to independent acceptance review; full SH8 self-build proofs are separate.",
+  "profile": "joy-nox-disclosed-compiler-v1",
+  "disclosure": "complete public witness",
+  "proof_properties": "Explicit public semantic certificate; no succinctness or zero-knowledge claim; no CCS profile claim.",
+  "physical_resource_claim": "unattested",
+  "source_revisions": {
+    "joy": "6e0ec4d8440e2521df08f442d64f54e667044716",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442"
+  },
+  "binary": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+    "bytes": 5635776,
+    "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+  },
+  "compiler": {
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/selfhost-source-preparation/final/prepared/compiler.dag",
+    "bytes": 9691488,
+    "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+  },
+  "pilots": [
+    {
+      "name": "loop",
+      "prover_receipt": "attempts/prove-loop-1/receipt.json",
+      "verifier_receipt": "attempts/verify-loop-result-1/receipt.json",
+      "comparison": "loop-comparison.json",
+      "proof": {
+        "external_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-loop-1/proof.joysc",
+        "bytes": 2077545,
+        "sha256": "279c74d1091cbff9fb974c93f39b3e65a3105cbab17c6812db20a0b434e643f5"
+      },
+      "verified": {
+        "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "input_particle": "f141441c93904ab8965be97403a8eec01751cfd7ba08e6400b8e3ede6dbb81c5",
+        "output_particle": "25ebae4ee84975b2010d8524bd5bdb64ea3525d375997ad5d8d9783130ab4846",
+        "charged_reductions": 1339805,
+        "invocations": 527913,
+        "expanded_steps": 1055826,
+        "logical_peak_frames": 616,
+        "semantic_events": 437596,
+        "records": 572259,
+        "transport": {
+          "decoded_bytes": 5320300,
+          "frames": 83,
+          "wire_bytes": 2077545
+        },
+        "compiler_job": {
+          "compiled_particle": "0c28dd7775db841ab10b97638bd6485bac19cc2ab66dd32723c072f61b19e65d",
+          "diagnostics": [],
+          "entry_function": "main",
+          "entry_module": "sample",
+          "input_validation_visits": 222,
+          "limits": {
+            "arena_nodes": 100000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 32,
+            "reductions": 100000000,
+            "sequence_length": 65536,
+            "source_bytes": 4096,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "sh3-pilot",
+              "origin_version": "1",
+              "particle": "038bfb9c1fbdea64d9b52ded6f636567f25ec2d7df618d56d20459f5f72af631",
+              "source_bytes": 80,
+              "source_particle": "e3aa4a8ba604f132e54b6f1e85ce64dfc669a64d28f1bfe78121f6ead0b7ea35"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "output_validation_visits": 36,
+          "package_particle": "0a938251ce0d512aedf1de9b4e263beab7a1f8881d3191fa05c1b6d229b7bc1b",
+          "status": "success"
+        },
+        "format": "joy-nox-disclosed-compiler-v1",
+        "disclosure": "complete public witness",
+        "physical_resource_claim": "unattested"
+      },
+      "prover_host_observations": {
+        "events": 1190489,
+        "fresh_nodes": 34120,
+        "resets": 1,
+        "resets_during_reuse": 0,
+        "reused_calls": 38196,
+        "snapshot_nodes": 100541,
+        "suppressed_enters": 290017,
+        "transitions": 1055826
+      },
+      "prove_wall_seconds": 2.316874166019261,
+      "verify_wall_seconds": 1.8131746249855496,
+      "prove_sampled_peak_rss_kib": 275792,
+      "verify_sampled_peak_rss_kib": 201728
+    },
+    {
+      "name": "aggregate",
+      "prover_receipt": "attempts/prove-aggregate-1/receipt.json",
+      "verifier_receipt": "attempts/verify-aggregate-result-1/receipt.json",
+      "comparison": "aggregate-comparison.json",
+      "proof": {
+        "external_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+        "bytes": 8662132,
+        "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+      },
+      "verified": {
+        "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "input_particle": "5535406d0970f7374ac9369dce4cfb375b750e42c2831890c42f9cf3b3c48763",
+        "output_particle": "2189816ad04c418cfbd9d7dfa344161d0ff4815eee90ef819a5227bc23443a51",
+        "charged_reductions": 6034212,
+        "invocations": 2525050,
+        "expanded_steps": 5050100,
+        "logical_peak_frames": 776,
+        "semantic_events": 2193706,
+        "records": 2422816,
+        "transport": {
+          "decoded_bytes": 22563924,
+          "frames": 346,
+          "wire_bytes": 8662132
+        },
+        "compiler_job": {
+          "compiled_particle": "f01fa059feb4065a8a76b476d964dd49dd4a51d8d1d3e99413ce4d3b5b730f7c",
+          "diagnostics": [],
+          "entry_function": "main",
+          "entry_module": "sample",
+          "input_validation_visits": 432,
+          "limits": {
+            "arena_nodes": 100000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 32,
+            "reductions": 100000000,
+            "sequence_length": 65536,
+            "source_bytes": 4096,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "bank.values",
+              "origin_name": "sh3-pilot",
+              "origin_version": "1",
+              "particle": "b070ce18a5763c19bd00ad2caea153f350dd22d55f0298c58f700c3a97d2fcef",
+              "source_bytes": 136,
+              "source_particle": "a9d3f3cc7752813e1f9ba6dd067847f9ec02b0c2b0d3f0d5edf1dbe7916e2fa4"
+            },
+            {
+              "logical_path": "sample",
+              "origin_name": "sh3-pilot",
+              "origin_version": "1",
+              "particle": "86a38ac479b9b7dd96a9d0d9407be8836ba534d126812572d41e5375cebcab48",
+              "source_bytes": 242,
+              "source_particle": "b1a6d59daa3098eabbcd7fa8386955e0c83c1d14eb1d7e09453dfedf977b6f2a"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "output_validation_visits": 36,
+          "package_particle": "c76527491ec3c721150dfee67c362ed318353f05e14ca1ba5fcfb1cf50edc166",
+          "status": "success"
+        },
+        "format": "joy-nox-disclosed-compiler-v1",
+        "disclosure": "complete public witness",
+        "physical_resource_claim": "unattested"
+      },
+      "prover_host_observations": {
+        "events": 5279210,
+        "fresh_nodes": 128414,
+        "resets": 1,
+        "resets_during_reuse": 0,
+        "reused_calls": 186398,
+        "snapshot_nodes": 100694,
+        "suppressed_enters": 1334998,
+        "transitions": 5050100
+      },
+      "prove_wall_seconds": 5.074386209016666,
+      "verify_wall_seconds": 2.6550138749880716,
+      "prove_sampled_peak_rss_kib": 285808,
+      "verify_sampled_peak_rss_kib": 231440
+    },
+    {
+      "name": "compile-error",
+      "prover_receipt": "attempts/prove-compile-error-1/receipt.json",
+      "verifier_receipt": "attempts/verify-compile-error-result-1/receipt.json",
+      "comparison": "compile-error-comparison.json",
+      "proof": {
+        "external_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-compile-error-1/proof.joysc",
+        "bytes": 1707931,
+        "sha256": "ce70bd8bd8636498bbed79f575efbf7ce4eb48c8a5ef2baccfaf830c09add7b5"
+      },
+      "verified": {
+        "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "input_particle": "4f196c63a002b82fcd9bee9c36e520541bff66bb2832c73148f8d7fd0b669dbd",
+        "output_particle": "bea5ae0cb2d5336a475e01b6d677bebe5b5e05503c067c4f329d573a5c748592",
+        "charged_reductions": 915380,
+        "invocations": 360131,
+        "expanded_steps": 720262,
+        "logical_peak_frames": 466,
+        "semantic_events": 345779,
+        "records": 473270,
+        "transport": {
+          "decoded_bytes": 4377981,
+          "frames": 68,
+          "wire_bytes": 1707931
+        },
+        "compiler_job": {
+          "compiled_particle": null,
+          "diagnostics": [
+            {
+              "code": 5,
+              "end_byte": 39,
+              "message": "invalid binding",
+              "module_index": 2,
+              "start_byte": 32
+            }
+          ],
+          "entry_function": "main",
+          "entry_module": "sample",
+          "input_validation_visits": 350,
+          "limits": {
+            "arena_nodes": 100000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 32,
+            "reductions": 100000000,
+            "sequence_length": 65536,
+            "source_bytes": 4096,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "a.padding",
+              "origin_name": "sh3-pilot",
+              "origin_version": "1",
+              "particle": "68793ebf1a0a66a64ab4819935f8f99e73717c4849bd2875bf82524c97a7de16",
+              "source_bytes": 16,
+              "source_particle": "d4c4ae4d1086834ae9a71a067fb8a1618e9e2770a0859dd62ac9796e19d6cf3a"
+            },
+            {
+              "logical_path": "sample",
+              "origin_name": "sh3-pilot",
+              "origin_version": "1",
+              "particle": "cf6274dc226a1ec91baf848d649cdb9238507d37698bb6bc0ea58c54ee7222ce",
+              "source_bytes": 53,
+              "source_particle": "50a2504238ee227923b9789fd915f95bf6c12dd01420998680d0904a285f4391"
+            },
+            {
+              "logical_path": "z.dep",
+              "origin_name": "sh3-pilot",
+              "origin_version": "1",
+              "particle": "964304e8524f8fe28728aa2631dd5e53461ca3a89b6536631e137b6911e6089d",
+              "source_bytes": 64,
+              "source_particle": "27b3c51494bbe52d6cf5221557fa48faf31fce89b2b285b584cb547993827194"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "output_validation_visits": 59,
+          "package_particle": "a138c92cf894b60347b22774163996f6ee34ab1dd083408c36439d428439adfe",
+          "status": "compile_error"
+        },
+        "format": "joy-nox-disclosed-compiler-v1",
+        "disclosure": "complete public witness",
+        "physical_resource_claim": "unattested"
+      },
+      "prover_host_observations": {
+        "events": 847753,
+        "fresh_nodes": 26903,
+        "resets": 1,
+        "resets_during_reuse": 0,
+        "reused_calls": 28937,
+        "snapshot_nodes": 100586,
+        "suppressed_enters": 172773,
+        "transitions": 720262
+      },
+      "prove_wall_seconds": 2.186551666993182,
+      "verify_wall_seconds": 1.756073958997149,
+      "prove_sampled_peak_rss_kib": 275712,
+      "verify_sampled_peak_rss_kib": 203280
+    },
+    {
+      "name": "scale-baseline",
+      "prover_receipt": "attempts/prove-scale-baseline-1/receipt.json",
+      "verifier_receipt": "attempts/verify-scale-baseline-result-1/receipt.json",
+      "comparison": "scale-baseline-comparison.json",
+      "proof": {
+        "external_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-scale-baseline-1/proof.joysc",
+        "bytes": 957305,
+        "sha256": "3418f41da05e766f46f406c29463db53ea216f76139a3cd44b14b80db55f7a0d"
+      },
+      "verified": {
+        "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "input_particle": "91522948eb62484118bc0ae17f501a540b80572f5b789b347e100bcb1ecf5e5f",
+        "output_particle": "538dcc7c7cb0e0a8eed3b2adf76311f906452b803fdb4e2b8ed5ac7f9cc5e3e3",
+        "charged_reductions": 366863,
+        "invocations": 155129,
+        "expanded_steps": 310258,
+        "logical_peak_frames": 403,
+        "semantic_events": 150997,
+        "records": 263530,
+        "transport": {
+          "decoded_bytes": 2427376,
+          "frames": 39,
+          "wire_bytes": 957305
+        },
+        "compiler_job": {
+          "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "diagnostics": [],
+          "entry_function": "main",
+          "entry_module": "sample",
+          "input_validation_visits": 202,
+          "limits": {
+            "arena_nodes": 20000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 600000000,
+            "sequence_length": 65536,
+            "source_bytes": 35,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+              "source_bytes": 35,
+              "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "output_validation_visits": 36,
+          "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+          "status": "success"
+        },
+        "format": "joy-nox-disclosed-compiler-v1",
+        "disclosure": "complete public witness",
+        "physical_resource_claim": "unattested"
+      },
+      "prover_host_observations": {
+        "events": 422791,
+        "fresh_nodes": 12009,
+        "resets": 1,
+        "resets_during_reuse": 0,
+        "reused_calls": 13473,
+        "snapshot_nodes": 100522,
+        "suppressed_enters": 72894,
+        "transitions": 310258
+      },
+      "prove_wall_seconds": 1.8111952079925686,
+      "verify_wall_seconds": 1.5866833750042133,
+      "prove_sampled_peak_rss_kib": 202896,
+      "verify_sampled_peak_rss_kib": 202896
+    },
+    {
+      "name": "scale-valid65536",
+      "prover_receipt": "attempts/prove-scale-valid65536-1/receipt.json",
+      "verifier_receipt": "attempts/verify-scale-valid65536-result-1/receipt.json",
+      "comparison": "scale-valid65536-comparison.json",
+      "proof": {
+        "external_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-scale-valid65536-1/proof.joysc",
+        "bytes": 417642285,
+        "sha256": "9e9b9fda6519b3d350377976ad2270554094a5fb840dba890e0d5eec15b1901b"
+      },
+      "verified": {
+        "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+        "input_particle": "67aaa90a0027d08bb2ed54c0d2cd0cd8d4080906b631e51a3607467d0f0909c3",
+        "output_particle": "8716d4de8249f567d072d7a9da87dd9d2b26731ba6632229053fe0903d392d6f",
+        "charged_reductions": 488109499,
+        "invocations": 218835001,
+        "expanded_steps": 437670002,
+        "logical_peak_frames": 4324,
+        "semantic_events": 110928457,
+        "records": 119699379,
+        "transport": {
+          "decoded_bytes": 1109119361,
+          "frames": 16925,
+          "wire_bytes": 417642285
+        },
+        "compiler_job": {
+          "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "diagnostics": [],
+          "entry_function": "main",
+          "entry_module": "sample",
+          "input_validation_visits": 32946,
+          "limits": {
+            "arena_nodes": 20000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 600000000,
+            "sequence_length": 65536,
+            "source_bytes": 65536,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364",
+              "source_bytes": 65536,
+              "source_particle": "47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "output_validation_visits": 36,
+          "package_particle": "3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075",
+          "status": "success"
+        },
+        "format": "joy-nox-disclosed-compiler-v1",
+        "disclosure": "complete public witness",
+        "physical_resource_claim": "unattested"
+      },
+      "prover_host_observations": {
+        "events": 446440924,
+        "fresh_nodes": 8468935,
+        "resets": 3,
+        "resets_during_reuse": 0,
+        "reused_calls": 7955807,
+        "snapshot_nodes": 301983,
+        "suppressed_enters": 159392869,
+        "transitions": 437670002
+      },
+      "prove_wall_seconds": 255.2816539159976,
+      "verify_wall_seconds": 71.32204433297738,
+      "prove_sampled_peak_rss_kib": 828624,
+      "verify_sampled_peak_rss_kib": 561184
+    }
+  ],
+  "adversarial_summary": {
+    "controls": 3,
+    "rejected": 24,
+    "control_byte_equality": true,
+    "initial_results": "adversarial-results.json",
+    "valid_regenerated_output_results": "adversarial-valid-output-results.json"
+  },
+  "retained_harness_failures": {
+    "attack-control-copy": {
+      "classification": "harness output/input classification error",
+      "actual_verifier_exit": 0,
+      "cause": "Positive control intentionally replaced a preexisting output that the generic identity guard classified as an immutable input. Compiler, JOB and proof stayed byte-identical.",
+      "fix": "Positive control now uses a new destination; negative controls retain protected preexisting outputs. Original receipt and output retained."
+    }
+  },
+  "historical_negative_compiler": "inputs/different-compiler.dag is historical seed SHA256 4b8276068704063eb13e5555bca872372d2975b4ac71cf93edc03273222327b6, not accepted SH6 C1.",
+  "rust_reference_boundary": "Loop and aggregate compare raw executed output bytes against ABI-adapted Rust references; ART1 bytes differ and are not claimed equal.",
+  "scale_reference_boundary": "Exact accepted SH4 source bytes and same complete C2; explicit separate pilot resource profile changes JOB limits. Charge, depth and steps match historical execution; extracted ART1 and executed output bytes equal historical results.",
+  "notes": [
+    "Each proof and verifier command has exact argv, empty search PATH, binary identity and immutable argument hashes in its receipt.",
+    "RSS and wall times are host observations. Prover reset count includes the initial noun-table snapshot.",
+    "Large proof and compiler files are retained at indexed external paths; all small raw inputs, outputs, logs, receipts and drivers are copied below.",
+    "Original preparation snapshots intentionally retain their chronological pending wording. This final summary records completed pilot status."
+  ]
+}

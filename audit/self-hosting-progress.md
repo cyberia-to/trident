@@ -15,7 +15,9 @@ bootstrap repetitions and all twenty-four actual C2/C3 corpus jobs passed on mac
 and Windows, each ARM64 and x64. The original CI aggregate and independent
 byte-exact replay both pass. The earlier
 S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
-corpora. Compilation proofs remain separate SH7/SH8 gates.
+corpora. SH7 now accepts the production native public compiler profile through
+[actual C2 pilots and independent review](self-hosting/native-proof-pilots/README.md).
+SH8 still requires both complete self-build certificates and their adversarial checks.
 
 S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
 484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
@@ -105,11 +107,36 @@ bootstrap implementation is merged through [PR112](https://github.com/cyberia-to
 merged through [PR111](https://github.com/cyberia-to/trident/pull/111) at
 `c54446a`; integration targets `release/0.4`. Master remains untouched.
 
-The next proof foundation is integrated separately: nox [PR25](https://github.com/cyberia-to/nox/pull/25) merged as `172811b` into `release/0.4`, supplying bounded logical observation. Its [clean Joy integration and complete ordinary C2(S1) → C3 check](https://github.com/cyberia-to/nox/blob/84e35daab2a9af066c5d8ec85f73837083fbc1df/audit/semantic-observer/whole-compiler/README.md) preserve exact compiler bytes and every non-time execution field; capture was disabled for this compatibility check. Zheng [PR37](https://github.com/cyberia-to/zheng/pull/37) merged as `c753f5a`, adding only the draft noun/Cost/read-port relation proposal. [Integration identities](self-hosting/bootstrap-results/semantic-observer-integration/integration.json) bind both reviewed trees to their merge commits. Frozen SH6 source pins remain unchanged. Authenticated memory, compiler proof constraints and production proof dispatch remain open SH7 work.
+The earlier proof foundation integrated separately: nox [PR25](https://github.com/cyberia-to/nox/pull/25) merged as `172811b` into `release/0.4`, supplying bounded logical observation. Its [clean Joy integration and complete ordinary C2(S1) → C3 check](https://github.com/cyberia-to/nox/blob/84e35daab2a9af066c5d8ec85f73837083fbc1df/audit/semantic-observer/whole-compiler/README.md) preserve exact compiler bytes and every non-time execution field; capture was disabled for this compatibility check. Zheng [PR37](https://github.com/cyberia-to/zheng/pull/37) merged as `c753f5a`, adding only the draft noun/Cost/read-port relation proposal. [Integration identities](self-hosting/bootstrap-results/semantic-observer-integration/integration.json) bind both reviewed trees to their merge commits. Frozen SH6 source pins remain unchanged. Authenticated memory, compiler proof constraints and production proof dispatch remained open at that revision.
 
 Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) now implements the first internal noun/Cost component and merged as `633e5ba` into `release/0.4`. Its fixed schema constrains native Hemera headers, all Cost cases, full-u64 saturation and six explicit read premises; unresolved reads prevent ordinary relation finalization. [The retained audit](https://github.com/cyberia-to/zheng/blob/2f79869a81a28daff3d700863ec593339ba4d08f/audit/noun-cost-component/README.md) records 229 default and 236 all-feature test passes, each with one existing ignored test and zero warnings, plus fourteen component tests. These totals overlap and are not added. The [integration receipt](self-hosting/bootstrap-results/noun-cost-integration/integration.json) binds all fourteen measured source identities to the committed delivery and exact merge tree. The separate example-feature repair is [PR38](https://github.com/cyberia-to/zheng/pull/38). The component leaves authenticated memory, transitions and production proof dispatch open; SH6 pins and SH7/SH8 acceptance stay unchanged.
 
 The integrated nox/Zheng revisions also pass the [clean downstream regression](self-hosting/bootstrap-results/noun-cost-joy-integration/README.md): Joy has 172 passing tests; Trident has 1197 passing tests and five existing ignores, and all 21 examples build. The real Z3 follow-up checks safe/unsafe outcomes with exit codes 0/1. Its first tool-path identity failure and corrected fresh-target replay remain retained. These local component checks leave the frozen native SH6 matrix unchanged.
+
+Production structured public certificates are now integrated through Joy
+[PR26](https://github.com/cyberia-to/joy/pull/26), with transport from
+[PR25](https://github.com/cyberia-to/joy/pull/25), authenticated noun memory and
+bounded derivations from Zheng PR40–43, and complete collection snapshots from
+nox [PR26](https://github.com/cyberia-to/nox/pull/26). `prove-artifact` and
+`verify-artifact` bind complete ART1/JOB1/RES1 inputs, results, computed
+continuations, exact charge and expanded logical work. The verifier checks
+Zheng derivations without executing nox or a compiler. Physical resource
+observations remain explicitly unattested. Joy's
+[source-bound integration audit](https://github.com/cyberia-to/joy/blob/6e0ec4d8440e2521df08f442d64f54e667044716/audit/structured-certificates/README.md)
+records 215 passing workspace tests, one existing ignored census diagnostic,
+zero failures/warnings, independently constructed semantic attacks and
+fresh-process CLI checks. The separately reviewed
+[actual compiler pilot gate](self-hosting/native-proof-pilots/README.md) now closes
+SH7: five complete-C2 proofs, three byte-identical controls and twenty-four
+rejected mutations, including canonical wrong output DAGs and rebound terminals.
+The exact initial dynamic-apply probe proves and freshly verifies output 42
+at charge 6 through the production structured route. Full SH8 remains open.
+
+The separate [six-platform production-profile gate](https://github.com/cyberia-to/trisha/blob/79f5ba880ddf1a7699aee60a316fe4e23ca27ca2/audit/native-proof-profile/hosted-36958147193/README.md)
+passes on native macOS/Linux/Windows ARM64 and x64 through Trisha
+[PR21](https://github.com/cyberia-to/trisha/pull/21). Its complete logs and
+source inventories are retained; the frozen distribution archive remains a
+separate gate with its original pins.
 
 Coordinated distribution preparation is tracked in Trisha [PR18](https://github.com/cyberia-to/trisha/pull/18), with Joy's independent native smoke in [PR23](https://github.com/cyberia-to/joy/pull/23). The [source-bound Trisha audit](https://github.com/cyberia-to/trisha/blob/f512e87e197df477eb4b8d952886f5d3a38a1d2b/audit/native-soft3-release/README.md) retains 429 CPU test passes, six existing ignores and sixteen packaging guards. The first complete archive attempt failed on the standalone fixture helper's stale lockfile; its original failure is retained and the repair is committed. The next archive built successfully and exposed a stale smoke fixture that read private imported fields; the fixture now declares those fields public, with separate positive and privacy-rejection checks retained. The [third installed rehearsal](https://github.com/cyberia-to/trisha/blob/f512e87e197df477eb4b8d952886f5d3a38a1d2b/audit/native-soft3-release/installed-rehearsal/README.md) now passes on macOS ARM64 with actual Rust 1.89: four archive-built binaries, Joy’s 49 commands, complete coordinated smoke, all 47 proof-corpus cases, 28 process/file probes, all 133 baseline executions, deterministic repack and unpacked LSP. Its 570 retained raw files include the actual proof payloads and independent source/archive review. The [archived CPU and full baseline-proof gate](https://github.com/cyberia-to/trisha/blob/fef81df38e1e22fd0b20b2135408f2333c512f08/audit/native-soft3-release/cpu-proof-rehearsal/README.md) also passed on the same closure: Trident workspace 1231 passing tests with five existing ignores, Trisha 429 with six, and Joy 172 with none; all commands have zero failures and warnings. The separate 198-proof gate covers 99 positive and 34 rejection fixtures and all 43 baselines. It verifies proof payloads in process and retains their exact events and claims; the payloads themselves are transient. The [root integration checks](self-hosting/bootstrap-results/cpu-proof-integration/root-review.json) compare original logs, committed source and tool/binary identities. Other native distribution platforms remain required.
 
@@ -134,8 +161,8 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH4](../reference/self-hosting.md#sh4-complete-project-and-runtime-scale) | Closed — current S1 measured scale | [Whole compiler, actual C2 source boundaries and complete-package invariance](self-hosting/lexer-bootstrap/README.md); original fixture limits retained |
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Closed — frozen S1 reproducible native bootstrap | [Original CI and independently replayed artifacts](self-hosting/bootstrap-results/run-36382085561/README.md): twelve bootstrap repetitions, twenty-four actual corpora, six platforms; original aggregate passed |
-| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Open — capture and internal noun/Cost constraints integrated | [Pinned source gap](self-hosting/native-proof-gap.md); nox [PR25](https://github.com/cyberia-to/nox/pull/25) supplies bounded capture; Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) supplies local header/Cost constraints with unresolved memory reads; authenticated memory, transitions and production proof dispatch remain required |
-| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — SH6 accepted; needs SH7 | Native proofs of both complete self-builds and adversarial verification |
+| [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Closed — native public compiler profile on actual SH3/SH4 pilots | [Complete retained proofs, independent review and dynamic-apply check](self-hosting/native-proof-pilots/README.md); full witness and unattested host resources declared |
+| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — SH6 and SH7 accepted; complete proof runs in progress | Native proofs of both exact frozen self-builds, fresh verification, C2/C3 byte equality and adversarial checks |
 
 The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-integration/README.md) bind the reviewed source trees to the actual merge commits for Joy PR22/23, Trident PR112/113/114 and Trisha PR18/19. All seven are merged into `release/0.4`. The accepted kit and direct self-build instructions are available there; master and release publication remain outside this delivery.
 
@@ -168,8 +195,12 @@ The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-
   preservation using the installed and unpacked binaries.
 - [ ] Complete the remaining native distribution platform gates before declaring
   Trident 0.4 ready. Archived macOS ARM64 CPU and proof gates are already green.
-- [ ] Design and accept the SH7 native compiler proof relation, then prove both
-  complete self-builds under SH8 with fresh-process and adversarial verification.
+- [x] Integrate the SH7 production public compiler profile, authenticated noun
+  memory, bounded dynamic derivations, collection snapshots and Joy dispatch.
+- [x] Accept SH7 using actual frozen compiler SH3/SH4 workloads, independently
+  verified positive/adversarial certificates and measured resource limits.
+- [ ] Prove both complete frozen self-builds under SH8, with fresh-process
+  verification, exact C2/C3 output comparison and adversarial binding checks.
 
 Resolve language/protocol choices in their owner contracts before dependent
 implementation. PRs target `release/0.4`; master remains outside this delivery.
@@ -327,7 +358,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
 | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
-| Native dynamic compiler execution outside production proof acceptance | Zheng + Joy / SH7–SH8 | [Original run/prove boundary](self-hosting-2026-09-23/soft3-runtime-probes.json); run-only compaction does not close the proof relation |
+| Complete self-build proof acceptance | Zheng + Joy / SH8 | [SH7 actual pilots and original dynamic probe now pass](self-hosting/native-proof-pilots/README.md); both complete self-build certificates and their fresh positive/adversarial verification remain required |
 
 ## Baseline evidence
 
@@ -362,9 +393,10 @@ in the body-scale receipt. This supplies a baseline for subsequent full-build
 runs, not a wall-time estimate for corpus, clean builds or CI. SH6 acceptance
 is now complete; distribution delivery and native compilation proofs remain.
 The original broad estimate is historical.
-Zheng compiler-scale proving (SH7/SH8) needs a relation design and measurements
-before a credible effort bound. A public native profile may close those gates;
-private/succinct compilation and semantic preservation remain separate claims.
+The native public relation and actual compiler pilots are accepted at SH7.
+Complete SH8 runs retain the original self-build inputs and declared bounds;
+their unfinished status supplies no completion estimate. Private/succinct
+compilation and semantic preservation remain separate claims.
 
 ## Delivery history and retained receipts
 

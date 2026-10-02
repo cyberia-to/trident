@@ -955,6 +955,17 @@ execution model remains outside that relation, so this profile alone does not
 close SH7 or the self-build proof gate. Historical foreign-backend JOYZK artifacts
 are unsupported in soft3-only Joy and do not satisfy this milestone.
 
+The production public compiler route is Joy's
+[`joy-nox-disclosed-compiler-v1`](../../joy/specs/structured-certificates.md):
+`prove-artifact` and `verify-artifact` accept complete ART1/JOB1/RES1 files.
+Zheng independently checks authenticated noun definitions, computed
+continuations, bounded activation/cache state, complete output and semantic
+charge. Verified state survives noun-table resets at nox collection boundaries.
+The profile discloses its full witness and reports physical host/GC observations
+as unattested. Its component implementation and tests require the actual pilot
+receipts above before SH7 acceptance, and both complete certificates below
+before SH8 acceptance.
+
 ## SH8. Proved self-compilation
 
 **Outcome:** native Zheng proofs authenticate both actual self-builds
