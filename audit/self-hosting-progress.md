@@ -1,6 +1,6 @@
 # Self-hosting on soft3 — progress ledger
 
-Updated: 2026-10-02. Working contract:
+Updated: 2026-10-03. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
 This ledger tracks acceptance. Linked receipts retain exact commands, revisions,
 source/artifact identities, failed experiments and historical resource limits.
@@ -18,7 +18,9 @@ S0 snapshot also reached exact C2/C3 equality and passed both supplied-compiler
 corpora. SH7 now accepts the production native public compiler profile through
 [actual C2 pilots and independent review](self-hosting/native-proof-pilots/README.md).
 The complete SH7 archive has [verified durable retention](self-hosting/native-proof-pilots/durable-retention/README.md), including independently downloaded parts, full archive reconstruction and both acceptance-commit install attempts.
-Both complete self-build certificates and fresh positive verification now pass, as do the [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md). Their complete byte-equivalence retention is accepted in Trisha [PR25](https://github.com/cyberia-to/trisha/pull/25), merged as `fbea3cef9a4139075e529c319ff75488ed5df625`. The [retained audit](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md) binds all 22 ordered parts, both complete digests, independent replay and the original failed local attempt. SH8 remains open for final adversarial acceptance and its evidence integration.
+SH8 is [accepted for frozen S1](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md) under `joy-nox-disclosed-compiler-v1`. Both complete self-build proofs pass fresh-process verification; the extracted C2 and C3 match byte for byte and each passes all 547 corpus observations. Final checker F5 accepts 23 distinct rejections and two original controls per generation, combining explicitly replayed prior results with fresh sequential completion. The [public summary](self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json) binds those results to the original commands and source. Earlier V2 and V3 attempts remain failed; V4 retains its `input-changed` outcome. The accepted profile discloses the complete public witness; physical resources remain unattested host observations.
+
+The [proof-extracted compiler corpora](self-hosting/whole-proof-corpus-v2-result/README.md) retain their original execution evidence. Complete byte-equivalence retention is accepted separately in Trisha [PR25](https://github.com/cyberia-to/trisha/pull/25), merged as `fbea3cef9a4139075e529c319ff75488ed5df625`. The [retained audit](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md) binds all 22 ordered parts, both complete digests, independent replay and the original failed local attempt.
 
 S1 is Trident `77213171d39b88c5f41221912251cc4813ac2b11`: 94 modules,
 484 functions and 370544 source bytes. The [reviewed feature map](self-hosting/compiler-feature-coverage.md)
@@ -95,7 +97,7 @@ curl failures and the first peer launch's pre-spawn interpreter-path rejection
 remain retained. Exact-tree review accepted merge
 `8da6f8f6efb3eafb4697f3ce7da74e059d18e02e` into `release/0.4`.
 This matrix retains its original Rust1.95 profile; the accepted Rust1.89 package
-rehearsal and pending SH8 proof acceptance keep their own source-bound gates.
+rehearsal and accepted frozen-S1 SH8 proofs keep their own source-bound gates.
 
 Historical S0 is `b991d901`: 94 modules, 484 functions and 369820 source bytes.
 Its [complete build](self-hosting/body-scale/README.md) published C2 SHA256
@@ -122,7 +124,7 @@ merged through [PR111](https://github.com/cyberia-to/trident/pull/111) at
 
 The earlier proof foundation integrated separately: nox [PR25](https://github.com/cyberia-to/nox/pull/25) merged as `172811b` into `release/0.4`, supplying bounded logical observation. Its [clean Joy integration and complete ordinary C2(S1) → C3 check](https://github.com/cyberia-to/nox/blob/84e35daab2a9af066c5d8ec85f73837083fbc1df/audit/semantic-observer/whole-compiler/README.md) preserve exact compiler bytes and every non-time execution field; capture was disabled for this compatibility check. Zheng [PR37](https://github.com/cyberia-to/zheng/pull/37) merged as `c753f5a`, adding only the draft noun/Cost/read-port relation proposal. [Integration identities](self-hosting/bootstrap-results/semantic-observer-integration/integration.json) bind both reviewed trees to their merge commits. Frozen SH6 source pins remain unchanged. Authenticated memory, compiler proof constraints and production proof dispatch remained open at that revision.
 
-Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) now implements the first internal noun/Cost component and merged as `633e5ba` into `release/0.4`. Its fixed schema constrains native Hemera headers, all Cost cases, full-u64 saturation and six explicit read premises; unresolved reads prevent ordinary relation finalization. [The retained audit](https://github.com/cyberia-to/zheng/blob/2f79869a81a28daff3d700863ec593339ba4d08f/audit/noun-cost-component/README.md) records 229 default and 236 all-feature test passes, each with one existing ignored test and zero warnings, plus fourteen component tests. These totals overlap and are not added. The [integration receipt](self-hosting/bootstrap-results/noun-cost-integration/integration.json) binds all fourteen measured source identities to the committed delivery and exact merge tree. The separate example-feature repair is [PR38](https://github.com/cyberia-to/zheng/pull/38). The component leaves authenticated memory, transitions and production proof dispatch open; SH6 pins and SH7/SH8 acceptance stay unchanged.
+Zheng [PR39](https://github.com/cyberia-to/zheng/pull/39) implemented the first internal noun/Cost component and merged as `633e5ba` into `release/0.4`. Its fixed schema constrains native Hemera headers, all Cost cases, full-u64 saturation and six explicit read premises; unresolved reads prevent ordinary relation finalization. [The retained audit](https://github.com/cyberia-to/zheng/blob/2f79869a81a28daff3d700863ec593339ba4d08f/audit/noun-cost-component/README.md) records 229 default and 236 all-feature test passes, each with one existing ignored test and zero warnings, plus fourteen component tests. These totals overlap and are not added. The [integration receipt](self-hosting/bootstrap-results/noun-cost-integration/integration.json) binds all fourteen measured source identities to the committed delivery and exact merge tree. The separate example-feature repair is [PR38](https://github.com/cyberia-to/zheng/pull/38). At that revision, authenticated memory, transitions and production proof dispatch remained open; SH6 pins and SH7/SH8 acceptance were unchanged.
 
 The integrated nox/Zheng revisions also pass the [clean downstream regression](self-hosting/bootstrap-results/noun-cost-joy-integration/README.md): Joy has 172 passing tests; Trident has 1197 passing tests and five existing ignores, and all 21 examples build. The real Z3 follow-up checks safe/unsafe outcomes with exit codes 0/1. Its first tool-path identity failure and corrected fresh-target replay remain retained. These local component checks leave the frozen native SH6 matrix unchanged.
 
@@ -143,7 +145,9 @@ fresh-process CLI checks. The separately reviewed
 SH7: five complete-C2 proofs, three byte-identical controls and twenty-four
 rejected mutations, including canonical wrong output DAGs and rebound terminals.
 The exact initial dynamic-apply probe proves and freshly verifies output 42
-at charge 6 through the production structured route. Full SH8 remains open.
+at charge 6 through the production structured route. The subsequent
+[SH8 acceptance](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
+covers both complete frozen-S1 self-builds.
 
 The separate [six-platform production-profile gate](https://github.com/cyberia-to/trisha/blob/79f5ba880ddf1a7699aee60a316fe4e23ca27ca2/audit/native-proof-profile/hosted-36958147193/README.md)
 passes on native macOS/Linux/Windows ARM64 and x64 through Trisha
@@ -178,7 +182,7 @@ Tooling preparation alone closes neither corpus nor fixed-point acceptance.
 | [SH5](../reference/self-hosting.md#sh5-first-self-compilation) | Closed — complete usable S1 C2 | [Actual supplied-C2 corpus](self-hosting/lexer-bootstrap/c2-corpus/README.md), all 547 observations and emitted-program checks |
 | [SH6](../reference/self-hosting.md#sh6-reproducible-bootstrap) | Closed — frozen S1 reproducible native bootstrap | [Original CI and independently replayed artifacts](self-hosting/bootstrap-results/run-36382085561/README.md): twelve bootstrap repetitions, twenty-four actual corpora, six platforms; original aggregate passed |
 | [SH7](../reference/self-hosting.md#sh7-native-proof-relation) | Closed — native public compiler profile on actual SH3/SH4 pilots | [Complete retained proofs, independent review and dynamic-apply check](self-hosting/native-proof-pilots/README.md); full witness and unattested host resources declared |
-| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Open — complete positive proof/corpus runs and byte-equivalence retention passed; final adversarial/checker acceptance pending | [Proof-extracted C2/C3 and corpus evidence](self-hosting/whole-proof-corpus-v2-result/README.md); Trisha [PR25 retention](https://github.com/cyberia-to/trisha/pull/25); [sequential remaining-case preparation](self-hosting/bootstrap-results/whole-proof-final/completion-v5/README.md), with earlier failed attempts preserved |
+| [SH8](../reference/self-hosting.md#sh8-proved-self-compilation) | Closed — complete public-profile proofs for frozen S1 | [Final F5 acceptance](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md): both proofs and fresh verifiers, exact C2/C3, 547 corpus observations each, 23 distinct rejections and two original controls per generation; separate Trisha [PR25 retention](https://github.com/cyberia-to/trisha/pull/25), with earlier failed attempts preserved |
 
 The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-integration/README.md) bind the reviewed source trees to the actual merge commits for Joy PR22/23, Trident PR112/113/114 and Trisha PR18/19. All seven are merged into `release/0.4`. The accepted kit and direct self-build instructions are available there; master and release publication remain outside this delivery.
 
@@ -216,8 +220,9 @@ The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-
   memory, bounded dynamic derivations, collection snapshots and Joy dispatch.
 - [x] Accept SH7 using actual frozen compiler SH3/SH4 workloads, independently
   verified positive/adversarial certificates and measured resource limits.
-- [ ] Prove both complete frozen self-builds under SH8, with fresh-process
-  verification, exact C2/C3 output comparison and adversarial binding checks.
+- [x] Prove both complete frozen self-builds under SH8, with fresh-process
+  verification, exact C2/C3 output comparison and adversarial binding checks;
+  retain the [final acceptance](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md).
 
 Resolve language/protocol choices in their owner contracts before dependent
 implementation. PRs target `release/0.4`; master remains outside this delivery.
@@ -377,14 +382,15 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 |---|---|---|
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
 | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
-| Complete self-build proof acceptance | Zheng + Joy / SH8 | [Complete positive proof/corpus evidence passes](self-hosting/whole-proof-corpus-v2-result/README.md); complete byte retention accepted in Trisha PR25; final adversarial/checker acceptance remains required |
+| Complete self-build proof acceptance | Zheng + Joy / SH8 — resolved for frozen S1 | [Final F5 acceptance](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md) binds both complete proofs, fresh verification, exact C2/C3 and corpus results, and all 23 distinct rejections plus two original controls per generation; complete byte retention is accepted in Trisha PR25 |
 
 ## Baseline evidence
 
 The original RAM prototype and its AST-to-nox gaps remain historical findings
 in the [prototype probes](self-hosting-2026-09-23/probes.json). The active native
 closure uses the delivered Noun collections and native code generator; its
-remaining execution and coverage gates are listed above.
+accepted frozen-S1 execution and proof gates are listed above. Further language
+coverage requires its own declared workloads.
 
 - [2026-09-23 soft3 assessment](soft3-self-compilation-readiness-2026-09-23.md):
   native target, runtime/backend/proof distinctions and inspected source paths.
@@ -411,13 +417,17 @@ on the reference host, with bounded resident memory; the exact command and
 revisions are retained in the [body-scale receipt](self-hosting/body-scale/README.md).
 The current S1 build is measured separately above. These observations supply
 baselines for subsequent full-build runs, not wall-time estimates for corpus,
-clean builds or CI. SH6 acceptance
-and the frozen distribution rehearsal are now complete; final native compilation-proof acceptance remains.
-The original broad estimate is historical.
-The native public relation and actual compiler pilots are accepted at SH7.
-Complete SH8 runs retain the original self-build inputs and declared bounds;
-their unfinished status supplies no completion estimate. Private/succinct
-compilation and semantic preservation remain separate claims.
+clean builds or CI. SH6, SH7, frozen-S1 SH8 and the frozen distribution rehearsal
+are accepted; the original broad estimate remains historical.
+
+The [original local public-profile proof runs](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
+took 6678.02309654 seconds for C1(S1) → C2 and 5955.15907412 seconds for
+C2(S1) → C3. Their separate fresh-process verifiers took 1874.25285621 and
+1646.03263471 seconds, respectively. The [summary](self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json)
+binds these measured command durations to the original proofs and final F5
+acceptance. The adversarial completion and transport histories are retained
+separately. Elapsed time and sampled memory remain host observations.
+Private/succinct compilation and semantic preservation remain separate claims.
 
 ## Delivery history and retained receipts
 

@@ -14,11 +14,13 @@ maturity and do not change package versions.
    compile fresh programs and the frozen compiler sources from the same kit.
 3. Bind compiler, source package, options, output and execution cost through
    Joy's native Zheng certificate route. [SH7 accepts the public compiler
-   profile](audit/self-hosting/native-proof-pilots/README.md); complete positive
-   self-build proofs and extracted-compiler corpora pass. Final adversarial
-   acceptance remains tracked under SH8. This profile discloses its witness;
-   private or succinct compiler proofs and semantic preservation have separate
-   requirements.
+   profile](audit/self-hosting/native-proof-pilots/README.md); [SH8 accepts both
+   complete frozen-S1 self-build proofs](audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
+   with fresh verification, exact C2/C3, 547 corpus observations per compiler,
+   and 23 distinct rejections plus two original controls per generation. This
+   profile discloses its complete public witness; physical resources remain host
+   observations. Private or succinct compiler proofs and semantic preservation
+   have separate requirements. Original failed attempts remain retained.
 4. Validate the coordinated source archive and installed packages through the
    [six-platform distribution rehearsal](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md),
    including package readback, native consumers and compiler-kit execution.

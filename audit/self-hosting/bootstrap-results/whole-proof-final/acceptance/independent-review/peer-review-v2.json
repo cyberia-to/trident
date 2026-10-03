@@ -1,0 +1,238 @@
+{
+  "schema": "trident/actual-whole-proof-peer-review/v2",
+  "status": "passed-actual-independent-review",
+  "completed_ns": 1791052214001452000,
+  "reviewer_scope": "Independent read-only actual terminal and delivery review; no native workload, F5 checker, collector, proof-body or native-binary execution/reread.",
+  "actual_receipts": {
+    "F5": {
+      "path": "whole-proof-final-launch-v5/orchestration/final-review.json",
+      "bytes": 137215,
+      "sha256": "46e7171ede86ce006afcb850b610590aa1bbcbd7bcf5ee3a37ec3f59ca617d66"
+    },
+    "watcher": {
+      "path": "whole-proof-final-launch-v5/orchestration/receipt.json",
+      "bytes": 9382,
+      "sha256": "e7cc4efc78edc333df6334fd910822c03ef5912cce0a09b2745573dee49aed41"
+    },
+    "V5": {
+      "path": "whole-proof-attacks-completion-v5/run-1/receipt.json",
+      "bytes": 51050,
+      "sha256": "86e068b8c8b59567580be56fa1f82db4af8e72b18b5494f89c55f0503fc2a008"
+    },
+    "packet": {
+      "path": "whole-proof-final-delivery-preparation/staging/actual-1/receipt.json",
+      "bytes": 10069,
+      "sha256": "82d65779a46a144f6b2e2bfaab543e25e0d8e2131c7da4ecb8e299f332e0e37b"
+    }
+  },
+  "source_bindings": {
+    "F5": {
+      "path": "whole-proof-final-review-v5/sources.json",
+      "bytes": 3716,
+      "sha256": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584"
+    },
+    "V5": {
+      "path": "whole-proof-attacks-completion-v5/sources.json",
+      "bytes": 41607,
+      "sha256": "32f57009374ce8b542202ebaf1a3b0b05ab171f7aaa0665a838be0204ba8912e"
+    },
+    "collector": {
+      "path": "whole-proof-final-delivery-preparation/sources.json",
+      "bytes": 1637,
+      "sha256": "d2f216163f07add07ef7278d998656eccb2f1f60190322e085761191fa64f59f"
+    },
+    "collector_review": {
+      "path": "whole-proof-final-delivery-preparation/independent-review.json",
+      "bytes": 4881,
+      "sha256": "29360024cf5ba6736599c53477b242af5ad3153da99cddf3d19464beb944b7c7"
+    }
+  },
+  "generations": [
+    {
+      "generation": 1,
+      "proof": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "compiler": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "controls": 2,
+      "prior_v2": 9,
+      "prior_v3": 3,
+      "selected_v4_cost": false,
+      "fresh_v5": 11,
+      "distinct_rejections": 23,
+      "corpus_observations": 547,
+      "suite": {
+        "path": "whole-proof-attacks-v5-c1/whole-c1/receipt.json",
+        "bytes": 573096,
+        "sha256": "62f5f01e1e02f820d6d8c69c5d673b657a38e26fde382cb780f054c1f10e25eb"
+      }
+    },
+    {
+      "generation": 2,
+      "proof": {
+        "bytes": 10569174820,
+        "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+      },
+      "compiler": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "controls": 2,
+      "prior_v2": 9,
+      "prior_v3": 3,
+      "selected_v4_cost": true,
+      "fresh_v5": 10,
+      "distinct_rejections": 23,
+      "corpus_observations": 547,
+      "suite": {
+        "path": "whole-proof-attacks-v5-c2/whole-c2/receipt.json",
+        "bytes": 905560,
+        "sha256": "371b544bf6ed26fdef3d841692e611c5a535d59784062c5f60ba0e57631543fa"
+      }
+    }
+  ],
+  "validation": {
+    "actual_metadata_command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-actual-independent-review/review_actual.py",
+      "actual-review-3.json"
+    ],
+    "actual_metadata_driver": {
+      "path": "whole-proof-actual-independent-review/review_actual.py",
+      "bytes": 20506,
+      "sha256": "b9120adf5c27f808e78506b84d60d380a5c1dd872c26a596e6f39b090ed5ecda"
+    },
+    "actual_metadata_receipt": {
+      "path": "whole-proof-actual-independent-review/actual-review-3.json",
+      "bytes": 186941,
+      "sha256": "f25dff1472b792d479c5a99369b769380ed5b5eb3aa2be695fc4f421bddd8916"
+    },
+    "packet_command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-actual-independent-review/review_packet.py"
+    ],
+    "packet_driver": {
+      "path": "whole-proof-actual-independent-review/review_packet.py",
+      "bytes": 7262,
+      "sha256": "bbd87a819ba53a1f168bdbb2a8bcb951261cb7a1bc04b1c452e606dc0b8eb328"
+    },
+    "packet_receipt": {
+      "path": "whole-proof-actual-independent-review/packet-review-1.json",
+      "bytes": 2149,
+      "sha256": "0290f0dff3636cacf57d8276331e83048d79094a474ffc3b9d86735fab9fbd57"
+    },
+    "command_attribution": "The command arrays are copied exactly from the original actual receipts. They are the drivers' reported sys.executable/sys.argv arrays and do not include Python launcher options."
+  },
+  "checked": {
+    "actual_native_command_receipts": 42,
+    "capacity_permits": 23,
+    "coordinator_resource_observations": 41793,
+    "sampled_peak_rss_bytes": 934871040,
+    "terminal_metadata_files": 950,
+    "terminal_metadata_read_bytes": 109460852,
+    "packet_files": 41,
+    "packet_original_streams": 94,
+    "packet_unique_objects": 33,
+    "packet_dependency_entries": 16703,
+    "packet_bytes": 7683029,
+    "packet_review_read_bytes": 23696811
+  },
+  "findings": [],
+  "retained_historical_outcomes": {
+    "v2": "failed",
+    "v3": "failed",
+    "v4_suites": "input-changed",
+    "v4_controller": "failed",
+    "selected_v4_cost": "Only the completed C2 cost rejection is reused; no earlier failed suite is relabelled passed."
+  },
+  "review_harness_history": [
+    {
+      "receipt": {
+        "path": "whole-proof-actual-independent-review/actual-review-1.json",
+        "bytes": 109492,
+        "sha256": "c8d55eabdf131f0cd6f6423ec3582eff0bcf9abeb7d7128ac39519f2dc45da4e"
+      },
+      "source": {
+        "path": "whole-proof-actual-independent-review/review_actual-attempt-1.py",
+        "bytes": 20330,
+        "sha256": "d15fb9db37844abfd420a4d3583be3c7db0fc2311e98101d21435deb1e0d64f8"
+      },
+      "result": "failed before outcome verdict: review helper compared the CLI envelope rather than its verification member and did not account for the proof_input path field. Corrected after inspecting exact originals."
+    },
+    {
+      "receipt": {
+        "path": "whole-proof-actual-independent-review/actual-review-2.json",
+        "bytes": 146347,
+        "sha256": "fc6d370f749412dbc9799e4c7c29e1c4890593311d98842056cb9c8506ae7a90"
+      },
+      "source": {
+        "path": "whole-proof-actual-independent-review/review_actual-attempt-2.py",
+        "bytes": 20459,
+        "sha256": "3c7ecccbbf5b4cccd1940e1ec7b7ae88a13e078acc0ac69b800463e1fe47424e"
+      },
+      "result": "failed before outcome verdict: review helper compared its relative display paths against the checker absolute reference paths. Corrected only path normalization."
+    }
+  ],
+  "privacy": "All copyable files passed the exact reviewed strict public_bytes predicate. Raw original process observations and other private evidence remain at their original paths; this packet contains identities and safe summaries only.",
+  "limits": "Original proof/compiler/native body identities were cross-bound through the actual producer, fresh verifier and F5 receipts, without another full-body read. The independent resource review is sampled metadata, not a cryptographic physical-resource attestation. Public witness; no zero-knowledge, succinctness, general compiler semantic-preservation, public-release or tag claim. Durable byte retention and platform distribution have separate accepted evidence.",
+  "copyable_files": {
+    ".gitattributes": {
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "actual-review-1.json": {
+      "bytes": 109492,
+      "sha256": "c8d55eabdf131f0cd6f6423ec3582eff0bcf9abeb7d7128ac39519f2dc45da4e"
+    },
+    "actual-review-2.json": {
+      "bytes": 146347,
+      "sha256": "fc6d370f749412dbc9799e4c7c29e1c4890593311d98842056cb9c8506ae7a90"
+    },
+    "actual-review-3.json": {
+      "bytes": 186941,
+      "sha256": "f25dff1472b792d479c5a99369b769380ed5b5eb3aa2be695fc4f421bddd8916"
+    },
+    "packet-review-1.json": {
+      "bytes": 2149,
+      "sha256": "0290f0dff3636cacf57d8276331e83048d79094a474ffc3b9d86735fab9fbd57"
+    },
+    "peer-review.json": {
+      "bytes": 8889,
+      "sha256": "b6f04d7a791ecdc4da72fe5b7cf12fecd08330ae6cd7b63f3c2760ef0f704ffb"
+    },
+    "review_actual-attempt-1.py": {
+      "bytes": 20330,
+      "sha256": "d15fb9db37844abfd420a4d3583be3c7db0fc2311e98101d21435deb1e0d64f8"
+    },
+    "review_actual-attempt-2.py": {
+      "bytes": 20459,
+      "sha256": "3c7ecccbbf5b4cccd1940e1ec7b7ae88a13e078acc0ac69b800463e1fe47424e"
+    },
+    "review_actual.py": {
+      "bytes": 20506,
+      "sha256": "b9120adf5c27f808e78506b84d60d380a5c1dd872c26a596e6f39b090ed5ecda"
+    },
+    "review_packet.py": {
+      "bytes": 7262,
+      "sha256": "bbd87a819ba53a1f168bdbb2a8bcb951261cb7a1bc04b1c452e606dc0b8eb328"
+    }
+  },
+  "superseded_peer_summary": {
+    "original": {
+      "path": "whole-proof-actual-independent-review/public/peer-review.json",
+      "bytes": 8889,
+      "sha256": "b6f04d7a791ecdc4da72fe5b7cf12fecd08330ae6cd7b63f3c2760ef0f704ffb"
+    },
+    "original_public_map": {
+      "path": "whole-proof-actual-independent-review/public-files.json",
+      "bytes": 1333,
+      "sha256": "bbb4c2d3797ee05b9447f7d91dbeec356db1af86e29f05bebe9aa482e6e2a184"
+    },
+    "finding": "First peer-summary command transcription failure: the summary used the Cellar launcher spelling and -B -W error options, while the authoritative actual receipts recorded the opt interpreter spelling followed directly by each script. Corrected only the summary attribution; the original receipts, commands executed, outcome checks, drivers and original public set remain unchanged.",
+    "correction": "Both v2 validation command arrays are exact copies of their original actual receipt command fields. No native, F5, collector or independent review rerun was performed."
+  }
+}

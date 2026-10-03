@@ -80,9 +80,14 @@ demonstrates execution. Joy also implements `prove-artifact` and
 and variable result shapes. Its [structured certificate contract](https://github.com/cyberia-to/joy/blob/dd61df9128f6da1f97d4698f45f154f05312fe51/specs/structured-certificates.md)
 specifies independent Zheng verification, full public witness disclosure and
 the resource bounds. Complete self-build proofs have [accepted byte-equivalence retention](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md).
-Final adversarial and independent-checker acceptance remains open under
-[SH8](../../reference/self-hosting.md#sh8-proved-self-compilation); follow the
-[acceptance ledger](../../audit/self-hosting-progress.md) for workload evidence.
+[SH8](../../reference/self-hosting.md#sh8-proved-self-compilation) is accepted for
+frozen S1 under this public profile. The [final acceptance](../../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
+covers both complete self-build proofs and fresh verifiers, exact C2/C3 bytes,
+547 corpus observations for each extracted compiler, and 23 distinct rejections
+plus two original controls per generation. Physical resources remain host
+observations; private or succinct compilation and semantic preservation have
+separate requirements. The [ledger](../../audit/self-hosting-progress.md) records
+the frozen source and original successful and failed attempts.
 
 
 ## Rebuild the complete frozen compiler
