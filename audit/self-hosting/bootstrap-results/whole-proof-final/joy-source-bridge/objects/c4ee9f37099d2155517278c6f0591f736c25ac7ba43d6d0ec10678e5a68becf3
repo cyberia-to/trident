@@ -1,0 +1,130 @@
+"""Read-only fixed-revision comparison; no build, proof read or native execution."""
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+
+BASE = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
+OUT = Path(__file__).resolve().parent
+REPO = BASE / 'joy-release-notes/joy'
+OLD = '6e0ec4d8440e2521df08f442d64f54e667044716'
+MERGED = '11b7bad201cbfc03955290b5479fa6684f8e2b82'
+PACKAGE = 'dd61df9128f6da1f97d4698f45f154f05312fe51'
+CURRENT = '15202f42240ba923398908ee0db62d32f1d655f8'
+TRIAL = 'a96e1371c78b36d95d6ff9fa20e0591943815ac7'
+commands = []
+
+
+def identity(data):
+    return {'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
+
+
+def write(name, data):
+    if not isinstance(data, bytes):
+        data = (json.dumps(data, indent=2, sort_keys=True) + '\n').encode()
+    with (OUT / name).open('xb') as f:
+        f.write(data)
+    return {'path': name, **identity(data)}
+
+
+def git(*args):
+    argv = ['git', '-C', str(REPO), *args]
+    result = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    assert result.returncode == 0, (args, result.stderr)
+    n = len(commands)
+    commands.append({'argv': argv, 'exit_code': result.returncode,
+                     'stdout': write(f'git-{n:02d}.stdout', result.stdout),
+                     'stderr': write(f'git-{n:02d}.stderr', result.stderr)})
+    return result.stdout
+
+
+input_paths = [
+    'whole-proof/installed-source-receipt.json',
+    'whole-proof/preparation.json',
+    'final-distribution/measurements/source-reproduction-readback/sources.json',
+    'final-distribution/measurements/source-preparation/source-impact.json',
+    'host-deadline/postcommit/receipt.json',
+    'final-distribution/root-host-ceiling-review/review.json',
+    'final-distribution/root-host-ceiling-review/receipt.json',
+]
+raw = {p: (BASE / p).read_bytes() for p in input_paths}
+inputs = {p: identity(data) for p, data in raw.items()}
+metadata = {p: json.loads(data) for p, data in raw.items()}
+installed = metadata[input_paths[0]]
+preparation = metadata[input_paths[1]]
+package_pins = {r['repository']: r['commit'] for r in metadata[input_paths[2]]}
+original_pins = installed['inputs']
+assert original_pins['joy'] == OLD and package_pins['joy'] == PACKAGE
+assert preparation['joy_revision'] == OLD
+assert preparation['binary'] == {'bytes': installed['binary_size'], 'sha256': installed['binary_sha256']}
+assert all(package_pins[k] == v for k, v in original_pins.items() if k != 'joy')
+trees = {rev: git('rev-parse', rev + '^{tree}').decode().strip()
+         for rev in (OLD, MERGED, PACKAGE, CURRENT, TRIAL)}
+assert trees[OLD] == trees[MERGED] and trees[PACKAGE] == trees[TRIAL]
+changed = git('diff', '--name-only', OLD, PACKAGE).decode().splitlines()
+production_changed = [p for p in changed if p.startswith(('rs/', 'cli/'))
+                      and '/tests/' not in p and not p.endswith('/tests.rs')]
+assert production_changed == ['rs/structured/limits.rs']
+old_limits = git('show', OLD + ':rs/structured/limits.rs')
+new_limits = git('show', PACKAGE + ':rs/structured/limits.rs')
+assert old_limits.count(b'const COMPACT_TIME_MS: u64 = 7_200_000;') == 1
+assert old_limits.replace(b'const COMPACT_TIME_MS: u64 = 7_200_000;',
+                          b'const COMPACT_TIME_MS: u64 = 14_400_000;') == new_limits
+git('diff', OLD, PACKAGE, '--', 'rs/structured/limits.rs')
+current_changed = git('diff', '--name-only', PACKAGE, CURRENT).decode().splitlines()
+assert current_changed == ['CHANGELOG.md', 'README.md']
+unchanged = ['Cargo.toml', 'Cargo.lock', 'rs/Cargo.toml', 'cli/Cargo.toml',
+             'rs/structured/certificate', 'rs/structured/certificate.rs',
+             'rs/structured/execution.rs', 'rs/structured/job.rs',
+             'rs/structured/job_limits.rs', 'rs/structured/job_result.rs']
+objects = {}
+for path in unchanged:
+    values = [git('rev-parse', rev + ':' + path).decode().strip() for rev in (OLD, PACKAGE, CURRENT)]
+    assert len(set(values)) == 1, path
+    objects[path] = values[0]
+for path in ('rs/structured/certificate/types.rs', 'rs/structured/certificate/admission.rs',
+             'rs/structured/certificate/pipeline.rs', 'rs/structured/certificate/session.rs'):
+    git('show', PACKAGE + ':' + path)
+assert all(identity((BASE / p).read_bytes()) == ref for p, ref in inputs.items())
+review = {
+    'status': 'passed-read-only-source-comparison',
+    'scope': 'Fixed Git objects and existing install/package metadata only; no binary equivalence or new proof acceptance.',
+    'source': identity(Path(__file__).read_bytes()),
+    'revisions': {'original_proof_joy': OLD, 'merged_original_tree': MERGED,
+                  'packaged_joy': PACKAGE, 'current_documentation_head': CURRENT,
+                  'prior_host_ceiling_trial': TRIAL},
+    'trees': trees, 'original_install_binary': preparation['binary'],
+    'original_install_sibling_pins': {k: v for k, v in original_pins.items() if k != 'joy'},
+    'final_package_pins': package_pins,
+    'sibling_pin_comparison': 'All nine original non-Joy install pins exactly equal final package pins; Trisha is an additional package member, not a Joy dependency.',
+    'changed_paths': changed, 'production_changed_paths': production_changed,
+    'current_docs_changed_paths': current_changed,
+    'identical_git_objects': objects,
+    'source_facts': [
+        'The sole production source delta is COMPACT_TIME_MS 7200000 to 14400000 in RunLimits admission for explicitly selected compaction.',
+        'The JOYSC001 envelope, parser, capture, session, verifier pipeline and certificate context sources are byte-identical. Zheng relation, noun memory, semantic stream and Nox evaluator dependencies retain exact original commits.',
+        'Context authenticates program/formula/object/profile/budget/frames; host time_ms is absent. Each process derives its own expiration from host.time_ms.',
+        'Host requests above two hours through four hours become admissible only in the explicit compaction mode. The 30000ms default, ordinary 300000ms ceiling and all work/storage/proof limits are unchanged.',
+        'dd61 to 15202f changes only README and CHANGELOG. This comparison makes no fresh full-certificate runtime assertion for a packaged binary.',
+    ],
+    'existing_trial': {
+        'review': inputs[input_paths[5]], 'receipt': inputs[input_paths[6]],
+        'scope': metadata[input_paths[5]]['scope'],
+        'actual_commands': metadata[input_paths[5]]['actual_commands'],
+        'accepted': metadata[input_paths[5]]['accepted'],
+        'rejected': metadata[input_paths[5]]['rejected'],
+        'checks': metadata[input_paths[5]]['checks'],
+    },
+    'limitations': [
+        'Original full proof/verifier results remain attached to their original Joy binary and selected profile; they are not tests executed by packaged Joy.',
+        'Source comparison is not binary equality, a new four-hour full-proof result, or closure of pending SH8 negative/final-checker gates.',
+        'No native process, build, test suite, proof body read, network access or original input mutation was performed by this capture.',
+    ],
+    'inputs_before_after': inputs,
+}
+write('commands.json', commands)
+write('review.json', review)
+files = {p.name: identity(p.read_bytes()) for p in sorted(OUT.iterdir()) if p.is_file()}
+write('files.json', files)
+print(json.dumps({'review': identity((OUT / 'review.json').read_bytes()),
+                  'files': len(files) + 1, 'status': review['status']}))

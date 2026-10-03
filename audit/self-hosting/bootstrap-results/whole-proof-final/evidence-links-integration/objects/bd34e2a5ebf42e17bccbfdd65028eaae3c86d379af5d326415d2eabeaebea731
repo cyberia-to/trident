@@ -1,0 +1,84 @@
+[
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "clean-before",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "head-before",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "f008a14a6c5e66dca5cfb7acade924618ea5b4a8^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "reviewed-tree",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "merge-tree",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "switch",
+      "-c",
+      "docs/0.4-final-proof-acceptance",
+      "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "new-branch",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "head-after",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "branch-after",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "label": "clean-after",
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "status": "passed-exact-docs-head-review",
+  "observed_ns": 1790983471043368000,
+  "scope": "Read complete diffs and install drivers, rehashed driver/raw streams/installed binaries; exact one-document deltas, fixed Git targets and recorded API matches; no repeated build or proof workload.",
+  "repositories": [
+    {
+      "repository": "joy",
+      "base": "15202f42240ba923398908ee0db62d32f1d655f8",
+      "head": "f008a14a6c5e66dca5cfb7acade924618ea5b4a8",
+      "changed_paths": [
+        "README.md"
+      ],
+      "pr": 30,
+      "install": {
+        "bytes": 8103,
+        "sha256": "8acfe3f43dc171de8a8307f4c919d51ad58b9e0226ca6e49ca02b818a21ecd26"
+      },
+      "binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/joy-install/postinstall-1/installed/bin/joy",
+        "bytes": 5652336,
+        "sha256": "7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071"
+      },
+      "expected_merge_tree": "7d1dae78d9d5b298ff0a2935c70476e744b4492f"
+    },
+    {
+      "repository": "trisha",
+      "base": "9e1af832543a21def306dac84ff918cbb823653d",
+      "head": "be137e7fa582198f13b2afe7f54d29a2aba4db48",
+      "changed_paths": [
+        "audit/README.md"
+      ],
+      "pr": 27,
+      "install": {
+        "bytes": 8160,
+        "sha256": "27a9975b8b861552b8b231632cad31f11d58fe766f179b4e46471032799e2f73"
+      },
+      "binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/trisha-install/postinstall-1/installed/bin/trisha",
+        "bytes": 14091840,
+        "sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+      },
+      "expected_merge_tree": "e2e97a67f418673af52850a337777dc61e115d7f"
+    }
+  ]
+}

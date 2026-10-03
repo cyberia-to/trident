@@ -1,0 +1,275 @@
+{
+  "schema": "trident/actual-sh8-command-projection/v1",
+  "source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "joy_revision": "6e0ec4d8440e2521df08f442d64f54e667044716",
+  "native_commands": [
+    {
+      "generation": 1,
+      "stage": "selfbuild",
+      "original": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-selfbuild-1/receipt.json",
+        "bytes": 32523,
+        "sha256": "0b8b4bffdff1c96c2a826998e1875b6b03879d4880a0f59016f272e06d59520d"
+      },
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "prove-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c1.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c1-job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "7200000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000",
+        "--proof-bytes",
+        "25769803776",
+        "--proof-decoded-bytes",
+        "103079215104",
+        "--proof-records",
+        "12000000000",
+        "--proof-steps",
+        "16000000000",
+        "--proof-cache-slots",
+        "262144",
+        "--output",
+        "proof.joysc"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-selfbuild-1",
+      "binary": {
+        "bytes": 5635776,
+        "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+      },
+      "profile_identity": {
+        "bytes": 916,
+        "sha256": "285dd5bb549795eda00beda023b91af07a047b1995cda7b99fffe3c4fe5c4fa2"
+      },
+      "installed_source_receipt": {
+        "bytes": 4485,
+        "sha256": "e870d61efec2f900b98c3473a1871f2734a7084b39197934b2610440e61927ee"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 6678.0230965419905,
+      "sampled_peak_rss_bytes": 1146552320
+    },
+    {
+      "generation": 1,
+      "stage": "fresh-verification",
+      "original": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-fresh-verification-1/receipt.json",
+        "bytes": 33088,
+        "sha256": "fda7a195b2b8716746f9084a5cc45453176285889b1cb08d4f548c70e696f3c4"
+      },
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c1.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c1-job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "7200000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000",
+        "--proof-bytes",
+        "25769803776",
+        "--proof-decoded-bytes",
+        "103079215104",
+        "--proof-records",
+        "12000000000",
+        "--proof-steps",
+        "16000000000",
+        "--proof-cache-slots",
+        "262144",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-selfbuild-1/proof.joysc",
+        "--output",
+        "compiler.dag",
+        "--emit",
+        "program"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c1-fresh-verification-1",
+      "binary": {
+        "bytes": 5635776,
+        "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+      },
+      "profile_identity": {
+        "bytes": 916,
+        "sha256": "285dd5bb549795eda00beda023b91af07a047b1995cda7b99fffe3c4fe5c4fa2"
+      },
+      "installed_source_receipt": {
+        "bytes": 4485,
+        "sha256": "e870d61efec2f900b98c3473a1871f2734a7084b39197934b2610440e61927ee"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 1874.2528562080115,
+      "sampled_peak_rss_bytes": 1053179904
+    },
+    {
+      "generation": 2,
+      "stage": "selfbuild",
+      "original": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/receipt.json",
+        "bytes": 32521,
+        "sha256": "ec7375ff87efbeff6edd68bdb981331015b88efc66c76c4a2991de68740e0563"
+      },
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "prove-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c2.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c2-job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "7200000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000",
+        "--proof-bytes",
+        "25769803776",
+        "--proof-decoded-bytes",
+        "103079215104",
+        "--proof-records",
+        "12000000000",
+        "--proof-steps",
+        "16000000000",
+        "--proof-cache-slots",
+        "262144",
+        "--output",
+        "proof.joysc"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1",
+      "binary": {
+        "bytes": 5635776,
+        "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+      },
+      "profile_identity": {
+        "bytes": 916,
+        "sha256": "285dd5bb549795eda00beda023b91af07a047b1995cda7b99fffe3c4fe5c4fa2"
+      },
+      "installed_source_receipt": {
+        "bytes": 4485,
+        "sha256": "e870d61efec2f900b98c3473a1871f2734a7084b39197934b2610440e61927ee"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 5955.159074124997,
+      "sampled_peak_rss_bytes": 1089650688
+    },
+    {
+      "generation": 2,
+      "stage": "fresh-verification",
+      "original": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-fresh-verification-1/receipt.json",
+        "bytes": 33085,
+        "sha256": "79bab81b5762b29d8f5d66423227ea41ad11049251ed81590c673525990e2233"
+      },
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c2.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/inputs/c2-job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "7200000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000",
+        "--proof-bytes",
+        "25769803776",
+        "--proof-decoded-bytes",
+        "103079215104",
+        "--proof-records",
+        "12000000000",
+        "--proof-steps",
+        "16000000000",
+        "--proof-cache-slots",
+        "262144",
+        "--proof",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc",
+        "--output",
+        "compiler.dag",
+        "--emit",
+        "program"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-fresh-verification-1",
+      "binary": {
+        "bytes": 5635776,
+        "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+      },
+      "profile_identity": {
+        "bytes": 916,
+        "sha256": "285dd5bb549795eda00beda023b91af07a047b1995cda7b99fffe3c4fe5c4fa2"
+      },
+      "installed_source_receipt": {
+        "bytes": 4485,
+        "sha256": "e870d61efec2f900b98c3473a1871f2734a7084b39197934b2610440e61927ee"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 1646.0326347089722,
+      "sampled_peak_rss_bytes": 1087750144
+    }
+  ],
+  "checker": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5/check.py",
+      "--base",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002",
+      "--output",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-launch-v5/orchestration/final-review.json"
+    ],
+    "original": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-launch-v5/orchestration/final-review.json",
+      "bytes": 137215,
+      "sha256": "46e7171ede86ce006afcb850b610590aa1bbcbd7bcf5ee3a37ec3f59ca617d66"
+    }
+  },
+  "collector_command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "collect.py",
+    "--review-sha256",
+    "29360024cf5ba6736599c53477b242af5ad3153da99cddf3d19464beb944b7c7",
+    "--output-name",
+    "actual-1"
+  ],
+  "collector_cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation",
+  "scope": "Public projection of exact original commands and measured fields. Full receipts remain local and retain their byte identities."
+}

@@ -43,7 +43,7 @@ CORE            256K         64K
 vm spec          32K         16K
 language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun             64K        128K      ← S1 reproducible self-hosting accepted on six native platforms (SH6)
+Noun             64K        128K      ← Frozen S1: six-platform self-hosting (SH6) and public self-build proofs (SH8) accepted
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
@@ -110,7 +110,7 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ✓ Frozen S1 reproducible self-compilation accepted (SH3–SH6); SH7 native public compiler profile accepted on actual pilots; complete self-build proofs remain SH8
+Noun        ✓ Frozen S1 reproducible self-compilation (SH3–SH6), public compiler pilots (SH7) and complete public self-build proofs (SH8) accepted
 cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; private dynamic compiler proof relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ◐ RAM/TIR prototype emits TIR; that pipeline's lower wiring and self-compilation remain open
@@ -631,7 +631,7 @@ The authoritative implementation sequence and acceptance criteria are in
 - SH5: it compiles its complete own source into a usable next compiler.
 - SH6: repeated self-builds reach C2 == C3 and reproduce across the CPU targets.
 - SH7: the native public compiler proof profile covers the accepted compiler pilots; [durable evidence](../audit/self-hosting/native-proof-pilots/durable-retention/README.md) is retained.
-- SH8: native Zheng proofs bind the actual self-build inputs and outputs.
+- SH8: [frozen-S1 acceptance](../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md) covers both native public self-build proofs, fresh verification, exact C2/C3, 547 corpus observations each, and 23 distinct rejections plus two original controls per generation.
 
 Rust produces the initial C1 seed. C1 and then C2 execute on nox to build C2
 and C3 from the same source closure. C1 may differ from C2 because the seed

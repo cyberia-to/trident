@@ -1,0 +1,889 @@
+[
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716^{tree}"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-00.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-00.stdout",
+      "sha256": "c0b468549849cd310acc9ef6ab10756864a393a61d6a8bd152e89b5f41486e49"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "11b7bad201cbfc03955290b5479fa6684f8e2b82^{tree}"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-01.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-01.stdout",
+      "sha256": "c0b468549849cd310acc9ef6ab10756864a393a61d6a8bd152e89b5f41486e49"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51^{tree}"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-02.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-02.stdout",
+      "sha256": "87010f9467ad5fab46ea5857de1fb4377b07dbc49422e07ba076cffdf659ec60"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8^{tree}"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-03.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-03.stdout",
+      "sha256": "e72faa82cbd7f2a5ef82c2a7010cc7683e33f72616cb5f2a295399436165f348"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "a96e1371c78b36d95d6ff9fa20e0591943815ac7^{tree}"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-04.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-04.stdout",
+      "sha256": "87010f9467ad5fab46ea5857de1fb4377b07dbc49422e07ba076cffdf659ec60"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "diff",
+      "--name-only",
+      "6e0ec4d8440e2521df08f442d64f54e667044716",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-05.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2797,
+      "path": "git-05.stdout",
+      "sha256": "645d45ef24d7a52fb559707b26a611d6ee165642c88fa694043c4e29824475c4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "show",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/limits.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-06.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2940,
+      "path": "git-06.stdout",
+      "sha256": "b7adbee9300d3136705270abf72081e95fc26ca810b0fff0a947e77201116447"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "show",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/limits.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-07.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2941,
+      "path": "git-07.stdout",
+      "sha256": "353807322daf28801ecc445fd30e5340796ddfb5e64bf32a0bf7586121ac8983"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "diff",
+      "6e0ec4d8440e2521df08f442d64f54e667044716",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51",
+      "--",
+      "rs/structured/limits.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-08.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 482,
+      "path": "git-08.stdout",
+      "sha256": "ad057c18c0ef4e86fec6d6405f7cbcf87203132d38bdb64800a158095b7fe246"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "diff",
+      "--name-only",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51",
+      "15202f42240ba923398908ee0db62d32f1d655f8"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-09.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 23,
+      "path": "git-09.stdout",
+      "sha256": "4630f54e0e1532cd712a32957ce34e853010a7b277d64fa43aa71d11c16e2209"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-10.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-10.stdout",
+      "sha256": "9df6279059581325a3441d0afd2660e9e3c10d8f265ba525be3e930a29d96cd4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-11.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-11.stdout",
+      "sha256": "9df6279059581325a3441d0afd2660e9e3c10d8f265ba525be3e930a29d96cd4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-12.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-12.stdout",
+      "sha256": "9df6279059581325a3441d0afd2660e9e3c10d8f265ba525be3e930a29d96cd4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:Cargo.lock"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-13.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-13.stdout",
+      "sha256": "a46221a78e927c4389d42be8f50aebd0a4e3f5bdb06f8ca2ccfa2374afc91774"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:Cargo.lock"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-14.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-14.stdout",
+      "sha256": "a46221a78e927c4389d42be8f50aebd0a4e3f5bdb06f8ca2ccfa2374afc91774"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:Cargo.lock"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-15.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-15.stdout",
+      "sha256": "a46221a78e927c4389d42be8f50aebd0a4e3f5bdb06f8ca2ccfa2374afc91774"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-16.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-16.stdout",
+      "sha256": "9c6a92c30d3c9877c6fa98b852b03ce6b394af8274619176b92512cf14e74f4f"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-17.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-17.stdout",
+      "sha256": "9c6a92c30d3c9877c6fa98b852b03ce6b394af8274619176b92512cf14e74f4f"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-18.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-18.stdout",
+      "sha256": "9c6a92c30d3c9877c6fa98b852b03ce6b394af8274619176b92512cf14e74f4f"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:cli/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-19.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-19.stdout",
+      "sha256": "63b357c689d1b7968a13f58db960c75a529be49d8fba0679ffa3db7e322c866b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:cli/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-20.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-20.stdout",
+      "sha256": "63b357c689d1b7968a13f58db960c75a529be49d8fba0679ffa3db7e322c866b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:cli/Cargo.toml"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-21.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-21.stdout",
+      "sha256": "63b357c689d1b7968a13f58db960c75a529be49d8fba0679ffa3db7e322c866b"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/certificate"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-22.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-22.stdout",
+      "sha256": "37ebc829132484d11432b0faa23d4c967b968b2526c7b1117259f997e0497e8a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/certificate"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-23.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-23.stdout",
+      "sha256": "37ebc829132484d11432b0faa23d4c967b968b2526c7b1117259f997e0497e8a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/structured/certificate"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-24.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-24.stdout",
+      "sha256": "37ebc829132484d11432b0faa23d4c967b968b2526c7b1117259f997e0497e8a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/certificate.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-25.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-25.stdout",
+      "sha256": "f17f4601ebe3d34a90168d173f6a7135cc8cb710d72dc4a7dae69acb05741408"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/certificate.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-26.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-26.stdout",
+      "sha256": "f17f4601ebe3d34a90168d173f6a7135cc8cb710d72dc4a7dae69acb05741408"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/structured/certificate.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-27.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-27.stdout",
+      "sha256": "f17f4601ebe3d34a90168d173f6a7135cc8cb710d72dc4a7dae69acb05741408"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/execution.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-28.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-28.stdout",
+      "sha256": "997791aa9bda2c1ae6dda8b553cbccc800b8a2b6cbb08ff8ebaf2226e2514296"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/execution.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-29.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-29.stdout",
+      "sha256": "997791aa9bda2c1ae6dda8b553cbccc800b8a2b6cbb08ff8ebaf2226e2514296"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/structured/execution.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-30.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-30.stdout",
+      "sha256": "997791aa9bda2c1ae6dda8b553cbccc800b8a2b6cbb08ff8ebaf2226e2514296"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/job.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-31.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-31.stdout",
+      "sha256": "5a1ad276de45e34a47916571d11d87c3061a504f321aea998dee10b0ec81a2e5"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/job.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-32.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-32.stdout",
+      "sha256": "5a1ad276de45e34a47916571d11d87c3061a504f321aea998dee10b0ec81a2e5"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/structured/job.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-33.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-33.stdout",
+      "sha256": "5a1ad276de45e34a47916571d11d87c3061a504f321aea998dee10b0ec81a2e5"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/job_limits.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-34.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-34.stdout",
+      "sha256": "f4e3c00fa899b76f9035d760ec8e69d63a4863b2ae637b63ce8eabdf176da939"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/job_limits.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-35.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-35.stdout",
+      "sha256": "f4e3c00fa899b76f9035d760ec8e69d63a4863b2ae637b63ce8eabdf176da939"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/structured/job_limits.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-36.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-36.stdout",
+      "sha256": "f4e3c00fa899b76f9035d760ec8e69d63a4863b2ae637b63ce8eabdf176da939"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "6e0ec4d8440e2521df08f442d64f54e667044716:rs/structured/job_result.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-37.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-37.stdout",
+      "sha256": "d572689388b53b575608ba305143733afba82536031b3895977644a60038e8bc"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/job_result.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-38.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-38.stdout",
+      "sha256": "d572689388b53b575608ba305143733afba82536031b3895977644a60038e8bc"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "rev-parse",
+      "15202f42240ba923398908ee0db62d32f1d655f8:rs/structured/job_result.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-39.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "path": "git-39.stdout",
+      "sha256": "d572689388b53b575608ba305143733afba82536031b3895977644a60038e8bc"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "show",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/certificate/types.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-40.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2137,
+      "path": "git-40.stdout",
+      "sha256": "825ed4c59db8395fc31955bfcfe2bf756a13a6fe42e6cba320cf550e019d4483"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "show",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/certificate/admission.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-41.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 4120,
+      "path": "git-41.stdout",
+      "sha256": "243c967811e6a2028d091a82663848552596fa866b5c5adfd14f8eb2c9b06efc"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "show",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/certificate/pipeline.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-42.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 8610,
+      "path": "git-42.stdout",
+      "sha256": "794881982c011a5e1b93e77f2e17d6b4d4e6fd443868b28246cbbedd1050165a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-C",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "show",
+      "dd61df9128f6da1f97d4698f45f154f05312fe51:rs/structured/certificate/session.rs"
+    ],
+    "exit_code": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "git-43.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 6283,
+      "path": "git-43.stdout",
+      "sha256": "a68b366a64dec82b5474e32a5ab4cedff143f7083f38ba10f298f18426c08e60"
+    }
+  }
+]

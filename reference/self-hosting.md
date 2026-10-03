@@ -50,7 +50,7 @@ The native route is `source -> typed AST -> nox formula`. Trident owns shared
 language semantics and nox reference lowering. Joy owns execution, artifact
 transport and proof integration. Nox owns its evaluator, data model and cost
 semantics. Zheng owns the execution relation and proof verification. Soft3
-owns the [composition contract](../../soft3/specs/execution-model.md).
+owns the [composition contract](https://github.com/cyberia-to/soft3/blob/4820c3d032c3c336d725f18e7b3fb13816eeb128/specs/execution-model.md).
 Triton remains an independent target and optional comparison oracle.
 
 The first compiler uses immutable native nouns with typed compiler collections,
@@ -949,14 +949,14 @@ positive and adversarial pilot proofs, limits and measured proving resources.
 A full-witness public proof may satisfy the declared profile; succinctness and
 zero knowledge require separate evidence. Joy now dispatches bounded static
 private execution to native Zheng through `JOYZH001`; its
-[private proof contract](../../joy/specs/private-execution.md) covers atom calls
+[private proof contract](https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/private-execution.md) covers atom calls
 and hidden queries over authenticated public tables. The dynamic compiler
 execution model remains outside that relation, so this profile alone does not
 close SH7 or the self-build proof gate. Historical foreign-backend JOYZK artifacts
 are unsupported in soft3-only Joy and do not satisfy this milestone.
 
 The production public compiler route is Joy's
-[`joy-nox-disclosed-compiler-v1`](../../joy/specs/structured-certificates.md):
+[`joy-nox-disclosed-compiler-v1`](https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/structured-certificates.md):
 `prove-artifact` and `verify-artifact` accept complete ART1/JOB1/RES1 files.
 Zheng independently checks authenticated noun definitions, computed
 continuations, bounded activation/cache state, complete output and semantic
