@@ -1,0 +1,14 @@
+--- /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/copy.py
++++ /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/copy.py
+@@ -51,9 +51,9 @@
+ 
+ 
+ selection = read(ROOT / 'selection.json')
+-assert identity(selection)['sha256'] == '0eb52b01b7574894e09d2502943ebe12c6aa9ae8af3af0ad9ad54439f8531eb8'
++assert identity(selection)['sha256'] == '1a2e8e846be854298a2e8e70dd7fc92b208b197b469d799a0d0e1124aa1ef7ad'
+ plan = json.loads(selection)
+-assert len(plan['originals']) == 283 and len(plan['references_only']) == 21
++assert len(plan['originals']) == 249 and len(plan['references_only']) == 12
+ source = read(__file__)
+ readme = read(ROOT / 'README.template.md')
+ v = plan['verifier']
