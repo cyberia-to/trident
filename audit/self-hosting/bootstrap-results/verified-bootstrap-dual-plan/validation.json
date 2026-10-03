@@ -1,0 +1,36 @@
+{
+  "status": "passed-planning-validation",
+  "base_revision": "a3cef15f6474c02363a042e648a39369785f2dbf",
+  "scope": "Documentation only; executable sources and SH contract unchanged. No VB gate accepted.",
+  "claude_lines": 993,
+  "documentation": {
+    ".claude/plans/verified-bootstrap.md": "e64abb4e7c2bd800de86453ff942b8b22bb3f7ff87fe64158e68bc128ed37e93",
+    "audit/self-hosting-progress.md": "f1b76792e975c1bf7b55af4cd656fed52ac875fe9b5bdf3fbb27aa4d40b2d881",
+    "reference/roadmap.md": "72d9f3cff4a4da17405f0941e8bec7822c8999ff476cf926ff0af250c086ed90",
+    "roadmap/README.md": "853850beca20526d5ea83cb9fc1f71f456f8a93bd095d1af790e20c9c140d1fd",
+    "roadmap/verified-bootstrap.md": "f47c265153b26a6e3a2cc3bf42896c92d130f0a2b427ab936101b2fc4f64eb10",
+    "roadmap/bounded-metaprogramming.md": "bf4770843a59a1de8e51199a40910bc5d00c58a6858eaf0ffde78c8eefaab4aa"
+  },
+  "checks": [
+    "changed-file whitespace",
+    "relative link targets",
+    "VB0-VB8 remain open",
+    "unchanged implementation and SH contract",
+    "independent semantic review with GC obligation resolved",
+    "cargo check workspace passed",
+    "cargo test workspace release passed",
+    "independent follow-up review: direct interpreter and compiled DDC generations separated"
+  ],
+  "incomplete_attempt": "debug test run terminated deliberately; original exit 101 and diagnostics retained in checks.json, debug-cancellation.json and 1.*.gz",
+  "raw_files": {
+    "0.stdout.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2.stderr.gz": "32376d1092f6d36fca23c781e85e92b0a6076f80b4ca57e7615fd62a1131f045",
+    "1.stdout.gz": "fdfb0f7f01d938545be5c21936fef4add5e20766cd26c71469f13e4b5d64c503",
+    "checks.json": "0bed9c12684a9ef3c6de197fbe3f2ee9cca8bbc464cda91e9cf613167a765f37",
+    "2.stdout.gz": "4993236364aff8c88fe1ec64c3b5124aff52b1883e2b798f7b34f3a04de8b32b",
+    "0.stderr.gz": "0d9d882d24c628aa92fd65334781b711f6afe4baebfe2c715603c30726452271",
+    "1.stderr.gz": "7ad4e45faa62ae5c9bfb7568f99e0b969de339506f7f8affabb7137f64aef1e3",
+    "debug-cancellation.json": "1a60f42d5392b20c86b0230875bc4b194e98f9a399fc77c848ceaab74990feda",
+    "release-check.json": "60cc9975c07d2c3901a5037f6f5b3f0ec67b8bd75e6ae8ca76c7f4167ca301b9"
+  }
+}

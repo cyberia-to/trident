@@ -10,7 +10,8 @@ frontmatter.
 
 | proposal | status | what |
 |----------|--------|------|
-| [verified-bootstrap](verified-bootstrap.md) | draft | VB0–VB8: independent trust root, binary/source correspondence, canonical nox/Zheng prover and verifier, complete scoped Joy; milestone open |
+| [verified-bootstrap](verified-bootstrap.md) | draft | VB0–VB8: independent checking root, Rust/Trident pairs for every critical component including Eidos E0–E4, source correspondence and full scoped stack; milestone open |
+| [bounded-metaprogramming](bounded-metaprogramming.md) | draft | ML-style sums, type/function specialization and bounded compile-time evaluation; cost and bootstrap obligations |
 | [[noun-types]] | draft | why nox drops cell? and what Trident does instead |
 | [[polynomial-target]] | draft | polynomial noun lowering for nox |
 | [[five-algebras]] | draft | type-driven regime dispatch: BitVec, RingElement, Tropical, Curve types + 4 new std modules |

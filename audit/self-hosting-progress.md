@@ -194,9 +194,10 @@ The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-
 
 ## Next work, in order
 
-- [ ] VB0: freeze the complete delivered compiler/nox/Zheng prover/verifier/Joy
-  surfaces, source/dependency closure, claims and trust assumptions; specify the
-  bounded VB1 independent-root experiment. Follow the
+- [ ] VB0: freeze the complete compiler/Eidos/nox/Zheng prover/verifier/Joy
+  surfaces and critical dependencies, required Rust/Trident implementation pairs,
+  claims and trust assumptions; specify Eidos E0–E4 and the bounded VB1
+  independent checker/proof-bridge experiment. Follow the
   [VB0–VB8 plan](../roadmap/verified-bootstrap.md) for dependent implementation.
 
 The completed SH work below retains its original evidence and scope.
@@ -393,7 +394,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
-| Verified bootstrap trust and canonical stack closure | soft3 + Trident/nox/Zheng/Joy / VB0 | Open — [separate implementation plan](../roadmap/verified-bootstrap.md); no accepted independent-root, DDC or complete canonical-stack claim |
+| Verified bootstrap trust and dual implementation closure | soft3 + Trident/Eidos/nox/Zheng/Joy / VB0 | Open — [separate implementation plan](../roadmap/verified-bootstrap.md); no accepted independent-root, DDC or complete canonical-stack claim |
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
 | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
 | Complete self-build proof acceptance | Zheng + Joy / SH8 — resolved for frozen S1 | [Final F5 acceptance](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md) binds both complete proofs, fresh verification, exact C2/C3 and corpus results, and all 23 distinct rejections plus two original controls per generation; complete byte retention is accepted in Trisha PR25 |

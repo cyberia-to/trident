@@ -38,8 +38,9 @@ Three targets before 256k release:
 
 Separate trust milestone: [VB — Verified Bootstrap](../roadmap/verified-bootstrap.md)
 is open. It covers an independently justified bootstrap root, compiler
-binary/source correspondence and semantic correctness, canonical nox, the full
-scoped Zheng prover/verifier and the complete scoped Joy delivery. Accepted
+binary/source correspondence and semantic correctness, required Rust/Trident
+implementations of Eidos, nox, the full scoped Zheng prover/verifier, complete
+scoped Joy and critical dependencies, with cross-verification. Accepted
 SH0–SH8 execution evidence is its starting point. VB0–VB8 define separate
 acceptance gates; this plan changes no Kelvin temperature or release version.
 
