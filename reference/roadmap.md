@@ -37,7 +37,8 @@ Three targets before 256k release:
    compilation, quantum circuit simulation
 
 Separate trust milestone: [VB — Verified Bootstrap](../roadmap/verified-bootstrap.md)
-is open. It covers an independently justified bootstrap root, compiler
+is open. It covers a self-contained soft3 bootstrap root with reviewed
+foundational assumptions, compiler
 binary/source correspondence and semantic correctness, required Rust/Trident
 implementations of Eidos, nox, the full scoped Zheng prover/verifier, complete
 scoped Joy and critical dependencies, with cross-verification. Accepted

@@ -49,8 +49,8 @@ A bound on dynamic input size/depth is separate from its recursive type.
 
 SML higher-order functions normally run at runtime. Compile-time evaluation is a
 separate language phase. Ordinary SML supplies no general automatic bound on
-execution. CakeML provides verified compilation and separate space-cost reasoning;
-these do not make every ML program terminating or cheap.
+execution. Trident extensions need their own termination, logical-cost and
+storage contracts; adopting ML-style syntax supplies none of these automatically.
 
 For every extension: specify types/effects and representation first; define
 lowering and resource/exhaustion behavior; implement both compiler paths; update
@@ -115,6 +115,6 @@ limits, source-to-artifact/refinement updates and measured compile/runtime/provi
 costs. Ratios and savings are open until measured from pinned revisions. Keep
 language features on separate branches from the VB trust-root implementation.
 
-References: [Standard ML definition](https://smlfamily.github.io/sml97-defn.pdf),
-[CakeML compilation](https://cakeml.org/) and
-[verified space-cost semantics](https://cakeml.org/projects.html).
+Reference: [Standard ML definition](https://smlfamily.github.io/sml97-defn.pdf).
+This is comparative language research. The bootstrap uses the self-contained
+soft3 root specified in the VB plan.
