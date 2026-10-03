@@ -1,0 +1,145 @@
+{
+  "status": "passed-source-equivalent-warm-install",
+  "started_ns": 1791053940204132000,
+  "driver": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/install.py",
+    "bytes": 7961,
+    "sha256": "bbc743eb74ee3de0cdb4930c836d0da398a878ce7bc525cc2ce4926b6136076c"
+  },
+  "scope": "Fresh-prefix postcommit installation from unchanged source-equivalent accepted archive paths using its existing warm target; not a build from new worktree paths.",
+  "commands": [
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/postinstall-1/installed/bin/trisha",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 13,
+        "sha256": "90517818a6cc48baf15f8b5fc8f4ace81b35c01766efc481d8b52c9902acc3a0"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "delivery_head": "f6161e3f6455bd6b4ae8f6a77fa98ac052c1d505",
+  "source_equivalence": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/source-equivalence-original.json",
+    "bytes": 69366,
+    "sha256": "009db17b7f94758903f533da493ea2ea5036b670aabefc4df34a7c13eb954d0d"
+  },
+  "accepted_candidate": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/release-results/candidate.json",
+    "bytes": 1275,
+    "sha256": "b54ff6882c5899306160157c104b8206a4ba8b4c77413b0dc29e128f2800774c"
+  },
+  "source_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/unpacked/cyber-source/sources.json",
+    "bytes": 4239613,
+    "sha256": "9334dead92b990a12acf16a2565aeb762a07311dfc2c3d6cb896c0490dc5926e"
+  },
+  "sibling_revisions": {
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "joy": "dd61df9128f6da1f97d4698f45f154f05312fe51",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "trisha": "c8836be0103c8d2ead07c409bb117af04cae3449",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9"
+  },
+  "rechecked_build_input_count": 3243,
+  "vendor_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/unpacked/cyber-source/vendor-sources.json",
+    "bytes": 108532,
+    "sha256": "cf324959661a85fc94cf4345beaf5dbf274c1dbd5fc66960155e0750ace35d1b"
+  },
+  "environment_overrides": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/postinstall-1/installed/bin:/Users/master/.grok/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pkg/env/active/bin:/opt/pmk/env/global/bin:/opt/homebrew/bin:/Users/master/Library/Application Support/Zed/external_agents/registry/npx/codex-acp/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/codex-path:/Users/master/.codex/tmp/arg0/codex-arg00dVQaB:/Users/master/.cargo/bin:/Users/master/.foundry/bin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/candidate/build/trisha",
+    "CARGO_BUILD_JOBS": "2",
+    "RUSTUP_TOOLCHAIN": "1.89.0"
+  },
+  "removed_environment_keys": [],
+  "tools": {
+    "rustc": {
+      "path": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+      "version": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+      "bytes": 414776,
+      "sha256": "af4a9eb303553510e9d74220636dc4b21f8574ddeab73741bf6b892adc49c21c"
+    },
+    "cargo": {
+      "path": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+      "version": "cargo 1.89.0 (c24e10642 2025-06-23)\nrelease: 1.89.0\ncommit-hash: c24e1064277fe51ab72011e2612e556ac56addf7\ncommit-date: 2025-06-23\nhost: aarch64-apple-darwin\nlibgit2: 1.9.0 (sys:0.20.2 vendored)\nlibcurl: 8.7.1 (sys:0.4.80+curl-8.12.1 system ssl:(SecureTransport) LibreSSL/3.3.6)\nssl: OpenSSL 3.5.0 8 Apr 2025\nos: Mac OS 26.4.1 [64-bit]\n",
+      "bytes": 28655992,
+      "sha256": "798a97c06e6fc3a63f1b7e3141f87e515e6bc8da1527bc32e19ba27d86bb89c5"
+    },
+    "rustdoc": {
+      "path": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+      "version": "rustdoc 1.89.0 (29483883e 2025-08-04)\nbinary: rustdoc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+      "bytes": 11456472,
+      "sha256": "1e65fe1796464bbe73ee53231852d8a779f144e8825c2711819435e0aad2213e"
+    }
+  },
+  "target": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/candidate/build/trisha",
+  "target_bytes_before": 1286341649,
+  "free_bytes_before": 28419706880,
+  "guard": {
+    "wall_seconds": 120,
+    "minimum_free_bytes": 8589934592,
+    "maximum_target_growth_bytes": 67108864,
+    "abort_on_any_compiling_line": true
+  },
+  "install_command": {
+    "argv": [
+      "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+      "install",
+      "--path",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/unpacked/cyber-source/trisha/cli",
+      "--locked",
+      "--offline",
+      "--force",
+      "--root",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/postinstall-1/installed"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/local-macos-final-rust189/temporary/cyber-candidate/unpacked/cyber-source/trisha"
+  },
+  "pid": 71162,
+  "exit_code": 0,
+  "elapsed_seconds": 0.4631325000664219,
+  "installed_binary": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/postinstall-1/installed/bin/trisha",
+    "bytes": 14091840,
+    "sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+  },
+  "source_inputs_unchanged": true,
+  "target_bytes_after": 1286341649,
+  "free_bytes_after": 28419670016,
+  "ended_ns": 1791053944538888000,
+  "files": {
+    "version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 672,
+      "sha256": "b856fed73da4489a26e8536c1219371e0fe7155e85e0f4e6f17f1306b1c83bf2"
+    },
+    "version.stdout": {
+      "bytes": 13,
+      "sha256": "90517818a6cc48baf15f8b5fc8f4ace81b35c01766efc481d8b52c9902acc3a0"
+    }
+  }
+}

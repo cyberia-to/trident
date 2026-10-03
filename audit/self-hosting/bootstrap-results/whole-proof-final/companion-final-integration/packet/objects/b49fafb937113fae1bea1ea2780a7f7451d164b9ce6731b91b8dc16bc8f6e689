@@ -1,0 +1,66 @@
+{
+  "status": "passed-final-companion-docs-and-immutable-links",
+  "scope": "Two README-only status updates from actual frozen-S1 F5 summary; original Joy6e0 proof scope kept separate from packaged Joy. No native proof/test run.",
+  "source": {
+    "bytes": 4439,
+    "sha256": "4008f3d58d6892eb1507853f59ccf6a477cde5c1940e47953dfce1027ad39db9"
+  },
+  "trident_commit": "a6b12e584719b69b64a606c5c4a54d6f6c7ae929",
+  "summary": {
+    "bytes": 5404,
+    "sha256": "7857fe9dc809faff1e65ca00ac11eab86c90c14808a2a82c19a906d1400a5214"
+  },
+  "targets": {
+    "acceptance/README.md": {
+      "url": "https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md",
+      "blob": "71c7ec6f914f6115f711f6deb67895e2490212cc",
+      "bytes": 5736,
+      "sha256": "e6cb719964560da41609d0eafeae4a0d2987f5279e29f2acc361f7d68b1be630",
+      "authenticated_api_bytes_equal": true
+    },
+    "joy-source-bridge/README.md": {
+      "url": "https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/joy-source-bridge/README.md",
+      "blob": "d1febac2b81e3a731da4b7120633d65461c0ca24",
+      "bytes": 2763,
+      "sha256": "0871b01c440e7e2cff2568505d707887525edf7be0323c49c6fe201c4e5b69d3",
+      "authenticated_api_bytes_equal": true
+    },
+    "acceptance/packet/summary.json": {
+      "url": "https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json",
+      "blob": "9624df324bca220512d97ebc8a79d510f3b9b4c4",
+      "bytes": 5404,
+      "sha256": "7857fe9dc809faff1e65ca00ac11eab86c90c14808a2a82c19a906d1400a5214",
+      "authenticated_api_bytes_equal": true
+    }
+  },
+  "documents": {
+    "joy": {
+      "base": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+      "path": "README.md",
+      "document": {
+        "bytes": 8233,
+        "sha256": "dcbb4e7d0bf9f94897fd67dd9650a7f770f37d249664c38f134e9c26b2e9f8b9"
+      },
+      "patch": {
+        "bytes": 1479,
+        "sha256": "a8c7a0a7e046f5972eb4729ac4df7a7870ba7b50475b087d9272dbc9510f3061"
+      }
+    },
+    "trisha": {
+      "base": "c9f442c58005249d14e95fc81f125ff7f864ab07",
+      "path": "audit/README.md",
+      "document": {
+        "bytes": 7167,
+        "sha256": "df9c8f60cd459424bff0ae26af71d4e433cd8552b028a2e6bb88cabce5d36afd"
+      },
+      "patch": {
+        "bytes": 1721,
+        "sha256": "01463d411dd661d04450f3b3038d69671c567fde68f1fee1d88e823a497d18f2"
+      }
+    }
+  },
+  "commands": {
+    "bytes": 11106,
+    "sha256": "8d41d6b28e42eafb65b1ec136ac6ea2a1671f1b2ab55afe4ce24c5c942ab47cc"
+  }
+}

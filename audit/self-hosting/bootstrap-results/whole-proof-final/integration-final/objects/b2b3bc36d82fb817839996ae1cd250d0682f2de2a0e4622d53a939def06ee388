@@ -1,0 +1,29 @@
+"""Merge one reviewed feature PR into release/0.4 with exact head and tree evidence."""
+import argparse,json,subprocess
+from pathlib import Path
+p=argparse.ArgumentParser();p.add_argument('--repo',required=True);p.add_argument('--directory',type=Path,required=True);p.add_argument('--pr',type=int,required=True);p.add_argument('--head',required=True);p.add_argument('--base',required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+def require(value,message):
+ if not value: raise ValueError(message)
+a.output.mkdir(parents=True,exist_ok=False)
+commands=[]
+def run(name,argv):
+ r=subprocess.run(argv,cwd=a.directory,capture_output=True);(a.output/(name+'.stdout')).write_bytes(r.stdout);(a.output/(name+'.stderr')).write_bytes(r.stderr);commands.append(dict(argv=argv,cwd=str(a.directory),exit_code=r.returncode));(a.output/'commands.json').write_text(json.dumps(commands,indent=2)+'\n');require(r.returncode==0,name+' command failed');return r.stdout.decode().strip()
+pre=json.loads(run('before',['gh','pr','view',str(a.pr),'--repo','cyberia-to/'+a.repo,'--json','state,isDraft,headRefOid,baseRefOid,baseRefName,mergeable,statusCheckRollup']))
+require(pre['state']=='OPEN' and not pre['isDraft'] and pre['baseRefName']=='release/0.4' and pre['headRefOid']==a.head and pre['mergeable']=='MERGEABLE','exact reviewed ready PR')
+require(all(c.get('status')=='COMPLETED' and c.get('conclusion') in ('SUCCESS','SKIPPED','NEUTRAL') for c in pre['statusCheckRollup']),'all reported checks finished green')
+actual_ref=json.loads(run('branch-before',['gh','api',f'repos/cyberia-to/{a.repo}/git/ref/heads/release/0.4']))
+require(actual_ref['object']['sha']==a.base,'exact current integration branch')
+run('fetch',['git','fetch','origin','release/0.4'])
+run('base-snapshot-ancestor',['git','merge-base','--is-ancestor',pre['baseRefOid'],a.base])
+require(run('fetched-base',['git','rev-parse','FETCH_HEAD'])==a.base,'unchanged integration base')
+expected=run('expected-tree',['git','merge-tree','--write-tree',a.base,a.head]).splitlines()[0]
+require(len(expected)==40,'expected merge tree')
+result=json.loads(run('merge',['gh','api','--method','PUT',f'repos/cyberia-to/{a.repo}/pulls/{a.pr}/merge','-f','merge_method=merge','-f','sha='+a.head]))
+require(result['merged'] is True,'GitHub merged reviewed head')
+run('fetch-merged',['git','fetch','origin','release/0.4'])
+merged=result['sha'];actual=run('actual-tree',['git','rev-parse',merged+'^{tree}']);require(actual==expected,'exact reviewed merged tree')
+parents=run('parents',['git','rev-list','--parents','-n','1',merged]).split();require(parents==[merged,a.base,a.head],'exact original base and reviewed head parents')
+post=json.loads(run('after',['gh','pr','view',str(a.pr),'--repo','cyberia-to/'+a.repo,'--json','state,headRefOid,baseRefName,mergeCommit']))
+require(post['state']=='MERGED' and post['mergeCommit']['oid']==merged and post['headRefOid']==a.head and post['baseRefName']=='release/0.4','merged PR identity')
+receipt=dict(status='passed',repository=a.repo,pr=a.pr,base_ref='release/0.4',base=a.base,head=a.head,merge=merged,expected_tree=expected,actual_tree=actual,commands=commands)
+(a.output/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps({k:receipt[k] for k in ('status','repository','pr','merge','actual_tree')}))

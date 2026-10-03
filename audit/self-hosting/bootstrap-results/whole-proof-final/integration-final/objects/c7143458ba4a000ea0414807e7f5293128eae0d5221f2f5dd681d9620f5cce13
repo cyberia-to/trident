@@ -1,0 +1,126 @@
+[
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "120",
+      "--repo",
+      "cyberia-to/trident",
+      "--json",
+      "state,isDraft,headRefOid,baseRefOid,baseRefName,mergeable,statusCheckRollup"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "repos/cyberia-to/trident/git/ref/heads/release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "28c982c0ff4fa9572f63778688a2763e0ed2878e",
+      "28c982c0ff4fa9572f63778688a2763e0ed2878e"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-tree",
+      "--write-tree",
+      "28c982c0ff4fa9572f63778688a2763e0ed2878e",
+      "a6b12e584719b69b64a606c5c4a54d6f6c7ae929"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "--method",
+      "PUT",
+      "repos/cyberia-to/trident/pulls/120/merge",
+      "-f",
+      "merge_method=merge",
+      "-f",
+      "sha=a6b12e584719b69b64a606c5c4a54d6f6c7ae929"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "942cb5584bc12a3753331829152fa53b83c81341^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-list",
+      "--parents",
+      "-n",
+      "1",
+      "942cb5584bc12a3753331829152fa53b83c81341"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "120",
+      "--repo",
+      "cyberia-to/trident",
+      "--json",
+      "state,headRefOid,baseRefName,mergeCommit"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0
+  }
+]

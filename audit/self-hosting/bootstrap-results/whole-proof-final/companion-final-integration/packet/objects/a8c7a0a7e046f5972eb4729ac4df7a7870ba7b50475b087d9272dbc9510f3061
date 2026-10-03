@@ -1,0 +1,18 @@
+diff --git a/README.md b/README.md
+index 20091de..c160abc 100644
+--- a/README.md
++++ b/README.md
+@@ -139,5 +139,11 @@ allocation, collection and elapsed time remain host observations. See the
+ [implementation validation](audit/structured-certificates/README.md).
+ Both original whole self-build certificates have
+ [accepted byte-equivalence retention](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md).
+-Full self-build SH8 adversarial and final-checker acceptance remain open;
+-component validation covers its stated fixtures and source revisions.
++[Frozen S1 SH8 acceptance](https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
++records both complete self-build proofs, fresh verification and exact extracted
++C2/C3 artifacts. Each generation has 547 corpus observations, 23 distinct
++rejections and two original positive controls. The runs use the original Joy
++`6e0ec4d8440e2521df08f442d64f54e667044716` installation and preserve all failed
++diagnostic histories. The [source bridge](https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/joy-source-bridge/README.md)
++distinguishes that binary from packaged Joy `dd61df9`; host-ceiling and package
++validation retain their separate evidence and scopes.

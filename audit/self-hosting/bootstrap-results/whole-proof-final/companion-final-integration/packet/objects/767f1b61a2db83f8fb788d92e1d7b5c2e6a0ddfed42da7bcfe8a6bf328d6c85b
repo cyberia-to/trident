@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/merge-accepted-pr-v2.py",
+    "--repo",
+    "trisha",
+    "--directory",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+    "--pr",
+    "28",
+    "--head",
+    "faca656ec1c6e5198433f97f59a2156262da006a",
+    "--base",
+    "c9f442c58005249d14e95fc81f125ff7f864ab07",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/trisha-final-sh8-pr28"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/trisha-final-sh8-pr28-wrapper",
+  "started_ns": 1791053757701897000,
+  "helper": {
+    "bytes": 3335,
+    "sha256": "b2b3bc36d82fb817839996ae1cd250d0682f2de2a0e4622d53a939def06ee388"
+  },
+  "wrapper": {
+    "bytes": 2688,
+    "sha256": "e97e6867d44ba14f2ba0eae282c2f7a46ce7139155b5b9fc82653f72fde562af"
+  },
+  "timeout_seconds": 360,
+  "cleanup": [],
+  "pid": 62778,
+  "exit_code": 0,
+  "ended_ns": 1791053789485854000,
+  "stdout": {
+    "bytes": 167,
+    "sha256": "583200efa431084830e5787479d757b6b93bef208303cbc7990e9df896874fd2"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

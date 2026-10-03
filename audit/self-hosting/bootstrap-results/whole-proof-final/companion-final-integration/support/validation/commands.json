@@ -1,0 +1,234 @@
+[
+  {
+    "argv": [
+      "git",
+      "init",
+      "-q",
+      "--template="
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "0.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "config",
+      "core.autocrlf",
+      "true"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "1.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "joy-source-bridge/.gitattributes",
+      "joy-source-bridge/README.md",
+      "joy-source-bridge/objects/0058f00eac27a1db168678226c525f59eb176a487788be8dcbce22a21056871c",
+      "joy-source-bridge/objects/01463d411dd661d04450f3b3038d69671c567fde68f1fee1d88e823a497d18f2",
+      "joy-source-bridge/objects/060a9154ea553b5da39899c5d0dd6ccdb67b15a20e258bacef6d51e004983057",
+      "joy-source-bridge/objects/0a9292eba858d90b7c8e8cbad5e52b01a3c5f2d405ce20cc314816492c729c21",
+      "joy-source-bridge/objects/0a946b3cc3efa69915db70359bbce96bffa31c3655fa275dc3c949505912d022",
+      "joy-source-bridge/objects/0c9cfc4b3422072e58336916b3968406cd27f249c01d85c0bec4565c1e42132c",
+      "joy-source-bridge/objects/1553730f45aa430580d9a52efdc4c09b90106b8827cdae68103fdb237120a2a5",
+      "joy-source-bridge/objects/169a9b788e217f8ea45faa4fa8e4fbe8b3942d6fc830573e2b2e5dae74ab4830",
+      "joy-source-bridge/objects/187c70ba10d5803dbdcda94ef9699e77dc83fcda387371661e0009f22086b95e",
+      "joy-source-bridge/objects/191e2b6dba185fe995da8c88f627c709ad2c800552e001a8d91f23a3110b413c",
+      "joy-source-bridge/objects/1a2e8e846be854298a2e8e70dd7fc92b208b197b469d799a0d0e1124aa1ef7ad",
+      "joy-source-bridge/objects/1d05ecbacfd5b74018003833e0bc9a22b3f9d5d6fba9aa119cb4be002794fadb",
+      "joy-source-bridge/objects/1e8d920a7765437ef60b515b67ee847964a3d83689a05d76e32e23f7323e552a",
+      "joy-source-bridge/objects/20fd4d379af4fbb92da527440f12e55b184ea35d79ca93c7c0cadec6dd21669b",
+      "joy-source-bridge/objects/22301f4cd795c639576febf8ecc26d31dcb9b02e798b030a9949faa1f877b56e",
+      "joy-source-bridge/objects/2241cd9fecce35eccc756d5f097b4f798d49a865cde7c15b7a5c0ad065841167",
+      "joy-source-bridge/objects/23c7dda5f27d8cdd5b686cffcb377ba9bbb904e60309ff0d8ef307448026df52",
+      "joy-source-bridge/objects/27183ccea8d48403d343c2ca61cf8c001937cc77d07f8f383c211034003ef6d7",
+      "joy-source-bridge/objects/2c808ba7ebdaa6a54415986314f8b83beacec8c1a60149864ee2d5d775552b6c",
+      "joy-source-bridge/objects/33b29b0149fa455a69361ec91cf44b4fbbb9d7c8ffdc8210878525c49a78065b",
+      "joy-source-bridge/objects/3e9015c8609ae3e6aa6527b324dccc627227f777ea95555f46ba476697a9e907",
+      "joy-source-bridge/objects/4008f3d58d6892eb1507853f59ccf6a477cde5c1940e47953dfce1027ad39db9",
+      "joy-source-bridge/objects/4e9f1cf97648e7af396d8df237642ec9193cc971374eb43ed5428c4a37517ad3",
+      "joy-source-bridge/objects/51f63f0edd7a1edcd5d81935bc0304f1285b4b7e22255a479f32ab0feae81ae8",
+      "joy-source-bridge/objects/526c095c7377fb4caeb11323c2e7f0eb947b3ef8f5047ffe31a57cb145b5f35e",
+      "joy-source-bridge/objects/52909d8cf295238347de763934306053cc6f64915c20bc3d418d5a6477de23a8",
+      "joy-source-bridge/objects/561f300a6f742bfe4ce396d8d8371c903c7016b91fc2061a8bb4f678e695618c",
+      "joy-source-bridge/objects/583200efa431084830e5787479d757b6b93bef208303cbc7990e9df896874fd2",
+      "joy-source-bridge/objects/58b1f17c0778782cf4804f03179ada5aaf0924ba6c4133ac028a3b67d81c8e7e",
+      "joy-source-bridge/objects/5cc98b95e28a0225d0290a073324f9b95c64b36345428bc7aaf4120ad9728868",
+      "joy-source-bridge/objects/5f20312bdd7b15186aac2c6904922ad3b3396ebb7cf016c8d258b4bee2324758",
+      "joy-source-bridge/objects/614c4adc9aa2187ae849b6e652ca002824179b14e47bd7e675c21ff01aabebaa",
+      "joy-source-bridge/objects/62dda2f392943dc8c5c6d0014bed8d7443014e8d9b032a4e85917048ec04e7fb",
+      "joy-source-bridge/objects/630815eb196069a3f68a2c1bbee0eafed887f1c5f66aa4b69ce8c09098d75b0f",
+      "joy-source-bridge/objects/67b072f82f533a3f45d00e643ebfaef1e047c27fdf0e7e52d1593bae21ab73ed",
+      "joy-source-bridge/objects/683b5aefe4d3235e2416ed2b5c45776017bc582c56bfdee80cbb042b0f4f2b51",
+      "joy-source-bridge/objects/704fb1449f634d5a8b6e5e65fe547f953b4cf7a748b43c53bc1d2c823cef4ab3",
+      "joy-source-bridge/objects/7378491f40fee4dda850fe64e6ac3ae2d08bc6978782434ace74255effbb71ce",
+      "joy-source-bridge/objects/74498f7d71874e916f05ed8eaf3675de220415287f0973205a4c73c4d87228fb",
+      "joy-source-bridge/objects/767f1b61a2db83f8fb788d92e1d7b5c2e6a0ddfed42da7bcfe8a6bf328d6c85b",
+      "joy-source-bridge/objects/7765fc001d0220683462384dc970a2acacf92db9c0363b08a18b65530dd65c80",
+      "joy-source-bridge/objects/7823e45df995154da7d3655cbffd85ef21126966aec4225d16e01c05881a04a7",
+      "joy-source-bridge/objects/7857fe9dc809faff1e65ca00ac11eab86c90c14808a2a82c19a906d1400a5214",
+      "joy-source-bridge/objects/7a46c680022df645df222ba8b8fed222f06b295feeb34632d605837f603e2a14",
+      "joy-source-bridge/objects/7ad77a8b34389b02c7b3bf11dd314bf5767a4f15763f251d231cd3ecf6069e82",
+      "joy-source-bridge/objects/7b3adae0e36ae2173ad1a7c4c6dee1229b46111c06d61b5d4245a6d0011f7868",
+      "joy-source-bridge/objects/7f990ffb23cdf8619c0343cd8b92f673c8aa4b1fc50f5e54a196cedc70be9342",
+      "joy-source-bridge/objects/821088827cc26c67c51c8192330c4acd46c1a909521387d453f46a99faa615be",
+      "joy-source-bridge/objects/88db44ee4721f990cd461f9730d58b07bc15bc65b7f2d3840cd09d60ed4594f6",
+      "joy-source-bridge/objects/8927450bda0c5b17b34e2f1ce13f9442bcd1387cadd9f46272ba4df33d49fee8",
+      "joy-source-bridge/objects/8a0b15d6aa281467e37428af06d3b0bc0a06f034251347f1c7529ab8f4020acd",
+      "joy-source-bridge/objects/8cb3bc314f562d9ecb4fdeb96f5699fda95adfe32e47767ac91c7ae32b058d2b",
+      "joy-source-bridge/objects/8d41d6b28e42eafb65b1ec136ac6ea2a1671f1b2ab55afe4ce24c5c942ab47cc",
+      "joy-source-bridge/objects/8ee737423466aa17e80717453c8ad6b19e963fabe0afa88b5ca106708cb30bf6",
+      "joy-source-bridge/objects/90517818a6cc48baf15f8b5fc8f4ace81b35c01766efc481d8b52c9902acc3a0",
+      "joy-source-bridge/objects/928f123e1d2f1a8a88df1f1ccfd4a4e7f855fc05fdedfb5f6e6e32f85bd5c171",
+      "joy-source-bridge/objects/9923509cf225179bc818d6952ada427e00ca065ed2eb8f3e1dfd9b6a926fba0e",
+      "joy-source-bridge/objects/9941dab977b4fc0d7294c0816b41886ae6740314d2f18801af1f8ac6d051b583",
+      "joy-source-bridge/objects/9d9d30e10363f2df6af7f65340270117d6a9dc4cbb8f374aec6c68c5c36606eb",
+      "joy-source-bridge/objects/9e9d6a68ba73c33f0249815094bec0e9f3892bf7770628a494b36915bc375b91",
+      "joy-source-bridge/objects/9ef4c3626e2ceab8e21f6a4a0c8c1538f1b9a6570a56f957a74133f1b9d00ac1",
+      "joy-source-bridge/objects/a02ce2b6c7be3a468c23ce05c1372004f7d3932cb6f89963503fb4f42957c3f7",
+      "joy-source-bridge/objects/a1330ba9bbe32c2e587f8ffd70c719c836db298cfd28a55bd799cf9b6589c6ca",
+      "joy-source-bridge/objects/a5530219610706ab863c8bb25ed986b50b88d169a2c178ae84b58e3bddfdc237",
+      "joy-source-bridge/objects/a5d4df9579697bffc914ee0730d298229425d7bdf2065bcd3703e58f01271a30",
+      "joy-source-bridge/objects/a628aa8bb17c53b6ab9597c2dd02e660614609afc677937db7e7d18e744b2b63",
+      "joy-source-bridge/objects/a7afcade06b93da6e61835d917bc135bab8fec449df3dc11cdb37ec25080e7e4",
+      "joy-source-bridge/objects/a8c7a0a7e046f5972eb4729ac4df7a7870ba7b50475b087d9272dbc9510f3061",
+      "joy-source-bridge/objects/aaf3d6e099f4004c1e339cb54a04509f4cf795add21e88519ddbe6ca996382d1",
+      "joy-source-bridge/objects/ad5a5d9bb22427d774cfb61d65d4b1d0ab9d59e63767e31eeab4f6080fb7f5c5",
+      "joy-source-bridge/objects/ad70727d5b9bca41d17bce3bbae625ea3fca96b6a5aec5a1243a4c809f9d32e9",
+      "joy-source-bridge/objects/b3a94f383ae26e54e962fdc7b2f98dc80a7900a9f0d9b0f8b373aca64bdf1f29",
+      "joy-source-bridge/objects/b49fafb937113fae1bea1ea2780a7f7451d164b9ce6731b91b8dc16bc8f6e689",
+      "joy-source-bridge/objects/b66e3385097ea5b92229f4e7daadcba719a46af0ba64e1760fe3cfe3b01aae25",
+      "joy-source-bridge/objects/b7d276f814158755d8c75344969c85f2f824221a38e136357932f26a0ee571c7",
+      "joy-source-bridge/objects/b801a07de6a6e348b11e8c7b5c11c492f5c4d9c053dd7e150ab29f5d23df7290",
+      "joy-source-bridge/objects/b856fed73da4489a26e8536c1219371e0fe7155e85e0f4e6f17f1306b1c83bf2",
+      "joy-source-bridge/objects/b9bed4727b2db7671cc1d0313dbdf3d8fcedd0abfc958d32684567df88665f50",
+      "joy-source-bridge/objects/bb11c4b4806bf6c534b42fb8651cb317a9a3298695f5fb5f55669a00362ca67b",
+      "joy-source-bridge/objects/bbc743eb74ee3de0cdb4930c836d0da398a878ce7bc525cc2ce4926b6136076c",
+      "joy-source-bridge/objects/bccf6c2e4b42112f39a81d3b26d716bf337abae720f55cd98a1cdf6e2977f3db",
+      "joy-source-bridge/objects/bf28e737cb3d276ac9bd047481b3c67a3393924e07d4e07849c6db74e3665f7d",
+      "joy-source-bridge/objects/bfebe566de8ef301a0a863f4b178111ddfc566c746a76377edc64c7f5745d6d9",
+      "joy-source-bridge/objects/c16258a744a23fc9c6455736c20f2d0dbff7e89c4409d50f9ca18c5dbb9d0f98",
+      "joy-source-bridge/objects/c27d81ce9b7e701bef137e9f9a59dec5f67a31abdea9e488b6a16b458f5b7960",
+      "joy-source-bridge/objects/c2873506920439970f461a7a2ac8654c4d5a8d134d41f5a28d67295a5daa9c24",
+      "joy-source-bridge/objects/c94b4db3c2df421c3a869119d45a8092a3ac6f1734f77b7b7c7258b416539162",
+      "joy-source-bridge/objects/c95c08512470ffd94ae76e5007a5590a7fa8bab44c636b12eb42dd6f7fb33b3e",
+      "joy-source-bridge/objects/cf0dfc078b904850f87447bff67d1d8edc5b0eae183337c1e7bfbbdf456fb32e",
+      "joy-source-bridge/objects/d0919d5bb7576d4b1a495856f1e561985d1063a8e22c74dfb90a5267c165331d",
+      "joy-source-bridge/objects/d2651c4bceee795db8b3e83fd4841921a8b2d2d4b4d2f2d43a92be860a9b4714",
+      "joy-source-bridge/objects/d7bda47308d0d501667dc09ea4555a23d85121e13030ab1488672e9b11e53c13",
+      "joy-source-bridge/objects/dc3bdf9a40649e9a4866b83687ab9f83fc3fede93feb5b67f59c493d85b79dd1",
+      "joy-source-bridge/objects/df379299f74ff881edc8dded1ae5bc2de617b1451dc0f96a42ff9b1de607580b",
+      "joy-source-bridge/objects/e17b93931b8ec964487611c9f11dce4e59315bb177da225d3a959976a770d6cb",
+      "joy-source-bridge/objects/e221b7d4605d9000607f32378066cea3fbd506abec0eb164a6650d6565e39473",
+      "joy-source-bridge/objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "joy-source-bridge/objects/ea3d7a0cadb24b1227c1f9467b018ec7e66066a211104e1c313e014a0453c6ff",
+      "joy-source-bridge/objects/ea4738587f96b4d0730592ecad5f618f45d7c99c5dd38770b56e4f91e009bc6a",
+      "joy-source-bridge/objects/ec6e1a6d54055f683339b4df594a462bf35eed9c8b4341fc7f1d2b03c5830303",
+      "joy-source-bridge/objects/ee061813d0d72c6b5014b3f616144592f5144826ab4cdc3d1612ab6266a5961b",
+      "joy-source-bridge/objects/f08a1087d86f52e5f51c5761c57f87dd6691be2ee39fd11873054da784577b7e",
+      "joy-source-bridge/objects/f3d3b24d81aa261009506f410c430813f9461ae860fa345a943182358ec7100a",
+      "joy-source-bridge/objects/f4f10f14a2a89f93f5194bd21798562982e9a62102ebe84e2bf1f9436f2c8085",
+      "joy-source-bridge/objects/f625255a845780b6f486049a8e47eeecfc75242b0b7d3ebd230336e9d5caa5d6",
+      "joy-source-bridge/objects/f97ee63f5b8c5c78afe9e776cb5623b2a61ddb78208f147cb6917b0e31f31ba3",
+      "joy-source-bridge/objects/fdbb21ee72c88d5201613eee3fd26af4c92495ce7eae86854653d943692d0a6b",
+      "joy-source-bridge/objects/ffb617a18d210799bf93a479051ff86d515809f9dfff3193e58b7dc08cee36f1",
+      "joy-source-bridge/references-only.json",
+      "joy-source-bridge/retained-files.json",
+      "joy-source-bridge/verify-retained.py"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "2.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "3.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "3.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "write-tree"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "4.stdout",
+      "bytes": 41,
+      "sha256": "7ebbb25bd70146ecb38c22cde407206304b752f0fc65247e6351eacd8290801e"
+    },
+    "stderr": {
+      "path": "4.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "-c",
+      "core.autocrlf=true",
+      "checkout-index",
+      "--all",
+      "--prefix=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/checkout/"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/git-fixture",
+    "exit_code": 0,
+    "stdout": {
+      "path": "5.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "5.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]
