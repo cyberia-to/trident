@@ -1,0 +1,179 @@
+"""Deferred docs-only Joy install from accepted archive paths and warm target."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import signal
+import subprocess
+import time
+import traceback
+
+HERE = Path(__file__).resolve().parent
+BASE = HERE.parent.parent
+REPO = HERE.parent / 'joy'
+ACCEPTED = BASE / 'final-distribution/local-macos-final-rust189'
+SOURCE = ACCEPTED / 'temporary/cyber-candidate/unpacked/cyber-source'
+TARGET = ACCEPTED / 'temporary/cyber-candidate/candidate/build/joy'
+BASE_HEAD = '011543e29a9113564581605bcbaf120b14c1a975'
+SOURCE_SHA = '9334dead92b990a12acf16a2565aeb762a07311dfc2c3d6cb896c0490dc5926e'
+BINARY_SHA = '7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071'
+IMPACT_SHA = 'd9aeb78f31383f2da238f30f48eaa090e7e200c0f9104c3675443525aaa426b0'
+
+
+def identity(path):
+    with path.open('rb') as stream:
+        digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+    return dict(bytes=path.stat().st_size, sha256=digest)
+
+
+def ref(path):
+    return dict(path=str(path), **identity(path))
+
+
+def load(path):
+    return json.loads(path.read_text())
+
+
+def size(path):
+    return sum(p.stat().st_size for p in path.rglob('*') if p.is_file())
+
+
+def git(*args):
+    return subprocess.check_output(['/usr/bin/git', *args], cwd=REPO, timeout=30)
+
+
+def check_inputs(impact):
+    for name, wanted in impact['runtime_files_exact'].items():
+        assert identity(REPO / name) == identity(SOURCE / 'joy' / name) == wanted, name
+    for name, wanted in impact['archived_build_inputs'].items():
+        assert identity(Path(name)) == wanted, name
+
+
+def execute(head, name):
+    assert re.fullmatch('[0-9a-f]{40}', head)
+    assert re.fullmatch('postinstall-[1-9][0-9]*', name)
+    out = HERE / name
+    out.mkdir()
+    prefix = out / 'installed'
+    report = dict(status='prepared', started_ns=time.time_ns(), driver=ref(Path(__file__)),
+                  scope='Fresh-prefix docs-commit installation from source-equivalent accepted archived Joy dd61 paths, using existing warm fingerprints; not compilation from new worktree paths.')
+    child = None
+
+    def save():
+        (out / 'receipt.json').write_text(json.dumps(report, indent=2) + '\n')
+
+    try:
+        assert git('rev-parse', 'HEAD').decode().strip() == head
+        assert not git('status', '--porcelain=v1')
+        assert git('rev-parse', 'HEAD^').decode().strip() == BASE_HEAD
+        assert sorted(git('diff', '--name-only', BASE_HEAD, head).decode().splitlines()) == ['CHANGELOG.md', 'README.md']
+        documents = load(HERE / 'documents.json')
+        for path, wanted in documents.items():
+            assert identity(REPO / path) == wanted
+        assert identity(HERE / 'source-equivalence.json')['sha256'] == IMPACT_SHA
+        impact = load(HERE / 'source-equivalence.json')
+        check_inputs(impact)
+        assert identity(SOURCE / 'sources.json')['sha256'] == SOURCE_SHA
+        candidate = load(ACCEPTED / 'release-results/candidate.json')
+        assert candidate['provenance_sha256'] == SOURCE_SHA and candidate['rustflags'] == ''
+        assert next(b['sha256'] for b in candidate['binaries'] if b['name'] == 'joy') == BINARY_SHA
+        assert identity(TARGET / 'release/joy')['sha256'] == BINARY_SHA
+        report.update(head=head, documents=ref(HERE / 'documents.json'),
+                      source_equivalence=ref(HERE / 'source-equivalence.json'),
+                      candidate=ref(ACCEPTED / 'release-results/candidate.json'),
+                      source_manifest=ref(SOURCE / 'sources.json'),
+                      vendor_manifest=ref(SOURCE / 'vendor-sources.json'),
+                      sibling_revisions=impact['sibling_revisions'],
+                      joy_files=len(impact['runtime_files_exact']),
+                      archived_build_inputs=len(impact['archived_build_inputs']))
+        tools = load(ACCEPTED / 'release-results/toolchain-paths.json')
+        env = os.environ.copy()
+        removed = [k for k in env if k.startswith(('RUST', 'CARGO_BUILD_RUST', 'CARGO_PROFILE_'))
+                   or k in ('CARGO_ENCODED_RUSTFLAGS', 'CARGO_BUILD_TARGET')]
+        for key in removed:
+            env.pop(key)
+        env.update(PATH=str(Path(tools['cargo']['path']).parent) + os.pathsep + str(prefix / 'bin') + os.pathsep + os.environ.get('PATH', ''),
+                   RUSTC=tools['rustc']['path'], RUSTDOC=tools['rustdoc']['path'],
+                   RUSTFLAGS='', CARGO_TARGET_DIR=str(TARGET), CARGO_BUILD_JOBS='2', RUSTUP_TOOLCHAIN='1.89.0')
+        report['environment_overrides'] = {k: env[k] for k in ('PATH', 'RUSTC', 'RUSTDOC', 'RUSTFLAGS', 'CARGO_TARGET_DIR', 'CARGO_BUILD_JOBS', 'RUSTUP_TOOLCHAIN')}
+        report['removed_environment_keys'] = sorted(removed)
+        report['tools'] = {}
+        for tool in ('rustc', 'cargo', 'rustdoc'):
+            path = Path(tools[tool]['path'])
+            assert identity(path)['sha256'] == tools[tool]['sha256']
+            version = subprocess.check_output([str(path), '-vV'], env=env, timeout=30).decode()
+            assert '1.89.0' in version and 'host: aarch64-apple-darwin' in version
+            report['tools'][tool] = dict(version=version, **ref(path))
+        initial_size = size(TARGET)
+        free = shutil.disk_usage(out).free
+        assert free >= 10 * 1024**3 and not prefix.exists()
+        report.update(target=str(TARGET), target_bytes_before=initial_size, free_bytes_before=free,
+                      guard=dict(wall_seconds=120, minimum_free_bytes=8 * 1024**3,
+                                 maximum_target_growth_bytes=64 * 1024**2, abort_on_any_compiling_line=True))
+        argv = [tools['cargo']['path'], 'install', '--path', str(SOURCE / 'joy/cli'), '--locked', '--offline', '--force', '--root', str(prefix)]
+        report['command'] = dict(argv=argv, cwd=str(SOURCE / 'joy'))
+        save()
+        started = time.monotonic()
+        with (out / 'stdout').open('xb') as stdout, (out / 'stderr').open('xb') as stderr:
+            child = subprocess.Popen(argv, cwd=SOURCE / 'joy', env=env, stdout=stdout, stderr=stderr, start_new_session=True)
+            report['owned_group'] = child.pid
+            save()
+            while child.poll() is None:
+                text = (out / 'stderr').read_text(errors='replace')
+                if re.search(r'^\s*Compiling\s', text, re.M):
+                    raise RuntimeError('warm-only install refused compilation')
+                if time.monotonic() - started > 120:
+                    raise RuntimeError('warm install deadline')
+                if shutil.disk_usage(out).free < 8 * 1024**3:
+                    raise RuntimeError('shared free-space floor')
+                if size(TARGET) - initial_size > 64 * 1024**2:
+                    raise RuntimeError('warm target growth allowance')
+                time.sleep(.1)
+            assert child.returncode == 0
+        report.update(exit_code=child.returncode, elapsed_seconds=time.monotonic() - started)
+        text = (out / 'stdout').read_text() + (out / 'stderr').read_text()
+        assert not re.search(r'(^|\n)\s*(warning:|warning\[|Compiling\s)', text)
+        binary = prefix / 'bin/joy'
+        assert identity(binary)['sha256'] == BINARY_SHA
+        report['installed_binary'] = ref(binary)
+        version = subprocess.run([str(binary), '--version'], env=env, capture_output=True, timeout=30, check=True)
+        (out / 'version.stdout').write_bytes(version.stdout)
+        (out / 'version.stderr').write_bytes(version.stderr)
+        assert not version.stderr
+        report['version_command'] = dict(argv=[str(binary), '--version'], exit_code=0)
+        check_inputs(impact)
+        assert all(identity(REPO / p) == w for p, w in documents.items())
+        assert git('rev-parse', 'HEAD').decode().strip() == head and not git('status', '--porcelain=v1')
+        assert size(TARGET) - initial_size <= 64 * 1024**2
+        report.update(status='passed-source-equivalent-warm-install', source_inputs_unchanged=True,
+                      target_bytes_after=size(TARGET), free_bytes_after=shutil.disk_usage(out).free)
+    except BaseException:
+        report.update(status='failed-or-deferred-install', error=traceback.format_exc())
+        save()
+        if child is not None and child.poll() is None:
+            try:
+                os.killpg(child.pid, signal.SIGTERM)
+                try:
+                    child.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    os.killpg(child.pid, signal.SIGKILL)
+                    child.wait(timeout=10)
+                report['owned_child_stopped'] = dict(pid=child.pid, exit_code=child.returncode)
+            except BaseException:
+                report['cleanup_error'] = traceback.format_exc()
+        raise
+    finally:
+        report.update(ended_ns=time.time_ns(), files={p.name: identity(p) for p in out.iterdir() if p.is_file() and p.name != 'receipt.json'})
+        save()
+        print(json.dumps(dict(status=report['status'], receipt=ref(out / 'receipt.json'))))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--head', required=True)
+    parser.add_argument('--out', required=True)
+    args = parser.parse_args()
+    execute(args.head, args.out)
