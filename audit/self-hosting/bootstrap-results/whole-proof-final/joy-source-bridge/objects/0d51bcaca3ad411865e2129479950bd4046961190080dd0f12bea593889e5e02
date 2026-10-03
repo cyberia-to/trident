@@ -1,0 +1,43 @@
+{
+  "status": "passed-independent-source-and-helper-execution",
+  "reviewed_commit": "803203ffb1a4b85a5c05a1f63b57e28d16df4f5f",
+  "findings": [],
+  "scope": "Actual installed dd61/a96 Joy helper trial; source734 supplies unchanged fixture bytes only, no coordinated final package or whole self-build claim",
+  "argv": [
+    "python3",
+    "-B",
+    "-W",
+    "error",
+    "scripts/check-installed-host-ceiling.py",
+    "--source",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/current-distribution/local-macos-current-rust189/temporary/cyber-candidate/unpacked/cyber-source",
+    "--candidate",
+    "../measurements/host-ceiling-helper-candidate",
+    "--output",
+    "../root-host-ceiling-review"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-distribution/trisha-native-ci",
+  "exit_code": 0,
+  "actual_commands": 23,
+  "accepted": 15,
+  "rejected": 8,
+  "checks": [
+    "Three producer deadlines yield identical complete certificate bytes",
+    "All nine fresh verifier pairings preserve complete logical claim and exact extracted program; physical resources unattested",
+    "Generated program executes to expected fourteen",
+    "Compacting zero/above4h/u64max reject for both operations and preserve destination",
+    "Ordinary five-minute ceiling accepts, higher value rejects without destination replacement",
+    "Actual Joy and fixture bytes unchanged, all original command streams rehashed"
+  ],
+  "sources": {
+    "scripts/check-installed-host-ceiling.py": {
+      "bytes": 6762,
+      "sha256": "20c434ab117fe2e54e7e1a80e39f232fac4ef32f92803326bf9213e78fceebf7"
+    },
+    "scripts/current-structured-corpus.py": {
+      "bytes": 15161,
+      "sha256": "5caa737b7c7b8b1fef0dd024a56e78f394273b8140b12a1832f29c8dad891a94"
+    }
+  },
+  "original_receipt_sha256": "bb4872d13b51168c7dce252cf3e7b1ce375776767a9ce62492767313afe41452"
+}

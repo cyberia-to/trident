@@ -1,0 +1,186 @@
+{
+  "status": "passed",
+  "scope": "Authenticated GitHub contents at exact documentation URL repository, revision and path match previously checked Git blobs.",
+  "checks": [
+    {
+      "url": "https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/compiler-work-budget/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/joy/contents/audit/compiler-work-budget/README.md?ref=15202f42240ba923398908ee0db62d32f1d655f8"
+      ],
+      "started_ns": 1790983294798977000,
+      "ended_ns": 1790983302308260000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 2871,
+        "sha256": "edd689ae7aea00ec3226454f9275bc534f60382dbc01d125d6d3af97859b8357"
+      },
+      "actual": {
+        "bytes": 2871,
+        "sha256": "edd689ae7aea00ec3226454f9275bc534f60382dbc01d125d6d3af97859b8357"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/nox/blob/2f09ca3c3f18ae470365310cca8db5208eda75c6/audit/prefix-frontier/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/nox/contents/audit/prefix-frontier/README.md?ref=2f09ca3c3f18ae470365310cca8db5208eda75c6"
+      ],
+      "started_ns": 1790983294799071000,
+      "ended_ns": 1790983302419445000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 8161,
+        "sha256": "a1219f09a4d4d7b4bb152965e75c1f92c26fe8c07b90fcc3259fe48fc11dc93c"
+      },
+      "actual": {
+        "bytes": 8161,
+        "sha256": "a1219f09a4d4d7b4bb152965e75c1f92c26fe8c07b90fcc3259fe48fc11dc93c"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/self-hosting/compiler-jobs.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/joy/contents/audit/self-hosting/compiler-jobs.md?ref=15202f42240ba923398908ee0db62d32f1d655f8"
+      ],
+      "started_ns": 1790983294799208000,
+      "ended_ns": 1790983302363524000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 3714,
+        "sha256": "cd01e1bfdb54d132c0d9ba8a2c424f6534b64f4298bb74a1284f3d33e81b2054"
+      },
+      "actual": {
+        "bytes": 3714,
+        "sha256": "cd01e1bfdb54d132c0d9ba8a2c424f6534b64f4298bb74a1284f3d33e81b2054"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/explicit-compiler-arena-combined.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/joy/contents/audit/explicit-compiler-arena-combined.md?ref=15202f42240ba923398908ee0db62d32f1d655f8"
+      ],
+      "started_ns": 1790983302308533000,
+      "ended_ns": 1790983309247530000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 1387,
+        "sha256": "cc67c1bc9ea7d502c23372f3278e9d6d0886be249f36b1ec562ca546e79f8650"
+      },
+      "actual": {
+        "bytes": 1387,
+        "sha256": "cc67c1bc9ea7d502c23372f3278e9d6d0886be249f36b1ec562ca546e79f8650"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/nox/blob/2f09ca3c3f18ae470365310cca8db5208eda75c6/audit/sequential-compaction/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/nox/contents/audit/sequential-compaction/README.md?ref=2f09ca3c3f18ae470365310cca8db5208eda75c6"
+      ],
+      "started_ns": 1790983302363656000,
+      "ended_ns": 1790983309252047000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 6033,
+        "sha256": "0d1201d55824eb4ce929315c52a6fe899deb9c37a846d2765b5eeff4d7a3948a"
+      },
+      "actual": {
+        "bytes": 6033,
+        "sha256": "0d1201d55824eb4ce929315c52a6fe899deb9c37a846d2765b5eeff4d7a3948a"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/self-hosting-compaction/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/joy/contents/audit/self-hosting-compaction/README.md?ref=15202f42240ba923398908ee0db62d32f1d655f8"
+      ],
+      "started_ns": 1790983302419632000,
+      "ended_ns": 1790983309249656000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 2243,
+        "sha256": "2397edb41fc722991e0366e057c85c9c5be51a4ce3e537f843c7c23606d74148"
+      },
+      "actual": {
+        "bytes": 2243,
+        "sha256": "2397edb41fc722991e0366e057c85c9c5be51a4ce3e537f843c7c23606d74148"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/joy/blob/15202f42240ba923398908ee0db62d32f1d655f8/audit/soft3-only/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/joy/contents/audit/soft3-only/README.md?ref=15202f42240ba923398908ee0db62d32f1d655f8"
+      ],
+      "started_ns": 1790983309247672000,
+      "ended_ns": 1790983317116014000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 6204,
+        "sha256": "5b0c9f5769a47341be21041b18afc51a2e897b870fd1622d96b9a1890ac3e3ad"
+      },
+      "actual": {
+        "bytes": 6204,
+        "sha256": "5b0c9f5769a47341be21041b18afc51a2e897b870fd1622d96b9a1890ac3e3ad"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/contents/audit/final-host-ceiling-package/README.md?ref=95899e8f4fe32b5d7269d92b5e63ef429fbfafac"
+      ],
+      "started_ns": 1790983309249861000,
+      "ended_ns": 1790983317681555000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 29177,
+        "sha256": "0b0213c342e9a44267c6c7a2e7a56b82e3a552ba70198cbb0a44ebd1be120730"
+      },
+      "actual": {
+        "bytes": 29177,
+        "sha256": "0b0213c342e9a44267c6c7a2e7a56b82e3a552ba70198cbb0a44ebd1be120730"
+      },
+      "passed": true
+    },
+    {
+      "url": "https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/contents/audit/whole-retention-byte-closure/README.md?ref=fbea3cef9a4139075e529c319ff75488ed5df625"
+      ],
+      "started_ns": 1790983309252283000,
+      "ended_ns": 1790983316220326000,
+      "exit_code": 0,
+      "expected": {
+        "bytes": 5128,
+        "sha256": "7147879617545da1b1d1b80b10df403acada1bd387642c2e59684c3d46a531ed"
+      },
+      "actual": {
+        "bytes": 5128,
+        "sha256": "7147879617545da1b1d1b80b10df403acada1bd387642c2e59684c3d46a531ed"
+      },
+      "passed": true
+    }
+  ]
+}

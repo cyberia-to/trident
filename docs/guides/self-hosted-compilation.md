@@ -1,6 +1,6 @@
 # Compile with the self-built nox compiler
 
-The current native compiler can compile `.tri` source while running inside
+The frozen S1 native compiler can compile `.tri` source while running inside
 Joy/nox. This guide uses an actual C2 emitted by that compiler, then executes
 its output. The supported language subset and larger self-build procedure are
 specified in [Self-Hosting](../../reference/self-hosting.md); current platform
@@ -20,7 +20,9 @@ the unpacked `kit.json` SHA256 is
 `4096a513d439adda55e62731f461ff0a7a72fa0c85d79292090be048b7f55ae8`.
 The kit carries the compiler and provenance; obtain Joy separately from the
 compatible `release/0.4` build. Its accepted status covers the frozen S1 compiler
-matrix. The coordinated 0.4 release remains subject to its distribution gates.
+matrix. The [coordinated distribution rehearsal](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md)
+passed for frozen source archive `73b50ebd`. Public versioning and release
+promotion remain separate owner-controlled steps.
 
 An accepted coordinated distribution includes `share/trident-selfhost/`.
 Verify the distribution and kit archive checksums before using their contents.
@@ -77,9 +79,10 @@ demonstrates execution. Joy also implements `prove-artifact` and
 `verify-artifact` for public ART1/JOB1/RES1 programs with computed continuations
 and variable result shapes. Its [structured certificate contract](https://github.com/cyberia-to/joy/blob/dd61df9128f6da1f97d4698f45f154f05312fe51/specs/structured-certificates.md)
 specifies independent Zheng verification, full public witness disclosure and
-the resource bounds. Complete self-build proof acceptance and final durable
-retention remain open under [SH8](../../reference/self-hosting.md#sh8-proved-self-compilation);
-follow the [acceptance ledger](../../audit/self-hosting-progress.md) for workload evidence.
+the resource bounds. Complete self-build proofs have [accepted byte-equivalence retention](https://github.com/cyberia-to/trisha/blob/fbea3cef9a4139075e529c319ff75488ed5df625/audit/whole-retention-byte-closure/README.md).
+Final adversarial and independent-checker acceptance remains open under
+[SH8](../../reference/self-hosting.md#sh8-proved-self-compilation); follow the
+[acceptance ledger](../../audit/self-hosting-progress.md) for workload evidence.
 
 
 ## Rebuild the complete frozen compiler

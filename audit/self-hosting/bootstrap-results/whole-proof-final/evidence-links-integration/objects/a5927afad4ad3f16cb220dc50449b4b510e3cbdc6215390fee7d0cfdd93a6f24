@@ -1,0 +1,86 @@
+{
+  "status": "passed-document-only-scope-and-exact-target-blobs",
+  "source": {
+    "bytes": 4131,
+    "sha256": "c50955f6aadda16d859b5b36be282e98f83f02f83e9f97ed43deaea2c9de7430"
+  },
+  "documents": {
+    "joy": {
+      "base": "15202f42240ba923398908ee0db62d32f1d655f8",
+      "path": "README.md",
+      "changed_paths": [
+        "README.md"
+      ],
+      "document": {
+        "bytes": 7534,
+        "sha256": "efffcc006424fd771ee0afbf4f7c8061a847f99bbd0cce1578860a522838fb61"
+      },
+      "patch": {
+        "bytes": 1537,
+        "sha256": "f5eba624e38899ee7d068d4d82f010aca7c3736b935f509ecc21fe763395ed0d"
+      }
+    },
+    "trisha": {
+      "base": "9e1af832543a21def306dac84ff918cbb823653d",
+      "path": "audit/README.md",
+      "changed_paths": [
+        "audit/README.md"
+      ],
+      "document": {
+        "bytes": 6556,
+        "sha256": "2f6895e5960b1af2d94addd79e95efd41a420f4976260be9ff04df1de420cce5"
+      },
+      "patch": {
+        "bytes": 857,
+        "sha256": "02d5a78ebac48cdc6dcf6604fbdb7f9a835a2d4b044554e334663d2e4fc3932d"
+      }
+    }
+  },
+  "targets": [
+    {
+      "repository": "cyber",
+      "commit": "4f2dac1440f91cd9ac802f6993f3ddbf50cec767",
+      "path": "specs/worker.md",
+      "url": "https://github.com/cyberia-to/cyber/blob/4f2dac1440f91cd9ac802f6993f3ddbf50cec767/specs/worker.md",
+      "git_blob": "603fb3af6bd129f98897aaa9e47044bd93d924f1",
+      "bytes": 10022,
+      "sha256": "e9bc2e939f907f46cd06c5188a40457929082ae658b2b0a05e82df3c0e6df5f6",
+      "authenticated_api_content_equal": true
+    },
+    {
+      "repository": "zheng",
+      "commit": "0d7ba6d422d9b825f9685e903e55252f88ebecd9",
+      "path": "specs/execution.md",
+      "url": "https://github.com/cyberia-to/zheng/blob/0d7ba6d422d9b825f9685e903e55252f88ebecd9/specs/execution.md",
+      "git_blob": "63e8cc5f52ae51faf88af95e8c2823a7debe9b29",
+      "bytes": 6746,
+      "sha256": "9c478d8830877079017df98c793407e8dbc52776ce18da8ee2820afba3b37983",
+      "authenticated_api_content_equal": true
+    },
+    {
+      "repository": "zheng",
+      "commit": "0d7ba6d422d9b825f9685e903e55252f88ebecd9",
+      "path": "specs/ccs-execution-backends.md",
+      "url": "https://github.com/cyberia-to/zheng/blob/0d7ba6d422d9b825f9685e903e55252f88ebecd9/specs/ccs-execution-backends.md",
+      "git_blob": "d56aecaa14dc34791b3ba143e01351de471c9c87",
+      "bytes": 5436,
+      "sha256": "0553aaec42d28b73490c96946d3e756f30d2e319ffaea80294dd7da4a547a49a",
+      "authenticated_api_content_equal": true
+    },
+    {
+      "repository": "trident",
+      "commit": "28c982c0ff4fa9572f63778688a2763e0ed2878e",
+      "path": "audit/self-hosting-progress.md",
+      "url": "https://github.com/cyberia-to/trident/blob/28c982c0ff4fa9572f63778688a2763e0ed2878e/audit/self-hosting-progress.md",
+      "git_blob": "dfb0b4ea8cdef429f53306606fe94aecf5904401",
+      "bytes": 50428,
+      "sha256": "e70226440047b47d045363d6e7c05ef22d54083e253f82f5947951f49c61bedc",
+      "authenticated_api_content_equal": true
+    }
+  ],
+  "commands": {
+    "bytes": 12082,
+    "sha256": "6bedf2714ffb6e3103242be9ea68d09c70595f6c3b214f613dc7e5853cce907a"
+  },
+  "scope": "Four immutable URL repairs only; no production source or SH8 status change. No native/test/proof workload."
+}

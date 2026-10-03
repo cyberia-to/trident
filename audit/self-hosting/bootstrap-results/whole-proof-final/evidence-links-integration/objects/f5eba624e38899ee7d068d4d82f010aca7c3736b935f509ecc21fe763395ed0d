@@ -1,0 +1,24 @@
+diff --git a/README.md b/README.md
+index 586d2e4..20091de 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,7 @@
+ # Joy
+ 
+ Interface specification: [Joy CLI](specs/cli.md). Node integration and
+-acceptance are owned by [cyber's worker contract](../cyber/specs/worker.md).
++acceptance are owned by [cyber's worker contract](https://github.com/cyberia-to/cyber/blob/4f2dac1440f91cd9ac802f6993f3ddbf50cec767/specs/worker.md).
+ Both specs distinguish implemented behavior from the planned interface.
+ The typed [worker adapter](specs/worker-adapter.md) checks native results against
+ independently saved jobs; Cyber retains scheduling and network admission.
+@@ -62,8 +62,8 @@ branch shapes. Public structured artifacts use the separate
+ [dynamic compiler profile](#structured-native-artifacts-04-integration).
+ Budgets must cover the authenticated cost of the selected execution path.
+ The static relation also bounds every possible cost below the field modulus. See
+-[Zheng's exact contract](../zheng/specs/execution.md) and
+-[proof backend/state contract](../zheng/specs/ccs-execution-backends.md).
++[Zheng's exact contract](https://github.com/cyberia-to/zheng/blob/0d7ba6d422d9b825f9685e903e55252f88ebecd9/specs/execution.md) and
++[proof backend/state contract](https://github.com/cyberia-to/zheng/blob/0d7ba6d422d9b825f9685e903e55252f88ebecd9/specs/ccs-execution-backends.md).
+ 
+ Public inputs bind as `[p_last [... [p_first 0]]]`. Proof verification checks
+ requested `--claim` and `--input-values`; `--budget` bounds the certificate's

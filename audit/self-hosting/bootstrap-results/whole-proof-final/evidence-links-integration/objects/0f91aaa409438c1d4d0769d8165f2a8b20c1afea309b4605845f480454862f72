@@ -1,0 +1,20 @@
+--- /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/install-preparation/install.py
++++ /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/trisha-install/install.py
+@@ -2,7 +2,7 @@
+ import argparse,hashlib,json,os,re,shutil,signal,subprocess,time,traceback
+ from pathlib import Path
+ HERE=Path(__file__).resolve().parent
+-LANE=HERE.parent;BASE=LANE.parent;REPO=LANE/'trisha'
++BASE=Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002');REPO=BASE/'trisha-delivery-docs-20261002/trisha'
+ ACCEPTED=BASE/'final-distribution/local-macos-final-rust189'
+ FAMILY=ACCEPTED/'temporary/cyber-candidate'
+ SOURCE=FAMILY/'unpacked/cyber-source'
+@@ -26,6 +26,8 @@
+ try:
+     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO).decode().strip()
+     assert head==args.reviewed_head
++    assert subprocess.check_output(['git','rev-parse','HEAD^'],cwd=REPO).decode().strip()=='9e1af832543a21def306dac84ff918cbb823653d'
++    assert subprocess.check_output(['git','diff','--name-only','HEAD^','HEAD'],cwd=REPO).decode().splitlines()==['audit/README.md']
+     assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=REPO)
+     report['delivery_head']=head
+     impact_path=HERE/'source-equivalence-original.json'

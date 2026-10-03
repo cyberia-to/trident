@@ -1,0 +1,13 @@
+diff --git a/rs/structured/limits.rs b/rs/structured/limits.rs
+index 8a2d1da..8f3179d 100644
+--- a/rs/structured/limits.rs
++++ b/rs/structured/limits.rs
+@@ -11,7 +11,7 @@ pub struct CompactionPolicy {
+ const COMPACT_ALLOCATIONS: u64 = 1_000_000_000;
+ const COMPACT_REDUCTIONS: u64 = 20_000_000_000;
+ const COMPACT_WORK: u64 = 10_000_000_000;
+-const COMPACT_TIME_MS: u64 = 7_200_000;
++const COMPACT_TIME_MS: u64 = 14_400_000;
+ 
+ #[derive(Debug, Clone, Copy)]
+ pub struct RunLimits {

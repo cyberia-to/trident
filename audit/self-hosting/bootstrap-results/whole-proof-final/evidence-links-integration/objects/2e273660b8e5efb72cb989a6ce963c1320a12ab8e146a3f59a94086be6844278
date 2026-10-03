@@ -1,0 +1,126 @@
+[
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "30",
+      "--repo",
+      "cyberia-to/joy",
+      "--json",
+      "state,isDraft,headRefOid,baseRefOid,baseRefName,mergeable,statusCheckRollup"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "repos/cyberia-to/joy/git/ref/heads/release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "15202f42240ba923398908ee0db62d32f1d655f8",
+      "15202f42240ba923398908ee0db62d32f1d655f8"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-tree",
+      "--write-tree",
+      "15202f42240ba923398908ee0db62d32f1d655f8",
+      "f008a14a6c5e66dca5cfb7acade924618ea5b4a8"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "--method",
+      "PUT",
+      "repos/cyberia-to/joy/pulls/30/merge",
+      "-f",
+      "merge_method=merge",
+      "-f",
+      "sha=f008a14a6c5e66dca5cfb7acade924618ea5b4a8"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-list",
+      "--parents",
+      "-n",
+      "1",
+      "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "30",
+      "--repo",
+      "cyberia-to/joy",
+      "--json",
+      "state,headRefOid,baseRefName,mergeCommit"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  }
+]
