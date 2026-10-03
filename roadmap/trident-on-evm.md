@@ -52,11 +52,12 @@ redeployment is the same."
 
 ### 4. STARK-proven compilation
 
-The compiler self-hosts and produces a STARK proof that emitted
-bytecode corresponds to source. Etherscan "Verified Contract" is a
-re-compilation trust ritual; the Trident claim is mathematical.
-Solves Thompson's trust-chain problem at the level of the compiler,
-not the social layer.
+Planned EVM compilation certificates would bind the compiler, source and emitted
+bytecode. Establishing source-language correctness and resistance to hidden
+compiler-binary injection requires the separate
+[Verified Bootstrap gates](verified-bootstrap.md), including independent source
+correspondence and semantic verification. Current accepted self-build certificates
+cover the native nox public profile; the EVM/STARK path remains proposed.
 
 ### 5. Static, exact cost analysis before deployment
 

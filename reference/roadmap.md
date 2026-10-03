@@ -36,6 +36,13 @@ Three targets before 256k release:
 3. Revolution demos — small proven inference, FHE circuit
    compilation, quantum circuit simulation
 
+Separate trust milestone: [VB — Verified Bootstrap](../roadmap/verified-bootstrap.md)
+is open. It covers an independently justified bootstrap root, compiler
+binary/source correspondence and semantic correctness, canonical nox, the full
+scoped Zheng prover/verifier and the complete scoped Joy delivery. Accepted
+SH0–SH8 execution evidence is its starting point. VB0–VB8 define separate
+acceptance gates; this plan changes no Kelvin temperature or release version.
+
 ```
 Layer           Current   First Release
 ───────────────────────────────────────
@@ -638,6 +645,11 @@ and C3 from the same source closure. C1 may differ from C2 because the seed
 compiler optimizes differently. Fixed-point comparison establishes reproducible
 self-consistency. Semantic preservation needs separate evidence; a buggy
 compiler can execute faithfully and receive a valid execution proof.
+
+The follow-on [Verified Bootstrap plan](../roadmap/verified-bootstrap.md) makes
+those trust obligations explicit. Its source-correspondence gate addresses
+Thompson-style binary injection; semantic, prover/verifier and complete-delivery
+gates cover the declared stack under documented assumptions. VB remains open.
 
 ## 5.2 Self-Verifying Compiler Optimization
 
