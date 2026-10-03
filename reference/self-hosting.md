@@ -12,6 +12,12 @@ completed acceptance evidence. The
 records the starting implementation and probes. Requirements below describe
 future work; their presence does not mean the feature exists.
 
+The follow-on [VB — Verified Bootstrap milestone](../roadmap/verified-bootstrap.md)
+is open. It adds independently justified source/binary correspondence and
+semantic correctness for the declared compiler/nox/Zheng/Joy closure, including
+the complete scoped prover and Joy delivery. SH0–SH8 retain the acceptance scope
+defined here; VB has its own trust ledger and gates.
+
 ## Release 0.4 delivery policy
 
 `release/0.4` is the integration branch for native soft3 self-hosting. Deliver

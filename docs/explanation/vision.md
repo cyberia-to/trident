@@ -386,19 +386,20 @@ Windows on ARM64 and x64. The original CI aggregate and independent artifact
 replay agree. The [acceptance ledger](../../audit/self-hosting-progress.md)
 binds these results to exact sources and artifacts.
 
-The [self-hosting contract](../../reference/self-hosting.md) separates this
-result from native Zheng proofs of the actual compilations, which remain
-SH7/SH8 work. An execution proof would bind a compiler, its exact inputs and
-its output. Establishing that the compiler preserves source-language semantics
-requires separate verification or translation validation; a fixed point or
-execution proof alone does not establish it.
+The [accepted SH8 certificates](../../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
+bind both actual frozen-S1 self-builds to their exact compiler, inputs and outputs
+under the disclosed native Zheng profile. The separate
+[Verified Bootstrap milestone](../../roadmap/verified-bootstrap.md) is open:
+independent source/binary correspondence, semantic correctness, canonical nox,
+the complete scoped Zheng prover/verifier and Joy delivery have explicit gates.
+Its claims terminate at an independently justified root with named assumptions.
 
 Rust still provides the reference frontend, seed compiler and tooling. The
 native compiler covers its declared implementation subset; full frontend and
 tooling parity remain separate work. The older RAM/TIR compiler components
 remain prototypes, and Triton remains an independent target owned by Trisha.
-Production compilation certificates require the SH7/SH8 relation and
-verification gates.
+The production public compiler certificates retain their accepted SH7/SH8 scope;
+VB adds separate provenance and correctness obligations for the declared stack.
 
 ---
 
