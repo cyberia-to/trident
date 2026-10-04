@@ -10,7 +10,7 @@ Component results close only their named substeps.
 
 Follow-on work: [VB — Verified Bootstrap](../roadmap/verified-bootstrap.md) is
 open. Its next slice is VB0: exact delivery inventory, claim/assumption matrix
-and independent-root experiment contract. The accepted SH results below prove
+and own nox seed/Eidos kernel experiment contract. The accepted SH results below prove
 their declared execution claims; source/binary correspondence, semantic
 preservation and full canonical nox/Zheng/Joy verification have separate VB gates.
 
@@ -194,10 +194,14 @@ The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-
 
 ## Next work, in order
 
-- [ ] VB0: freeze the complete delivered compiler/nox/Zheng prover/verifier/Joy
-  surfaces, source/dependency closure, claims and trust assumptions; specify the
-  bounded VB1 independent-root experiment. Follow the
+- [ ] VB0 + RS0: freeze the complete Trident/Rs/Eidos/nox/Zheng prover/verifier/Joy
+  surfaces and critical dependencies, required Rust/Trident implementation pairs,
+  claims and trust assumptions; specify Eidos E0–E4 and the bounded VB1
+  own nox seed/Eidos kernel experiment. Follow the
   [VB0–VB8 plan](../roadmap/verified-bootstrap.md) for dependent implementation.
+  The [soft3 development and ceremony order](https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md)
+  retains the reviewed nox seed and adds the own Rs frontend/bootstrap route;
+  all implementation acceptance remains open.
 
 The completed SH work below retains its original evidence and scope.
 
@@ -393,7 +397,7 @@ implementation. PRs target `release/0.4`; master remains outside this delivery.
 
 | Blocker | Owner / first gate | Current evidence |
 |---|---|---|
-| Verified bootstrap trust and canonical stack closure | soft3 + Trident/nox/Zheng/Joy / VB0 | Open — [separate implementation plan](../roadmap/verified-bootstrap.md); no accepted independent-root, DDC or complete canonical-stack claim |
+| Verified bootstrap trust and dual implementation closure | soft3 + Trident/Eidos/nox/Zheng/Joy / VB0 | Open — [separate implementation plan](../roadmap/verified-bootstrap.md); no accepted soft3 root, DDC or complete canonical-stack claim |
 | Bounded long-trivia scanning | Trident / SH4 — resolved in S1 | Actual supplied C2 accepts the valid 64 KiB comment at 4324 frames; all six source-boundary cases and complete-package invariance pass. Original S0 failure remains retained |
 | Cross-platform bootstrap | Trident + Joy / SH6 — resolved for frozen S1 | All twelve fresh bootstrap repetitions, twenty-four actual corpus jobs, original aggregate and independent byte-exact replay pass. Original one-hour worker and 330-minute CI failures remain historical evidence |
 | Complete self-build proof acceptance | Zheng + Joy / SH8 — resolved for frozen S1 | [Final F5 acceptance](self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md) binds both complete proofs, fresh verification, exact C2/C3 and corpus results, and all 23 distinct rejections plus two original controls per generation; complete byte retention is accepted in Trisha PR25 |

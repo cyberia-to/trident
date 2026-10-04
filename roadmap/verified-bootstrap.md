@@ -1,23 +1,31 @@
 ---
-status: draft
+status: accepted
 milestone-status: open
 ---
 
 # Verified Bootstrap on soft3
 
 Milestone: **VB — Verified Bootstrap**, a verified bootstrap of the declared
-soft3 delivery from an independently justified trust root. All VB gates are
-open. This is an implementation plan; the gate identifiers below name planned
+soft3 delivery from an explicitly reviewed, self-contained soft3 trust root.
+All VB gates are open. This is an implementation plan; the gate identifiers below name planned
 executable checks. Their runners and acceptance evidence are future work.
+
+The accepted development order and exact bootstrap ceremony live in
+[soft3/docs/verified-bootstrap.md](https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md).
+The route retains the reviewed native nox seed, establishes Trident, then uses
+our Trident interpreter of restricted Rs to establish a native Rs toolchain.
+[Rs RS0–RS9](https://github.com/cyberia-to/rs/blob/docs/verified-bootstrap-rs/roadmap/verified-bootstrap.md)
+owns the independent frontend, bounded implementation profile and native build
+closure. Design acceptance leaves every implementation gate open.
 
 The question this milestone must answer is: **does the delivered compiler and
 execution/proof stack correspond to its reviewed sources and specifications,
-under an explicit, independently justified set of trust assumptions?**
+under an explicit, reviewed set of foundational trust assumptions?**
 
 The [accepted SH0–SH8 workload](../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md)
 provides self-compilation on nox through Joy, a reproducible fixed point and
 independently checked public execution certificates. VB adds source/binary
-correspondence, semantic correctness and the independent root. Existing SH
+correspondence, semantic correctness and the self-contained trust root. Existing SH
 receipts retain their original claims and source identities.
 
 The published claim after VB acceptance must name its exact source closure,
@@ -30,20 +38,25 @@ claims.
 
 ## Mandatory delivery scope
 
-VB includes the compiler, canonical nox, **the complete scoped Zheng prover and
-verifier**, and **the complete scoped Joy delivery**. Rust acceleration may
-coexist with canonical Trident implementations once its obligations are met.
+VB requires **maintained Rust and Trident implementations of every critical
+soft3 component**: compiler, Eidos, nox, the complete scoped Zheng prover and
+verifier, the complete scoped Joy delivery, Rs and their critical dependencies.
+Both implementations have acceptance obligations; Rust remains a required
+implementation and cross-verification route, including where it accelerates
+canonical Trident execution.
 Compiling `.tri` code and proving its execution are implementation steps;
 correspondence with the specification requires its own evidence.
 
-| Owner | Canonical implementation and verification responsibility |
+| Owner | Required Rust/Trident implementation pair and verification responsibility |
 |---|---|
 | Trident | `.tri` compiler and its complete imports; source admission, frontend semantics and nox generation; independent source/binary correspondence for the delivered compiler |
+| Rs | Own compiler/frontend, restricted-Rs source interpreters, build driver, native emitter/linker, runtime/builtins and actual source/build closure; independent Rust/Rs and Trident implementations and checked native artifact semantics |
+| Eidos | Proof-term decoding, environment admission, type checking, conversion/reduction, inductive rules and all proof-production/import/export operations used in the delivery; reviewed foundational logic, checked downstream implementation and executable provenance |
 | nox | `.tri` evaluator, noun/encoding semantics, arithmetic, control, errors, logical cost, state/witness boundaries and every operation in the frozen delivery; jets and caches preserve the canonical result and declared cost |
 | Zheng | `.tri` relation construction, witness handling, proof generation and verification for every frozen production profile; transcripts, commitments/openings, folding/deciding, transport and dependencies actually used |
 | Joy | Every shipped CLI/library surface and adapter in the frozen inventory: argument/package admission, dispatch, execution/proof selection, expected-statement binding, codecs, resource/error/cancellation policy and output publication decisions |
 | Arithmetic, Hemera, Lens and other dependency owners | Canonical operations and correctness obligations for the exact transitive algorithm closure used above; state-related dependencies are included where a frozen profile uses them |
-| soft3 | Composition contract, trust ledger, independent root and complete bootstrap/acceptance manifest |
+| soft3 | Composition contract, trust ledger, own seed/kernel and complete bootstrap/acceptance manifest |
 
 Keep implementations with their component owners; Trident remains the language
 and compiler. Joy remains soft3/cyber; Triton/Neptune remain Trisha-owned. VB
@@ -52,16 +65,73 @@ target regression/distribution gates where shared delivery changes affect it.
 
 VB0 inventories existing shipped behavior, including faithful refusals, rather
 than importing every aspirational network or deployment feature into this gate.
-Full Rust CLI/LSP language parity is a separately named scope decision. Compiler
-features needed by the canonical ports must be added to the frozen VB closure
-and validated before those ports can pass.
+The source admission and compilation behavior used by every mandatory port is
+required in both compiler implementations. Auxiliary editor features can have a
+separately declared scope only when they cannot influence accepted artifacts or
+claims. Compiler features needed by the ports extend the frozen VB closure and
+must be validated before those ports can pass.
 
 Joy's host boundary must enumerate each filesystem, process, network, clock and
 entropy operation. Canonical `.tri` code owns semantic and security decisions.
-Each remaining native routine has an explicit refinement obligation or a named
-trust assumption; an unexplained permanent Rust Joy exemption cannot close VB.
+Every critical semantic routine has both implementations and checked obligations.
+The OS/firmware/hardware boundary has named assumptions for actual external
+effects; listing a portable semantic routine as a host assumption cannot waive
+the implementation pair. An unexplained permanent Rust Joy exemption keeps VB open.
 Classify trust separately for result soundness, confidentiality and availability.
 An accelerator untrusted for result validity may still see secret data.
+
+## Cross-verification contract
+
+VB0 records one row per critical operation: specification, Rust source, Trident
+source, artifact/build lineage, dependency closure, proof obligation, comparison
+rule, corpus and status. A missing implementation, required proof or comparison
+keeps the owning gate and VB8 open. Common specifications, test fixtures and
+proof formats are intentional; shared semantic code, generators and toolchain
+ancestry must be disclosed as correlated trust. Translating one implementation
+mechanically into the other alone supplies no independent implementation check.
+
+Each pair needs checked refinement to the same reviewed specification, or checked
+validation covering every admitted operation with that narrower claim explicit.
+Add differential tests for positive, malformed, boundary and exhaustion cases.
+Compare deterministic results, errors and specified logical charge; compare exact
+bytes where canonical encoding requires it. For differing valid compiler layouts,
+check emitted-program semantics as well as per-compiler reproducibility; VB2's
+final DDC comparison remains exact. Check randomized proofs in both directions
+(Rust producer/Trident verifier and Trident producer/Rust verifier), as well as
+both same-implementation paths. Freeze budgets and test-only randomness first.
+Agreement is regression evidence; formal obligations and independent provenance
+remain required even when both implementations agree.
+
+The Rs interpreter executing one Rs compiler source supplies a separate
+execution/provenance route. It does not discharge the separately authored
+Trident implementation of that compiler. Freeze B, the Rs language used by the
+compiler and its complete self-build closure, separately from L, the language
+that compiler accepts. L's Rust compatibility remains an explicit product
+obligation; the initial interpreter only needs B. The current rustc frontend
+and rustc-produced MIR remain development inputs outside the accepted root
+replay until separately justified; replacing that dependency is RS3 work.
+
+### Language capabilities and cost guarantees
+
+Preserve explicit resource contracts while adding only features required by the
+ports. Trident's bounded loops and acyclic source call graph simplify analysis;
+they do not alone bound arbitrary dynamic nox application, decoding, allocations,
+normalization or physical proving time. Runtime fuel bounds admitted work and
+may end in exhaustion; a bound sufficient for successful completion needs its
+own argument. Track logical charge, memory and host time separately.
+
+Finite sum types and statically specialized type parameters can preserve bounded
+execution. They are separate compiler/design obligations, rather than necessary
+sources of unbounded cost. Unrestricted recursion and escaping closures remain
+outside the current language contract. Eidos binding/substitution can operate on
+explicit term data with bounded stacks; it does not require Trident closures.
+If a port needs a language extension, first specify its lowering, size/termination
+or fuel contract, exhaustion behavior and cost model; implement it in both
+compilers and extend VB2/VB3. Resolve older target-wide exclusion prose against
+the actual native Noun/collection/runtime contract in that owning feature PR.
+The [bounded metaprogramming assessment](bounded-metaprogramming.md) maps existing
+roadmap ideas to concrete feature gates. This plan does not silently change the
+language specification.
 
 ## Claims that receive separate evidence
 
@@ -69,6 +139,7 @@ An accelerator untrusted for result validity may still see secret data.
 |---|---|
 | Binary/source correspondence | An independently obtained compiler/interpreter route, exact parent/source/build inputs and DDC comparison with the delivered artifact |
 | Compiler correctness | A checked semantic-preservation theorem for the frozen source domain, or checked translation certificates for every delivered program with the narrower scope stated explicitly |
+| Eidos correctness | Explicitly reviewed foundational logic/root; checked relative metatheory and refinement of both downstream checkers, including environment admission, reduction, decoding, budgets and proof transport; self-checking does not discharge the root assumptions |
 | nox correctness | Refinement of the canonical interpreter to the specified machine, including errors, state/witness behavior and logical cost |
 | Proof validity | Checked soundness of the selected relations/protocols and refinement of the actual verifier; explicit cryptographic assumptions, parameters and any soundness error |
 | Prover correctness | The canonical producer implements the protocol and generates accepted proofs for valid admitted workloads under its declared resource/precondition model |
@@ -78,7 +149,7 @@ An accelerator untrusted for result validity may still see secret data.
 A sound verifier must withstand arbitrary prover output. Including the whole
 prover also addresses completeness, secret handling and delivery correctness.
 Porting either side to Trident supplies no automatic proof of these properties.
-Recursive proofs terminate at the independently justified checker and its
+Recursive proofs terminate at the reviewed soft3 kernel and its foundational
 assumptions; a component's self-approval cannot establish that checker.
 
 ## Gates and dependencies
@@ -89,16 +160,25 @@ in parallel in separate file scopes; a passing prototype does not close a gate.
 | Gate | Result | Closes after | Lead owners | Status |
 |---|---|---|---|---|
 | VB0 | Frozen claims, delivery inventory and trust ledger | SH baseline recorded | soft3 + all component owners | open |
-| VB1 | Independently justified executable checking root | VB0 | soft3 | open |
+| VB1 | Reviewed soft3 seed, minimal Eidos kernel and executable provenance | VB0 | soft3 + Eidos | open |
 | VB2 | Compiler binary/source correspondence through independent bootstrap | VB1 | Trident + soft3 | open |
 | VB3 | Compiler semantic correctness for the declared domain | VB1, VB2 | Trident | open |
 | VB4 | Canonical nox with checked semantic refinement | VB3 | nox + dependency owners | open |
 | VB5 | Canonical Zheng prover and verifier with checked obligations | VB3, VB4 | Zheng + dependency owners | open |
 | VB6 | Complete scoped Joy on the canonical stack | VB4, VB5 | Joy + cyber adapter owners | open |
-| VB7 | Adversarial trust-boundary acceptance | VB2–VB6 | independent review + all owners | open |
-| VB8 | Reproducible, independently checked full-stack bootstrap delivery | VB0–VB7 | soft3 + all owners | open |
+| VB7 | Adversarial trust-boundary acceptance | VB2–VB6, E4, RS8 | independent review + all owners | open |
+| VB8 | Complete Rust/Trident pairs and independently checked full-stack bootstrap | VB0–VB7, E0–E4 below, RS9 for the claimed native closure | soft3 + all owners | open |
+
+VB2/VB3 first establish the nox Trident compiler and its declared translations.
+Native Rust/Rs artifacts gain their justified build route through RS8 and must
+be present before full paired delivery acceptance. RS8/RS9 use the reviewed root
+and precede VB8; neither requires VB8 or final Eidos E4 to establish itself.
 
 ### VB0 — Freeze scope and assumptions
+
+Include Rs's B/L language domains, whole B self-build closure, native compiler
+and build tools in this inventory. Record which native delivery targets the Rs
+route must produce and execute, independently of the initial seed platform.
 
 Produce a machine-readable inventory of commands, library APIs, proof profiles,
 source/dependency closures, artifacts, platforms and external effects. Link
@@ -106,7 +186,10 @@ every item to its canonical owner and acceptance check. Include public compiler
 certificates and every other currently shipped production profile, including
 supported feature combinations. An unported shipped profile keeps VB open;
 private profiles remain mandatory even though the first compiler workload is
-public. The inventory covers the complete pinned delivery.
+public. The inventory covers the complete pinned delivery, the Eidos proof-development
+and checking closure, and both implementations of each critical operation.
+Mark every absent port or missing Eidos feature as an open mandatory obligation;
+an early pilot may reduce its workload, but cannot reduce final VB scope.
 
 Write the trust ledger: logic, specification review, cryptographic assumptions,
 checker implementation/binary, toolchain lineage, OS/firmware/hardware, artifact
@@ -117,30 +200,136 @@ surfaces as unresolved scope gaps, with their owner.
 Acceptance `vb.scope`: inventory completeness and owner review, exact initial
 source pins, a claim-to-obligation matrix and negative tests for missing profile,
 dependency, host capability and changed artifact. Freeze budgets and comparison
-rules before each later measured run. Record the first independent-root decision
+rules before each later measured run. Record the first self-contained-root decision
 experiment without declaring any VB implementation accepted.
 
-### VB1 — Establish the independent root
+### VB1 — Establish the soft3 trust root
 
-Select an existing small formal checking kernel/proof format as the first
-candidate; justify a new kernel only if assessed candidates fail explicit needs.
-Record the decision, logical rules, parser/decoder, arithmetic, executable
-construction and all I/O assumptions. Establish an auditable binary bootstrap
-path that does not depend solely on the candidate Trident/Rust lineage. A small
-seed assembled from inspected bytes is one candidate; its loader and execution
-environment remain explicit assumptions.
+The root belongs to soft3: a frozen minimal Eidos checking kernel, an inspectable
+nox bootstrap executor and their reviewed source-to-executable construction.
+Rust and Trident remain the two maintained implementation languages. Independence
+means separate implementation, review and bootstrap provenance within this stack.
+The accepted root route operates from retained files and explicit ISA/OS contracts;
+it requires no foreign proof assistant, language runtime or compiler to certify
+its own starting point. Rust builds remain a separate required comparison route.
 
-First run a vertical experiment: accepted and rejected formal certificates,
-their exact executable checker, and a source-to-executable correspondence claim
-for a small program. Demonstrate that the checked statement binds the actual
-source bytes and artifact bytes. This selects a workable proof/export route
-before committing to a whole compiler proof effort.
+The root's logical rules, initial kernel image, native seed and physical execution
+contract are explicit reviewed foundational assumptions. Formal claims about the
+larger stack are conditional on them. A metatheory checked by that same root can
+establish a relative implication; it cannot discharge its own foundational rules.
+The seed audit, logical models and checker justification are our responsibility.
+Agreement of Rust and Trident implementations alone leaves common-mode errors open.
 
-Acceptance `vb.root`: reproducible checker bytes from the chosen root, reviewed
-dependency/lineage ledger, independent execution/readback and rejection of changed
-axioms, statement, proof or checker selection. Document residual assumptions.
-Agreement between implementations is supporting evidence; it cannot discharge
-the specification/refinement obligations by itself.
+#### Root contents and ownership
+
+| Owner | Required bootstrap content |
+|---|---|
+| Eidos | Frozen minimal rules, bounded proof/theorem/environment decoding, scopes/substitution, conversion and admitted inductive rules; explicit premises and exact expected-statement binding. Maintain Rust and Trident kernels. Retain a directly reviewed nox image of the initial kernel and its source/operation mapping under `eidos/bootstrap/`; proofs/models belong under `eidos/proofs/`. |
+| nox | A minimal deterministic bootstrap execution profile: supported operations, field arithmetic, noun representation, memory, errors and resource charges. Retain inspectable native bytes, instruction-by-instruction ISA mapping and loader/I/O contract under `nox/bootstrap/`. The first proposed native seed target is Linux AArch64; other root targets need their own reviewed mapping. |
+| Trident | A bounded reference source interpreter, with separate Rust/Trident implementations derived from the frozen language semantics; its admitted nox image, source binding and refinement evidence. It lives under `trident/bootstrap/` and supplies VB2. |
+| Rs | Frozen B source/build closure and separate B interpreters; the admitted Trident interpreter image runs on the established nox root to produce native Rs from its own compiler source. RS0–RS9 own frontend, native translation and toolchain acceptance. |
+| soft3 | Exact seed/kernel/source/proof inventory, expected statements, comparison/readback procedure, assumption ledger and clean bootstrap replay contract. |
+
+The native nox seed is an auditable starting artifact of our executor, not another
+language ecosystem. Its complete bytes and readable ISA mapping are retained.
+The minimal profile uses explicit bounded storage; unsupported operations fail
+closed. Jets, caches, network/state lookups and witness inputs supply no implicit
+escape to the ordinary runtime. Any required feature extends the stated profile
+and its review before use. The full Rust/Trident nox, Eidos, Zheng and Joy ports
+remain mandatory; bootstrap minimality creates no product-scope exemption.
+
+Canonical decoding, limits, theorem/environment selection, exact byte comparison
+and result readback are inside the reviewed boundary. Bind the actual source,
+proof, kernel and artifact bytes, including assumptions and dependency closure.
+An unchecked helper or producer-controlled manifest cannot select the statement
+or declare success. Initial comparison can use exact bytes; any digest or codec
+used for acceptance needs its own implementation obligation.
+
+#### Construction and acceptance order
+
+1. Review the minimal logic, nox profile, native seed bytes, ISA/loader behavior
+   and statement/comparison procedure. Independently reconstruct the retained
+   image from its explicit byte description; document the remaining physical
+   assumptions. Assemblers/linkers and file-writing tools may assist, but their
+   output is checked against that description before it becomes an input.
+2. Review the initial Eidos kernel's source-to-nox mapping directly. Execute this
+   exact kernel image on the accepted seed. Accept and reject real closed terms,
+   malformed encodings, changed statements and exhausted work/storage budgets.
+   A kernel image produced by the candidate compiler alone cannot close this step.
+3. Use that root to check translation and semantic-refinement evidence for the
+   bounded Trident interpreter and its actual nox image. Untrusted tools may
+   propose code/proofs; source/translation claims must bind the exact artifacts.
+   If root expressiveness is insufficient, keep this step open and apply the
+   rule-extension policy below before relying on any new judgment.
+4. Execute VB2 through this admitted interpreter. Later accept compiled versions
+   of Eidos/nox and the rest of the stack through their own VB gates. Their
+   self-checks never serve as the sole acceptance of earlier prerequisites.
+
+First demonstrate this sequence on a small actual source/artifact claim. Then
+scale to the whole compiler. Acceptance `vb.root` requires retained seed bytes,
+reviewed mappings and assumptions, independent reconstruction/execution/readback,
+all positive and rejection fixtures, and no hidden dependency on Rustc, candidate
+Trident/Joy or unrecorded downloaded tools. Run the root replay with those tools
+absent. This is conditional acceptance of an audited root, not a proof of its
+own absolute soundness or of physical hardware correctness.
+
+Freeze each accepted root by identity. Conservative extensions and checker
+optimizations need certificates checked by the prior accepted kernel. A stronger
+logic or new trusted rule requires a separately reviewed root version and an
+explicitly changed assumption ledger. The new kernel cannot authorize that
+change itself. Full proof-corpus coverage remains mandatory for E4/VB8.
+
+### Eidos implementation workstream — required for VB8
+
+Eidos currently provides a Rust strict checker for fixed Nat/Bool/Eq/Pos/BNat
+proof terms; arbitrary inductive admission, bounded normalization, a Trident
+implementation, reviewed root and checked downstream refinement remain work.
+Existing arithmetic certificates provide a starting corpus. The owner must reconcile
+aspirational kernel/nox specifications with implemented behavior in E0; theorem
+counts and unchecked complexity sketches do not establish these obligations.
+
+Every item below is mandatory work, with status **open**. Needed features are
+implemented in Rust and Trident; existing admissions remain closed until the
+corresponding rule and implementation checks pass.
+
+| Slice | Implementation and required evidence | Construction prerequisites; final acceptance |
+|---|---|---|
+| E0: contract and root experiment | Freeze the logic, proof format, arithmetic/cost model and implementation inventory; demonstrate VB1 on a small actual source/artifact claim; reject changed rules, proof and expected statement | VB0; closes with the bounded VB1 experiment |
+| E1: bounded kernel pair | Independent decoding, scopes/substitution, dependent products, universes, conversion and reduction; explicit work/storage limits with exhaustion reported as resource failure, never acceptance; differential strict corpus and checked rule/refinement obligations | Construct from E0 and the reviewed root rules; final compiled-pair acceptance in E4 waits for VB3/VB4 and RS8 |
+| E2: admitted inductives and recursion | Validated inductive environments, parameters/indices, positivity, universe/elimination restrictions, constructor/recursor typing and definitional reduction; termination discipline for admitted definitions and sufficient resources for the declared workload; malformed/cyclic/ill-scoped declarations rejected | Construct from E0/E1 rule contracts; each root rule follows VB1 extension review before use; final paired delivery in E4 |
+| E3: semantics and proof pipeline | ASTs, nouns, traces, finite maps/lists, machine/field arithmetic, serialization/hash semantics, B/Rs and native ISA/ABI models, and algebra/probability sufficient for the complete frozen compiler/nox/Zheng/Joy/dependency specifications; both implementations of elaboration, tactics, automation and import/export actually used; closed explicit terms rechecked at the kernel boundary | Construct/check each model with the already reviewed adequate root and owner specification; later E1/E2 product acceptance is not a prerequisite for root availability; complete paired pipeline in E4 |
+| E4: accepted checker delivery | Build both checkers through justified routes, bind exact theorem/dependency/assumption manifests, cross-check all delivery proofs, reject corrupted terms/theories/identities, and validate refinement and statement-preserving proof transport relative to the reviewed root | All E1–E3 obligations, VB2–VB6 and RS8 native toolchain acceptance; required by VB7/VB8 |
+
+Before accepting I_tri, I_rs or native Rs, the reviewed initial kernel or an
+explicitly reviewed root extension must already express and check that artifact's
+semantics/refinement statement. E1–E3 models and construction can advance from
+that root while final compiled product acceptance remains open. A later Eidos
+binary cannot establish the sole justification of its own bootstrap prerequisites.
+Proof generation can use untrusted development tools; the accepted root checks
+all terms, environments and expected statements. A missing root capability keeps
+the dependent step open rather than introducing an assumed translation theorem.
+
+Joy must execute the Trident checker on nox. Zheng execution certificates bind
+its exact checker, theorem, proof and environment identities; the reviewed soft3
+root still checks the logical/refinement claims. Reject substitution of any of
+these identities.
+
+Map each required theorem to the minimal adequate fragment; implement missing
+expressiveness until all mandatory obligations are covered. General inductive
+admission and usable semantic models are planned features, not permanent escapes
+to assumed evaluation functions. Replace axiomatized executable operations with
+actual definitions and checked refinement. Retain explicit foundational and
+cryptographic assumptions in each theorem's manifest; law parameters remain
+premises, never discharged by giving them a name.
+
+Proof search and tactics may propose arbitrary terms; both kernels must recheck
+the complete term/environment closure. Porting those producers is part of the
+required delivery where used, while kernel checking keeps their mistakes from
+becoming axioms. Encode recursive proof terms as bounded data traversals in
+Trident; recursion in Eidos's object language needs justified elimination or
+termination rules. A fuel limit controls checker work and cannot prove logical
+normalization. Prove normalization if conversion/decidability/completeness claims
+rely on it; otherwise state the resource-bounded partial-checking claim precisely.
 
 ### VB2 — Independently establish compiler correspondence
 
@@ -149,18 +338,39 @@ domain through the VB1 route. Implement it independently of the candidate's
 parser, lowering and code generator, or explicitly account for shared trusted
 code. Running one candidate binary on two VMs cannot establish its source origin.
 
-Apply the generalized DDC construction: independently compile the parent source,
-use that result to compile the claimed compiler source, and compare the final
-output with the delivered self-built compiler. Record parent identities and
-semantics, all source/library inputs, flags, environment effects and the trusted
-comparison. Independent first-stage executables may differ. The final comparison
-is exact over executable bytes and behavior-affecting metadata; any excluded
-metadata requires an established semantics-preserving rule.
+The first route uses Trident's own reference source interpreter and exact
+comparator, admitted through VB1's seed/kernel route. Maintain independently
+written Rust and Trident interpreters. For acceptance, run the admitted Trident
+interpreter image on the directly reviewed nox executor. Its initial provenance
+must come from the reviewed construction or root-checked translation, not merely
+from the compiler binary being investigated. Implement its parser/evaluator from
+the language contract and account for any shared semantic code.
+
+Let P be the exact parent compiler source and A the claimed compiler source.
+Execute **Interpret(P, A)** and compare its output directly with the delivered
+artifact attributed to that parent. The interpreter plus P acts as the separately
+obtained parent compiler. Its parser/semantics covers the whole parent source and
+imports; A is that compiler's input. This is owning-repository bootstrap work,
+beyond the VB1 proof kernel. Checking the emitted program on nox adds no extra
+compilation generation to this comparison. Optimizing code generation, the Zheng
+producer and Joy product surfaces stay in their normal component implementations.
+
+The alternative compiled DDC route has two stages: independently compile P to p1,
+then independently execute p1 on A to obtain a2 and compare a2 with the delivered
+artifact. A p1 targeting nox needs an independently justified nox executor. Keep
+the direct-interpreter and compiled routes distinct, including when P differs
+from A. Each interpreter/executor and comparator needs reviewed semantics,
+checked refinement, resource contracts and exact executable provenance.
+
+Record parent identities and semantics, source/library inputs, flags, environment
+effects and the trusted comparison. Independent first-stage executables may
+differ. The final comparison is exact over executable bytes and behavior-affecting
+metadata; exclusions require an established semantics-preserving rule.
 
 The frozen-S1 starting comparison targets delivered C2: its declared parent C1
 implements the same S1 source. Keep the Rust-seed → C1 → C2 lineage explicit.
 For a later compiler with different parent source, use that exact parent in the
-generalized construction. Both execution of the independently generated parent
+chosen construction. Both execution of the independently obtained parent
 and final artifact comparison must use the independently justified route. Record
 the executor/comparator source and binary provenance; second-stage execution on
 an unverified candidate nox/Joy lineage cannot establish this gate.
@@ -183,7 +393,9 @@ Choose and record a checked preservation theorem for the frozen language domain,
 or translation validation covering every program in the complete delivered
 closure. The latter accepts only those translations; it supplies no universal
 compiler-correctness claim. Cover the compiler's own translation and the later
-nox/Zheng/Joy programs. Features introduced by those ports extend this gate.
+Eidos/nox/Zheng/Joy programs and all critical dependencies. Features introduced
+by those ports extend this gate. Both compiler implementations cover that domain
+and meet the cross-verification contract.
 
 Acceptance `vb.compiler-semantics`: VB1 checks the proof/certificates, including
 rejection of a semantically changed instruction despite an otherwise valid
@@ -203,8 +415,11 @@ checked outputs with sufficient obligations, or an explicit disabled path.
 Acceptance `vb.nox`: source-to-artifact correspondence and VB1-checked refinement
 to the machine specification, plus independently executed positive/adversarial
 corpora. Trap hidden host semantic fallbacks. Every enabled primitive must map
-to its implementation and proof obligation. Physical time, memory and GC remain
-measured quantities unless separately modeled and proved.
+to its implementation and proof obligation. Both implementations meet the cross-verification contract. Physical time, peak
+host memory and GC overhead remain measured quantities unless separately modeled
+and proved. Memory/GC semantics, including object lifetime, noun identity,
+allocation failure and secret retention where applicable, remain part of the
+paired correctness/security obligations.
 
 ### VB5 — Canonical Zheng, including the prover
 
@@ -225,9 +440,9 @@ For each declared private profile, check protocol privacy and implementation
 randomness/secret-handling obligations under the chosen leakage model. Document
 timing, host memory and other residual assumptions. Fixed randomness belongs only
 to controlled test fixtures. Randomized valid certificates need compatible
-verification, not unconditional byte equality. Rust remains a differential or
-accelerated implementation with explicit obligations; its existence cannot
-replace the canonical prover delivery.
+verification, not unconditional byte equality. Rust and Trident producers/verifiers are both mandatory, maintained and subject
+to the cross-verification contract. Neither implementation replaces the other
+required delivery.
 
 ### VB6 — Complete scoped Joy delivery
 
@@ -245,7 +460,7 @@ case using the supplied canonical artifacts, including unsupported-capability
 refusals and negative paths. Native semantic substitution must fail the gate.
 Each actual host effect is either checked against its contract or listed as a
 residual assumption with its security impact. The complete inventory and
-canonical/native correspondence must be reviewable; successful `prove`/`verify`
+Rust/Trident refinement and cross-verification must be reviewable; successful `prove`/`verify`
 smoke alone cannot close this gate.
 
 ### VB7 — Adversarial trust-boundary acceptance
@@ -254,7 +469,9 @@ Build isolated, inert adversarial fixtures for a self-propagating compiler
 injection absent from source, malicious source logic, modified nox semantics,
 permissive verifier, incorrect relation, corrupt prover output, wrong public
 statement, secret disclosure in a private fixture, swapped dependencies and
-misleading host output. Keep fixtures outside normal build/publication paths.
+misleading host output. Add unsound Eidos rule admission, invalid universes or
+inductives, proof-export meaning substitution and exhaustion accepted as proof.
+Keep fixtures outside normal build/publication paths.
 
 Each fixture names the property and gate expected to detect it. Source-visible
 malice belongs to the specification/source review and semantic checks; DDC may
@@ -270,35 +487,52 @@ not establish a universal absence-of-backdoors theorem.
 
 ### VB8 — Full bootstrap and independent delivery
 
-Build the full frozen compiler/nox/Zheng/Joy closure through the accepted root.
+Build both Rust and Trident implementations of the full frozen
+Trident/Rs/Eidos/nox/Zheng/Joy/dependency closure through justified routes. Require
+all Eidos E0–E4 obligations, Rs RS0–RS9 for the declared native toolchain closure,
+and every operation in the implementation-pair matrix.
 Produce and check actual self-builds with the canonical prover and verifier;
-also verify via the independent root. Bind all formal certificates, DDC results,
+also verify via the reviewed soft3 root. Bind all formal certificates, DDC results,
 sources, dependencies, parameters, platform results and trust assumptions to one
 delivery manifest. Repeat fresh package consumption on the existing claimed
 macOS/Linux/Windows ARM64/x64 matrix, retaining the exact scope for each result.
+
+The initial Linux AArch64 seed and Rs's historical macOS/Linux product targets
+do not shrink that matrix. Every claimed native artifact needs a justified
+producing toolchain and target ABI/format evidence; an uncovered target remains
+open. Record root platform, output target and consumption platform separately.
 
 Acceptance `vb.delivery`: every required VB gate passes for this exact closure;
 another environment can reproduce the bootstrap and check the retained package
 without the original private workspace or an opaque unrecorded seed. The source
 inventory, comparison tools and expected statements are independently authenticated.
-Any unmatched artifact, missing profile, native semantic fallback or unresolved
-mandatory assumption keeps the milestone open. Owner-controlled version, default
+Any unmatched artifact, missing implementation/profile/proof, native semantic
+fallback or unresolved mandatory assumption keeps the milestone open. A pilot or
+one completed pair closes only its declared slice; VB8 requires the whole scope. Owner-controlled version, default
 branch, tag and public-release operations retain their existing policy.
 
 ## Delivery sequence and first work item
 
-Keep each implementation slice on an owning feature branch with a PR to
-`release/0.4`. This planning delivery changes no component version or Kelvin
+Keep Trident/Joy/Trisha slices on owning feature branches with PRs to
+`release/0.4`. Rs and soft3 coordination uses separate owner-reviewed feature
+PRs; their integration policy is recorded in the linked soft3 development order.
+This planning delivery changes no component version or Kelvin
 temperature. VB is a separate roadmap item and remains open after SH8; a release
 claiming verified bootstrap must pass VB8. A narrower self-hosting release must
 state its SH scope explicitly under the owner release policy.
 
 The next slice is **VB0: inventory and trust contract**. Start by capturing the
-accepted Trident/Joy/nox/Zheng pins, then enumerate the actual delivered surfaces
-and dependency algorithms from those revisions. Add owner specifications and a
+accepted Trident/Joy/nox/Zheng pins and the actual Eidos/dependency revisions,
+then enumerate delivered surfaces, theorem needs and dependency algorithms.
+Include RS0, the B/L split, own Rs frontend, source/build closure and native
+artifact obligations. Follow the soft3 D0–D6 sequence for the exact executors,
+inputs, outputs and evidence at each ceremony step. N_seed remains the root
+after descendant native nox/Rs images become available.
+Record both implementation paths and missing ports for every critical operation. Add owner specifications and a
 machine-readable claim/assumption matrix, with inventory rejection checks. Its
-PR must list the proposed VB1 root, the small correspondence experiment, fixed
-resource caps and unresolved selection criteria. Do not start an expensive full
+PR must list the own nox seed/Eidos kernel profile, direct byte/mapping review,
+small correspondence experiment, fixed
+resource caps, Eidos E0–E4 owner slices and unresolved selection criteria. Do not start an expensive full
 compiler proof run to decide whether that root is viable.
 
 Reconcile the historical `cyber/research/bootstrap.md` in its own delivery:
@@ -307,9 +541,10 @@ by the full canonical scope and explicit assumptions, preserving historical
 context. The Trident roadmap and acceptance ledger already distinguish SH and VB.
 
 After the VB1 experiment, size subsequent slices in sessions/pomodoros using its
-measured proof/export and execution costs. A calendar completion date or whole
+measured root checking and execution costs. A calendar completion date or whole
 stack effort estimate is currently open. Parallel canonical ports may prepare
-VB4–VB6 while VB1–VB3 proceed; their final acceptance waits for the listed gates.
+VB4–VB6 and Eidos work while VB1–VB3 proceed; acceptance waits for the listed
+gates. Incremental delivery changes execution order, never the required scope.
 
 Place specifications with their owners and measured results in each repository's
 `audit/verified-bootstrap/`. Each receipt records the exact command, source and
@@ -322,10 +557,9 @@ composition and the final trust manifest.
 
 - [Thompson, Reflections on Trusting Trust](https://www.cs.cmu.edu/~rdriley/487/papers/Thompson_1984_ReflectionsonTrustingTrust.pdf): self-propagating binary injection motivates VB2 and VB7.
 - [Wheeler, DDC](https://dwheeler.com/trusting-trust/dissertation/html/wheeler-trusting-trust-ddc.html): conditional source correspondence, parent compilation and trusted environment/comparison obligations.
-- [GNU Mes bootstrap](https://www.gnu.org/software/mes/manual/html_node/Bootstrappable-Builds.html): auditable bootstrap provenance is a candidate technique for VB1.
-- [CakeML verified bootstrap](https://cakeml.org/popl14.pdf): an existing example of semantic proof linked to compiler bootstrap; adopting its machinery is an open engineering decision.
 - [ZKProof reference](https://docs.zkproof.org/pages/reference/reference.pdf): soundness, completeness and privacy are distinct obligations; the disclosed SH profile retains its explicit disclosure.
 
-Root/kernel selection, formal semantics/proof-language integration and the exact
-host-effect boundary close through VB0/VB1 evidence. These are tracked decisions,
-not implicit permission to omit the prover, Joy or independent source provenance.
+The frozen kernel/seed profile, reviewed construction, formal semantic models
+and exact host-effect boundary close through VB0/VB1 evidence. These are tracked decisions,
+not implicit permission to omit Eidos, either implementation, the prover, Joy or
+independent source provenance.
