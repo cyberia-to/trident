@@ -38,12 +38,15 @@ Three targets before 256k release:
 
 Separate trust milestone: [VB — Verified Bootstrap](../roadmap/verified-bootstrap.md)
 is open. It covers a self-contained soft3 bootstrap root with reviewed
-foundational assumptions, compiler
+foundational assumptions, own Rs bootstrap through a restricted-Rs interpreter,
+compiler
 binary/source correspondence and semantic correctness, required Rust/Trident
 implementations of Eidos, nox, the full scoped Zheng prover/verifier, complete
 scoped Joy and critical dependencies, with cross-verification. Accepted
 SH0–SH8 execution evidence is its starting point. VB0–VB8 define separate
 acceptance gates; this plan changes no Kelvin temperature or release version.
+The [soft3 ceremony](https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md)
+specifies development order and exactly what executes and compiles each artifact.
 
 ```
 Layer           Current   First Release

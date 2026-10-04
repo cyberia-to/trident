@@ -10,7 +10,7 @@ frontmatter.
 
 | proposal | status | what |
 |----------|--------|------|
-| [verified-bootstrap](verified-bootstrap.md) | draft | VB0–VB8: self-contained soft3 checking root, Rust/Trident pairs for every critical component including Eidos E0–E4, source correspondence and full scoped stack; milestone open |
+| [verified-bootstrap](verified-bootstrap.md) | accepted | VB0–VB8: reviewed nox root, Trident and own Rs bootstrap, Rust/Trident pairs including Eidos E0–E4 and complete scoped stack; implementation gates open |
 | [bounded-metaprogramming](bounded-metaprogramming.md) | draft | ML-style sums, type/function specialization and bounded compile-time evaluation; cost and bootstrap obligations |
 | [[noun-types]] | draft | why nox drops cell? and what Trident does instead |
 | [[polynomial-target]] | draft | polynomial noun lowering for nox |

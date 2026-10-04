@@ -194,11 +194,14 @@ The [0.4 integration receipts](self-hosting/bootstrap-results/native-acceptance-
 
 ## Next work, in order
 
-- [ ] VB0: freeze the complete compiler/Eidos/nox/Zheng prover/verifier/Joy
+- [ ] VB0 + RS0: freeze the complete Trident/Rs/Eidos/nox/Zheng prover/verifier/Joy
   surfaces and critical dependencies, required Rust/Trident implementation pairs,
   claims and trust assumptions; specify Eidos E0–E4 and the bounded VB1
   own nox seed/Eidos kernel experiment. Follow the
   [VB0–VB8 plan](../roadmap/verified-bootstrap.md) for dependent implementation.
+  The [soft3 development and ceremony order](https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md)
+  retains the reviewed nox seed and adds the own Rs frontend/bootstrap route;
+  all implementation acceptance remains open.
 
 The completed SH work below retains its original evidence and scope.
 

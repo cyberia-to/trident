@@ -14,6 +14,12 @@ This is an assessment and proposed order, not accepted syntax or an implementati
 implementations of critical components. A feature enters its mandatory language
 closure only when a port needs it; the component's complete scope stays mandatory.
 
+That inventory includes Rs's bounded-source interpreter and independent compiler
+counterpart. Their implementation profile B and accepted language L are separate:
+supporting richer L syntax inside a compiler does not require adopting that
+syntax in Trident itself. Specify each needed host-language extension and validate
+it in both Trident compilers before accepting the dependent Rs artifacts.
+
 ## Existing roadmap and implementation
 
 The [language contract](../reference/language.md#size-generic-functions) implements
