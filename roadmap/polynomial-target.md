@@ -5,11 +5,13 @@ crystal-domain: cyber
 status: draft
 date: 2026-03-25
 ---
+> superseded: this page describes the retired zheng design (Merkle-free Brakedown, unchecked HyperNova fold, ~2 KiB / ~5 μs figures). It is unsound and its numbers do not hold. The repair and the measured numbers live in [[soft3/proposals/proof-system-repair|soft3 proposals/proof-system-repair]].
+
 # polynomial target — nox engine for the polynomial proof system
 
 ## the opportunity
 
-trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[recursive brakedown|Merkle-authenticated proofs today, ~2 KiB blocked on a soundness fix]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history (~70,000 constraints with jets today, ~89 the blocked target).
+trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[soft3/proposals/proof-system-repair|polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[recursive brakedown|Merkle-authenticated proofs today, ~2 KiB blocked on a soundness fix]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history (~70,000 constraints with jets today, ~89 the blocked target).
 
 no language change. no new syntax. one new compilation backend. the polynomial proof system becomes available to every `.tri` program.
 
@@ -253,4 +255,4 @@ trident's 14 algebraically irreducible languages ALL compile through nox:
 
 14 languages → 16 nox patterns → 1 polynomial proof system → ~157 KiB proofs, ~1.0 ms verify today (~2 KiB / ~5 μs is the blocked target, see [[recursive brakedown]]).
 
-see [[polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[recursive brakedown]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
+see [[soft3/proposals/proof-system-repair|polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[recursive brakedown]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
