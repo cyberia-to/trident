@@ -5,13 +5,13 @@ crystal-domain: cyber
 status: draft
 date: 2026-03-25
 ---
-> superseded: this page describes the retired zheng design (Merkle-free Brakedown, unchecked HyperNova fold, ~2 KiB / ~5 μs figures). It is unsound and its numbers do not hold. The repair and the measured numbers live in [[soft3/proposals/proof-system-repair|soft3 proposals/proof-system-repair]].
+> superseded: this page was written against the retired zheng design (Merkle-free Brakedown, unchecked HyperNova fold), which was unsound; its old size and time figures do not hold. The body below now names the current design (Spartan over CCS, one WHIR opening, phase-3 ARC-style accumulation) and the goal (≤ 64 KB, verify ≤ 1 ms, constant in steps). The repair and the measured numbers live in [[soft3/proposals/proof-system-repair|soft3 proposals/proof-system-repair]].
 
 # polynomial target — nox engine for the polynomial proof system
 
 ## the opportunity
 
-trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[soft3/proposals/proof-system-repair|polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[recursive brakedown|Merkle-authenticated proofs today, ~2 KiB blocked on a soundness fix]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history (~70,000 constraints with jets today, ~89 the blocked target).
+trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[soft3/proposals/proof-system-repair|polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[soft3/proposals/proof-system-repair|hash-based proofs with one WHIR opening (goal ≤ 64 KB, verify ≤ 1 ms)]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history as one WHIR opening of the final accumulator (phase 3 of the repair, landing this release; size and time TODO(F-numbers)).
 
 no language change. no new syntax. one new compilation backend. the polynomial proof system becomes available to every `.tri` program.
 
@@ -50,7 +50,7 @@ trident's stdlib uses Tip5 (5-round Goldilocks hash). the polynomial proof syste
 
 ```
 current:   trident uses Tip5, cyber stack uses hemera → two hashes, two security analyses
-polynomial: everything uses hemera → one hash, one security analysis, ~3 calls per execution
+polynomial: everything uses hemera → one hash, one security analysis (Merkle trees, Fiat–Shamir, identity)
 ```
 
 change: `std.crypto.hash` implementation switches from Tip5 to hemera. API unchanged. programs recompile without source changes.
@@ -63,29 +63,29 @@ change: `std.crypto.hash` implementation switches from Tip5 to hemera. API uncha
 
 | current TIROp | what it does | replacement | cost change |
 |---|---|---|---|
-| SpongeInit | initialize hash sponge | hemera_init (rare, ~3 per execution) | same |
-| SpongeAbsorb | absorb field elements | hemera_absorb (rare) | same |
-| SpongeSqueeze | squeeze hash output | hemera_squeeze (rare) | same |
+| SpongeInit | initialize hash sponge | hemera_init | same |
+| SpongeAbsorb | absorb field elements | hemera_absorb | same |
+| SpongeSqueeze | squeeze hash output | hemera_squeeze | same |
 | MerkleStep | verify one tree level | PCS.open (polynomial evaluation) | O(log N) → O(1) |
 
-**Tier 3 (recursion) — FRI operations → folding operations:**
+**Tier 3 (recursion) — FRI operations → accumulation operations:**
 
 | current TIROp | what it does | replacement | cost change |
 |---|---|---|---|
 | ExtMul | cubic extension multiply | keep (soundness amplification) | same |
 | ExtInvert | cubic extension inverse | keep | same |
-| FoldExt | FRI folding (extension) | HyperNova.fold (~30 field ops) | different algorithm |
-| FoldBase | FRI folding (base) | HyperNova.fold | different algorithm |
-| ProofBlock | recursive verification container | fold_row (proof-carrying) | ~8K → ~89 constraints |
+| FoldExt | FRI folding (extension) | accumulation step (ARC-style, phase 3) | different algorithm |
+| FoldBase | FRI folding (base) | accumulation step (ARC-style, phase 3) | different algorithm |
+| ProofBlock | recursive verification container | accumulate_row (proof-carrying) | measured cost TODO(F-numbers) |
 
 **New TIROps:**
 
 | new TIROp | what it does | tier | cost |
 |---|---|---|---|
-| PCSCommit | Brakedown.commit(polynomial) | 2 | O(N) field ops |
-| PCSOpen | Brakedown.open(polynomial, point) | 2 | O(log N + λ) |
-| Fold | HyperNova.fold(accumulator, instance) | 3 | ~30 field ops |
-| FoldRow | proof-carrying fold during execution | 3 | ~30 field ops |
+| PCSCommit | lens.commit(polynomial) — WHIR, hemera Merkle | 2 | O(N log N) field ops + hashing |
+| PCSOpen | lens.open(polynomial, point) — one WHIR opening | 2 | polylog(N) queries + Merkle paths |
+| Accumulate | accumulation step: batch RS evaluation claims by sumcheck, commit one word, open a few queries (ARC-style, phase 3, landing this release) | 3 | TODO(F-numbers) |
+| AccumulateRow | proof-carrying accumulation step during execution | 3 | TODO(F-numbers) |
 
 ### state jet recognition
 
@@ -123,13 +123,13 @@ nox cost model:
   patterns 1-4:         1 field op each
   patterns 5-10:        1 field op each (field arithmetic)
   patterns 11-14:       1 field op each (bitwise, but ~32 constraints in F_p)
-  pattern 15 (hash):    736 constraints (hemera, rare — ~3 per execution)
+  pattern 15 (hash):    736 constraints (hemera)
   pattern 16 (hint):    1 (witness injection)
 
-  fold overhead:        +30 field ops per step (proof-carrying)
+  accumulation:         per-step cost TODO(F-numbers) (proof-carrying)
 
-  total proof cost:     Σ (pattern_cost + 30) per step
-  decider:              +89 constraints (once, at verification)
+  total proof cost:     Σ (pattern_cost + accumulation) per step
+  decider:              one WHIR opening of the final accumulator (once, at verification)
 ```
 
 simpler than Triton's multi-table model. the cost IS the polynomial degree, which IS the evaluation table size.
@@ -137,29 +137,29 @@ simpler than Triton's multi-table model. the cost IS the polynomial degree, whic
 ```
 trident build main.tri --engine nox --costs
 
-  function        steps    field_ops    fold_cost    hemera    total
-  ────────        ─────    ─────────    ─────────    ──────    ─────
-  transfer()      12       12           360          0         372
-  mint_card()     45       48           1,350        736       2,134
-  verify_sig()    200      264          6,000        736       7,000
+  function        steps    field_ops    hemera    accumulation
+  ────────        ─────    ─────────    ──────    ────────────
+  transfer()      12       12           0         TODO(F-numbers)
+  mint_card()     45       48           736       TODO(F-numbers)
+  verify_sig()    200      264          736       TODO(F-numbers)
 
-  total:          257      324          7,710        1,472     9,506
+  total:          257      324          1,472     TODO(F-numbers)
 
-  decider: +89 constraints
-  proof size: ~2 KiB
-  verify: ~0.1 μs (decider jet) or ~5 μs (generic)
+  decider: one WHIR opening
+  proof size: goal ≤ 64 KB (≤ 16–20 KB for small statements); measured TODO(F-numbers)
+  verify: goal ≤ 1 ms; measured TODO(F-numbers)
 ```
 
 ## what trident programs gain
 
 ```
                         triton target (current)     nox target (polynomial)
-proof size:             ~200 KiB                    ~2 KiB
-verify:                 ~50 ms                      ~5 μs (generic) / ~0.1 μs (decider jet)
+proof size:             ~200 KiB                    goal ≤ 64 KB, constant in steps
+verify:                 ~50 ms                      goal ≤ 1 ms (succinct profile today: 7.96 ms at hash.tri)
 prover:                 O(N log N)                  O(N)
-recursion:              ~200K constraints/level      ~30 field ops/fold
+recursion:              ~200K constraints/level      accumulation step (ARC-style), cost TODO(F-numbers)
 data access:            O(log N) Merkle walk         O(1) PCS opening
-hash calls:             thousands (sponge-heavy)     ~3 (hemera trust anchor)
+hash calls:             thousands (sponge-heavy)     hemera Merkle trees + Fiat–Shamir
 state operations:       full trace                   3-5 constraints (state jets)
 proving latency:        separate phase (Trisha)      zero (proof-carrying)
 identity:               Tip5 hash                    hemera(PCS.commit ‖ tag)
@@ -195,8 +195,8 @@ polynomial: R_q = F_p[x]/(x^n+1) where p = Goldilocks
 
 ```
 current:   quantum gates over Goldilocks extension fields
-polynomial: same gates, but proofs are ~2 KiB instead of ~200 KiB
-           recursive simulation proofs fold via HyperNova
+polynomial: same gates, proofs at the stack goal (≤ 64 KB) instead of ~200 KiB
+           long simulations accumulate step by step (phase 3 accumulation)
            quantum error correction circuits → state jets
 ```
 
@@ -216,9 +216,9 @@ phase 2: hemera migration                              ~2 sessions
 
 phase 3: Tier 2-3 TIROp update                        ~3 sessions
   replace MerkleStep with PCSOpen
-  replace FoldExt/FoldBase with HyperNova.fold
-  replace ProofBlock with FoldRow
-  add PCSCommit, PCSOpen, Fold, FoldRow TIROps
+  replace FoldExt/FoldBase with the accumulation step
+  replace ProofBlock with AccumulateRow
+  add PCSCommit, PCSOpen, Accumulate, AccumulateRow TIROps
 
 phase 4: cost model                                    ~2 sessions
   implement NoxCostModel (polynomial degree-based)
@@ -239,20 +239,20 @@ trident's 14 algebraically irreducible languages ALL compile through nox:
 
 | language | algebra | nox field | PCS | what polynomial proofs enable |
 |---|---|---|---|---|
-| Tri | $\mathbb{F}_{p^n}$ tower | Goldilocks | Brakedown | native field tower proofs |
-| Tok | UTXO conservation | Goldilocks | Brakedown | state jets for transfers (3 constraints) |
-| Arc | category theory | Goldilocks | Brakedown | graph schema as polynomial |
-| Seq | partial order | Goldilocks | Brakedown | causal ordering via PCS |
-| Inf | Horn clauses | Goldilocks | Brakedown | logic as polynomial evaluation |
-| Bel | distributions | Goldilocks | Brakedown | probability as polynomial coefficients |
-| Ren | Clifford algebra | Goldilocks | Brakedown | geometric product as field ops |
-| Dif | manifolds | Goldilocks | Brakedown | continuous dynamics discretized |
-| Sym | Hamiltonian | Goldilocks | Brakedown | physics simulation proved |
-| Wav | $R_q$ convolution | Goldilocks | Brakedown | FHE native (R_q = Goldilocks NTT) |
-| Ten | tensor contraction | Goldilocks/F₂ | Brakedown/Binius | neural inference 1,400× |
+| Tri | $\mathbb{F}_{p^n}$ tower | Goldilocks | WHIR | native field tower proofs |
+| Tok | UTXO conservation | Goldilocks | WHIR | state jets for transfers (3 constraints) |
+| Arc | category theory | Goldilocks | WHIR | graph schema as polynomial |
+| Seq | partial order | Goldilocks | WHIR | causal ordering via PCS |
+| Inf | Horn clauses | Goldilocks | WHIR | logic as polynomial evaluation |
+| Bel | distributions | Goldilocks | WHIR | probability as polynomial coefficients |
+| Ren | Clifford algebra | Goldilocks | WHIR | geometric product as field ops |
+| Dif | manifolds | Goldilocks | WHIR | continuous dynamics discretized |
+| Sym | Hamiltonian | Goldilocks | WHIR | physics simulation proved |
+| Wav | $R_q$ convolution | Goldilocks | WHIR | FHE native (R_q = Goldilocks NTT) |
+| Ten | tensor contraction | Goldilocks/F₂ | WHIR/Binius | neural inference 1,400× |
 | Bt | F₂ tower | F₂ | Binius | binary ops native |
 | Rs | Z/2ⁿ words | split | split | systems programming proved |
 
-14 languages → 16 nox patterns → 1 polynomial proof system → ~157 KiB proofs, ~1.0 ms verify today (~2 KiB / ~5 μs is the blocked target, see [[recursive brakedown]]).
+14 languages → 16 nox patterns → 1 polynomial proof system → succinct profile today: hash.tri 15,921 B proof, verify 7.96 ms; a 2^20 relation 71,081 B, verify 270 ms (zheng audit/succinct-profile-2026-10.md). the goal is ≤ 64 KB, verify ≤ 1 ms, constant in the number of steps; it is not met yet.
 
-see [[soft3/proposals/proof-system-repair|polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[recursive brakedown]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
+see [[soft3/proposals/proof-system-repair|polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[WHIR]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
