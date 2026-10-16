@@ -5,6 +5,25 @@ maturity and do not change package versions.
 
 ## Unreleased — native self-hosting on soft3
 
+### BREAKING: content hashes move to cyber-hemera 0.4
+
+hemera 0.4 (profile 15: 6 + 6 full + 48 partial rounds, x⁷ in every round;
+hemera `release/0.4` 7237a23, receipt `hemera/audit/profile-0.4-2026-10.md`)
+replaces the 0.3 permutation. Every content identifier — `trident deploy`
+digests, package hashes, function identity from normalized AST — changes
+value again; the API is unchanged. Representative 0.3 → 0.4 digests of
+`trident::hash::content_hash_bytes`:
+
+| input | hemera 0.3 | hemera 0.4 |
+|---|---|---|
+| `""` | `a67a71b221e6bdd6…806d563c` | `9e89f2487be432e4…bd657326` |
+| `"trident"` | `5386a7e49142b577…abc9df71` | `8a56fea8031f2860…fbf152f6` |
+| `"fn main() { pub_write(42) }"` | `1c315c3651929e24…cd2013bd` | `e8d975fae24a8d13…e623a301` |
+
+On nox the hash pattern walks 60 rounds plus the squeeze row, so one hash
+costs 61 reductions (was 25) and every static cost that contains hashes
+grows with it (nox#31).
+
 1. Run the frozen Trident compiler through Joy on nox and reproduce its output
    byte for byte across successive compiler generations. The accepted
    [SH0–SH6 bootstrap and compiler corpora](audit/self-hosting-progress.md)

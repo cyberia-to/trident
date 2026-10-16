@@ -47,7 +47,7 @@ pub const PATTERN_REDUCTIONS: [u64; 18] = [
     32, // 12 and
     32, // 13 not
     32, // 14 shl
-    25, // 15 hash  — 24 Poseidon2 rounds + 1 squeeze
+    61, // 15 hash  — 60 Poseidon2 rounds + 1 squeeze (hemera 0.4)
     1,  // 16 call
     1,  // 17 look
 ];
@@ -280,7 +280,7 @@ mod tests {
         assert_eq!(PATTERN_REDUCTIONS[8], 64); // inv
         assert_eq!(PATTERN_REDUCTIONS[10], 64); // lt
         assert_eq!(PATTERN_REDUCTIONS[11], 32); // xor
-        assert_eq!(PATTERN_REDUCTIONS[15], 25); // hash
+        assert_eq!(PATTERN_REDUCTIONS[15], 61); // hash
         assert_eq!(PATTERN_REDUCTIONS[16], 1); // call
     }
 
@@ -316,11 +316,11 @@ mod tests {
     }
 
     #[test]
-    fn hash_costs_twenty_five_plus_operand() {
-        // [15 [1 7]] — hash(25) + quote(1) = 26
+    fn hash_costs_sixty_one_plus_operand() {
+        // [15 [1 7]] — hash(61) + quote(1) = 62
         let f = cell(atom(15), cell(atom(1), atom(7)));
         let c = NoxCost::analyze(&f);
-        assert_eq!(c.bill.max, 26);
+        assert_eq!(c.bill.max, 62);
         assert_eq!(c.pattern_counts[15], 1);
     }
 
@@ -342,15 +342,15 @@ mod tests {
     #[test]
     fn branch_produces_a_range() {
         // [4 [test [yes no]]] with test=[9[[1 0][1 0]]] (eq: 1+1+1=3),
-        // yes=[15 [1 1]] (hash: 26), no=[1 0] (quote: 1)
-        // total = branch(1) + test(3) + arm∈[1,26] → min 5, max 30
+        // yes=[15 [1 1]] (hash: 62), no=[1 0] (quote: 1)
+        // total = branch(1) + test(3) + arm∈[1,62] → min 5, max 66
         let test = cell(atom(9), cell(cell(atom(1), atom(0)), cell(atom(1), atom(0))));
         let yes = cell(atom(15), cell(atom(1), atom(1)));
         let no = cell(atom(1), atom(0));
         let f = cell(atom(4), cell(test, cell(yes, no)));
         let c = NoxCost::analyze(&f);
         assert_eq!(c.bill.min, 5);
-        assert_eq!(c.bill.max, 30);
+        assert_eq!(c.bill.max, 66);
         assert!(!c.bill.is_exact());
     }
 }
