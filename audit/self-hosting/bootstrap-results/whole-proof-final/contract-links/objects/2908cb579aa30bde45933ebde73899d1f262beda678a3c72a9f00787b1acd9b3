@@ -1,0 +1,158 @@
+{
+  "status": "passed-exact-three-url-only-change",
+  "started_ns": 1790988069134877000,
+  "scope": "Only three URLs in reference/self-hosting.md; no prose, contract, source/runtime or acceptance change; no commit.",
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "show",
+        "def4c69cc581c7a0c189977bc4ff7c546af7aa64:reference/self-hosting.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790988069135114000,
+      "ended_ns": 1790988069158491000,
+      "exit_code": 0,
+      "streams": {
+        "stdout": {
+          "bytes": 63539,
+          "sha256": "fc9e7be1b936b5df2331f914ca05aa8a90c2049419db7517360a169a212564ec"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "diff",
+        "--",
+        "reference/self-hosting.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790988069159028000,
+      "ended_ns": 1790988069182711000,
+      "exit_code": 0,
+      "streams": {
+        "stdout": {
+          "bytes": 2218,
+          "sha256": "ba21c6e676adcae973407953e3219726b16e24ed0fc226aceb8614d285e001e4"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "diff",
+        "--check",
+        "--",
+        "reference/self-hosting.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790988069182907000,
+      "ended_ns": 1790988069194663000,
+      "exit_code": 0,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790988069194815000,
+      "ended_ns": 1790988069241822000,
+      "exit_code": 0,
+      "streams": {
+        "stdout": {
+          "bytes": 29,
+          "sha256": "245dff882e4313b3b58c1a529c5c6cfbec1b1cb9695ed459b1083db2919ed625"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790988069241987000,
+      "ended_ns": 1790988069254538000,
+      "exit_code": 0,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "aaa4d71f832de4ffc8ad580691ffcc9e646b36c21d9b9b5118dfd5830e270bb9"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "target_validation": {
+    "bytes": 18314,
+    "sha256": "500004e715858043fa7f3fd9da3a65922311bf83ed8b616f6bb6cb062b5a037f"
+  },
+  "changes": [
+    {
+      "old": "../../soft3/specs/execution-model.md",
+      "new": "https://github.com/cyberia-to/soft3/blob/4820c3d032c3c336d725f18e7b3fb13816eeb128/specs/execution-model.md"
+    },
+    {
+      "old": "../../joy/specs/private-execution.md",
+      "new": "https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/private-execution.md"
+    },
+    {
+      "old": "../../joy/specs/structured-certificates.md",
+      "new": "https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/structured-certificates.md"
+    }
+  ],
+  "before": {
+    "bytes": 63539,
+    "sha256": "fc9e7be1b936b5df2331f914ca05aa8a90c2049419db7517360a169a212564ec"
+  },
+  "after": {
+    "bytes": 63749,
+    "sha256": "3ce329a39bc62fae3964ac32bba251c0bc5878ce6bf04957733c83061ab927ae"
+  },
+  "diff": {
+    "bytes": 2218,
+    "sha256": "ba21c6e676adcae973407953e3219726b16e24ed0fc226aceb8614d285e001e4"
+  },
+  "only_owned_path_modified": true,
+  "commit_created": false,
+  "ended_ns": 1790988069254805000
+}

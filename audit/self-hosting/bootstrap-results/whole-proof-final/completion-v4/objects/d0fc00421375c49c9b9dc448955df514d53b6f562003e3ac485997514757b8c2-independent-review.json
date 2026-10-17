@@ -1,0 +1,76 @@
+{
+  "schema": "whole-diagnostic-helper-authenticated-digest-independent-review/v1",
+  "status": "passed-source-review",
+  "observed_unix_ns": 1790957344962135000,
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/Cargo.lock": {
+      "bytes": 31586,
+      "sha256": "2299f3838b9f37294145498a34790a8b57169f0f7e0ecd527f3617eb8e8fc205"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/Cargo.toml": {
+      "bytes": 442,
+      "sha256": "f3c0f91ea813d13c073da1ea6fae72f4f011091d50236740637d104bd2b700ed"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/frames.rs": {
+      "bytes": 15017,
+      "sha256": "9cf4fef3fd2d3f6141a85ba96b3d348b988665a79b4d13c8f271df48e2d04f2f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/index.rs": {
+      "bytes": 5361,
+      "sha256": "00e3f4f40e5a09f8aaa3230526881810475a3c0923115f7bc5efda0362d585f8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/main.rs": {
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/mutation.rs": {
+      "bytes": 8473,
+      "sha256": "05d7bd37fcbb48fbbe1b57d1a3c926c57d2639ceeb52282d5ede8544050f8002"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper/noun.rs": {
+      "bytes": 4114,
+      "sha256": "bd64a225ca4703b9720775897565db4858629992eb644abcf2a1c7c68bdae0c8"
+    }
+  },
+  "binary": {
+    "bytes": 724240,
+    "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7"
+  },
+  "scope": "Frozen helper v4 source and exact build/actual bounded fixture evidence. No schedule, reclamation, production code, proof profile, resource-cap, whole workload or final SH8 acceptance approval.",
+  "findings": [],
+  "reasoning": [
+    "Frame header, payload and optional authenticated digest are private. Only successful Input::next creates Some after unchanged original header/order/codec/size/digest/terminal-EOF validation.",
+    "Newly encoded and synthesized terminal frames use None. The matching-new-header regression establishes they do not inherit a trusted zero digest.",
+    "Output retains the same wire/decoded allowances and rewrites sequence/predecessor before comparing all50 header bytes. It lazily reuses only an admitted digest for exactly identical immutable bytes; every changed/new frame hashes the same domain/header/payload as before.",
+    "Private truncated_completion reproduces the original terminal-header/31-byte-digest prefix and refuses new/nonterminal frames. All actual old/new fixture outputs and sidecars match.",
+    "main.rs, index.rs, noun.rs, Cargo.toml and Cargo.lock are byte-identical to frozen v3. No runtime verifier, source input, serialization/profile contract or numeric cap changes."
+  ],
+  "validation": {
+    "build": "Original actual Rust1.89 test/release-build receipts replayed:10 unit tests passed, zero warnings, exact binary bound.",
+    "fixture": "Independently rehashed raw28 command streams, checked14 full old/new bounded certificate byte comparisons, canonical sidecars, unchanged positive result, exact old negative stderr and protected destinations. These are retained actual root executions, not new executions by reviewer.",
+    "replay_receipt": {
+      "bytes": 5944,
+      "sha256": "c293dfc583482ae2fb5c75af8091921d4c7160fb28c8f1dee21c7b6ee38cfc98"
+    },
+    "replay_command": [
+      "python3",
+      "-B",
+      "-W",
+      "error",
+      "whole-helper-digest-independent-review/check_final.py"
+    ],
+    "replay_exit_code": 0
+  },
+  "prefix": {
+    "status": "reviewed-duplicate-content-observation-only",
+    "original_whole_sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0",
+    "compared_bytes": 11901028947,
+    "prefix_sha256": "a4108874af7f843bb86e89442c5ca4071a638d45c3d24b8aa7f20fa1f96b95ed",
+    "scope": "Read full observer source and replayed receipt/source bindings, stable closed descriptor/path metadata and actual first/last sample identities. Original root command compared every partial byte and scanned the complete original; this review did not repeat that full scan. Deletion requires separately reviewed plan/action, complete failure provenance and fresh quiescence; failed original status remains unchanged."
+  },
+  "limitations": [
+    "No numeric speedup is claimed. The same-cap full mutation construction still needs actual completion evidence.",
+    "The initial design checklist recommended an instrumentation counter; source-level lazy computation plus private immutable admission proves the redundant output hash is skipped, so no production/report API change or extra instrumentation is required.",
+    "Old v3 cases remain part of a failed suite. Any later successful case-level reuse or C2 construction reuse needs its independent new admission and fresh verification contract."
+  ]
+}

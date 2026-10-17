@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-guest-intrinsics.py",
+    "--joy",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c2-to-c3-20b-files-vgt4vpb1/result.dag",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/intrinsics.json"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+  "start": "2026-09-27T21:03:00.477599+00:00",
+  "expected_observations": 37,
+  "status": "finished",
+  "receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/intrinsics.json",
+  "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/intrinsics.log",
+  "exit_code": 0,
+  "end": "2026-09-27T21:05:17.440682+00:00",
+  "elapsed_nanoseconds": 136959842125,
+  "log_sha256": "076d45b626b2ee82663251f145ebe840ef4187e4d0da4156b6772c984e0f613a",
+  "receipt_sha256": "c7d890dec80ccb3333fa52d5ad4e648249dbbab0405f1a2a7a3034f0b2d478c5",
+  "receipt_status": "passed",
+  "commands": 157,
+  "observations": 37
+}

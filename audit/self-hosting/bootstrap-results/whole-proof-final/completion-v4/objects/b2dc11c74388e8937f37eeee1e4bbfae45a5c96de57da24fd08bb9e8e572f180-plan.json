@@ -1,0 +1,85 @@
+{
+  "schema": "trident/complete-proof-missing-cases/v4",
+  "status": "prepared-not-launched",
+  "generations": [
+    1,
+    2
+  ],
+  "roots": {
+    "1": "whole-proof-attacks-v4-c1",
+    "2": "whole-proof-attacks-v4-c2"
+  },
+  "original_scope": "whole-proof-attacks",
+  "proofs": {
+    "1": {
+      "bytes": 11977015727,
+      "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+    },
+    "2": {
+      "bytes": 10569174820,
+      "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+    }
+  },
+  "shared_disk_bytes": 27917287424,
+  "free_floor_bytes": 8589934592,
+  "combined_sampled_rss_bytes": 12884901888,
+  "mutant_growth_ceiling_bytes": 33554432,
+  "canonical_and_output_bucket_per_generation": 117440512,
+  "metadata_bucket_per_generation": 268435456,
+  "per_stream_log_bytes": 1048576,
+  "readiness_seconds": 15500,
+  "outer_schedule_seconds": 86400,
+  "scope": "Replay original two controls and twelve successful distinct historical cases per generation; execute eleven fresh missing rejections. Prelude admits only fresh C2 cost verification from the original successful construction. Full mutation admission requires its exact completed-case retirement and measured two-generation reservation within unchanged caps. Original failed histories remain failed. New authenticated-prefix helper; unchanged Joy/profile/proofs/inputs/resource ceilings. No retry or release claim.",
+  "retained_scopes": [
+    "whole-proof-attacks",
+    "whole-proof-attacks-v2-c1",
+    "whole-proof-attacks-v2-c2",
+    "whole-proof-attacks-parallel-v2",
+    "whole-proof-attacks-v3-c1",
+    "whole-proof-attacks-v3-c2",
+    "whole-proof-attacks-completion-v3"
+  ],
+  "fresh_rejections_per_generation": 11,
+  "replayed_rejections_per_generation": 12,
+  "replayed_controls_per_generation": 2,
+  "historical_cost": "whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc",
+  "prefix_transition": "whole-prefix-reclamation-v4",
+  "prelude_command": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+    "verify-artifact",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag",
+    "--input",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag",
+    "--proof",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag",
+    "--emit",
+    "program",
+    "--arena-nodes",
+    "1000000000",
+    "--budget",
+    "20000000000",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "7200000",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "10000000000",
+    "--proof-bytes",
+    "25769803776",
+    "--proof-decoded-bytes",
+    "103079215104",
+    "--proof-records",
+    "12000000000",
+    "--proof-steps",
+    "16000000000",
+    "--proof-cache-slots",
+    "262144",
+    "--force"
+  ]
+}

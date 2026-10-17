@@ -1,0 +1,167 @@
+{
+  "status": "completed-read-only-documentation-preflight",
+  "time_ns": 1790982645149729000,
+  "scope": "Documentation usability/status/relative-link inspection only; no native commands, network fetches, proof execution or repeated source gate audits. No product or proposal files modified.",
+  "inputs": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident:9e81bd187af63259940c273be8711a0fc34757f2:docs/guides/self-hosted-compilation.md": {
+      "bytes": 8510,
+      "sha256": "09578b7571d85e460cac0b34d435f4cc33984e0b3c3c2f44812c1e0eb76c55be"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident:9e81bd187af63259940c273be8711a0fc34757f2:audit/self-hosting-progress.md": {
+      "bytes": 50428,
+      "sha256": "e70226440047b47d045363d6e7c05ef22d54083e253f82f5947951f49c61bedc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident:9e81bd187af63259940c273be8711a0fc34757f2:reference/roadmap.md": {
+      "bytes": 83311,
+      "sha256": "119dff07663aa1d56f2f19362a0b94d4905dddd7c51942f03a36da3f93256aaa"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident:9e81bd187af63259940c273be8711a0fc34757f2:CHANGELOG.md": {
+      "bytes": 20079,
+      "sha256": "d8bc536048b60588ec716ca2c6e2216fc4a7f355fe17299103901721d2bcebb6"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident:9e81bd187af63259940c273be8711a0fc34757f2:reference/self-hosting.md": {
+      "bytes": 63539,
+      "sha256": "fc9e7be1b936b5df2331f914ca05aa8a90c2049419db7517360a169a212564ec"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident:9e81bd187af63259940c273be8711a0fc34757f2:audit/self-hosting/body-scale/README.md": {
+      "bytes": 5512,
+      "sha256": "016b5ed38c1081e9bc705396950174fedf436ba8a167dfd3e1649bab396281fd"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy:15202f42240ba923398908ee0db62d32f1d655f8:README.md": {
+      "bytes": 7315,
+      "sha256": "38b861a271cf683e3b0e829c93a25e976884ecaf66a5965b7dfeb566de2f8e63"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha:9e1af832543a21def306dac84ff918cbb823653d:audit/README.md": {
+      "bytes": 6486,
+      "sha256": "f7f60b67d16ca9b4951c952352943d445bd3afb8c8ba38cd057979eea199ac5a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/docs-proposal.md": {
+      "bytes": 3030,
+      "sha256": "0fe3eb21e4f4b7ae0a38c72f3d78786c266fc042a2334dbc21583eda652a2acc"
+    }
+  },
+  "findings": [
+    {
+      "id": "guide-distribution",
+      "file": "Trident/docs/guides/self-hosted-compilation.md",
+      "lines": [
+        22,
+        23
+      ],
+      "classification": "stale-current-status",
+      "action": "Replace the statement that coordinated distribution remains subject to its gates with the accepted frozen source 73b50ebd rehearsal in Trisha PR24 (95899e8f). Keep public version/promotion as owner steps. Preserve the valid c66 kit pins."
+    },
+    {
+      "id": "guide-retention",
+      "file": "Trident/docs/guides/self-hosted-compilation.md",
+      "lines": [
+        80,
+        81,
+        82
+      ],
+      "classification": "stale-current-status",
+      "action": "Separate accepted complete byte-equivalence retention (Trisha PR25, fbea3cef) from still-pending SH8 adversarial/final-checker acceptance. Retention is no longer open."
+    },
+    {
+      "id": "discovery-history",
+      "file": "Trident/audit/self-hosting-progress.md",
+      "lines": [
+        365,
+        366
+      ],
+      "classification": "unqualified-historical-status",
+      "action": "Label complete compilation remains open as the historical discovery-component checkpoint, or point to the now-closed S1 SH4 result. Current full S1 compilation is already established at lines 11-13 and 35-41."
+    },
+    {
+      "id": "s0-timing",
+      "file": "Trident/audit/self-hosting-progress.md",
+      "lines": [
+        407,
+        408,
+        409,
+        410
+      ],
+      "classification": "mislabelled-historical-measurement",
+      "action": "Identify 1471089704 worker microseconds as the historical S0 b991d901 body-scale run; remove now or replace the current comparison with the separately recorded S1 1425188177 value at line36. Keep original body-scale receipt unchanged."
+    },
+    {
+      "id": "trisha-ledger-link",
+      "file": "Trisha/audit/README.md",
+      "lines": [
+        18
+      ],
+      "classification": "github-broken-sibling-link",
+      "action": "Replace ../../trident/audit/self-hosting-progress.md with a repo-qualified immutable Trident URL. GitHub resolves the present link to /cyberia-to/trisha/blob/trident/audit/self-hosting-progress.md, not the sibling repository."
+    },
+    {
+      "id": "other-sibling-links",
+      "file": "Joy/README.md and Trident/audit/self-hosting-progress.md",
+      "lines": {
+        "Joy/README.md": [
+          4,
+          65,
+          66
+        ],
+        "Trident/audit/self-hosting-progress.md": [
+          113,
+          114,
+          260,
+          338,
+          363,
+          364,
+          461,
+          479
+        ]
+      },
+      "classification": "github-broken-sibling-links",
+      "action": "For public-rendered docs, use repo-qualified immutable cyber/Zheng/Joy/Nox links. Existing ../sibling paths work in coordinated checkouts but do not cross GitHub repositories. The inspected Joy audit targets exist at15202f; this is routing, not missing evidence."
+    },
+    {
+      "id": "guide-scope-label",
+      "file": "Trident/docs/guides/self-hosted-compilation.md",
+      "lines": [
+        3,
+        4
+      ],
+      "classification": "usability-clarification",
+      "action": "Name the frozen S1 native compiler at first mention. Keep the existing 94-source reproduction restriction at lines87-95; do not imply all Rust-seed features or arbitrary edited compiler trees are self-hosted."
+    },
+    {
+      "id": "proposal-sequencing",
+      "file": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/docs-proposal.md",
+      "lines": [
+        40,
+        41,
+        42,
+        43
+      ],
+      "classification": "superseded-preparation-sequencing",
+      "action": "When preparing the next docs patch, remove PR117 replay/merge and the helper evidence PR from remaining work: PR117 merged8da6f8f6 and PR119 merged28c982c0. Preserve this original proposal as historical preparation and regenerate line references from current9e81bd18."
+    }
+  ],
+  "keep_pending_until_actual_acceptance": [
+    "Trident roadmap line113 and changelog lines18-20",
+    "Joy README lines142-143",
+    "Trisha audit README lines16-18",
+    "Trident ledger SH8 row181, next-work219-220 and blocker378"
+  ],
+  "accepted_context": {
+    "TrishaPR24": "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+    "TrishaPR25": "fbea3cef9a4139075e529c319ff75488ed5df625",
+    "TridentPR117": "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e",
+    "TridentPR119": "28c982c0ff4fa9572f63778688a2763e0ed2878e"
+  },
+  "positive_checks": [
+    "Guide internal relative targets exist; its pinned c66 kit/readme and dd61 certificate contract Git objects exist.",
+    "Joy linked PR25 byte-retention Git object exists.",
+    "Trisha final package section anchor exists at9e1af83.",
+    "Current ledger PR117 paragraphs88-98 already reflect exact successful original replays and accepted merge.",
+    "Changelog distinguishes tested SemVer versions, frozen package rehearsal, owner promotion, full public witness and pending SH8.",
+    "Roadmap distinguishes Noun S1 from the separate RAM/TIR prototype and broader future tooling.",
+    "Ordinary complete self-build example retains its original two-hour execution profile; Linux four-hour proof producer profile does not require silently changing this command."
+  ],
+  "limitations": [
+    "No public HTTP request was made. Link checks use exact local Git objects and standard URL resolution.",
+    "No final SH8 outcome is inferred; V5/F5 remains pending."
+  ]
+}

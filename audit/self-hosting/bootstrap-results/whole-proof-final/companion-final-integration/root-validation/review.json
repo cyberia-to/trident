@@ -1,0 +1,32 @@
+{
+  "status": "passed-root-final-companion-archive-review",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/packet/verify-retained.py",
+    "--originals"
+  ],
+  "originals_verifier": {
+    "status": "passed-retained-byte-validation",
+    "original_files": 252,
+    "original_bytes": 281649,
+    "unique_objects": 108,
+    "stored_object_bytes": 260285,
+    "originals_checked": true,
+    "map": {
+      "bytes": 87522,
+      "sha256": "af36c7e0a02479ff8033cd1e1ea1d5a2efcdcb5d8ea50959c99c67208e13256a"
+    },
+    "inspection": "Credential-pattern, signed-URL, process-table and parsed nonempty raw_stdout checks passed. No original code was executed."
+  },
+  "packet_files": 113,
+  "packet_bytes": 361301,
+  "plain_text_exact_identities": {
+    "191e2b6dba185fe995da8c88f627c709ad2c800552e001a8d91f23a3110b413c": "Original Markdown proposal with a leading link; inert placeholder preserved.",
+    "9941dab977b4fc0d7294c0816b41886ae6740314d2f18801af1f8ac6d051b583": "Original Joy Git commit stdout.",
+    "bfebe566de8ef301a0a863f4b178111ddfc566c746a76377edc64c7f5745d6d9": "Original Trisha Git commit stdout."
+  },
+  "inspection": "Exact identities; strict frozen public_bytes for all other files and unchanged inspect_text plus UTF-8/manual review for the three exact plain-text objects; exact postmerge drivers/receipts/source guards and installed binary digests; original format-probe failure retained."
+}

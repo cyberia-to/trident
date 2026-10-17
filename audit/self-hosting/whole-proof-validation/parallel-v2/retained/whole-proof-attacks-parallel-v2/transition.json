@@ -1,0 +1,320 @@
+{
+  "status": "original-schedule-quiescent",
+  "reason": "Superseded by separately reviewed two-generation parallel validation after actual certificate sizes establish unchanged26GiB shared budget feasibility. Every original interrupted result and any partial payload remain retained and charged to that same budget.",
+  "scheduler_pid": 792,
+  "suite_pid": 17179,
+  "helper_pid": 50893,
+  "started_ns": 1790917744424667000,
+  "signal": "SIGTERM",
+  "process_commands": [
+    "792 32509   792 /opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B run_ready.py",
+    "17179   792 /opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python -B /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole_suite.py --generation 2",
+    "50893 17179 /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator mutate /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/index.json /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/result.dag /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/certificate-rechain.joysc rechain"
+  ],
+  "scheduler_cwd_observation": "p792\nfcwd\nn/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks\n",
+  "original_orchestration": {
+    "status": "running",
+    "started_ns": 1790913142131167000,
+    "source": {
+      "whole_suite.py": {
+        "bytes": 13622,
+        "sha256": "65acbc20993403fdf8dc732ffc0c9faa83fafc75bef19c436e60a94ba97962fb"
+      },
+      "guard.py": {
+        "bytes": 5864,
+        "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+      },
+      "plan.md": {
+        "bytes": 6842,
+        "sha256": "692938a0b639275629660ee3b17a35180d35f0c9bfda4073fa91d2d5b7b594a1"
+      },
+      "helper/mutation.rs": {
+        "bytes": 8521,
+        "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+      },
+      "helper/main.rs": {
+        "bytes": 2734,
+        "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+      },
+      "helper-build-2/receipt.json": {
+        "bytes": 2887,
+        "sha256": "1fa8c0de27e502c609142f74a5e856925c8f306230ec3fa4e5e0e3f25f5ca7dd"
+      },
+      "fixture-check/receipt.json": {
+        "bytes": 4914,
+        "sha256": "c0f138dcb0d67d38bd13be7cbab179503e9f7bb9cbbcf7c7c07206b6716680db"
+      },
+      "root-helper-review-validation.json": {
+        "bytes": 580,
+        "sha256": "6a950e048c6f1f73d10dbae0f0f424476a022f2b2be2aef3221bb343e21bb402"
+      }
+    },
+    "independent_review": {
+      "bytes": 3960,
+      "sha256": "1925ed1a510644e9ab21ddab82c4110b4e793b59e9e92d626b89313bb8e2a6dd"
+    },
+    "driver": {
+      "bytes": 3987,
+      "sha256": "6969d8ac91cf5c65436e296c72e5619d732edd361eec47db56c7cc25f8cfdbf1"
+    },
+    "generations": [
+      {
+        "generation": 2,
+        "status": "running",
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole_suite.py",
+          "--generation",
+          "2"
+        ],
+        "pid": 17179,
+        "started_ns": 1790916793148410000
+      }
+    ]
+  },
+  "active_receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/attempts/whole-c2-construct-rechain/receipt.json",
+  "active_before": {
+    "schema": "trident/whole-proof-attack-command/v1",
+    "status": "running",
+    "argv": [
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator",
+      "mutate",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/index.json",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/result.dag",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/certificate-rechain.joysc",
+      "rechain"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/attempts/whole-c2-construct-rechain",
+    "environment": {
+      "PATH": ""
+    },
+    "caps": {
+      "wall": 1800,
+      "cpu": 1800,
+      "rss": 1073741824,
+      "file": 25769869312
+    },
+    "sampled_scope_disk_cap": 27917287424,
+    "free_floor": 8589934592,
+    "sample_interval_seconds": 1,
+    "driver": {
+      "bytes": 5864,
+      "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+    },
+    "inputs_before": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+        "bytes": 724240,
+        "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc": {
+        "bytes": 10569174820,
+        "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/index.json": {
+        "bytes": 1248,
+        "sha256": "aa45340be4991b1083d019023e4b7a44c6cb82a0b9880f597d268f8b42faec1e"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/result.dag": {
+        "bytes": 9692331,
+        "sha256": "92cb9bc1dcdafd8c73383aed5edfefcc3e36da278c62f6f62b007e765259d60c"
+      }
+    },
+    "expected_exit": 0,
+    "metadata": {
+      "generation": 2,
+      "mode": "rechain"
+    },
+    "started_ns": 1790917620175063000,
+    "sampled_peak_rss_bytes": 2031616,
+    "pid": 50893,
+    "latest_sample": {
+      "time_ns": 1790917743671428000,
+      "elapsed": 123.49486541602528,
+      "processes": [
+        {
+          "pid": 50893,
+          "rss_bytes": 2031616
+        }
+      ],
+      "rss_bytes": 2031616,
+      "owned_bytes": 1154411985,
+      "free_bytes": 58054135808
+    }
+  },
+  "ended_ns": 1790917753961654000,
+  "original_final_orchestration": {
+    "status": "failed",
+    "started_ns": 1790913142131167000,
+    "source": {
+      "whole_suite.py": {
+        "bytes": 13622,
+        "sha256": "65acbc20993403fdf8dc732ffc0c9faa83fafc75bef19c436e60a94ba97962fb"
+      },
+      "guard.py": {
+        "bytes": 5864,
+        "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+      },
+      "plan.md": {
+        "bytes": 6842,
+        "sha256": "692938a0b639275629660ee3b17a35180d35f0c9bfda4073fa91d2d5b7b594a1"
+      },
+      "helper/mutation.rs": {
+        "bytes": 8521,
+        "sha256": "36a8a2f71097a13904a3a1e90a3492f14e57879791e34bdbe07e99755b60204d"
+      },
+      "helper/main.rs": {
+        "bytes": 2734,
+        "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+      },
+      "helper-build-2/receipt.json": {
+        "bytes": 2887,
+        "sha256": "1fa8c0de27e502c609142f74a5e856925c8f306230ec3fa4e5e0e3f25f5ca7dd"
+      },
+      "fixture-check/receipt.json": {
+        "bytes": 4914,
+        "sha256": "c0f138dcb0d67d38bd13be7cbab179503e9f7bb9cbbcf7c7c07206b6716680db"
+      },
+      "root-helper-review-validation.json": {
+        "bytes": 580,
+        "sha256": "6a950e048c6f1f73d10dbae0f0f424476a022f2b2be2aef3221bb343e21bb402"
+      }
+    },
+    "independent_review": {
+      "bytes": 3960,
+      "sha256": "1925ed1a510644e9ab21ddab82c4110b4e793b59e9e92d626b89313bb8e2a6dd"
+    },
+    "driver": {
+      "bytes": 3987,
+      "sha256": "6969d8ac91cf5c65436e296c72e5619d732edd361eec47db56c7cc25f8cfdbf1"
+    },
+    "generations": [
+      {
+        "generation": 2,
+        "status": "running",
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole_suite.py",
+          "--generation",
+          "2"
+        ],
+        "pid": 17179,
+        "started_ns": 1790916793148410000
+      }
+    ],
+    "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/run_ready.py\", line 65, in main\n    code = child.wait()\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1279, in wait\n    return self._wait(timeout=timeout)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 2084, in _wait\n    (pid, sts) = self._try_wait(0)\n                 ~~~~~~~~~~~~~~^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 2042, in _try_wait\n    (pid, sts) = os.waitpid(self.pid, wait_flags)\n                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/run_ready.py\", line 24, in cancel\n    raise InterruptedError(\"suite scheduler signal: \" + str(signum))\nInterruptedError: suite scheduler signal: 15\n",
+    "ended_ns": 1790917752702040000
+  },
+  "active_after": {
+    "schema": "trident/whole-proof-attack-command/v1",
+    "status": "failed",
+    "argv": [
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator",
+      "mutate",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/index.json",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/result.dag",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/certificate-rechain.joysc",
+      "rechain"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/attempts/whole-c2-construct-rechain",
+    "environment": {
+      "PATH": ""
+    },
+    "caps": {
+      "wall": 1800,
+      "cpu": 1800,
+      "rss": 1073741824,
+      "file": 25769869312
+    },
+    "sampled_scope_disk_cap": 27917287424,
+    "free_floor": 8589934592,
+    "sample_interval_seconds": 1,
+    "driver": {
+      "bytes": 5864,
+      "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+    },
+    "inputs_before": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+        "bytes": 724240,
+        "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc": {
+        "bytes": 10569174820,
+        "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/index.json": {
+        "bytes": 1248,
+        "sha256": "aa45340be4991b1083d019023e4b7a44c6cb82a0b9880f597d268f8b42faec1e"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/result.dag": {
+        "bytes": 9692331,
+        "sha256": "92cb9bc1dcdafd8c73383aed5edfefcc3e36da278c62f6f62b007e765259d60c"
+      }
+    },
+    "expected_exit": 0,
+    "metadata": {
+      "generation": 2,
+      "mode": "rechain"
+    },
+    "started_ns": 1790917620175063000,
+    "sampled_peak_rss_bytes": 2031616,
+    "pid": 50893,
+    "latest_sample": {
+      "time_ns": 1790917743671428000,
+      "elapsed": 123.49486541602528,
+      "processes": [
+        {
+          "pid": 50893,
+          "rss_bytes": 2031616
+        }
+      ],
+      "rss_bytes": 2031616,
+      "owned_bytes": 1154411985,
+      "free_bytes": 58054135808
+    },
+    "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/guard.py\", line 115, in run\n    child.wait(timeout=1)\n    ~~~~~~~~~~^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 1279, in wait\n    return self._wait(timeout=timeout)\n           ~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py\", line 2078, in _wait\n    time.sleep(delay)\n    ~~~~~~~~~~^^^^^^^\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole_suite.py\", line 99, in cancel\n    raise InterruptedError(\"owned suite terminated: \" + str(signum))\nInterruptedError: owned suite terminated: 15\n",
+    "inputs_after": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+        "bytes": 724240,
+        "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof/attempts/c2-selfbuild-1/proof.joysc": {
+        "bytes": 10569174820,
+        "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/index.json": {
+        "bytes": 1248,
+        "sha256": "aa45340be4991b1083d019023e4b7a44c6cb82a0b9880f597d268f8b42faec1e"
+      },
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/result.dag": {
+        "bytes": 9692331,
+        "sha256": "92cb9bc1dcdafd8c73383aed5edfefcc3e36da278c62f6f62b007e765259d60c"
+      }
+    },
+    "ended_ns": 1790917748472399000,
+    "files": {
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "resources.jsonl": {
+        "bytes": 22596,
+        "sha256": "4174fd2f2ecadb3c90e1016e8b65a1b0df843f2c4a80da64001884ee6dfb7cc7"
+      }
+    }
+  },
+  "retained_partial_mutants": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/whole-c2/certificate-rechain.joysc": {
+      "bytes": 920494713,
+      "sha256": "3aa4ea4bc79ace206166c23952c104d22effb69fd0b80bd9a4d32b834f1477a1",
+      "status": "classified interrupted rechain construction; never accepted as a certificate"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/check-generated-compiler-profile.py",
+    "--joy",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3-files-jb8je2q4/result.dag",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile.json"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+  "start": "2026-09-27T22:10:30.489537+00:00",
+  "expected_observations": 21,
+  "status": "finished",
+  "receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile.json",
+  "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c3-corpus/generated-profile.log",
+  "exit_code": 0,
+  "end": "2026-09-27T22:11:40.590815+00:00",
+  "elapsed_nanoseconds": 70100292958,
+  "log_sha256": "9ffa622854b685b08b9f76310889d0489e6b6935d9c8996e9cd085e20b63d471",
+  "receipt_sha256": "f7f49bc1b006301d091bf45c9725e5211ba22c99adfae1eb98cecbba88c8d6d2",
+  "receipt_status": "passed",
+  "commands": 64,
+  "observations": 21
+}

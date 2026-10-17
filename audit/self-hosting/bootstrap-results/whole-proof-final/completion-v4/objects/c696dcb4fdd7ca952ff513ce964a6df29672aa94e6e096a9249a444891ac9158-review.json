@@ -1,0 +1,43 @@
+{
+  "status": "passed-prefix-reclamation-source-review",
+  "sources": {
+    "bytes": 880,
+    "sha256": "0734c103f8dec872296e8a1baaf57af2f4a44c68c30cb6fc1a8dcb9d09d35535"
+  },
+  "plan": {
+    "bytes": 63004,
+    "sha256": "a0b802db80cee7cbeac1b8bafdb60d0d98d661f3471bf39258bf61be10fd78b1"
+  },
+  "started_ns": 1790958808163041000,
+  "ended_ns": 1790958808508957000,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_reclamation"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 4757,
+      "sha256": "85425e11b0afc7c1f13e3dce931d8dea58b6ce3f0d6912c3742c4f1d26c29a34"
+    }
+  },
+  "reviewer": "root",
+  "findings": [],
+  "checked": [
+    "One exact single-link regular held inode; all ancestor symlinks rejected; original full hash and every prefix byte authenticated before and after unlink.",
+    "Original failed receipts and native registrations preserved; two later birth-aware quiescence observations; no signals; all old owner locks held.",
+    "Fsynced nonoverwriting before/unlink/held/closed journals; no accounting release before final verification and close.",
+    "Only the declared C1 temporary is eligible; C2 and previous partials fully authenticated before/after.",
+    "Explicitly bounded reconstruction exists to a fresh destination; never invoked by reclamation."
+  ]
+}

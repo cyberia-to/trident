@@ -1,0 +1,183 @@
+{
+  "archive_groups": {
+    "checker-v4": 30,
+    "checker-v5": 66,
+    "completion-v4": 61,
+    "completion-v5": 60,
+    "delivery-preparation": 95,
+    "final-launch-v5": 16,
+    "helper-v4": 101,
+    "historical-plans": 2,
+    "integration-20261002": 92,
+    "schedule-v4-failure": 14
+  },
+  "archive_paths": 537,
+  "base": "10772124836b68a2df011c912b5776b2454a511f",
+  "changed_paths": 543,
+  "checked_in_native_triggers": "All exact diff paths are ignored by bootstrap; transport matches none; notify is default-branch push only. No native matrix expected from this increment.",
+  "current_origin": "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e",
+  "elapsed_seconds": 0.512276749999728,
+  "head": "15fa1507598ace547d44970d4fe8530137464c0b",
+  "head_tree": "783d591f5e7d5adf978e8d8c4305b9267b76d6f4",
+  "helper_recorded_fixture_comparisons": 14,
+  "helper_recorded_fresh_verifier_streams": 28,
+  "helper_recorded_rust_tests": 10,
+  "helper_review": {
+    "bytes": 5210,
+    "sha256": "d0fc00421375c49c9b9dc448955df514d53b6f562003e3ac485997514757b8c2"
+  },
+  "helper_sources_equal_review": 7,
+  "incoming_preserve": [
+    "docs/guides/self-hosted-compilation.md"
+  ],
+  "limitations": "No SH8 or full0.4 readiness claim. Current ledger/CHANGELOG/preparation truthfully leave final adversarial/F5 acceptance open. This is a retained-byte/read-only replay, not new native/helper/proof tests. Runtime sources, versions, root attributes and workflow behavior are unchanged.",
+  "longest_path_utf16": 195,
+  "markdown_paths": [
+    ".claude/plans/native-compiler-arena.md",
+    ".claude/plans/warrior-release-repair.md",
+    "CHANGELOG.md",
+    "audit/release-version-closure.md",
+    "audit/self-hosting-progress.md",
+    "reference/roadmap.md"
+  ],
+  "mismatches": [],
+  "origin_merge_evidence": {
+    "bytes": 3702,
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/trident-proof-acceptance-pr117/receipt.json",
+    "sha256": "899f1f6057311f9df39ed0c995c865523db95e6980dd547537dc03c550c83838"
+  },
+  "pending_doc_corrections": [
+    {
+      "finding": "PR117 collection/replay/merge statements still future; update from actual original replay and merge8da6f8f6.",
+      "lines": [
+        7,
+        27
+      ],
+      "path": ".claude/plans/native-compiler-arena.md"
+    },
+    {
+      "finding": "Kelvin versioning opening conflates product SemVer with roadmap maturity.",
+      "lines": [
+        3,
+        4
+      ],
+      "path": "CHANGELOG.md",
+      "proposal": "Package releases use SemVer. Kelvin temperatures in the roadmap describe maturity and do not change package versions."
+    },
+    {
+      "finding": "Preserve current release/0.4 incoming guide; this is base integration, not a missing implementation.",
+      "path": "docs/guides/self-hosted-compilation.md"
+    }
+  ],
+  "recommendation": "After the pending CI evidence/status commit, retain incoming guide and exact-head validation/install. Ready/merge this separately scoped tooling/evidence increment; actual V5/F5 need not finish for preparation integration.",
+  "reference_only_rows": [
+    {
+      "archive": "completion-v4",
+      "reference": {
+        "bytes": 724240,
+        "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper/release/whole-proof-mutator",
+        "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7",
+        "storage": "original native binary remains at its hash-bound local path"
+      }
+    }
+  ],
+  "retained_maps": {
+    "checker-v4": {
+      "identity": {
+        "bytes": 9217,
+        "sha256": "b46af5472494365070fd41390e2f1d12f2f06ed7592df8a6972eea3d1f7bd20f"
+      },
+      "original_rows": 28,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/checker-v4/retained-files.json",
+      "stored_entries": 28
+    },
+    "checker-v5": {
+      "identity": {
+        "bytes": 57503,
+        "sha256": "74bf12dd9b7b1e4959af59379f3236025210068f379e3c06783c7a3d94b7d3c9"
+      },
+      "original_rows": 165,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/checker-v5/retained-files.json",
+      "stored_entries": 165
+    },
+    "completion-v4": {
+      "identity": {
+        "bytes": 20514,
+        "sha256": "2505351bfdb80a765f5da58ab92eb0ef29c8b8ca0c6a99ff05dfdfd824dc903f"
+      },
+      "original_rows": 59,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/completion-v4/retained-files.json",
+      "stored_entries": 58
+    },
+    "completion-v5": {
+      "identity": {
+        "bytes": 25484,
+        "sha256": "723c08b2d7df332229ee75edeec26e801693a26da45a4cc7c0cc114255482739"
+      },
+      "original_rows": 74,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/completion-v5/retained-files.json",
+      "stored_entries": 74
+    },
+    "delivery-preparation": {
+      "identity": {
+        "bytes": 41679,
+        "sha256": "d6c908a0314a3f7760f0284294c7ec5dc8b28125a691fa7fbb9458dd19fd2a5a"
+      },
+      "original_rows": 116,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/delivery-preparation/retained-files.json",
+      "stored_entries": 116
+    },
+    "final-launch-v5": {
+      "identity": {
+        "bytes": 5141,
+        "sha256": "7c7c821f7326414bf7711a02b08c5e5e60077f3dd16dc885f9b584983d37c976"
+      },
+      "original_rows": 15,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/final-launch-v5/retained-files.json",
+      "stored_entries": 15
+    },
+    "helper-v4": {
+      "identity": {
+        "bytes": 28944,
+        "sha256": "e806d87c508b9ab5f290ff706f000e6fcf22dd899319965a11169f543e39a352"
+      },
+      "original_rows": 96,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/helper-v4/retained-files.json",
+      "stored_entries": 96
+    },
+    "integration-20261002": {
+      "identity": {
+        "bytes": 50193,
+        "sha256": "24766e8b58b81e52db45ae1f1d01dc19ee9f05bab46ee3ca879e4846a32e13ad"
+      },
+      "original_rows": 148,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/integration-20261002/retained-files.json",
+      "stored_entries": 148
+    },
+    "schedule-v4-failure": {
+      "identity": {
+        "bytes": 3765,
+        "sha256": "daf0cc62691634f7483306b2086f668643bf875ed2e9470801c911f7d52a1e47"
+      },
+      "original_rows": 11,
+      "path": "audit/self-hosting/bootstrap-results/whole-proof-final/schedule-v4-failure/retained-files.json",
+      "stored_entries": 11
+    }
+  },
+  "source": {
+    "bytes": 8785,
+    "sha256": "7c6b55edb291a608d412f78d5eb1ff9ca6f47f25912a89069f5ba69cad9be5a7"
+  },
+  "status": "passed-read-only-increment-readiness-with-doc-corrections",
+  "stored_entries_rehashed": 711,
+  "unchanged_tree_or_blob_ids": {
+    ".gitattributes": "98508220d7c8f2c517d08dbb0ddd17972039b1e6",
+    ".github": "e24eac7eca13b6b8e1f1f61cb8011629ddda6fb9",
+    "Cargo.lock": "c98ecafbcfc43aa6dfe530c90f1df7faa0c4b1a4",
+    "Cargo.toml": "6651217bc14d04eb46bbf7ffc000fadc3f47c09b",
+    "build.rs": "6abcb16dbe7c69766404ff02d342b7e58194fa04",
+    "lib": "0f0ee66fd405aedbdaa40aad8e7a41a2e1d54913",
+    "scripts": "6723649173167bfa5c21ab8516befbbc04dfdb22",
+    "src": "87cf5c8492303a0bc34601c8229fb80f8a63916c"
+  }
+}

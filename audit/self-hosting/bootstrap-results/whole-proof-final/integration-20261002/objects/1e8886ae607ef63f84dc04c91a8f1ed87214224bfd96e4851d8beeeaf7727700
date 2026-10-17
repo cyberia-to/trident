@@ -1,0 +1,126 @@
+[
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "25",
+      "--repo",
+      "cyberia-to/trisha",
+      "--json",
+      "state,isDraft,headRefOid,baseRefOid,baseRefName,mergeable,statusCheckRollup"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "repos/cyberia-to/trisha/git/ref/heads/release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+      "95899e8f4fe32b5d7269d92b5e63ef429fbfafac"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "merge-tree",
+      "--write-tree",
+      "95899e8f4fe32b5d7269d92b5e63ef429fbfafac",
+      "5a8e386aa1228c6c37603811f1cfda219d281665"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "--method",
+      "PUT",
+      "repos/cyberia-to/trisha/pulls/25/merge",
+      "-f",
+      "merge_method=merge",
+      "-f",
+      "sha=5a8e386aa1228c6c37603811f1cfda219d281665"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "origin",
+      "release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "fbea3cef9a4139075e529c319ff75488ed5df625^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-list",
+      "--parents",
+      "-n",
+      "1",
+      "fbea3cef9a4139075e529c319ff75488ed5df625"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  },
+  {
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "25",
+      "--repo",
+      "cyberia-to/trisha",
+      "--json",
+      "state,headRefOid,baseRefName,mergeCommit"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-retention-remote-readback/trisha",
+    "exit_code": 0
+  }
+]

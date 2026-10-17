@@ -1,0 +1,98 @@
+{
+  "schema": "trident/provided-compiler-routing/v1",
+  "kind": "local-development",
+  "scope": "Runner routing and first supplied-C1 case only; no full corpus, C2 or C3 acceptance.",
+  "heads_at_collection": {
+    "trident": "ca9d926b65701be4f9fe0eadac0ac05283b95bb6",
+    "joy": "4e814a9b7e5d0515803ce394341785c0aa0e4b0a",
+    "nox": "13b4c2ee71b3f3e205ddc9ad30d1476b86a7ccc5"
+  },
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_native_compiler_runner.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "unit-tests.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "audit/self-hosting/compiler-routing/first-case-probe.py",
+        "--joy",
+        "../install-scaled/bin/joy",
+        "--compiler",
+        "../measurements/scaled-c1.dag",
+        "--output",
+        "audit/self-hosting/compiler-routing/provided-c1.json"
+      ],
+      "exit_code": 0,
+      "log": "provided-c1.log",
+      "status": "partial-external-stop"
+    },
+    {
+      "argv": [
+        "python3",
+        "audit/self-hosting/run-native-compiler.py",
+        "--joy",
+        "../install-scaled/bin/joy",
+        "--compiler",
+        "/tmp/trident-sort-specialized.dag",
+        "--output",
+        "audit/self-hosting/compiler-routing/profile-rejection.json"
+      ],
+      "exit_code": 1,
+      "log": "profile-rejection.log",
+      "status": "expected-profile-rejection"
+    }
+  ],
+  "inputs": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-scaled/bin/joy": {
+      "sha256": "9be2cc973013e52558e3fe3e19c4f5599d47c52493696c83d37883d9dba6b0f8",
+      "bytes": 4926832
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/scaled-c1.dag": {
+      "sha256": "67fd57be4b610d4716fc550c28fba9034782e003a21188c95f12bc03d85c92d3",
+      "bytes": 9719875
+    },
+    "/private/tmp/trident-sort-specialized.dag": {
+      "sha256": "655bb7c2455300776ab28f3020ca283fa3818343de9a5c9b6a85c8560d74c02f",
+      "bytes": 1048864
+    }
+  },
+  "source_files": {
+    "audit/self-hosting/run-native-compiler.py": {
+      "sha256": "e94cd0707e1b897e6ba6edcc433c68ec5fa5448bc21b7f3145dd9252f08daac4",
+      "lines": 480
+    },
+    "audit/self-hosting/native_compiler_artifact.py": {
+      "sha256": "e6522b2a762266fa90afc997d34a42de7b3a75eec2d1e5679e7e21fb83f3c9e7",
+      "lines": 33
+    },
+    "audit/self-hosting/test_native_compiler_runner.py": {
+      "sha256": "3c08e944dda725fffdb6e8fe2617cf7ed0073d2f5ffc6fb147e93b1f0a9b1ad4",
+      "lines": 155
+    },
+    "audit/self-hosting/compiler-routing/first-case-probe.py": {
+      "sha256": "b927cfc2bcb32f768547a47f65bd16c7741e4f4776791005bc04fcf11273e0cf",
+      "lines": 62
+    }
+  },
+  "evidence": {
+    "profile-rejection.json": "7e0067d0df957015169d8b19c02be67d97eb1bc87193e315e576394e5d15546a",
+    "profile-rejection.log": "4f85c21478fca4c39017b7c8199461db74c61f70b982ab74872c153f4d7b50c4",
+    "provided-c1.json": "4ad6943422a299ad0ce1028c8f5c22cbc04b407fbd887dbc65d9a769f3d277a5",
+    "provided-c1.log": "e5b86c74d9cbcba08e33f03364366eee2407e0d82b9cd1781118c279361fec5d",
+    "provided-c1.partial.json": "a353007de615a3e2be028821550d06a433ebc9568d4132e5e248945a9b307748",
+    "unit-tests.log": "9d261eead6b936d2f042e0464971964d70a607446d2242b16225c3a2482789c0"
+  }
+}

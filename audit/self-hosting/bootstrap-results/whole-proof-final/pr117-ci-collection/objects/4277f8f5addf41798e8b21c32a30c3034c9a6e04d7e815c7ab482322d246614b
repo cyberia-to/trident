@@ -1,0 +1,86 @@
+"""Exact old failures and full22 ZIP admission; large maps stay out of receipts."""
+import hashlib,subprocess,sys,time,zipfile
+from pathlib import Path
+from collection_common import *
+from metadata import admit as metadata_admit,asset,same,FIELDS
+
+V3_RECEIPT=dict(bytes=22119153,sha256='afcafa52769d5c44e47fc6db4c000bb909be96b4615af4e6527427d68938151b')
+V3_TERMINAL=dict(bytes=1048576,sha256='a5e895d319ae22859ca5cca55a237e89ef35765989eb342a1337492a9660ee3f')
+V3_WRAPPER=dict(bytes=1554,sha256='3925358cac3f6c9c906d1b7e19d368d8b5871db17ec6c4ac2a232513faf719d0')
+FAILED='bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1'
+
+def zip_members(path):
+    result={}
+    with zipfile.ZipFile(path) as archive:
+        members=archive.infolist();require(len(members)<=10000 and sum(m.file_size for m in members)<=GIB,'bounded original ZIP expansion')
+        for m in members:
+            if m.is_dir():continue
+            require(m.filename not in result,'distinct original ZIP member')
+            with archive.open(m) as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()
+            result[m.filename]=dict(bytes=m.file_size,sha256=digest)
+    return result
+
+def prior16(out,budget):
+    argv=[sys.executable,'-B','-W','error',str(ROOT/'prior16.py')];start=time.time_ns();budget.fast(2*MIB)
+    # The hash-checked local program checks its serialized output cap before writing.
+    done=subprocess.run(argv,cwd=V3,env={'PATH':'','LANG':'C'},capture_output=True,timeout=120)
+    require(len(done.stdout)<=256*1024 and len(done.stderr)<=MIB,'bounded isolated admission output')
+    for kind,data in [('stdout',done.stdout),('stderr',done.stderr)]:
+        budget.charge(len(data))
+        with (out/('prior16.'+kind)).open('xb') as f:f.write(data)
+    row=dict(command=argv,cwd=str(V3),environment={'PATH':'','LANG':'C'},started_ns=start,ended_ns=time.time_ns(),exit_code=done.returncode,stdout=identity(out/'prior16.stdout'),stderr=identity(out/'prior16.stderr'))
+    require(done.returncode==0 and not done.stderr,'original16 independent read-only replay')
+    value=load(out/'prior16.stdout');require(value['status']=='passed-original16-admission' and len(value['archives'])==16,'complete original16 admission')
+    return value,row
+
+def validate_v3(r,terminal,wrapper,prior):
+    require(r['schema']=='trident/exact-attempt-actions-collection-completion/v3' and r['status']=='running','preserved original v3 checkpoint')
+    require(terminal['status']=='failed' and terminal['ordinary_receipt']==V3_RECEIPT and terminal['latest_command']==r['commands'][-1],'authoritative failed v3 terminal')
+    require(wrapper['status']=='failed' and wrapper['exit_code']==1 and wrapper['sources_unchanged'] is True and wrapper['completed/receipt.json']==V3_RECEIPT and wrapper['completed/terminal-failure.json']==V3_TERMINAL,'original v3 outer failure')
+    require((r['run'],r['attempt'],r['head'])==(RUN,1,HEAD),'original run binding')
+    require(r['sources']==terminal['source_manifest']==load(V3/'sources.json') and wrapper['source_manifest']==identity(V3/'sources.json'),'original v3 source manifest')
+    for name,wanted in r['sources'].items():require(identity(name)==wanted,'unchanged v3 source closure')
+    require(r['review']==wrapper['review']==identity(V3/'independent-review.json'),'original source review binding')
+    for name in ('outer.stdout','outer.stderr'):require(identity(V3/name)==wrapper[name],'original v3 outer streams')
+    require(wrapper['started_ns']<=r['started_ns']<=terminal['ended_ns']<=wrapper['ended_ns'] and terminal['ended_ns']-r['started_ns']<=7200*10**9,'original bounded v3 interval')
+    require('all_files' not in r['original'] and all(tree(Path(name))==wanted for name,wanted in r['history']['all_files'].items()),'complete unchanged original/v2/probe inventories')
+    require(r['prior_attempts']==prior['prior_attempts'] and all(r['archives'][n]==v for n,v in prior['archives'].items()),'distinct original16 provenance')
+    require(r['limits']==dict(per_download_seconds=1200,total_seconds=7200,max_body_attempts=2,zip_bytes=GIB,decoded_bytes=4*GIB,owned_bytes=3*GIB,free_floor_bytes=8*GIB,body_read_rate=RATE,stderr_bytes=MIB),'unchanged historical v3 profile')
+
+
+def admit(out,budget):
+    require(identity(V3/'completed/receipt.json')==V3_RECEIPT and identity(V3/'completed/terminal-failure.json')==V3_TERMINAL and identity(V3/'launch-completed.json')==V3_WRAPPER,'exact failed v3 packet')
+    r=load(V3/'completed/receipt.json');terminal=load(V3/'completed/terminal-failure.json');wrapper=load(V3/'launch-completed.json');prior,local_command=prior16(out,budget);validate_v3(r,terminal,wrapper,prior)
+    run,jobs,listing=[load(OLD/(name+'.json')) for name in ('run','jobs','artifacts')];assets=metadata_admit(run,jobs,listing);by_name={a['name']:a for a in assets}
+    fresh={name:load(V3/'completed'/('admission-'+name+'.json')) for name in ('run','jobs','artifacts')};fresh_assets=metadata_admit(fresh['run'],fresh['jobs'],fresh['artifacts']);same(fresh['run'],fresh['jobs'],fresh_assets,run,jobs,assets)
+    ordered=sorted(by_name,key=lambda n:(n!='bootstrap-phase-matrix-comparison-attempt-1',n));new=[n for n in ordered if n in r['archives'] and n not in prior['archives']]
+    require(len(r['archives'])==len(r['members'])==22 and len(new)==6,'complete16 plus6 archive union')
+    expected=[('admission-run',f'actions/runs/{RUN}/attempts/1',8*MIB,False,False),('admission-jobs',f'actions/runs/{RUN}/attempts/1/jobs?per_page=100',8*MIB,False,False),('admission-artifacts',f'actions/runs/{RUN}/artifacts?per_page=100',8*MIB,False,False)]
+    for name in new+[FAILED]:
+        a=by_name[name];direct=load(V3/'completed'/(name+'-metadata.json'));require(all(direct[k]==a[k] for k in FIELDS),'v3 direct artifact metadata')
+        expected.append((name+'-metadata',f"actions/artifacts/{a['id']}",4*MIB,False,False))
+        for number in range(1,3 if name==FAILED else 2):expected.append((f'{name}-attempt-{number}',f"actions/artifacts/{a['id']}/zip",a['size_in_bytes'],True,name==FAILED))
+    require(len(r['commands'])==len(expected) and all(a['ended_ns']<=b['started_ns'] for a,b in zip(r['commands'],r['commands'][1:])),'complete serial v3 command prefix')
+    cumulative={n:list(v) for n,v in prior['prior_attempts'].items()}
+    for row,(name,endpoint,maximum,body,failed) in zip(r['commands'],expected):
+        require(row['name']==name and row['command']==[r['gh']['path'],'api','repos/'+REPO+'/'+endpoint],'exact historical ordered GET')
+        require(row['stdout_limit']==maximum and row['stderr_limit']==MIB and row['timeout_seconds']==1200 and row['body_read_rate']==(RATE if body else None),'historical command bounds')
+        require(r['started_ns']<=row['started_ns']<=row['ended_ns']<=terminal['ended_ns'] and 0<=row['elapsed_monotonic_seconds']<=1230,'historical command interval')
+        require(not any(k in row for k in ('cleanup_error','evidence_error')),'historical complete evidence/cleanup')
+        require(identity(V3/'completed'/(name+('.zip' if body else '.json')))==row['stdout'] and identity(V3/'completed'/(name+'.stderr'))==row['stderr'],'all historical raw output identities')
+        require(row['stdout']['bytes']<=maximum and row['stderr']['bytes']<=MIB,'historical output caps')
+        if failed:require(row['exit_code']==1 and row['retryable'] is True and 'error' in row and row['cleanup'].get('group_empty') is True and row['stdout']['bytes']==0,'two failed zero-byte attempts and quiescence')
+        else:require(row['exit_code']==0 and 'error' not in row,'successful historical command')
+        if body:
+            label=name.rsplit('-attempt-',1)[0];cumulative[label].append(dict(scope='v3',name=name))
+    require(len(r['transfers'])==7 and [t['name'] for t in r['transfers']]==new+[FAILED],'all historical v3 transfers')
+    for t in r['transfers']:
+        name=t['name'];attempts=[f'{name}-attempt-{n}' for n in range(1,3 if name==FAILED else 2)]
+        require(t['attempts']==attempts and t['prior_attempts']==prior['prior_attempts'][name] and t['cumulative_attempts']==cumulative[name],'exact cumulative v3 attempts')
+        require(t['status']==('transport-failure-retained' if name==FAILED else 'passed-body'),'historical transfer outcome')
+    for name,wanted in r['archives'].items():
+        require(wanted['metadata']==by_name[name] and {k:wanted[k] for k in ('bytes','sha256')}==asset(by_name[name]),'full authentic artifact identity')
+        if name in new:require(wanted['command_ref']==dict(scope='v3',name=name+'-attempt-1') and wanted['storage']==dict(zip=str(V3/'completed'/(name+'-attempt-1.zip')),tree=str(V3/'completed'/name)),'owned v3 reused storage')
+        require(identity(wanted['storage']['zip'])==asset(by_name[name]) and tree(Path(wanted['storage']['tree']))==r['members'][name]==zip_members(wanted['storage']['zip']),'all22 complete ZIP/member identities')
+    require(len(cumulative[FAILED])==2,'two prior attempts for current missing body')
+    return dict(run=run,jobs=jobs,assets=assets,archives=r['archives'],members=r['members'],prior_attempts=cumulative,gh=r['gh'],history=dict(v3=dict(receipt=V3_RECEIPT,terminal=V3_TERMINAL,wrapper=V3_WRAPPER,status='failed'),prior16=local_command,all_files={str(p):tree(p) for p in PRIOR}))

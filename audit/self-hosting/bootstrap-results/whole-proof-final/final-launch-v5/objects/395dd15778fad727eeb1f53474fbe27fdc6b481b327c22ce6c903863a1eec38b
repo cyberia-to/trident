@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_when_ready"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-launch-v5",
+  "sources": {
+    "when_ready.py": {
+      "bytes": 7264,
+      "sha256": "d56faf9f89f6cb4ecad6b13a23c7cc596b3857dc11cd675c7ddf477dff3564e8"
+    },
+    "test_when_ready.py": {
+      "bytes": 4842,
+      "sha256": "f67e10db3d42483bde4055f50b26870a7c2d375d4979623420eb9ae1b5f38c06"
+    }
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 0.13145908300066367,
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 958,
+      "sha256": "4728a058b1043299ba1cf69811b3086a0f1d900c839ebe571227e7e002396c69"
+    }
+  }
+}

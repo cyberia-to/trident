@@ -1,0 +1,70 @@
+{
+  "status": "passed-offline-launch-preparation",
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_admission",
+    "test_run"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay",
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_NO_REPLACE_OBJECTS": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "started_ns": 1790977159716836000,
+  "ended_ns": 1790977159843879000,
+  "exit_code": 0,
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 2516,
+    "sha256": "03c5665bf9328594a906672bb37803c88173f6cd326b26fb70e74e2285734767"
+  },
+  "source_manifest": {
+    "bytes": 1221,
+    "sha256": "368e1e006085d5d2d1225b0603f00bfb996b67e8a881f5165f30b50ae16220e2"
+  },
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/admission.py": {
+      "bytes": 8025,
+      "sha256": "66d2de43caa413287a10fe76351543b5791bdc7b6274fe480c765dd71b5c457b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/run.py": {
+      "bytes": 9900,
+      "sha256": "58a5f65b13348918149c0f6fd605b7513446bac078e669883a53c2f85327590d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/test_admission.py": {
+      "bytes": 5161,
+      "sha256": "09c4a185dcc802afb164fac4865eaebaf2544b13005b3d128bd665a47843d999"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/test_run.py": {
+      "bytes": 5032,
+      "sha256": "dc948d18f26ffcfd1113ec076048c6826b2387cdb514e99a87e83ad35726655d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/PLAN.md": {
+      "bytes": 4077,
+      "sha256": "f38db5c67cb280e9b179ae28d9439934b0cc3c86615125070a461a74bc9b9652"
+    }
+  },
+  "source_unchanged": true,
+  "prior_preparation": {
+    "bytes": 8619,
+    "sha256": "641933f8f99c646020f480484a68d6b9f0a12f94dabe71a4211d4a8171ad1173"
+  },
+  "scope": "23 isolated tests incl actual signals to test process; no child collector/replay/native spawned. Five local Git blob availability reads reused from unchanged first prep."
+}

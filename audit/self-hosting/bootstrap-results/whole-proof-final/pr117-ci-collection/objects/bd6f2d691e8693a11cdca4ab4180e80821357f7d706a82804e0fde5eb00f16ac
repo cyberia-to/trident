@@ -1,0 +1,28 @@
+{
+  "status": "failed-test-fixture-timing",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_http.HttpTests.test_known_permanent_http_timeout_stops_without_retry",
+    "test_http.CurlOriginTests.test_actual_short_permanent_http_response_is_not_retried",
+    "test_http.HttpTests.test_actual_timeout_quiescent_before_retry"
+  ],
+  "elapsed_seconds": 5.398,
+  "tests": 3,
+  "failures": 3,
+  "tool_chunks": [
+    "d729f3",
+    "5dfb8d"
+  ],
+  "observations": [
+    "Known-permanent timeout fixture used0.15s and Python startup could finish after the deadline, leaving no observed header on early attempts. Expected one command, observed3/2/3 for401/403/404 respectively.",
+    "Actual installedcurl short401/403/404/418 test passed; no-header timeout test passed.",
+    "Fixture timeout increased to1s so written headers can be observed; production deadline remains1200s."
+  ],
+  "source": "test_http.py"
+}

@@ -1,0 +1,119 @@
+"""Adversarial synthetic receipts only; no native execution or original deletion."""
+import copy
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+import cases
+import check
+import common
+import native
+import schedule
+import selected_transitions as transitions
+import selected
+import selected_quiescence
+
+
+class RetirementTests(unittest.TestCase):
+    def setUp(self):
+        self.path=Path('/fixture/exact-cost')
+        state=dict(device=1,inode=2,bytes=common.COST['bytes'],mtime_ns=10,ctime_ns=11,links=1,mode=0o100644)
+        self.admission=dict(schema='trident/retained-cost-construction-admission/v1',status='passed-construction-admission',
+                           generation=2,name='cost',original_proof={'proof':True},profile={'profile':True},
+                           certificate=dict(path=str(self.path),**common.COST,stat=state),accepted_as_rejection=False,
+                           fresh_verification_required=True,deletion_authorized=False,expected_fresh_error=common.ERRORS['cost'])
+        mapping=dict(device='st_dev',inode='st_ino',bytes='st_size',mtime_ns='st_mtime_ns',ctime_ns='st_ctime_ns',links='st_nlink',mode='st_mode')
+        self.before=dict(status='classified-before-unlink',removed=False,path=str(self.path),identity=common.COST,
+                         stat={v:state[k] for k,v in mapping.items()},construction_admission={'a':1},fresh_verification={'v':1},
+                         failed_original_verification_remains_failed=True,process_retirement={'p':1},prelude={'q':1},time_ns=100)
+        self.unlinked=dict(self.before,status='unlinked-held-inode',removed=True,charged_bytes=common.COST['bytes'])
+        self.final=dict(self.before,status='passed',removed=True,charged_bytes=0,completed_ns=110,before={'b':1})
+
+    def review(self):
+        transitions.admission_contract(self.admission,{'proof':True},{'profile':True})
+        transitions.retirement_contract(self.before,self.unlinked,self.final,self.admission,self.path)
+
+    def test_complete_chain_without_body(self):self.review()
+
+    def test_old_verdict_laundering(self):
+        self.admission['accepted_as_rejection']=True
+        with self.assertRaises(ValueError):self.review()
+
+    def test_admission_cannot_authorize_deletion(self):
+        self.admission['deletion_authorized']=True
+        with self.assertRaises(ValueError):self.review()
+
+    def test_missing_fresh_verification(self):
+        self.admission['fresh_verification_required']=False
+        with self.assertRaises(ValueError):self.review()
+
+    def test_hardlink_rejected(self):
+        self.admission['certificate']['stat']['links']=2
+        with self.assertRaises(ValueError):self.review()
+
+    def test_changed_retired_inode(self):
+        self.before['stat']['st_ino']=3
+        with self.assertRaises(ValueError):self.review()
+
+    def test_unlinked_bytes_not_yet_released(self):
+        self.unlinked['charged_bytes']=0
+        with self.assertRaises(ValueError):self.review()
+
+    def test_failed_retirement_is_not_success(self):
+        self.final['status']='failed'
+        with self.assertRaises(ValueError):self.review()
+
+    def test_partial_body_not_complete_cost(self):
+        self.admission['certificate']['bytes']-=1
+        with self.assertRaises(ValueError):self.review()
+
+    def test_changed_before_binding(self):
+        self.final['fresh_verification']={'different':True}
+        with self.assertRaises(ValueError):self.review()
+
+    def test_reversed_retirement_clock(self):
+        self.final['completed_ns']=99
+        with self.assertRaises(ValueError):self.review()
+
+
+
+class SelectedOriginalTests(unittest.TestCase):
+    def setUp(self):
+        self.base=Path(__file__).resolve().parent.parent
+        self.prior=common.load(self.base/'whole-proof-attacks-completion-v5/actual-2/c2.json')
+        self.suite=common.load(self.base/'whole-proof-attacks-v4-c2/whole-c2/receipt.json')
+    def review(self):return selected.suite_contract(self.suite,self.prior)
+    def test_actual_failed_shape_selects_only_cost(self):self.review()
+    def test_original_failed_suite_must_stay_input_changed(self):
+        self.suite['status']='passed-completion'
+        with self.assertRaises(ValueError):self.review()
+    def test_interrupted_after_scan_cannot_be_claimed(self):
+        self.suite['immutable_inputs_after']=self.suite['immutable_inputs_before']
+        with self.assertRaises(ValueError):self.review()
+    def test_mismatched_semantic_error_not_accepted(self):
+        self.suite['rejections'][0]['error']='certificate claim: context digest mismatch'
+        with self.assertRaises(ValueError):self.review()
+    def test_prelude_exact_original_snapshot(self):
+        ready=common.load(self.base/'whole-proof-attacks-v4-c2/whole-c2/prelude-complete.json')
+        self.assertEqual(ready['suite_receipt'],transitions.prelude_snapshot(self.suite))
+    def test_prelude_cannot_drop_completed_rejection_binding(self):
+        expected=transitions.prelude_snapshot(self.suite)
+        self.suite['rejections'][0]['protected_output']['sha256']='0'*64
+        self.assertNotEqual(expected,transitions.prelude_snapshot(self.suite))
+    def test_actual_retained_quiescence_replay_no_new_ps(self):
+        record=common.load(self.base/'whole-proof-attacks-completion-v5/actual-2/c2-cost.json')
+        for field in ('current_quiescence_before','current_quiescence_after'):
+            self.assertEqual(record[field],selected_quiescence.retained_observation(self.base,record[field]))
+    def test_original_birth_not_laundered_as_reused(self):
+        with self.assertRaisesRegex(ValueError,'original or ambiguous v4 process still live'):
+            selected_quiescence.classify(b'20 20 Fri Oct  2 00:00:00 2026   \n',{20:'old'},1790899300000000000,1790964890000000000)
+    def test_duplicate_process_identity_rejected(self):
+        raw=b'20 20 Fri Oct  2 00:00:00 2026\n20 30 Fri Oct  2 00:00:00 2026\n'
+        with self.assertRaisesRegex(ValueError,'unique positive process identity'):selected_quiescence.classify(raw,{99:'old'},1790899200000000000,1790964890000000000)
+    def test_prefix_private_birth_padding_is_normalized(self):
+        import quiescence
+        record=common.load(self.base/'whole-prefix-reclamation-v4/action-1/quiescence-1.json')
+        raw=Path(record['raw_private']['stdout']['local_only_path']).read_text()
+        for line in raw.splitlines():quiescence.birth(line.strip().split(None,3)[3])

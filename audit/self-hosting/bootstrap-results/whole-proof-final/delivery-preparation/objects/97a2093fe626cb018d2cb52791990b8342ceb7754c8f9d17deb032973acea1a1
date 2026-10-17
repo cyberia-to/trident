@@ -1,0 +1,104 @@
+"""Bounded no-follow reads and exclusive, fsynced metadata writes."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import stat
+import time
+
+
+def require(value, message):
+    if not value:
+        raise ValueError(message)
+
+
+def digest(data):
+    return dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+
+
+def exact_identity(value):
+    require(isinstance(value, dict) and type(value.get('bytes')) is int
+            and value['bytes'] >= 0 and isinstance(value.get('sha256'), str)
+            and len(value['sha256']) == 64
+            and all(c in '0123456789abcdef' for c in value['sha256']), 'valid byte identity')
+    return {k: value[k] for k in ('bytes', 'sha256')}
+
+
+def relative(name):
+    path = Path(name)
+    require(isinstance(name, str) and name and path.parts and not path.is_absolute()
+            and name == path.as_posix() and all(p not in ('.', '..') for p in path.parts),
+            'canonical relative path')
+    return path
+
+
+class Budget:
+    def __init__(self, caps):
+        self.caps = caps
+        self.start = time.monotonic()
+        self.read_bytes = 0
+        self.written_bytes = 0
+
+    def tick(self):
+        require(time.monotonic() - self.start <= self.caps['wall_seconds'], 'collector wall cap')
+
+    def read(self, path, maximum=None):
+        self.tick()
+        path = Path(path).absolute()
+        # Fail on symlinks anywhere in the original path, not only its leaf.
+        for parent in reversed(path.parents):
+            require(not stat.S_ISLNK(parent.lstat().st_mode), 'symlink ancestor')
+        cap = min(maximum or self.caps['individual_read_bytes'], self.caps['individual_read_bytes'])
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        try:
+            before = os.fstat(fd)
+            require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1, 'single-link regular input')
+            require(before.st_size <= cap, 'individual read cap')
+            require(self.read_bytes + before.st_size <= self.caps['total_read_bytes'], 'total read cap')
+            parts = []
+            count = 0
+            while True:
+                self.tick()
+                block = os.read(fd, min(1024 * 1024, cap + 1 - count))
+                if not block:
+                    break
+                count += len(block)
+                require(count <= cap, 'input grew beyond cap')
+                parts.append(block)
+            after = os.fstat(fd)
+            fields = ('st_dev', 'st_ino', 'st_nlink', 'st_size', 'st_mtime_ns', 'st_ctime_ns')
+            require(tuple(getattr(before, k) for k in fields) ==
+                    tuple(getattr(after, k) for k in fields), 'input changed during read')
+            leaf = path.lstat()
+            require(tuple(getattr(leaf, k) for k in fields) ==
+                    tuple(getattr(after, k) for k in fields), 'input path replaced during read')
+            require(count == before.st_size, 'complete input read')
+            self.read_bytes += count
+            return b''.join(parts)
+        finally:
+            os.close(fd)
+
+    def write(self, root, name, data):
+        self.tick()
+        path = Path(root) / relative(name)
+        require(self.written_bytes + len(data) <= self.caps['output_bytes'], 'output cap')
+        for parent in [path.parent, *path.parent.parents]:
+            require(not parent.is_symlink(), 'output symlink ancestor')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+        try:
+            with os.fdopen(fd, 'wb') as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+            parent_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            try:
+                os.fsync(parent_fd)
+            finally:
+                os.close(parent_fd)
+        finally:
+            self.written_bytes += len(data)
+
+
+def encoded(value):
+    return (json.dumps(value, indent=2, sort_keys=True) + '\n').encode()

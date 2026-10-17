@@ -1,0 +1,131 @@
+"""Adversarial synthetic receipts only; no native execution or original deletion."""
+import copy
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+import cases
+import check
+import common
+import native
+import schedule
+import transitions
+
+
+class NativeTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.base=Path(self.temp.name)
+        self.root=self.base/'whole-proof-attacks-v5-c1';self.shared=self.base/'whole-proof-attacks-completion-v5'
+        self.directory=self.root/'attempts/whole-c1-verify-cost'
+        self.directory.mkdir(parents=True);(self.shared/'native-processes').mkdir(parents=True)
+        self.argv=['/fixture/joy','verify-artifact','/fixture/compiler']
+        self.inputs={'/fixture/joy':dict(bytes=1,sha256='a'*64)}
+        self.metadata=dict(generation=1,expected_error=common.ERRORS['cost'])
+        self.binding=dict(pid=40,pgid=40,started='Fri Oct  2 00:00:00 2026',members={'40':'Fri Oct  2 00:00:00 2026'})
+        self.registered=dict(self.binding,parent=20,coordinator=10,argv=self.argv,attempt=self.directory.name,registered_ns=30)
+        self.plan=dict(proofs={'1':{'bytes':10569174820}},prelude_command=self.argv)
+        self.write(self.shared/'plan.json',self.plan);(self.shared/'resources.py').write_text('fixture')
+        (self.root/'guard.py').write_text('fixture')
+        self.write(self.shared/'admission-c1.json',dict(pid=10,children={'1':20},time_ns=2))
+        self.write(self.shared/'run-1/receipt.json',dict(started_ns=1,ended_ns=1000))
+        self.write(self.shared/'completed-c1.json',dict(quiescent_ns=90))
+        self.permit=self.shared/'capacity/c1-cost.json'
+        self.write(self.permit,dict(status='passed-capacity-admission',generation=1,case='cost',
+                   reservation={'accepted':True},admission=common.identity(self.shared/'admission-c1.json'),
+                   started_ns=3,ended_ns=10))
+        self.registered.update(generation=1,capacity_permit=common.reference(self.permit))
+        self.reg=self.shared/'native-processes'/(self.directory.name+'.json')
+        self.write(self.reg,self.registered);self.write(self.reg.with_suffix('.observed'),self.registered)
+        self.write(self.reg.with_suffix('.retired'),dict(time_ns=75,original=common.identity(self.reg),final_observation=dict(status='empty',members=[])))
+        sample=dict(time_ns=50,elapsed=1,rss_bytes=1024,shared_stop=False,
+                    processes=[dict(pid=40,rss_bytes=1024,started=self.binding['started'],state='S')])
+        (self.directory/'stdout').write_bytes(b'');(self.directory/'stderr').write_text('semantic terminal: Claim\n')
+        (self.directory/'resources.jsonl').write_text(json.dumps(sample)+'\n')
+        self.row=dict(schema='trident/whole-proof-attack-command/v2',status='passed',exit_code=1,expected_exit=1,
+                      argv=self.argv,metadata=self.metadata,cwd=str(self.directory),environment={'PATH':''},
+                      inputs_before=self.inputs,inputs_after=self.inputs,caps=dict(wall=7500,cpu=7500,rss=6*native.GIB,file=32*native.MIB),
+                      sampled_scope_disk_cap=26*native.GIB,free_floor=8*native.GIB,sample_interval_seconds=1,
+                      per_stream_log_bytes=native.MIB,pid=40,process_binding=self.binding,final_group=dict(status='empty',members=[]),
+                      started_ns=20,ended_ns=70,elapsed_seconds=2,sampled_peak_rss_bytes=1024,latest_sample=sample,
+                      driver=common.identity(self.root/'guard.py'),shared_driver=common.identity(self.shared/'resources.py'),
+                      shared_profile=common.identity(self.shared/'plan.json'),admission=common.identity(self.shared/'admission-c1.json'),capacity_permit=common.reference(self.permit))
+        self.save()
+
+    def write(self,path,value):
+        path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value,indent=2)+'\n')
+
+    def save(self):
+        self.row['files']={n:common.identity(self.directory/n) for n in ('stdout','stderr','resources.jsonl')}
+        self.write(self.directory/'receipt.json',self.row)
+
+    def review(self):
+        return native.diagnostic(self.base,1,self.directory,self.argv,1,self.metadata,self.inputs,'verify')
+
+    def test_complete_native_fixture(self):self.review()
+
+    def test_changed_caps_rejected(self):
+        self.row['caps']['wall']+=1;self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_shared_stop_cannot_be_passed(self):
+        self.row['resource_stop']='wall';self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_error_hidden_under_passed(self):
+        self.row['cleanup_error']='original failure';self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_raw_log_tamper(self):
+        (self.directory/'stderr').write_text('changed')
+        with self.assertRaises(ValueError):self.review()
+
+    def test_nonempty_final_group(self):
+        self.row['final_group']={'status':'owned','members':[]};self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_birth_replacement(self):
+        self.row['process_binding']=dict(self.binding,started='new birth');self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_retirement_not_actual_empty(self):
+        r=common.load(self.reg.with_suffix('.retired'));r['final_observation']={'status':'unbound','members':[]}
+        self.write(self.reg.with_suffix('.retired'),r)
+        with self.assertRaises(ValueError):self.review()
+
+    def test_wrong_registered_parent(self):
+        self.registered['parent']=999;self.write(self.reg,self.registered)
+        with self.assertRaises(ValueError):self.review()
+
+    def test_capacity_wrong_case(self):
+        permit=common.load(self.permit);permit['case']='generation';self.write(self.permit,permit)
+        self.row['capacity_permit']=common.reference(self.permit);self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_capacity_after_native_start(self):
+        permit=common.load(self.permit);permit['ended_ns']=21;self.write(self.permit,permit)
+        self.registered['capacity_permit']=common.reference(self.permit)
+        self.write(self.reg,self.registered);self.write(self.reg.with_suffix('.observed'),self.registered)
+        self.write(self.reg.with_suffix('.retired'),dict(time_ns=75,original=common.identity(self.reg),final_observation=dict(status='empty',members=[])))
+        self.row['capacity_permit']=common.reference(self.permit);self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_monotonic_cap_not_civil_duration(self):
+        self.row['elapsed_seconds']=7506;self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_process_rss_sum(self):
+        s=copy.deepcopy(self.row['latest_sample']);s['processes'][0]['rss_bytes']=1025
+        self.row['latest_sample']=s;(self.directory/'resources.jsonl').write_text(json.dumps(s)+'\n');self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_clock_domains_reported_separately(self):
+        self.row['ended_ns']=70_000_000_000
+        self.write(self.shared/'run-1/receipt.json',dict(started_ns=1,ended_ns=100_000_000_000))
+        self.write(self.shared/'completed-c1.json',dict(quiescent_ns=80_000_000_000));self.save()
+        # A long civil interval does not substitute for or extend the monotonic guard.
+        self.review()
+
+

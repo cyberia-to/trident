@@ -10,6 +10,8 @@ frontmatter.
 
 | proposal | status | what |
 |----------|--------|------|
+| [verified-bootstrap](verified-bootstrap.md) | accepted | VB0–VB8: reviewed nox root, Trident and own Rs bootstrap, Rust/Trident pairs including Eidos E0–E4 and complete scoped stack; implementation gates open |
+| [bounded-metaprogramming](bounded-metaprogramming.md) | draft | ML-style sums, type/function specialization and bounded compile-time evaluation; cost and bootstrap obligations |
 | [[noun-types]] | draft | why nox drops cell? and what Trident does instead |
 | [[polynomial-target]] | draft | polynomial noun lowering for nox |
 | [[five-algebras]] | draft | type-driven regime dispatch: BitVec, RingElement, Tropical, Curve types + 4 new std modules |

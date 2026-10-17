@@ -1,0 +1,30 @@
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 4.19s
+     Running tests/native_compiler.rs (../target-root/release/deps/native_compiler-8941dbcc9881c059)
+
+running 23 tests
+test function_bounds::actual_call_marker_push_checks_the_hard_delimiter_cap ... ok
+test function_import_bounds::imported_parameter_allowance_is_shared_and_rejects_before_first_excess_parameter ... ok
+test function_import_bounds::imported_function_allowance_counts_private_and_replaced_declarations_together ... ok
+test function_bounds::arguments_cross_chunk_and_balanced_frame_boundaries_in_source_order ... ok
+test function_imports::imported_calls_evaluate_arguments_once_and_preserve_distinct_trap_order ... ok
+test function_check::unit_return_scope_and_unused_body_errors_reject_before_code_generation ... ok
+test function_check::every_declared_body_checks_against_its_own_signature_with_final_call_bindings ... ok
+test function_bounds::actual_function_table_and_call_frames_obey_exact_output_depth ... ok
+test function_imports::imported_function_artifacts_ignore_declaration_discovery_and_unused_definitions ... ok
+test function_imports::imported_call_namespace_is_distinct_from_constants_and_lexical_module_roots ... ok
+test function_imports::imported_ordinary_asserts_keep_call_semantics_and_purity_uses_the_member_name ... ok
+test function_imports::imported_functions_keep_private_helpers_forward_calls_and_scalar_abis ... ok
+test function_plan::table_order_uses_full_names_and_only_reachable_final_definitions ... ok
+test function_plan::final_callable_graph_rejects_cycles_even_in_unused_and_unselected_code ... ok
+test function_imports::dependency_body_errors_retain_original_owner_spans_including_replaced_bodies ... ok
+test function_imports::imported_functions_do_not_expose_private_transitive_or_ambient_callables ... ok
+test loops::loop_table_ownership_is_independent_of_function_discovery_order ... ok
+test function_imports::imported_table_order_compares_owner_then_member_without_entry_privilege ... ok
+test functions::function_table_identity_ignores_declaration_order_and_unreachable_bodies ... ok
+test function_imports::imported_callables_follow_direct_per_symbol_use_order_and_final_visibility ... ok
+test function_bounds::graph_depth_counts_memoized_shared_suffixes_in_either_shortcut_order ... ok
+test functions::function_job_rejects_cycles_and_checks_every_body_and_call ... ok
+test constants::native_constants_freeze_final_typed_bindings_before_all_function_bodies ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 165 filtered out; finished in 53.82s

@@ -1,0 +1,1286 @@
+[
+  {
+    "command": [
+      "../target-byte-scale/release/trident",
+      "audit",
+      "lib/std/nox/bytes.tri",
+      "--json"
+    ],
+    "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+    "working_source_sha256": "293a6a44eb56633a8df095184c13bbcdefe4cfcd6a3480adc7b3a4c20f1a53db",
+    "exit_code": 2,
+    "stderr": "Auditing lib/std/nox/bytes.tri...\n",
+    "report": {
+      "file": "lib/std/nox/bytes.tri",
+      "functions": [
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "table_empty",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "table_empty: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "table_empty",
+          "unsupported": [
+            "table_empty: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "table_len",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "table_len: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "table_len",
+          "unsupported": [
+            "table_len: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "table_push",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "table_push: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "table_push",
+          "unsupported": [
+            "table_push: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "table_get",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "table_get: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "table_get",
+          "unsupported": [
+            "table_get: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "empty",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "empty: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "empty",
+          "unsupported": [
+            "empty: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "len",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "len: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "len",
+          "unsupported": [
+            "len: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "quotient",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "quotient: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "quotient",
+          "unsupported": [
+            "quotient: unmodeled scalar/aggregate expression"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "word_count",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "word_count: unmodeled scalar/aggregate expression"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "word_count",
+          "unsupported": [
+            "word_count: unmodeled scalar/aggregate expression"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "scale",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "scale: unmodeled call convert.as_u32"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "scale",
+          "unsupported": [
+            "scale: unmodeled call convert.as_u32"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "get",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "get: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "get",
+          "unsupported": [
+            "get: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "words",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "words: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "words",
+          "unsupported": [
+            "words: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "word_groups",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "word_groups: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "word_groups",
+          "unsupported": [
+            "word_groups: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "words_from",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "words_from: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "words_from",
+          "unsupported": [
+            "words_from: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "word_at",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "word_at: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "word_at",
+          "unsupported": [
+            "word_at: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "word_byte",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "word_byte: unmodeled call convert.as_u32"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "word_byte",
+          "unsupported": [
+            "word_byte: unmodeled call convert.as_u32"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "set",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "set: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "set",
+          "unsupported": [
+            "set: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "push",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "push: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "push",
+          "unsupported": [
+            "push: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "to_noun",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "to_noun: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "to_noun",
+          "unsupported": [
+            "to_noun: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "validation_task",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "validation_task: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "validation_task",
+          "unsupported": [
+            "validation_task: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "validate_eight",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "validate_eight: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "validate_eight",
+          "unsupported": [
+            "validate_eight: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "validate_words_chunk",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "validate_words_chunk: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "validate_words_chunk",
+          "unsupported": [
+            "validate_words_chunk: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "from_noun",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "from_noun: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "from_noun",
+          "unsupported": [
+            "from_noun: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "from_noun_budget",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "from_noun_budget: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "from_noun_budget",
+          "unsupported": [
+            "from_noun_budget: aggregate return"
+          ],
+          "verdict": "unknown"
+        }
+      ],
+      "verdict": "unknown"
+    }
+  },
+  {
+    "command": [
+      "../target-byte-scale/release/trident",
+      "audit",
+      "lib/std/nox/tree.tri",
+      "--json"
+    ],
+    "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+    "working_source_sha256": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4",
+    "exit_code": 2,
+    "stderr": "Auditing lib/std/nox/tree.tri...\n",
+    "report": {
+      "file": "lib/std/nox/tree.tri",
+      "functions": [
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "remaining",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "remaining: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "remaining",
+          "unsupported": [
+            "remaining: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "cursor",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "cursor: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "cursor",
+          "unsupported": [
+            "cursor: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "cursor_at",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "cursor_at: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "cursor_at",
+          "unsupported": [
+            "cursor_at: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "read_leaf",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "read_leaf: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "read_leaf",
+          "unsupported": [
+            "read_leaf: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "read",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "read: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "read",
+          "unsupported": [
+            "read: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "empty",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "empty: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "empty",
+          "unsupported": [
+            "empty: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "shape",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "shape: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "shape",
+          "unsupported": [
+            "shape: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "get",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "get: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "get",
+          "unsupported": [
+            "get: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "zipper",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "zipper: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "zipper",
+          "unsupported": [
+            "zipper: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "set",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "set: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "set",
+          "unsupported": [
+            "set: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "push",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "push: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "push",
+          "unsupported": [
+            "push: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "task",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "task: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "task",
+          "unsupported": [
+            "task: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "validate_chunk",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "validate_chunk: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "validate_chunk",
+          "unsupported": [
+            "validate_chunk: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "validate",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "validate: aggregate parameter"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "validate",
+          "unsupported": [
+            "validate: aggregate parameter"
+          ],
+          "verdict": "unknown"
+        }
+      ],
+      "verdict": "unknown"
+    }
+  },
+  {
+    "command": [
+      "../target-byte-scale/release/trident",
+      "audit",
+      "lib/std/compiler/nox/utf8.tri",
+      "--json"
+    ],
+    "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+    "working_source_sha256": "eec8b5cbe9364a5dab13205bea7e315a6ec5a14e2deb567e86db0bedabbe5fab",
+    "exit_code": 2,
+    "stderr": "Auditing lib/std/compiler/nox/utf8.tri...\n",
+    "report": {
+      "file": "lib/std/compiler/nox/utf8.tri",
+      "functions": [
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "word",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "word: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "word",
+          "unsupported": [
+            "word: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "group",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "group: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "group",
+          "unsupported": [
+            "group: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "chunk",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "chunk: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "chunk",
+          "unsupported": [
+            "chunk: aggregate return"
+          ],
+          "verdict": "unknown"
+        },
+        {
+          "analysis": {
+            "constraints": [],
+            "counterexamples": [],
+            "file": "validate",
+            "redundant_assertions": [],
+            "suggestions": [],
+            "summary": {
+              "active_constraints": 0,
+              "bmc_violations": 0,
+              "divine_inputs": 0,
+              "pub_inputs": 0,
+              "pub_outputs": 0,
+              "random_violations": 0,
+              "static_violations": 0,
+              "total_constraints": 0,
+              "variables": 0
+            },
+            "unsupported": [
+              "validate: aggregate return"
+            ],
+            "verdict": "unknown",
+            "version": 1
+          },
+          "function": "validate",
+          "unsupported": [
+            "validate: aggregate return"
+          ],
+          "verdict": "unknown"
+        }
+      ],
+      "verdict": "unknown"
+    }
+  }
+]

@@ -1,0 +1,54 @@
+{
+  "status": "passed-root-validation",
+  "source_manifest": {
+    "bytes": 11036,
+    "sha256": "4d7cb7f1f3db2eec9f543b1ee530c143b21c5ca2dfc25502802be21d06715419"
+  },
+  "source_count": 49,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "-v",
+    "test_schedule",
+    "test_retirement",
+    "test_prior_cases_v4",
+    "test_prior_cost_v4",
+    "test_prior_quiescence_v4"
+  ],
+  "exit_code": 0,
+  "tests": 79,
+  "started_ns": 1790959550729188000,
+  "ended_ns": 1790959552436889000,
+  "logs": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 9695,
+      "sha256": "39894c4b1867e8ed9150a7a779a17bad298713b28f5a2d240ae11dc753a8ec43"
+    }
+  },
+  "historical_admission_review": {
+    "status": "passed-source-review",
+    "sources": {
+      "bytes": 2573,
+      "sha256": "10b6bb2f95de0a982be811da55fda7467e64f0b1031a0d135ad968431d23a7c0"
+    },
+    "actual_replay": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-3/receipt.json",
+      "bytes": 3731,
+      "sha256": "55616432a2d4fc733107a5e24106c1182a4a7bd6106a25a61f2e9ec5a7df660b"
+    },
+    "checked": [
+      "Pinned original positive and v2 primitives, exact failed v3 source/guard/profile and native retirement.",
+      "Two controls and disjoint nine plus three cases authenticated; original suites and interrupted cost verification retain failed status.",
+      "C2 construction only admitted after full held-inode hash, source/recipe/command checks and historical/current quiescence; no old negative verdict credited.",
+      "Raw command stream/resource sample/hash checks, exact JOB context and protected output lineage preserved."
+    ]
+  }
+}

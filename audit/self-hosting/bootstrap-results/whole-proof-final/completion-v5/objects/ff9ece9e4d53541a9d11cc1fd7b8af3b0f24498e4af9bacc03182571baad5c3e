@@ -1,0 +1,19 @@
+"""Retain exact Python validation without starting any proof workload."""
+from pathlib import Path
+import hashlib,json,subprocess,sys,time
+ROOT=Path(__file__).resolve().parent
+NAMES=['prior_cases_v5.py','prior_pins_v5.py','prior_native_v5.py','prior_transitions_v5.py','prior_schedule_v5.py',
+       'prior_quiescence_v5.py','prior-v4-evidence.json','PRIOR-ADMISSION.md','test_prior_v5.py','replay_prior_v5.py','validate_prior_v5.py']
+def identity(p):
+ d=p.read_bytes();return dict(bytes=len(d),sha256=hashlib.sha256(d).hexdigest())
+def main():
+ out=ROOT/sys.argv[1];out.mkdir();sources={n:identity(ROOT/n) for n in NAMES}
+ command=[sys.executable,'-B','-W','error','-m','unittest','-v','test_prior_v5'];t=time.time_ns()
+ with (out/'stdout').open('xb') as stdout,(out/'stderr').open('xb') as stderr:
+  result=subprocess.run(command,cwd=ROOT,stdout=stdout,stderr=stderr,timeout=60)
+ after={n:identity(ROOT/n) for n in NAMES}
+ report=dict(status='passed' if result.returncode==0 and after==sources else 'failed',command=command,cwd=str(ROOT),started_ns=t,ended_ns=time.time_ns(),exit_code=result.returncode,sources=sources,sources_after=after,stdout=identity(out/'stdout'),stderr=identity(out/'stderr'))
+ (out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+ if report['status']!='passed':raise ValueError('prior validation failed')
+ print(report['status'])
+if __name__=='__main__':main()

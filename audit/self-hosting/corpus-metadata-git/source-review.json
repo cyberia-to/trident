@@ -1,0 +1,15 @@
+{
+  "scope": "Supplied parent independent review acknowledgement; raw independent command output was not supplied.",
+  "reviewer": "/root",
+  "result": "No blocking findings: metadata-only Git use, Git hash before/after, unchanged Joy PATH and21-case exercise.",
+  "command": "python3 -B -m unittest test_generated_profile_metadata test_compiler_selection",
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/corpus-path-fix/trident/audit/self-hosting",
+  "reported_python": "3.14",
+  "reported_tests_passed": 21,
+  "reported_elapsed_seconds": 0.538,
+  "sources": {
+    "audit/self-hosting/check-generated-compiler-profile.py": "6e932595eb575a3eeace39a9aee681a26656f3863022b45e34290cd32214797b",
+    "audit/self-hosting/test_compiler_selection.py": "27659f8e32a0edc48507d885297f5425d5ca3b4e5d19f6ae45924568a38f94fe",
+    "audit/self-hosting/test_generated_profile_metadata.py": "856aa4b98aadf622f3769d18766513ac0464b252a310135204172c1d97cfaeff"
+  }
+}

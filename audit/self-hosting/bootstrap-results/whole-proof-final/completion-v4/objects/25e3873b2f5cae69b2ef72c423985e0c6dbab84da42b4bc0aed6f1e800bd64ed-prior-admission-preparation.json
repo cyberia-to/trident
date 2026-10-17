@@ -1,0 +1,135 @@
+{
+  "schema": "trident/historical-case-admission-preparation/v1",
+  "status": "prepared",
+  "prepared_ns": 1790959282695189000,
+  "sources": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior-admission-sources.json",
+    "bytes": 2573,
+    "sha256": "10b6bb2f95de0a982be811da55fda7467e64f0b1031a0d135ad968431d23a7c0"
+  },
+  "external_pinned_code": [
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/prior_cases.py",
+      "bytes": 12991,
+      "sha256": "031896f4946cf459eb8ad30c189a98201428d01998d5350df179645113f67818"
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v2/check.py",
+      "bytes": 32726,
+      "sha256": "503bb17b57ec2141788f1536b1750e875b5d1f8b108751e40e30d58ab2658c9c"
+    },
+    {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/pins.json",
+      "bytes": 5269,
+      "sha256": "b0bc46b7ee07d2e4ec2cb1ae5796c97e99dd2e645156c383639618b7e68c8837"
+    }
+  ],
+  "tests": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/admission-validation-final-2/receipt.json",
+    "bytes": 6295,
+    "sha256": "5a40359970fa2dd3ecf9ffa5e3b41e0166b0350a3b6f8c074e2ffdac1df8462c"
+  },
+  "actual_replay": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-3/receipt.json",
+    "bytes": 3731,
+    "sha256": "55616432a2d4fc733107a5e24106c1182a4a7bd6106a25a61f2e9ec5a7df660b"
+  },
+  "actual_outputs": {
+    "c1.json": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-3/c1.json",
+      "bytes": 30675,
+      "sha256": "8dc3211e402394d603128980aa1f35af9d6b659c6f03024710c236be81e888b1"
+    },
+    "c2.json": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-3/c2.json",
+      "bytes": 30675,
+      "sha256": "4cb05804191d3c287fd385bc684195f291daaeaa38b36fde8310a1a95ff53725"
+    },
+    "c2-cost-construction.json": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-3/c2-cost-construction.json",
+      "bytes": 48541,
+      "sha256": "00352d1c419917d0dad1474ae98dd3742bc11f219ce368dfae878efaff6f33c4"
+    }
+  },
+  "actual_command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "replay_prior_v4.py",
+    "actual-3"
+  ],
+  "validation_command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "test_prior_cases_v4",
+    "test_prior_cost_v4",
+    "test_prior_quiescence_v4",
+    "-v"
+  ],
+  "assertions": {
+    "historical_rejections_per_generation": 12,
+    "historical_controls_per_generation": 2,
+    "synthetic_tests": 44,
+    "native_cases_launched": 0,
+    "files_deleted": 0,
+    "old_failed_attempts_relabelled": 0
+  },
+  "current_process_overlaps": {
+    "current_quiescence_before": [],
+    "current_quiescence_after": []
+  },
+  "superseded_attempts": {
+    "actual": [
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-1/receipt.json",
+        "bytes": 3248,
+        "sha256": "971fefca26cfa2e1641a5d824889148c95815f17d718e06efd88f4f5732dab09"
+      },
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/actual-2/receipt.json",
+        "bytes": 3731,
+        "sha256": "420d215cf24085e3fe3a2b18bcf58d10a12b4a90420e7641c00ca31905ed9f2d"
+      }
+    ],
+    "preparation": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior-admission-preparation.json.before-birthtime",
+      "bytes": 5018,
+      "sha256": "98b15d950d1517b011c0907828f8321b03445eb23c6d99464d5f574afa414739"
+    },
+    "sources": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior-admission-sources.json.before-birthtime",
+      "bytes": 2573,
+      "sha256": "20ecd9df3a1c6975c84ec7ef5982c24cb226e68c771d21a3b1d959cdb7e0098e"
+    },
+    "initial_test_logs": [
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/tests-1.stderr",
+        "bytes": 51407,
+        "sha256": "25e34044dc115408aad6ab36aacc0eae2d4e6c053d4c85548138c6ae4f2b3fe7"
+      },
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/tests-2.stderr",
+        "bytes": 19194,
+        "sha256": "3e482eca8dab2c416fdd5198bbaa08bb6e16ea7b2163a307e67ef1633d12d738"
+      },
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/tests-3.stderr",
+        "bytes": 4012,
+        "sha256": "e175f6e5a063afc213786cb5bf87f72ac9e78068c6b83da1a58fd62d67c9f90c"
+      },
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/tests-4.stderr",
+        "bytes": 6230,
+        "sha256": "1c55790916cc4fae7947ec18c7151a732cd0815f25ab1890632afaaf495a65cb"
+      },
+      {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/tests-5.stderr",
+        "bytes": 5075,
+        "sha256": "c5f2d431e636b174bcda6413d4921df1d169afd9fb411f286f5fd95b3d73f16b"
+      }
+    ]
+  },
+  "scope": "Admission source and read-only actual evidence replay only; no v4 native activation, cost verdict, retirement or SH8 acceptance."
+}

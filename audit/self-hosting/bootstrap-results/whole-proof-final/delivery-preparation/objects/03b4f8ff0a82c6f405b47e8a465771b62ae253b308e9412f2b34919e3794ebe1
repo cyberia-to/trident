@@ -1,0 +1,129 @@
+# Final local proof evidence delivery preparation
+
+Status: preparation only. V5 and F5 remain live/pending. No actual collector,
+proof command, publication, helper-tree write or acceptance has been performed.
+
+The collector follows the existing `completion-v5`, `checker-v5`,
+`final-launch-v5` and `integration-20261002` content-addressed object/map layout.
+The exact existing integration `verify-retained.py` is copied without edits.
+It checks retained streams and optional original stream identities; it does not
+replace F5 or replay private/large dependencies.
+
+## Admission and execution
+
+After root reviews the frozen `sources.json`, place an exact independent review
+in this preparation directory with `status: passed-source-review` and
+`sources` equal to that manifest. The explicit review SHA must be supplied.
+Only after the original actual V5 coordinator, both suites, F5 and its original
+watcher all pass may root run once:
+
+```
+/opt/homebrew/opt/python@3.14/bin/python3.14 -B -W error collect.py \
+  --review-sha256 <exact-independent-review-SHA256> \
+  --output-name actual-1
+```
+
+The cwd is `whole-proof-final-delivery-preparation`. Output is exclusively the
+fresh `staging/actual-1` directory under this preparation scope. There is no
+base override, destination-root override, dry-run acceptance or relaxed gate.
+The collector never executes any retained source/native command, signals a
+process, modifies originals, installs, commits, uploads, or writes a helper
+repository. A failure preserves its original output; another name requires an
+explicitly reviewed follow-up. No automatic retry or deletion exists.
+
+`policy.json` fixes F5 manifest `9c56357c`, review `eeaba901`, 547 pin map,
+V5 182-file closure `32f57009`, review `448ab7a2`, original watcher and launch
+identities, original proof identities, and four existing archive-map hashes.
+The watcher must bind the ten exact terminal positive/corpus/V5 prerequisites.
+F5 must be the actual `passed-composite-replay` with unchanged V5 inputs and
+42 commands/23 capacity permits. Per generation, two controls and 23 distinct
+rejections comprise nine V2 + three V3 + eleven fresh C1; C2 selects the exact
+V4 cost rejection and adds ten fresh cases. Original V2/V3 failures and V4
+`input-changed` remain literal. No old entire suite becomes accepted.
+
+Source/review identity is checked at entry and again before the passed packet
+receipt. The copied verifier must match the entry manifest. Every metadata
+body read during collection is rehashed before the terminal receipt. F5 is
+responsible for validating large proof/resource/binary bodies; the collector
+binds F5 and does not perform a second proof scan.
+
+## Caps and complete dependency privacy policy
+
+Hard-coded caps, also fixed in policy: 120 seconds wall time, 64 MiB individual
+read, 256 MiB total metadata reads including final rechecks, 64 MiB staged
+output, 20,000 catalog records, and 1 MiB per public stream. These are collector
+limits only; original native/proof clocks and resource limits do not change.
+No-follow, single-link regular inputs have inode/size/time stability checked
+before/after reading. Writes are exclusive and file/parent fsynced. The terminal
+receipt labels staged bytes before its own write; read/time counts include the
+final source check. Cap/time exhaustion fails without a passed receipt.
+
+| Dependency set | Exact public retention | Identity-only treatment |
+|---|---|---|
+| 29 F5 sources, 547 F5 pins, 182 V5 closure, original source reviews/watchers | Existing four accepted archive maps are fixed and referenced | Static identities are inherited from reviewed maps and actual F5; no blanket fresh-rehash assertion |
+| Existing archived source, test, failed-preparation, review, integration objects | No duplicate copies | `already-retained-reference` points to exact accepted map/object |
+| Original full producer/fresh verifier receipts, two positive proofs, complete input package, two extracted-compiler corpus inventories | Eight exact positive stdout/stderr streams | Receipts, source/corpus file identities and compiler/proof bodies are references; proof/binary bodies never opened |
+| Actual watcher and F5 result | Two exact watcher stdout/stderr streams; allowlisted typed F5 summary | Complete original watcher/F5 JSON are private references, not sanitized replacements |
+| V5 controller/baseline, per-generation admissions/completions, selected V4 cost, suite histories | Summary states original failed history and exact case partition | Full JSON, nested selected `raw_stdout`, host snapshots and process ownership stay local |
+| 42 fresh construct/verify commands | 84 exact stdout/stderr streams, each bounded and privacy-scanned | Original command receipts, input maps and resource logs remain hash references |
+| 23 generation/case capacity permits and observation logs | Counts and source-bound scope in summary | Metadata receipts rehashed; observation bodies referenced through their exact permit identities |
+| 42 registrations plus original observations/retirements | No raw process tables | All exact metadata identities retained, process records remain private |
+| Every nested byte identity in the loaded metadata | None unless explicitly listed above | Classified under its path or original JSON pointer; arbitrary unknown data are reference-only, never copied or followed |
+| Signed URLs, credentials, raw host process output, unknown structured payloads | Never | Fail if present in any allowed public stream; no redaction of originals |
+
+`dependencies.json` is the union of the above declared closures and runtime
+metadata graph, not an unconstrained filesystem crawl. `observed_metadata_bytes`
+means this collector read/rehashed that exact small body. `false` explicitly
+means a declared identity from authenticated F5/maps; existence, fresh hashing
+or public safety are not inferred. `source-reference`, `private-original-reference`,
+`artifact-reference-no-body`, `unreviewed-original-reference` and
+`already-retained-reference` all forbid body copying. Only the explicit 94
+stream allowlist is `exact-public-stream`. The full public summary is a typed
+projection, linked to the original private F5 identity; it is not byte-identical
+to that original or an independently replayed acceptance verdict.
+
+The separate `preview.py` performs only static metadata classification. Its
+preparation receipt cannot satisfy collector admission. The initial actual
+preview classified 14,654 entries using 4,064,325 metadata bytes, including the
+6,215-file historical immutable baseline and both complete corpus inventories.
+The dynamic final metadata is added only after actual acceptance. Caps stay
+fixed; exceeding them needs a new reviewed preparation, not silent widening.
+
+## Reviewable packet and later owner integration
+
+Packet files: `summary.json`, `dependencies.json`, `collector-source.json`,
+`retained-files.json`, deduplicated `objects/<sha256>`, exact copied
+`verify-retained.py`, local `.gitattributes` (`objects/* -text`), README and the
+terminal receipt binding all earlier packet files. Never copy proof bodies,
+source-package archives, binaries or the private original JSON into Git.
+
+Root first runs the copied verifier against the staged packet (optionally
+`--originals`), independently checks the complete packet receipt/map/summary,
+and checks the privacy classifications. It then copies the small exact packet
+once to a NEW helper `audit/self-hosting/bootstrap-results/whole-proof-final/`
+subdirectory with explicit paths and original hashes. That later integration,
+raw-byte attributes, actual final documentation and commit/install/PR are
+separate root-owned actions. Keep existing frozen archives and source manifests
+unchanged. No root `.gitattributes` broadening; any byte-preserving whitespace
+exception must name an exact raw object, if a real diff check requires it.
+
+This completes local SH8 evidence delivery only if actual F5 passes. Durable
+22-part proof retention is the already accepted Trisha PR25 gate. Six-platform
+package coverage is accepted PR24 source `73b50ebd`; PR116 and PR117 native CI
+are distinct. New product versions, default-branch integration, tags, registry
+publication and public promotion remain owner actions. No private/succinct
+compiler proof or language-semantics preservation is added.
+
+## Preparation validation
+
+```
+python3 -B -W error -m unittest -v test_delivery test_shapes
+python3 -B -W error preview.py
+```
+
+Tests use synthetic temporary metadata only, including a complete 42-command,
+23-permit/94-stream shape. They cover source/verifier changes, false/pending
+acceptance, stale prerequisites, duplicate cases, historical-status laundering,
+private nested data, signed URLs, symlinks/hardlinks/path escapes, caps, output
+reuse, deduplication and preserved failed partial packets. No collector launch
+or live native/proof execution is part of preparation validation.

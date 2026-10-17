@@ -167,6 +167,15 @@ The package's 255-byte logical-name ceiling applies to that prefix; member
 identifiers retain the source-language length bound. An identifier is required
 after every dot. Lexical failures retain code 1, incomplete paths code 2 and
 prefix-capacity failures code 7, all at the original offending token.
+
+`qualified_name.matches_owner(prefix, owner)` compares validated byte handles
+bounded by 255 bytes. It accepts the complete owner or exactly its final dotted
+component; a dotted suffix shorter than the complete owner does not match. The
+comparison preserves every byte and leaves both handles unchanged. Function,
+constant and type import readers use this predicate while retaining the complete
+ordered-use scan: a later missing or private member leaves an earlier public
+binding visible.
+
 Imported constant lookup compares a member against its defining source, keeps
 the calling expression's span, and retains literal provenance independently of
 the canonical Field value. Direct-use order determines each exported binding;
@@ -200,6 +209,42 @@ call-graph roots; reachable definitions occupy runtime slots sorted by the pair
 not affect executable identities. A graph error retains the declaration owner's
 original package index and source span. Source-work and runtime limits are shared
 across the complete reached package; this slice does not raise them.
+
+### Preparing the frozen compiler source package
+
+`scripts/prepare-selfhost-source.py` prepares the frozen S1 package from a
+checksum-verified portable compiler kit and an exact Trident source tree. Its
+required `--kit-manifest-sha256` must come from the verified distribution;
+an internal `accepted` status is not an authentication mechanism. The helper
+checks that externally pinned manifest, every listed kit file, the frozen C2
+and inventory identities, and the fixed-point source-map identity. Native
+matrix acceptance remains owned by the kit's original acceptance authority.
+The default requires an accepted kit. `--rehearsal` explicitly admits a
+historical rehearsal kit and preserves that qualification in its receipt.
+
+Preparation performs bounded byte copying and SHA256 checks only. It neither
+discovers imports nor parses, checks or compiles source; it does not invoke
+Joy, Cargo, Git or any language tool. Exactly 94 canonical source paths totaling
+370544 bytes must match the frozen inventory and fixed-point map, including
+origin labels. Compiler options remain target0, profiles1/1, optimization0 and
+empty cfg flags. LIM1 and explicit Joy host flags match the declared whole
+compiler profile in [SH6](self-hosting.md#sh6-reproducible-bootstrap).
+
+Kit enumeration is bounded to 32 ordinary files in its root and 128 MiB total,
+with at most 16 MiB per file; JSON is bounded to 16 MiB before parsing. Source reads are bounded to the
+declared length and 65536 bytes per file before allocation. Duplicate JSON keys,
+nonordinary files, symlink components, unsafe or case-alias paths, and changed
+input identities reject. Output must be a fresh directory disjoint from the
+kit and source tree, with an existing ordinary parent. Input rejection creates
+no output. After output reservation, a failed write retains a `failed` receipt
+where possible; it never reports successful preparation.
+
+The output contains copied C2, 94 source files, a relative version1 package
+manifest, and a receipt binding the input identities and every copied byte.
+Only successful preparation reports `prepared`. The guide then invokes
+installed Joy explicitly to pack JOB1 and execute the supplied compiler.
+Preparing a package establishes neither compilation nor SH6 acceptance.
+
 
 ## Result and failures
 

@@ -1,0 +1,19 @@
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 13.51s
+     Running tests/native_job_word_compare.rs (../target-byte-scale/release/deps/native_job_word_compare-c2f87885df9d9445)
+
+running 3 tests
+job-word prefix=0 visits=2 reductions=11872 nodes=6095 frames=155
+job-word prefix=3 visits=8 reductions=15803 nodes=6220 frames=155
+job-word prefix=4 visits=20 reductions=21233 nodes=6727 frames=176
+job-word prefix=15 visits=96 reductions=43910 nodes=7900 frames=208
+job-word prefix=31 visits=256 reductions=54346 nodes=7477 frames=208
+job-word prefix=127 visits=1536 reductions=223856 nodes=15152 frames=388
+job-word prefix=254 visits=3570 reductions=453929 nodes=29934 frames=652
+test word_comparison_resource_probe ... ok
+test packed_comparison_preserves_exact_spent_allowance_and_prefix_order ... ok
+test packed_comparison_orders_every_byte_in_every_lane has been running for over 60 seconds
+test packed_comparison_orders_every_byte_in_every_lane ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 61.62s
+

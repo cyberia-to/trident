@@ -1,0 +1,25 @@
+{
+  "status": "superseded-test-coverage-candidate",
+  "source_manifest": {
+    "bytes": 3716,
+    "sha256": "6ce30fe39daa9fdff1ade7bd3c5359fb30486113568fb07fc8e79ad37bf038da"
+  },
+  "finding": "Two negative fixtures had literal backslash-n instead of LF and reached malformed birth parsing. Root independently identified with AST. Original80-test pass receipt remains preserved; intended owner/duplicate branches were not covered by those two original tests.",
+  "correction": "Only test_selected.py fixture LF bytes and specific rejection-message assertions changed; all production/pin/source-contract files identical.",
+  "changed": {
+    "test_selected.py": {
+      "before": {
+        "bytes": 6396,
+        "sha256": "2b5e2e81cc2e12639b0e31de01138d47f3dc2299cbd786ab98935b2822b401e0"
+      },
+      "after": {
+        "bytes": 6484,
+        "sha256": "b23996cca50b8e017a61383f1376e9014163a8561aa15d2f1aed1a8557516bc2"
+      }
+    }
+  },
+  "new_source_manifest": {
+    "bytes": 3716,
+    "sha256": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584"
+  }
+}

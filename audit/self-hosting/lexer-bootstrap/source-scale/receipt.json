@@ -1,0 +1,1770 @@
+{
+  "schema": "trident/source-scale-compacting/v1",
+  "status": "passed",
+  "scope": "provided-C2 source-size corpus only; full C2 corpus/fixed point/platform acceptance remain open",
+  "invocation": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/check.py",
+    "--joy",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "--joy-sha256",
+    "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+    "--compiler-sha256",
+    "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+    "--producer-receipt",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2.json",
+    "--producer-receipt-sha256",
+    "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale.json"
+  ],
+  "script_sha256": "03a99dd789a54a4bdfc616adfcc121b1d7a1cafcf300f3668b800213b673addb",
+  "binary": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+  "compiler": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+  "compiler_sha256_start": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "binary_sha256_start": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "producer_receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2.json",
+  "producer_receipt_sha256": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+  "host_flags": [
+    "--arena-nodes",
+    "1000000000",
+    "--budget",
+    "20000000000",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "3600000",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "10000000000"
+  ],
+  "program_host_flags": [
+    "--budget",
+    "1000000",
+    "--arena-nodes",
+    "196608",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "30000"
+  ],
+  "limits": {
+    "modules": 128,
+    "diagnostics": 16,
+    "sequence_length": 65536,
+    "validation_visits": 16777216,
+    "artifact_bytes": 16777216,
+    "artifact_nodes": 196608,
+    "artifact_depth": 4096,
+    "reductions": 20000000000,
+    "arena_nodes": 1000000000,
+    "evaluator_frames": 65536
+  },
+  "selected_cases": [
+    "baseline",
+    "valid4096",
+    "valid65536",
+    "diagnostic-after-comment",
+    "exact65536",
+    "excess65537"
+  ],
+  "complete_corpus": true,
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"b3de34b0fe5f7c18e62c97fca9cc948fab3134845db6654e0fc97ee36eee78ca\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":35,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737\",\"source_bytes\":35,\"source_particle\":\"962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a\",\"validation_visits\":202},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1253568333
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/program.dag\",\"execution\":{\"allocated_nodes\":112531,\"arena_reserved_bytes\":419430416,\"charged_reductions\":366863,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":310259,\"peak_resident_nodes\":112531,\"pinned_nodes\":100522,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":112531,\"scratch_bytes\":29360128,\"total_allocations\":112531},\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":202,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":35,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737\",\"source_bytes\":35,\"source_particle\":\"962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a\",\"status\":\"success\"},\"elapsed_micros\":1307564,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"b3de34b0fe5f7c18e62c97fca9cc948fab3134845db6654e0fc97ee36eee78ca\",\"output_particle\":\"4629c8f65d26e6dd497fed98efc164c8a5768e4df226650612e02d14097269d9\",\"peak_frames\":403,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1318755375
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/program.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/zero.dag",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/value.dag",
+        "--budget",
+        "1000000",
+        "--arena-nodes",
+        "196608",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/value.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":619,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 8356542
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"ea7f38b9f6c54b3c30d8b64f2bad628386ffb40fb9ac5e7bd9e97b8d5110c4de\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4096,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46\",\"source_bytes\":4096,\"source_particle\":\"2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da\",\"validation_visits\":2226},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1266637209
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/program.dag\",\"execution\":{\"allocated_nodes\":537382,\"arena_reserved_bytes\":419430416,\"charged_reductions\":22156845,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":19588063,\"peak_resident_nodes\":537382,\"pinned_nodes\":100547,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":537382,\"scratch_bytes\":29360128,\"total_allocations\":537382},\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":2226,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4096,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46\",\"source_bytes\":4096,\"source_particle\":\"2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da\",\"status\":\"success\"},\"elapsed_micros\":4007880,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"ea7f38b9f6c54b3c30d8b64f2bad628386ffb40fb9ac5e7bd9e97b8d5110c4de\",\"output_particle\":\"5db0a185fe4c453bf8297b1823ee7a93f2fa821b6da5104d281b9d5ed75291bf\",\"peak_frames\":2380,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 4019802416
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/program.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/zero.dag",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/value.dag",
+        "--budget",
+        "1000000",
+        "--arena-nodes",
+        "196608",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/value.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":690,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 9078875
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"2e4644403e03844d8e8dae59ffd3bc07767f1832ce0d12a25d98945dae22d4af\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364\",\"source_bytes\":65536,\"source_particle\":\"47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075\",\"validation_visits\":32946},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1439151500
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/program.dag\",\"execution\":{\"allocated_nodes\":8569494,\"arena_reserved_bytes\":419430416,\"charged_reductions\":488109499,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":8248,\"collection_work\":48576306,\"collection_work_limit\":10000000000,\"collections\":2,\"evaluator_checkpoints\":437670003,\"peak_resident_nodes\":3145728,\"pinned_nodes\":100559,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":6090032,\"resident_limit\":3145728,\"resident_nodes\":2479462,\"scratch_bytes\":29360128,\"total_allocations\":8569494},\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":32946,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364\",\"source_bytes\":65536,\"source_particle\":\"47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075\",\"status\":\"success\"},\"elapsed_micros\":57370443,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"2e4644403e03844d8e8dae59ffd3bc07767f1832ce0d12a25d98945dae22d4af\",\"output_particle\":\"675aa05e3c01cf01f1d176f959a3550da2cb318e4606d57135898189b9591db1\",\"peak_frames\":4324,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 57384870417
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/program.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/zero.dag",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/value.dag",
+        "--budget",
+        "1000000",
+        "--arena-nodes",
+        "196608",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/value.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":637,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 9017666
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"31592cf3b36dcb32f19311b901c73467ec4eb3787cd2e48881c7cc35cb112359\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4139,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2\",\"source_bytes\":4139,\"source_particle\":\"65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5\",\"validation_visits\":2264},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1263180041
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/result.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/result.dag\",\"execution\":{\"allocated_nodes\":546223,\"arena_reserved_bytes\":419430416,\"charged_reductions\":23860286,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":20738039,\"peak_resident_nodes\":546223,\"pinned_nodes\":100555,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":546223,\"scratch_bytes\":29360128,\"total_allocations\":546223},\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":5,\"end_byte\":4138,\"message\":\"invalid binding\",\"module_index\":0,\"start_byte\":4131}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":2264,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4139,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2\",\"source_bytes\":4139,\"source_particle\":\"65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":59,\"package_particle\":\"95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5\",\"status\":\"compile_error\"},\"elapsed_micros\":4175002,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"31592cf3b36dcb32f19311b901c73467ec4eb3787cd2e48881c7cc35cb112359\",\"output_particle\":\"bd42adf8335ea9afc3bf18625487d146243c6cbc201ab1e221a881d0716107ad\",\"peak_frames\":2388,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"bd42adf8335ea9afc3bf18625487d146243c6cbc201ab1e221a881d0716107ad\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 4187357166
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/program.dag",
+        "--force",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code5 module0 [4131..4138): invalid binding\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 4075051167
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"3fa5fb788d0bc17536128c0dae965e140eed133a24056e5f8f7a8831d3d0aece\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6\",\"source_bytes\":65536,\"source_particle\":\"73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf\",\"validation_visits\":32946},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1443097417
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/result.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/result.dag\",\"execution\":{\"allocated_nodes\":438973,\"arena_reserved_bytes\":419430416,\"charged_reductions\":6147232,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":6732813,\"peak_resident_nodes\":438973,\"pinned_nodes\":100522,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":438973,\"scratch_bytes\":29360128,\"total_allocations\":438973},\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":1,\"end_byte\":1,\"message\":\"invalid encoding/token\",\"module_index\":0,\"start_byte\":0}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":32946,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6\",\"source_bytes\":65536,\"source_particle\":\"73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":65,\"package_particle\":\"7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf\",\"status\":\"compile_error\"},\"elapsed_micros\":3007476,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"3fa5fb788d0bc17536128c0dae965e140eed133a24056e5f8f7a8831d3d0aece\",\"output_particle\":\"f5db59f42e23cad8b69e3bfa485fd7cbcc496840c023b7e8aad34a7deb361dac\",\"peak_frames\":1619,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"f5db59f42e23cad8b69e3bfa485fd7cbcc496840c023b7e8aad34a7deb361dac\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 3019071000
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/program.dag",
+        "--force",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code1 module0 [0..1): invalid encoding/token\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 3019959083
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"c446d1db12e08f78ea7e7f33a0a93a87b20649289bb4d79d93eb666d0e1c6141\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65537,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178\",\"source_bytes\":65537,\"source_particle\":\"e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d\",\"validation_visits\":32976},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1439587125
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/job.dag",
+        "--emit",
+        "result",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/result.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/result.dag\",\"execution\":{\"allocated_nodes\":107904,\"arena_reserved_bytes\":419430416,\"charged_reductions\":100737,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":100441,\"peak_resident_nodes\":107904,\"pinned_nodes\":100525,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":107904,\"scratch_bytes\":29360128,\"total_allocations\":107904},\"compiler_job\":{\"compiled_particle\":null,\"diagnostics\":[{\"code\":7,\"end_byte\":0,\"message\":\"compiler capacity\",\"module_index\":0,\"start_byte\":0}],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":32976,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65537,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178\",\"source_bytes\":65537,\"source_particle\":\"e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":65,\"package_particle\":\"f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d\",\"status\":\"compile_error\"},\"elapsed_micros\":1281483,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"c446d1db12e08f78ea7e7f33a0a93a87b20649289bb4d79d93eb666d0e1c6141\",\"output_particle\":\"88be04502e3800fa0c000d976105565f4fae89176730eec72b3f7040784a1e29\",\"peak_frames\":312,\"program_particle\":\"2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"88be04502e3800fa0c000d976105565f4fae89176730eec72b3f7040784a1e29\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1293111459
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/program.dag",
+        "--force",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 1,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: guest compilation failed: code7 module0 [0..0): compiler capacity\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 1289679125
+    }
+  ],
+  "observations": [
+    {
+      "case": "baseline",
+      "status": "passed",
+      "source_bytes": 35,
+      "source_sha256": "5c9aa89baf258457fb467293f9c205b82a05ff7422dd0c8dc5d115613e04b694",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 35
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "b3de34b0fe5f7c18e62c97fca9cc948fab3134845db6654e0fc97ee36eee78ca",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 35,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+              "source_bytes": 35,
+              "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+          "validation_visits": 202
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "d23275d60f264e6a6bfb1c994d57904e584c3e70ff89a6ec7b80d84a5868b02f",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/program.dag",
+        "execution": {
+          "allocated_nodes": 112531,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 366863,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 310259,
+            "peak_resident_nodes": 112531,
+            "pinned_nodes": 100522,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 112531,
+            "scratch_bytes": 29360128,
+            "total_allocations": 112531
+          },
+          "compiler_job": {
+            "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 202,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 35,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+                "source_bytes": 35,
+                "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+            "status": "success"
+          },
+          "elapsed_micros": 1307564,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "b3de34b0fe5f7c18e62c97fca9cc948fab3134845db6654e0fc97ee36eee78ca",
+          "output_particle": "4629c8f65d26e6dd497fed98efc164c8a5768e4df226650612e02d14097269d9",
+          "peak_frames": 403,
+          "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+        "schema": "joy/artifact-run/v1"
+      },
+      "program_sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82",
+      "runtime_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/baseline/value.dag",
+        "execution": {
+          "allocated_nodes": 10,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 1,
+          "elapsed_micros": 619,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+          "peak_frames": 1,
+          "program_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 13,
+      "baseline_artifact_bytes_equal": true,
+      "output_sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "case": "valid4096",
+      "status": "passed",
+      "source_bytes": 4096,
+      "source_sha256": "97399baa952797fafd5f9b6cd878076abec9ea5f0441c6a50f763ab295c46d20",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 4096
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "ea7f38b9f6c54b3c30d8b64f2bad628386ffb40fb9ac5e7bd9e97b8d5110c4de",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 4096,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46",
+              "source_bytes": 4096,
+              "source_particle": "2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da",
+          "validation_visits": 2226
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "8afa354044fa5d2b2371f471f7acbf43aedf306a80b1b910c18fed021d95951e",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/program.dag",
+        "execution": {
+          "allocated_nodes": 537382,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 22156845,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 19588063,
+            "peak_resident_nodes": 537382,
+            "pinned_nodes": 100547,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 537382,
+            "scratch_bytes": 29360128,
+            "total_allocations": 537382
+          },
+          "compiler_job": {
+            "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 2226,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 4096,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46",
+                "source_bytes": 4096,
+                "source_particle": "2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da",
+            "status": "success"
+          },
+          "elapsed_micros": 4007880,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "ea7f38b9f6c54b3c30d8b64f2bad628386ffb40fb9ac5e7bd9e97b8d5110c4de",
+          "output_particle": "5db0a185fe4c453bf8297b1823ee7a93f2fa821b6da5104d281b9d5ed75291bf",
+          "peak_frames": 2380,
+          "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+        "schema": "joy/artifact-run/v1"
+      },
+      "program_sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82",
+      "runtime_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid4096/value.dag",
+        "execution": {
+          "allocated_nodes": 10,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 1,
+          "elapsed_micros": 690,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+          "peak_frames": 1,
+          "program_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 13,
+      "baseline_artifact_bytes_equal": true,
+      "output_sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "case": "valid65536",
+      "status": "passed",
+      "source_bytes": 65536,
+      "source_sha256": "9a0125c744455fa4fa4d31ef3a9247f0e354e5a68fcef8b4be1a5af76587e449",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 65536
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "2e4644403e03844d8e8dae59ffd3bc07767f1832ce0d12a25d98945dae22d4af",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 65536,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364",
+              "source_bytes": 65536,
+              "source_particle": "47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075",
+          "validation_visits": 32946
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "5adf0ac6001d65a3bed7a0d8a5313632f18688a04e7d74c5215c3c6074fcbd58",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/program.dag",
+        "execution": {
+          "allocated_nodes": 8569494,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 488109499,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 8248,
+            "collection_work": 48576306,
+            "collection_work_limit": 10000000000,
+            "collections": 2,
+            "evaluator_checkpoints": 437670003,
+            "peak_resident_nodes": 3145728,
+            "pinned_nodes": 100559,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 6090032,
+            "resident_limit": 3145728,
+            "resident_nodes": 2479462,
+            "scratch_bytes": 29360128,
+            "total_allocations": 8569494
+          },
+          "compiler_job": {
+            "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 32946,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 65536,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364",
+                "source_bytes": 65536,
+                "source_particle": "47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075",
+            "status": "success"
+          },
+          "elapsed_micros": 57370443,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "2e4644403e03844d8e8dae59ffd3bc07767f1832ce0d12a25d98945dae22d4af",
+          "output_particle": "675aa05e3c01cf01f1d176f959a3550da2cb318e4606d57135898189b9591db1",
+          "peak_frames": 4324,
+          "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+        "schema": "joy/artifact-run/v1"
+      },
+      "program_sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82",
+      "runtime_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/valid65536/value.dag",
+        "execution": {
+          "allocated_nodes": 10,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 1,
+          "elapsed_micros": 637,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+          "peak_frames": 1,
+          "program_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 13,
+      "baseline_artifact_bytes_equal": true,
+      "output_sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "case": "diagnostic-after-comment",
+      "status": "passed",
+      "source_bytes": 4139,
+      "source_sha256": "96474061b8146cc7e37f9074608cb6df702285e0434177acccdb44205e9c8864",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 4139
+        }
+      },
+      "expected_diagnostic": 5,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "31592cf3b36dcb32f19311b901c73467ec4eb3787cd2e48881c7cc35cb112359",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 4139,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2",
+              "source_bytes": 4139,
+              "source_particle": "65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5",
+          "validation_visits": 2264
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "950010d71e80a548602418b9c7178b37529ff45134be317a197efffedf56cbce",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/diagnostic-after-comment/result.dag",
+        "execution": {
+          "allocated_nodes": 546223,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 23860286,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 20738039,
+            "peak_resident_nodes": 546223,
+            "pinned_nodes": 100555,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 546223,
+            "scratch_bytes": 29360128,
+            "total_allocations": 546223
+          },
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 5,
+                "end_byte": 4138,
+                "message": "invalid binding",
+                "module_index": 0,
+                "start_byte": 4131
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 2264,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 4139,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "134e79d97a9a0556d19697b7af82034d45c840f72d5dbbeb62b5662e7321d0b2",
+                "source_bytes": 4139,
+                "source_particle": "65d273414e3a9518f9ba5eabf54e183853f2abcc4881fbdf56005eae90e54e92"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 59,
+            "package_particle": "95fa444109bd07a294922964989e2457ce4ff69138c51342d82179517552cdf5",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 4175002,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "31592cf3b36dcb32f19311b901c73467ec4eb3787cd2e48881c7cc35cb112359",
+          "output_particle": "bd42adf8335ea9afc3bf18625487d146243c6cbc201ab1e221a881d0716107ad",
+          "peak_frames": 2388,
+          "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "bd42adf8335ea9afc3bf18625487d146243c6cbc201ab1e221a881d0716107ad",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 5,
+          "end_byte": 4138,
+          "message": "invalid binding",
+          "module_index": 0,
+          "start_byte": 4131
+        }
+      ],
+      "result_sha256": "493506435cb5dad57b3b68c13c8c69942777c5e6768c68598616bd9c8c11b6ea",
+      "previous_program_preserved": true
+    },
+    {
+      "case": "exact65536",
+      "status": "passed",
+      "source_bytes": 65536,
+      "source_sha256": "d02a8a5dbddd3ad6821b0f905317e147e4a0ab755815d479d81943c47e950f15",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 65536
+        }
+      },
+      "expected_diagnostic": 1,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "3fa5fb788d0bc17536128c0dae965e140eed133a24056e5f8f7a8831d3d0aece",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 65536,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6",
+              "source_bytes": 65536,
+              "source_particle": "73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf",
+          "validation_visits": 32946
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "a01991e623a0cbc4619d6572fe06f8643b2c3271183ff9c0b85c5da6a628b410",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/exact65536/result.dag",
+        "execution": {
+          "allocated_nodes": 438973,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 6147232,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 6732813,
+            "peak_resident_nodes": 438973,
+            "pinned_nodes": 100522,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 438973,
+            "scratch_bytes": 29360128,
+            "total_allocations": 438973
+          },
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 1,
+                "end_byte": 1,
+                "message": "invalid encoding/token",
+                "module_index": 0,
+                "start_byte": 0
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 32946,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 65536,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "064916d90280976afacaf1fb5f5283d643500e1181e882f87cd334ccac4e5ec6",
+                "source_bytes": 65536,
+                "source_particle": "73478ebf00d8cefde55db131833d2989f4dd4c3709334895289fdc66477076cd"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 65,
+            "package_particle": "7e145204e63f832f83bf2fb68b9b413534884ec6e83e5320edf64103c43421cf",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 3007476,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "3fa5fb788d0bc17536128c0dae965e140eed133a24056e5f8f7a8831d3d0aece",
+          "output_particle": "f5db59f42e23cad8b69e3bfa485fd7cbcc496840c023b7e8aad34a7deb361dac",
+          "peak_frames": 1619,
+          "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "f5db59f42e23cad8b69e3bfa485fd7cbcc496840c023b7e8aad34a7deb361dac",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 1,
+          "end_byte": 1,
+          "message": "invalid encoding/token",
+          "module_index": 0,
+          "start_byte": 0
+        }
+      ],
+      "result_sha256": "b614d11ffea2d0d64e7cd6d8b11df158649f38ff97c966fa5471541a0ffed1ac",
+      "previous_program_preserved": true
+    },
+    {
+      "case": "excess65537",
+      "status": "passed",
+      "source_bytes": 65537,
+      "source_sha256": "36ebf6a953addb5627cca0cf48c3518c99655cbbe1c43638e897b3c376f2c2d1",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 65537
+        }
+      },
+      "expected_diagnostic": 7,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "c446d1db12e08f78ea7e7f33a0a93a87b20649289bb4d79d93eb666d0e1c6141",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 65537,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178",
+              "source_bytes": 65537,
+              "source_particle": "e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d",
+          "validation_visits": 32976
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "dcb1c40c1df7bafb51588c8b21a93471a0966b070dc44fb516961e5ba4b07c32",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/excess65537/result.dag",
+        "execution": {
+          "allocated_nodes": 107904,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 100737,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 100441,
+            "peak_resident_nodes": 107904,
+            "pinned_nodes": 100525,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 107904,
+            "scratch_bytes": 29360128,
+            "total_allocations": 107904
+          },
+          "compiler_job": {
+            "compiled_particle": null,
+            "diagnostics": [
+              {
+                "code": 7,
+                "end_byte": 0,
+                "message": "compiler capacity",
+                "module_index": 0,
+                "start_byte": 0
+              }
+            ],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 32976,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 65537,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "0e350c526d9ce08d05763315998d33ccd0b7695ecc4e2a168b90f923c7297178",
+                "source_bytes": 65537,
+                "source_particle": "e5bf514bff6509549677bafa62b2ef99e7919f2266aab77c6a7ea615019367cf"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 65,
+            "package_particle": "f662f2cf99355a5fa507ecaa6dda05292887dd10c1ffb42be81f255bcc8a309d",
+            "status": "compile_error"
+          },
+          "elapsed_micros": 1281483,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "c446d1db12e08f78ea7e7f33a0a93a87b20649289bb4d79d93eb666d0e1c6141",
+          "output_particle": "88be04502e3800fa0c000d976105565f4fae89176730eec72b3f7040784a1e29",
+          "peak_frames": 312,
+          "program_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "88be04502e3800fa0c000d976105565f4fae89176730eec72b3f7040784a1e29",
+        "schema": "joy/artifact-run/v1"
+      },
+      "diagnostics": [
+        {
+          "code": 7,
+          "end_byte": 0,
+          "message": "compiler capacity",
+          "module_index": 0,
+          "start_byte": 0
+        }
+      ],
+      "result_sha256": "5f2eee917d4710fac65c56411b5080575d9615f95aa4915662d3512ce76821dc",
+      "previous_program_preserved": true
+    }
+  ],
+  "artifact_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx",
+  "compiler_particle": "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+  "input_fixture": {
+    "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/joy/cli/tests/compiler_vectors.json",
+    "source_sha256": "4b118cd9c9f20764e46b16676d4cb63599dc40c7e8f3a40a47c4fe5962f752ad",
+    "retained": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-source-scale-files-ecc_9iyx/zero.dag",
+    "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+  },
+  "compiler_sha256_end": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "binary_sha256_end": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8"
+}

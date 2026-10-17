@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 90, in <module>
+    main()
+    ~~~~^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 47, in main
+    archive = bounded(ROOT / 'evidence.tar.gz', 8 << 20)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 27, in bounded
+    require(stat.S_ISREG(path.lstat().st_mode) and path.stat().st_size <= maximum,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'bounded ordinary input: ' + str(path))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 19, in require
+    raise ValueError(message)
+ValueError: bounded ordinary input: /Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/evidence.tar.gz

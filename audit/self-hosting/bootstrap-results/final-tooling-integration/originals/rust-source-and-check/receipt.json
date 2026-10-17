@@ -1,0 +1,96 @@
+{
+  "status": "passed",
+  "scope": "Exact source-bound reuse of original complete Rust workspace result plus a fresh pinned compiler check; no fresh Rust test count",
+  "index_tree": "27228fb1b10997fecffc34c037ab63db42b08a29",
+  "protected_paths": [
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "tests",
+    "Cargo.toml",
+    "Cargo.lock",
+    "build.rs"
+  ],
+  "protected_tree_bytes": 56915,
+  "protected_tree_sha256": "a63b62baf01a096dabf4a56d56fce71fb5e20c37cd4c60f92dc4fe4a40650b52",
+  "tree_commands": [
+    [
+      "git",
+      "ls-tree",
+      "-rz",
+      "--full-tree",
+      "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+      "--",
+      "src",
+      "lib",
+      "compiler",
+      "catalog",
+      "silicon",
+      "tests",
+      "Cargo.toml",
+      "Cargo.lock",
+      "build.rs"
+    ],
+    [
+      "git",
+      "ls-tree",
+      "-rz",
+      "--full-tree",
+      "27228fb1b10997fecffc34c037ab63db42b08a29",
+      "--",
+      "src",
+      "lib",
+      "compiler",
+      "catalog",
+      "silicon",
+      "tests",
+      "Cargo.toml",
+      "Cargo.lock",
+      "build.rs"
+    ]
+  ],
+  "original_test_receipt": {
+    "path": "audit/self-hosting/whole-proof-validation/parallel-v2/delivery/inherited-rust-workspace/receipt.json",
+    "sha256": "4032ec0da9b1e51a5efed6bdd9cfd7f681dd2de289aa5e1d3789b9043e1a12aa"
+  },
+  "original_test_counts": [
+    1231,
+    0,
+    5
+  ],
+  "native_phase_files": "unchanged exact bbcd blobs",
+  "changed_corpus_helper": "exact reviewed2f1a575 blob",
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "-D warnings",
+    "RUSTDOCFLAGS": "-D warnings",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target"
+  },
+  "command": [
+    "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+    "check",
+    "--release",
+    "--workspace",
+    "--locked",
+    "--offline"
+  ],
+  "exit_code": 0,
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 2882,
+      "sha256": "6e365b268b2eecf5666f0c28f67064b8b47b64eb94890a51904b0f379327bba0"
+    }
+  },
+  "warning_lines": [],
+  "finished": "2026-10-02T09:15:46.739490+00:00"
+}

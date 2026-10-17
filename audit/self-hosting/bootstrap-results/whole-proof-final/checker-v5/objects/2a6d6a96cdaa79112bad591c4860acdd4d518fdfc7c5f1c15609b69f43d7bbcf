@@ -1,0 +1,108 @@
+"""Compose two old controls and exactly 9 v2 + 3 v3 + selected v4 + fresh v5 rejections."""
+from pathlib import Path
+from common import (require, identity, load, same, files, within, profile_flags,
+                    ERRORS, PRIOR, ADDITIONAL, NEW, COST, reference, case_partition)
+import historical
+import native
+import selected
+
+
+def suite_contract(suite, number, prior, positive, profile):
+    require(suite['schema'] == 'trident/whole-self-build-certificate-completion/v5'
+            and suite['status'] == 'passed-completion' and suite['generation'] == number
+            and suite['original_proof'] == positive['proof'] and suite['profile'] == profile,
+            'successful exact v5 completion suite')
+    require(suite['prior_cases'] == prior and 'controls' not in suite and not suite.get('error')
+            and not suite.get('input_error'), 'explicit historical reuse with no hidden suite failure')
+    require(suite['immutable_inputs_before'] == suite['immutable_inputs_after'], 'immutable v5 suite inputs')
+    case_partition([r['name'] for r in prior['original_v2']['rejections']],
+                   [r['name'] for r in prior['additional_v3']['rejections']],
+                   [r['name'] for r in suite['rejections']],number,[] if number==1 else ['cost'])
+    require(len(prior['controls']) == 2 and [r['name'] for r in prior['controls']] ==
+            ['original-fresh-verification','rechain'], 'exact original two controls')
+
+
+def review(base, number, positive, pins):
+    root=base/f'whole-proof-attacks-v5-c{number}'
+    old=base/f'whole-proof-attacks-v3-c{number}'
+    work=root/f'whole-c{number}'
+    proof=base/f'whole-proof/attempts/c{number}-selfbuild-1/proof.joysc'
+    verifier=base/f'whole-proof/attempts/c{number}-fresh-verification-1'
+    profile=load(base/'whole-proof/profile.json')
+    prior=historical.review(base,number,proof,verifier,positive['verification'])
+    suite=load(work/'receipt.json')
+    suite_contract(suite,number,prior,positive,profile)
+    helper_root=base/'whole-proof-helper-v4'
+    expected_inputs=[root/'whole_suite.py',root/'guard.py',old/'preparation.json',helper_root/'build-1/receipt.json',
+                     helper_root/'fixture-1/receipt.json',base/'whole-helper-digest-independent-review/independent-review.json',
+                     base/'whole-proof-attacks-completion-v5/prior_cases_v5.py',base/'production-install/installed/bin/joy',
+                     helper_root/'target-helper/release/whole-proof-mutator',helper_root/'helper/Cargo.toml',helper_root/'helper/Cargo.lock']
+    expected_inputs+=sorted((helper_root/'helper').glob('*.rs'))
+    expected_inputs+=[p for p in sorted((old/'inputs').rglob('*')) if p.is_file()]
+    require(set(map(str,expected_inputs))==set(suite['immutable_inputs_after']),'independent full V5 immutable input inventory')
+    for path,value in suite['immutable_inputs_after'].items():same(Path(path),value)
+    cost_chain=None
+    if number==1:
+        require(suite['selected_v4_cost'] is None,'C1 has no selected historical cost')
+    else:
+        recorded=load(work/'selected-v4-cost.json')
+        require(suite['selected_v4_cost']==recorded,'suite binds exact selected V4 object')
+        replayed=selected.admit_v4_c2_cost(base,proof,verifier,positive['verification'],recorded)
+        require(recorded==replayed,'independently replayed historical cost and original failed outcomes')
+        before,after=(recorded[k] for k in ('current_quiescence_before','current_quiescence_after'))
+        require(suite['started_ns']<=before['started_ns']<=before['ended_ns']<=after['started_ns']<=after['ended_ns']<=suite['ended_ns'],
+                'two retained cost admission observations within actual V5 suite')
+        cost_chain=dict(selected=reference(work/'selected-v4-cost.json'),verification=recorded['verification'],
+                        retirement=recorded['retirement'],original_suite_status='input-changed',original_controller_status='failed')
+    helper=base/'whole-proof-helper-v4/target-helper/release/whole-proof-mutator'
+    index,noun=work/'index.json',work/'result.dag'
+    same(index,prior['index']);same(noun,prior['result'])
+    indexed=load(index)
+    require(indexed['source_sha256']==positive['proof']['sha256'] and indexed['source_bytes']==positive['proof']['bytes']
+            and indexed['records']==positive['verification']['records']
+            and indexed['decoded_bytes']==positive['verification']['transport']['decoded_bytes'],'complete original copied index')
+    frozen=old/'inputs/frozen'
+    files(frozen,load(base/'whole-proof/preparation.json')['files'])
+    compiler,job=frozen/f'c{number}.dag',frozen/f'c{number}-job.dag'
+    joy=base/'production-install/installed/bin/joy'
+    inputs={str(p):identity(p) for p in (helper,index,noun)};inputs[str(proof)]=positive['proof']
+    commands=[]
+    for row in suite['rejections']:
+        name=row['name']
+        certificate=work/f'certificate-{name}.joysc'
+        output=work/(name+'.dag');directory=root/f'attempts/whole-c{number}-verify-{name}'
+        require(within(root,row['verification_receipt'])==directory/'receipt.json','distinct exact verifier receipt')
+        argv=[joy,'verify-artifact',compiler,'--input',job,'--proof',certificate,'--output',output,
+              '--emit','program',*profile_flags(profile),'--force']
+        actual_inputs={str(p):identity(p) for p in (joy,compiler,job)}
+        actual_inputs.update({str(certificate):row['certificate'],str(output):row['protected_output']})
+        native.diagnostic(base,number,directory,argv,1,dict(generation=number,expected_error=ERRORS[name]),actual_inputs,'verify')
+        require(row['error']==ERRORS[name] and (directory/'stdout').read_bytes()==b''
+                and ERRORS[name] in (directory/'stderr').read_text(),'specific actual negative without success stdout')
+        same(output,row['protected_output'])
+        recipe=row['recipe']
+        build=root/f'attempts/whole-c{number}-construct-{name}'
+        require(within(root,recipe['construction_receipt'])==build/'receipt.json'
+                and recipe['certificate']==row['certificate'] and recipe['mode']==name and recipe['context']==[],
+                'exact fresh constructed mutation')
+        native.diagnostic(base,number,build,[helper,'mutate',proof,index,noun,certificate,name],0,
+                          dict(generation=number,mode=name),inputs,'helper')
+        built=load(build/'stdout')
+        require(built['mode']==name and built['wire_bytes']==row['certificate']['bytes']
+                and built['source_records']==indexed['records'],'actual new helper output dimensions')
+        if name in ('drop-first','swap-first-two','omit-completion','truncate-last-byte','trailing-byte'):
+            require(built['source_decoded_bytes']==indexed['decoded_bytes'],'framing source dimensions')
+        else:require(built['source_sha256']==positive['proof']['sha256'],'semantic whole source identity')
+        sidecar=name.startswith('valid-output-')
+        require(('canonical_output_sidecar' in recipe)==sidecar,'all required canonical sidecars')
+        if sidecar:
+            path=within(root,recipe['canonical_output_sidecar']['path'])
+            require(path==certificate.with_suffix('.dag'),'exact canonical output path');same(path,recipe['canonical_output_sidecar'])
+        require(not certificate.exists() and not certificate.is_symlink(),'completed owned temporary reclaimed')
+        commands.append(reference(build/'receipt.json'))
+        commands.append(reference(directory/'receipt.json'))
+    require({str(p):identity(p) for p in (helper,index,noun,proof)}==inputs,'proof/index/result/helper unchanged')
+    return dict(status='passed-case-replay',suite=reference(work/'receipt.json'),original_v2_status='failed',
+                original_v3_status='failed',original_v4_status='input-changed',reused_controls=2,reused_v2_rejections=list(PRIOR),
+                reused_v3_rejections=list(ADDITIONAL),fresh_v5_rejections=list(NEW if number==1 else NEW[1:]),distinct_rejections=23,
+                actual_v5_commands=commands,c2_cost=cost_chain)

@@ -1,0 +1,3 @@
+# Actual local final proof evidence
+
+This packet projects the exact accepted local F5 result bound in summary.json. Raw private receipts and host process observations remain local and are represented by byte identities. Exact public command streams are content addressed; existing source/review archives are referenced without recopying. Proof bodies, binary bodies, signed URLs and full host process snapshots are excluded. dependencies.json labels observed metadata reads separately from identities inherited from reviewed manifests/F5. It is not a standalone proof replay or a durable transport/publication verdict.

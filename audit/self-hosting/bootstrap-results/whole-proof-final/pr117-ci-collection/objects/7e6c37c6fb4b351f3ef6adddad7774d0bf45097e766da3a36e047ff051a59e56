@@ -1,0 +1,27 @@
+"""Exact authenticated native-run and artifact coordinates."""
+from collection_common import RUN,HEAD,REPO,MIB,GIB,require
+FIELDS=('id','name','size_in_bytes','digest','expired','workflow_run','url','archive_download_url')
+RUN_FIELDS=('id','run_attempt','head_sha','status','conclusion','path','event','head_branch')
+
+def asset(a):
+    require(type(a['id']) is int and a['id']>0,'positive artifact id')
+    require(a['digest'].startswith('sha256:') and len(a['digest'])==71 and all(c in '0123456789abcdef' for c in a['digest'][7:]),'mandatory server digest')
+    require(a['expired'] is False and type(a['size_in_bytes']) is int and 0<a['size_in_bytes']<=256*MIB,'live bounded original asset')
+    require(a['url']==f"https://api.github.com/repos/{REPO}/actions/artifacts/{a['id']}" and a['archive_download_url']==a['url']+'/zip','fixed original artifact origin')
+    require(a['workflow_run']['id']==RUN and a['workflow_run']['head_sha']==HEAD,'original run provenance')
+    return dict(bytes=a['size_in_bytes'],sha256=a['digest'][7:])
+
+def admit(run,jobs,listing):
+    require((run['id'],run['run_attempt'],run['head_sha'],run['status'],run['conclusion'])==(RUN,1,HEAD,'completed','success'),'exact successful original attempt')
+    require(jobs['total_count']==len(jobs['jobs'])==37 and all((j['run_id'],j['run_attempt'],j['head_sha'],j['status'],j['conclusion'])==(RUN,1,HEAD,'completed','success') for j in jobs['jobs']),'all37 actual native jobs')
+    require(len({j['id'] for j in jobs['jobs']})==len({j['name'] for j in jobs['jobs']})==37,'distinct exact jobs')
+    names={f'bootstrap-phase-{target}-repeat-{repeat}-{phase}-attempt-1' for target in ['aarch64-apple-darwin','x86_64-apple-darwin','aarch64-unknown-linux-gnu','x86_64-unknown-linux-gnu','aarch64-pc-windows-msvc','x86_64-pc-windows-msvc'] for repeat in (1,2) for phase in ('producer','c2','c3')}|{'bootstrap-phase-matrix-comparison-attempt-1'}
+    assets=listing['artifacts'];require(listing['total_count']==len(assets)==len({a['id'] for a in assets})==37 and {a['name'] for a in assets}==names,'complete original artifact inventory')
+    require(sum(a['size_in_bytes'] for a in assets)<=GIB,'aggregate original ZIP cap')
+    for a in assets:asset(a)
+    return assets
+
+def same(run,jobs,assets,previous_run,previous_jobs,previous_assets):
+    require(all(run[k]==previous_run[k] for k in RUN_FIELDS),'exact original run unchanged')
+    require({(j['id'],j['name']) for j in jobs['jobs']}=={(j['id'],j['name']) for j in previous_jobs['jobs']},'same37 original jobs')
+    require({a['name']:{k:a[k] for k in FIELDS} for a in assets}=={a['name']:{k:a[k] for k in FIELDS} for a in previous_assets},'same full original artifact identities')

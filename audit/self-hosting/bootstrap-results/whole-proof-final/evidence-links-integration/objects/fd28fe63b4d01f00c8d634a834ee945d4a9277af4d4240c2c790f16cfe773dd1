@@ -1,0 +1,18 @@
+{
+  "status": "passed-ready-pr-exact-head-readback",
+  "head": "f008a14a6c5e66dca5cfb7acade924618ea5b4a8",
+  "pull_request": {
+    "baseRefName": "release/0.4",
+    "baseRefOid": "15202f42240ba923398908ee0db62d32f1d655f8",
+    "body": "Replace the three sibling-relative README links with immutable GitHub URLs for Cyber's worker contract and Zheng's execution/backend contracts. These links now cross repository boundaries correctly in GitHub's rendered README.\n\nValidation: each linked Git blob exactly matches the authenticated GitHub file at the pinned revision; only README.md changes; git diff --check passes. Fresh-prefix Rust 1.89 offline installation from source-equivalent accepted archive paths passed in 0.361 seconds using the existing warm target, with zero warnings and unchanged Joy SHA256 7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071. SH8 remains pending; product source and versions are unchanged.\n",
+    "headRefName": "docs/0.4-evidence-links",
+    "headRefOid": "f008a14a6c5e66dca5cfb7acade924618ea5b4a8",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "number": 30,
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "title": "docs: fix cross-repository evidence links",
+    "url": "https://github.com/cyberia-to/joy/pull/30"
+  }
+}

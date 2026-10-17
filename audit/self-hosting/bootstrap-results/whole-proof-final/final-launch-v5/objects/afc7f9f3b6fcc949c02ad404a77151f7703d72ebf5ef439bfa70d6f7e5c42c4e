@@ -1,0 +1,81 @@
+"""Independent mock-only watcher lifecycle probes and unchanged-source validation."""
+import contextlib,hashlib,importlib.util,json,signal,subprocess,sys,tempfile,time,traceback
+from pathlib import Path
+from unittest.mock import Mock,patch
+ROOT=Path(__file__).resolve().parent
+BASE=ROOT.parent
+SOURCE=BASE/'whole-proof-final-launch-v5'
+EXPECTED={'when_ready.py':dict(bytes=7264,sha256='d56faf9f89f6cb4ecad6b13a23c7cc596b3857dc11cd675c7ddf477dff3564e8'),
+'test_when_ready.py':dict(bytes=4842,sha256='f67e10db3d42483bde4055f50b26870a7c2d375d4979623420eb9ae1b5f38c06')}
+MANIFEST='9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584'
+REVIEW='eeaba901de02584018eb0d4b5f4ceac978c738349b0d4ff2468a9f58f2cf4897'
+def identity(p):
+    data=p.read_bytes();return dict(bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+def require(c,m):
+    if not c:raise ValueError(m)
+def main():
+    require(all(identity(SOURCE/n)==v for n,v in EXPECTED.items()),'exact original watcher source')
+    out=ROOT/'validation-1';out.mkdir();(out/'sources').mkdir()
+    for n in EXPECTED:(out/'sources'/n).write_bytes((SOURCE/n).read_bytes())
+    report=dict(status='running',started_ns=time.time_ns(),sources=EXPECTED,probes=[])
+    try:
+        cmd=[sys.executable,'-B','-W','error','-m','unittest','-v','test_when_ready']
+        with (out/'stdout').open('xb') as stdout,(out/'stderr').open('xb') as stderr:
+            result=subprocess.run(cmd,cwd=SOURCE,stdout=stdout,stderr=stderr,timeout=60)
+        require(result.returncode==0,'six original offline tests')
+        report.update(command=cmd,cwd=str(SOURCE),exit_code=result.returncode,existing_tests=6)
+        spec=importlib.util.spec_from_file_location('reviewed_watcher',SOURCE/'when_ready.py');W=importlib.util.module_from_spec(spec);spec.loader.exec_module(W)
+        require(len(W.source_gate(BASE/'whole-proof-final-review-v5',MANIFEST,REVIEW))==29,'actual checker source gate, read-only')
+        complete={'proof':dict(status='passed',required='passed',identity={'bytes':1,'sha256':'a'*64})}
+        for scenario in ('stable-success','native-nonzero','changed-terminal-after-check','checker-timeout','readiness-timeout','changed-source-before-launch'):
+            with tempfile.TemporaryDirectory() as temp,contextlib.ExitStack() as stack:
+                root=Path(temp);child=Mock(pid=98765);child.poll.return_value=0
+                child.wait.return_value=0
+                if scenario=='native-nonzero':child.wait.return_value=1
+                if scenario=='checker-timeout':
+                    child.poll.return_value=None
+                    child.wait.side_effect=[subprocess.TimeoutExpired('synthetic-checker',3600),subprocess.TimeoutExpired('synthetic-checker',30),-9]
+                calls=[]
+                def launch(command,**kw):
+                    calls.append(dict(command=command,cwd=str(kw['cwd']),env=kw['env'],start_new_session=kw['start_new_session']))
+                    (root/'orchestration/final-review.json').write_text('{"status":"passed-composite-replay"}\n')
+                    return child
+                stack.enter_context(patch.object(W,'ROOT',root));stack.enter_context(patch.object(W,'BASE',root))
+                stack.enter_context(patch.object(W,'CHECKER_ROOT',root/'checker'))
+                source_gate=stack.enter_context(patch.object(W,'source_gate',return_value={}))
+                if scenario=='changed-source-before-launch':source_gate.side_effect=[{},W.Blocked('changed original checker')]
+                observations=[complete,complete,complete,complete]
+                if scenario=='changed-terminal-after-check':observations[-1]={'proof':dict(status='passed',required='passed',identity={'changed':True})}
+                if scenario=='readiness-timeout':observations=[{'proof':dict(status='running',required='passed')}]
+                stack.enter_context(patch.object(W,'observe',side_effect=observations))
+                stack.enter_context(patch.object(W.time,'sleep'))
+                if scenario=='readiness-timeout':stack.enter_context(patch.object(W.time,'monotonic',side_effect=[0,86401]))
+                stack.enter_context(patch.object(W.signal,'signal'))
+                popen=stack.enter_context(patch.object(W.subprocess,'Popen',side_effect=launch))
+                kill=stack.enter_context(patch.object(W.os,'killpg'))
+                stack.enter_context(patch.object(sys,'argv',['when_ready.py','--source-manifest-sha256',MANIFEST,'--review-sha256',REVIEW]))
+                error=None
+                try:W.main()
+                except (W.Blocked,subprocess.TimeoutExpired) as e:error=type(e).__name__
+                receipt=json.loads((root/'orchestration/receipt.json').read_text())
+                expected='passed' if scenario=='stable-success' else ('blocked-prerequisite' if scenario in ('readiness-timeout','changed-source-before-launch') else 'failed-checker')
+                require(receipt['status']==expected,'exact lifecycle result: '+scenario)
+                expected_calls=0 if expected=='blocked-prerequisite' else 1
+                require(len(calls)==expected_calls and receipt['checker_launched']==bool(expected_calls),'at most one exact launch')
+                if calls:
+                    require(calls[0]['env']=={'PATH':'','LANG':'C','PYTHONDONTWRITEBYTECODE':'1'} and calls[0]['start_new_session'] is True,'isolated exact checker environment')
+                    require(calls[0]['command']==[sys.executable,'-B','-W','error',str(root/'checker/check.py'),'--base',str(root),'--output',str(root/'orchestration/final-review.json')],'exact immutable checker entrypoint')
+                if scenario=='checker-timeout':
+                    require(kill.call_args_list==[ ((98765,signal.SIGTERM),), ((98765,signal.SIGKILL),) ],'mocked TERM/KILL only owned direct child')
+                    require(child.wait.call_args_list==[(( ),{'timeout':3600}),(( ),{'timeout':30}),(( ),{'timeout':30})],'unchanged checker and reap deadlines')
+                else:require(not kill.called,'no signal in ordinary gate cases')
+                report['probes'].append(dict(name=scenario,status=receipt['status'],mocked_launches=len(calls),caught=error))
+        require(all(identity(SOURCE/n)==v for n,v in EXPECTED.items()),'watcher source unchanged after tests')
+        report.update(status='passed-independent-offline-review',sources_unchanged=True,checker_source_manifest=MANIFEST,checker_review=REVIEW,
+                      scope='Six original tests plus six mock-only main lifecycle probes. Actual source gate hashed read-only. No actual watcher/checker/native launch, process signal, network or deletion.')
+    except BaseException:
+        report.update(status='failed',error=traceback.format_exc());raise
+    finally:
+        report['ended_ns']=time.time_ns();report['files']={n:identity(out/n) for n in ('stdout','stderr')}
+        (out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+if __name__=='__main__':main()

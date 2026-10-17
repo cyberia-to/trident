@@ -19,34 +19,85 @@ pub(crate) fn target_constants(target: &crate::target::TerrainConfig) -> String 
 }
 
 pub(crate) fn native_hash(target: &crate::target::TerrainConfig) -> String {
-    let params = (0..target.hash_rate).map(|i| format!("x{i}: Field")).collect::<Vec<_>>().join(", ");
-    let zeros = std::iter::once("value".to_string()).chain((1..target.hash_rate).map(|_| "0".to_string())).collect::<Vec<_>>().join(", ");
+    let params = (0..target.hash_rate)
+        .map(|i| format!("x{i}: Field"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let zeros = std::iter::once("value".to_string())
+        .chain((1..target.hash_rate).map(|_| "0".to_string()))
+        .collect::<Vec<_>>()
+        .join(", ");
     format!("module vm.crypto.hash\n// Target-native structural hash; algorithm and layout are part of the selected ABI.\n#[intrinsic(hash)]\npub fn native({params}) -> Digest\n#[pure]\npub fn single(value: Field) -> Digest {{ native({zeros}) }}\n")
 }
 
 /// Complete target-shaped I/O declarations. Availability is checked on reachable calls.
 pub(crate) fn io(target: &crate::target::TerrainConfig) -> String {
-    let mut source = "module vm.io.io\n#[intrinsic(divine)]\npub fn divine() -> Field\n".to_string();
+    let mut source =
+        "module vm.io.io\n#[intrinsic(divine)]\npub fn divine() -> Field\n".to_string();
     source.push_str("#[intrinsic(pub_read)]\npub fn read() -> Field\n#[intrinsic(pub_write)]\npub fn write(v: Field)\n");
     for n in 2..=target.digest_width {
         let fields = vec!["Field"; n as usize].join(", ");
-        let params = (0..n).map(|i| format!("v{i}: Field")).collect::<Vec<_>>().join(", ");
+        let params = (0..n)
+            .map(|i| format!("v{i}: Field"))
+            .collect::<Vec<_>>()
+            .join(", ");
         if n < target.digest_width {
-            source.push_str(&format!("#[intrinsic(pub_read{n})]\npub fn read{n}() -> ({fields})\n"));
+            source.push_str(&format!(
+                "#[intrinsic(pub_read{n})]\npub fn read{n}() -> ({fields})\n"
+            ));
         }
-        source.push_str(&format!("#[intrinsic(pub_write{n})]\npub fn write{n}({params})\n"));
+        source.push_str(&format!(
+            "#[intrinsic(pub_write{n})]\npub fn write{n}({params})\n"
+        ));
     }
     source.push_str(&format!("#[intrinsic(pub_read{})]\npub fn read_digest() -> Digest\n#[intrinsic(divine{})]\npub fn divine_digest() -> Digest\n", target.digest_width, target.digest_width));
     if target.xfield_width > 0 && target.xfield_width != target.digest_width {
         let n = target.xfield_width;
-        source.push_str(&format!("#[intrinsic(divine{n})]\npub fn divine{n}() -> ({})\n", vec!["Field"; n as usize].join(", ")));
+        source.push_str(&format!(
+            "#[intrinsic(divine{n})]\npub fn divine{n}() -> ({})\n",
+            vec!["Field"; n as usize].join(", ")
+        ));
     }
     source
 }
 
 /// Preserve the language declarations; each function advertises transitive
 /// requirements, and reachable calls are checked against the owner's surface.
-pub(crate) fn intrinsic_modules(_target: &crate::target::TerrainConfig) -> std::collections::BTreeMap<String, String> {
-    FILES.iter().filter(|(path, _)| path.starts_with("lib/vm/") && path.ends_with(".tri"))
-        .map(|(path, source)| (path.trim_start_matches("lib/").trim_end_matches(".tri").replace('/', "."), source.to_string())).collect()
+pub(crate) fn intrinsic_modules(
+    _target: &crate::target::TerrainConfig,
+) -> std::collections::BTreeMap<String, String> {
+    FILES
+        .iter()
+        .filter(|(path, _)| path.starts_with("lib/vm/") && path.ends_with(".tri"))
+        .map(|(path, source)| {
+            (
+                path.trim_start_matches("lib/")
+                    .trim_end_matches(".tri")
+                    .replace('/', "."),
+                source.to_string(),
+            )
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn compiler_resources_follow_the_selected_target_boundary() {
+        assert!(super::module("std.compiler.nox.syntax").is_some());
+        let external = cfg!(feature = "external-targets");
+        assert_eq!(super::module("std.compiler.codegen").is_some(), external);
+        assert_eq!(
+            super::get("catalog/os/neptune/owner.toml").is_some(),
+            external
+        );
+        if !external {
+            assert!(super::FILES
+                .iter()
+                .all(|(path, _)| !path.starts_with("catalog/")));
+            assert!(crate::target::owner_for("neptune").is_none());
+            assert!(crate::target::owner_for("triton").is_none());
+        }
+        assert_eq!(crate::target::TerrainConfig::nox().name, "nox");
+    }
 }

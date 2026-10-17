@@ -1,0 +1,19 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "exit_code": 2,
+  "scope": "Original command streams contain trailing spaces and a terminal blank line. Bytes stay unchanged; exact four paths receive Git whitespace-only exemptions.",
+  "files": [
+    "audit/self-hosting/native-proof-pilots/durable-retention/delivery/debug-cargo/test.stderr",
+    "audit/self-hosting/native-proof-pilots/durable-retention/delivery/release-eight-threads/stderr",
+    "audit/self-hosting/native-proof-pilots/durable-retention/delivery/release-eight-threads/stdout",
+    "audit/self-hosting/native-proof-pilots/durable-retention/delivery/release-two-threads/stderr"
+  ],
+  "stdout_bytes": 281559,
+  "stdout_sha256": "87e4a090f2f4546a5376674b21228c66b0e0109a76744efef5916f6599e3132b",
+  "stderr": ""
+}

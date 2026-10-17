@@ -1,0 +1,14 @@
+{
+  "schema": "trident/classified-temporary-reclamation/v1",
+  "status": "failed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "reclaim_completed.py",
+    "--review-sha256",
+    "8109fc53771e2a4bc6134456948f1def29ed1f85d8efda95b0672cbf3b982cd6"
+  ],
+  "started_ns": 1790936552077843000,
+  "removed": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/reclaim_completed.py\", line 137, in execute\n    report[\"quiescence\"] = no_live_owners(output)\n                           ~~~~~~~~~~~~~~^^^^^^^^\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/reclaim_completed.py\", line 95, in no_live_owners\n    require(not [row for row in rows if row[0] in groups or row[1] in groups], \"prior owner/group remains alive\")\n    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/reclaim_completed.py\", line 24, in require\n    raise ValueError(message)\nValueError: prior owner/group remains alive\n",
+  "ended_ns": 1790936552120932000
+}

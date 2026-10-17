@@ -3,7 +3,6 @@ module std.compiler.nox.type_imports
 use vm.nox.noun
 use std.nox.bytes
 use std.compiler.nox.syntax
-use std.compiler.nox.ascii
 use std.compiler.nox.qualified_name
 use std.compiler.nox.type_exports
 use std.compiler.nox.types
@@ -17,20 +16,6 @@ pub struct View {
 #[pure]
 pub fn empty() -> View {
     View { names: bytes.table_empty(), exports: type_exports.empty(syntax.ZERO), uses: noun.atom(0) }
-}
-
-#[pure]
-#[requires((as_u32(255) < bytes.len(owner)) == false)]
-fn alias(prefix: bytes.Bytes, owner: bytes.Bytes) -> Bool {
-    if noun.eq(bytes.to_noun(prefix), bytes.to_noun(owner)) { return true }
-    let mut start = syntax.ZERO
-    let mut pos = syntax.ZERO
-    for letter in 0..255 {
-        if pos == bytes.len(owner) { return ascii.same(owner, start, pos, prefix) }
-        if bytes.get(owner, pos) == as_u32(46) { start = syntax.inc(pos) }
-        pos = syntax.inc(pos)
-    }
-    ascii.same(owner, start, pos, prefix)
 }
 
 // The caller extracts the final member once from its own source. A successful
@@ -49,7 +34,7 @@ pub fn lookup(name: qualified_name.Name, member: bytes.Bytes, view: View) -> typ
         // module_store.Use starts with its compact target module ID.
         let target = as_u32(noun.as_field(noun.head(noun.head(rest))))
         let owner = bytes.table_get(view.names, target)
-        if alias(name.prefix, owner) {
+        if qualified_name.matches_owner(name.prefix, owner) {
             let candidate = type_exports.find(view.exports, target, member)
             // Missing/private symbols in a later same-basename module leave
             // the earlier public binding visible; repeated uses retain order.

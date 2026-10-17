@@ -1,0 +1,105 @@
+"""Read exact committed contract files locally and through authenticated GitHub GETs."""
+import base64
+import hashlib
+import json
+import subprocess
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+B = ROOT.parent.parent
+H = B / 'whole-proof-helper-v4/trident'
+JOY = B / 'joy-release-notes/joy'
+SOFT3 = Path('/Users/master/cyber/soft3')
+GH = '/opt/homebrew/Cellar/gh/2.92.0/bin/gh'
+GIT = '/usr/bin/git'
+report = dict(status='running', started_ns=time.time_ns(), commands=[])
+
+
+def identity(path):
+    raw = path.read_bytes()
+    return dict(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+
+
+def persist():
+    (ROOT / 'receipt.json').write_text(json.dumps(report, indent=2) + '\n')
+
+
+def command(label, argv, cwd=ROOT, allow_fail=False):
+    row = dict(label=label, argv=argv, cwd=str(cwd), started_ns=time.time_ns())
+    report['commands'].append(row)
+    persist()
+    try:
+        with (ROOT / (label + '.stdout')).open('xb') as out, (ROOT / (label + '.stderr')).open('xb') as err:
+            process = subprocess.run(argv, cwd=cwd, stdout=out, stderr=err, timeout=60)
+        row['exit_code'] = process.returncode
+    finally:
+        row['ended_ns'] = time.time_ns()
+        row['streams'] = {n: identity(ROOT / (label + '.' + n)) for n in ('stdout', 'stderr')}
+        persist()
+    assert allow_fail or row['exit_code'] == 0, label
+    return (ROOT / (label + '.stdout')).read_bytes()
+
+
+def git(label, repo, *args, allow_fail=False):
+    return command(label, [GIT, '-C', str(repo), *args], allow_fail=allow_fail)
+
+
+def api(label, endpoint):
+    raw = command(label, [GH, 'api', '--hostname', 'github.com', '--method', 'GET',
+                         endpoint, '-H', 'Accept: application/vnd.github+json',
+                         '-H', 'X-GitHub-Api-Version: 2022-11-28'])
+    assert len(raw) <= 2 * 1024 * 1024
+    return json.loads(raw)
+
+
+try:
+    report['tools'] = {p: identity(Path(p)) for p in (GIT, GH)}
+    report['head'] = git('trident-head', H, 'rev-parse', 'HEAD').decode().strip()
+    assert report['head'] == 'def4c69cc581c7a0c189977bc4ff7c546af7aa64'
+    assert git('trident-clean-before', H, 'status', '--porcelain') == b''
+    for label, repo, expected in [('joy', JOY, 'joy'), ('soft3', SOFT3, 'soft3')]:
+        remote = git(label + '-origin', repo, 'remote', 'get-url', 'origin').decode().strip()
+        assert remote == 'https://github.com/cyberia-to/' + expected + '.git'
+    joy_sha = git('joy-pin', JOY, 'rev-parse', '89088bb2').decode().strip()
+    assert joy_sha == '89088bb27a2d6eaa63ec85aaa2eaec08028c28ad'
+    joy_commit = api('joy-committed', 'repos/cyberia-to/joy/commits/' + joy_sha)
+    assert joy_commit['sha'] == joy_sha
+    soft3_repo = api('soft3-repository', 'repos/cyberia-to/soft3')
+    assert soft3_repo['full_name'] == 'cyberia-to/soft3'
+    branch = soft3_repo['default_branch']
+    assert branch and not branch.startswith('/') and '..' not in branch
+    ref = api('soft3-default-ref', 'repos/cyberia-to/soft3/git/ref/heads/' + branch)
+    assert ref['ref'] == 'refs/heads/' + branch and ref['object']['type'] == 'commit'
+    soft3_sha = ref['object']['sha']
+    # Inspect an existing local object only; no checkout, fetch or ref mutation.
+    local_soft3 = git('soft3-pin', SOFT3, 'rev-parse', soft3_sha + '^{commit}').decode().strip()
+    assert local_soft3 == soft3_sha
+    report['soft3_default'] = dict(branch=branch, commit=soft3_sha)
+    report['targets'] = []
+    for label, repo, name, sha, file in [
+        ('composition', SOFT3, 'soft3', soft3_sha, 'specs/execution-model.md'),
+        ('private', JOY, 'joy', joy_sha, 'specs/private-execution.md'),
+        ('structured', JOY, 'joy', joy_sha, 'specs/structured-certificates.md')]:
+        local = git(label + '-git-blob', repo, 'show', sha + ':' + file)
+        blob = git(label + '-git-id', repo, 'rev-parse', sha + ':' + file).decode().strip()
+        remote = api(label + '-github-file', 'repos/cyberia-to/' + name + '/contents/' + file + '?ref=' + sha)
+        assert remote['type'] == 'file' and remote['path'] == file and remote['encoding'] == 'base64'
+        data = base64.b64decode(remote['content'], validate=False)
+        assert data == local and remote['sha'] == blob and remote['size'] == len(local)
+        url = 'https://github.com/cyberia-to/' + name + '/blob/' + sha + '/' + file
+        assert remote['html_url'] == url
+        with (ROOT / (label + '.md')).open('xb') as out:
+            out.write(data)
+        report['targets'].append(dict(repository=name, commit=sha, path=file, git_blob=blob,
+                                      url=url, file_identity=identity(ROOT / (label + '.md')),
+                                      authenticated_github_bytes_equal_local_git_blob=True))
+    assert git('trident-clean-after-validation', H, 'status', '--porcelain') == b''
+    report['status'] = 'passed-exact-contract-link-target-validation'
+except BaseException as error:
+    report.update(status='failed', error=type(error).__name__ + ': ' + str(error))
+    raise
+finally:
+    report['ended_ns'] = time.time_ns()
+    persist()
+print(json.dumps(dict(status=report['status'], targets=report.get('targets', []))))

@@ -1,0 +1,36 @@
+test_actual_expected_rejection_without_resource_failure (__main__.ParallelGuards.test_actual_expected_rejection_without_resource_failure) ... ERROR
+test_actual_log_overflow_is_resource_failure (__main__.ParallelGuards.test_actual_log_overflow_is_resource_failure) ... ERROR
+test_other_generation_cannot_be_reclaimed (__main__.ParallelGuards.test_other_generation_cannot_be_reclaimed) ... ok
+test_second_mutant_fails_shared_reservation (__main__.ParallelGuards.test_second_mutant_fails_shared_reservation) ... ok
+test_shared_accounting_includes_both_mutants_and_retained_partial (__main__.ParallelGuards.test_shared_accounting_includes_both_mutants_and_retained_partial) ... ok
+test_stop_retains_own_mutant (__main__.ParallelGuards.test_stop_retains_own_mutant) ... ok
+
+======================================================================
+ERROR: test_actual_expected_rejection_without_resource_failure (__main__.ParallelGuards.test_actual_expected_rejection_without_resource_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-tooling-delivery-review/test_parallel_v2.py", line 96, in test_actual_expected_rejection_without_resource_failure
+    receipt = self.guard.run('expected-rejection', [self.executable, '-c', 'import sys; sys.stderr.write("specific rejection\\n"); sys.exit(1)'], 'pack', [], expected_exit=1)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/guard.py", line 66, in run
+    generation = shared.admitted(ROOT)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/resources.py", line 82, in admitted
+    raise ValueError('unknown generation scope')
+ValueError: unknown generation scope
+
+======================================================================
+ERROR: test_actual_log_overflow_is_resource_failure (__main__.ParallelGuards.test_actual_log_overflow_is_resource_failure)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-tooling-delivery-review/test_parallel_v2.py", line 86, in test_actual_log_overflow_is_resource_failure
+    self.guard.run('log-overflow', [self.executable, '-c', 'import os; os.write(1,b"x"*2097152)'], 'pack', [])
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/guard.py", line 66, in run
+    generation = shared.admitted(ROOT)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/resources.py", line 82, in admitted
+    raise ValueError('unknown generation scope')
+ValueError: unknown generation scope
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.033s
+
+FAILED (errors=2)

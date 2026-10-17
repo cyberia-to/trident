@@ -1,0 +1,83 @@
+{
+  "status": "passed-final-companion-postmerge-and-public-archive",
+  "scope": "Clean integrated branches, exact-merge bounded warm prefix installs, and original companion integration archive. No native proof/CI rerun, H edits, runtime/version/default/tag/publication action.",
+  "branches": {
+    "joy": {
+      "head": "65f6a2b7dba1a661adfaed1c37154ac0a825036d",
+      "branch": "docs/0.4-selfhost-integrated",
+      "clean": true,
+      "driver": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/joy-install/install.py",
+        "bytes": 9347,
+        "sha256": "9d9d30e10363f2df6af7f65340270117d6a9dc4cbb8f374aec6c68c5c36606eb"
+      },
+      "driver_byte_equal_to_premerge": true,
+      "install": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/joy-install/postinstall-1/receipt.json",
+        "bytes": 8209,
+        "sha256": "ea3d7a0cadb24b1227c1f9467b018ec7e66066a211104e1c313e014a0453c6ff"
+      },
+      "install_seconds": 0.23854500008746982,
+      "binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/joy-install/postinstall-1/installed/bin/joy",
+        "bytes": 5652336,
+        "sha256": "7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071"
+      }
+    },
+    "trisha": {
+      "head": "f6161e3f6455bd6b4ae8f6a77fa98ac052c1d505",
+      "branch": "docs/0.4-selfhost-integrated",
+      "clean": true,
+      "driver": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/install.py",
+        "bytes": 7961,
+        "sha256": "bbc743eb74ee3de0cdb4930c836d0da398a878ce7bc525cc2ce4926b6136076c"
+      },
+      "driver_byte_equal_to_premerge": true,
+      "install": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/postinstall-1/receipt.json",
+        "bytes": 8250,
+        "sha256": "4e9f1cf97648e7af396d8df237642ec9193cc971374eb43ed5428c4a37517ad3"
+      },
+      "install_seconds": 0.4631325000664219,
+      "binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/postinstall-1/installed/bin/trisha",
+        "bytes": 14091840,
+        "sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+      }
+    }
+  },
+  "copy_root": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/packet",
+  "destination": "audit/self-hosting/bootstrap-results/whole-proof-final/companion-final-integration",
+  "packet_files": 113,
+  "packet_bytes": 361301,
+  "original_files": 252,
+  "original_bytes": 281649,
+  "unique_objects": 108,
+  "references_only": 12,
+  "retained_map": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/packet/retained-files.json",
+    "bytes": 87522,
+    "sha256": "af36c7e0a02479ff8033cd1e1ea1d5a2efcdcb5d8ea50959c99c67208e13256a"
+  },
+  "copy_inventory": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/copy-inventory.json",
+    "bytes": 20531,
+    "sha256": "cb545fb1dcdb6c0b41b14526ac14f7e927a786bb130d3382b0fc0f1efe321b48"
+  },
+  "validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/validation/receipt.json",
+    "bytes": 1393,
+    "sha256": "10c95ba6c687fa6c55ff1f52898c42f39fd118e853f9ab2ca4597b5c26944372"
+  },
+  "copy_source": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/copy.py",
+    "bytes": 4349,
+    "sha256": "187c70ba10d5803dbdcda94ef9699e77dc83fcda387371661e0009f22086b95e"
+  },
+  "selection": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/archive-preparation/selection.json",
+    "bytes": 74091,
+    "sha256": "1a2e8e846be854298a2e8e70dd7fc92b208b197b469d799a0d0e1124aa1ef7ad"
+  }
+}

@@ -1,0 +1,138 @@
+"""Replay the actual failed restricted v4 schedule without inventing full admission."""
+import json
+from pathlib import Path
+from prior_pins_v5 import C, require, identity, load, same, reference, source_closure
+from prior_cases_v4 import C2_COST as COST
+from prior_native_v5 import binding, retirement
+GIB,MIB=1024**3,1024**2
+RETAINED=('whole-proof-attacks', 'whole-proof-attacks-v2-c1', 'whole-proof-attacks-v2-c2', 'whole-proof-attacks-parallel-v2', 'whole-proof-attacks-v3-c1', 'whole-proof-attacks-v3-c2', 'whole-proof-attacks-completion-v3')
+
+def sample(row, plan, base, version=3):
+    require(row['reason'] is None and 0 <= row['owned_bytes'] <= 26*GIB
+            and row['free_bytes'] >= 8*GIB and 0 <= row['rss_bytes'] <= 12*GIB,
+            'shared sampled resource verdict')
+    require(set(row['generations']) == {'1', '2'}, 'both generation resource observations')
+    for g, observed in row['generations'].items():
+        require(len(observed['mutants']) <= 1, 'one live mutant per generation')
+        for path, size in observed['mutants'].items():
+            p = Path(path)
+            require(p.parent == base / f'whole-proof-attacks-v{version}-c{g}/whole-c{g}'
+                    and p.suffix == '.joysc' and 0 <= size <= plan['proofs'][g]['bytes'] + 32*MIB,
+                    'bounded owned generation mutant')
+        require(0 <= observed['canonical_output_bytes'] <= 112*MIB
+                and 0 <= observed['metadata_bytes'] <= 256*MIB, 'generation output/metadata buckets')
+    require(0 <= row['coordinator_metadata_bytes'] <= 256*MIB, 'coordinator metadata bucket')
+    require(all(type(p['pid']) is int and p['pid'] > 0 and type(p['rss_kib']) is int
+                and p['rss_kib'] >= 0 for p in row['processes'])
+            and len({p['pid'] for p in row['processes']}) == len(row['processes']), 'valid unique raw process rows')
+    require(row['rss_bytes'] == sum(p['rss_kib']*1024 for p in row['processes']), 'raw process RSS sum')
+
+
+def sample_time(row, run, previous=None):
+    require(all(type(run[k]) is int for k in ('started_ns','ended_ns'))
+            and 0 < run['started_ns'] <= run['ended_ns'] and type(row['time_ns']) is int
+            and run['started_ns'] <= row['time_ns'] <= run['ended_ns']
+            and (previous is None or previous['time_ns'] <= row['time_ns']),
+            'ordered resource sample belongs to actual run interval')
+
+
+def contract(plan):
+    require(plan['schema']=='trident/complete-proof-missing-cases/v4','v4 completion scope')
+    expected=dict(shared_disk_bytes=26*GIB,free_floor_bytes=8*GIB,combined_sampled_rss_bytes=12*GIB,
+                  mutant_growth_ceiling_bytes=32*MIB,canonical_and_output_bucket_per_generation=112*MIB,
+                  metadata_bucket_per_generation=256*MIB,per_stream_log_bytes=MIB,readiness_seconds=15500,
+                  outer_schedule_seconds=86400,fresh_rejections_per_generation=11,
+                  replayed_rejections_per_generation=12,replayed_controls_per_generation=2)
+    require(all(plan[k]==v for k,v in expected.items()),'unchanged physical limits and exact case counts')
+    require(plan['roots']=={'1':'whole-proof-attacks-v4-c1','2':'whole-proof-attacks-v4-c2'}
+            and plan['generations']==[1,2] and plan['retained_scopes']==list(RETAINED)
+            and plan['historical_cost']=='whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc',
+            'exact charged scopes and sole declared retirement')
+
+
+def reservation(row,plan,full,existing=None):
+    mutants=sum(v['bytes']+32*MIB for v in plan['proofs'].values()) if full else 0
+    growth=mutants+2*112*MIB+3*256*MIB
+    require(type(row['existing_bytes']) is int and row['existing_bytes']>=0
+            and row['growth_bytes']==growth and row['reservation_bytes']==row['existing_bytes']+growth<=26*GIB
+            and row['required_free_bytes']==max(growth+8*GIB,mutants+10*GIB)
+            and row['free_bytes']>=row['required_free_bytes'],'complete measured reservation and physical headroom')
+    if existing is not None:require(row['existing_bytes']==existing,'independently recomputed baseline bytes')
+
+
+def cleanup_contract(run, admission, native):
+    require(run['cleanup']['status'] == 'passed' and not run.get('cleanup_error'), 'original cleanup passed')
+    expected = {row['pid']: row for row in run['generations']}
+    expected[native['pid']] = dict(binding=native)
+    groups = run['cleanup']['groups']
+    require({g['binding']['pid'] for g in groups} == set(expected), 'all original suite/native owners classified')
+    for group in groups:
+        record = group['binding'];binding(record)
+        require(all(record[k] == expected[record['pid']]['binding'][k] for k in ('pid','pgid','started')),
+                'cleanup binds original process birth')
+        require(group['status'] == 'passed' and group['final'] == dict(status='empty',members=[])
+                and group['events'][-1].get('observation') == dict(status='empty',members=[]), 'actual final empty observation')
+        previous = run['started_ns']
+        for event in group['events']:
+            require(type(event['time_ns']) is int and previous <= event['time_ns'] <= run['ended_ns'], 'ordered cleanup times')
+            previous = event['time_ns']
+            require('signal' not in event or event['signal'] in (15,9), 'only recorded bounded cleanup signals')
+    require(run['started_ns'] <= run['cleanup']['time_ns'] <= run['ended_ns'], 'cleanup within failed run')
+
+
+def review(base):
+    shared = base/'whole-proof-attacks-completion-v4'
+    plan, admission, run = (load(shared/p) for p in ('plan.json','admission.json','run-1/receipt.json'))
+    contract(plan);manifest=source_closure(base)
+    require(run['schema']=='trident/complete-proof-missing-cases-orchestration/v4'
+            and run['status']=='failed' and run['phase']=='restricted-cost-verification'
+            and 'free space below reserved growth and unchanged headroom' in run['error'], 'actual later capacity refusal remains failed')
+    require(not (shared/'full-admission.json').exists() and 'full_admission' not in run
+            and 'inputs_unchanged' not in run and 'final_sample' not in run, 'no invented full admission or final success')
+    stop=load(shared/'stop.json')
+    require(stop['reason']=='coordinator-exception' and stop['detail']==run['error']
+            and stop['pid']==admission['pid'] and run['started_ns']<=stop['time_ns']<=run['ended_ns'], 'literal original failed stop')
+    same(shared/'plan.json',run['plan']);same(shared/'independent-review.json',run['independent_review'])
+    same(shared/'plan.json',admission['plan']);same(shared/'sources.json',admission['source_manifest'])
+    require(run['source']==manifest and admission['phase']=='restricted-cost-verification'
+            and run['admission']==admission['reservation'], 'actual reviewed restricted admission')
+    baseline=load(shared/'baseline.json');cost=str(base/plan['historical_cost'])
+    require(baseline['declared_retirement']=={cost:COST} and baseline['files'][cost]==COST['bytes'], 'complete historical body originally charged')
+    static={p for p in baseline['files'] if p!=cost and any(Path(p).is_relative_to(base/s) for s in RETAINED)}
+    require(set(baseline['immutable'])==static, 'complete originally retained immutable set')
+    for p in static:
+        require(baseline['immutable'][p]['bytes']==baseline['files'][p], 'original retained size')
+        same(Path(p),baseline['immutable'][p])
+    reservation(run['admission'],plan,False,sum(baseline['files'].values()))
+    require(run['started_ns']<=admission['time_ns']<=stop['time_ns'], 'ordered restricted admission')
+    require([r['generation'] for r in run['generations']]==[1,2]
+            and set(run['children_final'])==set(admission['children'])=={'1','2'}, 'both original suites')
+    for row in run['generations']:
+        g=str(row['generation']);root=base/f'whole-proof-attacks-v4-c{g}';python=row['command'][0]
+        require(row['status']=='running' and row['cwd']==str(root) and Path(python).is_absolute()
+                and row['command']==[python,'-B',str(root/'whole_suite.py'),'--generation',g]
+                and row['pid']==admission['children'][g]
+                and run['children_final'][g]==dict(pid=row['pid'],exit_code=1), 'failed suite launch and actual terminal exit')
+        binding(row['binding']);require(row['binding']['pid']==row['pid'], 'suite birth binding')
+        suite=load(root/f'whole-c{g}/receipt.json')
+        require(suite['status']=='input-changed' and suite['generation']==int(g)
+                and 'immutable_inputs_after' not in suite and 'owned suite terminated: 15' in suite['input_error'], 'interrupted historical inventory remains explicit')
+        require([r['name'] for r in suite['rejections']]==([] if g=='1' else ['cost']), 'only one actual restricted negative')
+    require(set(run['files'])=={'c1.stdout','c1.stderr','c2.stdout','c2.stderr','resources.jsonl'}, 'complete coordinator streams')
+    C.files(shared/'run-1',run['files'])
+    require(all(run['files'][f'c{g}.{s}']['bytes']==0 for g in (1,2) for s in ('stdout','stderr')), 'no invented terminal success output')
+    paths=list((shared/'native-processes').glob('*.json'))
+    require([p.stem for p in paths]==['whole-c2-verify-cost'], 'only one native command admitted')
+    native=load(paths[0]);retired=retirement(shared,paths[0].stem,run)
+    cleanup_contract(run,admission,native)
+    count=peak=0;last=None
+    with (shared/'run-1/resources.jsonl').open() as stream:
+        while line:=stream.readline(4*MIB+1):
+            require(len(line)<=4*MIB,'bounded original resource record');row=json.loads(line)
+            sample(row,plan,base,version=4);sample_time(row,run,last)
+            require(all(not v['mutants'] for v in row['generations'].values()), 'no new mutant before capacity admission')
+            last=row;count+=1;peak=max(peak,row['rss_bytes'])
+    require(count>0 and last==run['latest_sample'] and peak==run['sampled_peak_rss_bytes'], 'complete failed raw resource trace')
+    return dict(controller=reference(shared/'run-1/receipt.json'),status='failed',stop=reference(shared/'stop.json'),
+                admission=reference(shared/'admission.json'),native_retirement=retired,cleanup_status='passed',
+                raw_resources=reference(shared/'run-1/resources.jsonl'),samples=count,sampled_peak_rss_bytes=peak)

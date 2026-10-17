@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "scope": "Check SH6 acceptance retention metadata after manual review of the named docs.",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-phases/../measurements/ci-phases-readonly/review-acceptance-docs.py"
+  ],
+  "command_source_sha256": "7f164eee2e58c71120b653d6f3fc49567f828f7ae86c4eb042f84bfdd7b68da9",
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-phases",
+  "repository_head": "53c3c6d5b764e23e61635d54420ee0eafef1ef30",
+  "reviewed_pending_files": {
+    "README.md": "174b426cda87e5efbd95ea618c4f9383564aa4b3190cba6217ef4bf37f8f7e49",
+    "docs/explanation/vision.md": "804a81b76c05e9601523d18df3985c04ab1748c9db1325ea9a44bb24aecb2ba6",
+    "docs/explanation/atlas.md": "3b08cdfb2c9e1f51a82eca84e254c942fdcbf61cf8a44d86d9af9c21843857e6",
+    "reference/roadmap.md": "22414e97cfd31039070c21a4aa1b976d41290d27856d43e0d31897ad54883682",
+    "audit/self-hosting-progress.md": "0942a806185575d48898330d76d668e2a0d3a5a28c1ad747b0e4e66d7a65ca1c",
+    "audit/self-hosting/bootstrap-results/run-36382085561/README.md": "e8182410c7c8b47c802bc7d29bea500f0604289e64007aad8566c969066f80d2",
+    "audit/self-hosting/bootstrap-results/run-36382085561/final-validation/README.md": "8a85f8d1aa0d6464a506f8d158fe46534be24d0fde56bbe4bc193800e93be50f",
+    "audit/self-hosting/bootstrap-results/run-36382085561/accepted/retention.json": "c44e857235bb7bf700abfde09c4cb341b0d8e17af5d8674d9e4a67ba1bb35a09",
+    "audit/self-hosting/bootstrap-results/run-36382085561/accepted/review/files.json": "6b2aa193ef0534835397472227f22549ec93c33713ee0c410ba8b7fe585be2f6"
+  },
+  "supporting_commands": [
+    [
+      "git",
+      "diff",
+      "HEAD",
+      "--name-only",
+      "--",
+      "audit/self-hosting/bootstrap-results/run-36353842247",
+      "audit/self-hosting/bootstrap-results/run-36359020560",
+      "audit/self-hosting/bootstrap-results/run-36382085561/components-034",
+      "audit/self-hosting/bootstrap-results/run-36382085561/final-validation/preparation"
+    ],
+    [
+      "git",
+      "ls-files",
+      "--others",
+      "--exclude-standard",
+      "--",
+      "audit/self-hosting/bootstrap-results/run-36353842247",
+      "audit/self-hosting/bootstrap-results/run-36359020560",
+      "audit/self-hosting/bootstrap-results/run-36382085561/components-034",
+      "audit/self-hosting/bootstrap-results/run-36382085561/final-validation/preparation"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
+    ]
+  ],
+  "final_verification_sha256": "be6d76f37c0daf9694e75dad83e200adc25a32b05e593fdbeec11f4d67a69f81",
+  "accepted_compressed_members": 155,
+  "review_compressed_members": 4,
+  "accepted_tree_files": 161,
+  "accepted_raw_bytes": 2883020,
+  "review_raw_bytes": 12840,
+  "external_original_phase_containers": 36,
+  "corpus_jobs": 24,
+  "each_corpus": {
+    "observations": 547,
+    "commands": 1816,
+    "explicit_reference_builds": 119
+  },
+  "corrected_findings": [
+    "Twelve producer/bootstrap repetitions are distinguished from their two self-build executions apiece",
+    "Historical SH6-open and current kit status are expressed without contradicting accepted SH6"
+  ],
+  "blocking_findings": [],
+  "limitations": [
+    "Original phase ZIP container bytes remain external; docs disclose the requirement for full original-container replay",
+    "This review does not repeat the large matrix and does not close SH7/SH8 or separate distribution gates"
+  ]
+}

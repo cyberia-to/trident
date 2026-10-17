@@ -1,0 +1,786 @@
+{
+  "schema": "trident/source-transport-ci-independent/v1",
+  "status": "passed",
+  "run": 36400752982,
+  "attempt": 1,
+  "head": "85ab2d3f33d4e5d5e057600782aeb99bed2dfeb2",
+  "verifier": {
+    "bytes": 10260,
+    "sha256": "53eda859dc43a317df2f2a9c72b5937aace49e6e27135eb11dc38dafd0e8c16e"
+  },
+  "scope": "Six native byte-preparation guard jobs only; no SH6, compiler execution or proof gate",
+  "targets": [
+    {
+      "target": "aarch64-apple-darwin",
+      "machine": "arm64",
+      "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+      "job_id": 108857774671,
+      "runner_label": "macos-15",
+      "artifact_id": 10960067320,
+      "artifact_name": "source-transport-aarch64-apple-darwin-attempt-1",
+      "zip": {
+        "bytes": 3414,
+        "sha256": "6e6b5ebfe7af034070a76c722ac2e20b127f76ff80fdc1529b7b1e7ad64de173"
+      },
+      "receipt": {
+        "bytes": 2856,
+        "sha256": "be6a880ba1ee9b4157b1211d086c1d70dfbcdb69f63e038911e36d8c0a90e224"
+      },
+      "raw_files": {
+        "ordinary.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "optimized.stderr": {
+          "bytes": 3331,
+          "sha256": "6c4db637692e90e6ceab3733623147b471fd818a7b248b29a74768bf0ad97fdc"
+        },
+        "optimized.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ordinary.json": {
+          "bytes": 159,
+          "sha256": "7577b64feafd7a893a79c63ee0f4892126b483fe9de617b4a3ac4136e45ea413"
+        },
+        "optimized.json": {
+          "bytes": 159,
+          "sha256": "80fcf8c98e5d95ae50f722cc5edc38ea48e63c3c1da02ee6674ebc6eea8cf3e8"
+        },
+        "ordinary.stderr": {
+          "bytes": 3331,
+          "sha256": "26566f46ce90c730b95ca035ad8c59bb593c6c670d941106bf67d4aae06568d5"
+        },
+        "receipt.json": {
+          "bytes": 2856,
+          "sha256": "be6a880ba1ee9b4157b1211d086c1d70dfbcdb69f63e038911e36d8c0a90e224"
+        }
+      },
+      "outcomes": [
+        {
+          "mode": "ordinary",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 0
+        },
+        {
+          "mode": "optimized",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 1
+        }
+      ]
+    },
+    {
+      "target": "x86_64-apple-darwin",
+      "machine": "x86_64",
+      "python": "3.13.15 (v3.13.15:4061bc4c35f, Aug  5 2026, 09:08:51) [Clang 21.0.0 (clang-2100.1.1.101)]",
+      "job_id": 108857774702,
+      "runner_label": "macos-15-intel",
+      "artifact_id": 10960037461,
+      "artifact_name": "source-transport-x86_64-apple-darwin-attempt-1",
+      "zip": {
+        "bytes": 3417,
+        "sha256": "9fd16b0af6ce14784ff2d2c5aadcd1ddcc649af9544dac6d017af28d84e9708a"
+      },
+      "receipt": {
+        "bytes": 2855,
+        "sha256": "91e253125104aa93f2552ef4bf25d757c95226ab7c58e44eadbe4ef8e2e2f454"
+      },
+      "raw_files": {
+        "ordinary.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "optimized.stderr": {
+          "bytes": 3331,
+          "sha256": "3556d8261a86a409a48fa2ad0c10a2e319930c505b593501f419ae009240c2d0"
+        },
+        "optimized.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ordinary.json": {
+          "bytes": 159,
+          "sha256": "7577b64feafd7a893a79c63ee0f4892126b483fe9de617b4a3ac4136e45ea413"
+        },
+        "optimized.json": {
+          "bytes": 159,
+          "sha256": "80fcf8c98e5d95ae50f722cc5edc38ea48e63c3c1da02ee6674ebc6eea8cf3e8"
+        },
+        "ordinary.stderr": {
+          "bytes": 3331,
+          "sha256": "f9ba691e2d1e78be9a9d5c70229bfe746a1ddee5941729cf7cc16acd9c71bd6f"
+        },
+        "receipt.json": {
+          "bytes": 2855,
+          "sha256": "91e253125104aa93f2552ef4bf25d757c95226ab7c58e44eadbe4ef8e2e2f454"
+        }
+      },
+      "outcomes": [
+        {
+          "mode": "ordinary",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 0
+        },
+        {
+          "mode": "optimized",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 1
+        }
+      ]
+    },
+    {
+      "target": "aarch64-unknown-linux-gnu",
+      "machine": "aarch64",
+      "python": "3.13.15 (main, Aug  6 2026, 02:19:22) [GCC 13.3.0]",
+      "job_id": 108857774675,
+      "runner_label": "ubuntu-24.04-arm",
+      "artifact_id": 10960366682,
+      "artifact_name": "source-transport-aarch64-unknown-linux-gnu-attempt-1",
+      "zip": {
+        "bytes": 3720,
+        "sha256": "f41f90bfa36b34dab0cb2226fba42592ba283ef1510c3ef838db50c631397259"
+      },
+      "receipt": {
+        "bytes": 2796,
+        "sha256": "c488abe356b79cf95a44a2062711c3dc555865ba1d17eafcee02abe1569ed739"
+      },
+      "raw_files": {
+        "ordinary.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "optimized.stderr": {
+          "bytes": 3396,
+          "sha256": "812e1c0dcf4c0637d4ee7230aee30fbace5653dfc1662b5c18fc46cc7b70024d"
+        },
+        "optimized.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ordinary.json": {
+          "bytes": 400,
+          "sha256": "a2fb8ada0e805963c269f9e84ecdcf54d37e44522718ba5db810bdd974511d29"
+        },
+        "optimized.json": {
+          "bytes": 400,
+          "sha256": "c1210fe4092012b85c6f39d4cc4454df8e89068fc2bc0c2ee1183e7a311c30d8"
+        },
+        "ordinary.stderr": {
+          "bytes": 3396,
+          "sha256": "9f715a8b058a2e45635de296ca79c9985042986cfb4a1d60bfde80c8e3d6c9ad"
+        },
+        "receipt.json": {
+          "bytes": 2796,
+          "sha256": "c488abe356b79cf95a44a2062711c3dc555865ba1d17eafcee02abe1569ed739"
+        }
+      },
+      "outcomes": [
+        {
+          "mode": "ordinary",
+          "selected": 21,
+          "passed": 20,
+          "skipped": 1,
+          "skip_details": [
+            {
+              "test": "test_case_alias_of_input_parent_cannot_receive_output (source_transport_tests.Preparation.test_case_alias_of_input_parent_cannot_receive_output)",
+              "reason": "filesystem has case-sensitive directory names"
+            }
+          ],
+          "skip_classification": [
+            "case-sensitive filesystem: case-alias capability not available"
+          ],
+          "optimize": 0
+        },
+        {
+          "mode": "optimized",
+          "selected": 21,
+          "passed": 20,
+          "skipped": 1,
+          "skip_details": [
+            {
+              "test": "test_case_alias_of_input_parent_cannot_receive_output (source_transport_tests.Preparation.test_case_alias_of_input_parent_cannot_receive_output)",
+              "reason": "filesystem has case-sensitive directory names"
+            }
+          ],
+          "skip_classification": [
+            "case-sensitive filesystem: case-alias capability not available"
+          ],
+          "optimize": 1
+        }
+      ]
+    },
+    {
+      "target": "x86_64-unknown-linux-gnu",
+      "machine": "x86_64",
+      "python": "3.13.15 (main, Aug  6 2026, 02:15:18) [GCC 13.3.0]",
+      "job_id": 108857774764,
+      "runner_label": "ubuntu-24.04",
+      "artifact_id": 10960530599,
+      "artifact_name": "source-transport-x86_64-unknown-linux-gnu-attempt-1",
+      "zip": {
+        "bytes": 3716,
+        "sha256": "67241e850ad2bd63a83eebdd5d35fcf433b4c435afb4cafb070935e1000f81f7"
+      },
+      "receipt": {
+        "bytes": 2787,
+        "sha256": "ebfb7bfd4f0c65a341096c704cd59a3dcbe61c695b4bb9a38bf3217b97c222b4"
+      },
+      "raw_files": {
+        "ordinary.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "optimized.stderr": {
+          "bytes": 3396,
+          "sha256": "285a5588bb94d70ed72bdd52f21b3e3a5c6877d5735ac9fb053f231bdbc83094"
+        },
+        "optimized.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ordinary.json": {
+          "bytes": 400,
+          "sha256": "a2fb8ada0e805963c269f9e84ecdcf54d37e44522718ba5db810bdd974511d29"
+        },
+        "optimized.json": {
+          "bytes": 400,
+          "sha256": "c1210fe4092012b85c6f39d4cc4454df8e89068fc2bc0c2ee1183e7a311c30d8"
+        },
+        "ordinary.stderr": {
+          "bytes": 3396,
+          "sha256": "4e73ee4744686afbb8666bbede4bd28f12bbe03d405e0d03bb3af5bf11d5674a"
+        },
+        "receipt.json": {
+          "bytes": 2787,
+          "sha256": "ebfb7bfd4f0c65a341096c704cd59a3dcbe61c695b4bb9a38bf3217b97c222b4"
+        }
+      },
+      "outcomes": [
+        {
+          "mode": "ordinary",
+          "selected": 21,
+          "passed": 20,
+          "skipped": 1,
+          "skip_details": [
+            {
+              "test": "test_case_alias_of_input_parent_cannot_receive_output (source_transport_tests.Preparation.test_case_alias_of_input_parent_cannot_receive_output)",
+              "reason": "filesystem has case-sensitive directory names"
+            }
+          ],
+          "skip_classification": [
+            "case-sensitive filesystem: case-alias capability not available"
+          ],
+          "optimize": 0
+        },
+        {
+          "mode": "optimized",
+          "selected": 21,
+          "passed": 20,
+          "skipped": 1,
+          "skip_details": [
+            {
+              "test": "test_case_alias_of_input_parent_cannot_receive_output (source_transport_tests.Preparation.test_case_alias_of_input_parent_cannot_receive_output)",
+              "reason": "filesystem has case-sensitive directory names"
+            }
+          ],
+          "skip_classification": [
+            "case-sensitive filesystem: case-alias capability not available"
+          ],
+          "optimize": 1
+        }
+      ]
+    },
+    {
+      "target": "aarch64-pc-windows-msvc",
+      "machine": "arm64",
+      "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:51:22) [MSC v.1944 64 bit (ARM64)]",
+      "job_id": 108857774800,
+      "runner_label": "windows-11-arm",
+      "artifact_id": 10960840248,
+      "artifact_name": "source-transport-aarch64-pc-windows-msvc-attempt-1",
+      "zip": {
+        "bytes": 3445,
+        "sha256": "0000df08fc6233f26bb5d684848e2ea19733cc8a554b2e8ea5e7d455393b088f"
+      },
+      "receipt": {
+        "bytes": 2895,
+        "sha256": "776360f54062bad725ea0df5322c984bfc12ffd4d419b97d9ae709b9bea8611d"
+      },
+      "raw_files": {
+        "ordinary.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "optimized.stderr": {
+          "bytes": 3357,
+          "sha256": "d445a1da011057500486fa0896bd16c4b17c5ad47f6c19e95a8b0ed96e3b4827"
+        },
+        "optimized.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ordinary.json": {
+          "bytes": 169,
+          "sha256": "c13a5f8afc4db1bafe59a384b40f8a17c1ac1ac7602a91e397f08575c7bb1cd0"
+        },
+        "optimized.json": {
+          "bytes": 169,
+          "sha256": "cdbd26e1e9ebd4d204a81c5d37d35f7fc77bc55ce8eaba2702c4a8746fe0ae90"
+        },
+        "ordinary.stderr": {
+          "bytes": 3357,
+          "sha256": "f966017957bb4b87c9c082556ede5af59f54c36097d18de190ac39e17eeda5d4"
+        },
+        "receipt.json": {
+          "bytes": 2895,
+          "sha256": "776360f54062bad725ea0df5322c984bfc12ffd4d419b97d9ae709b9bea8611d"
+        }
+      },
+      "outcomes": [
+        {
+          "mode": "ordinary",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 0
+        },
+        {
+          "mode": "optimized",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 1
+        }
+      ]
+    },
+    {
+      "target": "x86_64-pc-windows-msvc",
+      "machine": "amd64",
+      "python": "3.13.15 (tags/v3.13.15:4061bc4, Aug  5 2026, 13:05:39) [MSC v.1944 64 bit (AMD64)]",
+      "job_id": 108857774411,
+      "runner_label": "windows-2022",
+      "artifact_id": 10960012566,
+      "artifact_name": "source-transport-x86_64-pc-windows-msvc-attempt-1",
+      "zip": {
+        "bytes": 3448,
+        "sha256": "2ddf8e0d156478eef783d92165c9156709ac9c67a92b972c1c2f50683034eade"
+      },
+      "receipt": {
+        "bytes": 2887,
+        "sha256": "219a7e252df2fbd3cdfeb49faa590fbd7d50bec40b8fd98607c2c3f99c91cdd7"
+      },
+      "raw_files": {
+        "ordinary.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "optimized.stderr": {
+          "bytes": 3357,
+          "sha256": "361641fe4fbe1546c9e49afb9a92829da4b0f2672c76426c203b5fa54314c1ee"
+        },
+        "optimized.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ordinary.json": {
+          "bytes": 169,
+          "sha256": "c13a5f8afc4db1bafe59a384b40f8a17c1ac1ac7602a91e397f08575c7bb1cd0"
+        },
+        "optimized.json": {
+          "bytes": 169,
+          "sha256": "cdbd26e1e9ebd4d204a81c5d37d35f7fc77bc55ce8eaba2702c4a8746fe0ae90"
+        },
+        "ordinary.stderr": {
+          "bytes": 3358,
+          "sha256": "e29264af3873054b1bc05f1148cbe787bd1ca5f0e7a061015e2468555816ad54"
+        },
+        "receipt.json": {
+          "bytes": 2887,
+          "sha256": "219a7e252df2fbd3cdfeb49faa590fbd7d50bec40b8fd98607c2c3f99c91cdd7"
+        }
+      },
+      "outcomes": [
+        {
+          "mode": "ordinary",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 0
+        },
+        {
+          "mode": "optimized",
+          "selected": 21,
+          "passed": 21,
+          "skipped": 0,
+          "skip_details": [],
+          "skip_classification": [],
+          "optimize": 1
+        }
+      ]
+    }
+  ],
+  "unique_test_cases": 21,
+  "native_targets": 6,
+  "interpreter_modes": 2,
+  "selected_case_executions": 252,
+  "passed_case_executions": 248,
+  "skipped_case_executions": 4,
+  "run_logs": {
+    "bytes": 88938,
+    "sha256": "cd9f8caf8e1324538f211b40dad426933f3991d8b5b2c653bf3f2dd676b92a15",
+    "members": [
+      {
+        "path": "0_Source transport x86_64-unknown-linux-gnu.txt",
+        "bytes": 18642,
+        "sha256": "d3acd52bcc6acca4c121efddf63ef48ebda8eb8692cc96b2b27e8b270954d1bb"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/system.txt",
+        "bytes": 624,
+        "sha256": "eff1b3b564769a9f450ca47a3c32cab23a3dabe0924c0c3f9c8586531b40f141"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/1_Set up job.txt",
+        "bytes": 2267,
+        "sha256": "e9190982b1bdc51d93182f863c9196ed0223cecbbf883bcf1f9fe675ea2a1a5b"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/2_Run git config --global core.autocrlf false.txt",
+        "bytes": 493,
+        "sha256": "621ee7d8b95a51050e131b793536f0ea752a0bc085a683e408041b16cca2d105"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/3_Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 8509,
+        "sha256": "a161576040e68f8223a6d8624f65b7d486b4ad2b63ddd9f191459314203b2e16"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/4_Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 936,
+        "sha256": "4d9c845b9edaef9ec7bce78d925891e9149490f20f0690c926deaaf62e9f37b2"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/5_Run ordinary and optimized transport guards.txt",
+        "bytes": 1354,
+        "sha256": "31bede9df065364b3b4d86136df0921144a0c7a3dd169d98292c0652554fa5bb"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/6_Retain the original pass, failure and skip reports.txt",
+        "bytes": 2937,
+        "sha256": "507aae759cf302e910e19a61868162e6144cf222a38c00e829c29b094b700914"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/11_Post Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 50,
+        "sha256": "d7a1fab9814c889c69f5f687c92e98d97e367bd7d60454217e0bd76bb1223b29"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/12_Post Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 1668,
+        "sha256": "ab78c31419d14957a9562dbef5d460bd1c10cb134fca324a617dff90c2ac7726"
+      },
+      {
+        "path": "Source transport x86_64-unknown-linux-gnu/13_Complete job.txt",
+        "bytes": 452,
+        "sha256": "b115db26e3d2f229d094e0c8c38f94d5120b18373652d9a25da50f70bb64a132"
+      },
+      {
+        "path": "1_Source transport aarch64-apple-darwin.txt",
+        "bytes": 17781,
+        "sha256": "abe9b35798e62ae09cd332af4f6ffc94209391aae49c4615b84a41b1afb67c33"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/system.txt",
+        "bytes": 620,
+        "sha256": "7bdb7c7836b58d9402427575c6a2cf57688f4d9afd9d3c20e9b2750856360d79"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/1_Set up job.txt",
+        "bytes": 2283,
+        "sha256": "4f656eb2c67553932bc67baae917c77bdc5defa0fdff69cc8be052f9639d4af3"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/2_Run git config --global core.autocrlf false.txt",
+        "bytes": 489,
+        "sha256": "d92969223d99ff1d115a514fe8e214b269a7c738fb9f20f8ce3f82080a46f4e5"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/3_Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 7660,
+        "sha256": "dc00d1aa3989dda972107d23179f85af033a96c3a365136987ff216ddefd1383"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/4_Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 938,
+        "sha256": "9ec6f6dd1ec00131b03f635880ab4098f5c70c917f7429bb9c487f7346247014"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/5_Run ordinary and optimized transport guards.txt",
+        "bytes": 1301,
+        "sha256": "5add5dc2db1023d789ecefd98b90e9bdf995661bc223dbf7d75f4ba6841fa31f"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/6_Retain the original pass, failure and skip reports.txt",
+        "bytes": 2888,
+        "sha256": "0b9d1d7f560ccac5157c761e54b36517689db1e7d3af35bf53e52f85b16885c8"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/11_Post Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 50,
+        "sha256": "da9da283cba5c70006ba3e739e7b30d13adcadd5879e0d1e667b1915d132ac8e"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/12_Post Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 1744,
+        "sha256": "3d3c974f0a19af327930ce1d6f3f8bbcbe9230beee43c46db00539aa6e47a6f4"
+      },
+      {
+        "path": "Source transport aarch64-apple-darwin/13_Complete job.txt",
+        "bytes": 452,
+        "sha256": "82d3a8c2f07c209562d62031ecdfbb925f3ffd14545c909e2f9fdf4be32eb719"
+      },
+      {
+        "path": "2_Source transport aarch64-pc-windows-msvc.txt",
+        "bytes": 21965,
+        "sha256": "05d5371ea8d60f4cb3cd82ea264315e022ba6a0c56097bb72c64c2718b12d634"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/system.txt",
+        "bytes": 626,
+        "sha256": "549ec921c9ca85422ea45f34de07205a04a42205e3d4f5fa664211db4e9f13b8"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/1_Set up job.txt",
+        "bytes": 2374,
+        "sha256": "c2a61211ccc54945ed6af5e77fb6f70b807086e41cfb79ce95cb786f7cf28888"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/2_Run git config --global core.autocrlf false.txt",
+        "bytes": 538,
+        "sha256": "ccf077a9a1ed0a531fbd5fde21c04ef7fe78c8ccc38d88b4fcb6163e9a17a7f4"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/3_Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 11506,
+        "sha256": "ce4f2c15d703459f2209ea6ffe8f74cfbc0b497a478dca1188e1982a4be80e5f"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/4_Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 955,
+        "sha256": "a080338a3f0eae09d262578422074fb3ef1d862c32b798e729b33937e1c95a7e"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/5_Run ordinary and optimized transport guards.txt",
+        "bytes": 1350,
+        "sha256": "0876e0b904c574e7df91e541fd4547b0cdf8eeb489c9223603a10adac277ad1a"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/6_Retain the original pass, failure and skip reports.txt",
+        "bytes": 2915,
+        "sha256": "813270fb16d94e4b2747153d88683ef98623ac4269697adbb1cc91490e987001"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/11_Post Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 51,
+        "sha256": "0fba105da13bb54081a28d6dcdbe809dce04de5a132d597de0ab37b26ea1d3ca"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/12_Post Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 1846,
+        "sha256": "a4327ea645b36d147625b0c286668726d2d4c7d3dc3b515744c553b0ebbeb8a0"
+      },
+      {
+        "path": "Source transport aarch64-pc-windows-msvc/13_Complete job.txt",
+        "bytes": 454,
+        "sha256": "9e83dbeaf68a0d9fe3f957b9dcaebf1c391a403d0282c2a11ecd655cfd703378"
+      },
+      {
+        "path": "3_Source transport x86_64-apple-darwin.txt",
+        "bytes": 22433,
+        "sha256": "21e67816ef31c81ef7c16d103b5a067dac0b70858f41b5beadba8a9b630f49ab"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/system.txt",
+        "bytes": 626,
+        "sha256": "ac28adda3802f5b87ff5ff7b986c07958a09b409b9102952f1eee0ddb5c55444"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/1_Set up job.txt",
+        "bytes": 2258,
+        "sha256": "abb53836a517adace9ae481a6cfcfa94e781c5dbe4ce015716a335f093d4238a"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/2_Run git config --global core.autocrlf false.txt",
+        "bytes": 489,
+        "sha256": "e9bbf900caaeb9bd4549252ecf244eeeacab32865982b3a3dc9d6faa9329c69e"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/3_Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 12389,
+        "sha256": "21c0e3d67a63812d9bfa41f6a7191e3d59c7294e4c28f3f2c95d1dd79ee37d39"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/4_Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 936,
+        "sha256": "8b31bc3498ca74e91946e333d75ad768543e0c0b1885257c2fee658f417920c3"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/5_Run ordinary and optimized transport guards.txt",
+        "bytes": 1288,
+        "sha256": "d50518cd3c9e3cee1fa382af24ebed6ada0d31e24a1eb0a3e6e755a25c3c54a8"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/6_Retain the original pass, failure and skip reports.txt",
+        "bytes": 2875,
+        "sha256": "10d952eea1247b2aa4a69a7ffb169632cc8b192815df0220e2ac5376a7c1bd8e"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/11_Post Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 50,
+        "sha256": "28f5fd82ca601e81c987374c4d70e60ce9b25b341648603f45de3aa605831f06"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/12_Post Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 1720,
+        "sha256": "3b5af118bea11be2f6beffdd17f7d14c483a7e14917d72cf47cdac878fa94176"
+      },
+      {
+        "path": "Source transport x86_64-apple-darwin/13_Complete job.txt",
+        "bytes": 452,
+        "sha256": "b1766061dab853eadcbbe81f0e2c9e9d0ebd8bf8b51b704f7899a3660aff8e3b"
+      },
+      {
+        "path": "4_Source transport aarch64-unknown-linux-gnu.txt",
+        "bytes": 18697,
+        "sha256": "2b28e1511b5d79cd413d6e13c422946f5b0c9a31f4c03a6ed15d989c302c3617"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/system.txt",
+        "bytes": 628,
+        "sha256": "a6d8fa742a6532bd30ab54bc2a92c9c33cf8321cd2e0f438cc0d8c03307a3739"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/1_Set up job.txt",
+        "bytes": 2290,
+        "sha256": "aa05b69f47ea8f2bdd4c431c12194085482eacea7f35d1f068a5696ca35bf6af"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/2_Run git config --global core.autocrlf false.txt",
+        "bytes": 493,
+        "sha256": "b357a9128aacfc669d1e3112036a334d55f126fd3f573d656fbb461f1f4686c8"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/3_Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 8509,
+        "sha256": "4ac7afd73b311d552ba1999dd5346ee384bd3b081b9d6eb7c55feee758158fdd"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/4_Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 938,
+        "sha256": "dcf113c22cf0b1e35ee309637b9e95d708fce9e9b009d1536ba0b91791b79599"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/5_Run ordinary and optimized transport guards.txt",
+        "bytes": 1369,
+        "sha256": "17025a278c4f35bb51a0d87b32fd9c8cc01a68a88f13ce0591f8c2ef71fde715"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/6_Retain the original pass, failure and skip reports.txt",
+        "bytes": 2952,
+        "sha256": "3eb841c638662a530a47000c38a5762cd2795916f17a748a2014ae6e333ec970"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/11_Post Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 50,
+        "sha256": "fe8b7d711e685cace6ae87339fbbeae479e969dc342ab55b3b453b1d960152fb"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/12_Post Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 1668,
+        "sha256": "ff9ba5b46b5aff78f7c591673d622486791560259280011b8844ae9f28db0b65"
+      },
+      {
+        "path": "Source transport aarch64-unknown-linux-gnu/13_Complete job.txt",
+        "bytes": 452,
+        "sha256": "4bedc7b52a93358de372203c970cc19e9c32c6ffd23bad7e47a7da340be44e2c"
+      },
+      {
+        "path": "5_Source transport x86_64-pc-windows-msvc.txt",
+        "bytes": 18501,
+        "sha256": "57fdc34411be1f91e908a28044afed4e9e2dc17f951d3ef31480d9abdd2aa93e"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/system.txt",
+        "bytes": 624,
+        "sha256": "875290f14853469b60f78ad52c1c0dad9736bd3cc6276c6b4b6decc09cf950c2"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/1_Set up job.txt",
+        "bytes": 2329,
+        "sha256": "76dd4a73157bdb7d084ac8763ac3ffd7613b41fe671e3cc2f45f73010edec3d7"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/2_Run git config --global core.autocrlf false.txt",
+        "bytes": 538,
+        "sha256": "f2117eddcf2144659cbc3e252341901cdb15ed512940079dff85147c956a74d9"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/3_Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 8115,
+        "sha256": "b9af471512de36703c4c794d2b89122ac3b65a85f31cf2b9e70c6114a4aad2f1"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/4_Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 953,
+        "sha256": "fa3afa9070e3b42808d882c9ecc26be9b0e893d0e0060f0ed2f5fb287346aae8"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/5_Run ordinary and optimized transport guards.txt",
+        "bytes": 1337,
+        "sha256": "2ea59241a5eba2059279795b0b0a7c291378058bd467e3e280cdf0c3b0f4c57a"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/6_Retain the original pass, failure and skip reports.txt",
+        "bytes": 2902,
+        "sha256": "6111183baa026411ffff9bd4404782ad5c8102e13d125e786ab3c07269425fa1"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/11_Post Run actions_setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1.txt",
+        "bytes": 51,
+        "sha256": "f09858a5160670e5247f5e6583fe8ebb3e581e93d3d4d7bd7b2f6000b7e691e0"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/12_Post Run actions_checkout@11d5960a326750d5838078e36cf38b85af677262.txt",
+        "bytes": 1846,
+        "sha256": "52935e0c2583ef0eb2ce45771ec06aaec823e9e819ed5152e264996d457888bd"
+      },
+      {
+        "path": "Source transport x86_64-pc-windows-msvc/13_Complete job.txt",
+        "bytes": 454,
+        "sha256": "420e0f463ddeccf0eaa7bc515f9563ca68b79b7e6ded25b38e3fa988b6de5246"
+      }
+    ]
+  }
+}

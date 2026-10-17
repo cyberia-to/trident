@@ -81,9 +81,16 @@ pub fn find(bank: Bank, owner: U32, source: bytes.Bytes, caller: bytes.Bytes, qu
     for step in 0..4096 {
         if cursor == syntax.ZERO { return Found { exists: false, target: syntax.ZERO } }
         let id = syntax.dec(cursor)
-        let binding = read(bank, id)
-        if same(caller, query, source, binding.name) { return Found { exists: true, target: binding.target } }
-        cursor = as_u32(noun.as_field(noun.head(seq.get(bank.records, id))))
+        // The bank owns validated records. Read this chain link once and decode
+        // only the name until it matches; owner and target are not search keys.
+        let row = seq.get(bank.records, id)
+        let rest = noun.tail(noun.tail(row))
+        let span = noun.head(rest)
+        let name = syntax.token(1, as_u32(noun.as_field(noun.head(span))), as_u32(noun.as_field(noun.tail(span))), 0)
+        if same(caller, query, source, name) {
+            return Found { exists: true, target: as_u32(noun.as_field(noun.tail(rest))) }
+        }
+        cursor = as_u32(noun.as_field(noun.head(row)))
     }
     Found { exists: false, target: syntax.ZERO }
 }

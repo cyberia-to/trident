@@ -12,6 +12,12 @@ completed acceptance evidence. The
 records the starting implementation and probes. Requirements below describe
 future work; their presence does not mean the feature exists.
 
+The follow-on [VB — Verified Bootstrap milestone](../roadmap/verified-bootstrap.md)
+is open. It adds independently justified source/binary correspondence and
+semantic correctness for the declared compiler/nox/Zheng/Joy closure, including
+the complete scoped prover and Joy delivery. SH0–SH8 retain the acceptance scope
+defined here; VB has its own trust ledger and gates.
+
 ## Release 0.4 delivery policy
 
 `release/0.4` is the integration branch for native soft3 self-hosting. Deliver
@@ -50,7 +56,7 @@ The native route is `source -> typed AST -> nox formula`. Trident owns shared
 language semantics and nox reference lowering. Joy owns execution, artifact
 transport and proof integration. Nox owns its evaluator, data model and cost
 semantics. Zheng owns the execution relation and proof verification. Soft3
-owns the [composition contract](../../soft3/specs/execution-model.md).
+owns the [composition contract](https://github.com/cyberia-to/soft3/blob/4820c3d032c3c336d725f18e7b3fb13816eeb128/specs/execution-model.md).
 Triton remains an independent target and optional comparison oracle.
 
 The first compiler uses immutable native nouns with typed compiler collections,
@@ -206,7 +212,7 @@ their normal checking order. Invalid JOB1 option values fail Joy admission.
 
 ```text
 program := "program" logical_path use* declaration+ EOF
-module := "module" logical_path use* ("pub"? constant)* EOF
+module := "module" logical_path use* declaration* EOF
 use := "use" logical_path
 logical_path := identifier ("." identifier)*
 declaration := function_attribute* "pub"? function | "pub"? (constant | record_declaration)
@@ -337,7 +343,8 @@ The scalar unqualified builtins are: `as_u32(Field) -> U32`,
 bindings take precedence over builtin names, including forward declarations;
 local variables do not replace callable bindings. Builtins do not enter the
 function graph or code table. Every argument is type checked and evaluated
-once in source order. Qualified names require future import resolution.
+once in source order. Qualified names use the direct-import resolution rules
+in [the module contract](self-hosting-jobs.md).
 
 `as_u32` checks that its evaluated Field argument is less than 2^32. Failure
 traps during execution of the emitted program through `inv(0)`; compiling that
@@ -841,9 +848,85 @@ regression corpus correctly, and clean bootstrap reproduction succeeds on the
 six supported CPU release targets: macOS, Linux glibc and Windows MSVC, each
 on ARM64 and x64. Record missing platform evidence as an open gate.
 
-CI pins the source closure/seed and invokes one documented bootstrap runner.
-Its command and artifact paths are added to the ledger when implemented;
-this specification does not advertise an existing bootstrap CLI command.
+The bootstrap runner is
+[`audit/self-hosting/bootstrap-runner.py`](../audit/self-hosting/bootstrap-runner.py).
+Supply `BOOTSTRAP_PINS` as a JSON object with exact full Git commit identities
+for `trident`, `joy`, `nox`, `hemera`, `strata`, `zheng`, `bbg`, `lens` and
+`neuron`. Install the native Rust 1.95.0 toolchain and Python 3.13, then invoke
+the runner with fresh, separate build and evidence directories, for example
+on macOS ARM64:
+
+```sh
+python3 audit/self-hosting/bootstrap-runner.py --target aarch64-apple-darwin --work ../sh6-work --output ../sh6-evidence
+```
+
+`--pins-json` accepts the same JSON explicitly. By default, an invocation performs
+two repetitions with separate source checkouts and build directories.
+`--repeat 1` or `--repeat 2` performs only that numbered repetition. Every full invocation fetches
+the pinned commits and locked dependencies, then builds offline, constructs
+C1, executes both complete self-builds, checks their fixed point and runs
+all six semantic corpora with actual C2 and actual C3. Rust-generated raw
+reference programs remain separately identified comparison oracles.
+`--prepare-only` stops after preparing C1 and reports `prepared`; it cannot
+pass bootstrap acceptance.
+
+Each whole-compiler job uses the same declared profile: 20000000000
+reductions, 1000000000 cumulative nodes, 3145728 resident nodes, 10000000000
+collection work, 65536 frames and 7200000 milliseconds. The explicit
+compaction deadline is a host allowance; guest computational limits and
+compiler semantics remain fixed. A failed limit fails the repetition, with
+no automatic retry or in-run increase. Corpus cases retain their existing
+deterministic limits.
+The runner emits `trident/clean-bootstrap/v2` receipts with the selected
+repetition and CI run, attempt and head identities. The output directory
+retains `receipt.json`, `files.json`, command logs and
+`repeat-1/` / `repeat-2/` source inventories, C1/C2/C3 artifacts, full job
+receipts, fixed-point checks and corpus evidence.
+
+The [`selfhost-bootstrap.yml`](../.github/workflows/selfhost-bootstrap.yml)
+workflow runs two independent repetitions on each of the six native targets for
+pull requests to `release/0.4`, using the exact PR head and pinned sibling
+revisions. Each repetition uses the reusable
+[`selfhost-bootstrap-repeat.yml`](../.github/workflows/selfhost-bootstrap-repeat.yml):
+one producer job executes the complete C1→C2→C3 chain and fixed-point check,
+then two native jobs run all six corpora on C2 and C3 independently. Each job
+retains the existing 330-minute step and 350-minute job ceilings. Guest limits,
+individual compiler deadlines and corpus quotas remain unchanged.
+
+[`bootstrap-phases.py`](../audit/self-hosting/bootstrap-phases.py) implements
+this phase boundary. `--phase producer` accepts the normal target, repetition,
+pin, Rust version, work and output arguments, and exports the exact native Joy,
+C1/C2/C3, inventory and original self-build evidence. Its `produced` status
+establishes only the self-build stage. `--phase corpus --producer DIRECTORY
+--generation 2` (or `3`) consumes that producer's original receipt, manifest,
+Joy and selected compiler. The consumer checks their byte identities and
+native platform before running, restores executable permission on POSIX, and
+fetches the pinned Trident/Joy fixture checkouts. It never rebuilds Joy or
+substitutes a compiler. Both corpus jobs are bound to their distinct generation,
+producer receipt, compiler path, source pins, profile and CI origin.
+
+The `trident/clean-bootstrap-phase/v1` receipts retain these phase identities
+and hashes of the runner and phase implementation. All original receipts and
+raw files remain separate. The original full runner and its v2 replay continue
+to support local complete repetitions and their historical evidence.
+Every phase uploads success or failure evidence. Documentation-only pull requests and new
+receipts under `audit/self-hosting/lexer-bootstrap/` or `bootstrap-results/`
+retain the acceptance of their recorded source revision without rerunning
+unchanged compiler jobs. Source, executable harness and workflow changes
+continue to trigger the gate. The aggregate invokes the phase runner with
+`--phase matrix --matrix PHASE_RESULTS --output MATRIX_EVIDENCE`.
+`PHASE_RESULTS` contains 36 original evidence directories: twelve producers
+and twenty-four corpus jobs. It requires each target/repetition producer and
+both associated generations, verifies every retained file and phase binding,
+and compares exact C2/C3 bytes across all twelve producers. Source pins,
+execution profile, implementation and CI run/attempt/head must match; missing,
+repeated, relabelled or mixed-run results cannot supply acceptance.
+Artifact names include the attempt number so earlier evidence remains intact.
+A new CI attempt requires all twelve fresh producers and their twenty-four
+new corpus jobs. Previous run results cannot fill a missing phase.
+Missing or incomplete platform evidence fails acceptance. The
+[progress ledger](../audit/self-hosting-progress.md) records executed results;
+adding this runner or workflow alone closes no gate.
 
 **Receipt:** C2/C3 comparison, corpus results, six-target matrix, CI run and
 downloadable source/seed/artifact identities. This closes reproducible native
@@ -870,8 +953,24 @@ native proof path. Experimental circuit tests alone do not close this gate.
 **Receipt:** normative relation/profile version, production dispatch/verifier,
 positive and adversarial pilot proofs, limits and measured proving resources.
 A full-witness public proof may satisfy the declared profile; succinctness and
-zero knowledge require separate evidence. Triton-backed JOYZK003 is a distinct
-profile and does not satisfy this native milestone.
+zero knowledge require separate evidence. Joy now dispatches bounded static
+private execution to native Zheng through `JOYZH001`; its
+[private proof contract](https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/private-execution.md) covers atom calls
+and hidden queries over authenticated public tables. The dynamic compiler
+execution model remains outside that relation, so this profile alone does not
+close SH7 or the self-build proof gate. Historical foreign-backend JOYZK artifacts
+are unsupported in soft3-only Joy and do not satisfy this milestone.
+
+The production public compiler route is Joy's
+[`joy-nox-disclosed-compiler-v1`](https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/structured-certificates.md):
+`prove-artifact` and `verify-artifact` accept complete ART1/JOB1/RES1 files.
+Zheng independently checks authenticated noun definitions, computed
+continuations, bounded activation/cache state, complete output and semantic
+charge. Verified state survives noun-table resets at nox collection boundaries.
+The profile discloses its full witness and reports physical host/GC observations
+as unattested. Its component implementation and tests require the actual pilot
+receipts above before SH7 acceptance, and both complete certificates below
+before SH8 acceptance.
 
 ## SH8. Proved self-compilation
 

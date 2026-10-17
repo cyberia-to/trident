@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "command": "CARGO_TARGET_DIR=../target-root cargo test --release --locked --offline -- --test-threads=4",
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+  "exit_code": 0,
+  "source_commit": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "source_inventory": "inventory.json",
+  "source_inventory_sha256": "c121df82df67e1672e83cfc30b94a9161cde551b1be1890ff1e075c070ef2ea9",
+  "all_compiler_source_hashes_still_match_frozen_capture": true,
+  "completed_suites": 45,
+  "passed": 1195,
+  "ignored": 5,
+  "failed": 0,
+  "rust_warnings": 0,
+  "log": "full-tests.log.gz",
+  "log_sha256": "63dfdb448c7a299fc199b2c55d54d5efb63be0da584e03c8eea4f4734c9b4567",
+  "decompressed_log_sha256": "a92ac18fa1d7ca645406c512be923a4d1962aa7818e24bc80f284a559bb574bf",
+  "decompressed_bytes": 637373,
+  "scope": "Complete Rust test gate on frozen guest sources; does not establish C1(S), C2 corpus, fixed point or proof acceptance."
+}

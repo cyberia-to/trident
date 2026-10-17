@@ -1,0 +1,87 @@
+{
+  "status": "passed-four-link-repair-delivery",
+  "scope": "Four immutable link repairs across two ready docs-only PRs into release/0.4. No merge, runtime/version change, native proof rerun, SH8 acceptance or default/tag/publication action.",
+  "link_validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/link-validation/receipt.json",
+    "bytes": 3264,
+    "sha256": "a5927afad4ad3f16cb220dc50449b4b510e3cbdc6215390fee7d0cfdd93a6f24"
+  },
+  "results": {
+    "joy": {
+      "head": "f008a14a6c5e66dca5cfb7acade924618ea5b4a8",
+      "base": "15202f42240ba923398908ee0db62d32f1d655f8",
+      "head_tree": "7d1dae78d9d5b298ff0a2935c70476e744b4492f",
+      "changed_paths": [
+        "README.md"
+      ],
+      "document": {
+        "bytes": 7534,
+        "sha256": "efffcc006424fd771ee0afbf4f7c8061a847f99bbd0cce1578860a522838fb61"
+      },
+      "clean": true,
+      "diff_check_exit": 0,
+      "all_other_tracked_paths_unchanged": true,
+      "pull_request": {
+        "baseRefName": "release/0.4",
+        "baseRefOid": "15202f42240ba923398908ee0db62d32f1d655f8",
+        "headRefOid": "f008a14a6c5e66dca5cfb7acade924618ea5b4a8",
+        "isDraft": false,
+        "mergeStateStatus": "CLEAN",
+        "state": "OPEN",
+        "statusCheckRollup": [],
+        "url": "https://github.com/cyberia-to/joy/pull/30"
+      },
+      "install_receipt": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/joy-install/postinstall-1/receipt.json",
+        "bytes": 8103,
+        "sha256": "8acfe3f43dc171de8a8307f4c919d51ad58b9e0226ca6e49ca02b818a21ecd26"
+      },
+      "install_seconds": 0.3609156250022352,
+      "installed_binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/joy-install/postinstall-1/installed/bin/joy",
+        "bytes": 5652336,
+        "sha256": "7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071"
+      },
+      "existing_warm_target_bytes_unchanged": true
+    },
+    "trisha": {
+      "head": "be137e7fa582198f13b2afe7f54d29a2aba4db48",
+      "base": "9e1af832543a21def306dac84ff918cbb823653d",
+      "head_tree": "e2e97a67f418673af52850a337777dc61e115d7f",
+      "changed_paths": [
+        "audit/README.md"
+      ],
+      "document": {
+        "bytes": 6556,
+        "sha256": "2f6895e5960b1af2d94addd79e95efd41a420f4976260be9ff04df1de420cce5"
+      },
+      "clean": true,
+      "diff_check_exit": 0,
+      "all_other_tracked_paths_unchanged": true,
+      "pull_request": {
+        "baseRefName": "release/0.4",
+        "baseRefOid": "9e1af832543a21def306dac84ff918cbb823653d",
+        "headRefOid": "be137e7fa582198f13b2afe7f54d29a2aba4db48",
+        "isDraft": false,
+        "mergeStateStatus": "CLEAN",
+        "state": "OPEN",
+        "statusCheckRollup": [],
+        "url": "https://github.com/cyberia-to/trisha/pull/27"
+      },
+      "install_receipt": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/trisha-install/postinstall-1/receipt.json",
+        "bytes": 8160,
+        "sha256": "27a9975b8b861552b8b231632cad31f11d58fe766f179b4e46471032799e2f73"
+      },
+      "install_seconds": 0.7642614580108784,
+      "installed_binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/trisha-install/postinstall-1/installed/bin/trisha",
+        "bytes": 14091840,
+        "sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+      },
+      "existing_warm_target_bytes_unchanged": true
+    }
+  },
+  "source_equivalent_install_scope": "Fresh prefixes installed from exact accepted archive production inputs and warm fingerprints; wrappers checked doc commits and runtime equivalence. No compilation from new worktree paths.",
+  "workflow_observation": "Joy has no checked-in workflow. Trisha checked-in push workflows are restricted to named test/* or release/native-* branches; none matches docs/0.4-evidence-links. No workflow manually dispatched. Fresh ready PR statusCheckRollup arrays are empty."
+}

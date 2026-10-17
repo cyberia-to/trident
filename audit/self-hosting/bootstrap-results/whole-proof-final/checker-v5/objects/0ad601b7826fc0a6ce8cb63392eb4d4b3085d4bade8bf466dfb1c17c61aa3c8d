@@ -1,0 +1,55 @@
+"""Replay measured physical reservations and bounded waits without projected credit."""
+import json
+from common import require,load,same,identity,reference,fresh_names
+GIB,MIB=1024**3,1024**2
+
+
+def reservation(row,plan,generation,minimum_existing=0):
+    mutant=plan['proofs'][str(generation)]['bytes']+32*MIB
+    growth=mutant+112*MIB+2*256*MIB
+    require(type(row['existing_bytes']) is int and row['existing_bytes']>=minimum_existing
+            and type(row['free_bytes']) is int and row['free_bytes']>=0,
+            'actual measured current bytes; no old inventory credit')
+    total=row['existing_bytes']+growth;floor=max(growth+8*GIB,mutant+10*GIB)
+    reasons=[]
+    if total>26*GIB:reasons.append('shared-owned-reservation')
+    if row['free_bytes']<floor:reasons.append('physical-free-reservation')
+    require(row['generation']==generation and row['mutant_bytes']==mutant and row['growth_bytes']==growth
+            and row['reservation_bytes']==total and row['required_free_bytes']==floor
+            and row['accepted']==(not reasons) and row['reasons']==reasons,
+            'exact actual reservation formula and refusal classification')
+
+
+def review(base,generation,name,run,admission,minimum_existing):
+    shared=base/'whole-proof-attacks-completion-v5';plan=load(shared/'plan.json')
+    require(name is None or name in fresh_names(generation),'generation-specific capacity case')
+    path=shared/'capacity'/f'c{generation}-{name or "generation"}.json';row=load(path)
+    require(row['status']=='passed-capacity-admission' and row['generation']==generation and row['case']==name
+            and row['deadline_seconds']==600 and row['sample_interval_seconds']==1
+            and type(row['elapsed_seconds']) in (int,float) and 0<=row['elapsed_seconds']<=600
+            and row['outer_deadline_monotonic']==admission['outer_deadline_monotonic'],
+            'bounded original-clock generation/case capacity permit')
+    require(run['started_ns']<=row['started_ns']<=row['ended_ns']<=run['ended_ns'],'capacity civil interval')
+    same(shared/'plan.json',row['plan'])
+    if name is None:
+        require(row['admission'] is None and row['ended_ns']<=admission['time_ns'],'capacity before generation launch admission')
+    else:
+        same(shared/f'admission-c{generation}.json',row['admission'])
+        require(admission['time_ns']<=row['started_ns'],'case wait after exact immutable admission')
+    log=path.with_suffix('.jsonl');require(row['logs']==reference(log) and row['logs']['bytes']<=MIB,'complete bounded capacity log')
+    previous=None;count=0
+    with log.open() as stream:
+        while line:=stream.readline(MIB+1):
+            require(len(line)<=MIB,'bounded capacity observation row');observed=json.loads(line)
+            reservation(observed['reservation'],plan,generation,minimum_existing)
+            require(row['started_ns']<=observed['time_ns']<=row['ended_ns'] and 0<=observed['elapsed_seconds']<=row['elapsed_seconds'],
+                    'recorded capacity observation clock domains')
+            if previous is not None:
+                require(not previous['reservation']['accepted'] and previous['time_ns']<=observed['time_ns']
+                        and previous['elapsed_seconds']<=observed['elapsed_seconds'],'no observation after accepted permit')
+            previous=observed;count+=1
+    require(count==row['observations'] and count>0 and previous['reservation']==row['reservation']
+            and previous['reservation']['accepted'] is True and previous['elapsed_seconds']==row['elapsed_seconds'],
+            'final actual physical observation alone admits the command')
+    require(not path.with_suffix('.failed.json').exists(),'failed wait never becomes accepted')
+    return row

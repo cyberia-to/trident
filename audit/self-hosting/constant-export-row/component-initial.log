@@ -1,0 +1,24 @@
+   Compiling cyber-nox v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox/rs)
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 14.28s
+     Running tests/native_constant_export_rows.rs (../target-pipeline-review/release/deps/native_constant_export_rows-13386c944629b5bc)
+
+running 2 tests
+test constant_export_row_compiler_footprint ... ignored, explicit paired complete C1 footprint diagnostic
+
+thread '<unnamed>' (15808409) panicked at tests/native_constant_export_rows.rs:236:17:
+case 4
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'paired_lookup_keeps_final_names_foreign_literal_provenance_and_misses' (15808408) panicked at tests/native_control/support.rs:13:10:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+test paired_lookup_keeps_final_names_foreign_literal_provenance_and_misses ... FAILED
+
+failures:
+
+failures:
+    paired_lookup_keeps_final_names_foreign_literal_provenance_and_misses
+
+test result: FAILED. 0 passed; 1 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.55s
+
+error: test failed, to rerun pass `--test native_constant_export_rows`

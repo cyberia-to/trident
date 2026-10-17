@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 90, in <module>
+    main()
+    ~~~~^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 46, in main
+    index = json.loads(bounded(ROOT / 'retention.json', 256 << 10))
+                       ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 27, in bounded
+    require(stat.S_ISREG(path.lstat().st_mode) and path.stat().st_size <= maximum,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            'bounded ordinary input: ' + str(path))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/replay.py", line 19, in require
+    raise ValueError(message)
+ValueError: bounded ordinary input: /Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/source-transport-replay-guards/oversized-input/retention.json

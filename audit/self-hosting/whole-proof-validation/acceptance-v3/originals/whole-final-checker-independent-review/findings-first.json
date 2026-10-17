@@ -1,0 +1,44 @@
+{
+  "status": "changes-requested",
+  "observed_ns": 1790938611251638000,
+  "scope": "Independent checker source review and isolated metadata consistency probes; no final acceptance or active runtime mutation",
+  "source_manifest": {
+    "bytes": 2854,
+    "sha256": "999b67d11deb4ee6c057371fd4deaf2ce6ecfe43d30c88aa3c988721a2359f28"
+  },
+  "findings": [
+    {
+      "id": "watcher-cleanup-terminal-status",
+      "origin": "parent independent review, independently confirmed by source read",
+      "source": "when_ready.py",
+      "source_identity": {
+        "bytes": 7018,
+        "sha256": "26cdf2db3497a521968c95f9eb79dbfa6c49dd132ba46a3ffc47af21040f75d1"
+      },
+      "problem": "Cleanup exception before status/error assignment can preserve running-checker after terminal failure.",
+      "requested": "Save original terminal status/error first; retain cleanup_error separately."
+    },
+    {
+      "id": "fresh-schedule-resource-provenance",
+      "origin": "this independent review",
+      "source": "schedule.py",
+      "source_identity": {
+        "bytes": 8355,
+        "sha256": "d99522a483e3b9c305872d858cb52d7bf60138f81ca1706fa634e2702ee75968"
+      },
+      "problem": "Isolated control and five contradictory metadata variants all accepted: timestamps outside coordinator interval, descending samples, latest mismatch, final time outside interval, failed child terminal code.",
+      "requested": "Bind timed rows, latest/final row and children_final PID/zero exit consistently.",
+      "probe": {
+        "bytes": 5195,
+        "sha256": "b19470bcc183ff26eb1a9c69414d947ccfa19e68b1caf4207abc9a825aa0f5ee"
+      },
+      "outcomes": {
+        "bytes": 325,
+        "sha256": "35b12350af7410b44c3b6ad932188705eafe14d6b854245fb3f142748854f36e"
+      },
+      "fixture_limit": "Synthetic bounded real files and real SHA validation; only unrelated historical reclamation review replaced. Not a forged full acceptance run."
+    }
+  ],
+  "original_receipts_changed": false,
+  "checker_or_watcher_launched": false
+}

@@ -1,0 +1,34 @@
+"""Explicitly partial retained-data compatibility replay; never final acceptance."""
+import hashlib,json,sys,time,traceback
+from pathlib import Path
+import common,history,transitions,selected_schedule
+ROOT=Path(__file__).resolve().parent
+def ref(path):
+    return dict(path=str(path),**common.identity(path))
+def source_files():
+    paths=list(ROOT.glob('*.py'))+[ROOT/'PLAN.md']
+    return {p.name:common.identity(p) for p in sorted(paths)}
+def main():
+    out=ROOT/sys.argv[1];out.mkdir();started=time.monotonic()
+    before=source_files();(out/'sources').mkdir()
+    for name in before:(out/'sources'/name).write_bytes((ROOT/name).read_bytes())
+    report=dict(schema='trident/partial-retained-preparation-replay/v5',status='running',
+        command=[sys.executable,*sys.argv],cwd=str(ROOT),sources=before,started_ns=time.time_ns(),steps={},
+        scope='Read-only preparation compatibility replay of original failed histories, completed prefix transition and failed V4 restricted schedule. No V5 schedule or final checker acceptance, fresh positive proof rerun, native command, host observation, signal, cleanup, network or publication.')
+    def save():
+        (out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+    save()
+    try:
+        # Current immutable source/data gate, then independently replay original retained bytes.
+        common.v4_sources(ROOT.parent);common.v5_sources(ROOT.parent);common.v3_pins(ROOT.parent)
+        for label,function in [('failed-v2-v3',history.review),('prefix',transitions.prefix),('failed-v4',selected_schedule.review)]:
+            tick=time.monotonic();result=function(ROOT.parent)
+            path=out/(label+'.json');path.write_text(json.dumps(result,indent=2)+'\n')
+            report['steps'][label]=dict(status='passed-retained-preparation-step',result=ref(path),elapsed_seconds=time.monotonic()-tick);save()
+        assert source_files()==before,'checker draft changed during retained replay'
+        report.update(status='passed-partial-retained-preparation-replay',sources_unchanged=True)
+    except BaseException:
+        report.update(status='failed-partial-retained-preparation-replay',error=traceback.format_exc());raise
+    finally:
+        report.update(ended_ns=time.time_ns(),elapsed_seconds=time.monotonic()-started);save()
+if __name__=='__main__':main()

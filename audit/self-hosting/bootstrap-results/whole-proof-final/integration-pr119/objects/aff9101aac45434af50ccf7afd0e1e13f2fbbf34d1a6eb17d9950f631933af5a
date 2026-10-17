@@ -1,0 +1,12 @@
+Full-size negative-proof construction was spending its deadline rehashing unchanged frames. The diagnostic constructor now reuses already authenticated frame digests; retained pilot byte comparisons and fresh verifier outcomes cover that change. Bounded sequential completion, final acceptance and metadata-delivery tools keep explicit limits and preserve earlier failed attempts.
+
+This increment also retains both offline replays of the original PR117 native matrix, its exact-tree merge, and accepted companion distribution/retention integration. Status docs keep SH8 open until the active whole-proof negative suite and final checker finish. Package versions and public release decisions are unchanged.
+
+Validation:
+
+- Diagnostic helper: 10 Rust tests and 14 old/new pilot byte comparisons with fresh verifier outcomes; independent source review retained.
+- Final checker: 80 fixtures; completion and metadata-delivery tools have their own source-bound reviews and adversarial tests.
+- PR117: original 37-job matrix retained and replayed twice, with 12 producers and 24 corpus jobs of 547 observations each; original failures preserved.
+- Exact retained-byte checks, scoped Windows byte preservation, source equivalence and fresh-prefix Rust 1.89 installation. Product compiler/runtime sources, Cargo inputs and workflows are unchanged; the checked-in path filters exclude this tooling/reporting increment from another native-matrix run.
+
+The incoming self-hosted-compilation guide from `release/0.4` is preserved by the merge. Final SH8 results will follow in a separate acceptance delivery after their actual gates pass.

@@ -15,7 +15,7 @@ use super::{LockedDep, Lockfile};
 /// name = { hash = "abc...", source = "registry:https://..." }
 /// ```
 pub fn load_lockfile(path: &Path) -> Result<Lockfile, String> {
-    let content = std::fs::read_to_string(path)
+    let content = crate::config::text_file::project(path)
         .map_err(|e| format!("cannot read lockfile '{}': {}", path.display(), e))?;
 
     let mut locked: BTreeMap<String, LockedDep> = BTreeMap::new();

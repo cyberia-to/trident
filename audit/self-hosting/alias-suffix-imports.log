@@ -1,0 +1,56 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 4.59s
+     Running tests/native_compiler.rs (../target-byte-scale/release/deps/native_compiler-8941dbcc9881c059)
+
+running 31 tests
+test constant_imports::imported_constants_bind_each_symbol_in_direct_use_order_with_owner_spans ... ok
+imports: 2477830 reductions, 172407 nodes, 657 frames
+imports: 3780605 reductions, 189663 nodes, 673 frames
+test constant_imports::exported_alias_values_keep_foreign_literal_origin_and_complete_member_names ... ok
+imports: 2477825 reductions, 172788 nodes, 657 frames
+imports: 3575341 reductions, 186537 nodes, 651 frames
+test constant_provenance::failed_private_import_resolution_cannot_reuse_a_previous_publish_result ... ok
+test function_import_bounds::imported_parameter_allowance_is_shared_and_rejects_before_first_excess_parameter ... ok
+test function_import_bounds::imported_function_allowance_counts_private_and_replaced_declarations_together ... ok
+imports: 2704464 reductions, 176368 nodes, 657 frames
+test function_imports::imported_calls_evaluate_arguments_once_and_preserve_distinct_trap_order ... ok
+imports: 3588832 reductions, 191824 nodes, 656 frames
+imports: 1029975 reductions, 144189 nodes, 528 frames
+test function_imports::imported_function_artifacts_ignore_declaration_discovery_and_unused_definitions ... ok
+test function_imports::imported_call_namespace_is_distinct_from_constants_and_lexical_module_roots ... ok
+imports: 2302541 reductions, 167485 nodes, 617 frames
+test generated_profiles::imported_scalar_helpers_do_not_change_generated_structured_entry_profiles ... ok
+imports: 3702154 reductions, 191904 nodes, 629 frames
+imports: 1443559 reductions, 146118 nodes, 609 frames
+imports: 9449278 reductions, 199146 nodes, 2905 frames
+test function_imports::imported_ordinary_asserts_keep_call_semantics_and_purity_uses_the_member_name ... ok
+imports: 1922793 reductions, 157509 nodes, 694 frames
+imports: 3845425 reductions, 190686 nodes, 569 frames
+test function_imports::imported_functions_keep_private_helpers_forward_calls_and_scalar_abis ... ok
+test constant_linking::guest_import_errors_keep_original_package_indices_and_caller_byte_spans ... ok
+test type_import_bounds::final_type_exports_fit_the_exact_shared_type_declaration_allowance ... ok
+imports: 2231810 reductions, 168937 nodes, 692 frames
+test function_imports::dependency_body_errors_retain_original_owner_spans_including_replaced_bodies ... ok
+test function_imports::imported_table_order_compares_owner_then_member_without_entry_privilege ... ok
+test type_import_bounds::nominal_allowance_counts_private_and_repeated_declarations_across_owners ... ok
+test function_imports::imported_functions_do_not_expose_private_transitive_or_ambient_callables ... ok
+imports: 1770152 reductions, 153075 nodes, 673 frames
+test constant_linking::guest_imports_retain_per_symbol_source_order_and_lexical_shadowing ... ok
+test type_imports::dependency_aggregate_abis_preserve_every_digest_word_noun_and_array_element ... ok
+test constant_linking::guest_imports_validate_private_and_replaced_declarations_before_exporting ... ok
+test intrinsics::vm::guest_intrinsics_import_exact_vm_sources_and_preserve_complete_values ... ok
+test constant_linking::guest_imports_compile_transitive_frozen_constants_without_host_resolution ... ok
+test type_imports::imported_constructors_use_declaration_order_once_and_edits_keep_old_snapshots ... ok
+test intrinsics::guest_intrinsics_do_not_escape_private_final_or_direct_import_visibility ... ok
+test function_imports::imported_callables_follow_direct_per_symbol_use_order_and_final_visibility ... ok
+test type_imports::qualified_constructor_namespace_ignores_lexical_roots_but_field_reads_keep_them ... ok
+test type_imports::qualified_types_and_constructors_preserve_full_and_short_descriptor_identity ... ok
+test type_imports::nominal_names_require_direct_visibility_and_same_shape_does_not_erase_owner ... ok
+test type_imports::every_dependency_layout_is_stable_and_forward_types_remain_unavailable ... ok
+test type_imports::opaque_nominal_values_cross_diamonds_with_owner_privacy_and_persistent_writes ... ok
+test type_imports::type_aliases_follow_per_symbol_use_order_and_final_declaration_visibility ... ok
+
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 157 filtered out; finished in 41.14s

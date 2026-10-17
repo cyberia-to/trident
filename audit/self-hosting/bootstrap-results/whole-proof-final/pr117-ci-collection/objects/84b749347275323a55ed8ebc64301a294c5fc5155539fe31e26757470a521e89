@@ -1,0 +1,132 @@
+{
+  "status": "prepared-inactive-reviewed-launch-pending",
+  "time_ns": 1790974455246515000,
+  "scope": "Exact original PR117 run37002840888 attempt1; authenticated22 archive reuse and15 remaining archives plus logs; curl transport only; no CI/native execution",
+  "source_manifest": {
+    "bytes": 16156,
+    "sha256": "cd2d58e2c0f0ac022295b9d679d1441376e849cfd41db0307f27f1b7e1731b25"
+  },
+  "source_count": 72,
+  "files": {
+    "PLAN.md": {
+      "bytes": 3557,
+      "sha256": "f188075fd8783bf38eba0741384ddc0f5141846e2e7961079dafc0b7c0161a52"
+    },
+    "toolchain.json": {
+      "bytes": 2241,
+      "sha256": "2e9d0b06692fc381bce70e97064cd5fa33238eff9e1d746932771b9b91b9adde"
+    },
+    "sources.json": {
+      "bytes": 16156,
+      "sha256": "cd2d58e2c0f0ac022295b9d679d1441376e849cfd41db0307f27f1b7e1731b25"
+    },
+    "preparation/admission-first/receipt.json": {
+      "bytes": 1173,
+      "sha256": "8dcd3d1dd06049aa51df72cdf771f24261b6728f42d8b82e06dc3894ab255c8c"
+    },
+    "preparation/admission-first/prior16.stdout": {
+      "bytes": 29255,
+      "sha256": "da83242e2fb1bd7b1bd08e91bcdb872981555795ba3d2535dbdeb262826640ae"
+    },
+    "preparation/admission-first/prior16.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/projection-final/projection.json": {
+      "bytes": 7901,
+      "sha256": "09cda0579e858ae3117480abada1eaaaa313540040ef0ba60975b76c96c77b35"
+    },
+    "preparation/projection-final/prior16.stdout": {
+      "bytes": 29255,
+      "sha256": "da83242e2fb1bd7b1bd08e91bcdb872981555795ba3d2535dbdeb262826640ae"
+    },
+    "preparation/projection-final/prior16.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/inherited-source-comparison.json": {
+      "bytes": 683,
+      "sha256": "94c7a429bf161179aa5b630d2dd48af415e0ba06f44ba595c70617d0f6411a28"
+    },
+    "preparation/final-gates/receipt.json": {
+      "bytes": 18487,
+      "sha256": "f829a5d5760a83d4fd7a047e9872de76680d1f31a7118a3e18472953e3bed3f8"
+    },
+    "preparation/final-gates/v4.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/final-gates/v4.stderr": {
+      "bytes": 3256,
+      "sha256": "7cc3dd03a1de2c897859a3680739e353296b13fea70b769a7265d15b97b4afb8"
+    },
+    "preparation/final-gates/original-v3.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/final-gates/original-v3.stderr": {
+      "bytes": 2715,
+      "sha256": "76f07646c9607034226448a07b37e40a93dbee966ff6632f88f1f94f8af43ba7"
+    },
+    "preparation/tests-first.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/tests-first.stderr": {
+      "bytes": 4456,
+      "sha256": "66d83259f4bbb10e910836a3a19769f4c448f33ca396754a1c8f00879b913d25"
+    },
+    "preparation/test_http-first.py": {
+      "bytes": 12437,
+      "sha256": "9f075604b8f45bc102911efbb18e466dc6febec40668c0122ff5a8f789248cd7"
+    },
+    "preparation/tests-second.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/tests-second.stderr": {
+      "bytes": 3256,
+      "sha256": "d6cf8e4e5c813a5c619f60620c72c64e98039a65210716eb4310e6de5b5737df"
+    }
+  },
+  "tests": {
+    "current25": "passed 7.833s",
+    "original19": "passed unchanged 3.749s",
+    "first_attempt": "One mocked-clock test fixture exhausted its finite clock iterator; unchanged actual transport/HTTPS tests passed. The test fixture was corrected and original source/raw failure retained; no production workaround."
+  },
+  "actual_admission": {
+    "archives": 22,
+    "member_files": 51620,
+    "elapsed_seconds": 26.59608433302492
+  },
+  "conditional_projection": {
+    "main_receipt_serialized_bytes": 1680024,
+    "extra_main_receipt_reserve": 2097152,
+    "main_receipt_margin": 29777256,
+    "reference_total": 31705325,
+    "largest_reference": 7107110,
+    "projected_peak_owned_bytes": 2522016986,
+    "conditional_owned_margin": 699208486,
+    "assumptions": [
+      "Remaining PR117 decoded membership and logs use corresponding actual PR116 archives as a qualified sizing proxy; no remaining PR117 bytes are claimed observed.",
+      "Main receipt models three attempts for every35 request,70 failures with16KiB tracebacks,70 backoffs, large numeric fields, full source closure and all reference identities, plus2MiB extra serialization reserve.",
+      "Peak projection includes a simultaneous replacement main receipt and96MiB further sidecar/partial allowance; arbitrary full failed-body triples need not fit and fail closed under unchanged3GiB.",
+      "Every actual operation independently enforces exact size/hash,32MiB per receipt/reference, shared3GiB physical budget and8GiB free floor; this conditional forecast grants no cap exception."
+    ]
+  },
+  "launch_pending": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-W",
+      "error",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/collect.py"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+    "source_review_required": true,
+    "max_runs": 1
+  },
+  "source_unchanged": true,
+  "network_actions": 0,
+  "credentials_read": 0
+}

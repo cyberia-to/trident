@@ -1,0 +1,51 @@
+{
+  "status": "passed-final-public-retained-byte-validation",
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery/verify-retained.py",
+    "--originals"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery",
+  "started_ns": 1790980147336285000,
+  "verifier": {
+    "bytes": 3127,
+    "sha256": "7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446"
+  },
+  "map": {
+    "bytes": 159807,
+    "sha256": "1ae43954feba40f36cdc2cdd4366d273af1ea650227f052fcffbfa3059728fc3"
+  },
+  "exit_code": 0,
+  "public_metadata_privacy_passed": true,
+  "static_stage_unchanged": true,
+  "intermediate_stage_unchanged": true,
+  "original_code_executed": false,
+  "network_or_native_commands": false,
+  "result": {
+    "status": "passed-retained-byte-validation",
+    "original_files": 441,
+    "original_bytes": 2669486,
+    "unique_objects": 232,
+    "stored_object_bytes": 1920295,
+    "originals_checked": true,
+    "map": {
+      "bytes": 159807,
+      "sha256": "1ae43954feba40f36cdc2cdd4366d273af1ea650227f052fcffbfa3059728fc3"
+    },
+    "inspection": "Credential-pattern, signed-URL, process-table and parsed nonempty raw_stdout checks passed. No original code was executed."
+  },
+  "ended_ns": 1790980147601580000,
+  "streams": {
+    "validation-final.stdout": {
+      "bytes": 422,
+      "sha256": "9e1e520cc0d0d31d8f79e2d719f5da759de98344447a9d4a9950a910a3fdc548"
+    },
+    "validation-final.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

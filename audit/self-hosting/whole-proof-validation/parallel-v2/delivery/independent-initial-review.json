@@ -1,0 +1,102 @@
+{
+  "schema": "parallel-v2-delivery-independent-review-v1",
+  "status": "reviewed-with-wording-fix-pending",
+  "reviewed_utc": "2026-10-02T05:40:58.596531+00:00",
+  "scope": "Read-only archive/source/receipt replay; no proof execution or full certificate read. Root scripts not executed.",
+  "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+  "base_revision": "e57f2b4c6c6b7128e1cbbf80a77a0ccfcc8d33d7",
+  "retained_files": 31,
+  "retained_bytes": 761028,
+  "retained_all_match_originals": true,
+  "retained_inventory_complete": true,
+  "source_equivalence": {
+    "status": "passed-source-equivalence",
+    "tested_base": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+    "delivery_base": "e57f2b4c6c6b7128e1cbbf80a77a0ccfcc8d33d7",
+    "paths": [
+      "src",
+      "lib",
+      "compiler",
+      "catalog",
+      "silicon",
+      "tests",
+      "Cargo.toml",
+      "Cargo.lock",
+      "build.rs"
+    ],
+    "command": [
+      "git",
+      "ls-tree",
+      "-rz",
+      "--full-tree",
+      "REVISION",
+      "--",
+      "src",
+      "lib",
+      "compiler",
+      "catalog",
+      "silicon",
+      "tests",
+      "Cargo.toml",
+      "Cargo.lock",
+      "build.rs"
+    ],
+    "tree_bytes": 56915,
+    "tree_sha256": "a63b62baf01a096dabf4a56d56fce71fb5e20c37cd4c60f92dc4fe4a40650b52",
+    "rust_test_receipt": {
+      "bytes": 2823,
+      "sha256": "4032ec0da9b1e51a5efed6bdd9cfd7f681dd2de289aa5e1d3789b9043e1a12aa"
+    },
+    "scope": "Existing complete actual Rust1.89 workspace result applies to identical Rust/compiler/test source blobs. New Python orchestration is covered by its separate actual subprocess tests. This is source-impact reuse, not a fresh Rust workspace test execution."
+  },
+  "rust_test_results": [
+    1231,
+    0,
+    5
+  ],
+  "fresh_cargo_check": {
+    "status": "passed",
+    "rust": "1.89.0",
+    "elapsed_seconds": 2.691963792021852
+  },
+  "findings": [
+    {
+      "severity": "minor",
+      "id": "parent-readme-historical-status",
+      "detail": "Parent README still says no complete certificate has been consumed yet; v1 has now completed a whole-c2 index. Explicitly qualify that sentence as the original delivery-time snapshot."
+    }
+  ],
+  "claims_reviewed": [
+    "V2 README keeps whole SH8 acceptance open and records two generation suites as running.",
+    "Original interruption and retained partial are explicitly preserved; no negative success is inherited.",
+    "Eight actual helper/resource tests are separate from the reused Rust test result.",
+    "Inherited1231/0/5 Rust results are explicitly tied to exact source-tree equivalence and not presented as rerun.",
+    "Large proof and input payloads are external with identities; archive contains tooling/receipts only."
+  ],
+  "checked_files": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/parallel-v2/files.json": {
+      "bytes": 9623,
+      "sha256": "f0ea089171fc8b07ba8aff0c0d47861e51c0627dddd128bb5d9489af5fba5560"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/parallel-v2/README.md": {
+      "bytes": 3194,
+      "sha256": "156bf394bfa3f5abbc02c3a8fed5e3b210285435265c67d97696c30c7b52336b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/parallel-v2/check_delivery.py": {
+      "bytes": 3315,
+      "sha256": "73643987ba84ac5bb2afe91669e2ac1142f2feeef71379388b287837a79e1743"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/parallel-v2/delivery/test-inheritance.json": {
+      "bytes": 1058,
+      "sha256": "d243ab1a8f3f4a3663ec48e7956e454016732cc1644b0d279506fbed849bdff7"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/parallel-v2/delivery/cargo-check/receipt.json": {
+      "bytes": 1549,
+      "sha256": "02dacb6782b53f078c8941cd2a05be0bbb12d6fe73bfdb7ded4b38bbc93fee78"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/parallel-v2/delivery/inherited-rust-workspace/receipt.json": {
+      "bytes": 2823,
+      "sha256": "4032ec0da9b1e51a5efed6bdd9cfd7f681dd2de289aa5e1d3789b9043e1a12aa"
+    }
+  }
+}

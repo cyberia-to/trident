@@ -1,0 +1,67 @@
+"""Replay actual v4 raw commands, unchanged caps and birth-bound retirement."""
+from common import C, require, identity, load, same, reference
+from historical_rows import command_samples
+
+GIB, MIB = 1024**3, 1024**2
+
+
+def binding(record):
+    require(type(record['pid']) is int and record['pid'] > 0 and record['pid'] == record['pgid']
+            and isinstance(record['started'], str) and bool(record['started'])
+            and record['members'].get(str(record['pid'])) == record['started'], 'native birth identity')
+    require(all(str(int(p)) == p and int(p) > 0 and isinstance(b, str) and b
+                for p, b in record['members'].items()), 'known native birth membership')
+
+
+def retirement(shared, name, run, row=None):
+    path = shared/'native-processes'/(name+'.json')
+    registered, observed, retired = load(path), load(path.with_suffix('.observed')), load(path.with_suffix('.retired'))
+    binding(registered)
+    binding(observed)
+    require(all(registered[k] == observed[k] for k in ('pid','pgid','started','parent','argv','attempt','coordinator','registered_ns')),
+            'observed registration preserves original ownership')
+    require(all(observed['members'].get(k) == v for k, v in registered['members'].items()), 'observed members retain original births')
+    same(path, retired['original'])
+    require(retired['final_observation'] == dict(status='empty', members=[]), 'recorded native group actually empty')
+    require(run['started_ns'] <= registered['registered_ns'] <= retired['time_ns'] <= run['ended_ns'],
+            'native registration and retirement within coordinator civil interval')
+    if row is not None:
+        require(all(row['process_binding'][k] == registered[k] for k in ('pid','pgid','started'))
+                and row['final_group'] == dict(status='empty', members=[]), 'command exact birth and empty final group')
+        require(row['started_ns'] <= registered['registered_ns'] <= row['ended_ns'], 'registration within command civil interval')
+    return dict(registration=reference(path), observation=reference(path.with_suffix('.observed')),
+                retirement=reference(path.with_suffix('.retired')))
+
+
+def diagnostic(base, generation, directory, argv, exit_code, metadata, inputs, kind):
+    shared = base/'whole-proof-attacks-completion-v4'
+    plan, admission, run = (load(shared/p) for p in ('plan.json','admission.json','run-1/receipt.json'))
+    row = C.command_receipt(directory, exit_code)
+    require(row['schema'] == 'trident/whole-proof-attack-command/v2' and row['argv'] == list(map(str,argv))
+            and row['metadata'] == metadata and row['cwd'] == str(directory)
+            and row['environment'] == {'PATH': ''} and row['inputs_before'] == inputs, 'exact v4 command and inputs')
+    caps = (dict(wall=1800,cpu=1800,rss=GIB,file=min(24*GIB+65536,plan['proofs'][str(generation)]['bytes']+32*MIB))
+            if kind == 'helper' else dict(wall=7500,cpu=7500,rss=6*GIB,file=32*MIB))
+    require(row['caps'] == caps and row['sampled_scope_disk_cap'] == 26*GIB and row['free_floor'] == 8*GIB
+            and row['sample_interval_seconds'] == 1 and row['per_stream_log_bytes'] == MIB, 'unchanged v4 command ceilings')
+    same(directory.parents[1]/'guard.py', row['driver'])
+    for field, name in (('shared_driver','resources.py'),('shared_profile','plan.json'),('admission','admission.json')):
+        same(shared/name,row[field])
+    require(all(row['files'][name]['bytes'] <= MIB for name in ('stdout','stderr')), 'bounded actual streams')
+    registered = load(shared/'native-processes'/(directory.name+'.json'))
+    require(registered['pid'] == row['pid'] and registered['attempt'] == directory.name
+            and registered['parent'] == admission['children'][str(generation)]
+            and registered['coordinator'] == admission['pid'] and registered['argv'] == row['argv'], 'actual admitted native parent')
+    require(run['started_ns'] <= row['started_ns'] <= row['ended_ns'] <= run['ended_ns'], 'command within actual coordinator civil interval')
+    require(type(row['elapsed_seconds']) in (int,float) and 0 <= row['elapsed_seconds'] <= caps['wall']+5,
+            'actual monotonic command completion within guard plus final reap allowance')
+    command_samples(directory,row)
+    require(row['elapsed_seconds'] >= row['latest_sample']['elapsed'], 'monotonic final elapsed follows samples')
+    retirement(shared,directory.name,run,row)
+    full = load(shared/'full-admission.json')
+    if directory.name == 'whole-c2-verify-cost':
+        require(generation == 2 and kind == 'verify' and row['argv'] == plan['prelude_command']
+                and row['ended_ns'] <= full['time_ns'], 'only exact C2 verifier precedes full admission')
+    else:
+        require(full['time_ns'] <= row['started_ns'], 'all other native work follows full admission')
+    return row

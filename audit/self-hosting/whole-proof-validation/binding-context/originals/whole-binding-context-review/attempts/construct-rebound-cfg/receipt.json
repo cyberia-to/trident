@@ -1,0 +1,117 @@
+{
+  "schema": "trident/whole-proof-attack-command/v1",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator",
+    "mutate",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/index.json",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/result.dag",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/rebound-cfg.joysc",
+    "rebind",
+    "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+    "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+    "563c90d4fdf219ec01bb455e33351d6ec9422362591b71b19cd43f7db80521f2",
+    "1",
+    "100000000",
+    "65536"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/attempts/construct-rebound-cfg",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 150,
+    "cpu": 150,
+    "rss": 1073741824,
+    "file": 67108864
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 5864,
+    "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+  },
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/index.json": {
+      "bytes": 1222,
+      "sha256": "4d55c8a7fe2683b26fce2d67786c99228fb463aac4be90de5b71e075cef9520e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    }
+  },
+  "expected_exit": 0,
+  "metadata": {
+    "mode": "rebind",
+    "context": [
+      "2eea2ac5f611012877b4e7291a3a6f534aee7281bb358a0b8e5fabe2ac1f9fbe",
+      "ab3a8aa4a125ccadfb3ec09da5c9703d67f23ce287e39fef3aad1ee6bdb9780a",
+      "563c90d4fdf219ec01bb455e33351d6ec9422362591b71b19cd43f7db80521f2",
+      "1",
+      "100000000",
+      "65536"
+    ]
+  },
+  "started_ns": 1790934436903259000,
+  "sampled_peak_rss_bytes": 1867776,
+  "pid": 44230,
+  "latest_sample": {
+    "time_ns": 1790934437932452000,
+    "elapsed": 1.029187667008955,
+    "processes": [
+      {
+        "pid": 44230,
+        "rss_bytes": 1867776
+      }
+    ],
+    "rss_bytes": 1867776,
+    "owned_bytes": 42476021,
+    "free_bytes": 49008410624
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 1.214492250001058,
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/target-helper/release/whole-proof-mutator": {
+      "bytes": 724240,
+      "sha256": "ba7ced8038f76aa4ae9754b26f238c4567468f0fa914d4aa6693386408bf904c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot/attempts/prove-aggregate-1/proof.joysc": {
+      "bytes": 8662132,
+      "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/index.json": {
+      "bytes": 1222,
+      "sha256": "4d55c8a7fe2683b26fce2d67786c99228fb463aac4be90de5b71e075cef9520e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-binding-context-review/actual/result.dag": {
+      "bytes": 12948,
+      "sha256": "50c818e31b005ff1a23aab33767b9d7454e98e21191efd1b971228f921ce4cab"
+    }
+  },
+  "ended_ns": 1790934438121957000,
+  "files": {
+    "stdout": {
+      "bytes": 241,
+      "sha256": "5ff7745ebdad5416bf43566e62081993c1dc697bbd6b513af249f2e5baa4d9fd"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resources.jsonl": {
+      "bytes": 383,
+      "sha256": "595bcf8d73a96b743414c86e2e6a1192170f645bbaede902665563fcb9b8bac1"
+    }
+  }
+}

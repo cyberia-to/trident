@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-tooling-delivery-review/test_parallel_v2.py"
+  ],
+  "tests": 8,
+  "elapsed_reported_seconds": 25.127,
+  "scope": "Isolated temporary scopes and actual small subprocesses; no whole certificates consumed; both orphan leader and leaderless native groups tested.",
+  "files": {
+    "test_parallel_v2.py": {
+      "bytes": 9166,
+      "sha256": "c986af704937ecd20c346b16145dcec0b774743ff194b66a7b30078e1ebca7db"
+    },
+    "parallel-v2-tests-5.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "parallel-v2-tests-5.stderr": {
+      "bytes": 1159,
+      "sha256": "c1dc27c88f9c8b4f5ce070dbcbde78dbd91a455850030035f5d4f2f5b444ecda"
+    }
+  }
+}

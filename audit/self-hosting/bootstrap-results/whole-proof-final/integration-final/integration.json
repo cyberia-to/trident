@@ -1,0 +1,105 @@
+{
+  "status": "accepted-final-sh8-integration",
+  "merges": {
+    "trident": {
+      "pr": 120,
+      "head": "a6b12e584719b69b64a606c5c4a54d6f6c7ae929",
+      "base": "28c982c0ff4fa9572f63778688a2763e0ed2878e",
+      "merge": "942cb5584bc12a3753331829152fa53b83c81341",
+      "tree": "cb284627b1d8028f06007ea1771365180d905b1d",
+      "receipt": {
+        "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/trident-final-sh8-pr120/receipt.json",
+        "bytes": 3746,
+        "sha256": "38017e7c2654d28a8eb8d50b1fab05c979f68df7a4ff1d5bd33bd7ede3f612f0"
+      }
+    },
+    "joy": {
+      "pr": 31,
+      "head": "c5ededb34b4a9ea82b77c2cb540b81be818750d2",
+      "base": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+      "merge": "65f6a2b7dba1a661adfaed1c37154ac0a825036d",
+      "tree": "abf552bd0205a2c1cf429152cdefb13ab747d969",
+      "receipt": {
+        "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-final-sh8-pr31/receipt.json",
+        "bytes": 3634,
+        "sha256": "62dda2f392943dc8c5c6d0014bed8d7443014e8d9b032a4e85917048ec04e7fb"
+      }
+    },
+    "trisha": {
+      "pr": 28,
+      "head": "faca656ec1c6e5198433f97f59a2156262da006a",
+      "base": "c9f442c58005249d14e95fc81f125ff7f864ab07",
+      "merge": "f6161e3f6455bd6b4ae8f6a77fa98ac052c1d505",
+      "tree": "afda1e6b48ca542962eb6e452f3186ecac351147",
+      "receipt": {
+        "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/trisha-final-sh8-pr28/receipt.json",
+        "bytes": 3814,
+        "sha256": "c27d81ce9b7e701bef137e9f9a59dec5f67a31abdea9e488b6a16b458f5b7960"
+      }
+    }
+  },
+  "trident_installs": {
+    "postinstall-final-sh8": {
+      "revision": "a6b12e584719b69b64a606c5c4a54d6f6c7ae929",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "install",
+        "--path",
+        ".",
+        "--root",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/postinstall-final-sh8/prefix",
+        "--locked",
+        "--offline",
+        "--force"
+      ],
+      "seconds": 0.4018668750068173,
+      "binaries": {
+        "trident": {
+          "bytes": 9088672,
+          "sha256": "b2736abc9956a1c089c1ccaf5159590a5de19f673305d4387da50611f74d6dac"
+        },
+        "trident-lsp": {
+          "bytes": 6636944,
+          "sha256": "c9901902fccc090c07ae7b369ff103989b24e7f2391e1bec343b2e0fdb0ec2bd"
+        }
+      },
+      "receipt": {
+        "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/postinstall-final-sh8/receipt.json",
+        "bytes": 3456,
+        "sha256": "4fd71325b28826802dccee38b605430edff70b9e91aba2b72dd2ecf3ec8debc7"
+      }
+    },
+    "postinstall-final-sh8-merged": {
+      "revision": "942cb5584bc12a3753331829152fa53b83c81341",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "install",
+        "--path",
+        ".",
+        "--root",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/postinstall-final-sh8-merged/prefix",
+        "--locked",
+        "--offline",
+        "--force"
+      ],
+      "seconds": 0.3444213750772178,
+      "binaries": {
+        "trident": {
+          "bytes": 9088672,
+          "sha256": "b2736abc9956a1c089c1ccaf5159590a5de19f673305d4387da50611f74d6dac"
+        },
+        "trident-lsp": {
+          "bytes": 6636944,
+          "sha256": "c9901902fccc090c07ae7b369ff103989b24e7f2391e1bec343b2e0fdb0ec2bd"
+        }
+      },
+      "receipt": {
+        "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/postinstall-final-sh8-merged/receipt.json",
+        "bytes": 3470,
+        "sha256": "88c553af139b19db9e16e421988e825fa52384bf19e65f5ff5853ee70a2ca125"
+      }
+    }
+  },
+  "retained_originals": 43,
+  "scope": "Exact reviewed feature merges into release/0.4 and source-bound installations. Original self-build acceptance remains bound to its frozen source/binary. Companion install details have their own retained packet. Version/default-branch/tag/registry/public promotion are separate owner actions."
+}

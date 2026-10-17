@@ -1,0 +1,68 @@
+{
+  "schema": "trident/final-delivery-capacity-assessment/v1",
+  "status": "planning-review-complete-no-cap-change",
+  "source_manifest": {
+    "bytes": 1637,
+    "sha256": "d2f216163f07add07ef7278d998656eccb2f1f60190322e085761191fa64f59f"
+  },
+  "source_driver": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-delivery-capacity-review/measure.py",
+    "bytes": 9992,
+    "sha256": "8b6e8fc926e98b132fcb79a1d45c30dac7700acd47c6a3299b02ff7cbcdb1f6a"
+  },
+  "raw_measurement": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-delivery-capacity-review/receipt.json",
+    "bytes": 32403,
+    "sha256": "31e12a256c2455339187de8e7c44f69e8400c81c09a9710b67457eddf6a7edf7"
+  },
+  "duplicate_shape_addendum": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-delivery-capacity-review/duplicate-shape-addendum.json",
+    "bytes": 2439,
+    "sha256": "84786836137b1a5476ee67324bf3bde6ed523f54a24c1392e7fb554cfbefdb4b"
+  },
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "measure.py"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-delivery-capacity-review",
+  "tool_exit_code": 0,
+  "stdout": {
+    "bytes": 2080,
+    "sha256": "5e26d6e3dca3117a717927c99b278201afc15eac878a26896db51e17d33bcf80"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scope": "Measured closed individual C1 native metadata and frozen static/positive/corpus records only. The full C1 suite was still running and its completion marker absent. No live aggregate was used in sizing; no proof/binary/resource body was read; no actual collector/native run or cap/source change occurred.",
+  "measured": {
+    "static_catalog": 14654,
+    "closed_native_commands": 10,
+    "complete_case_pairs": 5,
+    "small_metadata_files": 71,
+    "catalog_entries": 15731,
+    "catalog_serialized_bytes": 6446226,
+    "small_metadata_read_bytes": 4308661,
+    "closed_public_streams": 28,
+    "closed_public_stream_bytes": 114252
+  },
+  "conditional": {
+    "catalog_entries": 17724,
+    "catalog_remaining_for_unmodeled": 2276,
+    "projected_output_bytes": 9292842,
+    "output_cap": 67108864,
+    "projected_reads": 24052856,
+    "read_cap": 268435456,
+    "scope": "32 remaining commands modeled at the maximum observed standalone contribution; 28 observed plus 66 future streams at the maximum observed size; historical prior/selected-cost template shapes, including known duplicate selected-cost reference placement. Final dynamic wrappers, F5, new permits and generated metadata remain unmodeled."
+  },
+  "conclusion": "No concrete overflow demonstrated. The 20,000-entry catalog is the closest planning limit: its remaining 2,276 slots must cover unmodeled final watcher/F5/controller/suite/capacity metadata and any larger future native shape. Byte projections leave much larger margins under the 64 MiB output and 256 MiB read caps, conditional on observed stream/metadata maxima. Keep frozen caps and source unchanged; actual terminal collection still decides.",
+  "caveats": [
+    "The 1 MiB per-public-stream cap alone permits 94 MiB before metadata, so independent per-stream caps do not guarantee a 64 MiB packet. Current 28 streams total 114,252 bytes; projection uses their measured maximum of 28,221 bytes, not that worst-case bound.",
+    "The original static preview has 14,654 distinct catalog entries. Repeated JSON-pointer provenance can create additional entries even when body hashes/path references repeat. The selected-cost double placement was explicitly measured (+10 entries, +70,448 catalog bytes).",
+    "An initial bounded status observation found the C1 aggregate still running and completed-c1 absent. Those live values were not ingested into the catalog or treated as final acceptance."
+  ],
+  "observed_ns": 1790980444354269000
+}

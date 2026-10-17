@@ -1,0 +1,74 @@
+"""A complete miniature gather graph, explicitly synthetic and outside live roots."""
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from safe_io import Budget,digest,encoded
+from catalog import Catalog
+from collect import gather,CAPS
+from contracts import F5,V5,WATCH,fresh,prerequisites
+from test_delivery import fixture,I
+
+
+class Shapes(unittest.TestCase):
+    def test_complete_declared_graph_and_private_selected_body(self):
+        with tempfile.TemporaryDirectory() as name:
+            base=Path(name).resolve()
+            policy,locked,watcher,result,observed=fixture(base)
+            def write(name,value):
+                data=encoded(value);path=base/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
+                return digest(data)
+            def ref(name,value):return dict(path=str(base/name),**write(name,value))
+            empty=digest(b'')
+            schedule=result['completion_schedule']
+            schedule.update(admissions={},completed={})
+            write(V5+'/baseline.json',dict(files={},immutable={}))
+            write(V5+'/active-generation.json',dict(status='active',generation=2))
+            write('whole-proof/preparation.json',dict(files={}))
+            observed[V5+'/run-1/receipt.json']['files']={}
+            for g in (1,2):
+                row=result['generations'][g-1]
+                for stage in ('selfbuild','fresh-verification'):
+                    root=f'whole-proof/attempts/c{g}-{stage}-1'
+                    observed[root+'/receipt.json']['files']={'stdout':empty,'stderr':empty}
+                observed[f'whole-proof-corpus-v2/c{g+1}/receipt.json']['files']=write(f'whole-proof-corpus-v2/c{g+1}/files.json',{})
+                for stage in ('admission','completed'):
+                    key='admissions' if stage=='admission' else 'completed'
+                    schedule[key][str(g)]=ref(f'{V5}/{stage}-c{g}.json',dict(generation=g))
+                for case in ('generation',*fresh(g)):
+                    write(f'{V5}/capacity/c{g}-{case}.json',dict(status='passed-capacity-admission',logs=empty))
+                commands=[]
+                for case in fresh(g):
+                    for action in ('construct','verify'):
+                        attempt=f'whole-c{g}-{action}-{case}'
+                        path=f'whole-proof-attacks-v5-c{g}/attempts/{attempt}/receipt.json'
+                        code=0 if action=='construct' else 1
+                        commands.append(ref(path,dict(status='passed',exit_code=code,expected_exit=code,
+                                        inputs_before={},inputs_after={},files={'stdout':empty,'stderr':empty,'resources.jsonl':empty})))
+                        for suffix in ('.json','.observed','.retired'):
+                            write(f'{V5}/native-processes/{attempt}{suffix}',dict(raw_stdout='synthetic private process metadata'))
+                row['composite_cases']['actual_v5_commands']=commands
+            selected_name='whole-proof-attacks-v5-c2/whole-c2/selected-v4-cost.json'
+            result['generations'][1]['composite_cases']['c2_cost']['selected']=ref(selected_name,dict(raw_stdout='private original selected history'))
+            identities={n:write(n,v) for n,v in observed.items()}
+            for g in (1,2):
+                row=result['generations'][g-1]
+                row['producer_receipt']=identities[f'whole-proof/attempts/c{g}-selfbuild-1/receipt.json']
+                row['verifier_receipt']=identities[f'whole-proof/attempts/c{g}-fresh-verification-1/receipt.json']
+                row['corpus_receipt']=identities[f'whole-proof-corpus-v2/c{g+1}/receipt.json']
+                row['composite_cases']['suite']=identities[f'whole-proof-attacks-v5-c{g}/whole-c{g}/receipt.json']
+            schedule['receipt']=identities[V5+'/run-1/receipt.json']
+            watcher['observed_statuses']={str(base/n):dict(status=s,required=s,identity=identities[n]) for n,s in prerequisites().items()}
+            watcher['files']={'stdout':empty,'stderr':empty,'final-review.json':write(WATCH+'/final-review.json',result)}
+            write(WATCH+'/receipt.json',watcher)
+            c=Catalog(base,Budget(CAPS));summary,streams=gather(c,policy,locked)
+            self.assertEqual(len(streams),94)
+            self.assertEqual(summary['native_commands'],42)
+            self.assertNotIn('private original selected',json.dumps(summary))
+            self.assertNotIn('private original selected',json.dumps(c.snapshot()))
+            self.assertTrue(c.rows[selected_name]['observed_metadata_bytes'])
+            self.assertEqual(c.rows[selected_name]['classification'],'private-original-reference')
+            self.assertFalse(c.rows[V5+'/capacity/c1-cost.jsonl']['observed_metadata_bytes'])
+
+
+if __name__=='__main__':unittest.main()

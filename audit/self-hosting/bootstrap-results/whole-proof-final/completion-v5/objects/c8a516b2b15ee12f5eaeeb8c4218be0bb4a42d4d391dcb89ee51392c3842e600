@@ -1,0 +1,76 @@
+{
+  "schema": "trident/prior-v5-root-source-review/v1",
+  "status": "passed-source-review",
+  "time_ns": 1790964887206248000,
+  "sources": {
+    "prior_cases_v5.py": {
+      "bytes": 6034,
+      "sha256": "8703dd0991c89f92837faa5c70e3efba544351ec4fd8461646ac83f2b06e8f0d"
+    },
+    "prior_pins_v5.py": {
+      "bytes": 2275,
+      "sha256": "a3b64f58ef5b9f1ae37bc0ab7ac25ef9b550e7d847a6d224f62ed137006ce6b8"
+    },
+    "prior_native_v5.py": {
+      "bytes": 4722,
+      "sha256": "5cb710ed3d1c0123a2a467a813d5fca2078ccde5bbb0be45f33f6df515981f0b"
+    },
+    "prior_transitions_v5.py": {
+      "bytes": 9511,
+      "sha256": "d47969e255cb911466ec4290ae057d0ee4759a7caede723d7be43fc3a5c77f81"
+    },
+    "prior_schedule_v5.py": {
+      "bytes": 10404,
+      "sha256": "7d5ea4b88a1b16c3915a1dfd59410f22d7a63f579b0e848f368fad43fb352873"
+    },
+    "prior_quiescence_v5.py": {
+      "bytes": 4310,
+      "sha256": "9ff1a5bf27d6577e4010492004a238ca63703d7b15bea915d11883f70b095f30"
+    },
+    "prior-v4-evidence.json": {
+      "bytes": 4608,
+      "sha256": "39811cd142956c68e98ad9e5ceb5a2d6e2ba21fcf7ad3fbb3a22356a8adbbc36"
+    },
+    "PRIOR-ADMISSION.md": {
+      "bytes": 1485,
+      "sha256": "f61bc19998ac290a868369462680b058a4322519b0f93c5a3407c13209d2a6cc"
+    },
+    "test_prior_v5.py": {
+      "bytes": 8310,
+      "sha256": "2e035abc7faa369908b0b640fed5bf626f7cfd9855f6be01f2413de4fa76fef0"
+    },
+    "replay_prior_v5.py": {
+      "bytes": 1698,
+      "sha256": "1527abfcf7d4f5360e4b6d81022d6e35fe075231af5b2cce60c3054f85c6e694"
+    },
+    "validate_prior_v5.py": {
+      "bytes": 1400,
+      "sha256": "ff9ece9e4d53541a9d11cc1fd7b8af3b0f24498e4af9bacc03182571baad5c3e"
+    }
+  },
+  "source_manifest": {
+    "bytes": 1457,
+    "sha256": "509124e2fddf2a8fd3c90034c3bcc71dd741862830dab927e9dff15627884ed6"
+  },
+  "validation": {
+    "bytes": 3751,
+    "sha256": "771bae9d257d3d6c6bf44e29302ea8f167cde940f5650377d630e7a3bd5df6af"
+  },
+  "actual_replay": {
+    "bytes": 2190,
+    "sha256": "3ecd76da5c8bdbe068299aa2b60700548d448497e75e30ed929d1bbe142aadf4"
+  },
+  "selected": {
+    "bytes": 323555,
+    "sha256": "a11a89c629d95ecb5de2663cb18184d0f3ec8661122bf59b5a6e57f0cbfefb26"
+  },
+  "evidence_pins_rehashed": 27,
+  "review": [
+    "Read all six production modules and explicit pinned import closure; old failed suites, interrupted final scan and historical verifier remain failed.",
+    "Native receipt, semantic diagnostic, before/after command inputs, unchanged caps, resource rows, birth-bound retirement, exact serialized prelude and held-inode retirement authenticate selected C2 cost.",
+    "Root independently ran all nine adversarial test methods with warnings as errors; inspected and rehashed author actual replay and its outputs. Actual large-proof replay was not repeated by root.",
+    "Actual production/source pins unchanged after replay; later additions were tests and validation driver only.",
+    "Fresh before/after process snapshots remain private; only identity references retained in publication."
+  ],
+  "scope": "Prior admission source only. Combined runner freeze and actual capacity admission still required before launch."
+}

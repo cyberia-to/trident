@@ -1,0 +1,113 @@
+{
+  "schema": "trident/whole-proof-final-checker-v4-preparation/v1",
+  "status": "prepared-not-executed",
+  "prepared_ns": 1790961417638039000,
+  "source_manifest": {
+    "bytes": 2396,
+    "sha256": "7deb421f844dac6fb439181290ee2312890de74a68847ac0c3c5c32277b0d436"
+  },
+  "sources": {
+    "PLAN.md": {
+      "bytes": 3567,
+      "sha256": "f7cae4d39d1af73eccaabb95a5e27ec9d8a3c3beedb4b38260915d09fdc105a6"
+    },
+    "adaptation.json": {
+      "bytes": 3023,
+      "sha256": "796949aae8914c858f7b1d7b3d51bbc4e761b10f0116e41931c5efbddc446347"
+    },
+    "cases.py": {
+      "bytes": 6758,
+      "sha256": "027a358ea082995b9bda7d74ec1c2a3fd484a62bb209f5009dfddc5e23f5b44e"
+    },
+    "check.py": {
+      "bytes": 4395,
+      "sha256": "ffa643552fe1bb3d925846ec1ff99a516fd99273edb1ddb41c4928905869abdb"
+    },
+    "common.py": {
+      "bytes": 4637,
+      "sha256": "44a742bbd34a5b4bcc56a67339724c390d0fb4977740b942ae83ac6f9b574ea1"
+    },
+    "historical.py": {
+      "bytes": 6415,
+      "sha256": "3fbe091ff1ca1e9291257f05403b2aca97a07423bc14647409439caccc0edc32"
+    },
+    "historical_quiescence.py": {
+      "bytes": 5803,
+      "sha256": "1346ebaad9391ff6190add0cb14193544f3e0e51138a7919a1615e2eeb64f75a"
+    },
+    "historical_rows.py": {
+      "bytes": 12982,
+      "sha256": "8ad2619be56bda142bbacdf078331836d26fc5d1bf41e44ef9e788edcc20708c"
+    },
+    "history.py": {
+      "bytes": 3007,
+      "sha256": "362ece6969cf85c140a65598aa5912f0308c03f708e74c94ae926415a8d7d5ee"
+    },
+    "legacy_history.py": {
+      "bytes": 14215,
+      "sha256": "be52954608a6f4dd1ce655903fc96e501d043a088cc8b7e4a214ba3e8b3522bb"
+    },
+    "legacy_schedule.py": {
+      "bytes": 10138,
+      "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+    },
+    "native.py": {
+      "bytes": 4864,
+      "sha256": "0dd16f1b9a1b54e65ef33147c1fd651e1249e371fa6171ab19a346689eca61f6"
+    },
+    "pins.json": {
+      "bytes": 72245,
+      "sha256": "6180ab18dbc6c9722889d02723570b96adb6445c63fe7ac8421b9d9412dcfc79"
+    },
+    "positive.py": {
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "quiescence.py": {
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "schedule.py": {
+      "bytes": 9062,
+      "sha256": "8d1c48ed1348686e06e749842191ce702e142bf507f6d4252a6fe6179ef77d8c"
+    },
+    "test_checker.py": {
+      "bytes": 15862,
+      "sha256": "743721f8fffcc3eb184143bf04e8895df993dea9ffcaa230c52390486004820b"
+    },
+    "transitions.py": {
+      "bytes": 13900,
+      "sha256": "4504d4305270c64e75144b5c45d2c68764f4bd8304d98605ca3d240ccf4279bf"
+    },
+    "validate.py": {
+      "bytes": 2326,
+      "sha256": "4445c57713a489c1df659b803b6bf5faef6db7a8915e8ee66ed548980b048b56"
+    }
+  },
+  "validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v4/validation-final-1/receipt.json",
+    "bytes": 3575,
+    "sha256": "80aa4cc448c6b8588c7ca4f5010ed0b7b135d80e7edb0c4fa7268d60c3a4c02e"
+  },
+  "actual_tests": 47,
+  "pinned_original_receipts": 369,
+  "runtime_source_closure_files": 49,
+  "independent_review_pending": true,
+  "actual_final_replay_executed": false,
+  "watcher_created": false,
+  "old_v3_sources_modified": false,
+  "review_entrypoints": [
+    "check.py",
+    "common.py",
+    "schedule.py",
+    "native.py",
+    "cases.py",
+    "transitions.py",
+    "history.py"
+  ],
+  "adaptation": {
+    "bytes": 3023,
+    "sha256": "796949aae8914c858f7b1d7b3d51bbc4e761b10f0116e41931c5efbddc446347"
+  },
+  "scope": "New directory only. Root owns source/archive integration and separately authorizes actual final replay after independent source review and completed v4 prerequisites."
+}

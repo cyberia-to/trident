@@ -9,6 +9,7 @@ use std.compiler.nox.signatures
 
 pub struct Ordered { pub ids: seq.Seq, pub next: U32, pub error: syntax.Error }
 struct Insert { ids: seq.Seq, gap: U32, done: Bool }
+struct Merge { output: seq.Seq, left: U32, right: U32, middle: U32, end: U32 }
 
 #[pure]
 fn before(source: bytes.Bytes, left: syntax.Token, right: syntax.Token) -> Bool {
@@ -52,6 +53,71 @@ fn insert(source: bytes.Bytes, functions: seq.Seq, input: seq.Seq, id: U32, cap:
     }
     // At most TABLE_CAP final bindings can precede this insertion.
     seq.set(s.ids, s.gap, value)
+}
+
+#[pure]
+fn merge_chunk(source: bytes.Bytes, functions: seq.Seq, values: seq.Seq, input: Merge, cap: U32) -> Merge {
+    let mut s = input
+    for step in 0..8 {
+        if seq.len(s.output) == s.end { return s }
+        let mut take_right = s.left == s.middle
+        if syntax.both(s.left < s.middle, s.right < s.end) {
+            let left = signatures.read(seq.get(functions, as_u32(noun.as_field(seq.get(values, s.left))))).name
+            let right = signatures.read(seq.get(functions, as_u32(noun.as_field(seq.get(values, s.right))))).name
+            take_right = before(source, right, left)
+        }
+        if take_right {
+            s.output = seq.push(s.output, seq.get(values, s.right), cap)
+            s.right = syntax.inc(s.right)
+        } else {
+            s.output = seq.push(s.output, seq.get(values, s.left), cap)
+            s.left = syntax.inc(s.left)
+        }
+    }
+    s
+}
+
+#[pure]
+fn merge(source: bytes.Bytes, functions: seq.Seq, values: seq.Seq, width: U32, output: seq.Seq, cap: U32) -> seq.Seq {
+    let start = seq.len(output)
+    let mut middle = as_u32(as_field(start) + as_field(width))
+    if seq.len(values) < middle { middle = seq.len(values) }
+    let mut end = as_u32(as_field(middle) + as_field(width))
+    if seq.len(values) < end { end = seq.len(values) }
+    let mut s = Merge { output, left: start, right: middle, middle, end }
+    for block in 0..512 {
+        s = merge_chunk(source, functions, values, s, cap)
+        if seq.len(s.output) == s.end { return s.output }
+    }
+    s.output
+}
+
+#[pure]
+fn pass(source: bytes.Bytes, functions: seq.Seq, values: seq.Seq, width: U32, cap: U32) -> seq.Seq {
+    let mut output = seq.empty()
+    for run in 0..4096 {
+        if seq.len(output) == seq.len(values) { return output }
+        output = merge(source, functions, values, width, output, cap)
+    }
+    output
+}
+
+// Explicit roots already own final binding selection and original tie order.
+// Package compilation calls this on one owner's bucket; no owner/rank metadata
+// enters the member comparator. The ordinary sort entry keeps its old path.
+#[pure]
+#[requires((syntax.TABLE_CAP < seq.len(functions)) == false)]
+#[requires((syntax.TABLE_CAP < cap) == false)]
+#[requires((cap < seq.len(roots)) == false)]
+pub fn sort_roots(source: bytes.Bytes, functions: seq.Seq, roots: seq.Seq, cap: U32) -> seq.Seq {
+    let mut output = roots
+    let mut width = as_u32(1)
+    for level in 0..12 {
+        if (width < seq.len(output)) == false { return output }
+        output = pass(source, functions, output, width, cap)
+        width = as_u32(as_field(width) * 2)
+    }
+    output
 }
 
 #[pure]

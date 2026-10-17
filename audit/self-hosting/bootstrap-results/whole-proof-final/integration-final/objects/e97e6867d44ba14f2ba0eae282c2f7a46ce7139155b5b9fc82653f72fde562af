@@ -1,0 +1,55 @@
+"""Bound one exact-head feature merge and preserve the complete tool receipt."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import sys
+import time
+
+p = argparse.ArgumentParser()
+p.add_argument('--repo', choices=('trident', 'joy', 'trisha'), required=True)
+p.add_argument('--directory', required=True)
+p.add_argument('--pr', type=int, required=True)
+p.add_argument('--head', required=True)
+p.add_argument('--base', required=True)
+a = p.parse_args()
+B = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
+helper = Path('/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/merge-accepted-pr-v2.py')
+name = f'{a.repo}-final-sh8-pr{a.pr}'
+out = B / 'integration' / name
+wrapper = B / 'integration' / (name + '-wrapper')
+assert not out.exists()
+wrapper.mkdir()
+argv = [sys.executable, '-B', '-W', 'error', str(helper), '--repo', a.repo,
+        '--directory', a.directory, '--pr', str(a.pr), '--head', a.head,
+        '--base', a.base, '--output', str(out)]
+identity = lambda raw: dict(bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+receipt = dict(status='running', command=argv, cwd=str(wrapper), started_ns=time.time_ns(),
+               helper=identity(helper.read_bytes()), wrapper=identity(Path(__file__).read_bytes()),
+               timeout_seconds=360, cleanup=[])
+(wrapper / 'started.json').write_text(json.dumps(receipt, indent=2) + '\n')
+child = subprocess.Popen(argv, cwd=wrapper, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+receipt['pid'] = child.pid
+try:
+    stdout, stderr = child.communicate(timeout=360)
+except subprocess.TimeoutExpired:
+    receipt['cleanup'].append('timeout: SIGTERM to owned child group')
+    os.killpg(child.pid, signal.SIGTERM)
+    try:
+        stdout, stderr = child.communicate(timeout=10)
+    except subprocess.TimeoutExpired:
+        receipt['cleanup'].append('SIGKILL to owned child group')
+        os.killpg(child.pid, signal.SIGKILL)
+        stdout, stderr = child.communicate(timeout=10)
+(wrapper / 'stdout').write_bytes(stdout)
+(wrapper / 'stderr').write_bytes(stderr)
+receipt.update(status='passed' if child.returncode == 0 and not receipt['cleanup'] else 'failed',
+               exit_code=child.returncode, ended_ns=time.time_ns(), stdout=identity(stdout), stderr=identity(stderr))
+(wrapper / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+print(json.dumps(dict(status=receipt['status'], exit_code=child.returncode, receipt=str(wrapper / 'receipt.json'))))
+if child.returncode == 0:
+    print(stdout.decode().strip())
+raise SystemExit(0 if receipt['status'] == 'passed' else 1)

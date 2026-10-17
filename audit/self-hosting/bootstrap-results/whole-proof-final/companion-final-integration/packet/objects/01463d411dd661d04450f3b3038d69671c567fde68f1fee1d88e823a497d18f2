@@ -1,0 +1,22 @@
+diff --git a/audit/README.md b/audit/README.md
+index 3f65a36..3ebda0f 100644
+--- a/audit/README.md
++++ b/audit/README.md
+@@ -13,9 +13,14 @@ bind draft source asset `605224542`.
+ 
+ The package retains its tested product versions and exact binary identities.
+ [Complete certificate byte-equivalence retention](whole-retention-byte-closure/README.md)
+-is accepted for both original self-build certificates. SH8 adversarial and
+-final-checker acceptance remain separate gates in Trident's
+-[self-hosting ledger](https://github.com/cyberia-to/trident/blob/28c982c0ff4fa9572f63778688a2763e0ed2878e/audit/self-hosting-progress.md).
++is accepted for both original self-build certificates. The public
++`joy-nox-disclosed-compiler-v1` profile has [accepted frozen S1 SH8 evidence](https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md):
++both complete proofs, fresh verification, exact extracted C2/C3 artifacts,
++547 corpus observations and 23 distinct rejections plus two original positive
++controls per generation. These runs use the original Joy `6e0ec4d` installation
++and retain all failed diagnostic histories. The [source bridge](https://github.com/cyberia-to/trident/blob/a6b12e584719b69b64a606c5c4a54d6f6c7ae929/audit/self-hosting/bootstrap-results/whole-proof-final/joy-source-bridge/README.md)
++keeps that binary's proof evidence distinct from the packaged Joy host-ceiling
++and distribution validation above.
+ Version/bump approval, default-branch release integration, tags, registry
+ publication and public promotion remain owner release steps. Draft evidence
+ transport does not promote this branch rehearsal.

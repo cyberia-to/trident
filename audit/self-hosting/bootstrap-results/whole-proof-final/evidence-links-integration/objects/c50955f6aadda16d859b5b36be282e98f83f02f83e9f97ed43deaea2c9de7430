@@ -1,0 +1,74 @@
+"""Exact documentation-only scope and immutable cross-repository link targets."""
+import base64
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+
+BASE = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
+OUT = Path(__file__).resolve().parent / 'link-validation'
+OUT.mkdir()
+
+
+def identity(data):
+    return {'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
+
+
+commands = []
+
+
+def run(argv, cwd):
+    r = subprocess.run(argv, cwd=cwd, capture_output=True, timeout=60)
+    n = len(commands)
+    for name, data in [('stdout', r.stdout), ('stderr', r.stderr)]:
+        (OUT / f'{n}.{name}').write_bytes(data)
+    commands.append({'argv': argv, 'cwd': str(cwd), 'exit_code': r.returncode,
+                     'stdout': {'path': f'{n}.stdout', **identity(r.stdout)},
+                     'stderr': {'path': f'{n}.stderr', **identity(r.stderr)}})
+    (OUT / 'commands.json').write_text(json.dumps(commands, indent=2) + '\n')
+    assert r.returncode == 0, (argv, r.returncode)
+    return r.stdout
+
+
+repositories = {
+    'joy': (BASE / 'joy-release-notes/joy', '15202f42240ba923398908ee0db62d32f1d655f8', 'README.md'),
+    'trisha': (BASE / 'trisha-delivery-docs-20261002/trisha', '9e1af832543a21def306dac84ff918cbb823653d', 'audit/README.md'),
+}
+docs = {}
+for name, (repo, base, path) in repositories.items():
+    assert run(['git', 'rev-parse', 'HEAD'], repo).decode().strip() == base
+    assert run(['git', 'branch', '--show-current'], repo).decode().strip() == 'docs/0.4-evidence-links'
+    changed = run(['git', 'diff', '--name-only', base], repo).decode().splitlines()
+    assert changed == [path]
+    run(['git', 'diff', '--check', base], repo)
+    patch = run(['git', 'diff', base, '--', path], repo)
+    (OUT / (name + '.patch')).write_bytes(patch)
+    docs[name] = {'base': base, 'path': path, 'changed_paths': changed,
+                  'document': identity((repo / path).read_bytes()), 'patch': identity(patch)}
+targets = [
+    ('cyber', Path('/Users/master/cyber/cyber'), '4f2dac1440f91cd9ac802f6993f3ddbf50cec767', 'specs/worker.md', 'joy'),
+    ('zheng', BASE / 'final-distribution/zheng', '0d7ba6d422d9b825f9685e903e55252f88ebecd9', 'specs/execution.md', 'joy'),
+    ('zheng', BASE / 'final-distribution/zheng', '0d7ba6d422d9b825f9685e903e55252f88ebecd9', 'specs/ccs-execution-backends.md', 'joy'),
+    ('trident', BASE / 'whole-proof-helper-v4/trident', '28c982c0ff4fa9572f63778688a2763e0ed2878e', 'audit/self-hosting-progress.md', 'trisha'),
+]
+checked = []
+for name, repo, rev, path, owner in targets:
+    local = run(['git', 'show', rev + ':' + path], repo)
+    git_blob = run(['git', 'rev-parse', rev + ':' + path], repo).decode().strip()
+    api = json.loads(run(['gh', 'api', f'repos/cyberia-to/{name}/contents/{path}?ref={rev}'], repo))
+    assert api['type'] == 'file' and api['encoding'] == 'base64'
+    assert api['sha'] == git_blob and base64.b64decode(api['content']) == local
+    url = f'https://github.com/cyberia-to/{name}/blob/{rev}/{path}'
+    assert api['html_url'] == url
+    owner_repo, _, owner_path = repositories[owner]
+    assert (owner_repo / owner_path).read_text().count('](' + url + ')') == 1
+    checked.append({'repository': name, 'commit': rev, 'path': path, 'url': url,
+                    'git_blob': git_blob, **identity(local), 'authenticated_api_content_equal': True})
+assert 'SH8' in (repositories['joy'][0] / 'README.md').read_text()
+assert 'SH8 adversarial and\nfinal-checker acceptance remain separate gates' in (repositories['trisha'][0] / 'audit/README.md').read_text()
+receipt = {'status': 'passed-document-only-scope-and-exact-target-blobs',
+           'source': identity(Path(__file__).read_bytes()), 'documents': docs, 'targets': checked,
+           'commands': identity((OUT / 'commands.json').read_bytes()),
+           'scope': 'Four immutable URL repairs only; no production source or SH8 status change. No native/test/proof workload.'}
+(OUT / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+print(json.dumps({'status': receipt['status'], 'receipt': identity((OUT / 'receipt.json').read_bytes())}))

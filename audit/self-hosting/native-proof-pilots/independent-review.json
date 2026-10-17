@@ -1,0 +1,122 @@
+{
+  "schema": "trident/sh7-retention-independent-review/v1",
+  "status": "passed",
+  "reviewer_scope": "Independent read-only source, receipt and byte-integrity review; scripts were not imported or executed. No whole self-build proof was consumed. Root-owned upload session65820 was not controlled.",
+  "time_utc": "2026-10-02T03:12:06.942175+00:00",
+  "source_files": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/retain.py": {
+      "bytes": 8219,
+      "sha256": "8d73202546aad9c4aff127290d3cd2de59acc12a3e8f271660ba83314c05680c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/transport.py": {
+      "bytes": 4373,
+      "sha256": "139e71193d07c5d4657a109821a44318b799e5fcd64569d7746d713020a0c213"
+    }
+  },
+  "reviewed_receipt": {
+    "bytes": 3575,
+    "sha256": "3655658672547f14190eb2ea0e02988e01aa596c84d4cb44ee1ff05bd57fcc63"
+  },
+  "reviewed_archive_manifest": {
+    "bytes": 107126,
+    "sha256": "7c04eb6c5af9e853cc5876c85be71f65f8b0dcb409e98144b241db69d48628bf"
+  },
+  "package_summary": {
+    "bytes": 21263,
+    "sha256": "cacbcd13b2aa9736a65d82a8b778c02ab1bb74e8ecff2b9c460d2981a59a33cd"
+  },
+  "package_manifest": {
+    "bytes": 213992,
+    "sha256": "3ffc9d503bb7a28b52ce24f5506e8c415a32b688adb71cd45c0b83b4a3f703ec"
+  },
+  "package_files": {
+    "bytes": 96258,
+    "sha256": "1533a74506da7579f9edc796764129820ae04b97efd9cad49bc13df09d4782e1"
+  },
+  "archive": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention/sh7-native-c2-complete-evidence-20261002.tar.gz",
+    "bytes": 602191451,
+    "sha256": "fa0f99785b4f499067683949a4126a1e4837558fbd421c0c4d61fedc39000d61"
+  },
+  "checks": {
+    "source_parsing": "Both scripts parsed with ast.parse; no script execution.",
+    "source_identity": "retain.py matches root-review checker identity; transport.py matches active transport receipt driver identity.",
+    "original_files": 665,
+    "package_files": 637,
+    "archive_members": 670,
+    "archive_uncompressed_bytes": 658849928,
+    "all_manifest_original_bytes_match": true,
+    "all_packaged_copies_match": true,
+    "all_package_file_identities_match": true,
+    "all_archive_member_bytes_match": true,
+    "all_archive_members_regular_unique_safe_relative_names": true,
+    "all_archive_members_uid_gid_mtime_zero": true,
+    "archive_member_set_exact": true,
+    "source_revisions_and_production_binary_match_summary": true,
+    "pilot_proof_identity_count": 5,
+    "accepted_controls": 3,
+    "rejected_attacks": 24,
+    "archive_sha256_matches_retention_receipt": true,
+    "retention_checker_executes_no_payloads": true,
+    "transport_operations": "Read draft and absent tag, upload one unique archive with no clobber, check exact asset identity, download and compare bytes, recheck draft and absent tag. No release-create, publish, edit, tag-create/push or delete operation appears.",
+    "transport_completed_command_logs_match": true
+  },
+  "findings": [],
+  "transport_observation": {
+    "status_at_review": "running",
+    "receipt_identity_at_review": {
+      "bytes": 1873,
+      "sha256": "22e979c2b09ccfda682ea0fe7424b88fa625c23ee0f2734e494b003c9b7fda98"
+    },
+    "repository": "cyberia-to/trisha",
+    "release_id": 389977897,
+    "tag_name": "candidate-20260916.1",
+    "draft": true,
+    "published_at": null,
+    "tag_lookup_status": "404",
+    "completed_commands": [
+      {
+        "name": "draft-before",
+        "command": [
+          "gh",
+          "api",
+          "repos/cyberia-to/trisha/releases/389977897"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "bytes": 39242,
+          "sha256": "ee104805bf01f80fdff361717c2b5b174f7d8e5484d568f92f55a0cd49ef7fe9"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "name": "draft-before-tag",
+        "command": [
+          "gh",
+          "api",
+          "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+        ],
+        "exit_code": 1,
+        "stdout": {
+          "bytes": 114,
+          "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+        },
+        "stderr": {
+          "bytes": 25,
+          "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+        }
+      }
+    ],
+    "verdict": "Pending root-owned upload/download completion; no remote byte-retention success claimed by this review."
+  },
+  "limits": [
+    "Receipt/byte integrity review is distinct from a new production execution-proof verification.",
+    "Draft and tag checks are pre/post observations; they do not provide an atomic lock against an unrelated concurrent owner release-state change. The transport script itself contains no publication or tag-creation command."
+  ],
+  "writes": [
+    "R2/sh7-independent-review/receipt.json"
+  ]
+}

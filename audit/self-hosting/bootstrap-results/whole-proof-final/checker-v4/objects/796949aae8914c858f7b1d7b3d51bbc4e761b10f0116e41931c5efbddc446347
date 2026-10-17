@@ -1,0 +1,55 @@
+{
+  "status": "prepared-for-independent-review",
+  "original_sources": {
+    "positive.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/positive.py",
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "legacy_schedule.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/schedule.py",
+      "bytes": 10138,
+      "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+    },
+    "legacy_history.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/history.py",
+      "bytes": 14208,
+      "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+    },
+    "quiescence.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/quiescence.py",
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "historical_rows.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior_replay_v4.py",
+      "bytes": 12995,
+      "sha256": "e2a5058f431f22ab06d7ccd44959bb9e2c2bb9066421f533f8b7d721dc840f32"
+    },
+    "historical.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior_cases_v4.py",
+      "bytes": 9342,
+      "sha256": "1d64c2fccf89126f4ff75c5582bf9bf8cce9abb8a9af3ae1521ad50db5171254"
+    },
+    "historical_quiescence.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior_quiescence_v4.py",
+      "bytes": 8786,
+      "sha256": "e05d6d2dfc65e1fd64709419d633274c8be14302017330e5b2064fd703449099"
+    },
+    "common.py": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v4/prior_primitives_v4.py",
+      "bytes": 2895,
+      "sha256": "c547459b6cd5cef96a2e83891a76a30a515991ba4913b2c68d8ac94ca7614d0f"
+    }
+  },
+  "changes": {
+    "positive.py": "Byte-identical v3 positive/corpus checker.",
+    "legacy_schedule.py": "Byte-identical v3 resource primitives; successful v3 review entrypoint is unused.",
+    "legacy_history.py": "Only import redirects to legacy_schedule.",
+    "quiescence.py": "Byte-identical original reclamation birth classifier.",
+    "historical_rows.py": "Copied frozen prior_replay_v4, import redirects to common.",
+    "historical.py": "Copied selected-case replay and interrupted-verifier checks; removed live C2 admission function.",
+    "historical_quiescence.py": "Copied historical raw quiescence replay and pure birth classifier; removed live process and file-hash admission operations.",
+    "common.py": "Original pinned primitives plus exact v4 source closure and case partition."
+  }
+}

@@ -1,0 +1,298 @@
+"""Adversarial synthetic receipts only; no native execution or original deletion."""
+import copy
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+import cases
+import check
+import common
+import native
+import schedule
+import transitions
+
+
+class ContractTests(unittest.TestCase):
+    def test_exact_partition(self):
+        common.case_partition(list(common.PRIOR),list(common.ADDITIONAL),list(common.NEW))
+
+    def test_duplicate_fresh_case(self):
+        fresh=list(common.NEW);fresh[-1]=fresh[0]
+        with self.assertRaises(ValueError):common.case_partition(list(common.PRIOR),list(common.ADDITIONAL),fresh)
+
+    def test_reordered_case(self):
+        fresh=list(common.NEW);fresh[0],fresh[1]=fresh[1],fresh[0]
+        with self.assertRaises(ValueError):common.case_partition(list(common.PRIOR),list(common.ADDITIONAL),fresh)
+
+    def test_historical_case_relabelled_fresh(self):
+        fresh=list(common.NEW);fresh[0]='generation'
+        with self.assertRaises(ValueError):common.case_partition(list(common.PRIOR),list(common.ADDITIONAL),fresh)
+
+    def test_missing_historical_case(self):
+        with self.assertRaises(ValueError):common.case_partition(list(common.PRIOR),['continuation','generation'],list(common.NEW))
+
+    def test_birth_requires_original_member(self):
+        with self.assertRaises(ValueError):native.binding(dict(pid=10,pgid=10,started='original',members={'10':'reused'}))
+
+    def test_birth_requires_group_leader(self):
+        with self.assertRaises(ValueError):native.binding(dict(pid=10,pgid=20,started='original',members={'10':'original'}))
+
+    def test_full_reservation_formula(self):
+        plan={'proofs':{'1':{'bytes':100},'2':{'bytes':200}}}
+        growth=300+2*32*schedule.MIB+2*112*schedule.MIB+3*256*schedule.MIB
+        row=dict(existing_bytes=123,growth_bytes=growth,reservation_bytes=123+growth,
+                 required_free_bytes=max(growth+8*schedule.GIB,300+64*schedule.MIB+10*schedule.GIB),free_bytes=100*schedule.GIB)
+        schedule.reservation(row,plan,True)
+        row['existing_bytes']=0
+        with self.assertRaises(ValueError):schedule.reservation(row,plan,True)
+
+    def test_prelude_cannot_claim_subtracted_bytes(self):
+        plan={'proofs':{}}
+        growth=2*112*schedule.MIB+3*256*schedule.MIB
+        row=dict(existing_bytes=0,growth_bytes=growth,reservation_bytes=growth,
+                 required_free_bytes=10*schedule.GIB,free_bytes=100*schedule.GIB)
+        with self.assertRaises(ValueError):schedule.reservation(row,plan,False,common.COST['bytes'])
+
+
+class RetirementTests(unittest.TestCase):
+    def setUp(self):
+        self.path=Path('/fixture/exact-cost')
+        state=dict(device=1,inode=2,bytes=common.COST['bytes'],mtime_ns=10,ctime_ns=11,links=1,mode=0o100644)
+        self.admission=dict(schema='trident/retained-cost-construction-admission/v1',status='passed-construction-admission',
+                           generation=2,name='cost',original_proof={'proof':True},profile={'profile':True},
+                           certificate=dict(path=str(self.path),**common.COST,stat=state),accepted_as_rejection=False,
+                           fresh_verification_required=True,deletion_authorized=False,expected_fresh_error=common.ERRORS['cost'])
+        mapping=dict(device='st_dev',inode='st_ino',bytes='st_size',mtime_ns='st_mtime_ns',ctime_ns='st_ctime_ns',links='st_nlink',mode='st_mode')
+        self.before=dict(status='classified-before-unlink',removed=False,path=str(self.path),identity=common.COST,
+                         stat={v:state[k] for k,v in mapping.items()},construction_admission={'a':1},fresh_verification={'v':1},
+                         failed_original_verification_remains_failed=True,process_retirement={'p':1},prelude={'q':1},time_ns=100)
+        self.unlinked=dict(self.before,status='unlinked-held-inode',removed=True,charged_bytes=common.COST['bytes'])
+        self.final=dict(self.before,status='passed',removed=True,charged_bytes=0,completed_ns=110,before={'b':1})
+
+    def review(self):
+        transitions.admission_contract(self.admission,{'proof':True},{'profile':True})
+        transitions.retirement_contract(self.before,self.unlinked,self.final,self.admission,self.path)
+
+    def test_complete_chain_without_body(self):self.review()
+
+    def test_old_verdict_laundering(self):
+        self.admission['accepted_as_rejection']=True
+        with self.assertRaises(ValueError):self.review()
+
+    def test_admission_cannot_authorize_deletion(self):
+        self.admission['deletion_authorized']=True
+        with self.assertRaises(ValueError):self.review()
+
+    def test_missing_fresh_verification(self):
+        self.admission['fresh_verification_required']=False
+        with self.assertRaises(ValueError):self.review()
+
+    def test_hardlink_rejected(self):
+        self.admission['certificate']['stat']['links']=2
+        with self.assertRaises(ValueError):self.review()
+
+    def test_changed_retired_inode(self):
+        self.before['stat']['st_ino']=3
+        with self.assertRaises(ValueError):self.review()
+
+    def test_unlinked_bytes_not_yet_released(self):
+        self.unlinked['charged_bytes']=0
+        with self.assertRaises(ValueError):self.review()
+
+    def test_failed_retirement_is_not_success(self):
+        self.final['status']='failed'
+        with self.assertRaises(ValueError):self.review()
+
+    def test_partial_body_not_complete_cost(self):
+        self.admission['certificate']['bytes']-=1
+        with self.assertRaises(ValueError):self.review()
+
+    def test_changed_before_binding(self):
+        self.final['fresh_verification']={'different':True}
+        with self.assertRaises(ValueError):self.review()
+
+    def test_reversed_retirement_clock(self):
+        self.final['completed_ns']=99
+        with self.assertRaises(ValueError):self.review()
+
+
+class NativeTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.base=Path(self.temp.name)
+        self.root=self.base/'whole-proof-attacks-v4-c2';self.shared=self.base/'whole-proof-attacks-completion-v4'
+        self.directory=self.root/'attempts/whole-c2-verify-cost'
+        self.directory.mkdir(parents=True);(self.shared/'native-processes').mkdir(parents=True)
+        self.argv=['/fixture/joy','verify-artifact','/fixture/compiler']
+        self.inputs={'/fixture/joy':dict(bytes=1,sha256='a'*64)}
+        self.metadata=dict(generation=2,expected_error=common.ERRORS['cost'])
+        self.binding=dict(pid=40,pgid=40,started='Fri Oct  2 00:00:00 2026',members={'40':'Fri Oct  2 00:00:00 2026'})
+        self.registered=dict(self.binding,parent=20,coordinator=10,argv=self.argv,attempt=self.directory.name,registered_ns=30)
+        self.plan=dict(proofs={'2':{'bytes':10569174820}},prelude_command=self.argv)
+        self.write(self.shared/'plan.json',self.plan);(self.shared/'resources.py').write_text('fixture')
+        (self.root/'guard.py').write_text('fixture')
+        self.write(self.shared/'admission.json',dict(pid=10,children={'2':20}))
+        self.write(self.shared/'run-1/receipt.json',dict(started_ns=1,ended_ns=1000))
+        self.write(self.shared/'full-admission.json',dict(time_ns=80))
+        self.reg=self.shared/'native-processes'/(self.directory.name+'.json')
+        self.write(self.reg,self.registered);self.write(self.reg.with_suffix('.observed'),self.registered)
+        self.write(self.reg.with_suffix('.retired'),dict(time_ns=75,original=common.identity(self.reg),final_observation=dict(status='empty',members=[])))
+        sample=dict(time_ns=50,elapsed=1,rss_bytes=1024,shared_stop=False,
+                    processes=[dict(pid=40,rss_bytes=1024,started=self.binding['started'],state='S')])
+        (self.directory/'stdout').write_bytes(b'');(self.directory/'stderr').write_text('semantic terminal: Claim\n')
+        (self.directory/'resources.jsonl').write_text(json.dumps(sample)+'\n')
+        self.row=dict(schema='trident/whole-proof-attack-command/v2',status='passed',exit_code=1,expected_exit=1,
+                      argv=self.argv,metadata=self.metadata,cwd=str(self.directory),environment={'PATH':''},
+                      inputs_before=self.inputs,inputs_after=self.inputs,caps=dict(wall=7500,cpu=7500,rss=6*native.GIB,file=32*native.MIB),
+                      sampled_scope_disk_cap=26*native.GIB,free_floor=8*native.GIB,sample_interval_seconds=1,
+                      per_stream_log_bytes=native.MIB,pid=40,process_binding=self.binding,final_group=dict(status='empty',members=[]),
+                      started_ns=20,ended_ns=70,elapsed_seconds=2,sampled_peak_rss_bytes=1024,latest_sample=sample,
+                      driver=common.identity(self.root/'guard.py'),shared_driver=common.identity(self.shared/'resources.py'),
+                      shared_profile=common.identity(self.shared/'plan.json'),admission=common.identity(self.shared/'admission.json'))
+        self.save()
+
+    def write(self,path,value):
+        path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value,indent=2)+'\n')
+
+    def save(self):
+        self.row['files']={n:common.identity(self.directory/n) for n in ('stdout','stderr','resources.jsonl')}
+        self.write(self.directory/'receipt.json',self.row)
+
+    def review(self):
+        return native.diagnostic(self.base,2,self.directory,self.argv,1,self.metadata,self.inputs,'verify')
+
+    def test_complete_native_fixture(self):self.review()
+
+    def test_changed_caps_rejected(self):
+        self.row['caps']['wall']+=1;self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_shared_stop_cannot_be_passed(self):
+        self.row['resource_stop']='wall';self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_error_hidden_under_passed(self):
+        self.row['cleanup_error']='original failure';self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_raw_log_tamper(self):
+        (self.directory/'stderr').write_text('changed')
+        with self.assertRaises(ValueError):self.review()
+
+    def test_nonempty_final_group(self):
+        self.row['final_group']={'status':'owned','members':[]};self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_birth_replacement(self):
+        self.row['process_binding']=dict(self.binding,started='new birth');self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_retirement_not_actual_empty(self):
+        r=common.load(self.reg.with_suffix('.retired'));r['final_observation']={'status':'unbound','members':[]}
+        self.write(self.reg.with_suffix('.retired'),r)
+        with self.assertRaises(ValueError):self.review()
+
+    def test_wrong_registered_parent(self):
+        self.registered['parent']=999;self.write(self.reg,self.registered)
+        with self.assertRaises(ValueError):self.review()
+
+    def test_prelude_command_changed(self):
+        self.plan['prelude_command']=['/another/joy'];self.write(self.shared/'plan.json',self.plan)
+        self.row['shared_profile']=common.identity(self.shared/'plan.json');self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_premature_full_admission(self):
+        self.write(self.shared/'full-admission.json',dict(time_ns=69))
+        with self.assertRaises(ValueError):self.review()
+
+    def test_monotonic_cap_not_civil_duration(self):
+        self.row['elapsed_seconds']=7506;self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_process_rss_sum(self):
+        s=copy.deepcopy(self.row['latest_sample']);s['processes'][0]['rss_bytes']=1025
+        self.row['latest_sample']=s;(self.directory/'resources.jsonl').write_text(json.dumps(s)+'\n');self.save()
+        with self.assertRaises(ValueError):self.review()
+
+    def test_clock_domains_reported_separately(self):
+        self.row['ended_ns']=70_000_000_000
+        self.write(self.shared/'run-1/receipt.json',dict(started_ns=1,ended_ns=100_000_000_000))
+        self.write(self.shared/'full-admission.json',dict(time_ns=80_000_000_000));self.save()
+        # A long civil interval does not substitute for or extend the monotonic guard.
+        self.review()
+
+
+class ActivationTests(unittest.TestCase):
+    def test_failed_prerequisite_prevents_acceptance(self):
+        with patch.object(check,'load',return_value={'status':'failed'}),self.assertRaises(ValueError):
+            check.prerequisites(Path('/fixture'))
+
+    def test_unreviewed_checker_cannot_activate(self):
+        with patch.object(check,'load',side_effect=[{'x':1},{'status':'pending','sources':{'x':1}}]),self.assertRaises(ValueError):
+            check.source_gate()
+
+
+class CompositeTests(unittest.TestCase):
+    def setUp(self):
+        old=[dict(name=n) for n in common.PRIOR]
+        additional=[dict(name=n) for n in common.ADDITIONAL]
+        self.prior=dict(controls=[dict(name='original-fresh-verification'),dict(name='rechain')],
+                        original_v2=dict(rejections=old),additional_v3=dict(rejections=additional))
+        self.profile={'p':1};self.positive={'proof':{'bytes':1,'sha256':'a'*64}}
+        self.suite=dict(schema='trident/whole-self-build-certificate-completion/v4',status='passed-completion',
+                        generation=2,profile=self.profile,original_proof=self.positive['proof'],prior_cases=self.prior,
+                        immutable_inputs_before={'i':1},rejections=[dict(name=n) for n in common.NEW],
+                        immutable_inputs_after={'i':1},ended_ns=100)
+
+    def review(self):cases.suite_contract(self.suite,2,self.prior,self.positive,self.profile)
+
+    def test_exact_composite(self):self.review()
+
+    def test_no_fabricated_fresh_controls(self):
+        self.suite['controls']=self.prior['controls']
+        with self.assertRaises(ValueError):self.review()
+
+    def test_incomplete_suite_not_promoted(self):
+        self.suite['status']='running'
+        with self.assertRaises(ValueError):self.review()
+
+    def test_failed_suite_not_promoted(self):
+        self.suite['status']='failed'
+        with self.assertRaises(ValueError):self.review()
+
+    def test_hidden_input_failure(self):
+        self.suite['input_error']='input changed'
+        with self.assertRaises(ValueError):self.review()
+
+    def test_wrong_original_proof(self):
+        self.suite['original_proof']={'bytes':2,'sha256':'b'*64}
+        with self.assertRaises(ValueError):self.review()
+
+    def test_prelude_exact_serializer_reconstruction(self):
+        snapshot=dict(self.suite,status='running',rejections=[self.suite['rejections'][0]])
+        snapshot.pop('immutable_inputs_after');snapshot.pop('ended_ns')
+        raw=(json.dumps(snapshot,indent=2)+'\n').encode()
+        self.assertEqual(dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest()),transitions.prelude_snapshot(self.suite))
+
+    def test_prelude_binds_original_cost_row(self):
+        original=transitions.prelude_snapshot(self.suite)
+        self.suite['rejections'][0]={'name':'generation'}
+        self.assertNotEqual(original,transitions.prelude_snapshot(self.suite))
+
+    def test_prelude_binds_prior_admission(self):
+        original=transitions.prelude_snapshot(self.suite)
+        self.suite['prior_cases']={'changed':True}
+        self.assertNotEqual(original,transitions.prelude_snapshot(self.suite))
+
+    def test_failed_snapshot_cannot_reconstruct_success(self):
+        self.suite['error']='failure'
+        with self.assertRaises(ValueError):transitions.prelude_snapshot(self.suite)
+
+    def test_partial_source_review_cannot_activate(self):
+        with patch.object(check,'load',side_effect=[{'x':1},{'status':'passed-source-review','sources':{}}]),self.assertRaises(ValueError):
+            check.source_gate()
+
+
+if __name__=='__main__':unittest.main()

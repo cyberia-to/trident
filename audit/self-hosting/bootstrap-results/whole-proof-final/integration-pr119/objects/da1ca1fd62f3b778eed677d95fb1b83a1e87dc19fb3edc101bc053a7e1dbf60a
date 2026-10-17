@@ -1,0 +1,242 @@
+{
+  "status": "passed-exact-tooling-evidence-head",
+  "head": "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50",
+  "base": "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e",
+  "expected_merge_tree": "131b52d5f724128afd435043c477ba82355ee2bb",
+  "changed_paths": 875,
+  "protected_source_trees_equal": {
+    "src": "87cf5c8492303a0bc34601c8229fb80f8a63916c",
+    "lib": "0f0ee66fd405aedbdaa40aad8e7a41a2e1d54913",
+    "Cargo.toml": "6651217bc14d04eb46bbf7ffc000fadc3f47c09b",
+    "Cargo.lock": "c98ecafbcfc43aa6dfe530c90f1df7faa0c4b1a4",
+    "build.rs": "6abcb16dbe7c69766404ff02d342b7e58194fa04",
+    "scripts": "6723649173167bfa5c21ab8516befbbc04dfdb22",
+    ".github": "e24eac7eca13b6b8e1f1f61cb8011629ddda6fb9",
+    ".gitattributes": "98508220d7c8f2c517d08dbb0ddd17972039b1e6"
+  },
+  "incoming_guide_preserved": true,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:src"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:src"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:lib"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:lib"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:Cargo.toml"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:Cargo.toml"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:Cargo.lock"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:Cargo.lock"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:build.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:build.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:scripts"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:scripts"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:.github"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:.github"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:.gitattributes"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50:.gitattributes"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "10772124836b68a2df011c912b5776b2454a511f...e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "merge-tree",
+        "--write-tree",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e",
+        "e1b825c76cdc7f3aa6a167d43f1a818d4e35ce50"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "8da6f8f6efb3eafb4697f3ce7da74e059d18e02e:docs/guides/self-hosted-compilation.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "131b52d5f724128afd435043c477ba82355ee2bb:docs/guides/self-hosted-compilation.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+      "exit_code": 0
+    }
+  ],
+  "install": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/postinstall-pr117-evidence/receipt.json",
+    "bytes": 3466,
+    "sha256": "77ccbaba50d383fce12c9cdb6e636e1b46a4c5ad50088c80731632155f2703c4"
+  },
+  "independent_readiness": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/helper-tooling-readiness-15fa/review.json",
+    "sha256": "d26e0f029877e8b286ea6cb700793bf9c4cbc4b63439f18768a043758e3b5747"
+  },
+  "scope": "Ready separately scoped tooling/evidence increment only; no SH8 or full version0.4 readiness claim."
+}

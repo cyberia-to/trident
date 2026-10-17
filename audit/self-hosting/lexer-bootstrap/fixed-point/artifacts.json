@@ -1,0 +1,85 @@
+{
+  "schema": "trident/full-source-fixed-point-artifacts/v1",
+  "source_revision": "77213171d39b88c5f41221912251cc4813ac2b11",
+  "scope": "Actual S1 C1(S)->C2->C3 byte fixed point; semantic and clean-platform gates separate",
+  "first_receipt": "../c1-to-c2.json",
+  "first_receipt_sha256": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+  "source_archive": "../sources.tar.gz",
+  "source_archive_sha256": "c9cf43c04d53adfdf1f3b771d1b209757923bd8657dcfa9560b762d7991011cf",
+  "all_94_second_source_files_and_manifest_byte_identical_to_archived_first": true,
+  "all_94_source_files_match_committed_source": true,
+  "checker_command": {
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/check-selfhost-fixed-point.py",
+      "--first",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2.json",
+      "--second",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3.json",
+      "--inventory-checker",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_inventory",
+      "--joy",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+      "--output",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-fixed-point.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+    "status": "completed",
+    "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-fixed-point.log",
+    "exit_code": 0,
+    "elapsed_nanoseconds": 5855895916,
+    "log_sha256": "5b127259156c188a1e4c775a895992dc384539b2c9db4ee051b3bff7b90833cf"
+  },
+  "checker_sha256": "db059dd2eeec314200cd259cd563e88f29a54a52810437fa0d246b23bebee393",
+  "files": {
+    "c2-to-c3.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3.json",
+      "original_sha256": "9479e0899f4aeeee089bfc0fd53ab0d9767fde8f50de8d5cbfff55cda515e8fa",
+      "original_bytes": 189913,
+      "sha256": "9479e0899f4aeeee089bfc0fd53ab0d9767fde8f50de8d5cbfff55cda515e8fa",
+      "bytes": 189913
+    },
+    "comparison.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-fixed-point.json",
+      "original_sha256": "fdcc4445886e9bf7a3cd23208c8205765dd9ebf8b0e61836c19e38e31d296438",
+      "original_bytes": 93915,
+      "sha256": "fdcc4445886e9bf7a3cd23208c8205765dd9ebf8b0e61836c19e38e31d296438",
+      "bytes": 93915
+    },
+    "c3.dag.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3-files-jb8je2q4/result.dag",
+      "original_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+      "original_bytes": 9691488,
+      "sha256": "ae592b0e27815fe605f4385cc9a73e67e531d6a5abfecc9b3312a6b1bc0d4b8e",
+      "bytes": 4042349
+    },
+    "job2.dag.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-to-c3-files-jb8je2q4/job.dag",
+      "original_sha256": "3474e5583e7b3ac36bdd526435bb2ae584691774a009e29ca02407c22589f13d",
+      "original_bytes": 6762002,
+      "sha256": "47062c398272fdad037784caa87a0623bbb6e2ea7ab0197fa379cf6e72d82bf3",
+      "bytes": 4105274
+    },
+    "check-selfhost-fixed-point.py.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/check-selfhost-fixed-point.py",
+      "original_sha256": "db059dd2eeec314200cd259cd563e88f29a54a52810437fa0d246b23bebee393",
+      "original_bytes": 20986,
+      "sha256": "640775a62296cab0207389236ca9f198f9b94d3eddfda8df6850b6c01d2a6927",
+      "bytes": 5884
+    },
+    "comparison.log.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-fixed-point.log",
+      "original_sha256": "5b127259156c188a1e4c775a895992dc384539b2c9db4ee051b3bff7b90833cf",
+      "original_bytes": 230,
+      "sha256": "628bd3390c446e709313cd61ced7858b7df1f1c9ea5f32dc7d768c7a53a25f11",
+      "bytes": 189
+    },
+    "collect.py.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/../measurements/collect-lexer-fixed-point.py",
+      "original_sha256": "85e03d3a6718aa0ee704824eba211bad686554ef6908cecaf247b20afbb679e5",
+      "original_bytes": 4697,
+      "sha256": "655c37a84847c874d1dd8c131b394c3db55359a1a8f53ad6f45df18fa7fb239c",
+      "bytes": 1708
+    }
+  }
+}

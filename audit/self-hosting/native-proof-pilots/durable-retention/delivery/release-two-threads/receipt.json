@@ -1,0 +1,47 @@
+{
+  "schema": "trident/sh7-retention-release-test/v1",
+  "status": "failed",
+  "base_commit": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "argv": [
+    "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+    "test",
+    "--release",
+    "--workspace",
+    "--locked",
+    "--offline",
+    "--",
+    "--test-threads",
+    "2"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "RUSTFLAGS": "-D warnings",
+    "RUSTDOCFLAGS": "-D warnings",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "versions": {
+    "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+    "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\nrelease: 1.89.0\ncommit-hash: c24e1064277fe51ab72011e2612e556ac56addf7\ncommit-date: 2025-06-23\nhost: aarch64-apple-darwin\nlibgit2: 1.9.0 (sys:0.20.2 vendored)\nlibcurl: 8.7.1 (sys:0.4.80+curl-8.12.1 system ssl:(SecureTransport) LibreSSL/3.3.6)\nssl: OpenSSL 3.5.0 8 Apr 2025\nos: Mac OS 26.4.1 [64-bit]\n"
+  },
+  "previous_attempt": "../cargo-gates/receipt.json",
+  "scope": "Same complete workspace tests in release mode, after explicitly retained interruption of debug arithmetic slowdown. Warm accepted Cargo cache; no excluded test filters.",
+  "started_utc": "2026-10-02T04:42:58.617142+00:00",
+  "exit_code": 101,
+  "elapsed_seconds": 1151.307091041992,
+  "logs": {
+    "stdout": {
+      "bytes": 66769,
+      "sha256": "e126b2dbc9e72d1a10514dbeccbc31ab80d1735c9aa9535b5ecc3162c310dfd5"
+    },
+    "stderr": {
+      "bytes": 491437,
+      "sha256": "e9a91729bafa6b21217c6d7b604c8e677362a9366e3fe80825f021071ac3120b"
+    }
+  },
+  "warning_lines": []
+}

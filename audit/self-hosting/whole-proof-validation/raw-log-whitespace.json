@@ -1,0 +1,13 @@
+{
+  "status": "expected-raw-data-whitespace",
+  "commit": "0066007b75aa4e7e1b8fb6ec32c98841930db61b",
+  "command": [
+    "git",
+    "show",
+    "--format=",
+    "--check",
+    "HEAD"
+  ],
+  "exit_code": 2,
+  "note": "The initial stage check reported terminal blank lines in two byte-preserved Cargo test logs. No compiler warning occurred. The shell continued to commit; this follow-up retains that failed check and scopes whitespace attributes to those exact raw data files. No source, log or original receipt bytes are rewritten."
+}

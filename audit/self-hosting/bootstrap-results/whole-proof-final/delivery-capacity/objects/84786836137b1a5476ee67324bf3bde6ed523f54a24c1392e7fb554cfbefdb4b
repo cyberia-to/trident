@@ -1,0 +1,35 @@
+{
+  "actual_collection_executed": false,
+  "assumptions": [
+    "Every remaining native bundle contributes no more entries/read bytes/serialized catalog bytes than the largest observed standalone closed C1 bundle. Duplicate paths are deliberately overcounted in this estimate.",
+    "The two accepted historical prior-case result shapes and selected V4 cost result are each added once as conditional template contributions. Their future suite/JSON-pointer coordinates and contents can differ.",
+    "Every as-yet-unobserved public stream is no larger than the largest currently closed positive/native stdout/stderr stream. This is an assumption, not the1MiB per-stream cap.",
+    "Still unmodeled: final watcher/F5 result, completed controller/suite wrappers, remaining capacity/admission metadata, extra nested result identities, final source-gate reads, generated summary/receipt/map/readback overhead. Remaining margin must cover these actual future values.",
+    "All formulas are planning comparisons under unchanged CAPS; no terminal collector, proof body read, replay, new capacity or acceptance verdict is performed."
+  ],
+  "catalog_margin_before_other_unmodeled_metadata": 2276,
+  "duplicate_template_catalog_bytes": 70448,
+  "duplicate_template_catalog_entries": 10,
+  "initial": {
+    "bytes": 32403,
+    "sha256": "31e12a256c2455339187de8e7c44f69e8400c81c09a9710b67457eddf6a7edf7"
+  },
+  "limits_unchanged": true,
+  "observed_ns": 1790980381307687000,
+  "output_margin_before_other_unmodeled_metadata": 57816022,
+  "projected_catalog_before_other_unmodeled_metadata": 17724,
+  "projected_output_before_other_unmodeled_metadata": 9292842,
+  "projected_reads_including_stream_reads_and_packet_readback_before_other_metadata": 24052856,
+  "read_margin_before_other_unmodeled_metadata": 244382600,
+  "reason": "Collector loads selected V4 cost inside the C2 suite and again as a standalone file; model the known duplicate JSON-pointer provenance separately while deduplicating identical absolute paths.",
+  "source": {
+    "bytes": 1637,
+    "sha256": "d2f216163f07add07ef7278d998656eccb2f1f60190322e085761191fa64f59f"
+  },
+  "status": "conditional-planning-addendum",
+  "template": {
+    "bytes": 323555,
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v5/actual-2/c2-cost.json",
+    "sha256": "a11a89c629d95ecb5de2663cb18184d0f3ec8661122bf59b5a6e57f0cbfefb26"
+  }
+}

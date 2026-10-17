@@ -1,0 +1,66 @@
+"""One reviewed finite curl continuation; all old failures remain unchanged."""
+import os,signal,sys,time,traceback
+from pathlib import Path
+from budget import Budget
+from collection_common import *
+from metadata import admit as metadata_admit,same,asset,FIELDS,RUN_FIELDS
+from archive import extract
+from history import admit as history_admit
+from http_policy import endpoints
+from transfer import Transport
+from auth import credential
+
+def terminal(out,receipt,error):
+    value=dict(schema='trident/collection-completion-terminal-failure/v2',status='failed',ended_ns=time.time_ns(),error=error[:32768],sources=receipt['sources'],latest_command=receipt['commands'][-1] if receipt['commands'] else None,credential=receipt.get('credential'),ordinary_receipt=identity(out/'receipt.json') if (out/'receipt.json').exists() else None)
+    raw=encode(value);require(len(raw)<=MIB,'reserved terminal failure cap')
+    with (out/'terminal-reserve.json').open('r+b') as f:f.write(raw+b' '*(MIB-len(raw)));f.flush();os.fsync(f.fileno())
+    (out/'terminal-reserve.json').rename(out/'terminal-failure.json')
+
+def main():
+    source=sources();review=load(ROOT/'independent-review.json');require(review['status']=='passed-source-review' and review['sources']==source,'exact root source review')
+    out=ROOT/'completed';out.mkdir(mode=0o700);inventory=out/'inventories';inventory.mkdir();budget=Budget(SCOPES);budget.charge(MIB)
+    with (out/'terminal-reserve.json').open('xb') as f:f.write(b' '*MIB)
+    receipt=dict(schema='trident/exact-attempt-actions-collection-completion/v4',status='running',run=RUN,attempt=1,head=HEAD,profile=PROFILE,sources=source,review=identity(ROOT/'independent-review.json'),started_ns=time.time_ns(),commands=[],requests=[],backoffs=[],archives={},member_maps={},prior_attempts={})
+    def persist():save(out/'receipt.json',receipt,budget)
+    def cancel(signum,_frame):raise InterruptedError('collection signal '+str(signum))
+    signal.signal(signal.SIGALRM,cancel);signal.signal(signal.SIGINT,cancel);signal.signal(signal.SIGTERM,cancel);signal.alarm(7200);persist()
+    try:
+        admitted=history_admit(out,budget);history=admitted['history'];maps={}
+        for number,(name,value) in enumerate(history['all_files'].items()):maps[name]=reference(inventory,f'prior-scope-{number}',value,budget)
+        receipt['history']=dict(v3=history['v3'],prior16=history['prior16'],all_files=maps);receipt['prior_attempts']=admitted['prior_attempts'];receipt['archives']=admitted['archives']
+        for name,members in admitted['members'].items():receipt['member_maps'][name]=reference(inventory,name,members,budget)
+        receipt['gh']=admitted['gh'];receipt['curl']=dict(path='/usr/bin/curl',**identity('/usr/bin/curl'));receipt['python']=dict(path=str(Path(sys.executable).resolve()),**identity(Path(sys.executable).resolve()));persist()
+        token=credential(out,receipt['gh'],budget,receipt);persist();t=Transport(out,receipt['curl'],budget,receipt,token,endpoints(admitted['assets']));del token
+        fresh={}
+        for name,endpoint in [('run',f'actions/runs/{RUN}/attempts/1'),('jobs',f'actions/runs/{RUN}/attempts/1/jobs?per_page=100'),('artifacts',f'actions/runs/{RUN}/artifacts?per_page=100')]:
+            path,_=t.get('admission-'+name,'repos/'+REPO+'/'+endpoint,8*MIB);fresh[name]=load(path)
+        assets=metadata_admit(fresh['run'],fresh['jobs'],fresh['artifacts']);same(fresh['run'],fresh['jobs'],assets,admitted['run'],admitted['jobs'],admitted['assets'])
+        decoded=sum(v['bytes'] for members in admitted['members'].values() for v in members.values())
+        for a in sorted(assets,key=lambda a:(a['name']!='bootstrap-phase-matrix-comparison-attempt-1',a['name'])):
+            name=a['name']
+            if name in admitted['archives']:continue
+            direct,_=t.get(name+'-metadata',f"repos/{REPO}/actions/artifacts/{a['id']}",4*MIB);value=load(direct);require(all(value[k]==a[k] for k in FIELDS),'fresh direct asset identity')
+            wanted=asset(a);path,command=t.get(name,f"repos/{REPO}/actions/artifacts/{a['id']}/zip",wanted['bytes'],body=True,expected=wanted)
+            members=extract(path,out/name,4*GIB-decoded,budget);decoded+=sum(v['bytes'] for v in members.values());receipt['member_maps'][name]=reference(inventory,name,members,budget)
+            receipt['archives'][name]=dict(**wanted,metadata=a,storage=dict(zip=str(path),tree=str(out/name)),command_ref=dict(scope='v4',name=command));t.persist();print(__import__('json').dumps(dict(retained=name,archives=len(receipt['archives']),decoded=decoded)),flush=True)
+        name='attempt-1-logs';path,command=t.get(name,f'repos/{REPO}/actions/runs/{RUN}/attempts/1/logs',256*MIB,body=True)
+        members=extract(path,out/name,4*GIB-decoded,budget);receipt['member_maps'][name]=reference(inventory,name,members,budget);receipt['archives'][name]=dict(**identity(path),storage=dict(zip=str(path),tree=str(out/name)),command_ref=dict(scope='v4',name=command));t.persist()
+        after,_=t.get('attempt-after',f'repos/{REPO}/actions/runs/{RUN}/attempts/1',4*MIB);require(all(load(after)[k]==admitted['run'][k] for k in RUN_FIELDS),'unchanged original terminal run')
+        require(all(tree(Path(name))==value for name,value in history['all_files'].items()),'all prior failed scopes unchanged');require(sources()==source,'final exact source closure')
+        budget.reconcile('final');receipt.update(status='passed-completion',ended_ns=time.time_ns(),accounting=dict(peak_bytes=budget.peak,scans=budget.scans,reconciliations=budget.reconciliations));t.persist();budget.reconcile('after-final-receipt')
+        final=dict(schema='trident/collection-completion-final-accounting/v1',receipt=identity(out/'receipt.json'),observed_before_record=budget.used,peak_charged_before_record=budget.peak,reconciliation=budget.reconciliations[-1],record_bytes=0,final_scope_bytes=budget.used)
+        for _ in range(10):
+            raw=encode(final)
+            if len(raw)==final['record_bytes']:break
+            final.update(record_bytes=len(raw),final_scope_bytes=budget.used+len(raw))
+        else:raise ValueError('final accounting size did not stabilize')
+        require(len(raw)<=4096,'small final accounting');budget.charge(len(raw))
+        with (out/'final-accounting.json').open('xb') as f:f.write(raw)
+        require(budget.reconcile('after-final-accounting')==final['final_scope_bytes'],'actual final accounting')
+    except BaseException:
+        error=traceback.format_exc();receipt.update(status='failed',error=error)
+        try:terminal(out,receipt,error)
+        except BaseException as exception:print('terminal failure preservation error: '+repr(exception),file=sys.stderr)
+        raise
+    finally:signal.alarm(0)
+if __name__=='__main__':main()

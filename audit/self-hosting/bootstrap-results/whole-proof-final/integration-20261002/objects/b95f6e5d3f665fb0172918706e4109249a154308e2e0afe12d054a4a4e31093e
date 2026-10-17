@@ -1,0 +1,98 @@
+diff --git a/README.md b/README.md
+index 562c343..f5f4120 100644
+--- a/README.md
++++ b/README.md
+@@ -43,7 +43,7 @@ trisha bench baselines/triton/reference --full --skip-neural
+ trisha bench baselines/triton --full --skip-neural
+ ```
+ 
+-Benchmark fixtures contain independent expected outputs. Both classic and hand programs must match independent expected outputs before a cycle ratio is printed. Self-identifying type scripts disclose the implementation-specific program hashes and derived authenticated inputs used for the same semantic transaction; `--full` also proves and verifies both. Uncovered baselines are reported as `UNVERIFIED`, and incomplete coverage returns a failing exit status. Every one of the43 hand baselines has explicit positive reference fixtures, with rejection vectors where applicable. Current execution and full-proof receipts are recorded separately in the [release ledger](../trident/audit/full-release-preparation.md).
++Benchmark fixtures contain independent expected outputs. Both classic and hand programs must match independent expected outputs before a cycle ratio is printed. Self-identifying type scripts disclose the implementation-specific program hashes and derived authenticated inputs used for the same semantic transaction; `--full` also proves and verifies both. Uncovered baselines are reported as `UNVERIFIED`, and incomplete coverage returns a failing exit status. Every one of the43 hand baselines has explicit positive reference fixtures, with rejection vectors where applicable. Current branch execution and full-proof receipts are recorded in the [final package audit](audit/final-host-ceiling-package/README.md); the [September 16 release ledger](../trident/audit/full-release-preparation.md) retains its historical scope.
+ 
+ Regression tests exercise source CLI run/prove/verify and tampered claims, wide stacks, imported structures, SHA-256 against the empty-message FIPS digest, malformed inputs, and colliding batch proof destinations.
+ 
+diff --git a/audit/README.md b/audit/README.md
+index 6309329..3859a90 100644
+--- a/audit/README.md
++++ b/audit/README.md
+@@ -1,5 +1,36 @@
+ # Trisha validation records
+ 
++The `release/0.4` package rehearsal is accepted for exact source `73b50ebd`:
++six native producers, a fresh Mac ARM 198-proof gate, all 36 native consumer
++pairs and the bounded macOS 14 ARM consumer. The
++[final package audit](final-host-ceiling-package/README.md) retains commands,
++revisions, source and binary identities, resource observations and failures.
++[PR24](https://github.com/cyberia-to/trisha/pull/24) merged this evidence as
++`95899e8f4fe32b5d7269d92b5e63ef429fbfafac`. Its
++[source selection](../.github/final-package-source.json) binds the frozen
++eleven-repository archive; its [reproduction and readback](final-host-ceiling-package/README.md#independent-reproduction-and-complete-source-readback-passed)
++bind draft source asset `605224542`.
++
++The package retains its tested product versions and exact binary identities.
++[Complete certificate byte-equivalence retention](whole-retention-byte-closure/README.md)
++is accepted for both original self-build certificates. SH8 adversarial and
++final-checker acceptance remain separate gates in Trident's
++[self-hosting ledger](../../trident/audit/self-hosting-progress.md).
++Version/bump approval, default-branch release integration, tags, registry
++publication and public promotion remain owner release steps. Draft evidence
++transport does not promote this branch rehearsal.
++
++The earlier [Trisha 0.3.0 release](https://github.com/cyberia-to/trisha/releases/tag/v0.3.0)
++was published on September 16. The
++[bounded GitHub observation](delivery-status-20261002/README.md) records that
++release and tag separately from the unpublished draft used for current evidence.
++
++## Historical pre-release index
++
++The following index records preparation before the September 16 publication.
++Its status wording describes that period; each linked report retains its own
++recorded revisions and original findings.
++
+ The full release is still being prepared. The coordinated work ledger is
+ `trident/audit/full-release-preparation.md` in the complete source tree.
+ These reports distinguish local runtime/node evidence from publication and
+diff --git a/audit/final-host-ceiling-package/README.md b/audit/final-host-ceiling-package/README.md
+index a3ea835..0bedf6b 100644
+--- a/audit/final-host-ceiling-package/README.md
++++ b/audit/final-host-ceiling-package/README.md
+@@ -5,7 +5,9 @@ the fresh Mac ARM 198-proof gate, the complete six-by-six consumer matrix and
+ the bounded macOS 14 ARM consumer passed for exact source 73b50ebd. All twenty
+ remote and three local package/corpus bodies passed authenticated readback.
+ Original consumer containers and complete local proof evidence are retained.
+-Independent final consumer replay passed; release integration is pending.
++Independent final consumer replay passed. [PR24](https://github.com/cyberia-to/trisha/pull/24)
++merged this evidence into `release/0.4` as
++`95899e8f4fe32b5d7269d92b5e63ef429fbfafac`.
+ This is a feature-branch rehearsal, not a
+ published release.
+ 
+diff --git a/docs/reference/current-native-package.md b/docs/reference/current-native-package.md
+index 76e5c11..52c5d86 100644
+--- a/docs/reference/current-native-package.md
++++ b/docs/reference/current-native-package.md
+@@ -1,11 +1,16 @@
+-# Current native package validation
+-
+-Status: runner reviewed at `bbba2b7`; exact eleven-repository production
+-closure derived. Source export and dispatch remain dormant until the original
+-frozen native matrix passes and the new archive is independently reproduced.
+-
+-This is a new committed, pushed branch rehearsal for the current production
+-code. It keeps the frozen `e4bac7ff` distribution experiment and its receipts
++# Native package validation — source 734df69d
++
++Status: this source `734df69d` rehearsal completed its six native producer and
++consumer gates and actual Mac 198-proof gate; see the
++[retained results](../../audit/current-native-package/README.md).
++The later Joy host-deadline package, source `73b50ebd`, completed its own gates
++and entered `release/0.4` through [PR24](https://github.com/cyberia-to/trisha/pull/24).
++Its [final audit](../../audit/final-host-ceiling-package/README.md) is the current
++package evidence. The preparation and execution requirements below retain the
++earlier rehearsal's scope.
++
++This contract records the committed, pushed branch rehearsal for source
++`734df69d`. It keeps the frozen `e4bac7ff` distribution experiment and its receipts
+ unchanged. A new source inventory, archive digest, native selector, package
+ identity and corpus identify this run. Existing unpublished draft assets are
+ transport only; this process creates no tag or published release.

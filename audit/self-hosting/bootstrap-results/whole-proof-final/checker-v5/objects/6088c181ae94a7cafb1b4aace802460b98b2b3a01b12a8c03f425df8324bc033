@@ -1,0 +1,162 @@
+"""Independently replay sequential V5 admissions, ownership and actual capacity observations."""
+import json
+from pathlib import Path
+from common import require,identity,load,same,files,reference,v5_sources,fresh_names
+from legacy_schedule import sample as old_sample,sample_time,terminal_samples
+import capacity
+import native
+GIB,MIB=1024**3,1024**2
+RETAINED=('whole-proof-attacks','whole-proof-attacks-v2-c1','whole-proof-attacks-v2-c2',
+          'whole-proof-attacks-parallel-v2','whole-proof-attacks-v3-c1','whole-proof-attacks-v3-c2',
+          'whole-proof-attacks-completion-v3','whole-proof-attacks-v4-c1','whole-proof-attacks-v4-c2',
+          'whole-proof-attacks-completion-v4')
+
+
+def contract(plan):
+    require(plan['schema']=='trident/complete-proof-missing-cases/v5','V5 completion scope')
+    expected=dict(shared_disk_bytes=26*GIB,free_floor_bytes=8*GIB,combined_sampled_rss_bytes=12*GIB,
+                  mutant_growth_ceiling_bytes=32*MIB,canonical_and_output_bucket_per_generation=112*MIB,
+                  metadata_bucket_per_generation=256*MIB,per_stream_log_bytes=MIB,readiness_seconds=15500,
+                  outer_schedule_seconds=86400,fresh_rejections_per_generation={'1':11,'2':10},
+                  replayed_rejections_per_generation=12,replayed_controls_per_generation=2,
+                  selected_v4_cost_rejections={'1':0,'2':1},generation_order=[1,2],capacity_wait_seconds=600,capacity_sample_seconds=1)
+    require(all(plan[k]==v for k,v in expected.items()),'unchanged resource limits and exact sequential cases')
+    require(plan['roots']=={'1':'whole-proof-attacks-v5-c1','2':'whole-proof-attacks-v5-c2'}
+            and plan['generations']==[1,2] and plan['retained_scopes']==list(RETAINED),
+            'all historical V4 scopes remain charged')
+
+
+def sample(row,plan,base):
+    old_sample(row,plan,base,version=5)
+    require(sum(len(v['mutants']) for v in row['generations'].values())<=1,'one mutation across both generations')
+    for p in row['processes']:
+        require(isinstance(p['started'],str) and p['started'] and type(p['pgid']) is int,'birth-aware actual resource identities')
+
+
+def sequencing(run,admissions,completed,permits):
+    require([r['generation'] for r in run['generations']]==[1,2] and set(run['children_final'])=={'1','2'},'two sequential completed generations')
+    deadline=admissions[1]['outer_deadline_monotonic']
+    require(type(deadline) in (int,float) and admissions[2]['outer_deadline_monotonic']==deadline
+            and type(run['elapsed_seconds']) in (int,float) and 0<=run['elapsed_seconds']<=86400,'unchanged monotonic outer schedule')
+    require(run['started_ns']<=permits[1]['started_ns']<=permits[1]['ended_ns']<=admissions[1]['time_ns']
+            <=completed[1]['quiescent_ns']<=permits[2]['started_ns']<=permits[2]['ended_ns']
+            <=admissions[2]['time_ns']<=completed[2]['quiescent_ns']<=run['ended_ns'],
+            'completed and quiescent C1 precedes every C2 launch admission observation')
+    require(admissions[1]['pid']==admissions[2]['pid'],'same original coordinator across generations')
+
+
+def final_owners_absent(observed,owners):
+    from selected_quiescence import birth
+    reused=[]
+    for p in observed['processes']:
+        for owner,empty_ns in owners:
+            if p['pid'] in {int(k) for k in owner['members']} or p['pgid']==owner['pgid']:
+                born=birth(p['started'])
+                require(empty_ns+2_000_000_000<born<=observed['time_ns'],
+                        'old or ambiguous process birth survives terminal empty observation')
+                reused.append(dict(pid=p['pid'],pgid=p['pgid'],birth_ns=born,prior_empty_ns=empty_ns))
+    return reused
+
+
+def review(base):
+    shared=base/'whole-proof-attacks-completion-v5'
+    plan,run,baseline=(load(shared/p) for p in ('plan.json','run-1/receipt.json','baseline.json'))
+    contract(plan);manifest=v5_sources(base)
+    require(not (shared/'stop.json').exists() and not (shared/'shutdown.json').exists(),'no hidden failed V5 schedule')
+    require(run['schema']=='trident/complete-proof-missing-cases-orchestration/v5' and run['status']=='passed'
+            and run['phase']=='complete' and run['active_generation']==2 and run['inputs_unchanged'] is True
+            and not any(run.get(k) for k in ('error','cleanup','cleanup_error')),'complete successful unchanged V5 schedule')
+    same(shared/'plan.json',run['plan']);same(shared/'independent-review.json',run['independent_review'])
+    require(run['source']==manifest and baseline['declared_historical_retirements']=={},'no current historical deletion or source substitution')
+    static={p for p in baseline['files'] if any(Path(p).is_relative_to(base/s) for s in RETAINED)}
+    require(set(baseline['immutable'])==static,'all retained original bytes are immutable')
+    allowed=[base/s for s in (*RETAINED,*plan['roots'].values(),shared.name)]
+    for p,size in baseline['files'].items():
+        require(type(size) is int and size>=0 and any(Path(p).is_relative_to(s) for s in allowed),'complete owned baseline path')
+        if p in static:
+            require(baseline['immutable'][p]['bytes']==size,'retained baseline size');same(Path(p),baseline['immutable'][p])
+    for name in RETAINED:
+        current={str(p) for p in (base/name).rglob('*') if p.is_file() and 'target-helper' not in p.relative_to(base/name).parts}
+        require(current<=static,'every surviving historical file remains charged and unchanged')
+    for g in (1,2):
+        old=base/f'whole-proof-attacks-v3-c{g}/whole-c{g}/certificate-cost.joysc'
+        require(str(old) not in baseline['files'] and not old.exists(),'completed separate original retirement precedes V5')
+    require(set(run['files'])=={'c1.stdout','c1.stderr','c2.stdout','c2.stderr','resources.jsonl'},'complete coordinator raw logs')
+    files(shared/'run-1',run['files'])
+    admissions={g:load(shared/f'admission-c{g}.json') for g in (1,2)}
+    completed={g:load(shared/f'completed-c{g}.json') for g in (1,2)}
+    permits={};expected_names=set();expected_capacity=set();minimum=sum(v['bytes'] for v in baseline['immutable'].values())
+    for g,row in zip((1,2),run['generations']):
+        root=base/f'whole-proof-attacks-v5-c{g}';admission=admissions[g];complete=completed[g]
+        if g==2:
+            prior_root=base/'whole-proof-attacks-v5-c1'
+            minimum+=sum(p.stat().st_size for p in prior_root.rglob('*') if p.is_file() and 'target-helper' not in p.relative_to(prior_root).parts)
+        permits[g]=capacity.review(base,g,None,run,admission,minimum)
+        expected_capacity.add(f'c{g}-generation')
+        require(admission['generation']==g and admission['children']=={str(g):row['pid']}
+                and admission['suite_binding']==row['binding'] and admission['reservation']==permits[g]['reservation']
+                and admission['capacity']==identity(shared/'capacity'/f'c{g}-generation.json'),'exact immutable generation admission')
+        same(shared/'sources.json',admission['source_manifest']);same(shared/'plan.json',admission['plan'])
+        same(shared/f'admission-c{g}.json',row['admission'])
+        native.binding(row['binding']);require(row['binding']['pid']==row['pid'],'suite actual birth identity')
+        python=row['command'][0]
+        require(row['status']=='passed' and row['exit_code']==0 and row['cwd']==str(root) and Path(python).is_absolute()
+                and row['command']==[python,'-B',str(root/'whole_suite.py'),'--generation',str(g)]
+                and run['children_final'][str(g)]==dict(pid=row['pid'],exit_code=0),'exact successful suite command')
+        require(complete['status']=='passed' and complete['generation']==g and all(row[k]==v for k,v in complete.items()),
+                'immutable completed receipt identical to terminal generation row')
+        same(root/f'whole-c{g}/receipt.json',row['suite_receipt'])
+        require(set(row['logs'])=={'stdout','stderr'},'both suite streams')
+        for key,value in row['logs'].items():same(shared/f'run-1/c{g}.{key}',value)
+        require(load(shared/f'run-1/c{g}.stdout')==dict(status='passed-completion',generation=g)
+                and (shared/f'run-1/c{g}.stderr').read_bytes()==b'','actual suite terminal response')
+        require(not list((root/f'whole-c{g}').glob('certificate-*.joysc')),'completed fresh temporary bodies absent')
+        previous=admission['time_ns']
+        names={f'whole-c{g}-{action}-{name}' for action in ('construct','verify') for name in fresh_names(g)}
+        require(complete['native_attempts']==sorted(names),'exact per-generation native attempt inventory')
+        require({p.name for p in (root/'attempts').iterdir()}==names,'no omitted or additional native attempt')
+        expected_names.update(names)
+        for name in fresh_names(g):
+            permit=capacity.review(base,g,name,run,admission,minimum);expected_capacity.add(f'c{g}-{name}')
+            build=load(root/f'attempts/whole-c{g}-construct-{name}/receipt.json')
+            verify=load(root/f'attempts/whole-c{g}-verify-{name}/receipt.json')
+            require(previous<=permit['started_ns']<=permit['ended_ns']<=build['started_ns']<=build['ended_ns']
+                    <=verify['started_ns']<=verify['ended_ns']<=complete['quiescent_ns'],
+                    'each new measured capacity wait follows previous native completion')
+            previous=verify['ended_ns']
+        for name in names:
+            native.retirement(shared,name,run)
+            require(load(shared/'native-processes'/(name+'.retired'))['time_ns']<=complete['quiescent_ns'],
+                    'actual empty native group before generation completion')
+    sequencing(run,admissions,completed,permits)
+    require({p.stem for p in (shared/'native-processes').glob('*.json')}==expected_names and len(expected_names)==42,
+            'exact 42 fresh native registrations')
+    require({p.stem for p in (shared/'capacity').glob('*.json')}==expected_capacity
+            and {p.stem for p in (shared/'capacity').glob('*.jsonl')}==expected_capacity and len(expected_capacity)==23,
+            'exact 23 capacity permits and full observation logs')
+    active=load(shared/'active-generation.json')
+    require(active['status']=='quiescent' and active['generation']==2
+            and active['admission']==identity(shared/'admission-c2.json')
+            and admissions[2]['time_ns']<=active['time_ns']<=completed[2]['quiescent_ns'],'terminal restrictive switch is quiescent')
+    count=peak=0;last=None
+    with (shared/'run-1/resources.jsonl').open() as stream:
+        while line:=stream.readline(4*MIB+1):
+            require(len(line)<=4*MIB,'bounded shared resource row');observed=json.loads(line)
+            sample(observed,plan,base);sample_time(observed,run,last)
+            if observed['time_ns']<admissions[2]['time_ns']:
+                require(not observed['generations']['2']['mutants'],'no C2 mutation before C2 admission')
+            if observed['time_ns']>completed[1]['quiescent_ns']:
+                require(not observed['generations']['1']['mutants'],'no C1 mutation after completion')
+            last=observed;count+=1;peak=max(peak,observed['rss_bytes'])
+    require(count>0 and peak==run['sampled_peak_rss_bytes'],'actual complete shared sampled peak')
+    terminal_samples(last,run);sample(run['final_sample'],plan,base)
+    owners=[(r['binding'],completed[r['generation']]['quiescent_ns']) for r in run['generations']]
+    for name in expected_names:
+        path=shared/'native-processes'/(name+'.json')
+        owners.append((load(path.with_suffix('.observed')),load(path.with_suffix('.retired'))['time_ns']))
+    reused=final_owners_absent(run['final_sample'],owners)
+    return dict(receipt=reference(shared/'run-1/receipt.json'),samples=count,native_commands=42,capacity_permits=23,final_reused_owner_observations=reused,
+                sampled_peak_rss_bytes=max(peak,run['final_sample']['rss_bytes']),
+                admissions={str(g):reference(shared/f'admission-c{g}.json') for g in (1,2)},
+                completed={str(g):reference(shared/f'completed-c{g}.json') for g in (1,2)},
+                reservation_scope='Current inventory totals and physical free bytes are exact frozen-driver observations. Formulas, refusal logs and surviving historical plus completed-generation lower bounds are replayed; no projected unlink credit.')

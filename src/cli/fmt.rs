@@ -45,7 +45,7 @@ pub fn cmd_fmt(args: FmtArgs) {
 
 /// Format a single .tri file. Returns Ok(true) if the file was changed/would be changed.
 fn format_single_file(path: &Path, check: bool) -> Result<bool, String> {
-    let source = std::fs::read_to_string(path)
+    let source = trident::read_source_file(path)
         .map_err(|e| format!("cannot read '{}': {}", path.display(), e))?;
     let filename = path.to_string_lossy().to_string();
     let formatted = trident::format_source(&source, &filename)

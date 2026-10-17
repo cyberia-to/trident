@@ -1,17 +1,28 @@
 module std.compiler.nox.utf8
 
 use std.nox.bytes
+use std.nox.tree
+use vm.nox.noun
 use std.compiler.nox.syntax
-use vm.core.convert
 
 struct Scan { pos: U32, pending: U32, lead: U32, low: U32, high: U32, error: Bool }
 
 #[pure]
-fn chunk(source: bytes.Bytes, input: Scan) -> Scan {
+#[requires((length < input.pos) == false)]
+fn word(word: U32, length: U32, input: Scan) -> Scan {
     let mut s = input
-    for step in 0..64 {
-        if s.pos == bytes.len(source) { return s }
-        let c = bytes.get(source, s.pos)
+    // A zero high-bit mask certifies every byte in this packed word as ASCII.
+    // Pending continuations still examine the first offending byte exactly.
+    if s.pending == syntax.ZERO {
+        if (word & as_u32(2155905152)) == syntax.ZERO {
+            let end = as_u32(as_field(s.pos) + 4)
+            if length < end { s.pos = length } else { s.pos = end }
+            return s
+        }
+    }
+    for lane in 0..4 {
+        if s.pos == length { return s }
+        let c = bytes.word_byte(word, lane)
         if (s.pending == syntax.ZERO) == false {
             if syntax.either(c < s.low, (c < s.high) == false) {
                 s.error = true
@@ -45,13 +56,79 @@ fn chunk(source: bytes.Bytes, input: Scan) -> Scan {
     s
 }
 
+// A group contains eight packed words in their canonical height-three tree.
+// All high-bit masks are nonnegative and their sum fits in Field, so zero
+// certifies every lane as ASCII without a per-word state transition.
+#[pure]
+#[requires((length < input.pos) == false)]
+fn group(node: Noun, length: U32, input: Scan) -> Scan {
+    let a = noun.head(noun.head(node))
+    let b = noun.tail(noun.head(node))
+    let c = noun.head(noun.tail(node))
+    let d = noun.tail(noun.tail(node))
+    let w0 = as_u32(noun.as_field(noun.head(a)))
+    let w1 = as_u32(noun.as_field(noun.tail(a)))
+    let w2 = as_u32(noun.as_field(noun.head(b)))
+    let w3 = as_u32(noun.as_field(noun.tail(b)))
+    let w4 = as_u32(noun.as_field(noun.head(c)))
+    let w5 = as_u32(noun.as_field(noun.tail(c)))
+    let w6 = as_u32(noun.as_field(noun.head(d)))
+    let w7 = as_u32(noun.as_field(noun.tail(d)))
+    let mut s = input
+    if s.pending == syntax.ZERO {
+        let mask = as_u32(2155905152)
+        let high = as_field(w0 & mask) + as_field(w1 & mask) + as_field(w2 & mask) + as_field(w3 & mask)
+            + as_field(w4 & mask) + as_field(w5 & mask) + as_field(w6 & mask) + as_field(w7 & mask)
+        if high == 0 {
+            let end = as_u32(as_field(s.pos) + 32)
+            if length < end { s.pos = length } else { s.pos = end }
+            return s
+        }
+    }
+    s = word(w0, length, s)
+    if s.error { return s }
+    s = word(w1, length, s)
+    if s.error { return s }
+    s = word(w2, length, s)
+    if s.error { return s }
+    s = word(w3, length, s)
+    if s.error { return s }
+    s = word(w4, length, s)
+    if s.error { return s }
+    s = word(w5, length, s)
+    if s.error { return s }
+    s = word(w6, length, s)
+    if s.error { return s }
+    word(w7, length, s)
+}
+
+// Each chunk unwinds its word and tree traversal frames before the next one.
+#[pure]
+#[requires((length < input.pos) == false)]
+fn chunk(length: U32, input: Scan, words: tree.Cursor, grouped: Bool) -> (Scan, tree.Cursor) {
+    let mut s = input
+    let mut cursor = words
+    for step in 0..64 {
+        if s.pos == length { return (s, cursor) }
+        let (value, next) = tree.read(cursor)
+        cursor = next
+        if grouped { s = group(value, length, s) }
+        else { s = word(as_u32(noun.as_field(value)), length, s) }
+        if s.error { return (s, cursor) }
+    }
+    (s, cursor)
+}
+
 #[pure]
 #[requires((syntax.SOURCE_CAP < bytes.len(source)) == false)]
 pub fn validate(source: bytes.Bytes) -> syntax.Error {
     let zero = syntax.ZERO
     let mut s = Scan { pos: zero, pending: zero, lead: zero, low: zero, high: zero, error: false }
-    for block in 0..1024 {
-        s = chunk(source, s)
+    let grouped = as_u32(16) < bytes.len(source)
+    let mut cursor = bytes.words(source)
+    if grouped { cursor = bytes.word_groups(source) }
+    for block in 0..256 {
+        (s, cursor) = chunk(bytes.len(source), s, cursor, grouped)
         if s.error { return syntax.error(1, s.lead, s.pos) }
         if s.pos == bytes.len(source) {
             if (s.pending == zero) == false { return syntax.error(1, s.lead, s.pos) }

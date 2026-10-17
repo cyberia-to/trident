@@ -1,0 +1,79 @@
+{
+  "status": "passed-original-native-matrix-acceptance",
+  "reviewed_at_ns": 1790979582118615000,
+  "origin": {
+    "run_id": "37002840888",
+    "run_attempt": "1",
+    "head_sha": "10772124836b68a2df011c912b5776b2454a511f"
+  },
+  "collection": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/completed/receipt.json",
+    "bytes": 263807,
+    "sha256": "04f600b77c69d5206b59f8a84e339c4ea9eef17a40c64fe89884a5849f79bba0"
+  },
+  "collection_wrapper": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/launch-completed.json",
+    "bytes": 1412,
+    "sha256": "06067ffeff87a2fa609a81d7f6f73cba123de0dd4160407f3700fe6cf53f828c"
+  },
+  "owner": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-1/receipt.json",
+    "bytes": 29142,
+    "sha256": "966a24ed7e33a57e3a9ad06ed9965cb173b1ed624e405127e8a7add18a02d641"
+  },
+  "owner_wrapper": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/receipt.json",
+    "bytes": 5788,
+    "sha256": "c11262868beadb7cfc0d514b8a765f0cac60318565066cc12335bb4b80387e43"
+  },
+  "peer": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run-1/replay/receipt.json",
+    "bytes": 29162,
+    "sha256": "3a34b2396cd45ae2fcbe4248a26fd9ad8c57f142f03ddeea51fec694f8a6c91b"
+  },
+  "peer_wrapper": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run-1/receipt.json",
+    "bytes": 6181,
+    "sha256": "575fe0b7fe1ca86364344af794bdbc00f34d594c2328b44adb4a8c54e9b328ef"
+  },
+  "peer_outer": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/outer-completed.json",
+    "bytes": 3372,
+    "sha256": "17dc2db472103b6a5b017fd4ef3e948d245b075b59dd6c8997a1c21fba661080"
+  },
+  "replayed_equal_fields": [
+    "schema",
+    "status",
+    "checker",
+    "scope",
+    "origin",
+    "collection",
+    "reused_original_archives",
+    "reused_v2_archives",
+    "reused_v3_archives",
+    "continuation_original_archives",
+    "previous_failed_continuation",
+    "cumulative_attempt_history",
+    "final_accounting",
+    "original_metadata",
+    "archives",
+    "phases",
+    "compiler_sha256",
+    "source_pins",
+    "checker_sources",
+    "native_producers",
+    "native_corpus_jobs",
+    "observations_per_corpus_job"
+  ],
+  "native_producers": 12,
+  "native_corpus_jobs": 24,
+  "observations_per_corpus_job": 547,
+  "archives_with_attempt_logs": 38,
+  "compiler_sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8",
+  "original_peer_failure": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/prelaunch-failure-1/receipt.json",
+    "bytes": 2931,
+    "sha256": "ac0b973ef0a9eedb30e0b87de9360a4638326be7e1b8fd0a9f154fea8645e752"
+  },
+  "scope": "Acceptance of original native PR117 matrix on its pinned Rust1.95 profile; original collection failures remain retained. Separate from Rust1.89 distribution and SH8 full proof acceptance."
+}

@@ -1,0 +1,55 @@
+"""Fixed original coordinates and bounded evidence identities."""
+import hashlib,json
+from pathlib import Path
+from budget import require,MIB,GIB
+ROOT=Path(__file__).resolve().parent
+OLD=ROOT.parent/'pr117-terminal';V2=ROOT.parent/'pr117-completion-v2';V3=ROOT.parent/'pr117-completion-v3'
+PROBE=ROOT.parent/'pr117-metadata-probe-1';CONNECTOR=ROOT.parent/'pr117-connector-probe-1'
+PRIOR=(OLD,V2,V3,PROBE,CONNECTOR);SCOPES=(*PRIOR,ROOT)
+REPO='cyberia-to/trident';RUN=37002840888;HEAD='10772124836b68a2df011c912b5776b2454a511f';RATE=256*1024
+PROFILE=dict(per_command_seconds=1200,total_seconds=7200,connect_seconds=60,max_attempts=3,backoff_seconds=60,max_retry_after_seconds=120,zip_bytes=GIB,decoded_bytes=4*GIB,owned_bytes=3*GIB,free_floor_bytes=8*GIB,body_read_rate=RATE,stderr_bytes=MIB,header_bytes=65536,receipt_bytes=32*MIB,reference_bytes=32*MIB)
+
+def identity(path):
+    path=Path(path);require(path.is_file() and not path.is_symlink(),'regular evidence file')
+    with path.open('rb') as stream:return dict(bytes=path.stat().st_size,sha256=hashlib.file_digest(stream,'sha256').hexdigest())
+
+def encode(value):return (json.dumps(value,indent=2)+'\n').encode()
+
+def load(path):
+    path=Path(path);require(path.is_file() and not path.is_symlink() and path.stat().st_size<=32*MIB,'bounded regular JSON')
+    def unique(pairs):
+        result={}
+        for key,value in pairs:require(key not in result,'unique JSON keys');result[key]=value
+        return result
+    return json.loads(path.read_text(),object_pairs_hook=unique)
+
+def sources():
+    wanted=load(ROOT/'sources.json')
+    for name,value in wanted.items():require(Path(name).is_absolute() and identity(name)==value,'exact reviewed source closure')
+    return wanted
+
+def save(path,value,budget):
+    raw=encode(value);require(len(raw)<=32*MIB,'32MiB ordinary receipt cap');tmp=path.with_suffix('.next');old=path.stat().st_size if path.exists() else 0
+    budget.charge(len(raw))
+    with tmp.open('xb') as f:f.write(raw)
+    tmp.replace(path);budget.released(old)
+
+def tree(root):
+    paths=list(root.rglob('*'));require(len(paths)<=500000 and all(not p.is_symlink() for p in paths),'bounded ordinary scope')
+    return {str(p.relative_to(root)):identity(p) for p in paths if p.is_file()}
+
+def reference(root,name,value,budget):
+    require(name and '/' not in name and '..' not in name,'one reference basename');path=root/(name+'.json');raw=encode(value);require(len(raw)<=32*MIB,'32MiB inventory reference cap');budget.charge(len(raw))
+    with path.open('xb') as f:f.write(raw)
+    return dict(path=str(path),**identity(path))
+
+def referenced(record,directory,name):
+    require(name and '/' not in name and '\\' not in name and '..' not in name,'one owned reference basename')
+    path=directory/(name+'.json');require(set(record)=={'path','bytes','sha256'} and type(record['bytes']) is int and 0<=record['bytes']<=32*MIB,'exact bounded reference schema');require(record['path']==str(path) and identity(path)=={k:record[k] for k in ('bytes','sha256')},'exact owned inventory reference')
+    return load(path)
+
+
+def tools():
+    value=load(ROOT/'toolchain.json')
+    for item in value.values():require(identity(item['path'])=={k:item[k] for k in ('bytes','sha256')},'exact selected executable')
+    return value

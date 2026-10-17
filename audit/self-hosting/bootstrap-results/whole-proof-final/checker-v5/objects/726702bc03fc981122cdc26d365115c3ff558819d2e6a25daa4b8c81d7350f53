@@ -1,0 +1,97 @@
+"""Complete tiny retained schedule fixture; no process, native command or deletion."""
+import copy,json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+import common,schedule,capacity
+
+class FullSchedule(unittest.TestCase):
+    def write(self,path,value):
+        path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value,indent=2)+'\n')
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.base=Path(self.temp.name)
+        self.shared=self.base/'whole-proof-attacks-completion-v5';self.shared.mkdir()
+        actual=Path(__file__).resolve().parent.parent/'whole-proof-attacks-completion-v5/plan.json'
+        self.plan=common.load(actual);self.write(self.shared/'plan.json',self.plan)
+        self.write(self.shared/'sources.json',{});self.write(self.shared/'independent-review.json',{'fixture':True})
+        for name in schedule.RETAINED:(self.base/name).mkdir()
+        self.write(self.shared/'baseline.json',dict(files={},immutable={},declared_historical_retirements={}))
+        self.run=dict(schema='trident/complete-proof-missing-cases-orchestration/v5',status='passed',phase='complete',
+            active_generation=2,inputs_unchanged=True,started_ns=1,ended_ns=10000,elapsed_seconds=500,
+            plan=common.identity(self.shared/'plan.json'),source={},independent_review=common.identity(self.shared/'independent-review.json'),
+            generations=[],children_final={},sampled_peak_rss_bytes=1024)
+        for g in (1,2):
+            root=self.base/f'whole-proof-attacks-v5-c{g}';root.mkdir();tick=100 if g==1 else 5000
+            suite_binding=dict(pid=g*10,pgid=g*10,started='Fri Oct  2 00:00:00 2026',members={str(g*10):'Fri Oct  2 00:00:00 2026'})
+            admission=dict(pid=1,generation=g,children={str(g):g*10},suite_binding=suite_binding,time_ns=tick+10,
+                    outer_deadline_monotonic=90000,plan=common.identity(self.shared/'plan.json'),source_manifest=common.identity(self.shared/'sources.json'))
+            self.permit(g,None,tick,tick+1,None)
+            generation=common.load(self.shared/f'capacity/c{g}-generation.json')
+            admission.update(reservation=generation['reservation'],capacity=common.identity(self.shared/f'capacity/c{g}-generation.json'))
+            self.write(self.shared/f'admission-c{g}.json',admission)
+            names=set()
+            for offset,name in enumerate(common.fresh_names(g)):
+                start=tick+20+offset*20;self.permit(g,name,start,start+1,common.identity(self.shared/f'admission-c{g}.json'))
+                for action,delta in [('construct',2),('verify',6)]:
+                    n=f'whole-c{g}-{action}-{name}';names.add(n)
+                    self.write(root/f'attempts/{n}/receipt.json',dict(started_ns=start+delta,ended_ns=start+delta+2))
+                    pid=1000*g+offset*2+(0 if action=='construct' else 1)
+                    record=dict(pid=pid,pgid=pid,started='Fri Oct  2 00:00:00 2026',
+                        members={str(pid):'Fri Oct  2 00:00:00 2026'},parent=g*10,argv=['/fixture/tool'],attempt=n,
+                        coordinator=1,registered_ns=start+delta+1,generation=g,capacity_permit=common.reference(self.shared/f'capacity/c{g}-{name}.json'))
+                    reg=self.shared/'native-processes'/(n+'.json');self.write(reg,record);self.write(reg.with_suffix('.observed'),record)
+                    self.write(reg.with_suffix('.retired'),dict(original=common.identity(reg),time_ns=start+delta+3,final_observation=dict(status='empty',members=[])))
+            self.write(root/f'whole-c{g}/receipt.json',dict(status='passed-completion',generation=g))
+            self.write(self.shared/f'run-1/c{g}.stdout',dict(status='passed-completion',generation=g))
+            (self.shared/f'run-1/c{g}.stderr').write_bytes(b'')
+            complete=dict(status='passed',generation=g,exit_code=0,quiescent_ns=tick+1000,native_attempts=sorted(names),
+                  suite_receipt=common.identity(root/f'whole-c{g}/receipt.json'),
+                  logs={s:common.identity(self.shared/f'run-1/c{g}.{s}') for s in ('stdout','stderr')})
+            self.write(self.shared/f'completed-c{g}.json',complete)
+            self.run['generations'].append(dict(complete,command=['/fixture/python','-B',str(root/'whole_suite.py'),'--generation',str(g)],
+                 cwd=str(root),pid=g*10,binding=suite_binding,admission=common.identity(self.shared/f'admission-c{g}.json')))
+            self.run['children_final'][str(g)]=dict(pid=g*10,exit_code=0)
+        self.write(self.shared/'active-generation.json',dict(status='quiescent',generation=2,time_ns=5999,
+                    admission=common.identity(self.shared/'admission-c2.json')))
+        self.samples=[self.sample(120),self.sample(5020)]
+        self.run['latest_sample']=self.samples[-1];self.run['final_sample']=self.sample(9999)
+        self.save()
+    def sample(self,when):
+        return dict(time_ns=when,reason=None,owned_bytes=1000000,free_bytes=100*schedule.GIB,rss_bytes=1024,
+               generations={str(g):dict(mutants={},canonical_output_bytes=0,metadata_bytes=0) for g in (1,2)},
+               coordinator_metadata_bytes=100,processes=[dict(pid=1,pgid=1,ppid=0,rss_kib=1,started='Fri Oct  2 00:00:00 2026')])
+    def permit(self,g,name,start,end,admission):
+        mutant=self.plan['proofs'][str(g)]['bytes']+32*capacity.MIB;growth=mutant+112*capacity.MIB+512*capacity.MIB
+        r=dict(generation=g,existing_bytes=1000000,mutant_bytes=mutant,growth_bytes=growth,
+            reservation_bytes=1000000+growth,free_bytes=100*capacity.GIB,required_free_bytes=max(growth+8*capacity.GIB,mutant+10*capacity.GIB),
+            accepted=True,reasons=[])
+        path=self.shared/'capacity'/f'c{g}-{name or "generation"}.json';path.parent.mkdir(exist_ok=True)
+        log=path.with_suffix('.jsonl');log.write_text(json.dumps(dict(time_ns=start,elapsed_seconds=0,reservation=r))+'\n')
+        self.write(path,dict(status='passed-capacity-admission',generation=g,case=name,deadline_seconds=600,
+            sample_interval_seconds=1,elapsed_seconds=0,outer_deadline_monotonic=90000,started_ns=start,ended_ns=end,
+            plan=common.identity(self.shared/'plan.json'),admission=admission,logs=common.reference(log),observations=1,reservation=r))
+    def save(self):
+        (self.shared/'run-1/resources.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in self.samples))
+        self.run['files']={n:common.identity(self.shared/'run-1'/n) for n in ('c1.stdout','c1.stderr','c2.stdout','c2.stderr','resources.jsonl')}
+        self.write(self.shared/'run-1/receipt.json',self.run)
+    def review(self):
+        with patch.object(schedule,'v5_sources',return_value={}):return schedule.review(self.base)
+    def test_full_two_generation_replay(self):
+        result=self.review();self.assertEqual(42,result['native_commands']);self.assertEqual(23,result['capacity_permits'])
+    def test_two_mutants_across_generations_fail(self):
+        for g in (1,2):self.samples[0]['generations'][str(g)]['mutants']={str(self.base/f'whole-proof-attacks-v5-c{g}/whole-c{g}/certificate-cost.joysc'):1}
+        self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_extra_native_case_cannot_hide(self):
+        self.write(self.shared/'native-processes/extra.json',{})
+        with self.assertRaises(ValueError):self.review()
+    def test_full_admission_must_stay_immutable(self):
+        row=common.load(self.shared/'admission-c2.json');row['children']={'2':999};self.write(self.shared/'admission-c2.json',row)
+        with self.assertRaises(ValueError):self.review()
+    def test_no_historical_retirement_in_current_scope(self):
+        self.write(self.shared/'baseline.json',dict(files={},immutable={},declared_historical_retirements={'old':1}))
+        with self.assertRaises(ValueError):self.review()
+    def test_original_stop_cannot_be_ignored(self):
+        self.write(self.shared/'stop.json',{'reason':'capacity'})
+        with self.assertRaises(ValueError):self.review()

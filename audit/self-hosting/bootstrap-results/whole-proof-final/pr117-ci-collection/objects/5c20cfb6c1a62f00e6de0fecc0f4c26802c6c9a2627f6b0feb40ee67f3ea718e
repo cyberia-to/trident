@@ -1,0 +1,32 @@
+test_actual_curl_strips_auth_different_hostname (test_http.CurlOriginTests.test_actual_curl_strips_auth_different_hostname) ... ok
+test_actual_curl_strips_auth_same_hostname_different_port (test_http.CurlOriginTests.test_actual_curl_strips_auth_same_hostname_different_port) ... ok
+test_actual_short_permanent_http_response_is_not_retried (test_http.CurlOriginTests.test_actual_short_permanent_http_response_is_not_retried) ... ok
+test_actual_timeout_quiescent_before_retry (test_http.HttpTests.test_actual_timeout_quiescent_before_retry) ... ok
+test_auth_and_certificate_failures_are_not_retried (test_http.HttpTests.test_auth_and_certificate_failures_are_not_retried) ... ok
+test_cleanup_failure_prevents_retry (test_http.HttpTests.test_cleanup_failure_prevents_retry) ... ok
+test_credential_stays_out_of_argv_environment_and_evidence (test_http.HttpTests.test_credential_stays_out_of_argv_environment_and_evidence) ... ok
+test_curl_flags_disable_external_configuration (test_http.HttpTests.test_curl_flags_disable_external_configuration) ... ok
+test_expired_budget_starts_no_attempt (test_http.HttpTests.test_expired_budget_starts_no_attempt) ... ok
+test_hash_mismatch_is_not_retried (test_http.HttpTests.test_hash_mismatch_is_not_retried) ... ok
+test_http_retry_after_exact_timestamp_and_ceiling (test_http.HttpTests.test_http_retry_after_exact_timestamp_and_ceiling) ... ok
+test_known_permanent_http_timeout_stops_without_retry (test_http.HttpTests.test_known_permanent_http_timeout_stops_without_retry) ... ok
+test_oversized_body_stops_with_bounded_partial (test_http.HttpTests.test_oversized_body_stops_with_bounded_partial) ... ok
+test_oversized_headers_stop_with_bounded_partial (test_http.HttpTests.test_oversized_headers_stop_with_bounded_partial) ... ok
+test_permission_http403_is_not_retried (test_http.HttpTests.test_permission_http403_is_not_retried) ... ok
+test_three_failures_no_fourth_and_cumulative_prior_preserved (test_http.HttpTests.test_three_failures_no_fourth_and_cumulative_prior_preserved) ... ok
+test_token_config_injection_and_other_origin_rejected (test_http.HttpTests.test_token_config_injection_and_other_origin_rejected) ... ok
+test_transport_failure_retained_then_exact_success (test_http.HttpTests.test_transport_failure_retained_then_exact_success) ... ok
+test_wait_keeps_deadline_active_and_records_declared_delay (test_http.HttpTests.test_wait_keeps_deadline_active_and_records_declared_delay) ... ok
+test_identity_and_owned_path_are_required (test_http.ReferenceTests.test_identity_and_owned_path_are_required) ... ok
+test_reference_single_file_cap_and_boolean_length (test_http.ReferenceTests.test_reference_single_file_cap_and_boolean_length) ... ok
+test_https_different_hostname_auth_is_stripped (test_tls.CurlHttpsTests.test_https_different_hostname_auth_is_stripped) ... ok
+test_https_downgrade_blocked_before_target (test_tls.CurlHttpsTests.test_https_downgrade_blocked_before_target) ... ok
+test_https_same_hostname_cross_port_auth_is_stripped (test_tls.CurlHttpsTests.test_https_same_hostname_cross_port_auth_is_stripped) ... ok
+test_changed_immutable_scope_and_final_sum (test_accounting.AccountingTests.test_changed_immutable_scope_and_final_sum) ... ok
+test_negative_boolean_duplicate_and_out_of_interval_samples (test_accounting.AccountingTests.test_negative_boolean_duplicate_and_out_of_interval_samples) ... ok
+test_valid_control (test_accounting.AccountingTests.test_valid_control) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 13.788s
+
+OK

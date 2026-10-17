@@ -1,0 +1,472 @@
+{
+  "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+  "scope": "Bounded alias predicate component and paired C1 footprint; no full C1(S) reduction or C2 claim",
+  "working_source_sha256": {
+    "lib/std/compiler/nox/qualified_name.tri": "2cc1ec05f692a24eb54db7458b4a4056918dd10a7e78c92c953a57b297998eae",
+    "lib/std/compiler/nox/function_imports.tri": "2ba0e4785aca4b9ce9bdd50b27ff16b4076930084618e0c279cb1dde39fb6900",
+    "lib/std/compiler/nox/type_imports.tri": "a405a2a7635de409c10c4ae314c7a822277c6d2e4e2df8fa3f2326d21144ff7b",
+    "lib/std/compiler/nox/constant_imports.tri": "b5ecc2d0475365aa33d5c21a537a401e4dbfe3702917989cac11de3d8c3c111c",
+    "reference/self-hosting-jobs.md": "e969bdb525f733c4451e426b8f9df6fbf34b1708a3df0c33b7b48cc36c31fc54",
+    "tests/native_alias_suffix.rs": "b9bf0f7aea1b29d7eaf1c26a19f2de371270b2d6bb9a65c78d59df8bb1ffba86",
+    "tests/fixtures/native_alias_suffix.tri": "d68959931c222bc83024afe4dafa1973307cce322316eb3c45ca49e4740041d1"
+  },
+  "captured_source_map": "alias-suffix-source-snapshot.json",
+  "captured_source_map_sha256": "7274b1ff84210cfa28fd7b022e7fc4147761bc27986d6159cb13f395849fdc25",
+  "before_source_receipt": "alias-suffix-before.json",
+  "paired_measurement": {
+    "command": "TRIDENT_ALIAS_CAPTURED_SOURCES=1 CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_alias_suffix alias_suffix_ -- --include-ignored --nocapture",
+    "log": "alias-suffix-snapshot-measurements.log",
+    "component": [
+      {
+        "after": {
+          "frames": 203,
+          "loaded_nodes": 4520,
+          "matched": true,
+          "nodes": 6216,
+          "reductions": 28014
+        },
+        "before": {
+          "frames": 226,
+          "loaded_nodes": 4647,
+          "matched": true,
+          "nodes": 6629,
+          "reductions": 50097
+        },
+        "owner": "vm.nox.noun",
+        "prefix": "noun"
+      },
+      {
+        "after": {
+          "frames": 200,
+          "loaded_nodes": 4520,
+          "matched": false,
+          "nodes": 5342,
+          "reductions": 11073
+        },
+        "before": {
+          "frames": 334,
+          "loaded_nodes": 4647,
+          "matched": false,
+          "nodes": 6913,
+          "reductions": 84123
+        },
+        "owner": "std.compiler.nox.qualified_name",
+        "prefix": "noun"
+      },
+      {
+        "after": {
+          "frames": 203,
+          "loaded_nodes": 4520,
+          "matched": true,
+          "nodes": 6574,
+          "reductions": 37423
+        },
+        "before": {
+          "frames": 250,
+          "loaded_nodes": 4647,
+          "matched": true,
+          "nodes": 7033,
+          "reductions": 63877
+        },
+        "owner": "vm.core.field",
+        "prefix": "field"
+      },
+      {
+        "after": {
+          "frames": 203,
+          "loaded_nodes": 4520,
+          "matched": false,
+          "nodes": 6914,
+          "reductions": 40770
+        },
+        "before": {
+          "frames": 203,
+          "loaded_nodes": 4647,
+          "matched": false,
+          "nodes": 7288,
+          "reductions": 48919
+        },
+        "owner": "vm.core.field",
+        "prefix": "core.field"
+      },
+      {
+        "after": {
+          "frames": 203,
+          "loaded_nodes": 4520,
+          "matched": true,
+          "nodes": 5609,
+          "reductions": 19903
+        },
+        "before": {
+          "frames": 203,
+          "loaded_nodes": 4647,
+          "matched": true,
+          "nodes": 5736,
+          "reductions": 19903
+        },
+        "owner": "std.nox.bytes",
+        "prefix": "std.nox.bytes"
+      },
+      {
+        "after": {
+          "frames": 312,
+          "loaded_nodes": 4520,
+          "matched": true,
+          "nodes": 7107,
+          "reductions": 37475
+        },
+        "before": {
+          "frames": 2152,
+          "loaded_nodes": 4647,
+          "matched": true,
+          "nodes": 24705,
+          "reductions": 852498
+        },
+        "owner": "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.x",
+        "prefix": "x"
+      },
+      {
+        "after": {
+          "frames": 2152,
+          "loaded_nodes": 4520,
+          "matched": true,
+          "nodes": 36678,
+          "reductions": 1612564
+        },
+        "before": {
+          "frames": 2153,
+          "loaded_nodes": 4647,
+          "matched": true,
+          "nodes": 40633,
+          "reductions": 2401835
+        },
+        "owner": "p.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "prefix": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    ],
+    "compiler": [
+      {
+        "artifact_blake3": "f9de6f693fb9688035eae1780699ef2580dcbb214686b481a0ce99e7419dd1a1",
+        "artifact_bytes": 9719875,
+        "entry_blake3": "4a30dcac375511b1ccd7f9ad6a26db669a6478c03b056b1f6ec8940e0503d769",
+        "loaded_nodes": 100903,
+        "source_blake3": {
+          "std.compiler.nox.aggregate_gen": "7806f0ab0b1cefabec691fdadfe294e10b7442a224260f549eda4383e6332a92",
+          "std.compiler.nox.array_gen": "e0625bf4a4e8bdf0a47ae6323ad641b68def4c6326edf0242019e6c33f76f470",
+          "std.compiler.nox.array_parse": "efeea73459595343c7cab5888b1242d6f34b3dfd436dcaf6d03939610f87db74",
+          "std.compiler.nox.array_size": "665f603a628cbd2331aab382b35d10939d3887dc3fdd353ffc0a1a4af6d1c290",
+          "std.compiler.nox.ascii": "8238a9f32c8ec43518038296f6b361b314b04641125c7765dc88fcdeb6960b01",
+          "std.compiler.nox.ast": "dffd99a856283f4843a9d9e19d015982d684cd974cdeac871f9bb980fc746929",
+          "std.compiler.nox.attributes": "8a7cd9276e1491d92c440b8d6e5e480117cb8803c1ae764d010cf8f6b12e3d90",
+          "std.compiler.nox.block_gen": "fa556baa72d658c6f2508f5d27f5f79b5556c82c1b29ccb1377b810e1b40f03c",
+          "std.compiler.nox.blocks": "1f0ca14bd34d6376c526b7102b7b42cd05492d121b257f31b92f61ce71cc7955",
+          "std.compiler.nox.body": "4af52989acfc54ac9e778193f0cb745f36e1eacea8c8809136215dc6a098e452",
+          "std.compiler.nox.body_state": "5195fea4b1199e5fc473cc928001277279b4e1dbc5f97efed8512bd587507ea1",
+          "std.compiler.nox.body_store": "82d63ca1c6e2e65a590bbb65f37688707787025f97a625ba9e9580f773adee87",
+          "std.compiler.nox.builtin_gen": "ff145525cd012117f2baa060258de239fc88ea16de524fe10a34bd5e60e6eb93",
+          "std.compiler.nox.builtins": "2db117f8412a65be0e8a65271f68df457b2cb6150b3f94661981d46cbdd327ad",
+          "std.compiler.nox.call_codegen": "ab42a1d85dc2271ec36c86dae5d52a737a9f12b4eee70aec09baa509256f6627",
+          "std.compiler.nox.call_frames": "d07cf77effeafb37bd26bf01739a88cf8bd00eb4e42990e7fdabe3384a65bed8",
+          "std.compiler.nox.call_graph": "cd9f7764f309003079fe1d01d95e9755a9399309ab30f2c4b2e9404b0010add8",
+          "std.compiler.nox.call_parse": "2ba8fa443b0380c5d34551ffcfa337ecbdd479acd1eb9d6dcfc0452268e0afb2",
+          "std.compiler.nox.check_functions": "21c79fd12dd72b87dc0eafb5ae6735f59888d2edb06e6dfac712ca4412c0d3a2",
+          "std.compiler.nox.check_scope": "e0e46d16f2b34ec810fbfb9af9b2e2391526b51e9f8ffaaa1014b74073758cd1",
+          "std.compiler.nox.code_plan": "84c2bfc2a5d7604a003a0c69c696c4e5e95c7b87171c3858f68b04146bc47841",
+          "std.compiler.nox.codegen": "bd50ced3a5eb4d75c819c9a27f6a5d91d135dac01d06728c41e0e374e5c7b472",
+          "std.compiler.nox.const_module": "2f535ec9f2a93565594b2c68915466a1b35749e01ca82148df8848acdf8c1f47",
+          "std.compiler.nox.const_parse": "9e9393b676fe3703a9318a586a7f778e73ab6ec85c597e74c23528bc1360828e",
+          "std.compiler.nox.constant_exports": "142bad17e89bc84e63c1e73ff19a7396d6c9c42566508b4e63e8d3336cb1c1e1",
+          "std.compiler.nox.constant_imports": "c976ebceeaae1e64518e3c6b1323e01b03e7e13ad8a07d460d72dc1889f58f61",
+          "std.compiler.nox.constants": "d9e700765ae2b3850f0bcf3679c08b6a99396a0dde81d4d9af6fd9b685d3f969",
+          "std.compiler.nox.contexts": "18fd2a1c5622991b6b3e69956200cd0f6e125d2ce61843e1648ddc1d014c5cf5",
+          "std.compiler.nox.control_gen": "126e5e2841da9a823ca5e87fd962a12001888709ed61bdb960ef5f37e497f6b4",
+          "std.compiler.nox.control_parse": "43653573980eef3e4e08049c3cc68e5a64500a3145351733f5f7d2cdcbb4988a",
+          "std.compiler.nox.coverage": "1279206f3cd989163b5187b372c2a7c719e3e132eec95efa937f6064ddc4e41a",
+          "std.compiler.nox.declarations": "5b903ec11dcce7f259878112737fad56b1df215649ad468d089b5e6faedd5d8d",
+          "std.compiler.nox.digest_gen": "2d84354b36dd23c6d057c99708cead701e0f16d8581c6fb3342648c997e8840f",
+          "std.compiler.nox.emit": "647a3269f141c904bb25b8f2f442e372f1c0a15d52cca8ff72805f4ea65ecb62",
+          "std.compiler.nox.entry_frame": "b7a7477c5423f3e39de4177021d4e6a06530ad716ec14816925ddfade5f3ecfe",
+          "std.compiler.nox.expression": "ee2e25a928ee21c1f5a327627b380834333dfa5e5b3c7ac4a896b69f4a3569a3",
+          "std.compiler.nox.expression_state": "eae40b288c38690c623fb737456d5f53010dd831504862582a46baf36ec17fb8",
+          "std.compiler.nox.flow": "63e55149c7a0f2a389f21ade23a5f711442b2d062d2da18a9717c17908619c14",
+          "std.compiler.nox.formula": "cee3a45826a3c22f9d36b54ad26bc99bbf9d9d22fe2e424e6ce4111e49fae96c",
+          "std.compiler.nox.function_exports": "f11ca5d7779fb943b3c516898c0fb8c9967832e5e1204895668e0d06dfca9afa",
+          "std.compiler.nox.function_gen": "9d3fc63ba42fc9b127cdf6b6bc8e8d52979c9b667882d4caf288f75d23695984",
+          "std.compiler.nox.function_imports": "4d4169f4ef91a46a8c37b9962fd28612add420f1d9bda6f12c7c1b68b094a7e9",
+          "std.compiler.nox.function_order": "d38687a7dc732998a589661fdfdad26e53f998098d751d60f387a948ffc93ed2",
+          "std.compiler.nox.function_plan": "d715cbbd95aa8558546bd44348269a9c7e56737abde27d4143b82c56e5f64d62",
+          "std.compiler.nox.group_parse": "d9160cc9f07962e2cbe4b5800ebe069a24e1feee74a72738236258adb2852da1",
+          "std.compiler.nox.halting": "45a38618f1af2fc64e4f095156940ff733c825390d95f2fbe87fb8f1973efcd8",
+          "std.compiler.nox.header_state": "f1687fad3bd25dc15bdbe9570aa77916ec64d22132da7865e558af77d54282d9",
+          "std.compiler.nox.headers": "83850710819556c2657665103cf279f5043b11f17634d1bb920df3eea0f12ce6",
+          "std.compiler.nox.index_parse": "403421c7fdcbb0cc1f8cc664dc90194321c7a3ce065eb08cac44dd16926243b5",
+          "std.compiler.nox.intrinsic_abi": "f9e4cce04ec483f2277084769e766fe2071653add092a81328a20110236575a4",
+          "std.compiler.nox.intrinsic_bindings": "40f3196963e70ca44ee55d0a4921ee9db795c250c4adebf313745fc27b565e35",
+          "std.compiler.nox.intrinsic_plan": "9b1a6f6068dbb64ea2b1d7b5ee4b0c113c27daa1a13118da219bc8fbd5b36f0f",
+          "std.compiler.nox.job": "6c022ef1b2f6dd9e04950a68dd8fe21f14201f92a7a6a15f7e64e246a37425fa",
+          "std.compiler.nox.lexer": "bdc6efc9226820a92a0d84aa00969a2c7f8a03c8cd531a7096dac0905f00efab",
+          "std.compiler.nox.loop_gen": "d2b6d0efb19aca1f70ced26996915d6f65a3164278865aac0aecc782eeb22c74",
+          "std.compiler.nox.loop_parse": "49556e1afa004a9a99a52e7bc885bcab4d18df690334559330748d0d70af58b2",
+          "std.compiler.nox.loop_records": "5315206a4cb4eba4d5a666a8fd2628040ab44357fe16a5de8488987e1d3f0804",
+          "std.compiler.nox.module_function_order": "d23d066f7c12f4855ca2fc73b5a9f740932d5d226562e80c8f84a4330688319c",
+          "std.compiler.nox.module_functions": "f4513f65279abc1f97afd0cc3c6bd0a8a674a8c14677527cbe3aec7741248aba",
+          "std.compiler.nox.module_graph": "18c58212e98284711809df3296ef268e055a75a821475a4ba21c550680d761d0",
+          "std.compiler.nox.module_header": "ec9786436df73cd14ce012c627979b30cd52ebf0751c3cec197754422e11d532",
+          "std.compiler.nox.module_order": "75962242c30d07ef8779e5e9b978426dc8fbf4bd1d8c3413e5c5294a8631a78b",
+          "std.compiler.nox.module_store": "5df4bfb5e99b2e53b8ad64af17cd02b90aeed9e4a8131ee56179bba5037a5132",
+          "std.compiler.nox.nominal": "cd43d83ba9ecb07110323c945b51f6576088be1f63ca5759161842a0cd0c08f4",
+          "std.compiler.nox.package_compile": "8f94724e349c332e16ab5d270c6e160bb2364fcd34ea04deb9c7bdb632d55efe",
+          "std.compiler.nox.parser": "c3cfcc8e006b64e53db19fb5c30fa35222fafa8c10a6d08c6b386f179dc818c7",
+          "std.compiler.nox.purity": "8a918ea9716147ebbd4a33a5bca483ef75d8ff57b486551c0ac31d08a316f3ab",
+          "std.compiler.nox.qualified_call": "db46c299593989c3d3e560c9e319f0f1b350b81e95ba9f5b3e7bbb3637cf8367",
+          "std.compiler.nox.qualified_name": "a97f7fe78a837b34ce2881a8fda0a280abcec666543d8f0a2aafa6ca02298861",
+          "std.compiler.nox.record_assign": "246d3580412924d88da28620f979ecbd11a40bcc68d98bd4f55bbf810766d472",
+          "std.compiler.nox.record_edit_gen": "e88de6f434344aa9d32a2e88fb53b3a889ca33a46e4702612be085f0be2ff7db",
+          "std.compiler.nox.record_frames": "0fdb68a22a43a9ebbd3ed624c1b28df0bfb6bb6273ddcf288448cbe9256faad9",
+          "std.compiler.nox.record_parse": "0fcc781e45d49b824c50e803b5877d93a84a57761133d30a7d809d9aadb8be3e",
+          "std.compiler.nox.signatures": "fc1858631e180fb9cf3ced9e648315ef9ce59f42c58cc59fb72b5883c506eec6",
+          "std.compiler.nox.struct_parse": "f7ce98889c20f82bcd4f20138121532a68c3efd9fb71a384bea3c051c94bed71",
+          "std.compiler.nox.symbols": "e97022f5e4180e1aa07c5f176008df31aaae75cf93e21e89e5f20db5f8abdf1e",
+          "std.compiler.nox.syntax": "1f343001e3fd3e3b45384e09d98875e750de2dfabbba94a52a0152422f60c246",
+          "std.compiler.nox.terminal": "23efed3d53c514fbca30c1ce193fb0f2051250974ff7c2d22ef087a1a1a2a557",
+          "std.compiler.nox.tuple_bind": "e0ed3400fa4a25007c15be0afe32002f5376fc386efe632f46ad772eeec46430",
+          "std.compiler.nox.tuple_declarations": "f9824d81577f7436488d92bbff57436efb553ee97c9b61a96fa4ce3612749fc2",
+          "std.compiler.nox.tuple_pattern": "722161b638fa27af98bc058504ee89e0321d0ea427faad67e125380495584b7a",
+          "std.compiler.nox.type_exports": "6e3d3cf436132a7dedf8de0c44d611c79e4c63a05e3a137ea92fcca33d034d36",
+          "std.compiler.nox.type_imports": "97faa791c56606c22d1659531256752bda984eeae7eb08007ea68504f03c77db",
+          "std.compiler.nox.type_parse": "990bbb79b0cce4489a196bfc42d436e5c3616fafd7681244199caf5227d80ec3",
+          "std.compiler.nox.type_registry": "0080e5de49eae55d4ecdcd866e8c10e965b46695d6c6d6779e1034688b7ce0c5",
+          "std.compiler.nox.types": "e16020610446b569d50c062334fb8f2f50c25c92b8c4a0978900510d8f1d3b8b",
+          "std.compiler.nox.utf8": "3ae8248982945f4fbea6a02b476e555d24c41b9ba58e4fd43c3442e2a69471ce",
+          "std.nox.bytes": "5746627936e426b6231d9f613237bf3544baec9f7fe90192269adf6ef3f98e26",
+          "std.nox.seq": "dc732943bc47577722875aca45b980e288fe4b53c9c43009e1df82b5497c5038",
+          "std.nox.tree": "057fc3b7af83117e583d75ced25d2b66bbe6549ad58cb5833c34353b34a0824c",
+          "vm.core.convert": "52e49b12d0327607077c34060b34a1b2dddb9e61e97e895f5d89526a7484299a",
+          "vm.core.field": "2fc24c9c39f2b280bdc15878b799fab5f82b2916ce3a0e2784a0b925d09eaf57",
+          "vm.nox.noun": "71023057a73561c6ad74761d05cfcb09bd2a39131aa7ffba23f77fd6536960e8"
+        },
+        "variant": "before"
+      },
+      {
+        "artifact_blake3": "d0d1cfd8d088503bb257b5496ebd36f6f9f9241809938cea24928343deb01d26",
+        "artifact_bytes": 9700617,
+        "entry_blake3": "4a30dcac375511b1ccd7f9ad6a26db669a6478c03b056b1f6ec8940e0503d769",
+        "loaded_nodes": 100701,
+        "source_blake3": {
+          "std.compiler.nox.aggregate_gen": "7806f0ab0b1cefabec691fdadfe294e10b7442a224260f549eda4383e6332a92",
+          "std.compiler.nox.array_gen": "e0625bf4a4e8bdf0a47ae6323ad641b68def4c6326edf0242019e6c33f76f470",
+          "std.compiler.nox.array_parse": "efeea73459595343c7cab5888b1242d6f34b3dfd436dcaf6d03939610f87db74",
+          "std.compiler.nox.array_size": "665f603a628cbd2331aab382b35d10939d3887dc3fdd353ffc0a1a4af6d1c290",
+          "std.compiler.nox.ascii": "8238a9f32c8ec43518038296f6b361b314b04641125c7765dc88fcdeb6960b01",
+          "std.compiler.nox.ast": "dffd99a856283f4843a9d9e19d015982d684cd974cdeac871f9bb980fc746929",
+          "std.compiler.nox.attributes": "8a7cd9276e1491d92c440b8d6e5e480117cb8803c1ae764d010cf8f6b12e3d90",
+          "std.compiler.nox.block_gen": "fa556baa72d658c6f2508f5d27f5f79b5556c82c1b29ccb1377b810e1b40f03c",
+          "std.compiler.nox.blocks": "1f0ca14bd34d6376c526b7102b7b42cd05492d121b257f31b92f61ce71cc7955",
+          "std.compiler.nox.body": "4af52989acfc54ac9e778193f0cb745f36e1eacea8c8809136215dc6a098e452",
+          "std.compiler.nox.body_state": "5195fea4b1199e5fc473cc928001277279b4e1dbc5f97efed8512bd587507ea1",
+          "std.compiler.nox.body_store": "82d63ca1c6e2e65a590bbb65f37688707787025f97a625ba9e9580f773adee87",
+          "std.compiler.nox.builtin_gen": "ff145525cd012117f2baa060258de239fc88ea16de524fe10a34bd5e60e6eb93",
+          "std.compiler.nox.builtins": "2db117f8412a65be0e8a65271f68df457b2cb6150b3f94661981d46cbdd327ad",
+          "std.compiler.nox.call_codegen": "ab42a1d85dc2271ec36c86dae5d52a737a9f12b4eee70aec09baa509256f6627",
+          "std.compiler.nox.call_frames": "d07cf77effeafb37bd26bf01739a88cf8bd00eb4e42990e7fdabe3384a65bed8",
+          "std.compiler.nox.call_graph": "cd9f7764f309003079fe1d01d95e9755a9399309ab30f2c4b2e9404b0010add8",
+          "std.compiler.nox.call_parse": "2ba8fa443b0380c5d34551ffcfa337ecbdd479acd1eb9d6dcfc0452268e0afb2",
+          "std.compiler.nox.check_functions": "21c79fd12dd72b87dc0eafb5ae6735f59888d2edb06e6dfac712ca4412c0d3a2",
+          "std.compiler.nox.check_scope": "e0e46d16f2b34ec810fbfb9af9b2e2391526b51e9f8ffaaa1014b74073758cd1",
+          "std.compiler.nox.code_plan": "84c2bfc2a5d7604a003a0c69c696c4e5e95c7b87171c3858f68b04146bc47841",
+          "std.compiler.nox.codegen": "bd50ced3a5eb4d75c819c9a27f6a5d91d135dac01d06728c41e0e374e5c7b472",
+          "std.compiler.nox.const_module": "2f535ec9f2a93565594b2c68915466a1b35749e01ca82148df8848acdf8c1f47",
+          "std.compiler.nox.const_parse": "9e9393b676fe3703a9318a586a7f778e73ab6ec85c597e74c23528bc1360828e",
+          "std.compiler.nox.constant_exports": "142bad17e89bc84e63c1e73ff19a7396d6c9c42566508b4e63e8d3336cb1c1e1",
+          "std.compiler.nox.constant_imports": "0831716d98c65821888c166f8fe886c499feb29f2d8efd0ce87b3991f29b4915",
+          "std.compiler.nox.constants": "d9e700765ae2b3850f0bcf3679c08b6a99396a0dde81d4d9af6fd9b685d3f969",
+          "std.compiler.nox.contexts": "18fd2a1c5622991b6b3e69956200cd0f6e125d2ce61843e1648ddc1d014c5cf5",
+          "std.compiler.nox.control_gen": "126e5e2841da9a823ca5e87fd962a12001888709ed61bdb960ef5f37e497f6b4",
+          "std.compiler.nox.control_parse": "43653573980eef3e4e08049c3cc68e5a64500a3145351733f5f7d2cdcbb4988a",
+          "std.compiler.nox.coverage": "1279206f3cd989163b5187b372c2a7c719e3e132eec95efa937f6064ddc4e41a",
+          "std.compiler.nox.declarations": "5b903ec11dcce7f259878112737fad56b1df215649ad468d089b5e6faedd5d8d",
+          "std.compiler.nox.digest_gen": "2d84354b36dd23c6d057c99708cead701e0f16d8581c6fb3342648c997e8840f",
+          "std.compiler.nox.emit": "647a3269f141c904bb25b8f2f442e372f1c0a15d52cca8ff72805f4ea65ecb62",
+          "std.compiler.nox.entry_frame": "b7a7477c5423f3e39de4177021d4e6a06530ad716ec14816925ddfade5f3ecfe",
+          "std.compiler.nox.expression": "ee2e25a928ee21c1f5a327627b380834333dfa5e5b3c7ac4a896b69f4a3569a3",
+          "std.compiler.nox.expression_state": "eae40b288c38690c623fb737456d5f53010dd831504862582a46baf36ec17fb8",
+          "std.compiler.nox.flow": "63e55149c7a0f2a389f21ade23a5f711442b2d062d2da18a9717c17908619c14",
+          "std.compiler.nox.formula": "cee3a45826a3c22f9d36b54ad26bc99bbf9d9d22fe2e424e6ce4111e49fae96c",
+          "std.compiler.nox.function_exports": "f11ca5d7779fb943b3c516898c0fb8c9967832e5e1204895668e0d06dfca9afa",
+          "std.compiler.nox.function_gen": "9d3fc63ba42fc9b127cdf6b6bc8e8d52979c9b667882d4caf288f75d23695984",
+          "std.compiler.nox.function_imports": "953da5503fd0845f0f8907d56e94e0f9af1ff89c1152675d06add85dc23ec6b1",
+          "std.compiler.nox.function_order": "d38687a7dc732998a589661fdfdad26e53f998098d751d60f387a948ffc93ed2",
+          "std.compiler.nox.function_plan": "d715cbbd95aa8558546bd44348269a9c7e56737abde27d4143b82c56e5f64d62",
+          "std.compiler.nox.group_parse": "d9160cc9f07962e2cbe4b5800ebe069a24e1feee74a72738236258adb2852da1",
+          "std.compiler.nox.halting": "45a38618f1af2fc64e4f095156940ff733c825390d95f2fbe87fb8f1973efcd8",
+          "std.compiler.nox.header_state": "f1687fad3bd25dc15bdbe9570aa77916ec64d22132da7865e558af77d54282d9",
+          "std.compiler.nox.headers": "83850710819556c2657665103cf279f5043b11f17634d1bb920df3eea0f12ce6",
+          "std.compiler.nox.index_parse": "403421c7fdcbb0cc1f8cc664dc90194321c7a3ce065eb08cac44dd16926243b5",
+          "std.compiler.nox.intrinsic_abi": "f9e4cce04ec483f2277084769e766fe2071653add092a81328a20110236575a4",
+          "std.compiler.nox.intrinsic_bindings": "40f3196963e70ca44ee55d0a4921ee9db795c250c4adebf313745fc27b565e35",
+          "std.compiler.nox.intrinsic_plan": "9b1a6f6068dbb64ea2b1d7b5ee4b0c113c27daa1a13118da219bc8fbd5b36f0f",
+          "std.compiler.nox.job": "6c022ef1b2f6dd9e04950a68dd8fe21f14201f92a7a6a15f7e64e246a37425fa",
+          "std.compiler.nox.lexer": "bdc6efc9226820a92a0d84aa00969a2c7f8a03c8cd531a7096dac0905f00efab",
+          "std.compiler.nox.loop_gen": "d2b6d0efb19aca1f70ced26996915d6f65a3164278865aac0aecc782eeb22c74",
+          "std.compiler.nox.loop_parse": "49556e1afa004a9a99a52e7bc885bcab4d18df690334559330748d0d70af58b2",
+          "std.compiler.nox.loop_records": "5315206a4cb4eba4d5a666a8fd2628040ab44357fe16a5de8488987e1d3f0804",
+          "std.compiler.nox.module_function_order": "d23d066f7c12f4855ca2fc73b5a9f740932d5d226562e80c8f84a4330688319c",
+          "std.compiler.nox.module_functions": "f4513f65279abc1f97afd0cc3c6bd0a8a674a8c14677527cbe3aec7741248aba",
+          "std.compiler.nox.module_graph": "18c58212e98284711809df3296ef268e055a75a821475a4ba21c550680d761d0",
+          "std.compiler.nox.module_header": "ec9786436df73cd14ce012c627979b30cd52ebf0751c3cec197754422e11d532",
+          "std.compiler.nox.module_order": "75962242c30d07ef8779e5e9b978426dc8fbf4bd1d8c3413e5c5294a8631a78b",
+          "std.compiler.nox.module_store": "5df4bfb5e99b2e53b8ad64af17cd02b90aeed9e4a8131ee56179bba5037a5132",
+          "std.compiler.nox.nominal": "cd43d83ba9ecb07110323c945b51f6576088be1f63ca5759161842a0cd0c08f4",
+          "std.compiler.nox.package_compile": "8f94724e349c332e16ab5d270c6e160bb2364fcd34ea04deb9c7bdb632d55efe",
+          "std.compiler.nox.parser": "c3cfcc8e006b64e53db19fb5c30fa35222fafa8c10a6d08c6b386f179dc818c7",
+          "std.compiler.nox.purity": "8a918ea9716147ebbd4a33a5bca483ef75d8ff57b486551c0ac31d08a316f3ab",
+          "std.compiler.nox.qualified_call": "db46c299593989c3d3e560c9e319f0f1b350b81e95ba9f5b3e7bbb3637cf8367",
+          "std.compiler.nox.qualified_name": "3f36b4992541276b3b9ffb7907a76fb5acbc3e903145ead1d0bfcffb5dc410fe",
+          "std.compiler.nox.record_assign": "246d3580412924d88da28620f979ecbd11a40bcc68d98bd4f55bbf810766d472",
+          "std.compiler.nox.record_edit_gen": "e88de6f434344aa9d32a2e88fb53b3a889ca33a46e4702612be085f0be2ff7db",
+          "std.compiler.nox.record_frames": "0fdb68a22a43a9ebbd3ed624c1b28df0bfb6bb6273ddcf288448cbe9256faad9",
+          "std.compiler.nox.record_parse": "0fcc781e45d49b824c50e803b5877d93a84a57761133d30a7d809d9aadb8be3e",
+          "std.compiler.nox.signatures": "fc1858631e180fb9cf3ced9e648315ef9ce59f42c58cc59fb72b5883c506eec6",
+          "std.compiler.nox.struct_parse": "f7ce98889c20f82bcd4f20138121532a68c3efd9fb71a384bea3c051c94bed71",
+          "std.compiler.nox.symbols": "e97022f5e4180e1aa07c5f176008df31aaae75cf93e21e89e5f20db5f8abdf1e",
+          "std.compiler.nox.syntax": "1f343001e3fd3e3b45384e09d98875e750de2dfabbba94a52a0152422f60c246",
+          "std.compiler.nox.terminal": "23efed3d53c514fbca30c1ce193fb0f2051250974ff7c2d22ef087a1a1a2a557",
+          "std.compiler.nox.tuple_bind": "e0ed3400fa4a25007c15be0afe32002f5376fc386efe632f46ad772eeec46430",
+          "std.compiler.nox.tuple_declarations": "f9824d81577f7436488d92bbff57436efb553ee97c9b61a96fa4ce3612749fc2",
+          "std.compiler.nox.tuple_pattern": "722161b638fa27af98bc058504ee89e0321d0ea427faad67e125380495584b7a",
+          "std.compiler.nox.type_exports": "6e3d3cf436132a7dedf8de0c44d611c79e4c63a05e3a137ea92fcca33d034d36",
+          "std.compiler.nox.type_imports": "3367becc903361bbaea055ad83876beef5149e55a9dd4f88233f62bf62c175aa",
+          "std.compiler.nox.type_parse": "990bbb79b0cce4489a196bfc42d436e5c3616fafd7681244199caf5227d80ec3",
+          "std.compiler.nox.type_registry": "0080e5de49eae55d4ecdcd866e8c10e965b46695d6c6d6779e1034688b7ce0c5",
+          "std.compiler.nox.types": "e16020610446b569d50c062334fb8f2f50c25c92b8c4a0978900510d8f1d3b8b",
+          "std.compiler.nox.utf8": "3ae8248982945f4fbea6a02b476e555d24c41b9ba58e4fd43c3442e2a69471ce",
+          "std.nox.bytes": "5746627936e426b6231d9f613237bf3544baec9f7fe90192269adf6ef3f98e26",
+          "std.nox.seq": "dc732943bc47577722875aca45b980e288fe4b53c9c43009e1df82b5497c5038",
+          "std.nox.tree": "057fc3b7af83117e583d75ced25d2b66bbe6549ad58cb5833c34353b34a0824c",
+          "vm.core.convert": "52e49b12d0327607077c34060b34a1b2dddb9e61e97e895f5d89526a7484299a",
+          "vm.core.field": "2fc24c9c39f2b280bdc15878b799fab5f82b2916ce3a0e2784a0b925d09eaf57",
+          "vm.nox.noun": "71023057a73561c6ad74761d05cfcb09bd2a39131aa7ffba23f77fd6536960e8"
+        },
+        "variant": "after"
+      }
+    ]
+  },
+  "component_note": "Both input Bytes admissions are included. The exact former private function_imports.alias body is transplanted into the same qualified_name.matches_owner probe entry for the baseline component only. Complete C1 before uses unchanged original modules. Both variants capture the same 94 source strings and differ only in the four owned modules.",
+  "limits": {
+    "component_reductions": 20000000,
+    "component_arena_capacity": 262144,
+    "component_arena_nodes": 196608,
+    "component_frames": 65536,
+    "name_bytes": 255,
+    "each_input_admission_visits": 10000,
+    "default_regression_arena_nodes": 196608
+  },
+  "verification": [
+    {
+      "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_alias_suffix -- --nocapture",
+      "log": "alias-suffix-component.log",
+      "result": "2 passed, 1 ignored; live production capture before concurrent export-row work; exhaustive byte/lane and name boundary differential"
+    },
+    {
+      "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_compiler import -- --nocapture",
+      "log": "alias-suffix-imports.log",
+      "result": "31 passed; existing function/type/constant alias, visibility, artifact, source span, and capacity cases"
+    },
+    {
+      "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_compiler native_constants_keep_previous_default_arena_and_artifacts -- --nocapture",
+      "log": "alias-suffix-defaults.log",
+      "result": "1 passed; original 196608-node limit"
+    },
+    {
+      "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_compiler locals_cross_parser_and_emitter_chunks -- --nocapture",
+      "log": "alias-suffix-locals.log",
+      "result": "1 passed; original 196608-node limit"
+    },
+    {
+      "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo check --tests --locked --offline",
+      "log": "alias-suffix-check-final.log",
+      "result": "passed; zero Rust warnings"
+    }
+  ],
+  "audit": {
+    "command": "CARGO_TARGET_DIR=../target-byte-scale cargo run --release --locked --offline --bin trident -- audit lib/std/compiler/nox/qualified_name.tri --json",
+    "report": "alias-suffix-audit.json",
+    "build_log": "alias-suffix-audit-build.log",
+    "exit_code": 2,
+    "result": "unknown; aggregate parameter/return symbolic analysis unsupported",
+    "inherited_warnings": [
+      "ascii.tri:5 unused vm.core.convert",
+      "lexer.tri:6 unused vm.core.convert"
+    ],
+    "note": "No unused-import warning in any owned changed module; the two warned modules are unchanged from the baseline and outside this logical unit."
+  },
+  "static_model": {
+    "script": "alias-suffix-work-model.py",
+    "receipt": "alias-suffix-work-model.json",
+    "note": "Parser inventory call-site counts and source-derived module positions are static analysis, not measured reductions or guest acceptance."
+  },
+  "preserved_logs": [
+    "alias-suffix-c1.log",
+    "alias-suffix-final-measurements.log",
+    "alias-suffix-check.log"
+  ],
+  "comments_note": "The final snapshot restores an existing type-import lookup comment accidentally omitted during initial extraction. Final paired rerun produces identical before/after artifact identities and resource observations.",
+  "log_normalization": {
+    "operation": "Strip trailing line whitespace and final empty lines only; warning text and measured values are preserved. Original byte-for-byte outputs are retained outside the repository.",
+    "files": [
+      {
+        "log": "alias-suffix-audit-build.log",
+        "original_sha256": "aa0faeed701c7ec6af542cf8ed4d9ddd70eacb9f18cd492be77fb7da4e84710a",
+        "normalized_sha256": "a0707369c6d75a532da59ca03bfd63e73c92c6f2d560670fccdb7af0e1720b26",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-audit-build.log"
+      },
+      {
+        "log": "alias-suffix-c1.log",
+        "original_sha256": "62e220682b18e043e0180df93018f7f6534efe4860a42a31524afe7e0796f75d",
+        "normalized_sha256": "2b417bdde25ec0bb918df725f80cfaff4053da7a50627b2eb5f53138d4b76e73",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-c1.log"
+      },
+      {
+        "log": "alias-suffix-component.log",
+        "original_sha256": "1f35fa1a5f153fc40fb19c6bd016093759bebefba55bfd0b05df6bfd8890367c",
+        "normalized_sha256": "0de6645a6e90ba40c655b48b3ac4a8da82adc60d1366da29699a92115eceddbb",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-component.log"
+      },
+      {
+        "log": "alias-suffix-defaults.log",
+        "original_sha256": "b789a8dd73abf7c0c06668f6d94504c6cc8753afc4db0e12e5081bb641bad59f",
+        "normalized_sha256": "e262cfa69dcb163ff438c80ee8a062f069a0f65248d18f12b2774e3e9e2f5999",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-defaults.log"
+      },
+      {
+        "log": "alias-suffix-final-measurements.log",
+        "original_sha256": "6ff74ab7600175ed8f635ad4c1f9010e383dc528f4b97df7680fc1f6453747d8",
+        "normalized_sha256": "9cf61b0b997073211e5f19173632a26c94e486a8b3a84b041704117890f28cd9",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-final-measurements.log"
+      },
+      {
+        "log": "alias-suffix-imports.log",
+        "original_sha256": "2d9aff27bef73eefcfd4c3d9bf42f9cf83385cd2020ee01a5c4bebff8dbb5fec",
+        "normalized_sha256": "b4c0285c593e067baf5e424977ed1349c93c4b8a62fe52fbbab643631a1ffd2b",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-imports.log"
+      },
+      {
+        "log": "alias-suffix-locals.log",
+        "original_sha256": "8ba06a29b6b77823773793c12c21ac3f0f53dcf104284fd7e8a890aeb0d0706c",
+        "normalized_sha256": "65d040d09bd3f4b8a2f036849a4bef2efe5f3893483ee4ec14aa96c1196d41a1",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-locals.log"
+      },
+      {
+        "log": "alias-suffix-snapshot-measurements.log",
+        "original_sha256": "098d2475998f0623e18fa6054d0325788568c95ea22903edf8ce20bf2d087631",
+        "normalized_sha256": "907375bd9f13f5b404aeb031c888d53e03c0772185585642faca2faf07f70554",
+        "original_copy": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/alias-suffix-original-logs/alias-suffix-snapshot-measurements.log"
+      }
+    ]
+  }
+}

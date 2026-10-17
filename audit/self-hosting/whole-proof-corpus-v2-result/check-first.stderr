@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py", line 84, in <module>
+    print(json.dumps(check(originals=arguments.originals), indent=2, sort_keys=True))
+                     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py", line 64, in check
+    result = check_relations(payload, index, manifest, prepared)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 199, in check_relations
+    results = [check_corpus(payload, index, generation, binary, compiler, prepared) for generation in (2, 3)]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 151, in check_corpus
+    check_flags(report['observations'])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 45, in check_flags
+    check_flags(child)
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 41, in check_flags
+    require(child is True, f'failed observation flag: {key}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 22, in require
+    raise ValueError(message)
+ValueError: failed observation flag: exact_independent_formula

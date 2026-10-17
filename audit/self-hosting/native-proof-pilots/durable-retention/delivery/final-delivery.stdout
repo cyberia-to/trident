@@ -1,0 +1,165 @@
+{
+  "status": "passed",
+  "copied_gate_files": 14,
+  "test_counts": [
+    1231,
+    0,
+    5,
+    0,
+    0
+  ],
+  "local_links": [
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "build-inputs.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "debug-cargo/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "release-two-threads/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "debug-cargo-provenance.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "release-two-threads-provenance.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "raw-log-whitespace.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "release-eight-threads/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "release-counts.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "run_release_gate.py"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "release-eight-threads-provenance.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "z3-after-gate.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "../../../../formal-path-validation.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "frozen-baseline-impact.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "retention-command.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "documentation-checks.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "source-review.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/README.md",
+      "target": "../root-review/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "../README.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "../README.md"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "provenance.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "remote-parts-manifest.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-review.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "root-review/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "root-review/command.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "root-review/initial-invocation.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-audit.tar.gz"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "transport-audit-manifest.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "package-command-result.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-1/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-2/receipt.json"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-1/install.stderr"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "postinstall/attempt-2/install.stderr"
+    },
+    {
+      "source": "audit/self-hosting/native-proof-pilots/durable-retention/README.md",
+      "target": "delivery/README.md"
+    }
+  ],
+  "plan_lines": 1000,
+  "production_command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+    "--",
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "Cargo.toml",
+    "Cargo.lock"
+  ],
+  "scope": "Local copied gate evidence and documentation; no new proof execution or network download."
+}

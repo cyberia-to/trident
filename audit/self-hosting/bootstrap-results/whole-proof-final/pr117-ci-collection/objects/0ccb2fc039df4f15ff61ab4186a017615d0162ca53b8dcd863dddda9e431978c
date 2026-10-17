@@ -1,0 +1,52 @@
+"""Isolated launch-failure retention checks; no subprocess is started."""
+import json
+from pathlib import Path
+import sys
+import tempfile
+from types import SimpleNamespace
+import unittest
+from unittest.mock import patch
+
+import run
+
+
+class FailureTests(unittest.TestCase):
+    def test_admission_failure_creates_no_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.object(run, 'ROOT', root), patch.object(run, 'admit', side_effect=ValueError('not terminal')):
+                with self.assertRaisesRegex(ValueError, 'not terminal'):
+                    run.run(root / 'selection', root / 'review', root / 'output')
+            self.assertFalse((root / 'output').exists())
+
+    def test_primary_failure_saved_before_cleanup_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / 'output'
+            def stop(child, force_group):
+                before = json.loads((output / 'receipt.json').read_text())
+                self.assertEqual(before['status'], 'failed')
+                self.assertIn('primary spawn failure', before['error'])
+                self.assertIsNone(child)
+                self.assertTrue(force_group)
+                raise RuntimeError('secondary cleanup failure')
+            old_path = list(sys.path)
+            try:
+                with (patch.object(run, 'ROOT', root), patch.object(run, 'R2', root),
+                      patch.object(run, 'SCOPES', ()), patch.object(run, 'admit', return_value={}),
+                      patch.object(run.shutil, 'disk_usage', return_value=SimpleNamespace(free=100 * run.GIB)),
+                      patch.object(run.subprocess, 'Popen', side_effect=ValueError('primary spawn failure')),
+                      patch.dict(sys.modules, {'transport': SimpleNamespace(stop=stop)})):
+                    with self.assertRaisesRegex(ValueError, 'primary spawn failure'):
+                        run.run(root / 'selection', root / 'review', output)
+            finally:
+                sys.path[:] = old_path
+            final = json.loads((output / 'receipt.json').read_text())
+            self.assertEqual(final['status'], 'failed')
+            self.assertIn('primary spawn failure', final['error'])
+            self.assertIn('secondary cleanup failure', final['cleanup_error'])
+            self.assertNotIn('exit_code', final)
+
+
+if __name__ == '__main__':
+    unittest.main()

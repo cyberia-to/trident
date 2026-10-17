@@ -1,0 +1,40 @@
+{
+  "status": "passed-source-equivalence",
+  "tested_base": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "delivery_base": "e57f2b4c6c6b7128e1cbbf80a77a0ccfcc8d33d7",
+  "paths": [
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "tests",
+    "Cargo.toml",
+    "Cargo.lock",
+    "build.rs"
+  ],
+  "command": [
+    "git",
+    "ls-tree",
+    "-rz",
+    "--full-tree",
+    "REVISION",
+    "--",
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "tests",
+    "Cargo.toml",
+    "Cargo.lock",
+    "build.rs"
+  ],
+  "tree_bytes": 56915,
+  "tree_sha256": "a63b62baf01a096dabf4a56d56fce71fb5e20c37cd4c60f92dc4fe4a40650b52",
+  "rust_test_receipt": {
+    "bytes": 2823,
+    "sha256": "4032ec0da9b1e51a5efed6bdd9cfd7f681dd2de289aa5e1d3789b9043e1a12aa"
+  },
+  "scope": "Existing complete actual Rust1.89 workspace result applies to identical Rust/compiler/test source blobs. New Python orchestration is covered by its separate actual subprocess tests. This is source-impact reuse, not a fresh Rust workspace test execution."
+}

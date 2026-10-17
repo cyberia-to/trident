@@ -1,0 +1,139 @@
+{
+  "schema": "trident/independent-v5-checker-adaptation/v1",
+  "status": "preparation-not-actual-acceptance",
+  "original_v4_sources": {
+    "bytes": 2396,
+    "sha256": "7deb421f844dac6fb439181290ee2312890de74a68847ac0c3c5c32277b0d436"
+  },
+  "original_v4_review": {
+    "bytes": 4643,
+    "sha256": "b07ed62a50c361e2b547690a777eeb7b8161e30a1c3f9fe37562972e6a4e5478"
+  },
+  "scheduler_sources": {
+    "bytes": 41607,
+    "sha256": "32f57009374ce8b542202ebaf1a3b0b05ab171f7aaa0665a838be0204ba8912e"
+  },
+  "scheduler_review": {
+    "bytes": 45013,
+    "sha256": "448ab7a293431060f5de9cf945a54ba513e9eae38ffd20d75ecc3dca78a7af1b"
+  },
+  "original_v4_files": {
+    "PLAN.md": {
+      "bytes": 3567,
+      "sha256": "f7cae4d39d1af73eccaabb95a5e27ec9d8a3c3beedb4b38260915d09fdc105a6"
+    },
+    "adaptation.json": {
+      "bytes": 3023,
+      "sha256": "796949aae8914c858f7b1d7b3d51bbc4e761b10f0116e41931c5efbddc446347"
+    },
+    "cases.py": {
+      "bytes": 6758,
+      "sha256": "027a358ea082995b9bda7d74ec1c2a3fd484a62bb209f5009dfddc5e23f5b44e"
+    },
+    "check.py": {
+      "bytes": 4395,
+      "sha256": "ffa643552fe1bb3d925846ec1ff99a516fd99273edb1ddb41c4928905869abdb"
+    },
+    "common.py": {
+      "bytes": 4637,
+      "sha256": "44a742bbd34a5b4bcc56a67339724c390d0fb4977740b942ae83ac6f9b574ea1"
+    },
+    "historical.py": {
+      "bytes": 6415,
+      "sha256": "3fbe091ff1ca1e9291257f05403b2aca97a07423bc14647409439caccc0edc32"
+    },
+    "historical_quiescence.py": {
+      "bytes": 5803,
+      "sha256": "1346ebaad9391ff6190add0cb14193544f3e0e51138a7919a1615e2eeb64f75a"
+    },
+    "historical_rows.py": {
+      "bytes": 12982,
+      "sha256": "8ad2619be56bda142bbacdf078331836d26fc5d1bf41e44ef9e788edcc20708c"
+    },
+    "history.py": {
+      "bytes": 3007,
+      "sha256": "362ece6969cf85c140a65598aa5912f0308c03f708e74c94ae926415a8d7d5ee"
+    },
+    "legacy_history.py": {
+      "bytes": 14215,
+      "sha256": "be52954608a6f4dd1ce655903fc96e501d043a088cc8b7e4a214ba3e8b3522bb"
+    },
+    "legacy_schedule.py": {
+      "bytes": 10138,
+      "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+    },
+    "native.py": {
+      "bytes": 4864,
+      "sha256": "0dd16f1b9a1b54e65ef33147c1fd651e1249e371fa6171ab19a346689eca61f6"
+    },
+    "pins.json": {
+      "bytes": 72245,
+      "sha256": "6180ab18dbc6c9722889d02723570b96adb6445c63fe7ac8421b9d9412dcfc79"
+    },
+    "positive.py": {
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "quiescence.py": {
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "schedule.py": {
+      "bytes": 9062,
+      "sha256": "8d1c48ed1348686e06e749842191ce702e142bf507f6d4252a6fe6179ef77d8c"
+    },
+    "test_checker.py": {
+      "bytes": 15862,
+      "sha256": "743721f8fffcc3eb184143bf04e8895df993dea9ffcaa230c52390486004820b"
+    },
+    "transitions.py": {
+      "bytes": 13900,
+      "sha256": "4504d4305270c64e75144b5c45d2c68764f4bd8304d98605ca3d240ccf4279bf"
+    },
+    "validate.py": {
+      "bytes": 2326,
+      "sha256": "4445c57713a489c1df659b803b6bf5faef6db7a8915e8ee66ed548980b048b56"
+    }
+  },
+  "source_origins": {
+    "prior_schedule_v5.py": {
+      "bytes": 10404,
+      "sha256": "7d5ea4b88a1b16c3915a1dfd59410f22d7a63f579b0e848f368fad43fb352873"
+    },
+    "prior_native_v5.py": {
+      "bytes": 4722,
+      "sha256": "5cb710ed3d1c0123a2a467a813d5fca2078ccde5bbb0be45f33f6df515981f0b"
+    },
+    "prior_transitions_v5.py": {
+      "bytes": 9511,
+      "sha256": "d47969e255cb911466ec4290ae057d0ee4759a7caede723d7be43fc3a5c77f81"
+    },
+    "prior_pins_v5.py": {
+      "bytes": 2275,
+      "sha256": "a3b64f58ef5b9f1ae37bc0ab7ac25ef9b550e7d847a6d224f62ed137006ce6b8"
+    },
+    "prior_quiescence_v5.py": {
+      "bytes": 4310,
+      "sha256": "9ff1a5bf27d6577e4010492004a238ca63703d7b15bea915d11883f70b095f30"
+    },
+    "prior_cases_v5.py": {
+      "bytes": 6034,
+      "sha256": "8703dd0991c89f92837faa5c70e3efba544351ec4fd8461646ac83f2b06e8f0d"
+    }
+  },
+  "changes": [
+    "Independent V5 sequential scheduler and raw capacity permit replay; exact 42 commands/23 permits, unchanged caps, explicit clock domains.",
+    "C1 adds eleven fresh V5 cases; C2 selects exact completed V4 cost plus ten V5 cases; original failed/input-changed outcomes preserved.",
+    "Copied selected-cost admission primitives now independently replay retained observations and do not launch /bin/ps or delete anything.",
+    "Final owner observations use original births and quiescent times; unrelated later reused identifiers are separately classified with two-second rounding margin.",
+    "Removed unused V4 cost paths from new prefix module; old F4 source remains byte-identical.",
+    "Preparation-only F4 parser finding: retained BSD ps lstart rows contain four trailing spaces. Its unstripped prefix split would fail strict birth grammar. Only new F5 strips row whitespace before parsing, with actual retained raw-padding regression test. F4 never produced an actual acceptance."
+  ],
+  "tests": "Synthetic/adversarial full schedule, selected old receipts, capacity waits, native binding/caps and source activation gates; no native proof workload.",
+  "partial_retained_replay": {
+    "bytes": 5740,
+    "sha256": "739f4856167f6134bef2e2d4989c5193a7a62fc6b2f69595b11fa45a34da3af7"
+  },
+  "partial_replay_scope": "Original failed V2/V3 history, completed prefix and failed V4 restricted schedule only. Positive checker file unchanged from F4/v2; no redundant full proof rerun in this preparation.",
+  "public_retention": "Exact original selected admission includes nested raw_stdout. Keep private original and hash references; never copy full selected result or host process snapshots into public audit blindly."
+}

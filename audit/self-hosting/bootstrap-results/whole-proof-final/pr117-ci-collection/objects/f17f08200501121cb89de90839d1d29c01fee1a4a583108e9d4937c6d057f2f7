@@ -1,0 +1,16 @@
+"""Read-only isolated replay of the already reviewed sixteen-archive admission."""
+import hashlib,json,sys
+from pathlib import Path
+v3=Path(__file__).resolve().parent.parent/'pr117-completion-v3'
+manifest=v3/'sources.json'
+assert hashlib.sha256(manifest.read_bytes()).hexdigest()=='9e0ec52ed29170427e87c425b5c3a754967f7e1e36f09fc00411410f39c8a2d7'
+for name,wanted in json.loads(manifest.read_text()).items():
+    p=Path(name)
+    with p.open('rb') as stream:actual=dict(bytes=p.stat().st_size,sha256=hashlib.file_digest(stream,'sha256').hexdigest())
+    assert actual==wanted
+sys.path.insert(0,str(v3))
+import history
+original,archives,members,prior,closure=history.admit()
+value=dict(status='passed-original16-admission',archives=archives,prior_attempts=prior,member_counts={name:len(m) for name,m in members.items()})
+raw=json.dumps(value).encode();assert len(raw)<=256*1024
+sys.stdout.buffer.write(raw+b'\n')

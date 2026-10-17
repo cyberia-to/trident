@@ -11,6 +11,74 @@ const HALF: Field = 9223372034707292161
 
 pub struct Shape { pub height: U32, pub capacity: Field }
 
+// A sequential cursor retains pending right subtrees. Each branch is entered
+// once across a complete walk; occupied leaves remain opaque Nouns.
+pub struct Cursor { node: Noun, capacity: Field, pending: Noun, count: U32 }
+
+#[pure]
+#[ensures(result == input.count)]
+pub fn remaining(input: Cursor) -> U32 { input.count }
+
+// Requires the canonical tree shape for length, as get does.
+#[pure]
+#[ensures(remaining(result) == length)]
+pub fn cursor(root: Noun, length: U32) -> Cursor {
+    Cursor { node: root, capacity: shape(length).capacity, pending: noun.atom(0), count: length }
+}
+
+#[pure]
+#[requires((length < start) == false)]
+#[ensures(convert.as_field(remaining(result)) + convert.as_field(start) == convert.as_field(length))]
+pub fn cursor_at(root: Noun, length: U32, start: U32) -> Cursor {
+    assert((length < start) == false)
+    let count = convert.as_u32(field.sub(convert.as_field(length), convert.as_field(start)))
+    if count == ZERO { return cursor(noun.atom(0), ZERO) }
+    let mut node = root
+    let mut capacity = shape(length).capacity
+    let mut offset = start
+    let mut pending = noun.atom(0)
+    for level in 0..32 {
+        if capacity == 1 { return Cursor { node, capacity, pending, count } }
+        capacity = capacity * HALF
+        if offset < convert.as_u32(capacity) {
+            pending = noun.pair(noun.pair(noun.tail(node), noun.atom(capacity)), pending)
+            node = noun.head(node)
+        } else {
+            node = noun.tail(node)
+            offset = convert.as_u32(field.sub(convert.as_field(offset), capacity))
+        }
+    }
+    Cursor { node, capacity, pending, count }
+}
+
+#[pure]
+fn read_leaf(node: Noun, pending: Noun, count: U32) -> (Noun, Cursor) {
+    if count == ZERO {
+        return (node, Cursor { node: noun.atom(0), capacity: 1, pending: noun.atom(0), count })
+    }
+    let next = noun.head(pending)
+    (node, Cursor { node: noun.head(next), capacity: noun.as_field(noun.tail(next)), pending: noun.tail(pending), count })
+}
+
+// At most 32 descents per read and at most 32 pending right subtrees. The
+// driver's own chunk bound decides when evaluator loop frames are released.
+#[pure]
+#[requires(ZERO < remaining(input))]
+pub fn read(input: Cursor) -> (Noun, Cursor) {
+    assert(ZERO < input.count)
+    let mut node = input.node
+    let mut capacity = input.capacity
+    let mut pending = input.pending
+    let count = convert.as_u32(field.sub(convert.as_field(input.count), 1))
+    for level in 0..32 {
+        if capacity == 1 { return read_leaf(node, pending, count) }
+        capacity = capacity * HALF
+        pending = noun.pair(noun.pair(noun.tail(node), noun.atom(capacity)), pending)
+        node = noun.head(node)
+    }
+    read_leaf(node, pending, count)
+}
+
 // Canonical all-zero padding, including E(0) = atom zero.
 #[pure]
 #[requires((MAX_HEIGHT < height) == false)]

@@ -1,0 +1,45 @@
+{
+  "scope": "Read-only unchanged-production comparison and frozen distribution impact evidence. No current-binary 198-proof run claimed.",
+  "command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "HEAD",
+    "--",
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "Cargo.toml",
+    "Cargo.lock"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention-followup/trident",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "frozen_receipt": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/distribution/measurements/local-rust189-complete/receipt.json",
+    "bytes": 53959,
+    "sha256": "75cfe952f433f0b01ce4ea11168e7d4267a4c01e5070537ec030fa847de595fc"
+  },
+  "source_sha256": "e4bac7ff7260a5f395febc196b3e4792653e0ff81d7887d688e16ea0959aa361",
+  "source_provenance_sha256": "9fddb8002ebb49ad724dfeb20972066c1de0b75b22f806b5360609bb12eaaec5",
+  "proof_gate": {
+    "all_checks_passed": true,
+    "fresh_verified_proofs": 198,
+    "positive_fixtures_passed": 99,
+    "negative_fixtures_rejected": 34,
+    "inputs_unchanged": true,
+    "elapsed_seconds": 4106.085598958016,
+    "peak_rss_bytes": 17252352000,
+    "started_sha256": "e9db269c4a03debf74faf2e19d2f1c19ee5cce8e6b200944b183e87d30cf6bb9",
+    "log_sha256": "f258e033f10c3ab747dbd5b1cece78d91766aaa74f9496de7e233d505f8b2f9f"
+  },
+  "archive": {
+    "path": "rehearsal-20261002-e4bac7ff-local-rust189-evidence.tar.gz",
+    "bytes": 80874375,
+    "sha256": "0b613f41a1c65aeb937f636070b0c497a6cb60c938f445dd53e3983ab9c15fab"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "trident/sh7-evidence-retention/v1",
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "audit/self-hosting/native-proof-pilots/retain.py",
+    "--source",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/compiler-pilot",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention"
+  ],
+  "checker": {
+    "bytes": 8219,
+    "sha256": "8d73202546aad9c4aff127290d3cd2de59acc12a3e8f271660ba83314c05680c"
+  },
+  "source_revisions": {
+    "joy": "6e0ec4d8440e2521df08f442d64f54e667044716",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442"
+  },
+  "binary": {
+    "bytes": 5635776,
+    "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+  },
+  "manifest": {
+    "bytes": 213992,
+    "sha256": "3ffc9d503bb7a28b52ce24f5506e8c415a32b688adb71cd45c0b83b4a3f703ec"
+  },
+  "summary": {
+    "bytes": 21263,
+    "sha256": "cacbcd13b2aa9736a65d82a8b778c02ab1bb74e8ecff2b9c460d2981a59a33cd"
+  },
+  "original_manifest_files": 665,
+  "package_files": 637,
+  "archive_files": 670,
+  "archive": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention/sh7-native-c2-complete-evidence-20261002.tar.gz",
+    "bytes": 602191451,
+    "sha256": "fa0f99785b4f499067683949a4126a1e4837558fbd421c0c4d61fedc39000d61"
+  },
+  "pilots": [
+    {
+      "name": "loop",
+      "proof": {
+        "bytes": 2077545,
+        "sha256": "279c74d1091cbff9fb974c93f39b3e65a3105cbab17c6812db20a0b434e643f5"
+      }
+    },
+    {
+      "name": "aggregate",
+      "proof": {
+        "bytes": 8662132,
+        "sha256": "1b379caa0f299549b32b5d8acb79e91c5b719db8ffd082890d66a34457075d64"
+      }
+    },
+    {
+      "name": "compile-error",
+      "proof": {
+        "bytes": 1707931,
+        "sha256": "ce70bd8bd8636498bbed79f575efbf7ce4eb48c8a5ef2baccfaf830c09add7b5"
+      }
+    },
+    {
+      "name": "scale-baseline",
+      "proof": {
+        "bytes": 957305,
+        "sha256": "3418f41da05e766f46f406c29463db53ea216f76139a3cd44b14b80db55f7a0d"
+      }
+    },
+    {
+      "name": "scale-valid65536",
+      "proof": {
+        "bytes": 417642285,
+        "sha256": "9e9b9fda6519b3d350377976ad2270554094a5fb840dba890e0d5eec15b1901b"
+      }
+    }
+  ],
+  "accepted_controls": [
+    "control-copy-2",
+    "control-rebind-2",
+    "valid-output-control"
+  ],
+  "rejected_attacks": [
+    "expected-source",
+    "rebound-source",
+    "expected-dependency",
+    "rebound-dependency",
+    "expected-options",
+    "rebound-options",
+    "expected-job-limit",
+    "rebound-job-limit",
+    "expected-compiler",
+    "rebound-compiler",
+    "continuation",
+    "generation",
+    "cost",
+    "output-payload",
+    "output-topology",
+    "omit-terminal",
+    "drop-frame",
+    "swap-frames",
+    "trailing-byte",
+    "truncated",
+    "valid-output-payload",
+    "valid-output-topology",
+    "valid-output-payload-rebound",
+    "valid-output-topology-rebound"
+  ],
+  "scope": "Independent receipt/byte validation and durable full evidence assembly; no new execution-proof verification."
+}

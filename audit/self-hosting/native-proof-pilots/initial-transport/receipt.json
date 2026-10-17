@@ -1,0 +1,85 @@
+{
+  "schema": "trident/sh7-draft-evidence-transport/v1",
+  "status": "failed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "audit/self-hosting/native-proof-pilots/transport.py",
+    "--retention",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-transport"
+  ],
+  "driver": {
+    "bytes": 4373,
+    "sha256": "139e71193d07c5d4657a109821a44318b799e5fcd64569d7746d713020a0c213"
+  },
+  "review": {
+    "bytes": 3575,
+    "sha256": "3655658672547f14190eb2ea0e02988e01aa596c84d4cb44ee1ff05bd57fcc63"
+  },
+  "scope": "Evidence retention on an existing draft; no release publication, tag or binary promotion.",
+  "repository": "cyberia-to/trisha",
+  "release_id": 389977897,
+  "archive": {
+    "bytes": 602191451,
+    "sha256": "fa0f99785b4f499067683949a4126a1e4837558fbd421c0c4d61fedc39000d61"
+  },
+  "commands": [
+    {
+      "name": "draft-before",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 39242,
+        "sha256": "ee104805bf01f80fdff361717c2b5b174f7d8e5484d568f92f55a0cd49ef7fe9"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "draft-before-tag",
+      "command": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "exit_code": 1,
+      "stdout": {
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "upload",
+      "command": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-retention/sh7-native-c2-complete-evidence-20261002.tar.gz",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "exit_code": -15,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "error": "Traceback (most recent call last):\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/transport.py\", line 69, in main\n    run(\"upload\", [\"gh\", \"release\", \"upload\", TAG, str(archive), \"--repo\", REPO])\n    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/transport.py\", line 51, in run\n    raise RuntimeError(f\"{name}: unexpected exit {result.returncode}\")\nRuntimeError: upload: unexpected exit -15\n"
+}

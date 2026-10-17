@@ -1,0 +1,167 @@
+"""Tiny adversarial receipts exercise exact V5 partition and physical admission."""
+import copy,json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+import capacity,common,schedule,check,cases
+
+class PartitionTests(unittest.TestCase):
+    def valid(self,g,fresh=None,selected=None):
+        common.case_partition(list(common.PRIOR),list(common.ADDITIONAL),
+             list(common.fresh_names(g)) if fresh is None else fresh,g,([] if g==1 else ['cost']) if selected is None else selected)
+    def test_exact_both_partitions(self):
+        self.valid(1);self.valid(2)
+    def test_c2_cannot_execute_selected_cost_again(self):
+        with self.assertRaises(ValueError):self.valid(2,list(common.NEW))
+    def test_c1_must_execute_cost(self):
+        with self.assertRaises(ValueError):self.valid(1,list(common.NEW[1:]))
+    def test_duplicate_fresh(self):
+        rows=list(common.NEW);rows[-1]=rows[0]
+        with self.assertRaises(ValueError):self.valid(1,rows)
+    def test_reordered_fresh(self):
+        with self.assertRaises(ValueError):self.valid(2,list(reversed(common.NEW[1:])))
+    def test_selected_not_fresh_continuation(self):
+        with self.assertRaises(ValueError):self.valid(2,selected=['continuation'])
+    def test_c1_cannot_select_cost(self):
+        with self.assertRaises(ValueError):self.valid(1,selected=['cost'])
+    def test_missing_prior_cannot_be_covered_by_fresh(self):
+        with self.assertRaises(ValueError):common.case_partition(list(common.PRIOR[:-1]),list(common.ADDITIONAL),list(common.NEW),1,[])
+
+class CapacityTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.base=Path(self.temp.name)
+        self.shared=self.base/'whole-proof-attacks-completion-v5';(self.shared/'capacity').mkdir(parents=True)
+        self.plan={'proofs':{'1':{'bytes':100},'2':{'bytes':200}}};self.write(self.shared/'plan.json',self.plan)
+        self.run=dict(started_ns=1,ended_ns=1000)
+        self.admission=dict(time_ns=100,outer_deadline_monotonic=90000);self.write(self.shared/'admission-c1.json',self.admission)
+        mutant=100+32*capacity.MIB;growth=mutant+112*capacity.MIB+512*capacity.MIB
+        self.res=dict(generation=1,existing_bytes=50,mutant_bytes=mutant,growth_bytes=growth,reservation_bytes=50+growth,
+            free_bytes=100*capacity.GIB,required_free_bytes=max(growth+8*capacity.GIB,mutant+10*capacity.GIB),accepted=True,reasons=[])
+        self.path=self.shared/'capacity/c1-cost.json';self.log=self.path.with_suffix('.jsonl')
+        self.record=dict(status='passed-capacity-admission',generation=1,case='cost',started_ns=110,ended_ns=120,
+                         elapsed_seconds=2,deadline_seconds=600,sample_interval_seconds=1,outer_deadline_monotonic=90000,
+                         observations=3,reservation=self.res,plan=common.identity(self.shared/'plan.json'),
+                         admission=common.identity(self.shared/'admission-c1.json'))
+        self.rows=[]
+        for n in range(3):
+            r=copy.deepcopy(self.res)
+            if n<2:r.update(free_bytes=r['required_free_bytes']-1,accepted=False,reasons=['physical-free-reservation'])
+            self.rows.append(dict(time_ns=111+n,elapsed_seconds=n,reservation=r))
+        self.save()
+    def write(self,path,value):path.write_text(json.dumps(value)+'\n')
+    def save(self):
+        self.log.write_text(''.join(json.dumps(r)+'\n' for r in self.rows));self.record['logs']=common.reference(self.log);self.write(self.path,self.record)
+    def review(self):return capacity.review(self.base,1,'cost',self.run,self.admission,50)
+    def test_delayed_physical_free_is_recorded(self):self.review()
+    def test_final_physical_refusal_cannot_pass(self):
+        self.rows[-1]['reservation']['free_bytes']=0;self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_projected_deletion_cannot_reduce_reservation(self):
+        self.rows[-1]['reservation']['existing_bytes']=49;self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_extra_ten_gib_preserved(self):
+        self.rows[-1]['reservation']['required_free_bytes']-=1;self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_wait_cannot_change_native_or_outer_deadline(self):
+        self.record['outer_deadline_monotonic']+=1;self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_capacity_wait_still_600(self):
+        self.record['deadline_seconds']=601;self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_elapsed_wait_cap_enforced(self):
+        self.record['elapsed_seconds']=601;self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_repeated_native_admission_not_hidden(self):
+        self.rows[0]['reservation']=copy.deepcopy(self.res);self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_capacity_log_identity_is_binding(self):
+        self.log.write_text('changed')
+        with self.assertRaises(ValueError):self.review()
+    def test_failed_wait_not_promoted(self):
+        self.write(self.path.with_suffix('.failed.json'),{'failed':True})
+        with self.assertRaises(ValueError):self.review()
+    def test_missing_observation_rejected(self):
+        self.rows.pop(0);self.save()
+        with self.assertRaises(ValueError):self.review()
+    def test_exact_admission_bound(self):
+        self.record['admission']={'bytes':1,'sha256':'0'*64};self.save()
+        with self.assertRaises(ValueError):self.review()
+
+class SequenceTests(unittest.TestCase):
+    def setUp(self):
+        self.run=dict(started_ns=1,ended_ns=1000,elapsed_seconds=800,generations=[{'generation':1},{'generation':2}],children_final={'1':{},'2':{}})
+        self.admissions={1:dict(pid=1,time_ns=100,outer_deadline_monotonic=90000),2:dict(pid=1,time_ns=600,outer_deadline_monotonic=90000)}
+        self.completed={1:dict(quiescent_ns=500),2:dict(quiescent_ns=900)}
+        self.permits={1:dict(started_ns=10,ended_ns=90),2:dict(started_ns=501,ended_ns=590)}
+    def review(self):schedule.sequencing(self.run,self.admissions,self.completed,self.permits)
+    def test_sequential_complete(self):self.review()
+    def test_c2_cannot_reserve_before_c1_quiescent(self):
+        self.permits[2]['started_ns']=499
+        with self.assertRaises(ValueError):self.review()
+    def test_outer_clock_cannot_restart_for_c2(self):
+        self.admissions[2]['outer_deadline_monotonic']+=1
+        with self.assertRaises(ValueError):self.review()
+    def test_elapsed_outer_cap(self):
+        self.run['elapsed_seconds']=86401
+        with self.assertRaises(ValueError):self.review()
+    def test_no_generation_swap(self):
+        self.run['generations'].reverse()
+        with self.assertRaises(ValueError):self.review()
+
+class ActivationTests(unittest.TestCase):
+    def test_failed_prerequisite(self):
+        with patch.object(check,'load',return_value={'status':'failed'}),self.assertRaises(ValueError):check.prerequisites(Path('/fixture'))
+    def test_missing_independent_review(self):
+        with patch.object(check,'load',side_effect=[{'x':1},{'status':'pending','sources':{'x':1}}]),self.assertRaises(ValueError):check.source_gate()
+    def test_partial_source_review(self):
+        with patch.object(check,'load',side_effect=[{'x':1},{'status':'passed-source-review','sources':{}}]),self.assertRaises(ValueError):check.source_gate()
+
+if __name__=='__main__':unittest.main()
+
+class CompositeTests(unittest.TestCase):
+    def setUp(self):
+        self.prior=dict(controls=[dict(name='original-fresh-verification'),dict(name='rechain')],
+              original_v2=dict(rejections=[dict(name=n) for n in common.PRIOR]),
+              additional_v3=dict(rejections=[dict(name=n) for n in common.ADDITIONAL]))
+        self.profile={'profile':True};self.positive={'proof':{'bytes':1,'sha256':'a'*64}}
+        self.suite=dict(schema='trident/whole-self-build-certificate-completion/v5',status='passed-completion',generation=2,
+               original_proof=self.positive['proof'],profile=self.profile,prior_cases=self.prior,
+               immutable_inputs_before={'f':1},immutable_inputs_after={'f':1},rejections=[dict(name=n) for n in common.NEW[1:]])
+    def review(self):cases.suite_contract(self.suite,2,self.prior,self.positive,self.profile)
+    def test_complete_generation_two_shape(self):self.review()
+    def test_failed_current_suite_not_promoted(self):
+        self.suite['status']='failed'
+        with self.assertRaises(ValueError):self.review()
+    def test_hidden_input_failure(self):
+        self.suite['input_error']='interrupted'
+        with self.assertRaises(ValueError):self.review()
+    def test_wrong_original_proof(self):
+        self.suite['original_proof']={'bytes':2,'sha256':'b'*64}
+        with self.assertRaises(ValueError):self.review()
+    def test_no_fabricated_current_controls(self):
+        self.suite['controls']=self.prior['controls']
+        with self.assertRaises(ValueError):self.review()
+    def test_c2_selected_case_cannot_be_fresh_again(self):
+        self.suite['rejections'].insert(0,dict(name='cost'))
+        with self.assertRaises(ValueError):self.review()
+    def test_current_inputs_changed(self):
+        self.suite['immutable_inputs_after']={'different':1}
+        with self.assertRaises(ValueError):self.review()
+
+class TerminalBirthTests(unittest.TestCase):
+    def setUp(self):
+        self.owner=dict(pid=10,pgid=10,started='Fri Oct  2 00:00:00 2026',members={'10':'Fri Oct  2 00:00:00 2026'})
+        self.empty=1790899210000000000
+        self.sample=dict(time_ns=1790899300000000000,processes=[dict(pid=10,pgid=10,started='Fri Oct  2 00:00:20 2026   ')])
+    def test_later_reused_pid_classified_separately(self):
+        self.assertEqual(1,len(schedule.final_owners_absent(self.sample,[(self.owner,self.empty)])))
+    def test_original_birth_cannot_be_ignored(self):
+        self.sample['processes'][0]['started']=self.owner['started']
+        with self.assertRaises(ValueError):schedule.final_owners_absent(self.sample,[(self.owner,self.empty)])
+    def test_ambiguous_rounding_margin_refuses(self):
+        self.sample['processes'][0]['started']='Fri Oct  2 00:00:12 2026'
+        with self.assertRaises(ValueError):schedule.final_owners_absent(self.sample,[(self.owner,self.empty)])
+    def test_unrelated_owner_not_claimed(self):
+        self.sample['processes'][0].update(pid=11,pgid=11)
+        self.assertEqual([],schedule.final_owners_absent(self.sample,[(self.owner,self.empty)]))

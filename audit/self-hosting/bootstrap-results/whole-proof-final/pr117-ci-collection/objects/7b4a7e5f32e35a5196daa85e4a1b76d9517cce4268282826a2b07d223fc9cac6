@@ -1,0 +1,24 @@
+"""Bounded fake permission response plus hung body, never external HTTP."""
+import hashlib,json,sys,tempfile,time
+from pathlib import Path
+SOURCE=Path(sys.argv[1]).resolve();OUT=Path(sys.argv[2]);OUT.mkdir()
+sys.path.insert(0,str(SOURCE))
+from transfer import Transport,RetryableTransport
+from collection_common import identity
+from budget import Budget,MIB
+source={str(SOURCE/n):identity(SOURCE/n) for n in ('transfer.py','http_policy.py','validate.py')}
+with tempfile.TemporaryDirectory() as temp:
+ root=Path(temp);fake=root/'fake-curl'
+ fake.write_text('\n'.join(['#!'+sys.executable, 'import os,sys,time', 'sys.stdin.buffer.read()', 'fd=int(sys.argv[sys.argv.index("--dump-header")+1].rsplit("/",1)[1])', 'os.write(fd, '+repr(b'HTTP/1.1 403 Forbidden\r\nContent-Length: 100\r\n\r\n')+')', 'time.sleep(3)', '']));fake.chmod(0o700)
+ out=root/'out';out.mkdir();receipt={'commands':[],'requests':[],'backoffs':[],'prior_attempts':{}}
+ endpoint='repos/cyberia-to/trident/actions/artifacts/7/zip';t=Transport(out,{'path':str(fake),**identity(fake)},Budget([root],limit=16*MIB,free_floor=0,seconds=5),receipt,b'A'*40,{endpoint},source_check=lambda:{})
+ t.timeout=.75
+ try:t.command('fixture',endpoint,100,True);outcome='unexpected-pass'
+ except BaseException as error:outcome=type(error).__name__;detail=str(error)
+ for name in ('fixture.headers','fixture.stdout','fixture.zip','fixture.stderr'):
+  p=out/name
+  if p.exists():(OUT/name).write_bytes(p.read_bytes())
+ assert (OUT/'fixture.headers').read_bytes().startswith(b'HTTP/1.1 403 Forbidden\r\n'), 'permission header must actually arrive'
+ report={'status':'observed-permission-timeout-policy','outcome':outcome,'error':detail,'source':source,'receipt':receipt,'scope':'One local fake subprocess emits403 then sleeps; timeout0.75s, no network/real credential, actual owned group cleanup.'}
+ assert source=={str(SOURCE/n):identity(SOURCE/n) for n in ('transfer.py','http_policy.py','validate.py')}
+ (OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'outcome':outcome,'retryable':receipt['commands'][0].get('retryable'),'cleanup':receipt['commands'][0]['cleanup'],'receipt':identity(OUT/'receipt.json')}))

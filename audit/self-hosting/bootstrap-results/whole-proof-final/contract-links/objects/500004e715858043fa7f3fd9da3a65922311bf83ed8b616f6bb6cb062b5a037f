@@ -1,0 +1,554 @@
+{
+  "status": "passed-exact-contract-link-target-validation",
+  "started_ns": 1790987961666555000,
+  "commands": [
+    {
+      "label": "trident-head",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987961685947000,
+      "exit_code": 0,
+      "ended_ns": 1790987961698365000,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "aaa4d71f832de4ffc8ad580691ffcc9e646b36c21d9b9b5118dfd5830e270bb9"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "trident-clean-before",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987961698637000,
+      "exit_code": 0,
+      "ended_ns": 1790987961786599000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "joy-origin",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987961786993000,
+      "exit_code": 0,
+      "ended_ns": 1790987961799015000,
+      "streams": {
+        "stdout": {
+          "bytes": 38,
+          "sha256": "8cf9fb0f59e71b8a3c6f9d4cc209ddc3d2718de314b7ce251904e04d8315311d"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "soft3-origin",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/soft3",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987961799315000,
+      "exit_code": 0,
+      "ended_ns": 1790987961810604000,
+      "streams": {
+        "stdout": {
+          "bytes": 40,
+          "sha256": "5ce2c56341d39e6c4eeccbb4a70b9edca05f4be3ff1b26022fce8860642ad735"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "joy-pin",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+        "rev-parse",
+        "89088bb2"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987961810894000,
+      "exit_code": 0,
+      "ended_ns": 1790987961822610000,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "b3a94f383ae26e54e962fdc7b2f98dc80a7900a9f0d9b0f8b373aca64bdf1f29"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "joy-committed",
+      "argv": [
+        "/opt/homebrew/Cellar/gh/2.92.0/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/cyberia-to/joy/commits/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987961822947000,
+      "exit_code": 0,
+      "ended_ns": 1790987962739861000,
+      "streams": {
+        "stdout": {
+          "bytes": 6731,
+          "sha256": "c4309aa659ef9ecca07bdd96d417459100783ebca513e9be09d86df54280a3a3"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "soft3-repository",
+      "argv": [
+        "/opt/homebrew/Cellar/gh/2.92.0/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/cyberia-to/soft3",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987962740408000,
+      "exit_code": 0,
+      "ended_ns": 1790987963529885000,
+      "streams": {
+        "stdout": {
+          "bytes": 6731,
+          "sha256": "2a6d809b9e594a68a31d549135cb77592276e7f898788fe3acc3560d42e12793"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "soft3-default-ref",
+      "argv": [
+        "/opt/homebrew/Cellar/gh/2.92.0/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/cyberia-to/soft3/git/ref/heads/main",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987963530443000,
+      "exit_code": 0,
+      "ended_ns": 1790987965125605000,
+      "streams": {
+        "stdout": {
+          "bytes": 330,
+          "sha256": "320b9196b34cda4b32a4d93ee0f2e75b35ee48c8280f6c575eb14a8123534533"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "soft3-pin",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/soft3",
+        "rev-parse",
+        "4820c3d032c3c336d725f18e7b3fb13816eeb128^{commit}"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987965126136000,
+      "exit_code": 0,
+      "ended_ns": 1790987965150757000,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "52e7f940ad1092a3eca09a2bce2c75abfe7a3e9008e7935498ed56d79f334144"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "composition-git-blob",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/soft3",
+        "show",
+        "4820c3d032c3c336d725f18e7b3fb13816eeb128:specs/execution-model.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987965151181000,
+      "exit_code": 0,
+      "ended_ns": 1790987965173263000,
+      "streams": {
+        "stdout": {
+          "bytes": 13807,
+          "sha256": "427ac3c5244845dd15a124045db4ef8a6aea61874a7a51baa553010e6e377d85"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "composition-git-id",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/soft3",
+        "rev-parse",
+        "4820c3d032c3c336d725f18e7b3fb13816eeb128:specs/execution-model.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987965173642000,
+      "exit_code": 0,
+      "ended_ns": 1790987965187109000,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "4af5b7e16c2b9daa3d10504b647b999bd68b4f6cc66b1ca20eb6aa209a1e72b5"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "composition-github-file",
+      "argv": [
+        "/opt/homebrew/Cellar/gh/2.92.0/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/cyberia-to/soft3/contents/specs/execution-model.md?ref=4820c3d032c3c336d725f18e7b3fb13816eeb128",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987965187493000,
+      "exit_code": 0,
+      "ended_ns": 1790987966731487000,
+      "streams": {
+        "stdout": {
+          "bytes": 20060,
+          "sha256": "15f1466de8f1527f63059e0ec4e5484f976b2455e857357638fba41c4c45344b"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "private-git-blob",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+        "show",
+        "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad:specs/private-execution.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987966732170000,
+      "exit_code": 0,
+      "ended_ns": 1790987966753103000,
+      "streams": {
+        "stdout": {
+          "bytes": 2640,
+          "sha256": "ab0b067291a84456cab9389bcd57bf6523c4589e255a02851067fd56412d5735"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "private-git-id",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+        "rev-parse",
+        "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad:specs/private-execution.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987966753531000,
+      "exit_code": 0,
+      "ended_ns": 1790987966765909000,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "fec32d4bf90ca635f9ad5ca6a083ca2996c07c8f901f83d69e6a7d3a8482c2f2"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "private-github-file",
+      "argv": [
+        "/opt/homebrew/Cellar/gh/2.92.0/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/cyberia-to/joy/contents/specs/private-execution.md?ref=89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987966766219000,
+      "exit_code": 0,
+      "ended_ns": 1790987967779822000,
+      "streams": {
+        "stdout": {
+          "bytes": 4671,
+          "sha256": "f6b0dfcd30dd3015f360e559a45eda1746efd64616c1c3aee2f1b8fa2d1341a7"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "structured-git-blob",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+        "show",
+        "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad:specs/structured-certificates.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987967780359000,
+      "exit_code": 0,
+      "ended_ns": 1790987967793462000,
+      "streams": {
+        "stdout": {
+          "bytes": 10069,
+          "sha256": "0a349f91e59983f574e8a45de4abd45799b158997631f9d0f0f18c9e97b3c313"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "structured-git-id",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+        "rev-parse",
+        "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad:specs/structured-certificates.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987967793839000,
+      "exit_code": 0,
+      "ended_ns": 1790987967806245000,
+      "streams": {
+        "stdout": {
+          "bytes": 41,
+          "sha256": "66e567113a611d9257d0b9bc8bec1a0610a8e27211024875013ad7346a418134"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "structured-github-file",
+      "argv": [
+        "/opt/homebrew/Cellar/gh/2.92.0/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/cyberia-to/joy/contents/specs/structured-certificates.md?ref=89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "-H",
+        "X-GitHub-Api-Version: 2022-11-28"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987967806655000,
+      "exit_code": 0,
+      "ended_ns": 1790987968939298000,
+      "streams": {
+        "stdout": {
+          "bytes": 14952,
+          "sha256": "4138f789042ec102c18f3fab829f03fd62e7e560e81f1b20a1141c9515af57b6"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "label": "trident-clean-after-validation",
+      "argv": [
+        "/usr/bin/git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/selfhosting-contract-links",
+      "started_ns": 1790987968939945000,
+      "exit_code": 0,
+      "ended_ns": 1790987969019625000,
+      "streams": {
+        "stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "tools": {
+    "/usr/bin/git": {
+      "bytes": 118928,
+      "sha256": "12bed4523661307059b879b9b54e77a73176e9d27d27a0e40363271d8f0668ba"
+    },
+    "/opt/homebrew/Cellar/gh/2.92.0/bin/gh": {
+      "bytes": 37448466,
+      "sha256": "582a40676acf1394fcaf1c8c8bc5bad21806bd8c864b209d37b185c2df45dc92"
+    }
+  },
+  "head": "def4c69cc581c7a0c189977bc4ff7c546af7aa64",
+  "soft3_default": {
+    "branch": "main",
+    "commit": "4820c3d032c3c336d725f18e7b3fb13816eeb128"
+  },
+  "targets": [
+    {
+      "repository": "soft3",
+      "commit": "4820c3d032c3c336d725f18e7b3fb13816eeb128",
+      "path": "specs/execution-model.md",
+      "git_blob": "abbfb65b3ea8ff8c5439150d1c724a52f62b86fb",
+      "url": "https://github.com/cyberia-to/soft3/blob/4820c3d032c3c336d725f18e7b3fb13816eeb128/specs/execution-model.md",
+      "file_identity": {
+        "bytes": 13807,
+        "sha256": "427ac3c5244845dd15a124045db4ef8a6aea61874a7a51baa553010e6e377d85"
+      },
+      "authenticated_github_bytes_equal_local_git_blob": true
+    },
+    {
+      "repository": "joy",
+      "commit": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+      "path": "specs/private-execution.md",
+      "git_blob": "c54ff8bcd664cdffb82ce217610337bafe073d89",
+      "url": "https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/private-execution.md",
+      "file_identity": {
+        "bytes": 2640,
+        "sha256": "ab0b067291a84456cab9389bcd57bf6523c4589e255a02851067fd56412d5735"
+      },
+      "authenticated_github_bytes_equal_local_git_blob": true
+    },
+    {
+      "repository": "joy",
+      "commit": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+      "path": "specs/structured-certificates.md",
+      "git_blob": "7916abd86e81eebd7949ff2a3e763199b470c21f",
+      "url": "https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/structured-certificates.md",
+      "file_identity": {
+        "bytes": 10069,
+        "sha256": "0a349f91e59983f574e8a45de4abd45799b158997631f9d0f0f18c9e97b3c313"
+      },
+      "authenticated_github_bytes_equal_local_git_blob": true
+    }
+  ],
+  "ended_ns": 1790987969020099000
+}

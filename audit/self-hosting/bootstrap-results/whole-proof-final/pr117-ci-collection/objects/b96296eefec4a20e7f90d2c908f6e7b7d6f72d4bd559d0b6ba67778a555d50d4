@@ -1,0 +1,119 @@
+{
+  "status": "prepared-inactive-http-status-repair",
+  "time_ns": 1790974959672474000,
+  "source_manifest": {
+    "bytes": 16156,
+    "sha256": "bf91f93950dbd885a339d0f9f45b63e15a542327a3421e9ce73692618f98e6ec"
+  },
+  "source_count": 72,
+  "changed_sources": [
+    "http_policy.py",
+    "transfer.py",
+    "validate.py",
+    "test_http.py"
+  ],
+  "files": {
+    "sources.json": {
+      "bytes": 16156,
+      "sha256": "bf91f93950dbd885a339d0f9f45b63e15a542327a3421e9ce73692618f98e6ec"
+    },
+    "preparation/receipt.json": {
+      "bytes": 5600,
+      "sha256": "84b749347275323a55ed8ebc64301a294c5fc5155539fe31e26757470a521e89"
+    },
+    "preparation/superseded-cd2d58e2/snapshot.json": {
+      "bytes": 2971,
+      "sha256": "b6b7e35293649c92e0df13a9a25036d71bfa2c009c0e159fe74483696680cbb2"
+    },
+    "preparation/superseded-cd2d58e2/sources.json": {
+      "bytes": 16156,
+      "sha256": "cd2d58e2c0f0ac022295b9d679d1441376e849cfd41db0307f27f1b7e1731b25"
+    },
+    "preparation/final-status-gates/receipt.json": {
+      "bytes": 18487,
+      "sha256": "db569f42da3376905b62b193082aaf4491d0e3df0f9b7f85aa73a6d764bea42e"
+    },
+    "preparation/final-status-gates/v4.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/final-status-gates/v4.stderr": {
+      "bytes": 3543,
+      "sha256": "5c20cfb6c1a62f00e6de0fecc0f4c26802c6c9a2627f6b0feb40ee67f3ea718e"
+    },
+    "preparation/final-status-gates/original-v3.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/final-status-gates/original-v3.stderr": {
+      "bytes": 2715,
+      "sha256": "45261a687d1551c8cbb9ba25f246cc105f679a0b5b7e227a8b1a9ca450c1bea8"
+    },
+    "preparation/projection-status-final/projection.json": {
+      "bytes": 7908,
+      "sha256": "9d77468784068668a11e767948b7755a6fec19d004e99292e457c54a8825321c"
+    },
+    "preparation/projection-status-final/prior16.stdout": {
+      "bytes": 29255,
+      "sha256": "da83242e2fb1bd7b1bd08e91bcdb872981555795ba3d2535dbdeb262826640ae"
+    },
+    "preparation/projection-status-final/prior16.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/tests-status-fix.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preparation/tests-status-fix.stderr": {
+      "bytes": 3543,
+      "sha256": "f7128752866354a3189142a0f1683ea6f892a6bc1c951b3e00778bee70c58b8e"
+    },
+    "preparation/http-status-fix-first/receipt.json": {
+      "bytes": 1001,
+      "sha256": "bd6f2d691e8693a11cdca4ab4180e80821357f7d706a82804e0fde5eb00f16ac"
+    },
+    "preparation/http-status-fix-first/test_http.py": {
+      "bytes": 15308,
+      "sha256": "356a5e27cf21b98384c469cf8ff335b7d07f0629605ced833331bf910edf8373"
+    }
+  },
+  "scope_unchanged": true,
+  "profile_unchanged": true,
+  "original_failures_unchanged": true,
+  "findings_resolved": [
+    "Known permanent finalHTTP>=400 outside RETRY_HTTP rules out retries even when installedcurl exits18.",
+    "Parent timeout parses retained bounded headers and applies same code28 policy; independent replay uses same recorded classification inputs."
+  ],
+  "tests": {
+    "current": 27,
+    "unchanged_original": 19,
+    "status": "passed",
+    "new_actual_cases": [
+      "Installedcurl short401/403/404/418 retained one-byte bodies exit18 and launch no retry",
+      "Bounded401/403/404 header+sleep times out and launches no retry",
+      "code18/28 boundaries permanent401/403/404/418 versus retry429/503 and absentHTTPheader"
+    ]
+  },
+  "first_new_fixture_attempt": "Retained0.15s child-startup timing failure; timeout fixture alone widened to1s while production remains1200s. Original code/source review repro distinguishes known observed status from absent headers.",
+  "actual22_readmission": "passed inside exact project.py invocation; all22 fullZIP/member trees and prior histories authenticated",
+  "projection": {
+    "main_receipt_serialized_bytes": 1680024,
+    "extra_main_receipt_reserve": 2097152,
+    "main_receipt_margin": 29777256,
+    "reference_total": 31705325,
+    "largest_reference": 7107110,
+    "projected_peak_owned_bytes": 2522266429,
+    "conditional_owned_margin": 698959043,
+    "assumptions": [
+      "Remaining PR117 decoded membership and logs use corresponding actual PR116 archives as a qualified sizing proxy; no remaining PR117 bytes are claimed observed.",
+      "Main receipt models three attempts for every35 request,70 failures with16KiB tracebacks,70 backoffs, large numeric fields, full source closure and all reference identities, plus2MiB extra serialization reserve.",
+      "Peak projection includes a simultaneous replacement main receipt and96MiB further sidecar/partial allowance; arbitrary full failed-body triples need not fit and fail closed under unchanged3GiB.",
+      "Every actual operation independently enforces exact size/hash,32MiB per receipt/reference, shared3GiB physical budget and8GiB free floor; this conditional forecast grants no cap exception."
+    ]
+  },
+  "source_unchanged": true,
+  "network_actions": 0,
+  "credentials_read": 0,
+  "launch_pending": true
+}

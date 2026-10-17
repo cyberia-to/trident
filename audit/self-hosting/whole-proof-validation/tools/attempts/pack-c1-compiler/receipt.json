@@ -1,0 +1,860 @@
+{
+  "schema": "trident/whole-proof-attack-command/v1",
+  "status": "passed",
+  "argv": [
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+    "pack-job",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/frozen/c2.dag",
+    "--manifest",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/package.json",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/job.dag",
+    "--arena-nodes",
+    "1000000000",
+    "--budget",
+    "20000000000",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "7200000",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "10000000000"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/attempts/pack-c1-compiler",
+  "environment": {
+    "PATH": ""
+  },
+  "caps": {
+    "wall": 120,
+    "cpu": 120,
+    "rss": 2147483648,
+    "file": 33554432
+  },
+  "sampled_scope_disk_cap": 27917287424,
+  "free_floor": 8589934592,
+  "sample_interval_seconds": 1,
+  "driver": {
+    "bytes": 5864,
+    "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+  },
+  "inputs_before": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/frozen/c2.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/package.json": {
+      "bytes": 16119,
+      "sha256": "30f12d2ac0e7be839ff8151f9b96d1b5c88c26998c665765eb1d45439317e022"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/0.tri": {
+      "bytes": 581,
+      "sha256": "4aa567d2473b3b0869c4366ad67ab29feb7407f090ebfca1791eb8790223d836"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/1.tri": {
+      "bytes": 884,
+      "sha256": "16385690ea13466b37f153d38e575445a7c48649fc719be5f48548127e6929b2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/2.tri": {
+      "bytes": 2611,
+      "sha256": "45178d2f5eebeaa16abe0b524081939dccdcc10d0b19924bca4504d93f7b41ea"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/3.tri": {
+      "bytes": 3401,
+      "sha256": "936600f40d2007f4b0c79634ec90bfb9da12bf709f2baea0166088ca1e974da0"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/4.tri": {
+      "bytes": 2623,
+      "sha256": "d4cb6ba9e52172d5cb9de45e9751c4c4acfd5c2988b3db291423ca117e1a1112"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/5.tri": {
+      "bytes": 3487,
+      "sha256": "186fbb74915fdf0f8e96a6541deac136caf2c54c6e33ab1b3613bf16157c8bf8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/6.tri": {
+      "bytes": 3696,
+      "sha256": "32a3d6f4f2adca39c2edfb83506a1e16a4f375ecdbc7749c0699b9bd04ecac28"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/7.tri": {
+      "bytes": 4940,
+      "sha256": "6737ecbd5315373d2b02a176e6712946686d30ebcae5fd198bd626d76fe2b3ec"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/8.tri": {
+      "bytes": 4491,
+      "sha256": "78ec09a75c9dcf74336421de8af3f373e4c043c32931c9e7483b35519297294e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/9.tri": {
+      "bytes": 1845,
+      "sha256": "6522f78e7a190b5768c0cc86c5291d205749465dfb74f8fccf5ed8c79bf8e362"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/10.tri": {
+      "bytes": 8005,
+      "sha256": "32bb6ce5a836d8399febe1d0d7712a73c16b18db13221a2011c17f45de0f9b89"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/11.tri": {
+      "bytes": 2062,
+      "sha256": "6baea2076545742c9902cc8eed6c0adbdf6e618a28ccc440d22d81190d020327"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/12.tri": {
+      "bytes": 3967,
+      "sha256": "b8105f960cbbf5bff2f9e1d7261ba4936e94f929be0c9d674bdfb99cf23149b9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/13.tri": {
+      "bytes": 2485,
+      "sha256": "0cb89f5bb22f2aa876a950278fae5a279a8059793815da5dc8124d3f709ade8b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/14.tri": {
+      "bytes": 4055,
+      "sha256": "efb517e16fc89570d96fb8809f00057ce7f440dd74650d1f3d1dd953bc4d2fb3"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/15.tri": {
+      "bytes": 4570,
+      "sha256": "15a7bc148449237eb353d68822d44141f63f31b12a90ccdcc62356038a7754db"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/16.tri": {
+      "bytes": 1172,
+      "sha256": "9f5640c682e02ab21c937ebdabbf6acd9860188e118c33abceacfd17f2d99a03"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/17.tri": {
+      "bytes": 4925,
+      "sha256": "dd634625d583ead38090f0960aa1e34d4c8f4fdef95f7e2adaf95258353bb878"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/18.tri": {
+      "bytes": 5978,
+      "sha256": "de96007aadcb0dac6d15c33987a83bb65d4d9aa22438867ab93826d6f53260b4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/19.tri": {
+      "bytes": 4607,
+      "sha256": "0619ab3982eb83fd8e7cdad31dd80ee18099f4d534cd1188944ce05a80dcc672"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/20.tri": {
+      "bytes": 1227,
+      "sha256": "8c7da25152f0ba3e64bd7fdc41280c0bf922a7d5d65bbe90c027f0fb8f882b62"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/21.tri": {
+      "bytes": 2036,
+      "sha256": "336435403596764b1b093c8125fdc28a8113f3189a28d3a956c2cc57692eabab"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/22.tri": {
+      "bytes": 9025,
+      "sha256": "4f076285e8003241aae6c5e899ef341a3f2a79b0f4c5ce03bb8c6955cdf612a2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/23.tri": {
+      "bytes": 3466,
+      "sha256": "bab0af2b459743779b632d054428f6cb26424cc7bc76596eeca9e0cc935fa84e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/24.tri": {
+      "bytes": 5842,
+      "sha256": "ae4c382120ed7aa5d11ff3a1991fb65b250a285934d02424c20da477674486a6"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/25.tri": {
+      "bytes": 4147,
+      "sha256": "93e428f0c34b955fd6e50f0b2033e06ea44b245ce8851c6345c68f961a67fcd9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/26.tri": {
+      "bytes": 1826,
+      "sha256": "b5ecc2d0475365aa33d5c21a537a401e4dbfe3702917989cac11de3d8c3c111c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/27.tri": {
+      "bytes": 7952,
+      "sha256": "ae412f7852541b6cae52f96b60643d1ee7563fbd87961e0e7814b1b6de896148"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/28.tri": {
+      "bytes": 1630,
+      "sha256": "b64f7fa548a7a4be1a8c4f2528cf98bb2266af78021abb462a3254b415fc22f1"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/29.tri": {
+      "bytes": 4472,
+      "sha256": "49063f797711ac307e45aa906232cc6fd773a84acf01d53029c4d1e47d20f872"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/30.tri": {
+      "bytes": 4497,
+      "sha256": "1aa05302f8de871173dc1c97f3da14317b891f0ce90e85ee39c0476b28d98926"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/31.tri": {
+      "bytes": 4697,
+      "sha256": "1e58e2fbc69ccea501564f129855308b175bc8ea8505807755ca9325f7e0fc5a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/32.tri": {
+      "bytes": 3337,
+      "sha256": "a7f1fb9e4829b46ccace804af871465a12780f17ebe25c86ea909860d245067e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/33.tri": {
+      "bytes": 1096,
+      "sha256": "bbf574f7589bf91cea996a8835beedc4381d47b8649fd1ae5963cede448d9b0e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/34.tri": {
+      "bytes": 3419,
+      "sha256": "90143c8ef2c3730d68d690cab96fb4f1e954058369aa18c41d2a8afa716f5dd4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/35.tri": {
+      "bytes": 833,
+      "sha256": "6bef585ab6ce5f81de44947c00fb72861bf6270a6f4acca87952db146b200911"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/36.tri": {
+      "bytes": 14226,
+      "sha256": "282c170961f2404fa56a103c93845c4d5b969b229de451485fc28eeb5e2cb87c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/37.tri": {
+      "bytes": 1314,
+      "sha256": "d343c1f589a5446637ddc2436880fa07010e5ffcdc84e04eaba7f330a2bac443"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/38.tri": {
+      "bytes": 1947,
+      "sha256": "ea7e896c9d5dd961ea5c04f090417085bd33cfef022b4add01707ad318ee5c06"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/39.tri": {
+      "bytes": 1309,
+      "sha256": "22b176acd62f643d8c32ad87a48950702e717e2cf376d5549f37d1c21af4d4c2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/40.tri": {
+      "bytes": 4071,
+      "sha256": "69e18c06f64b3e9a265833e85d41944c855c4299b52c530cb71e5515af9b46d4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/41.tri": {
+      "bytes": 4938,
+      "sha256": "a435c056cf9ebb4709061b0ba969951eb1b6ffe9f7d5c7be9f75211ea949ea35"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/42.tri": {
+      "bytes": 1880,
+      "sha256": "2ba0e4785aca4b9ce9bdd50b27ff16b4076930084618e0c279cb1dde39fb6900"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/43.tri": {
+      "bytes": 5698,
+      "sha256": "9a2cc8e7c7080ab1756143f38904d79d37a46df542762c1c52f3131baff40dfa"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/44.tri": {
+      "bytes": 2618,
+      "sha256": "0450109a0c7f2f87ba38d4bc51d9db3e0f19576dd9d60805c7a04288aca67d68"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/45.tri": {
+      "bytes": 3865,
+      "sha256": "85348e84d3df114d1cbde36db99d6ab81eef228cad308097ca8370d4a98ea14e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/46.tri": {
+      "bytes": 751,
+      "sha256": "37703da1296e7d2a43fd2efa43acd91041e38de7fa582487f1f543c25c3d4c23"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/47.tri": {
+      "bytes": 1995,
+      "sha256": "9bc8a0971dcf3a992c7a233f7c0e057c1d68af790fa6998385f293d9752eebf5"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/48.tri": {
+      "bytes": 12936,
+      "sha256": "a6bdebaed8ef736d699b6ce7a05b55dae4612c21350837532bd21df37914f27e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/49.tri": {
+      "bytes": 3023,
+      "sha256": "19c85212756eee7c0d1438d743053209df55888b9cacc3a541bf2255e5439f1d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/50.tri": {
+      "bytes": 4896,
+      "sha256": "16d6d63167270db9b2f256bf5dfde478d6870f636c721773d0ca984c19a3d8a4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/51.tri": {
+      "bytes": 1843,
+      "sha256": "5aa54f9bd8ddb2a8d649d559523d82102d9abe104f3372b07dc57120a009ddcb"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/52.tri": {
+      "bytes": 1599,
+      "sha256": "cb6d46970af649be621a0f09874387e2e165ec78566969896f23b9231cd25fd6"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/53.tri": {
+      "bytes": 11465,
+      "sha256": "718c36591327eefb58decbc9c876419b3b988b658590366fad1c05919f6edb60"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/54.tri": {
+      "bytes": 7185,
+      "sha256": "8c21e20b82854e7f82023c275ded0802ab345fc6155ea144f1d8ae48c0bf58e2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/55.tri": {
+      "bytes": 3357,
+      "sha256": "94792cf555ecb7c20e6281562af2d2a8d01a3e277974566842f4a48d15ee888e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/56.tri": {
+      "bytes": 4460,
+      "sha256": "57dbf7397b8d3a92e3142f7ba2878187a6e6725d59a323052f4e21e9360928a0"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/57.tri": {
+      "bytes": 1065,
+      "sha256": "b3498e95a140efb2ecb06c07f3bdeef9fa694893fcf372ed02bac74aec889be2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/58.tri": {
+      "bytes": 11204,
+      "sha256": "a8413d5c496c4758cf7cef95b7fecfb3b045c253a4c1fa4229b94457026126e4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/59.tri": {
+      "bytes": 6045,
+      "sha256": "5b60e2cf60d6d0b02382d7548c220f8ebef8e79ef60ccfe8821a86df0bad05ae"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/60.tri": {
+      "bytes": 7434,
+      "sha256": "70594036286ec8ceabcb71c0f9836934890827fc9ff286abf66f5500dda5c62f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/61.tri": {
+      "bytes": 4591,
+      "sha256": "165ef18ca19198c3f81ffe5a96229328e6c74780ddd1f81ac3bb039000d66e1e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/62.tri": {
+      "bytes": 4287,
+      "sha256": "b302787b116c2942ed2296bcc42a490f0492f3df817ebd938340ff2b22b3e4ba"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/63.tri": {
+      "bytes": 2563,
+      "sha256": "e1658d0c4e12d718217e626b50f2af74bd3ac76b2f785b29c077a125582ad053"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/64.tri": {
+      "bytes": 4366,
+      "sha256": "205855de91c4db11d997fb5c17cd26417f9205c29b8cd300c4f9db367837b2e4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/65.tri": {
+      "bytes": 3968,
+      "sha256": "44bc21ca51430a53b3765743bce738290fbdb7620f0cbb3f49f483224b26370a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/66.tri": {
+      "bytes": 2977,
+      "sha256": "1f4327d3da7e74e04f6c6eb214efe321810766d24b5222137cbf74bff6389306"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/67.tri": {
+      "bytes": 2925,
+      "sha256": "3a6b45b8889bbde83b1c4be3fdc235e09c1e7e48b027116b6b220b1d6f283158"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/68.tri": {
+      "bytes": 1167,
+      "sha256": "0b5ce202423f7e2e701082213bf6c7fbaa2ccc93e67aa62f54caeac6a8d84481"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/69.tri": {
+      "bytes": 3439,
+      "sha256": "2cc1ec05f692a24eb54db7458b4a4056918dd10a7e78c92c953a57b297998eae"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/70.tri": {
+      "bytes": 2711,
+      "sha256": "8f7088a61aeb5a1e6ff2af3fbaf21c43d2c840fa6493008c93603e4a3ca68112"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/71.tri": {
+      "bytes": 2042,
+      "sha256": "b6f5ad380b82ce8bf760cc2bdc1c9c6d8742d50aa27955829fba33db861425cb"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/72.tri": {
+      "bytes": 2217,
+      "sha256": "796fa0c7f8d96f74f18ad131648b995e9ac748cbefb42026870b1cdb146fad23"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/73.tri": {
+      "bytes": 7994,
+      "sha256": "db8b886307ed4bdfceac0386dcd8c32277bb67b0cc46eaf59c67f33280877868"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/74.tri": {
+      "bytes": 3074,
+      "sha256": "192fd20331a541e1fd4e47b4fd2ace95a87ddef8b2d37780273d50aeef5ad70e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/75.tri": {
+      "bytes": 3701,
+      "sha256": "74f02fe3adc2847ce50e0da39f866cae26c04878daabf53adfc39ced66bab384"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/76.tri": {
+      "bytes": 2243,
+      "sha256": "f72ba9ec0568bd4784386d7b2cc9a946fe2915ce45595050bade3d1b75c25a2e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/77.tri": {
+      "bytes": 1946,
+      "sha256": "2f06cd88eb350f402f6c9ae0118b3edb7a79ba2730747ada96bb01fc51852e89"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/78.tri": {
+      "bytes": 2396,
+      "sha256": "fada1a138d39418d1fcb69aca21e014abdb7c31c732328fc80060152107c672e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/79.tri": {
+      "bytes": 3341,
+      "sha256": "253ac4f3133e4d079bab6599d2df9c4bb4ecb1a952457b4a42c97dd585d9c8dc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/80.tri": {
+      "bytes": 3402,
+      "sha256": "0307964dc968f7450cd1f917b8f7d50df2314e5c81ef40b6796bd20fddda2ec5"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/81.tri": {
+      "bytes": 2139,
+      "sha256": "54bcf80c289fc09ffddfc30e904844ca96b7abf5124725078d37e80ac00aae71"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/82.tri": {
+      "bytes": 2521,
+      "sha256": "8c41e0531703fda83d13670e9b6d6c708f68238fc8d2d0c8594216d16308c6ea"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/83.tri": {
+      "bytes": 2020,
+      "sha256": "a405a2a7635de409c10c4ae314c7a822277c6d2e4e2df8fa3f2326d21144ff7b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/84.tri": {
+      "bytes": 5195,
+      "sha256": "98d9d599c19b11ad4b093824c587c09c5f3a103dec8f4d4b093459e75a1b532f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/85.tri": {
+      "bytes": 2550,
+      "sha256": "2fb9aaa832f79c4be974494cf09461651887959746ba3e4a0047e338acbd007a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/86.tri": {
+      "bytes": 5175,
+      "sha256": "83a64259516e2b1182e74605f43f5674c5308d97b89cd2e4a5f7b73d7730a11c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/87.tri": {
+      "bytes": 5181,
+      "sha256": "eec8b5cbe9364a5dab13205bea7e315a6ec5a14e2deb567e86db0bedabbe5fab"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/88.tri": {
+      "bytes": 12478,
+      "sha256": "89d0653ff2883c1ec5bed8443e86c320227affabbd99b5be9fa54cc2a4029790"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/89.tri": {
+      "bytes": 2130,
+      "sha256": "1c70fc4614edd8dafcf667536d488335ae31df436c7c1fd5c2306eb87f37c20b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/90.tri": {
+      "bytes": 12984,
+      "sha256": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/91.tri": {
+      "bytes": 323,
+      "sha256": "bed1495b40f6d3b0085961924fb2ac2bc6a37b22267110dfb8a2b71af6d58b19"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/92.tri": {
+      "bytes": 461,
+      "sha256": "45718423e4f0a72eb0e8528993f2c0b7bde9d858e6c7f8ebeaf53aaf313a210a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/93.tri": {
+      "bytes": 1026,
+      "sha256": "a2795c828bf8a325b82edd59bb73fac9909984e63b2144573183db0a7a4a5603"
+    }
+  },
+  "expected_exit": 0,
+  "metadata": null,
+  "started_ns": 1790909985452505000,
+  "sampled_peak_rss_bytes": 207355904,
+  "pid": 88504,
+  "latest_sample": {
+    "time_ns": 1790909987521634000,
+    "elapsed": 2.0691178329871036,
+    "processes": [
+      {
+        "pid": 88504,
+        "rss_bytes": 207355904
+      }
+    ],
+    "rss_bytes": 207355904,
+    "owned_bytes": 34642998,
+    "free_bytes": 89429921792
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 3.0783568330225535,
+  "inputs_after": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy": {
+      "bytes": 5635776,
+      "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/frozen/c2.dag": {
+      "bytes": 9691488,
+      "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/package.json": {
+      "bytes": 16119,
+      "sha256": "30f12d2ac0e7be839ff8151f9b96d1b5c88c26998c665765eb1d45439317e022"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/0.tri": {
+      "bytes": 581,
+      "sha256": "4aa567d2473b3b0869c4366ad67ab29feb7407f090ebfca1791eb8790223d836"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/1.tri": {
+      "bytes": 884,
+      "sha256": "16385690ea13466b37f153d38e575445a7c48649fc719be5f48548127e6929b2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/2.tri": {
+      "bytes": 2611,
+      "sha256": "45178d2f5eebeaa16abe0b524081939dccdcc10d0b19924bca4504d93f7b41ea"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/3.tri": {
+      "bytes": 3401,
+      "sha256": "936600f40d2007f4b0c79634ec90bfb9da12bf709f2baea0166088ca1e974da0"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/4.tri": {
+      "bytes": 2623,
+      "sha256": "d4cb6ba9e52172d5cb9de45e9751c4c4acfd5c2988b3db291423ca117e1a1112"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/5.tri": {
+      "bytes": 3487,
+      "sha256": "186fbb74915fdf0f8e96a6541deac136caf2c54c6e33ab1b3613bf16157c8bf8"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/6.tri": {
+      "bytes": 3696,
+      "sha256": "32a3d6f4f2adca39c2edfb83506a1e16a4f375ecdbc7749c0699b9bd04ecac28"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/7.tri": {
+      "bytes": 4940,
+      "sha256": "6737ecbd5315373d2b02a176e6712946686d30ebcae5fd198bd626d76fe2b3ec"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/8.tri": {
+      "bytes": 4491,
+      "sha256": "78ec09a75c9dcf74336421de8af3f373e4c043c32931c9e7483b35519297294e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/9.tri": {
+      "bytes": 1845,
+      "sha256": "6522f78e7a190b5768c0cc86c5291d205749465dfb74f8fccf5ed8c79bf8e362"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/10.tri": {
+      "bytes": 8005,
+      "sha256": "32bb6ce5a836d8399febe1d0d7712a73c16b18db13221a2011c17f45de0f9b89"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/11.tri": {
+      "bytes": 2062,
+      "sha256": "6baea2076545742c9902cc8eed6c0adbdf6e618a28ccc440d22d81190d020327"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/12.tri": {
+      "bytes": 3967,
+      "sha256": "b8105f960cbbf5bff2f9e1d7261ba4936e94f929be0c9d674bdfb99cf23149b9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/13.tri": {
+      "bytes": 2485,
+      "sha256": "0cb89f5bb22f2aa876a950278fae5a279a8059793815da5dc8124d3f709ade8b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/14.tri": {
+      "bytes": 4055,
+      "sha256": "efb517e16fc89570d96fb8809f00057ce7f440dd74650d1f3d1dd953bc4d2fb3"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/15.tri": {
+      "bytes": 4570,
+      "sha256": "15a7bc148449237eb353d68822d44141f63f31b12a90ccdcc62356038a7754db"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/16.tri": {
+      "bytes": 1172,
+      "sha256": "9f5640c682e02ab21c937ebdabbf6acd9860188e118c33abceacfd17f2d99a03"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/17.tri": {
+      "bytes": 4925,
+      "sha256": "dd634625d583ead38090f0960aa1e34d4c8f4fdef95f7e2adaf95258353bb878"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/18.tri": {
+      "bytes": 5978,
+      "sha256": "de96007aadcb0dac6d15c33987a83bb65d4d9aa22438867ab93826d6f53260b4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/19.tri": {
+      "bytes": 4607,
+      "sha256": "0619ab3982eb83fd8e7cdad31dd80ee18099f4d534cd1188944ce05a80dcc672"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/20.tri": {
+      "bytes": 1227,
+      "sha256": "8c7da25152f0ba3e64bd7fdc41280c0bf922a7d5d65bbe90c027f0fb8f882b62"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/21.tri": {
+      "bytes": 2036,
+      "sha256": "336435403596764b1b093c8125fdc28a8113f3189a28d3a956c2cc57692eabab"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/22.tri": {
+      "bytes": 9025,
+      "sha256": "4f076285e8003241aae6c5e899ef341a3f2a79b0f4c5ce03bb8c6955cdf612a2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/23.tri": {
+      "bytes": 3466,
+      "sha256": "bab0af2b459743779b632d054428f6cb26424cc7bc76596eeca9e0cc935fa84e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/24.tri": {
+      "bytes": 5842,
+      "sha256": "ae4c382120ed7aa5d11ff3a1991fb65b250a285934d02424c20da477674486a6"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/25.tri": {
+      "bytes": 4147,
+      "sha256": "93e428f0c34b955fd6e50f0b2033e06ea44b245ce8851c6345c68f961a67fcd9"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/26.tri": {
+      "bytes": 1826,
+      "sha256": "b5ecc2d0475365aa33d5c21a537a401e4dbfe3702917989cac11de3d8c3c111c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/27.tri": {
+      "bytes": 7952,
+      "sha256": "ae412f7852541b6cae52f96b60643d1ee7563fbd87961e0e7814b1b6de896148"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/28.tri": {
+      "bytes": 1630,
+      "sha256": "b64f7fa548a7a4be1a8c4f2528cf98bb2266af78021abb462a3254b415fc22f1"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/29.tri": {
+      "bytes": 4472,
+      "sha256": "49063f797711ac307e45aa906232cc6fd773a84acf01d53029c4d1e47d20f872"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/30.tri": {
+      "bytes": 4497,
+      "sha256": "1aa05302f8de871173dc1c97f3da14317b891f0ce90e85ee39c0476b28d98926"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/31.tri": {
+      "bytes": 4697,
+      "sha256": "1e58e2fbc69ccea501564f129855308b175bc8ea8505807755ca9325f7e0fc5a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/32.tri": {
+      "bytes": 3337,
+      "sha256": "a7f1fb9e4829b46ccace804af871465a12780f17ebe25c86ea909860d245067e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/33.tri": {
+      "bytes": 1096,
+      "sha256": "bbf574f7589bf91cea996a8835beedc4381d47b8649fd1ae5963cede448d9b0e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/34.tri": {
+      "bytes": 3419,
+      "sha256": "90143c8ef2c3730d68d690cab96fb4f1e954058369aa18c41d2a8afa716f5dd4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/35.tri": {
+      "bytes": 833,
+      "sha256": "6bef585ab6ce5f81de44947c00fb72861bf6270a6f4acca87952db146b200911"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/36.tri": {
+      "bytes": 14226,
+      "sha256": "282c170961f2404fa56a103c93845c4d5b969b229de451485fc28eeb5e2cb87c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/37.tri": {
+      "bytes": 1314,
+      "sha256": "d343c1f589a5446637ddc2436880fa07010e5ffcdc84e04eaba7f330a2bac443"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/38.tri": {
+      "bytes": 1947,
+      "sha256": "ea7e896c9d5dd961ea5c04f090417085bd33cfef022b4add01707ad318ee5c06"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/39.tri": {
+      "bytes": 1309,
+      "sha256": "22b176acd62f643d8c32ad87a48950702e717e2cf376d5549f37d1c21af4d4c2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/40.tri": {
+      "bytes": 4071,
+      "sha256": "69e18c06f64b3e9a265833e85d41944c855c4299b52c530cb71e5515af9b46d4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/41.tri": {
+      "bytes": 4938,
+      "sha256": "a435c056cf9ebb4709061b0ba969951eb1b6ffe9f7d5c7be9f75211ea949ea35"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/42.tri": {
+      "bytes": 1880,
+      "sha256": "2ba0e4785aca4b9ce9bdd50b27ff16b4076930084618e0c279cb1dde39fb6900"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/43.tri": {
+      "bytes": 5698,
+      "sha256": "9a2cc8e7c7080ab1756143f38904d79d37a46df542762c1c52f3131baff40dfa"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/44.tri": {
+      "bytes": 2618,
+      "sha256": "0450109a0c7f2f87ba38d4bc51d9db3e0f19576dd9d60805c7a04288aca67d68"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/45.tri": {
+      "bytes": 3865,
+      "sha256": "85348e84d3df114d1cbde36db99d6ab81eef228cad308097ca8370d4a98ea14e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/46.tri": {
+      "bytes": 751,
+      "sha256": "37703da1296e7d2a43fd2efa43acd91041e38de7fa582487f1f543c25c3d4c23"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/47.tri": {
+      "bytes": 1995,
+      "sha256": "9bc8a0971dcf3a992c7a233f7c0e057c1d68af790fa6998385f293d9752eebf5"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/48.tri": {
+      "bytes": 12936,
+      "sha256": "a6bdebaed8ef736d699b6ce7a05b55dae4612c21350837532bd21df37914f27e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/49.tri": {
+      "bytes": 3023,
+      "sha256": "19c85212756eee7c0d1438d743053209df55888b9cacc3a541bf2255e5439f1d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/50.tri": {
+      "bytes": 4896,
+      "sha256": "16d6d63167270db9b2f256bf5dfde478d6870f636c721773d0ca984c19a3d8a4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/51.tri": {
+      "bytes": 1843,
+      "sha256": "5aa54f9bd8ddb2a8d649d559523d82102d9abe104f3372b07dc57120a009ddcb"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/52.tri": {
+      "bytes": 1599,
+      "sha256": "cb6d46970af649be621a0f09874387e2e165ec78566969896f23b9231cd25fd6"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/53.tri": {
+      "bytes": 11465,
+      "sha256": "718c36591327eefb58decbc9c876419b3b988b658590366fad1c05919f6edb60"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/54.tri": {
+      "bytes": 7185,
+      "sha256": "8c21e20b82854e7f82023c275ded0802ab345fc6155ea144f1d8ae48c0bf58e2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/55.tri": {
+      "bytes": 3357,
+      "sha256": "94792cf555ecb7c20e6281562af2d2a8d01a3e277974566842f4a48d15ee888e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/56.tri": {
+      "bytes": 4460,
+      "sha256": "57dbf7397b8d3a92e3142f7ba2878187a6e6725d59a323052f4e21e9360928a0"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/57.tri": {
+      "bytes": 1065,
+      "sha256": "b3498e95a140efb2ecb06c07f3bdeef9fa694893fcf372ed02bac74aec889be2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/58.tri": {
+      "bytes": 11204,
+      "sha256": "a8413d5c496c4758cf7cef95b7fecfb3b045c253a4c1fa4229b94457026126e4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/59.tri": {
+      "bytes": 6045,
+      "sha256": "5b60e2cf60d6d0b02382d7548c220f8ebef8e79ef60ccfe8821a86df0bad05ae"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/60.tri": {
+      "bytes": 7434,
+      "sha256": "70594036286ec8ceabcb71c0f9836934890827fc9ff286abf66f5500dda5c62f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/61.tri": {
+      "bytes": 4591,
+      "sha256": "165ef18ca19198c3f81ffe5a96229328e6c74780ddd1f81ac3bb039000d66e1e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/62.tri": {
+      "bytes": 4287,
+      "sha256": "b302787b116c2942ed2296bcc42a490f0492f3df817ebd938340ff2b22b3e4ba"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/63.tri": {
+      "bytes": 2563,
+      "sha256": "e1658d0c4e12d718217e626b50f2af74bd3ac76b2f785b29c077a125582ad053"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/64.tri": {
+      "bytes": 4366,
+      "sha256": "205855de91c4db11d997fb5c17cd26417f9205c29b8cd300c4f9db367837b2e4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/65.tri": {
+      "bytes": 3968,
+      "sha256": "44bc21ca51430a53b3765743bce738290fbdb7620f0cbb3f49f483224b26370a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/66.tri": {
+      "bytes": 2977,
+      "sha256": "1f4327d3da7e74e04f6c6eb214efe321810766d24b5222137cbf74bff6389306"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/67.tri": {
+      "bytes": 2925,
+      "sha256": "3a6b45b8889bbde83b1c4be3fdc235e09c1e7e48b027116b6b220b1d6f283158"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/68.tri": {
+      "bytes": 1167,
+      "sha256": "0b5ce202423f7e2e701082213bf6c7fbaa2ccc93e67aa62f54caeac6a8d84481"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/69.tri": {
+      "bytes": 3439,
+      "sha256": "2cc1ec05f692a24eb54db7458b4a4056918dd10a7e78c92c953a57b297998eae"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/70.tri": {
+      "bytes": 2711,
+      "sha256": "8f7088a61aeb5a1e6ff2af3fbaf21c43d2c840fa6493008c93603e4a3ca68112"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/71.tri": {
+      "bytes": 2042,
+      "sha256": "b6f5ad380b82ce8bf760cc2bdc1c9c6d8742d50aa27955829fba33db861425cb"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/72.tri": {
+      "bytes": 2217,
+      "sha256": "796fa0c7f8d96f74f18ad131648b995e9ac748cbefb42026870b1cdb146fad23"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/73.tri": {
+      "bytes": 7994,
+      "sha256": "db8b886307ed4bdfceac0386dcd8c32277bb67b0cc46eaf59c67f33280877868"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/74.tri": {
+      "bytes": 3074,
+      "sha256": "192fd20331a541e1fd4e47b4fd2ace95a87ddef8b2d37780273d50aeef5ad70e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/75.tri": {
+      "bytes": 3701,
+      "sha256": "74f02fe3adc2847ce50e0da39f866cae26c04878daabf53adfc39ced66bab384"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/76.tri": {
+      "bytes": 2243,
+      "sha256": "f72ba9ec0568bd4784386d7b2cc9a946fe2915ce45595050bade3d1b75c25a2e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/77.tri": {
+      "bytes": 1946,
+      "sha256": "2f06cd88eb350f402f6c9ae0118b3edb7a79ba2730747ada96bb01fc51852e89"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/78.tri": {
+      "bytes": 2396,
+      "sha256": "fada1a138d39418d1fcb69aca21e014abdb7c31c732328fc80060152107c672e"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/79.tri": {
+      "bytes": 3341,
+      "sha256": "253ac4f3133e4d079bab6599d2df9c4bb4ecb1a952457b4a42c97dd585d9c8dc"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/80.tri": {
+      "bytes": 3402,
+      "sha256": "0307964dc968f7450cd1f917b8f7d50df2314e5c81ef40b6796bd20fddda2ec5"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/81.tri": {
+      "bytes": 2139,
+      "sha256": "54bcf80c289fc09ffddfc30e904844ca96b7abf5124725078d37e80ac00aae71"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/82.tri": {
+      "bytes": 2521,
+      "sha256": "8c41e0531703fda83d13670e9b6d6c708f68238fc8d2d0c8594216d16308c6ea"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/83.tri": {
+      "bytes": 2020,
+      "sha256": "a405a2a7635de409c10c4ae314c7a822277c6d2e4e2df8fa3f2326d21144ff7b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/84.tri": {
+      "bytes": 5195,
+      "sha256": "98d9d599c19b11ad4b093824c587c09c5f3a103dec8f4d4b093459e75a1b532f"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/85.tri": {
+      "bytes": 2550,
+      "sha256": "2fb9aaa832f79c4be974494cf09461651887959746ba3e4a0047e338acbd007a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/86.tri": {
+      "bytes": 5175,
+      "sha256": "83a64259516e2b1182e74605f43f5674c5308d97b89cd2e4a5f7b73d7730a11c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/87.tri": {
+      "bytes": 5181,
+      "sha256": "eec8b5cbe9364a5dab13205bea7e315a6ec5a14e2deb567e86db0bedabbe5fab"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/88.tri": {
+      "bytes": 12478,
+      "sha256": "89d0653ff2883c1ec5bed8443e86c320227affabbd99b5be9fa54cc2a4029790"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/89.tri": {
+      "bytes": 2130,
+      "sha256": "1c70fc4614edd8dafcf667536d488335ae31df436c7c1fd5c2306eb87f37c20b"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/90.tri": {
+      "bytes": 12984,
+      "sha256": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/91.tri": {
+      "bytes": 323,
+      "sha256": "bed1495b40f6d3b0085961924fb2ac2bc6a37b22267110dfb8a2b71af6d58b19"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/92.tri": {
+      "bytes": 461,
+      "sha256": "45718423e4f0a72eb0e8528993f2c0b7bde9d858e6c7f8ebeaf53aaf313a210a"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks/inputs/c1/compiler/sources/93.tri": {
+      "bytes": 1026,
+      "sha256": "a2795c828bf8a325b82edd59bb73fac9909984e63b2144573183db0a7a4a5603"
+    }
+  },
+  "ended_ns": 1790909988539244000,
+  "files": {
+    "stdout": {
+      "bytes": 27442,
+      "sha256": "ec86ad3f1f228cc3256fd051e558671a5fcaf5559e9e7d8b9d74de24de34d060"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resources.jsonl": {
+      "bytes": 585,
+      "sha256": "9f928082ecd7c322e2bd69ab6091ba112fa6843c100e59f9ba5d2f4d69f8ebe3"
+    }
+  }
+}

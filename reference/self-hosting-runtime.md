@@ -4,7 +4,8 @@ SH0.4 contract for Trident0.4 on nox through Joy. The raw ART1 source profile
 uses reusable code tables and the bounded heap evaluator. The flat bundle/proof
 profile retains its legacy inline/unrolled lowering. The
 [runtime baseline](../audit/self-hosting/runtime-baseline.json) records that
-older profile's limits; the progress ledger tracks the remaining SH1 gates.
+older profile's limits; the [progress ledger](../audit/self-hosting-progress.md)
+tracks current native compiler acceptance and the remaining gates.
 
 ## Source execution
 
@@ -165,6 +166,19 @@ Measure physical arena size, codec workspace, frame storage and trace mode;
 logical node count is not measured RSS. Worker cancellation/time supervision
 must not leave a detached computation that later publishes an artifact.
 
+Joy may explicitly select bounded compacting execution for pure run-only jobs;
+see its structured-run contract. The append-only policy above remains the
+default. In compacting mode LIM1 arena_nodes is a conservative cumulative fresh
+allocation allowance: loaded nodes and reconstructed collected values charge,
+current hash-cons hits do not. A separate host resident-node limit bounds
+storage, and a separate collection-work limit bounds scans/index rebuilding.
+Collection never replenishes either cumulative allowance or guest gas. The
+loaded program/input arena stays pinned; only internal unreachable temporaries
+are reclaimed. Report cumulative allocations, resident/peak nodes, reclaimed
+nodes, passes, collection work and scratch storage separately. Successful noun
+identity and gas agree with append-only execution, while internal Order values
+and allocation history need not. Traced execution retains its existing policy.
+
 NOXDAG01 preserves unique DAG nodes and complete topology. Never flatten output
 or recursively print shared nouns into exponentially expanded bracket text.
 Encode and validate successful output fully before atomic publication. Existing
@@ -172,16 +186,17 @@ files remain intact on execution, encoding or publication failure. The host may
 serialize/import/export nouns and validate protocol records; it must not lex,
 parse, typecheck or finish the guest compiler's generated program.
 
-## Joy admission and first SH1 delivery
+## Joy structured admission
 
-Add an explicit structured raw-artifact run API/command alongside the existing
-flat ProgramBundle path. Accept machine0 ART1 profile(0,0), a raw NOXDAG01 input,
-and explicit transport/reduction/node/frame ceilings. Return complete raw output
-plus its identity and successful charged cost. Profile(1,1) is admitted only
-when production JOB1/RES1 binding/admission is implemented; a hand-built fixture
-is not a compiler. Run-only uses NoTrace. No automatic proof fallback.
+Joy provides an explicit structured raw-artifact run API/command alongside the
+existing flat ProgramBundle path. It accepts machine0 ART1 profile(0,0), a raw
+NOXDAG01 input, and explicit transport/reduction/node/frame ceilings, returning
+complete raw output plus its identity and successful charged cost. Compiler
+profile(1,1) uses implemented JOB1 admission and RES1 binding/validation.
+Hand-built fixtures alone do not establish guest compiler acceptance. Run-only
+uses NoTrace. No automatic proof fallback.
 
-First acceptance commands belong in the implementing owner's receipt. Fixtures
+Acceptance commands and results belong in the implementing owner's receipt. Fixtures
 must cover topology distinction, shared deep DAG, runtime-generated formula,
 input/output byte boundaries, arena exhaustion during execution, frame failure,
 budget failure, unsupported services, failed atomic publication and no-overwrite.
@@ -197,8 +212,12 @@ extend the production Zheng relation: it currently rejects dynamic continuations
 and variable shapes. SH7 must bind complete program/input/output particles,
 execution budget and supported control flow to the same verified execution.
 New artifact wrappers or copied source hashes alone prove nothing about that
-relation. SH8 needs native proofs of both complete self-builds. Triton-backed
-JOYZK003 remains a distinct profile and cannot satisfy native proof independence.
+relation. SH8 needs native proofs of both complete self-builds. Joy uses the
+soft3 proof stack only. Its native `JOYZH001` private profile covers the bounded
+static relation, including atom call witnesses and hidden queries over public
+tables. The compiler's dynamic continuations and variable data shapes still
+need the SH7 extension; private proof support alone does not close SH7 or SH8.
+Retired foreign private artifacts cannot satisfy native proof independence.
 
 Owners: Trident specifies source semantics/code layout; nox enforces reduction,
 allocation and frame behavior; Joy enforces transport/admission/publication;

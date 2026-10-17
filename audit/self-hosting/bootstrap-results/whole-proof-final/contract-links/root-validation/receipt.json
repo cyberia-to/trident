@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "verify-retained.py",
+    "--originals"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/contract-links",
+  "started_ns": 1790988737399351000,
+  "ended_ns": 1790988737452135000,
+  "exit_code": 0,
+  "base": "def4c69cc581c7a0c189977bc4ff7c546af7aa64",
+  "exact_url_substitutions": [
+    {
+      "old": "../../soft3/specs/execution-model.md",
+      "new": "https://github.com/cyberia-to/soft3/blob/4820c3d032c3c336d725f18e7b3fb13816eeb128/specs/execution-model.md"
+    },
+    {
+      "old": "../../joy/specs/private-execution.md",
+      "new": "https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/private-execution.md"
+    },
+    {
+      "old": "../../joy/specs/structured-certificates.md",
+      "new": "https://github.com/cyberia-to/joy/blob/89088bb27a2d6eaa63ec85aaa2eaec08028c28ad/specs/structured-certificates.md"
+    }
+  ],
+  "target_validation": {
+    "bytes": 18314,
+    "sha256": "500004e715858043fa7f3fd9da3a65922311bf83ed8b616f6bb6cb062b5a037f"
+  },
+  "edit_validation": {
+    "bytes": 5307,
+    "sha256": "2908cb579aa30bde45933ebde73899d1f262beda678a3c72a9f00787b1acd9b3"
+  },
+  "originals": 50,
+  "reference_only": 7,
+  "streams": {
+    "stdout": {
+      "bytes": 415,
+      "sha256": "81441188aeff75c6f625745150d1048d240824489f88726e9c13864da8c24419"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "status": "passed-final-companion-sh8-document-delivery",
+  "scope": "Companion README records actual frozenS1 public-profile SH8 acceptance, with original Joy6e0 binary and original failures preserved. Package source/binaries, host ceilings, versions and owner publication remain separate. No native proof/test rerun, merge or default/tag action.",
+  "trident_acceptance_commit": "a6b12e584719b69b64a606c5c4a54d6f6c7ae929",
+  "actual_summary": {
+    "original": "whole-proof-final-delivery-preparation/staging/actual-1/summary.json",
+    "bytes": 5404,
+    "sha256": "7857fe9dc809faff1e65ca00ac11eab86c90c14808a2a82c19a906d1400a5214"
+  },
+  "link_validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/receipt.json",
+    "bytes": 2750,
+    "sha256": "b49fafb937113fae1bea1ea2780a7f7451d164b9ce6731b91b8dc16bc8f6e689"
+  },
+  "repositories": {
+    "joy": {
+      "head": "c5ededb34b4a9ea82b77c2cb540b81be818750d2",
+      "base": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+      "tree": "abf552bd0205a2c1cf429152cdefb13ab747d969",
+      "changed_paths": [
+        "README.md"
+      ],
+      "document": {
+        "bytes": 8233,
+        "sha256": "dcbb4e7d0bf9f94897fd67dd9650a7f770f37d249664c38f134e9c26b2e9f8b9"
+      },
+      "clean": true,
+      "all_other_tracked_paths_unchanged": true,
+      "diff_check_exit": 0,
+      "pull_request": {
+        "baseRefName": "release/0.4",
+        "baseRefOid": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+        "body": "Replace the pending SH8 statement with the accepted frozen S1 public-profile result, linked to immutable Trident commit a6b12e584719b69b64a606c5c4a54d6f6c7ae929. The documented evidence covers both complete self-build proofs, fresh verification, exact extracted C2/C3 artifacts, 547 corpus observations, 23 distinct rejections and two original positive controls per generation.\n\nThe text retains the original Joy6e0 installation and failed diagnostic histories, and links the source bridge separating those proof runs from packaged Joydd61 host-ceiling/distribution validation. Product versions and owner-controlled release actions are unchanged.\n\nValidation: README-only diff and git diff --check pass; acceptance, source-bridge and public-summary Git blobs exactly match authenticated GitHub contents. A fresh-prefix Rust1.89 offline source-equivalent warm install passed in 0.243 seconds with zero warnings/compilation and unchanged Joy SHA256 7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071. No native proof was rerun.\n",
+        "headRefName": "docs/0.4-final-proof-acceptance",
+        "headRefOid": "c5ededb34b4a9ea82b77c2cb540b81be818750d2",
+        "isDraft": false,
+        "mergeStateStatus": "CLEAN",
+        "number": 31,
+        "state": "OPEN",
+        "statusCheckRollup": [],
+        "title": "docs: record accepted frozen S1 self-build proofs",
+        "url": "https://github.com/cyberia-to/joy/pull/31"
+      },
+      "published_document_blob": "c160abc647e50eb27c21f06e8e8faede8b086bd4",
+      "install": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/joy-install/postinstall-1/receipt.json",
+        "bytes": 8139,
+        "sha256": "df379299f74ff881edc8dded1ae5bc2de617b1451dc0f96a42ff9b1de607580b"
+      },
+      "install_seconds": 0.24289695802144706,
+      "installed_binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/joy-install/postinstall-1/installed/bin/joy",
+        "bytes": 5652336,
+        "sha256": "7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071"
+      },
+      "warm_target_size_unchanged": true
+    },
+    "trisha": {
+      "head": "faca656ec1c6e5198433f97f59a2156262da006a",
+      "base": "c9f442c58005249d14e95fc81f125ff7f864ab07",
+      "tree": "afda1e6b48ca542962eb6e452f3186ecac351147",
+      "changed_paths": [
+        "audit/README.md"
+      ],
+      "document": {
+        "bytes": 7167,
+        "sha256": "df9c8f60cd459424bff0ae26af71d4e433cd8552b028a2e6bb88cabce5d36afd"
+      },
+      "clean": true,
+      "all_other_tracked_paths_unchanged": true,
+      "diff_check_exit": 0,
+      "pull_request": {
+        "baseRefName": "release/0.4",
+        "baseRefOid": "c9f442c58005249d14e95fc81f125ff7f864ab07",
+        "body": "Replace the pending SH8 statement with the accepted frozen S1 public-profile result, linked to immutable Trident commit a6b12e584719b69b64a606c5c4a54d6f6c7ae929. The documented evidence covers both complete self-build proofs, fresh verification, exact extracted C2/C3 artifacts, 547 corpus observations, 23 distinct rejections and two original positive controls per generation.\n\nThe text retains the original Joy6e0 installation and failed diagnostic histories, and links the source bridge separating those proof runs from packaged Joydd61 host-ceiling/distribution validation. Product versions and owner-controlled release actions are unchanged.\n\nValidation: audit/README.md-only diff and git diff --check pass; acceptance, source-bridge and public-summary Git blobs exactly match authenticated GitHub contents. A fresh-prefix Rust1.89 offline source-equivalent warm install passed in 0.611 seconds with zero warnings/compilation and unchanged Trisha SHA256 fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f. Frozen source bindings are unchanged. No native proof was rerun.\n",
+        "headRefName": "docs/0.4-final-proof-acceptance",
+        "headRefOid": "faca656ec1c6e5198433f97f59a2156262da006a",
+        "isDraft": false,
+        "mergeStateStatus": "CLEAN",
+        "number": 28,
+        "state": "OPEN",
+        "statusCheckRollup": [],
+        "title": "docs: record accepted frozen S1 self-build proofs",
+        "url": "https://github.com/cyberia-to/trisha/pull/28"
+      },
+      "published_document_blob": "3ebda0f636519acca37128fe4f20f9d83119998d",
+      "install": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/trisha-install/postinstall-1/receipt.json",
+        "bytes": 8190,
+        "sha256": "f625255a845780b6f486049a8e47eeecfc75242b0b7d3ebd230336e9d5caa5d6"
+      },
+      "install_seconds": 0.6106960839824751,
+      "installed_binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/trisha-install/postinstall-1/installed/bin/trisha",
+        "bytes": 14091840,
+        "sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+      },
+      "warm_target_size_unchanged": true
+    }
+  },
+  "install_scope": "Fresh-prefix offline Rust1.89 installations from source-equivalent accepted archive paths and warm targets, after exact docs commits; no compilation from new worktree paths.",
+  "checks": "Authenticated exact target bodies and published README bodies; docs-only scope and diffcheck; required warm prefix installs, exact binary and source guards. Current PR statusCheckRollup arrays are empty; no native workflow dispatched."
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "whole-proof-final-checker-source-review-v1",
+  "status": "reviewed-with-minor-hardening",
+  "reviewed_utc": "2026-10-02T04:49:28.729734+00:00",
+  "source": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-independent/source-ba64c5f455f8d8bac2fa85c6890cced8e3cab38d03899ed7afec558e280ba868.py",
+    "bytes": 23163,
+    "sha256": "ba64c5f455f8d8bac2fa85c6890cced8e3cab38d03899ed7afec558e280ba868"
+  },
+  "scope": "Read-only source review and AST parsing. Final checker not executed; no full certificate read or copied. Root owns final evidence execution.",
+  "resolved_initial_findings": [
+    "case-recipe-command-binding",
+    "required-log-membership",
+    "fresh-rechain-observation-field",
+    "corpus-provenance-and-path-binding"
+  ],
+  "findings": [
+    {
+      "id": "complete-corpus-input-inventory",
+      "severity": "minor",
+      "detail": "The checker requires compiler membership but permits arbitrary subsets of the five corpus input identities. The pinned runtime wrapper already records and checks compiler, Joy, fresh receipt, fresh stdout and Joy compiler_vectors.json. Require that exact key set for complete evidence replay."
+    }
+  ],
+  "compatibility_checks": [
+    "Producer and fresh-verifier exact argv/file inventory match pinned whole-proof/run.py.",
+    "Diagnostic exact argv, input identities, metadata, caps and log inventory match guard.py and whole_suite.py.",
+    "All framing helper modes expose source_records and source_decoded_bytes; semantic helper modes expose source_sha256.",
+    "Index schema/source dimensions and all four canonical sidecar paths match helper code.",
+    "Rechain success omits only elapsed time and explicitly rejects prover observations.",
+    "Corpus orchestration uses the same absolute Python executable as the child commands; ordering and cwd match generation_corpora.",
+    "Canonical corpus_result checks exact extracted compiler path and identity; retained manifest excludes final receipt/manifest files."
+  ],
+  "nonblocking_observations": [
+    "Repeated proof identity calls inside per-case input maps cause many complete 10\u201312GB reads per generation. This is an I/O concern, not a semantic failure."
+  ],
+  "limitations": [
+    "Source-only review; complete final receipt replay remains pending.",
+    "No source edits made."
+  ]
+}

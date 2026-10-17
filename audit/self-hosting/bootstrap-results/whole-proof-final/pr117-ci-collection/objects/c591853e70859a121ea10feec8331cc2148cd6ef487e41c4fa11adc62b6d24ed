@@ -1,0 +1,42 @@
+"""Real installed curl HTTPS redirects with ephemeral fixture CA and fake credential."""
+import http.server,os,ssl,subprocess,tempfile,threading,unittest
+from pathlib import Path
+import http_policy as policy
+
+class CurlHttpsTests(unittest.TestCase):
+    def probe(self,hostname,downgrade=False):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);config=root/'openssl.cnf';cert=root/'cert.pem';key=root/'key.pem'
+            config.write_text('[req]\nprompt=no\ndistinguished_name=dn\nx509_extensions=ext\n[dn]\nCN=localhost\n[ext]\nsubjectAltName=DNS:localhost,IP:127.0.0.1\nbasicConstraints=critical,CA:TRUE\nkeyUsage=digitalSignature,keyEncipherment,keyCertSign\nextendedKeyUsage=serverAuth\n')
+            generated=subprocess.run(['/usr/bin/openssl','req','-new','-x509','-nodes','-newkey','rsa:2048','-sha256','-keyout',str(key),'-out',str(cert),'-days','1','-config',str(config)],capture_output=True,timeout=15);self.assertEqual(generated.returncode,0)
+            context=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER);context.load_cert_chain(cert,key);seen=[]
+            class Target(http.server.BaseHTTPRequestHandler):
+                def do_GET(self):seen.append(('target',self.headers.get('Authorization')));self.send_response(200);self.end_headers();self.wfile.write(b'okay')
+                def log_message(self,*args):pass
+            target=http.server.HTTPServer(('127.0.0.1',0),Target)
+            if not downgrade:target.socket=context.wrap_socket(target.socket,server_side=True)
+            class Origin(http.server.BaseHTTPRequestHandler):
+                def do_GET(self):seen.append(('origin',self.headers.get('Authorization')));self.send_response(302);self.send_header('Location',f'{"http" if downgrade else "https"}://{hostname}:{target.server_port}/file');self.end_headers()
+                def log_message(self,*args):pass
+            origin=http.server.HTTPServer(('127.0.0.1',0),Origin);origin.socket=context.wrap_socket(origin.socket,server_side=True);threads=[];read_fd,write_fd=os.pipe()
+            try:
+                for server in (target,origin):
+                    thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();threads.append(thread)
+                args=['/usr/bin/curl','-q','--silent','--show-error','--http1.1','--location','--max-redirs','1','--connect-timeout','2','--max-time','5','--proto','=https','--proto-redir','=https','--config','-','--cacert',str(cert),'--dump-header',f'/dev/fd/{write_fd}','--url',f'https://127.0.0.1:{origin.server_port}/file']
+                token=b'B'*40
+                with subprocess.Popen(args,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,pass_fds=(write_fd,),env={'PATH':'','LANG':'C'}) as child:
+                    os.close(write_fd);write_fd=None;stdout,stderr=child.communicate(policy.token_config(token),timeout=10)
+                headers=os.read(read_fd,65536)
+                if downgrade:
+                    self.assertNotEqual(child.returncode,0);self.assertEqual(stdout,b'');self.assertEqual(seen,[('origin','Bearer '+token.decode())]);self.assertEqual(policy.headers(headers,True)['statuses'],[302])
+                else:
+                    self.assertEqual(child.returncode,0,stderr.decode());self.assertEqual(stderr,b'');self.assertEqual(stdout,b'okay');self.assertEqual(seen,[('origin','Bearer '+token.decode()),('target',None)]);self.assertEqual(policy.headers(headers,True)['statuses'],[302,200])
+            finally:
+                for server in (origin,target):server.shutdown();server.server_close()
+                for thread in threads:thread.join(timeout=2)
+                os.close(read_fd)
+                if write_fd is not None:os.close(write_fd)
+    def test_https_same_hostname_cross_port_auth_is_stripped(self):self.probe('127.0.0.1')
+    def test_https_different_hostname_auth_is_stripped(self):self.probe('localhost')
+    def test_https_downgrade_blocked_before_target(self):self.probe('localhost',True)
+if __name__=='__main__':unittest.main()

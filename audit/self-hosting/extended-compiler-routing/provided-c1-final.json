@@ -1,0 +1,302 @@
+{
+  "status": "passed",
+  "binary_sha256": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "compiler": {
+    "sha256": "67fd57be4b610d4716fc550c28fba9034782e003a21188c95f12bc03d85c92d3",
+    "particle": "f2f7375fc6b9154adb92e826f6eb216ec6bdb32ed6182ef3f658d09f1a61ffe6",
+    "dag_entries": 100903
+  },
+  "compiler_mode": "provided",
+  "compiler_path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/scaled-c1.dag",
+  "compiler_sha256_start": "67fd57be4b610d4716fc550c28fba9034782e003a21188c95f12bc03d85c92d3",
+  "compiler_sha256_end": "67fd57be4b610d4716fc550c28fba9034782e003a21188c95f12bc03d85c92d3",
+  "binary_sha256_start": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "binary_sha256_end": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--manifest",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/package.json",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/scaled-c1.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/job.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"f2f7375fc6b9154adb92e826f6eb216ec6bdb32ed6182ef3f658d09f1a61ffe6\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"8d7d9b3e7052d51173dcb5e29ead81fe4672627e02d5645d881caf491ee7b9b3\",\"limits\":{\"arena_nodes\":786432,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":100000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"a.value\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"e25221ea1198ba1321ff767aa98030a825d001725c1e7aa2d317f27033b25e8b\",\"source_bytes\":97,\"source_particle\":\"34121d8646cf76252a0c567542e7e0a2fc3bae579563db3fa39093d0e6792537\"},{\"logical_path\":\"sample\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"19cecc42accadb3a6545b36c4982a9daf1cc2175fa892b92383eaac6e5fd56dd\",\"source_bytes\":65,\"source_particle\":\"b85f7d05d713682930a3b10e38eaefa73dae2a5e58d35b44a0a7fa81ab7e6ef2\"},{\"logical_path\":\"z.bridge\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"a861b15e1544d886f8d6ad7e1f28eed04939df6db36903406cb24f7c250fa2e1\",\"source_bytes\":105,\"source_particle\":\"ebe2f85d655a64907c49a4b5a06010443df5c06e641aaa0b43738eb6320472e6\"}],\"options\":{\"cfg_flags\":[\"explicit\"],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"625aae7d90c3b080a58ca0f464b5d3335108b5f5d24d4f7db9413256e85c6194\",\"validation_visits\":441},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "reference_only": false
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/scaled-c1.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/program.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/program.dag\",\"execution\":{\"allocated_nodes\":190031,\"arena_reserved_bytes\":104857616,\"charged_reductions\":3815451,\"compiler_job\":{\"compiled_particle\":\"1e1f17168455edbad1dfa06379df6922712ce692182f880930a85b85bffbd761\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":441,\"limits\":{\"arena_nodes\":786432,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":100000000,\"sequence_length\":4096,\"source_bytes\":4096,\"validation_visits\":1000000},\"modules\":[{\"logical_path\":\"a.value\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"e25221ea1198ba1321ff767aa98030a825d001725c1e7aa2d317f27033b25e8b\",\"source_bytes\":97,\"source_particle\":\"34121d8646cf76252a0c567542e7e0a2fc3bae579563db3fa39093d0e6792537\"},{\"logical_path\":\"sample\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"19cecc42accadb3a6545b36c4982a9daf1cc2175fa892b92383eaac6e5fd56dd\",\"source_bytes\":65,\"source_particle\":\"b85f7d05d713682930a3b10e38eaefa73dae2a5e58d35b44a0a7fa81ab7e6ef2\"},{\"logical_path\":\"z.bridge\",\"origin_name\":\"acceptance\",\"origin_version\":\"1\",\"particle\":\"a861b15e1544d886f8d6ad7e1f28eed04939df6db36903406cb24f7c250fa2e1\",\"source_bytes\":105,\"source_particle\":\"ebe2f85d655a64907c49a4b5a06010443df5c06e641aaa0b43738eb6320472e6\"}],\"options\":{\"cfg_flags\":[\"explicit\"],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"625aae7d90c3b080a58ca0f464b5d3335108b5f5d24d4f7db9413256e85c6194\",\"status\":\"success\"},\"elapsed_micros\":1780658,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"8d7d9b3e7052d51173dcb5e29ead81fe4672627e02d5645d881caf491ee7b9b3\",\"output_particle\":\"267d7b41eed9ef2c540c6de4162ba683abec6fda2eb797cc2b78dddfeec76d75\",\"peak_frames\":673,\"program_particle\":\"f2f7375fc6b9154adb92e826f6eb216ec6bdb32ed6182ef3f658d09f1a61ffe6\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"1e1f17168455edbad1dfa06379df6922712ce692182f880930a85b85bffbd761\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "reference_only": false
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/program.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/value.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/value.dag\",\"execution\":{\"allocated_nodes\":14,\"arena_reserved_bytes\":104857616,\"charged_reductions\":3,\"elapsed_micros\":1979,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"819b07d2f0d5e25f22c691ffde299bf1aa63220d0bb570d67fcd0c4f4a9d0a72\",\"peak_frames\":2,\"program_particle\":\"1e1f17168455edbad1dfa06379df6922712ce692182f880930a85b85bffbd761\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"819b07d2f0d5e25f22c691ffde299bf1aa63220d0bb570d67fcd0c4f4a9d0a72\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "reference_only": false
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "build",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/seed/sample.tri",
+        "--emit",
+        "artifact",
+        "--artifact-profile",
+        "raw",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/seed.dag"
+      ],
+      "exit_code": 0,
+      "stdout": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/seed.dag\n",
+      "stderr": "",
+      "reference_only": true
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/seed.dag",
+        "--input",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/zero.dag",
+        "-o",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/seed-value.dag",
+        "--budget",
+        "100000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "60000",
+        "--arena-nodes",
+        "786432"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/seed-value.dag\",\"execution\":{\"allocated_nodes\":66,\"arena_reserved_bytes\":104857616,\"charged_reductions\":44,\"elapsed_micros\":2264,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"819b07d2f0d5e25f22c691ffde299bf1aa63220d0bb570d67fcd0c4f4a9d0a72\",\"peak_frames\":11,\"program_particle\":\"f32fa471c74d096c658900d1f12b1b30e675ce261fa0552e5cb4d88c66b7a3da\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"819b07d2f0d5e25f22c691ffde299bf1aa63220d0bb570d67fcd0c4f4a9d0a72\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "reference_only": true
+    }
+  ],
+  "observations": [
+    {
+      "case": "full-short",
+      "sources": {
+        "a.value": "2f2f20d0b60a6d6f64756c6520612e76616c75652070756220636f6e737420583a4669656c643d332070756220636f6e737420493a5533323d372070756220636f6e737420503a4669656c643d3138343436373434303639343134353834333231",
+        "sample": "70726f6772616d2073616d706c6520757365207a2e62726964676520666e206d61696e28292d3e4669656c647b6272696467652e582b7a2e6272696467652e587d",
+        "z.bridge": "6d6f64756c65207a2e6272696467652075736520612e76616c75652070756220636f6e737420583a4669656c643d76616c75652e582070756220636f6e737420493a5533323d612e76616c75652e492070756220636f6e737420503a4669656c643d76616c75652e50"
+      },
+      "admission": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "f2f7375fc6b9154adb92e826f6eb216ec6bdb32ed6182ef3f658d09f1a61ffe6",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "8d7d9b3e7052d51173dcb5e29ead81fe4672627e02d5645d881caf491ee7b9b3",
+          "limits": {
+            "arena_nodes": 786432,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 100000000,
+            "sequence_length": 4096,
+            "source_bytes": 4096,
+            "validation_visits": 1000000
+          },
+          "modules": [
+            {
+              "logical_path": "a.value",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "e25221ea1198ba1321ff767aa98030a825d001725c1e7aa2d317f27033b25e8b",
+              "source_bytes": 97,
+              "source_particle": "34121d8646cf76252a0c567542e7e0a2fc3bae579563db3fa39093d0e6792537"
+            },
+            {
+              "logical_path": "sample",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "19cecc42accadb3a6545b36c4982a9daf1cc2175fa892b92383eaac6e5fd56dd",
+              "source_bytes": 65,
+              "source_particle": "b85f7d05d713682930a3b10e38eaefa73dae2a5e58d35b44a0a7fa81ab7e6ef2"
+            },
+            {
+              "logical_path": "z.bridge",
+              "origin_name": "acceptance",
+              "origin_version": "1",
+              "particle": "a861b15e1544d886f8d6ad7e1f28eed04939df6db36903406cb24f7c250fa2e1",
+              "source_bytes": 105,
+              "source_particle": "ebe2f85d655a64907c49a4b5a06010443df5c06e641aaa0b43738eb6320472e6"
+            }
+          ],
+          "options": {
+            "cfg_flags": [
+              "explicit"
+            ],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "625aae7d90c3b080a58ca0f464b5d3335108b5f5d24d4f7db9413256e85c6194",
+          "validation_visits": 441
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "compiler_execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/program.dag",
+        "execution": {
+          "allocated_nodes": 190031,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 3815451,
+          "compiler_job": {
+            "compiled_particle": "1e1f17168455edbad1dfa06379df6922712ce692182f880930a85b85bffbd761",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 441,
+            "limits": {
+              "arena_nodes": 786432,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 100000000,
+              "sequence_length": 4096,
+              "source_bytes": 4096,
+              "validation_visits": 1000000
+            },
+            "modules": [
+              {
+                "logical_path": "a.value",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "e25221ea1198ba1321ff767aa98030a825d001725c1e7aa2d317f27033b25e8b",
+                "source_bytes": 97,
+                "source_particle": "34121d8646cf76252a0c567542e7e0a2fc3bae579563db3fa39093d0e6792537"
+              },
+              {
+                "logical_path": "sample",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "19cecc42accadb3a6545b36c4982a9daf1cc2175fa892b92383eaac6e5fd56dd",
+                "source_bytes": 65,
+                "source_particle": "b85f7d05d713682930a3b10e38eaefa73dae2a5e58d35b44a0a7fa81ab7e6ef2"
+              },
+              {
+                "logical_path": "z.bridge",
+                "origin_name": "acceptance",
+                "origin_version": "1",
+                "particle": "a861b15e1544d886f8d6ad7e1f28eed04939df6db36903406cb24f7c250fa2e1",
+                "source_bytes": 105,
+                "source_particle": "ebe2f85d655a64907c49a4b5a06010443df5c06e641aaa0b43738eb6320472e6"
+              }
+            ],
+            "options": {
+              "cfg_flags": [
+                "explicit"
+              ],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "625aae7d90c3b080a58ca0f464b5d3335108b5f5d24d4f7db9413256e85c6194",
+            "status": "success"
+          },
+          "elapsed_micros": 1780658,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "8d7d9b3e7052d51173dcb5e29ead81fe4672627e02d5645d881caf491ee7b9b3",
+          "output_particle": "267d7b41eed9ef2c540c6de4162ba683abec6fda2eb797cc2b78dddfeec76d75",
+          "peak_frames": 673,
+          "program_particle": "f2f7375fc6b9154adb92e826f6eb216ec6bdb32ed6182ef3f658d09f1a61ffe6",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "1e1f17168455edbad1dfa06379df6922712ce692182f880930a85b85bffbd761",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 6,
+      "program_sha256": "17ecafc0c6365a7990b501eea22d5a8cc2e7f1dae848aab52a758f9de5f23dbb",
+      "runtime_execution": {
+        "artifact": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-bf6afid1/full-short/value.dag",
+        "execution": {
+          "allocated_nodes": 14,
+          "arena_reserved_bytes": 104857616,
+          "charged_reductions": 3,
+          "elapsed_micros": 1979,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "819b07d2f0d5e25f22c691ffde299bf1aa63220d0bb570d67fcd0c4f4a9d0a72",
+          "peak_frames": 2,
+          "program_particle": "1e1f17168455edbad1dfa06379df6922712ce692182f880930a85b85bffbd761",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "819b07d2f0d5e25f22c691ffde299bf1aa63220d0bb570d67fcd0c4f4a9d0a72",
+        "schema": "joy/artifact-run/v1"
+      },
+      "complete_seed_output_equal": true
+    }
+  ],
+  "reference_scope": "Rust-built raw-profile oracles are separate comparisons; never compiler substitutes"
+}

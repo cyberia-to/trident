@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/merge-accepted-pr-v2.py",
+    "--repo",
+    "joy",
+    "--directory",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "--pr",
+    "31",
+    "--head",
+    "c5ededb34b4a9ea82b77c2cb540b81be818750d2",
+    "--base",
+    "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-final-sh8-pr31"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/joy-final-sh8-pr31-wrapper",
+  "started_ns": 1791053624339854000,
+  "helper": {
+    "bytes": 3335,
+    "sha256": "b2b3bc36d82fb817839996ae1cd250d0682f2de2a0e4622d53a939def06ee388"
+  },
+  "wrapper": {
+    "bytes": 2688,
+    "sha256": "e97e6867d44ba14f2ba0eae282c2f7a46ce7139155b5b9fc82653f72fde562af"
+  },
+  "timeout_seconds": 360,
+  "cleanup": [],
+  "pid": 56859,
+  "exit_code": 0,
+  "ended_ns": 1791053687606370000,
+  "stdout": {
+    "bytes": 164,
+    "sha256": "b801a07de6a6e348b11e8c7b5c11c492f5c4d9c053dd7e150ab29f5d23df7290"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

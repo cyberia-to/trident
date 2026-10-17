@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "entry_module": "sample",
+  "entry_function": "main",
+  "modules": [
+    {
+      "logical_path": "sample",
+      "file": "sample.tri",
+      "origin_name": "selfhost-guide",
+      "origin_version": "1"
+    }
+  ],
+  "options": {
+    "target": 0,
+    "input_profile": 0,
+    "output_profile": 0,
+    "optimization": 0,
+    "cfg_flags": []
+  },
+  "limits": {
+    "source_bytes": 4096,
+    "modules": 32,
+    "diagnostics": 16,
+    "sequence_length": 4096,
+    "validation_visits": 1000000,
+    "artifact_bytes": 16777216,
+    "artifact_nodes": 196608,
+    "artifact_depth": 4096,
+    "reductions": 1000000,
+    "arena_nodes": 196608,
+    "evaluator_frames": 16384
+  }
+}

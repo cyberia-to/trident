@@ -1,0 +1,93 @@
+test_actual_complete_delivery (test_delivery.DeliveryTests.test_actual_complete_delivery) ... ERROR
+test_archive_link_rejected (test_delivery.DeliveryTests.test_archive_link_rejected) ... ok
+test_archive_traversal_rejected (test_delivery.DeliveryTests.test_archive_traversal_rejected) ... ok
+test_duplicate_archive_member_rejected (test_delivery.DeliveryTests.test_duplicate_archive_member_rejected) ... ok
+test_failed_preservation_observation_rejected (test_delivery.DeliveryTests.test_failed_preservation_observation_rejected) ... ok
+test_false_passed_report_with_missing_case_rejected (test_delivery.DeliveryTests.test_false_passed_report_with_missing_case_rejected) ... FAIL
+test_incorrect_fresh_result_rejected (test_delivery.DeliveryTests.test_incorrect_fresh_result_rejected) ... ok
+test_missing_archive_member_rejected (test_delivery.DeliveryTests.test_missing_archive_member_rejected) ... ok
+test_nonempty_runtime_path_rejected (test_delivery.DeliveryTests.test_nonempty_runtime_path_rejected) ... ok
+test_rehashed_archive_corruption_rejected (test_delivery.DeliveryTests.test_rehashed_archive_corruption_rejected) ... ok
+test_wrong_child_command_rejected (test_delivery.DeliveryTests.test_wrong_child_command_rejected) ... ok
+test_wrong_compiler_rejected_after_rehash (test_delivery.DeliveryTests.test_wrong_compiler_rejected_after_rehash) ... FAIL
+test_wrong_count_rejected_after_rehash (test_delivery.DeliveryTests.test_wrong_count_rejected_after_rehash) ... FAIL
+test_wrong_generation_input_rejected_even_identical_bytes (test_delivery.DeliveryTests.test_wrong_generation_input_rejected_even_identical_bytes) ... ok
+test_wrong_generation_rejected_after_rehash (test_delivery.DeliveryTests.test_wrong_generation_rejected_after_rehash) ... ok
+test_wrong_orchestration_source_rejected (test_delivery.DeliveryTests.test_wrong_orchestration_source_rejected) ... ok
+
+======================================================================
+ERROR: test_actual_complete_delivery (test_delivery.DeliveryTests.test_actual_complete_delivery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 58, in test_actual_complete_delivery
+    result = delivery.check()
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py", line 64, in check
+    result = check_relations(payload, index, manifest, prepared)
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 212, in check_relations
+    results = [check_corpus(payload, index, generation, binary, compiler, prepared) for generation in (2, 3)]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 155, in check_corpus
+    check_flags(report['observations'])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 45, in check_flags
+    check_flags(child)
+    ~~~~~~~~~~~^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 41, in check_flags
+    require(child is True, f'failed observation flag: {key}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py", line 22, in require
+    raise ValueError(message)
+ValueError: failed observation flag: metadata_identity_checked
+
+======================================================================
+FAIL: test_false_passed_report_with_missing_case_rejected (test_delivery.DeliveryTests.test_false_passed_report_with_missing_case_rejected)
+----------------------------------------------------------------------
+ValueError: failed observation flag: metadata_identity_checked
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 72, in test_false_passed_report_with_missing_case_rejected
+    self.rejects('corpus counts')
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 54, in rejects
+    with self.assertRaisesRegex(ValueError, message):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "corpus counts" does not match "failed observation flag: metadata_identity_checked"
+
+======================================================================
+FAIL: test_wrong_compiler_rejected_after_rehash (test_delivery.DeliveryTests.test_wrong_compiler_rejected_after_rehash)
+----------------------------------------------------------------------
+ValueError: failed observation flag: metadata_identity_checked
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 77, in test_wrong_compiler_rejected_after_rehash
+    self.rejects('provided compiler digest')
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 54, in rejects
+    with self.assertRaisesRegex(ValueError, message):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "provided compiler digest" does not match "failed observation flag: metadata_identity_checked"
+
+======================================================================
+FAIL: test_wrong_count_rejected_after_rehash (test_delivery.DeliveryTests.test_wrong_count_rejected_after_rehash)
+----------------------------------------------------------------------
+ValueError: failed observation flag: metadata_identity_checked
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 67, in test_wrong_count_rejected_after_rehash
+    self.rejects('547 corpus cardinality')
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py", line 54, in rejects
+    with self.assertRaisesRegex(ValueError, message):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "547 corpus cardinality" does not match "failed observation flag: metadata_identity_checked"
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.893s
+
+FAILED (failures=3, errors=1)

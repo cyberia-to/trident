@@ -24,7 +24,8 @@ name = "trident"
 path = "src/lib.rs"
 
 [features]
-default = []
+default = ["external-targets"]
+external-targets = []
 neural = ["dep:burn", "dep:rkyv", "dep:rayon"]
 
 [dependencies]

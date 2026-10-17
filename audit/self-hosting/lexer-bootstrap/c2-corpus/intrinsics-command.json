@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer/audit/self-hosting/check-guest-intrinsics.py",
+    "--joy",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c1-to-c2-files-astfqc_x/result.dag",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/intrinsics.json"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-lexer",
+  "start": "2026-09-27T21:47:53.556148+00:00",
+  "expected_observations": 37,
+  "status": "finished",
+  "receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/intrinsics.json",
+  "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/lexer-v9-c2-corpus/intrinsics.log",
+  "exit_code": 0,
+  "end": "2026-09-27T21:50:07.687314+00:00",
+  "elapsed_nanoseconds": 134128225375,
+  "log_sha256": "93bedd07ca0c015279e0ade9d1b3d462e4ae54cf20134fe5d99a849b1f156040",
+  "receipt_sha256": "73a7ef97b82231a9b0230115bf467bcc2c13e5f772b8812dcaf19c8fb6c4b843",
+  "receipt_status": "passed",
+  "commands": 157,
+  "observations": 37
+}

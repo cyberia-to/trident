@@ -2,11 +2,19 @@
 
 Date: 2026-09-11. Initial read-only review, followed by parent-authorized application of the proposed versions and compiler API 2. The tables retain the pre-change versions as the migration record. Registry availability/name ownership was not checked or claimed. Versions must additionally be free in the intended registry before publication.
 
+Current acceptance is tracked in the [self-hosting ledger](self-hosting-progress.md).
+The [final distribution rehearsal](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md)
+passed for its frozen source archive and integrated through Trisha PR24 into
+`release/0.4`. The dated host-only observations and proposed checks below remain
+historical evidence. This review does not establish registry installation;
+package publication, new version selection and public promotion remain separate
+owner steps. The rehearsal retains Trident0.3 / Trisha0.3 / Joy0.5 and API3.
+
 ## Release numbering correction — 2026-09-16
 
-The published Trident versions on GitHub and crates.io are 0.1.0 and 0.2.0.
-The 0.3.0 value in the development branch was never published. Advancing it
-again to 0.4.0 was unnecessary: the next coordinated release is **Trident
+At this September 16 checkpoint, the published Trident versions on GitHub and
+crates.io were 0.1.0 and 0.2.0. The development 0.3.0 value was unpublished.
+Advancing it again to 0.4.0 was unnecessary: the selected coordinated release was **Trident
 0.3.0**, with Trisha 0.3.0 and Joy 0.5.0. Compiler API **3** remains unchanged.
 The historical tables below record the earlier proposed/applied candidate
 numbers, not the final release numbering. New manifests and dependency

@@ -1,0 +1,12 @@
+{
+  "changed": [
+    "privacy.py",
+    "test_delivery.py"
+  ],
+  "original_manifest": {
+    "bytes": 1637,
+    "sha256": "1f11435b9b42bcab782669e113c22452c4f3a85e32f1a34b4231ff2ab81c1c3e"
+  },
+  "reason": "Peer synthetic probes found two-column PID/PGID/lstart rows and plain Authorization/Proxy-Authorization headers bypassed public stream guard. Added precise refusal patterns and exact probes. No actual leak or collector run. Caps and admission unchanged.",
+  "status": "superseded-preparation-candidate"
+}

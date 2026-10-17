@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-guest-type-imports.py",
+    "--joy",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+    "--compiler",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c2-to-c3-20b-files-vgt4vpb1/result.dag",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/types.json"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+  "start": "2026-09-27T21:01:34.578891+00:00",
+  "expected_observations": 24,
+  "status": "finished",
+  "receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/types.json",
+  "log": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c3-corpus/types.log",
+  "exit_code": 0,
+  "end": "2026-09-27T21:03:00.476259+00:00",
+  "elapsed_nanoseconds": 85895318083,
+  "log_sha256": "9242e6750e8472a1b37abc4d6aab82487e3b936cfe4cb379fffb17fe6076b76b",
+  "receipt_sha256": "67b48df83d0a758aedb90d55d5d584a2681cb3b847c2c3e07d064af7e7269335",
+  "receipt_status": "passed",
+  "commands": 110,
+  "observations": 24
+}

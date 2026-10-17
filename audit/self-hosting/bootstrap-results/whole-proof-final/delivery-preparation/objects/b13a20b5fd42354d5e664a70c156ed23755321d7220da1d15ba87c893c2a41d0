@@ -1,0 +1,278 @@
+"""Synthetic metadata fixtures only; no production receipts, native workloads or proof scans."""
+import copy
+import json
+import os
+import subprocess
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+from safe_io import Budget,digest,encoded,require,relative
+from privacy import public_bytes
+from catalog import Catalog
+from contracts import F5,V5,WATCH,NEW,PRIOR,ADDITIONAL,prerequisites,accept,fresh
+from collect import packet,gather,CAPS,ROOT
+
+I=dict(bytes=1,sha256='a'*64)
+
+
+def fixture(base):
+    locked={F5+'/sources.json':{'check.py':I},V5+'/sources.json':{'/source':I}}
+    policy=dict(locked={F5+'/sources.json':I,F5+'/independent-review.json':I,
+                       V5+'/plan.json':I,V5+'/independent-review.json':I},proofs={'1':I,'2':I})
+    observed={name:dict(status=status) for name,status in prerequisites().items()}
+    observed[V5+'/run-1/receipt.json'].update(phase='complete',inputs_unchanged=True,
+          source=locked[V5+'/sources.json'],plan=I,independent_review=I)
+    for g in (1,2):
+        observed[f'whole-proof-attacks-v5-c{g}/whole-c{g}/receipt.json'].update(
+            generation=g,original_proof=I,immutable_inputs_before={'proof':I},immutable_inputs_after={'proof':I},
+            rejections=[dict(name=n) for n in fresh(g)])
+    watcher=dict(schema='trident/composite-final-review-watcher/v5',status='passed',checker_launched=True,exit_code=0,
+           source_manifest_sha256='a'*64,independent_review_sha256='a'*64,readiness_timeout_seconds=86400,
+           runtime_timeout_seconds=3600,poll_seconds=30,stable_pass_observations_required=2,
+           reviewed_sources=locked[F5+'/sources.json'],observed_statuses={str(base/n):dict(status=s,required=s,identity=I) for n,s in prerequisites().items()})
+    result=dict(schema='trident/proved-self-build-local-review/v5',status='passed-composite-replay',
+                checker_sources=locked[F5+'/sources.json'],independent_review=I,
+                completion_schedule=dict(native_commands=42,capacity_permits=23,receipt=I),generations=[])
+    for g in (1,2):
+        result['generations'].append(dict(generation=g,proof=I,compiler=I,corpus_observations=547,
+             verification=dict(format='joy-nox-disclosed-compiler-v1',disclosure='complete public witness',physical_resource_claim='unattested'),
+             producer_receipt=I,verifier_receipt=I,corpus_receipt=I,prove_seconds=1.25,verify_seconds=2.5,
+             sampled_prove_rss_bytes=3,sampled_verify_rss_bytes=4,
+             composite_cases=dict(status='passed-case-replay',suite=I,distinct_rejections=23,reused_controls=2,
+                    original_v2_status='failed',original_v3_status='failed',original_v4_status='input-changed',
+                    reused_v2_rejections=list(PRIOR),reused_v3_rejections=list(ADDITIONAL),fresh_v5_rejections=list(fresh(g)),
+                    c2_cost=None if g==1 else dict(original_suite_status='input-changed',original_controller_status='failed'))))
+    return policy,locked,watcher,result,observed
+
+
+class Gates(unittest.TestCase):
+    def setUp(self):
+        self.base=Path('/synthetic-fixture')
+        self.args=fixture(self.base)
+
+    def call(self):
+        return accept(self.base,*self.args,lambda _:I)
+
+    def test_positive_projection_drops_private_extras(self):
+        self.args[3]['raw_stdout']='private full host process listing'
+        self.args[3]['generations'][0]['verification']['raw_stdout']='private nested listing'
+        value=self.call()
+        self.assertEqual(value['native_commands'],42)
+        self.assertNotIn('raw_stdout',json.dumps(value))
+        self.assertNotIn('private nested',json.dumps(value))
+
+    def test_pending_failed_or_not_launched_rejected(self):
+        for mutation in ({'status':'waiting'},{'status':'failed'},{'checker_launched':False},{'exit_code':1}):
+            with self.subTest(mutation=mutation):
+                self.args=fixture(self.base);self.args[2].update(mutation)
+                with self.assertRaisesRegex(ValueError,'terminal watcher pass'):self.call()
+
+    def test_wrong_source_hash_rejected(self):
+        self.args[2]['source_manifest_sha256']='b'*64
+        with self.assertRaisesRegex(ValueError,'frozen F5'):self.call()
+
+    def test_stale_prerequisite_identity_rejected(self):
+        next(iter(self.args[2]['observed_statuses'].values()))['identity']=dict(bytes=2,sha256='b'*64)
+        with self.assertRaisesRegex(ValueError,'unchanged actual prerequisite'):self.call()
+
+    def test_extra_prerequisite_rejected(self):
+        self.args[2]['observed_statuses']['/unrelated']=dict(status='passed')
+        with self.assertRaisesRegex(ValueError,'ten prerequisites'):self.call()
+
+    def test_failed_f5_rejected(self):
+        self.args[3]['status']='failed'
+        with self.assertRaisesRegex(ValueError,'actual F5 pass'):self.call()
+
+    def test_hidden_controller_cleanup_rejected(self):
+        self.args[4][V5+'/run-1/receipt.json']['cleanup']='terminated'
+        with self.assertRaisesRegex(ValueError,'hidden failure'):self.call()
+
+    def test_fresh_case_duplicate_rejected(self):
+        self.args[4]['whole-proof-attacks-v5-c1/whole-c1/receipt.json']['rejections'][-1]['name']='cost'
+        with self.assertRaisesRegex(ValueError,'fresh case partition'):self.call()
+
+    def test_v4_failed_history_not_laundered(self):
+        self.args[3]['generations'][1]['composite_cases']['original_v4_status']='passed'
+        with self.assertRaisesRegex(ValueError,'failed histories'):self.call()
+
+    def test_wrong_proof_rejected(self):
+        self.args[3]['generations'][0]['proof']=dict(bytes=2,sha256='b'*64)
+        with self.assertRaisesRegex(ValueError,'exact full proof'):self.call()
+
+    def test_missing_c2_selected_cost_rejected(self):
+        self.args[3]['generations'][1]['composite_cases']['c2_cost']=None
+        with self.assertRaisesRegex(ValueError,'selected V4 cost'):self.call()
+
+    def test_nonfinite_measurement_rejected(self):
+        self.args[3]['generations'][0]['prove_seconds']=float('nan')
+        with self.assertRaisesRegex(ValueError,'finite measured'):self.call()
+
+    def test_succinctness_not_laundered(self):
+        self.args[3]['generations'][0]['verification']['disclosure']='zero knowledge'
+        with self.assertRaisesRegex(ValueError,'full-witness profile'):self.call()
+
+
+class IOPrivacy(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
+        self.root=Path(self.tmp.name).resolve();self.b=Budget(CAPS)
+        self.source=dict(sources={'verify-retained.py':digest((ROOT/'verify-retained.py').read_bytes())})
+
+    def test_symlink_and_hardlink_refused(self):
+        (self.root/'original').write_bytes(b'x');(self.root/'sym').symlink_to('original')
+        with self.assertRaisesRegex(ValueError,'regular input'):self.b.read(self.root/'sym')
+        os.link(self.root/'original',self.root/'hard')
+        with self.assertRaisesRegex(ValueError,'single-link'):self.b.read(self.root/'hard')
+
+    def test_fifo_refused_before_any_open(self):
+        os.mkfifo(self.root/'pipe')
+        with patch('safe_io.os.open',side_effect=AssertionError('FIFO must not reach open')):
+            with self.assertRaisesRegex(ValueError,'regular input before open'):
+                self.b.read(self.root/'pipe')
+
+    def test_nested_absolute_key_identity_is_cataloged(self):
+        c=Catalog(self.root,self.b)
+        parent=str(self.root/'parent');child=str(self.root/'child')
+        c.references({parent:dict(I,nested=dict(path=child,bytes=2,sha256='b'*64))},'fixture.json')
+        self.assertEqual(set(c.rows),{'parent','child'})
+        self.assertEqual(c.rows['child']['sha256'],'b'*64)
+        self.assertFalse(c.rows['child']['observed_metadata_bytes'])
+
+    def test_symlink_parent_refused(self):
+        (self.root/'dir').mkdir();(self.root/'dir/x').write_bytes(b'x');(self.root/'sym').symlink_to('dir')
+        with self.assertRaisesRegex(ValueError,'symlink ancestor'):self.b.read(self.root/'sym/x')
+
+    def test_limits_and_exclusive_write(self):
+        (self.root/'x').write_bytes(b'ab')
+        b=Budget(dict(CAPS,individual_read_bytes=1))
+        with self.assertRaisesRegex(ValueError,'individual read cap'):b.read(self.root/'x')
+        b=Budget(dict(CAPS,total_read_bytes=1))
+        with self.assertRaisesRegex(ValueError,'total read cap'):b.read(self.root/'x')
+        b=Budget(dict(CAPS,output_bytes=1))
+        with self.assertRaisesRegex(ValueError,'output cap'):b.write(self.root,'out',b'ab')
+        b.write(self.root,'out',b'a')
+        with self.assertRaises(FileExistsError):self.b.write(self.root,'out',b'x')
+
+    def test_wall_cap(self):
+        b=Budget(CAPS);b.start-=121
+        with self.assertRaisesRegex(ValueError,'wall cap'):b.tick()
+
+    def test_path_escape(self):
+        for name in ('.','../x','/x','a//b','a/../b'):
+            with self.subTest(name=name),self.assertRaisesRegex(ValueError,'canonical relative'):relative(name)
+
+    def test_private_nested_payload_and_signed_urls(self):
+        values=[{'nested':{'raw_stdout':'host commands'}}, {'x':'https://example/a?' + 'sig=abc'},
+                {'x':'https://example/a?' + 'X-Amz-Signature=abc'}, {'x':'https://example/a?' + '%74oken=abc'},
+                {'x':'ghp_'+'a'*30}]
+        for value in values:
+            with self.subTest(value=value),self.assertRaises(ValueError):public_bytes(encoded(value))
+        public_bytes(b'{"mode":"cost","wire_bytes":123}\n')
+
+    def test_bsd_two_column_process_rows_rejected(self):
+        rows=''.join(f'{pid} {pgid} Fri Oct  2 21:00:00 2026\n'
+                     for pid,pgid in ((1001,900),(1002,900),(1003,900))).encode()
+        with self.assertRaisesRegex(ValueError,'host process table row'):
+            public_bytes(rows)
+
+    def test_plain_authorization_headers_rejected(self):
+        for prefix in (b'Authorization',b'Proxy-Authorization',b'authorization'):
+            with self.subTest(prefix=prefix),self.assertRaisesRegex(ValueError,'plain authorization header'):
+                public_bytes(prefix+b': Bearer synthetic-opaque-secret\n')
+
+    def test_process_table_rejected(self):
+        with self.assertRaisesRegex(ValueError,'process table'):public_bytes(b' PID PPID PGID COMMAND\n 1 2 3 private\n')
+
+    def test_catalog_references_never_read_proof_body(self):
+        c=Catalog(self.root,self.b)
+        c.add('proof.joysc',dict(bytes=12_000_000_000,sha256='a'*64),'accepted-F5-reference')
+        self.assertEqual(self.b.read_bytes,0)
+        self.assertEqual(c.snapshot()[0]['classification'],'artifact-reference-no-body')
+        self.assertFalse(c.snapshot()[0]['observed_metadata_bytes'])
+
+    def test_catalog_conflicts_and_cap(self):
+        c=Catalog(self.root,Budget(dict(CAPS,catalog_entries=1)));c.add('x',I,'one')
+        with self.assertRaisesRegex(ValueError,'conflicting'):c.add('x',dict(bytes=2,sha256='a'*64),'two')
+        with self.assertRaisesRegex(ValueError,'catalog cap'):c.add('y',I,'three')
+
+    def test_waiting_gather_stops_before_result_read(self):
+        (self.root/WATCH).mkdir(parents=True)
+        (self.root/WATCH/'receipt.json').write_bytes(encoded(dict(status='waiting',checker_launched=False)))
+        c=Catalog(self.root,self.b)
+        with self.assertRaisesRegex(ValueError,'not passed'):gather(c,{}, {})
+        self.assertEqual(set(c.data),{WATCH+'/receipt.json'})
+
+    def test_content_addressed_stream_dedup_and_no_overwrite(self):
+        for name in ('one','two'):(self.root/name).write_bytes(b'')
+        c=Catalog(self.root,self.b);output=self.root/'packet'
+        receipt=packet(c,dict(status='synthetic-only'),{'one':digest(b''),'two':digest(b'')},output,self.source,lambda:self.source)
+        self.assertEqual((receipt['streams'],receipt['objects']),(2,1))
+        rows=json.loads((output/'retained-files.json').read_bytes())
+        self.assertEqual(len(rows),2)
+        with self.assertRaisesRegex(ValueError,'fresh destination'):packet(c,{}, {},output,self.source,lambda:self.source)
+
+    def test_privacy_failure_creates_no_packet(self):
+        data=b'{"raw_stdout":"private"}\n';(self.root/'unsafe').write_bytes(data)
+        with self.assertRaisesRegex(ValueError,'private structured'):
+            packet(Catalog(self.root,self.b),{}, {'unsafe':digest(data)},self.root/'packet',self.source,lambda:self.source)
+        self.assertFalse((self.root/'packet').exists())
+
+    def test_actual_autocrlf_checkout_preserves_every_packet_identity(self):
+        (self.root/'stream').write_bytes(b'line one\nline two\n')
+        packet_root=self.root/'packet'
+        result=packet(Catalog(self.root,self.b),{}, {'stream':digest((self.root/'stream').read_bytes())},
+                      packet_root,self.source,lambda:self.source)
+        expected=dict(result['files']);expected['receipt.json']=digest((packet_root/'receipt.json').read_bytes())
+        git='/usr/bin/git'
+        def run(*args):
+            return subprocess.run([git,'-c','core.autocrlf=true','-c','core.safecrlf=false',*args],
+                                  cwd=packet_root,check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        run('init','-q')
+        run('add','--',*sorted(expected))
+        destination=self.root/'checkout';destination.mkdir()
+        run('checkout-index','--all','--prefix='+str(destination)+'/')
+        self.assertEqual({name:digest((destination/name).read_bytes()) for name in expected},expected)
+        self.assertEqual((destination/'.gitattributes').read_bytes(),b'* -text\n')
+
+    def test_final_recheck_cost_is_in_receipt(self):
+        (self.root/'source-check').write_bytes(b'final source check')
+        def final():
+            self.b.read(self.root/'source-check')
+            return self.source
+        result=packet(Catalog(self.root,self.b),{}, {},self.root/'packet',self.source,final)
+        self.assertEqual(result['read_bytes'],self.b.read_bytes)
+        size=(self.root/'packet/receipt.json').stat().st_size
+        self.assertEqual(result['staged_bytes_before_receipt']+size,self.b.written_bytes)
+
+    def test_final_source_mutation_preserves_failed_packet(self):
+        (self.root/'one').write_bytes(b'')
+        c=Catalog(self.root,self.b)
+        with self.assertRaisesRegex(ValueError,'source/review changed after entry'):
+            packet(c,{}, {'one':digest(b'')},self.root/'packet',self.source,lambda:{'changed':True})
+        self.assertTrue((self.root/'packet/failed.json').exists())
+        self.assertFalse((self.root/'packet/receipt.json').exists())
+        self.assertTrue((self.root/'packet/retained-files.json').exists())
+
+    def test_copied_verifier_substitution_rejected(self):
+        source=dict(sources={'verify-retained.py':I})
+        with self.assertRaisesRegex(ValueError,'copied verifier matches entry'):
+            packet(Catalog(self.root,self.b),{}, {},self.root/'packet',source,lambda:source)
+        self.assertTrue((self.root/'packet/failed.json').exists())
+        self.assertFalse((self.root/'packet/receipt.json').exists())
+
+    def test_changed_metadata_fails_and_preserves_partial_packet(self):
+        (self.root/'one').write_bytes(b'')
+        c=Catalog(self.root,self.b);c.read('one')
+        original=self.b.read
+        def changed(path,*args,**kwargs):
+            if path==self.root/'one':return b'changed'
+            return original(path,*args,**kwargs)
+        with patch.object(self.b,'read',side_effect=changed):
+            with self.assertRaisesRegex(ValueError,'changed after collection'):
+                packet(c,{}, {'one':digest(b'')},self.root/'packet',self.source,lambda:self.source)
+        self.assertTrue((self.root/'packet/failed.json').exists())
+        self.assertTrue((self.root/'packet/retained-files.json').exists())
+
+
+if __name__=='__main__':unittest.main()

@@ -1,0 +1,59 @@
+diff --git a/lib/std/compiler/nox/lexer.tri b/lib/std/compiler/nox/lexer.tri
+index 522572c..0492b2e 100644
+--- a/lib/std/compiler/nox/lexer.tri
++++ b/lib/std/compiler/nox/lexer.tri
+@@ -9,10 +9,15 @@ use vm.core.field
+ #[pure]
+ fn identifier(source: bytes.Bytes, start: U32) -> syntax.Token {
+     let mut pos = start
++    let mut word = syntax.ZERO
+     let mut packed: Field = 0
+     for step in 0..65536 {
+         if pos == bytes.len(source) { return syntax.token(ascii.keyword(packed), start, pos, packed) }
+-        let c = bytes.get(source, pos)
++        let lane = pos & as_u32(3)
++        if syntax.either(pos == start, lane == syntax.ZERO) {
++            word = bytes.word_at(source, pos)
++        }
++        let c = bytes.word_byte(word, lane)
+         if (syntax.either(ascii.initial(c), ascii.digit(c))) == false {
+             return syntax.token(ascii.keyword(packed), start, pos, packed)
+         }
+@@ -27,6 +32,7 @@ fn identifier(source: bytes.Bytes, start: U32) -> syntax.Token {
+ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
+     let max_digits = [1,8,4,4,6,7,4,4,0,7,3,7,0,9,5,5,1,6,1,5]
+     let mut pos = start
++    let mut word = syntax.ZERO
+     let mut significant = syntax.ZERO
+     let mut comparison: Field = 0
+     let mut value: Field = 0
+@@ -36,7 +42,11 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
+             if overflow { return syntax.token(14, start, pos, 0) }
+             return syntax.token(2, start, pos, value)
+         }
+-        let c = bytes.get(source, pos)
++        let lane = pos & as_u32(3)
++        if syntax.either(pos == start, lane == syntax.ZERO) {
++            word = bytes.word_at(source, pos)
++        }
++        let c = bytes.word_byte(word, lane)
+         if ascii.digit(c) == false {
+             if overflow { return syntax.token(14, start, pos, 0) }
+             return syntax.token(2, start, pos, value)
+@@ -72,10 +82,15 @@ fn decimal(source: bytes.Bytes, start: U32) -> syntax.Token {
+ #[requires((bytes.len(source) < start) == false)]
+ pub fn next(source: bytes.Bytes, start: U32) -> syntax.Token {
+     let mut pos = start
++    let mut word = syntax.ZERO
+     let mut comment = false
+     for step in 0..65537 {
+         if pos == bytes.len(source) { return syntax.token(0, pos, pos, 0) }
+-        let c = bytes.get(source, pos)
++        let lane = pos & as_u32(3)
++        if syntax.either(pos == start, lane == syntax.ZERO) {
++            word = bytes.word_at(source, pos)
++        }
++        let c = bytes.word_byte(word, lane)
+         if comment {
+             if c == as_u32(10) { comment = false }
+         } else if ascii.space(c) == false {

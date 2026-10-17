@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "base_commit": "e57f2b4c6c6b7128e1cbbf80a77a0ccfcc8d33d7",
+  "commands": [
+    {
+      "name": "focused-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "audit/self-hosting/test_generated_profile_metadata.py",
+        "audit/self-hosting/test_compiler_selection.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/corpus-path-fix/trident",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6367879169993103,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 120,
+        "sha256": "7640e43ddb807115b1137ba7d3cf05ad497ead79df059f1eb902841148218003"
+      }
+    },
+    {
+      "name": "bootstrap-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "audit/self-hosting/test_bootstrap_runner.py",
+        "audit/self-hosting/test_bootstrap_phases.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/corpus-path-fix/trident",
+      "exit_code": 0,
+      "elapsed_seconds": 2.4241645419970155,
+      "stdout": {
+        "bytes": 296,
+        "sha256": "379b699a588ea6e038f4f3266408c9446e28802c9eb5b4fb81ea80d853acc3aa"
+      },
+      "stderr": {
+        "bytes": 189,
+        "sha256": "32d988a924eddefe678b4c238bb2cbdc8d1f18acbfe91db63b48f91532369449"
+      }
+    }
+  ],
+  "source_impact": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "e57f2b4c6c6b7128e1cbbf80a77a0ccfcc8d33d7",
+        "--",
+        "src",
+        "lib",
+        "compiler",
+        "catalog",
+        "silicon",
+        "Cargo.toml",
+        "Cargo.lock",
+        "audit/self-hosting/bootstrap-runner.py",
+        "audit/self-hosting/bootstrap-phases.py",
+        "tests/fixtures"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "87e2909f6ab2dfc01a97add0fe0402cbd9cd838c",
+        "--",
+        "src",
+        "lib",
+        "compiler",
+        "catalog",
+        "silicon",
+        "Cargo.toml",
+        "Cargo.lock",
+        "audit/self-hosting/bootstrap-runner.py",
+        "audit/self-hosting/bootstrap-phases.py",
+        "tests/fixtures"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "exercise_without_metadata_ast_sha256": "48b6f601d51826ccf7efd72d057338e629dd1c2e509b88fcf498572c75d31370",
+  "unchanged_scope": "All generated-profile exercise statements except the two Git metadata assignments remain AST-identical; all21 guest observations, Joy/compiler command semantics, fixtures and caps unchanged.",
+  "sources": {
+    "audit/self-hosting/check-generated-compiler-profile.py": {
+      "bytes": 19854,
+      "sha256": "6e932595eb575a3eeace39a9aee681a26656f3863022b45e34290cd32214797b"
+    },
+    "audit/self-hosting/test_generated_profile_metadata.py": {
+      "bytes": 5687,
+      "sha256": "856aa4b98aadf622f3769d18766513ac0464b252a310135204172c1d97cfaeff"
+    },
+    "audit/self-hosting/test_compiler_selection.py": {
+      "bytes": 14998,
+      "sha256": "27659f8e32a0edc48507d885297f5425d5ca3b4e5d19f6ae45924568a38f94fe"
+    }
+  },
+  "rust_gate_reference": {
+    "commit": "87e2909f6ab2dfc01a97add0fe0402cbd9cd838c",
+    "path": "audit/self-hosting/native-proof-pilots/durable-retention/delivery/release-eight-threads/receipt.json",
+    "sha256": "4032ec0da9b1e51a5efed6bdd9cfd7f681dd2de289aa5e1d3789b9043e1a12aa",
+    "scope": "Prior1231passed/5ignored release workspace gate; protected Rust/Trident source byte-unchanged, no new complete Rust-suite run claimed."
+  }
+}

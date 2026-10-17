@@ -44,7 +44,7 @@ impl ModuleResolver {
         {
             Ok(source.clone())
         } else {
-            std::fs::read_to_string(entry_path)
+            crate::config::text_file::source(entry_path)
         }
         .map_err(|e| {
             vec![Diagnostic::error(
@@ -109,7 +109,7 @@ impl ModuleResolver {
             } else if let Some(source) = self.sources.get(canonical) {
                 Ok(source.clone())
             } else if explicit_dependency {
-                std::fs::read_to_string(&file_path)
+                crate::config::text_file::source(&file_path)
             } else if let Some(source) = crate::resources::module(canonical) {
                 Ok(source.to_string())
             } else if packaged {
@@ -118,7 +118,7 @@ impl ModuleResolver {
                     format!("module {canonical} is not supplied by this target package"),
                 ))
             } else {
-                std::fs::read_to_string(&file_path)
+                crate::config::text_file::source(&file_path)
             };
             let source = match result {
                 Ok(s) => s,

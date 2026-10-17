@@ -1,0 +1,44 @@
+{
+  "status": "draft-probes-confirmed-findings",
+  "observed_ns": 1790973093893385000,
+  "scope": "Direct frozen draft policy and exact extracted accounting predicates, no network or collector execution",
+  "retry_after": {
+    "raw_header": {
+      "status": 503,
+      "fields": {
+        "retry-after": [
+          "Thu, 01 Jan 1970 00:18:40 GMT"
+        ]
+      }
+    },
+    "runtime_classification_time": 1000,
+    "recorded_end_time": 1001,
+    "actual_delay": 120,
+    "replayed_delay": 119,
+    "consequence": "valid retry refused by offline exact equality"
+  },
+  "accounting": {
+    "injected": {
+      "peak_bytes": -1,
+      "scans": 1,
+      "reconciliations": [
+        {
+          "bytes": -1,
+          "scope_bytes": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "accepted_by_exact_accounting_predicates": true
+  },
+  "sources": {
+    "http_policy.py": "ea2198dea13252efb1bc1867969e70fcfcd5e76c8d19d241c584ff3ad66c7b75",
+    "validate.py": "89aeef47272f1c9111c155175abd251e178978b83c51d58db6136ac3429cc953"
+  }
+}

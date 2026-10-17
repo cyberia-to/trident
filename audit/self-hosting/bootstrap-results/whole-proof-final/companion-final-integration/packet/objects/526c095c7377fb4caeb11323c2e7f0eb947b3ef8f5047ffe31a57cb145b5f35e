@@ -1,0 +1,11 @@
+--- /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/trisha-install/install.py
++++ /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/trisha-install/install.py
+@@ -26,7 +26,7 @@
+ try:
+     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO).decode().strip()
+     assert head==args.reviewed_head
+-    assert subprocess.check_output(['git','rev-parse','HEAD^'],cwd=REPO).decode().strip()=='9e1af832543a21def306dac84ff918cbb823653d'
++    assert subprocess.check_output(['git','rev-parse','HEAD^'],cwd=REPO).decode().strip()=='c9f442c58005249d14e95fc81f125ff7f864ab07'
+     assert subprocess.check_output(['git','diff','--name-only','HEAD^','HEAD'],cwd=REPO).decode().splitlines()==['audit/README.md']
+     assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=REPO)
+     report['delivery_head']=head

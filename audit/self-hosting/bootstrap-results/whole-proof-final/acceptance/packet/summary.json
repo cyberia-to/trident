@@ -1,0 +1,164 @@
+{
+  "capacity_permits": 23,
+  "disclosure": "complete public witness",
+  "generations": [
+    {
+      "compiler": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "corpus_observations": 547,
+      "distinct_rejections": 23,
+      "fresh_v5": [
+        "cost",
+        "valid-output-payload",
+        "valid-output-topology",
+        "valid-output-payload-rebound",
+        "valid-output-topology-rebound",
+        "omit-terminal",
+        "drop-first",
+        "swap-first-two",
+        "omit-completion",
+        "truncate-last-byte",
+        "trailing-byte"
+      ],
+      "generation": 1,
+      "original_controls": 2,
+      "prior_v2": [
+        "binding-compiler",
+        "rebound-compiler",
+        "binding-source",
+        "rebound-source",
+        "binding-dependency",
+        "rebound-dependency",
+        "binding-cfg",
+        "rebound-cfg",
+        "binding-job-limit"
+      ],
+      "prior_v3": [
+        "rebound-job-limit",
+        "continuation",
+        "generation"
+      ],
+      "proof": {
+        "bytes": 11977015727,
+        "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+      },
+      "prove_seconds": 6678.0230965419905,
+      "sampled_prove_rss_bytes": 1146552320,
+      "sampled_verify_rss_bytes": 1053179904,
+      "selected_v4_cost": false,
+      "verify_seconds": 1874.2528562080115
+    },
+    {
+      "compiler": {
+        "bytes": 9691488,
+        "sha256": "76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8"
+      },
+      "corpus_observations": 547,
+      "distinct_rejections": 23,
+      "fresh_v5": [
+        "valid-output-payload",
+        "valid-output-topology",
+        "valid-output-payload-rebound",
+        "valid-output-topology-rebound",
+        "omit-terminal",
+        "drop-first",
+        "swap-first-two",
+        "omit-completion",
+        "truncate-last-byte",
+        "trailing-byte"
+      ],
+      "generation": 2,
+      "original_controls": 2,
+      "prior_v2": [
+        "binding-compiler",
+        "rebound-compiler",
+        "binding-source",
+        "rebound-source",
+        "binding-dependency",
+        "rebound-dependency",
+        "binding-cfg",
+        "rebound-cfg",
+        "binding-job-limit"
+      ],
+      "prior_v3": [
+        "rebound-job-limit",
+        "continuation",
+        "generation"
+      ],
+      "proof": {
+        "bytes": 10569174820,
+        "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+      },
+      "prove_seconds": 5955.159074124997,
+      "sampled_prove_rss_bytes": 1089650688,
+      "sampled_verify_rss_bytes": 1087750144,
+      "selected_v4_cost": true,
+      "verify_seconds": 1646.0326347089722
+    }
+  ],
+  "native_commands": 42,
+  "original_F5": {
+    "bytes": 137215,
+    "path": "whole-proof-final-launch-v5/orchestration/final-review.json",
+    "sha256": "46e7171ede86ce006afcb850b610590aa1bbcbd7bcf5ee3a37ec3f59ca617d66"
+  },
+  "original_watcher": {
+    "bytes": 9382,
+    "path": "whole-proof-final-launch-v5/orchestration/receipt.json",
+    "sha256": "e7cc4efc78edc333df6334fd910822c03ef5912cce0a09b2745573dee49aed41"
+  },
+  "physical_resource_claim": "unattested",
+  "prior_statuses": {
+    "v2": "failed",
+    "v3": "failed",
+    "v4": "input-changed"
+  },
+  "profile": "joy-nox-disclosed-compiler-v1",
+  "schema": "trident/final-delivery-public-summary/v1",
+  "scope": "Projection of exact original local F5 acceptance. Full original receipts stay private. Durable proof retention, native CI, package delivery, version changes and owner publication have separate evidence and verdicts.",
+  "source_bindings": {
+    "whole-final-watcher-v5-independent-review/independent-review.json": {
+      "bytes": 3167,
+      "sha256": "c88253e59eb430e5a22d0680e2350134b20561d093b93720ca9dc1b7fc56bddb"
+    },
+    "whole-proof-attacks-completion-v5/independent-review.json": {
+      "bytes": 45013,
+      "sha256": "448ab7a293431060f5de9cf945a54ba513e9eae38ffd20d75ecc3dca78a7af1b"
+    },
+    "whole-proof-attacks-completion-v5/plan.json": {
+      "bytes": 1977,
+      "sha256": "9910fd595e8723b3f6366ce4bc347f648ef7139800bf0a1ad4d83001d8e225ff"
+    },
+    "whole-proof-attacks-completion-v5/sources.json": {
+      "bytes": 41607,
+      "sha256": "32f57009374ce8b542202ebaf1a3b0b05ab171f7aaa0665a838be0204ba8912e"
+    },
+    "whole-proof-final-launch-v5/launch.py": {
+      "bytes": 2671,
+      "sha256": "0c836826bf994b33907e8b2cc2fa7d108d4d443da6b9a1ade08e969686441757"
+    },
+    "whole-proof-final-launch-v5/outer-started.json": {
+      "bytes": 1876,
+      "sha256": "f359e2fd571ef05a7cbea80f43ae8b71ea3eaec4ed0a9bafa0dd5ad241b67a04"
+    },
+    "whole-proof-final-launch-v5/when_ready.py": {
+      "bytes": 7264,
+      "sha256": "d56faf9f89f6cb4ecad6b13a23c7cc596b3857dc11cd675c7ddf477dff3564e8"
+    },
+    "whole-proof-final-review-v5/independent-review.json": {
+      "bytes": 8220,
+      "sha256": "eeaba901de02584018eb0d4b5f4ceac978c738349b0d4ff2468a9f58f2cf4897"
+    },
+    "whole-proof-final-review-v5/pins.json": {
+      "bytes": 102513,
+      "sha256": "4f99cdbc559e2841987fc60013e5bf1217e44a2d2f288af0d32404a7613a0979"
+    },
+    "whole-proof-final-review-v5/sources.json": {
+      "bytes": 3716,
+      "sha256": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584"
+    }
+  },
+  "status": "accepted-local-F5-projection"
+}

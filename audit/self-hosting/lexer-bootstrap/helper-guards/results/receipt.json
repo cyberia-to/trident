@@ -1,0 +1,398 @@
+{
+  "schema": "trident/archive-helper-guards/v1",
+  "status": "passed",
+  "base_revision": "989eaee8380b858ea367ea7f9fe0ec942349ef33",
+  "checker_sha256": "39c6f29c2bb469ff122573c5de50f993b5c24542d5ffedc4261632ba48540f9f",
+  "commands": [
+    {
+      "helper": "collect.py",
+      "mode": "normal",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/collect.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": null
+      },
+      "exit_code": 0,
+      "helper_sha256": "806bb7ad3abbda14ffb311b351d7e22617d1c2528118b1e3ef1945447637e05c",
+      "stdout": {
+        "path": "0.stdout.gz",
+        "bytes": 1737,
+        "sha256": "715eb25d87ee12592dc945a7078020a877c96798968f8b2a4cc9c49e488da343",
+        "compressed_sha256": "72efd2a7f94eed72390b62c0e7e846b06185150dfb2bdbff8782e60fd2581acf",
+        "compressed_bytes": 764
+      },
+      "stderr": {
+        "path": "0.stderr.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "passed": true
+    },
+    {
+      "helper": "collect.py",
+      "mode": "flag-O",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-O",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/collect.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": null
+      },
+      "exit_code": 1,
+      "helper_sha256": "806bb7ad3abbda14ffb311b351d7e22617d1c2528118b1e3ef1945447637e05c",
+      "stdout": {
+        "path": "1.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "stderr": {
+        "path": "1.stderr.gz",
+        "bytes": 316,
+        "sha256": "c5fe800d93a676a7086d8f8897504d7c510f93254e741a22709ec1344fc3b641",
+        "compressed_sha256": "47c15120d253748d0568cfe9862c6cfd7066c5a157e5221396abff280b87ad9d",
+        "compressed_bytes": 221
+      },
+      "passed": true
+    },
+    {
+      "helper": "collect.py",
+      "mode": "environment-OO",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/collect.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": "2"
+      },
+      "exit_code": 1,
+      "helper_sha256": "806bb7ad3abbda14ffb311b351d7e22617d1c2528118b1e3ef1945447637e05c",
+      "stdout": {
+        "path": "2.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "stderr": {
+        "path": "2.stderr.gz",
+        "bytes": 316,
+        "sha256": "c5fe800d93a676a7086d8f8897504d7c510f93254e741a22709ec1344fc3b641",
+        "compressed_sha256": "47c15120d253748d0568cfe9862c6cfd7066c5a157e5221396abff280b87ad9d",
+        "compressed_bytes": 221
+      },
+      "passed": true
+    },
+    {
+      "helper": "c2-corpus/verify.py",
+      "mode": "normal",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c2-corpus/verify.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": null
+      },
+      "exit_code": 0,
+      "helper_sha256": "4b447349565671ce365ab0fa99d9eef838f6ca85d8ea76f7eb3230ae5d6a10e5",
+      "stdout": {
+        "path": "3.stdout.gz",
+        "bytes": 332,
+        "sha256": "908eec3ed8eacae62dfeb494b95ac5d1defdcf985bfb3cd556409a11485d74d2",
+        "compressed_sha256": "0dc38804ff25451ac94d3740feef30b29263457ad89f42ce1aae66fd7cbe06ff",
+        "compressed_bytes": 235
+      },
+      "stderr": {
+        "path": "3.stderr.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "passed": true
+    },
+    {
+      "helper": "c2-corpus/verify.py",
+      "mode": "flag-O",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-O",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c2-corpus/verify.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": null
+      },
+      "exit_code": 1,
+      "helper_sha256": "4b447349565671ce365ab0fa99d9eef838f6ca85d8ea76f7eb3230ae5d6a10e5",
+      "stdout": {
+        "path": "4.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "stderr": {
+        "path": "4.stderr.gz",
+        "bytes": 325,
+        "sha256": "5a5a7c81f56fdbe087299e28527391247cd646ff658fab7c30d1888c09052426",
+        "compressed_sha256": "2126ca56b5d6bad5219a53a9369d7d4eaddd2e3ba3f733ea9fbde3c1041c87ea",
+        "compressed_bytes": 226
+      },
+      "passed": true
+    },
+    {
+      "helper": "c2-corpus/verify.py",
+      "mode": "environment-OO",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c2-corpus/verify.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": "2"
+      },
+      "exit_code": 1,
+      "helper_sha256": "4b447349565671ce365ab0fa99d9eef838f6ca85d8ea76f7eb3230ae5d6a10e5",
+      "stdout": {
+        "path": "5.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "stderr": {
+        "path": "5.stderr.gz",
+        "bytes": 325,
+        "sha256": "5a5a7c81f56fdbe087299e28527391247cd646ff658fab7c30d1888c09052426",
+        "compressed_sha256": "2126ca56b5d6bad5219a53a9369d7d4eaddd2e3ba3f733ea9fbde3c1041c87ea",
+        "compressed_bytes": 226
+      },
+      "passed": true
+    },
+    {
+      "helper": "c3-corpus/verify.py",
+      "mode": "normal",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c3-corpus/verify.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": null
+      },
+      "exit_code": 0,
+      "helper_sha256": "b824a20dab43b57474fc48ff1bd0618296a84458c878cb72f3b6480deb17dd7a",
+      "stdout": {
+        "path": "6.stdout.gz",
+        "bytes": 332,
+        "sha256": "73d37225431bddc5f17b57edc2334c24436d796c7488d3f6b00aec957c9cee1e",
+        "compressed_sha256": "8d8f1a9f693f8e99264f02d74815763048aed106813b1662e0295eb413677720",
+        "compressed_bytes": 234
+      },
+      "stderr": {
+        "path": "6.stderr.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "passed": true
+    },
+    {
+      "helper": "c3-corpus/verify.py",
+      "mode": "flag-O",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-O",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c3-corpus/verify.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": null
+      },
+      "exit_code": 1,
+      "helper_sha256": "b824a20dab43b57474fc48ff1bd0618296a84458c878cb72f3b6480deb17dd7a",
+      "stdout": {
+        "path": "7.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "stderr": {
+        "path": "7.stderr.gz",
+        "bytes": 325,
+        "sha256": "4a5e0cc4aafb363aff8ed2e876fbd401c7d1c4443aa674e739bcc6f49029dc24",
+        "compressed_sha256": "9801f1dd9f9bc384d5df8067ae6913560bd690c5a35d896e088a6f5fb9b41805",
+        "compressed_bytes": 226
+      },
+      "passed": true
+    },
+    {
+      "helper": "c3-corpus/verify.py",
+      "mode": "environment-OO",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/lexer-bootstrap/c3-corpus/verify.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONOPTIMIZE": "2"
+      },
+      "exit_code": 1,
+      "helper_sha256": "b824a20dab43b57474fc48ff1bd0618296a84458c878cb72f3b6480deb17dd7a",
+      "stdout": {
+        "path": "8.stdout.gz",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "compressed_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "compressed_bytes": 20
+      },
+      "stderr": {
+        "path": "8.stderr.gz",
+        "bytes": 325,
+        "sha256": "4a5e0cc4aafb363aff8ed2e876fbd401c7d1c4443aa674e739bcc6f49029dc24",
+        "compressed_sha256": "9801f1dd9f9bc384d5df8067ae6913560bd690c5a35d896e088a6f5fb9b41805",
+        "compressed_bytes": 226
+      },
+      "passed": true
+    }
+  ],
+  "all_retained_inputs_byte_identical": true,
+  "retained_input_sha256": {
+    "collect.py": "806bb7ad3abbda14ffb311b351d7e22617d1c2528118b1e3ef1945447637e05c",
+    "sources.tar.gz": "c9cf43c04d53adfdf1f3b771d1b209757923bd8657dcfa9560b762d7991011cf",
+    "c1.dag.gz": "d90dc269d23c78780c176a0e488add2cdfb950d7ff7b9933613d3487b330352d",
+    "c1-to-c2.json": "868ad429aa7d0b4867d10c5d59e04adc37c5179d19d537734e50155336fef0c6",
+    "job1.dag.gz": "db12cd852a07e751732a214b6eddc9737683313afd6eaf9978d46d881da238fb",
+    "README.md": "e167a8913586232074089e25846ae9284c7b493cdce9edac2a0eb79f1b289102",
+    "c2.dag.gz": "ae592b0e27815fe605f4385cc9a73e67e531d6a5abfecc9b3312a6b1bc0d4b8e",
+    "validation.json": "dd96285c7416c2931ea95067ae7bb4faf5481c46e7686e199304da2010db1a53",
+    "inventory.json": "d35d263c7f9f27cbe7ea760a34393105ae8140dc6ab84d484151b6fe04960571",
+    "launch.json": "f915a594946f50c23f25feb777baba7b68615b1d809e0830ba47ef6115b10e29",
+    "artifacts.json": "49a1e117cb62d9fe8ad84fcd6ac718184f7263b6d8585ea152eeb5fee3ae2788",
+    "install/install-dependency-07.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/install-dependency-06.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/install-dependency-04.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/install-trident.log.gz": "d81993b899482b4f3287ce0bd398dedde10e622f2347ec89acf5be192129bef2",
+    "install/install-dependency-05.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/files.json": "31e2624d3c95d2430defcd3cd752534f935be550c099984a4a12f65f809f0ff1",
+    "install/install-dependency-00.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/installed-seed.log.gz": "7e2ce93ba1f3f556465538bc01f4c7da0ab10ea773d92afd517d61ca5ad55876",
+    "install/install-dependency-01.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/install-dependency-08.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "install/install-dependency-03.diff.gz": "103df802b59b25e3dfa276b779965f9b9b97b43c9fdef589aa9303c09e77e1f5",
+    "install/install-joy-2.log.gz": "d57be673497984ba06f1678d55a1661f69b036649b5504570b2cce73913f8f94",
+    "install/install-cargo-metadata.json.gz": "6fafa6eeba4071458f51359acf0bc024fa1d035b4f5bb83a548fbb54f3f70882",
+    "install/install-joy.log.gz": "14f9def6aaf7c54898fb6dc87553491b8a23ed906c7eb45d76fd1718f870d9cf",
+    "install/receipt.json": "a7c1b9f38acc6dcf8d0d2d73b99fcfdd25deea9a0795a4798092dc4e358fd79c",
+    "install/install-dependency-02.diff.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "c3-corpus/summary.json": "0b5d0b5d7fff006e44ca2518ed9818a35b6241ec5b5735311935b772c6e49257",
+    "c3-corpus/generated-artifacts.tar.gz": "91f04866e10293d720bb7ba9d0262c4462b9c81835742c9e4583ee09c4341056",
+    "c3-corpus/types.json.gz": "0f461adafd9db42ae41af7a035e1759c48677931a64d1e438e1287bb5e1c4325",
+    "c3-corpus/intrinsics-command.json": "168f7e33a909d027b942e1ecbd4a6c789d002277fd9463a76f06b4c5a801c63e",
+    "c3-corpus/binding.json": "da8b14ae4247b4634088efec3e1f5711dcf96b37b475a342055a94db03f3ea42",
+    "c3-corpus/types-command.json": "0bfb0b78a0c1da2e41c4d20a2ab20e9029cf69c85a11d63d961a89ea08df9802",
+    "c3-corpus/callable.json.gz": "cc3da9233ea90a6d741e6bc0cb10095f2068553c6592f4b3dd4577b310d10b42",
+    "c3-corpus/intrinsics.json.gz": "725b68ab4f64891ad15e51aeb9f974623346c98c9c53ade0eae4958fd71cfa91",
+    "c3-corpus/generated-profile-command.json": "ce08e6381ac6c18420c8c42c0cc9ef0f6baee1e1f9950042e43c107b2ecd7644",
+    "c3-corpus/main-command.json": "9bb56d3a071e03b754123e13ac40109ed8ac24a180ed07388faf50b344bdf6ac",
+    "c3-corpus/callable-command.json": "b84fa5e2f62e45fb74508a7e9401614d3d3cc1026a82ee74181930c28fbffb2f",
+    "c3-corpus/README.md": "7fa29345739795db856a224876ac73668ff1ca228f56b9de0334115728e90a8f",
+    "c3-corpus/callable.log.gz": "aca1a0c2bfc93bb7f4ceed1ded86bb6b2658cb7067ecef5e322498052e66a4db",
+    "c3-corpus/generated-profile.log.gz": "2e175a8a92563d09cc21b3a9eb760792a3be97c7b275178e012fca5fcae02000",
+    "c3-corpus/run.py.gz": "a4458443bc23c6fc8614781ba42b65f5ca0281d42979b1d7386fa3368e58ba27",
+    "c3-corpus/collect.py.gz": "f9b763d350744a36fa259b8d3a3c29c10130702e146f8f90b02b96fafb6229e9",
+    "c3-corpus/inputs.json": "f13efccf2b13dddf8c6b12ef1827430188e86e742f1b44849d33c9cc06f6f69e",
+    "c3-corpus/main.json.gz": "60e1862568ca1aac9f4d51d902cb1e4ead056c7d80bead4e3ba463d12d91b1be",
+    "c3-corpus/validation.json": "586217216c981614b53ed0ea510e45e53709e0d5ed74edf8068da222022b09ae",
+    "c3-corpus/types.log.gz": "7ca8c3aaaac1be854fe5b626207bb45716a486088b378813fe6407a8cb4a4f15",
+    "c3-corpus/main.log.gz": "a6024b82b9bca1f83bb076c0ae58df03574722b120f23ba3bd9513b6414cad61",
+    "c3-corpus/constants-command.json": "5aa0c6ff40523500f9b4c63d3d5fd5a4cfc61cb4f2121fbc33828d65a5557b2a",
+    "c3-corpus/generated-profile.json.gz": "d0ceb52e03038204a1113e4663869396841000a789e069bef2530d10c6c9e10f",
+    "c3-corpus/verify.py": "b824a20dab43b57474fc48ff1bd0618296a84458c878cb72f3b6480deb17dd7a",
+    "c3-corpus/intrinsics.log.gz": "b20cff3a094bc90239cc2042d609ca5ef57aced840f4e90fe005f840d83be572",
+    "c3-corpus/constants.json.gz": "150cbac869918a6fca9844f277e115159db6fd38c3f422d7c4e68338266844f5",
+    "c3-corpus/constants.log.gz": "5cc017d85f9b16812ee62520ec57b3fdffbb63f193b40fd1a4f7d5ef5d73d004",
+    "source-scale/check.py": "03a99dd789a54a4bdfc616adfcc121b1d7a1cafcf300f3668b800213b673addb",
+    "source-scale/artifacts.tar.gz": "c4fc965429f825be91b7aea9cbccb3d9a1ed022b41554e91bc9faf75d71795f9",
+    "source-scale/artifacts.json": "06843859118e510e50f37ce4de9d68c8b43775539d98bbfc4d898ef0b63d5f03",
+    "source-scale/receipt.json": "75cdf5438afcfb110497e3a82bc815489d6a11fef0ba9fdf56daa3097e3d427b",
+    "package-invariance/inputs.tar.gz": "b65f3c67312d780fb6cec9ca807f75df20e7c7b28c2724f87751284b6b7784c2",
+    "package-invariance/check.py": "4101fd63355bae9ee35bf48ca7eace747fc5cc2856ec15394124eacfe029dc1b",
+    "package-invariance/artifacts.json": "3ea7fbd0fb865baad4a2ddfbfc5ea5721e070c586c7890c281eb5d2d98201138",
+    "package-invariance/receipt.json": "c78a78371afe0c248068f06fd0bbe0434ebc6765b4e5b77b156c9dbd62f5993c",
+    "fixed-point/c3.dag.gz": "ae592b0e27815fe605f4385cc9a73e67e531d6a5abfecc9b3312a6b1bc0d4b8e",
+    "fixed-point/job2.dag.gz": "47062c398272fdad037784caa87a0623bbb6e2ea7ab0197fa379cf6e72d82bf3",
+    "fixed-point/comparison.json": "fdcc4445886e9bf7a3cd23208c8205765dd9ebf8b0e61836c19e38e31d296438",
+    "fixed-point/README.md": "178c944ef883d1fd722ad5325a4755a21c1a9248210e3a2cc2ee3ea4389a9daf",
+    "fixed-point/collect.py.gz": "655c37a84847c874d1dd8c131b394c3db55359a1a8f53ad6f45df18fa7fb239c",
+    "fixed-point/check-selfhost-fixed-point.py.gz": "640775a62296cab0207389236ca9f198f9b94d3eddfda8df6850b6c01d2a6927",
+    "fixed-point/c2-to-c3.json": "9479e0899f4aeeee089bfc0fd53ab0d9767fde8f50de8d5cbfff55cda515e8fa",
+    "fixed-point/comparison.log.gz": "628bd3390c446e709313cd61ced7858b7df1f1c9ea5f32dc7d768c7a53a25f11",
+    "fixed-point/artifacts.json": "e87c4322ae739c7cb346012d827f25a22ff76d94e6ebc0ba00b679d5982d8dc9",
+    "orchestration/run.log.gz": "8d5955d336d3eea822b4f802e1d8d873372a2f8894ec023cdfb13f99bd4b6257",
+    "orchestration/c2-to-c3.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "orchestration/fixed-point.log.gz": "628bd3390c446e709313cd61ced7858b7df1f1c9ea5f32dc7d768c7a53a25f11",
+    "orchestration/README.md": "e1db454ca9b924532258f8318a87ed6ac8430ca0b419b3fd8bcc22674d1aef0f",
+    "orchestration/c2-source-scale.log.gz": "b2d271ed5165babe4539731f966795d75afec69e6978ab6fdd55b3ce6a537098",
+    "orchestration/c3-corpus-launcher.log.gz": "6606ca0db761318236e5908994b37939da43e662bef374ef9cd50b5ab76e8779",
+    "orchestration/files.json": "06ffe450d11ce9a0a1fcfa18f2a8da24ee9d16ec114b426a353550fad13ca7d4",
+    "orchestration/run.py.gz": "10c62bb5a40423498df6b5229acfc72489b29bd07f57224bdf5e390ab5a917f8",
+    "orchestration/c2-corpus-launcher.log.gz": "f759e03de8fd37a809ba1b5c681be2b4d339a991d83e87e36b3d558e74e0c76c",
+    "orchestration/receipt.json": "cf609680e7c3ded1dfac03e373b7336f2851471597eac0f135d767616b3836d3",
+    "example-build/run.py": "24ebfec1fdd2221a5fca6667698cb06a78b3f6ebf304c5619aa8ef72564b9fc6",
+    "example-build/measurement-files.tar.gz": "6b7a5bf033cfdc540c4e5ccd09c63ab05a16421679ef491c91f084fe4713ce3b",
+    "example-build/README.md": "24085476f9910560bacd62eb6bf248905c8a31e765dc4724f1c4862a6987d680",
+    "example-build/receipt.json": "1d4dc791b04d68819606e1a37b919134f818908b645b6149257581c597a943c9",
+    "example-build/build.log": "8e0ae0b134d215109a426959ca67e428ffb03f55fac3f0ca8589815ebfc5c3d5",
+    "c2-corpus/summary.json": "5fddec7d6e9388e0a503ea175e81ab880222e9a137dfab934ffb21d58c2c3aa0",
+    "c2-corpus/generated-artifacts.tar.gz": "91f04866e10293d720bb7ba9d0262c4462b9c81835742c9e4583ee09c4341056",
+    "c2-corpus/types.json.gz": "fa135dd04ecf90a154e07dcf33cad1c971eecae8c34bbc4dcdde02ec2d605a7f",
+    "c2-corpus/intrinsics-command.json": "f9636fb16c028290487f56dcbbcc1fd6081f3bd3bc497fe76f0a571a929303bd",
+    "c2-corpus/binding.json": "0f6bcf4d0f37a8bdf995ebd32bb6b7a43d57880c4c47b594103efa0e036cc0ca",
+    "c2-corpus/types-command.json": "b6ef84bfc98fef41397c4255a8a6ac27a9d7b22af0d3746872622d710b2e9749",
+    "c2-corpus/callable.json.gz": "791c40b3c310ea293a7c03ede45bcba2c9fdcad020b9915780afc0459be03359",
+    "c2-corpus/intrinsics.json.gz": "56c7b7ab04c5f16b5178507082f5d1df0803bbad400be08a5124c16fe8c2f97f",
+    "c2-corpus/generated-profile-command.json": "fafdfa3df4b3503c21c67d9ac6df80d3429bee0a174b68207ba2b1bc4215c52c",
+    "c2-corpus/main-command.json": "c4298da0345cffbfa1b1475d089ea242d8d17942fa7bfc2605adbe0663c84263",
+    "c2-corpus/callable-command.json": "47febfe543521ac30dc2a01f93debb505e0aa8d7aceaedc803ffff4c0ec9995b",
+    "c2-corpus/README.md": "7cf33a63bb317474747443cdf6aae5d0432adb32a754c2c96f8b93a586086534",
+    "c2-corpus/callable.log.gz": "aca1a0c2bfc93bb7f4ceed1ded86bb6b2658cb7067ecef5e322498052e66a4db",
+    "c2-corpus/generated-profile.log.gz": "9fcb2aadc6f956c2b880499d251e37942c9406c1abef4b08f11ede1e7faa8f4e",
+    "c2-corpus/run.py.gz": "b2f1e382010638c1f662e94cea205f5c335a3e954931d8e74162bb933f804248",
+    "c2-corpus/collect.py.gz": "db2ec8b0893a4be5c8b0a503d068cf6df4f0ba1c207c8b011f94a287ac3d2205",
+    "c2-corpus/inputs.json": "cf1151925abf67e88f4bcd8bb517802321ce725324aee11dbb922673aa1c35e7",
+    "c2-corpus/main.json.gz": "dec1e9d872c75eee0c047f9271147d9f29018b113aff52038129bcbac3b49565",
+    "c2-corpus/validation.json": "c981b33eb313449927b2b02c19652479ec3e6aa4a031b4dd990fe842b3d8c9f1",
+    "c2-corpus/types.log.gz": "7ca8c3aaaac1be854fe5b626207bb45716a486088b378813fe6407a8cb4a4f15",
+    "c2-corpus/main.log.gz": "1b4c10df2bede361d5764e080a671e0b5b129e4f2a2402353b81f93730080b54",
+    "c2-corpus/constants-command.json": "8d56824e5c8d0315feec5e0bdb028b9d12d0249e17c8995c190be78e88faaa07",
+    "c2-corpus/generated-profile.json.gz": "f432fa76c74210d1dc0e05264e7caa51ebcdeab5a3f15d9a9afdda29f155936f",
+    "c2-corpus/verify.py": "4b447349565671ce365ab0fa99d9eef838f6ca85d8ea76f7eb3230ae5d6a10e5",
+    "c2-corpus/intrinsics.log.gz": "b20cff3a094bc90239cc2042d609ca5ef57aced840f4e90fe005f840d83be572",
+    "c2-corpus/constants.json.gz": "dd284696ee4458111ac83510309843c8a776f82fca790b62b6727a45f8420153",
+    "c2-corpus/constants.log.gz": "5cc017d85f9b16812ee62520ec57b3fdffbb63f193b40fd1a4f7d5ef5d73d004"
+  },
+  "scope": "Audit helper invocation modes only; no compiler execution or new bootstrap acceptance"
+}

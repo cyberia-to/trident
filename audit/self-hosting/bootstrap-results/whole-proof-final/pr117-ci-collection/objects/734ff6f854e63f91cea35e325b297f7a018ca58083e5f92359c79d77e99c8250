@@ -1,0 +1,28 @@
+"""Bounded isolated offline source tests with exact before/after inputs."""
+import hashlib,json,os,signal,subprocess,sys,time,traceback
+from pathlib import Path
+HERE=Path(__file__).resolve().parent;SOURCE=HERE.parent/'pr117-completion-v4';OUT=HERE/'tests-3';OUT.mkdir()
+def identity(p):
+ b=p.read_bytes();return dict(bytes=len(b),sha256=hashlib.sha256(b).hexdigest())
+files={str(p):identity(p) for p in SOURCE.glob('*.py')}
+report=dict(status='running',started_ns=time.time_ns(),sources=files,commands=[],scope='Synthetic commands/loopback HTTP+HTTPS fake-credential probes and independent accounting fixtures; no external HTTP or real credentials/native workload.')
+try:
+ for name,cmd in [('owner-tests',[sys.executable,'-B','-W','error','-m','unittest','-v','test_http','test_tls','test_accounting']),('peer-accounting',[sys.executable,'-B','-W','error',str(HERE/'test_peer_accounting.py'),str(SOURCE),'-v'])]:
+  row=dict(name=name,argv=cmd,cwd=str(SOURCE),timeout_seconds=120,started_ns=time.time_ns());report['commands'].append(row)
+  with (OUT/(name+'.stdout')).open('xb') as stdout,(OUT/(name+'.stderr')).open('xb') as stderr:
+   child=subprocess.Popen(cmd,cwd=SOURCE,stdout=stdout,stderr=stderr,start_new_session=True)
+   try:row['exit_code']=child.wait(timeout=120)
+   except BaseException:
+    try:os.killpg(child.pid,signal.SIGTERM)
+    except ProcessLookupError:pass
+    try:child.wait(timeout=5)
+    except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=5)
+    raise
+  row.update(ended_ns=time.time_ns(),stdout=identity(OUT/(name+'.stdout')),stderr=identity(OUT/(name+'.stderr')))
+  assert row['exit_code']==0,name
+ assert files=={str(p):identity(p) for p in SOURCE.glob('*.py')}
+ report.update(status='passed-offline-source-tests',source_unchanged=True)
+except BaseException:
+ report.update(status='failed',error=traceback.format_exc());raise
+finally:
+ report['ended_ns']=time.time_ns();(OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'status':report['status'],'receipt':identity(OUT/'receipt.json')}))

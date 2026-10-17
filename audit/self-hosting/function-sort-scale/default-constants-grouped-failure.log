@@ -1,0 +1,23 @@
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 13.72s
+     Running tests/native_compiler.rs (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/deps/native_compiler-8941dbcc9881c059)
+
+running 1 test
+excess body-chunks: 2809228 reductions 196920 nodes 629 frames
+
+thread '<unnamed>' (15507823) panicked at tests/native_compiler/constants.rs:202:46:
+called `Result::unwrap()` on an `Err` value: "guest execution: Error(Unavailable); nodes=196608; frames=629"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'constants::native_constants_keep_previous_default_arena_and_artifacts' (15507822) panicked at tests/native_compiler/../native_control/support.rs:13:10:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+test constants::native_constants_keep_previous_default_arena_and_artifacts ... FAILED
+
+failures:
+
+failures:
+    constants::native_constants_keep_previous_default_arena_and_artifacts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 187 filtered out; finished in 8.81s
+
+error: test failed, to rerun pass `--test native_compiler`

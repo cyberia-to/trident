@@ -79,6 +79,57 @@ pub fn get(b: Bytes, index: U32) -> U32 {
     assert(index < b.length)
     let word = convert.as_u32(noun.as_field(tree.get(b.root, b.words, quotient(index))))
     let position = index & THREE
+    // Keep this direct path for existing random readers. Sequential readers
+    // call word_byte after retaining a packed word across several positions.
+    if position == ZERO { return word & convert.as_u32(255) }
+    if position == convert.as_u32(1) {
+        return convert.as_u32(convert.as_field(word & convert.as_u32(65280)) * 18374686475393433601)
+    }
+    if position == convert.as_u32(2) {
+        return convert.as_u32(convert.as_field(word & convert.as_u32(16711680)) * 18446462594437939201)
+    }
+    convert.as_u32(convert.as_field(word & convert.as_u32(4278190080)) * 18446742969902956801)
+}
+
+// Sequential readers share a traversal across packed words. Padding words are
+// excluded; the final word's unused high lanes are canonical zero bytes.
+#[pure]
+pub fn words(b: Bytes) -> tree.Cursor { tree.cursor(b.root, b.words) }
+
+// At least five words give the tree three levels. Treat each height-three
+// subtree as one opaque leaf, including its canonical final padding words.
+#[pure]
+#[requires(convert.as_u32(16) < len(b))]
+pub fn word_groups(b: Bytes) -> tree.Cursor {
+    assert(convert.as_u32(16) < b.length)
+    let remainder = b.length & convert.as_u32(31)
+    let mut count = field.sub(convert.as_field(b.length), convert.as_field(remainder)) * 17870283317245378561
+    if (remainder == ZERO) == false { count = count + 1 }
+    tree.cursor(b.root, convert.as_u32(count))
+}
+
+// The offset addresses a byte. The first word contains that byte; at the end
+// the cursor is empty even when the last word has unused high lanes.
+#[pure]
+#[requires((len(b) < offset) == false)]
+pub fn words_from(b: Bytes, offset: U32) -> tree.Cursor {
+    assert((b.length < offset) == false)
+    if offset == b.length { return tree.cursor(noun.atom(0), ZERO) }
+    tree.cursor_at(b.root, b.words, quotient(offset))
+}
+
+#[pure]
+#[requires(offset < len(b))]
+pub fn word_at(b: Bytes, offset: U32) -> U32 {
+    assert(offset < b.length)
+    convert.as_u32(noun.as_field(tree.get(b.root, b.words, quotient(offset))))
+}
+
+#[pure]
+#[requires(position < convert.as_u32(4))]
+#[ensures(result < BYTE_LIMIT)]
+pub fn word_byte(word: U32, position: U32) -> U32 {
+    assert(position < convert.as_u32(4))
     // The low two bits select a fixed byte lane. Direct masks avoid building
     // and indexing two temporary tables for each source byte.
     if position == ZERO { return word & convert.as_u32(255) }
@@ -130,25 +181,91 @@ pub fn to_noun(b: Bytes) -> Noun {
     noun.pair(noun.atom(TAG), noun.pair(noun.atom(convert.as_field(b.length)), b.root))
 }
 
-// Payload reads share the shape validator's allowance and charge before get.
+// The byte decoder validates branches and packed payloads in one traversal.
+// Full eight-word subtrees share one task and one allowance subtraction. Every
+// shape visit and the historical height+1 payload charge remain accounted for.
 #[pure]
-fn validate_words_chunk(root: Noun, length: U32, words: U32, start: U32, visits: U32, cost: U32) -> (U32, U32) {
-    let mut index = start
+fn validation_task(node: Noun, occupied: U32, capacity: Field, padding: Noun) -> Noun {
+    noun.pair(node, noun.pair(noun.atom(convert.as_field(occupied)), noun.pair(noun.atom(capacity), padding)))
+}
+
+#[pure]
+fn validate_eight(node: Noun) -> U32 {
+    let left = noun.head(node)
+    let right = noun.tail(node)
+    let a = noun.head(left)
+    let b = noun.tail(left)
+    let c = noun.head(right)
+    let d = noun.tail(right)
+    // Each checked conversion must execute, including the first seven words.
+    convert.as_u32(noun.as_field(noun.head(a)))
+    convert.as_u32(noun.as_field(noun.tail(a)))
+    convert.as_u32(noun.as_field(noun.head(b)))
+    convert.as_u32(noun.as_field(noun.tail(b)))
+    convert.as_u32(noun.as_field(noun.head(c)))
+    convert.as_u32(noun.as_field(noun.tail(c)))
+    convert.as_u32(noun.as_field(noun.head(d)))
+    convert.as_u32(noun.as_field(noun.tail(d)))
+}
+
+#[pure]
+fn validate_words_chunk(todo: Noun, visits: U32, cost: U32, last: U32) -> (Noun, U32, U32) {
+    let mut work = todo
     let mut remaining = visits
+    let mut final_word = last
     for step in 0..128 {
-        if index == words { return (index, remaining) }
-        assert((remaining < cost) == false)
-        remaining = convert.as_u32(field.sub(convert.as_field(remaining), convert.as_field(cost)))
-        let word = convert.as_u32(noun.as_field(tree.get(root, words, index)))
-        index = convert.as_u32(convert.as_field(index) + 1)
-        if index == words {
-            let used = length & THREE
-            if (used == ZERO) == false {
-                assert(word < convert.as_u32(scale(used)))
+        if noun.eq(work, noun.atom(0)) { return (work, remaining, final_word) }
+        assert(ZERO < remaining)
+        remaining = convert.as_u32(field.sub(convert.as_field(remaining), 1))
+        let current = noun.head(work)
+        work = noun.tail(work)
+        let node = noun.head(current)
+        let body = noun.tail(current)
+        let occupied = convert.as_u32(noun.as_field(noun.head(body)))
+        let geometry = noun.tail(body)
+        let capacity = noun.as_field(noun.head(geometry))
+        let padding = noun.tail(geometry)
+        if occupied == ZERO {
+            assert(noun.eq(node, padding))
+        } else if capacity == 1 {
+            assert((remaining < cost) == false)
+            remaining = convert.as_u32(field.sub(convert.as_field(remaining), convert.as_field(cost)))
+            final_word = convert.as_u32(noun.as_field(node))
+        } else if capacity == 8 {
+            if occupied == convert.as_u32(8) {
+                let charge = convert.as_u32(14 + convert.as_field(cost) * 8)
+                assert((remaining < charge) == false)
+                remaining = convert.as_u32(field.sub(convert.as_field(remaining), convert.as_field(charge)))
+                final_word = validate_eight(node)
+            } else {
+                let half = convert.as_u32(4)
+                let mut left_count = occupied
+                let mut right_count = ZERO
+                if half < occupied {
+                    left_count = half
+                    right_count = convert.as_u32(field.sub(convert.as_field(occupied), 4))
+                }
+                let child_padding = noun.head(padding)
+                let right = validation_task(noun.tail(node), right_count, 4, child_padding)
+                let left = validation_task(noun.head(node), left_count, 4, child_padding)
+                work = noun.pair(left, noun.pair(right, work))
             }
+        } else {
+            let half_capacity = capacity * 9223372034707292161
+            let half = convert.as_u32(half_capacity)
+            let mut left_count = occupied
+            let mut right_count = ZERO
+            if half < occupied {
+                left_count = half
+                right_count = convert.as_u32(field.sub(convert.as_field(occupied), half_capacity))
+            }
+            let child_padding = noun.head(padding)
+            let right = validation_task(noun.tail(node), right_count, half_capacity, child_padding)
+            let left = validation_task(noun.head(node), left_count, half_capacity, child_padding)
+            work = noun.pair(left, noun.pair(right, work))
         }
     }
-    (index, remaining)
+    (work, remaining, final_word)
 }
 
 #[pure]
@@ -169,14 +286,20 @@ pub fn from_noun_budget(value: Noun, max_length: U32, max_visits: U32) -> (Bytes
     assert((max_length < length) == false)
     let root = noun.tail(body)
     let words = word_count(length)
-    let mut remaining = tree.validate(root, words, max_visits)
     let geometry = tree.shape(words)
     let cost = convert.as_u32(convert.as_field(geometry.height) + 1)
-    let mut index = ZERO
-    // At most 2^30 packed words; chunks release the evaluator's loop frames.
-    for chunk in 0..8388608 {
-        (index, remaining) = validate_words_chunk(root, length, words, index, remaining, cost)
-        if index == words { return (Bytes { length, root, words }, remaining) }
+    let initial = validation_task(root, words, geometry.capacity, tree.empty(geometry.height))
+    let mut work = noun.pair(initial, noun.atom(0))
+    let mut remaining = max_visits
+    let mut last = ZERO
+    // Each chunk consumes visits or returns/fails, including an empty tree.
+    for chunk in 0..33554432 {
+        (work, remaining, last) = validate_words_chunk(work, remaining, cost, last)
+        if noun.eq(work, noun.atom(0)) {
+            let used = length & THREE
+            if (used == ZERO) == false { assert(last < convert.as_u32(scale(used))) }
+            return (Bytes { length, root, words }, remaining)
+        }
     }
     assert_eq(0, 1)
     (empty(), ZERO)

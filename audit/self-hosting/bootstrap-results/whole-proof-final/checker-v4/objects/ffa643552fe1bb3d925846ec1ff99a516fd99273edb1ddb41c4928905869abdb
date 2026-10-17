@@ -1,0 +1,79 @@
+"""Independent retained-byte v4 composite replay; no native programs or cleanup."""
+import argparse
+import datetime
+import importlib.util
+import json
+from pathlib import Path
+import sys
+import traceback
+from common import ROOT,C,require,identity,load,same,reference,v3_pins,v4_sources
+import positive
+import cases
+import schedule
+import history
+import transitions
+
+
+def source_gate():
+    manifest=load(ROOT/'sources.json')
+    review=load(ROOT/'independent-review.json')
+    require(review['status']=='passed-source-review' and review['sources']==manifest,
+            'final checker exact independent source review required')
+    expected={p.name for p in ROOT.glob('*.py')}|{'pins.json','PLAN.md','adaptation.json'}
+    require(set(manifest)==expected,'all checker source and selector bytes reviewed')
+    for name,value in manifest.items():same(ROOT/name,value)
+    return manifest
+
+
+def prerequisites(base):
+    root=base/'whole-proof-attacks-completion-v4'
+    require(load(root/'run-1/receipt.json')['status']=='passed' and not (root/'stop.json').exists(),
+            'actual complete v4 controller success required before final replay')
+    for g in (1,2):
+        require(load(base/f'whole-proof-attacks-v4-c{g}/whole-c{g}/receipt.json')['status']=='passed-completion',
+                'both actual completed suites required')
+    require(load(root/'retained-cost-retirement.json')['status']=='passed'
+            and (root/'full-admission.json').is_file(),'actual completed C2 retirement and full admission required')
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--base',type=Path,required=True)
+    parser.add_argument('--output',type=Path,required=True)
+    args=parser.parse_args();base=args.base.resolve()
+    require(not args.output.exists(),'fresh final review destination required')
+    # No acceptance report is started until independent source review and actual prerequisites exist.
+    manifest=source_gate();prerequisites(base)
+    report=dict(schema='trident/proved-self-build-local-review/v4',status='running',
+                command=[sys.executable,*sys.argv],checker_sources=manifest,
+                independent_review=reference(ROOT/'independent-review.json'),generations=[],
+                scope='Composite local SH8 retained-byte replay. Both failed v2/v3 histories stay failed; original two controls, nine v2 and three v3 rejections are explicit reuse, with eleven fresh v4 rejections per generation. Complete public witness; no succinctness, zero knowledge, language-semantics preservation, durable transport or publication claim.')
+    try:
+        selector=load(ROOT/'pins.json')
+        require(selector['status']=='frozen-checker-inputs','checker source pin freeze required')
+        for path,value in selector['files'].items():same(base/path,value)
+        pins=v3_pins(base);v4_sources(base)
+        helper=base/'whole-acceptance/trident/audit/self-hosting/bootstrap-runner.py'
+        require(identity(helper)['sha256']==C.PINS[str(helper.relative_to(base))],'pinned corpus helper')
+        spec=importlib.util.spec_from_file_location('retained_bootstrap_v4',helper)
+        bootstrap=importlib.util.module_from_spec(spec);spec.loader.exec_module(bootstrap)
+        report['failed_histories']=history.review(base)
+        report['prefix_transition']=transitions.prefix(base)
+        report['completion_schedule']=schedule.review(base)
+        for g in (1,2):
+            result=positive.review(base,g,bootstrap)
+            result['composite_cases']=cases.review(base,g,result,pins)
+            report['generations'].append(result)
+        require(report['generations'][0]['compiler']==report['generations'][1]['compiler'],'proof-extracted C2 equals C3')
+        for path,value in selector['files'].items():same(base/path,value)
+        require(source_gate()==manifest,'checker sources unchanged after replay');v4_sources(base)
+        report['status']='passed-composite-replay'
+    except BaseException:
+        report.update(status='failed',error=traceback.format_exc());raise
+    finally:
+        report['completed_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+        with args.output.open('x') as stream:json.dump(report,stream,indent=2);stream.write('\n')
+    print(json.dumps(dict(status=report['status'],generations=len(report['generations']))))
+
+
+if __name__=='__main__':main()

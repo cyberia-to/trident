@@ -33,8 +33,8 @@ formula; running it and proving it ran correctly are the same act.
 Trident is the language of the [soft3](https://soft3.org) stack. It
 compiles to **nox**, the proof-native VM, and the **joy** warrior runs,
 proves and verifies what it emits through **zheng**. Public execution
-certificates disclose their witness; private execution uses Trisha's Triton 7
-STARK to check Zheng's execution constraints. One algebra
+certificates disclose their witness; native Zheng private proofs hide secret
+inputs and intermediate values for the supported execution relation. One algebra
 ([strata](https://github.com/cyberia-to/strata)), one hash
 ([hemera](https://github.com/cyberia-to/hemera)), one field, from source
 to proof. Twenty other engines and twenty-five unions are declared
@@ -126,12 +126,19 @@ On the default target a Trident program never leaves the soft3 stack:
 |------|-----------|--------------|
 | compile | **trident** | `.tri` → `.nox` formula over 18 reduction patterns; cost in reductions |
 | execute | [nox](https://github.com/cyberia-to/nox) via [joy](https://github.com/cyberia-to/joy) | reduces the formula; the trace is the witness |
-| prove | [zheng](https://github.com/cyberia-to/zheng) via joy | Public execution certificate: full authenticated witness and exact CCS constraints |
+| prove | [zheng](https://github.com/cyberia-to/zheng) via joy | Public certificates or native private proofs of the verifier-derived execution constraints |
 | verify | joy | checks the proof against the statement — no re-execution |
-| state | Compiler/nox state primitive | State execution certificates are unsupported by the current Joy path |
+| state | Compiler/nox state primitive and BBG via joy | Authenticated public tables with public or hidden query proofs |
 | algebra · hash | [strata](https://github.com/cyberia-to/strata) · [hemera](https://github.com/cyberia-to/hemera) | Goldilocks arithmetic and Poseidon2 inside the compiler — no parallel implementations |
 
-The default Zheng path verifies the computation/public-result relation for its supported bounded programs without native re-execution. It reveals the witness and has linear certificate size and verification work; it is neither ZK nor succinct. Secret inputs, state proofs, and unsupported execution shapes fail explicitly. Older folded trace-statement artifacts do not establish this relation and require explicit legacy inspection.
+Zheng verifies the computation/public-result relation for supported bounded
+programs without native re-execution. Public certificates reveal the witness.
+Secret inputs or `joy prove --zk` select the native private proof; `--state`
+supplies authenticated public BBG tables. Both profiles have linear proof size.
+Unsupported execution shapes fail explicitly. Older folded trace-statement
+artifacts require explicit legacy inspection. The
+[private execution contract](../joy/specs/private-execution.md) specifies
+disclosure, bounds and cryptographic assumptions.
 
 ---
 
@@ -328,9 +335,15 @@ See [Content-Addressed Code](docs/explanation/content-addressing.md).
 
 ## Verification status
 
-The Rust compiler is the current implementation. `lib/std/compiler/` contains
-experimental components, not a complete self-hosted compiler or a proof
-that this compiler binary faithfully implements the language.
+The Rust compiler remains the reference frontend and tooling implementation.
+The native compiler in `compiler/nox/` and `lib/std/compiler/nox/` has compiled
+its complete frozen S1 source closure: 94 modules executed through Joy on nox.
+The generated C2 and C3 have identical canonical bytes and both pass the actual
+semantic corpus. SH0–SH6 are accepted for that frozen compiler subset: twelve
+independent native bootstrap repetitions and twenty-four C2/C3 corpus jobs passed on macOS,
+Linux and Windows, each ARM64 and x64. The original CI aggregate and independent
+artifact replay agree. Native compilation proofs (SH7/SH8), full parity with the Rust frontend
+and tooling, and formal semantic preservation remain separate work.
 
 [Self-hosting on soft3](reference/self-hosting.md) defines the native nox/Joy
 milestones and acceptance gates. The [progress ledger](audit/self-hosting-progress.md)
@@ -346,11 +359,12 @@ The nox compiler and Joy executor support the surface documented in
 [reference/nox.md](reference/nox.md). Zheng derives the execution constraints
 from the canonical program; verification binds public input, output, cost and
 authenticated state roots. Public JOYEXEC2 and JOYST001 certificates disclose
-the witness. Private JOYZK003 artifacts prove the same bounded relation using
-a real Triton STARK and omit private columns. Private queries select from
-bounded fully public state tables. Dynamic continuations, variable noun shapes
-and a private database remain unimplemented. Legacy unauthenticated recursive
-opening APIs remain disabled. See [Joy's proof contracts](../joy/README.md)
+the witness. Native JOYZH001 proofs hide atom call witnesses and intermediate
+values, including query coordinates over authenticated public tables. Joy uses
+only the soft3 proof stack; Trisha owns Triton and Neptune independently.
+Historical JOYZK artifacts are unsupported. Dynamic continuations, variable noun
+shapes and a private database remain unimplemented. Legacy unauthenticated
+recursive opening APIs remain disabled. See [Joy's proof contracts](../joy/README.md)
 and the [coordinated validation ledger](audit/full-release-preparation.md).
 
 ---
@@ -360,21 +374,26 @@ and the [coordinated validation ledger](audit/full-release-preparation.md).
 Build the coordinated development checkouts with their locked dependencies:
 
 ```sh
-nu ../trisha/patches/apply.nu
 cargo install --path . --locked
 cargo install --path ../joy/cli --locked
-cargo install --path ../trisha/cli --locked
 trident build main.tri                     # nox output by default
 trident run main.tri --input-values 3,5     # Joy execution
-trident build main.tri --target triton     # Trisha emits TASM
-trident run main.tri --target triton       # Trisha execution
-trident prove main.tri --target triton     # Triton STARK proof
 trident check main.tri                     # type-check
 trident fmt main.tri                       # format source
 ```
 
-Follow [Trisha's build instructions](../trisha/README.md) to prepare its
-patched dependencies before installing. Warriors must be on `PATH`.
+For the separate Triton/Neptune target, prepare and install Trisha:
+
+```sh
+nu ../trisha/patches/apply.nu
+cargo install --path ../trisha/cli --locked
+trident build main.tri --target triton     # Trisha emits TASM
+trident run main.tri --target triton       # Trisha execution
+trident prove main.tri --target triton     # Triton STARK proof
+```
+
+Follow [Trisha's build instructions](../trisha/README.md) for that target.
+Joy builds independently of Trisha. Installed warriors must be on `PATH`.
 An unavailable warrior is an error. An explicit target overrides the
 project target; otherwise `trident.toml` selects the target, then nox is
 the fallback. Standard compiler resources are embedded in the binaries.

@@ -1,0 +1,75 @@
+{
+  "schema": "parallel-whole-proof-independent-source-review-v1",
+  "status": "changes-requested",
+  "reviewed_utc": "2026-10-02T05:24:41.822704+00:00",
+  "scope": "Read-only source review only; no suite, certificate or coordinator execution. Receipt stored outside charged directories during preparation.",
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/run.py": {
+      "bytes": 10102,
+      "sha256": "49ee8bf4f4fee8fa3b44cdd33a5f9b2cb92bf3e2b87d0baa70b602d50c974c2c"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/resources.py": {
+      "bytes": 6329,
+      "sha256": "85af6946d43cc56bd114208b199daf5547cb9469610118a1513e511cd9fdb32d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/plan.json": {
+      "bytes": 1297,
+      "sha256": "dfd87e0764823d7fa92bfd7ddf1b0c8577395b0f3446ae5944ed7f0b6897691d"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/transition.json": {
+      "bytes": 15361,
+      "sha256": "aef3f4e5c6926c8085267d28b48dda73e0ad384b8cf5111976c6fecaca4b6371"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-parallel-v2/copied-inputs.json": {
+      "bytes": 630641,
+      "sha256": "de7a08fbe4eeb054d6c5b5d4580c585649723d789104a4e8658e3d9e42262bf3"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/guard.py": {
+      "bytes": 7499,
+      "sha256": "107c064b95e069394fa89fe79938d6c95523c628fbf2b5d5c1207f1f5ca000b2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c1/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/guard.py": {
+      "bytes": 7499,
+      "sha256": "107c064b95e069394fa89fe79938d6c95523c628fbf2b5d5c1207f1f5ca000b2"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/whole_suite.py": {
+      "bytes": 13854,
+      "sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132"
+    }
+  },
+  "findings": [
+    {
+      "id": "orphan-detached-process-ownership",
+      "severity": "blocking",
+      "detail": "Combined accounting and stop_all discover only current PPID descendants. After a suite exits or is killed, its detached native child may be reparented and omitted from both accounting and shutdown. Keep durable native group ownership and previously observed ownership until confirmed empty; terminate and ownership-recheck TERM/KILL fallback for those groups independently of live suite parents."
+    },
+    {
+      "id": "final-shared-accounting",
+      "severity": "minor",
+      "detail": "Recheck shared sample after children and pipes drain before passed, covering growth after the last timed sample."
+    },
+    {
+      "id": "per-generation-reclamation",
+      "severity": "minor",
+      "detail": "reclaim accepts either registered generation work directory for any caller. Bind the target to the admitted caller generation before deletion."
+    }
+  ],
+  "positive_checks": [
+    "Both copied suites retain exactly the original two controls and all 23 rejections; no negative success is inherited from interrupted v1.",
+    "Existing v1 partial is explicitly retained and included in baseline accounting.",
+    "Both mutant reservations plus canonical and metadata buckets are admitted before either suite runs.",
+    "Helper per-file ceiling is stricter and unchanged CPU, wall and RSS limits remain.",
+    "Per-stream logs have active bounded pipe draining.",
+    "Registered direct coordinator child and generation lock gate each suite.",
+    "Accounting read lock and exclusive reclaim prevent unlink races during inventory.",
+    "Exact source manifest and independent-review admission gate prevent unreviewed launch."
+  ],
+  "limitations": [
+    "Source reviewed before root fixes and executable resource tests; no launch approval.",
+    "The initial source manifest is retained here even if root revises sources later."
+  ]
+}

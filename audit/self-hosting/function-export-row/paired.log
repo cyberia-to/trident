@@ -1,0 +1,12 @@
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+    Finished `release` profile [optimized] target(s) in 0.47s
+     Running tests/native_function_exports.rs (../target-root/release/deps/native_function_exports-39b562dfad675c00)
+
+running 3 tests
+{"export_lookup":[{"after":{"frames":467,"loaded_nodes":6371,"nodes":50842,"reductions":1276457,"result":[1,0]},"before":{"frames":467,"loaded_nodes":6390,"nodes":50949,"reductions":1348546,"result":[1,0]},"query":"name00"},{"after":{"frames":467,"loaded_nodes":6371,"nodes":42090,"reductions":827341,"result":[1,16]},"before":{"frames":467,"loaded_nodes":6390,"nodes":42153,"reductions":863016,"result":[1,16]},"query":"name16"},{"after":{"frames":467,"loaded_nodes":6371,"nodes":33390,"reductions":410213,"result":[1,31]},"before":{"frames":467,"loaded_nodes":6390,"nodes":33410,"reductions":410321,"result":[1,31]},"query":"name31"},{"after":{"frames":467,"loaded_nodes":6371,"nodes":42043,"reductions":612968,"result":[0,0]},"before":{"frames":467,"loaded_nodes":6390,"nodes":42152,"reductions":687112,"result":[0,0]},"query":"absent"}]}
+test export_lookup_resource_probe ... ok
+test export_lookup_preserves_owner_final_binding_and_separate_source_spans ... ok
+{"compiler":[{"artifact_blake3":"d0d1cfd8d088503bb257b5496ebd36f6f9f9241809938cea24928343deb01d26","artifact_bytes":9700617,"loaded_nodes":100701,"source_blake3":"f11ca5d7779fb943b3c516898c0fb8c9967832e5e1204895668e0d06dfca9afa","variant":"before"},{"artifact_blake3":"70c027b41b8ae91318b0d70a571df422fecb689ed5625190ed466a6157fa90dc","artifact_bytes":9708336,"loaded_nodes":100780,"source_blake3":"3f538ca623f71201f2f9376965fc9344525d64c39a1b8683f038ef6ee925d966","variant":"after"}]}
+test export_lookup_compiler_footprint ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.59s

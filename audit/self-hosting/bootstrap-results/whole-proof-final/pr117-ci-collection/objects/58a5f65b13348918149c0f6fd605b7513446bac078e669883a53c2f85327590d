@@ -1,0 +1,186 @@
+"""One bounded, offline, fresh-output replay after both actual prerequisite passes."""
+import argparse
+import json
+import os
+from pathlib import Path
+import resource
+import selectors
+import shutil
+import signal
+import subprocess
+import sys
+import time
+import traceback
+
+from admission import (ROOT, R2, COLLECTOR, OWNER, OWNER_WRAPPER, GIT_REPO, PYTHON, SCOPES, ENV, MIB, GIB,
+                       admit, require, identity, reference, load, check_result)
+
+LIMITS = dict(replay_seconds=1200, owned_output_bytes=32 * MIB, log_bytes=MIB,
+              shared_bytes=3 * GIB, free_floor_bytes=8 * GIB)
+
+
+def size_tree(root):
+    require(root.is_dir() and not root.is_symlink(), 'ordinary existing accounting scope')
+    paths = list(root.rglob('*'))
+    require(len(paths) <= 500000 and all(not p.is_symlink() for p in paths), 'bounded ordinary tree')
+    return sum(p.stat().st_size for p in paths if p.is_file())
+
+
+def save(path, value):
+    raw = (json.dumps(value, indent=2) + '\n').encode()
+    require(len(raw) <= MIB, 'bounded peer wrapper receipt')
+    # Both the old receipt and the atomic replacement coexist before rename.
+    require(size_tree(path.parent) + len(raw) <= LIMITS['owned_output_bytes'],
+            'wrapper atomic replacement fits peer output ceiling')
+    shared_used = sum(size_tree(p) for p in (*SCOPES, OWNER, OWNER_WRAPPER, ROOT))
+    require(shared_used + len(raw) <= LIMITS['shared_bytes'], 'wrapper atomic replacement fits shared ceiling')
+    require(shutil.disk_usage(ROOT).free >= LIMITS['free_floor_bytes'] + len(raw),
+            'wrapper replacement preserves free floor')
+    temporary = path.with_suffix('.next')
+    with temporary.open('xb') as stream:
+        stream.write(raw)
+        stream.flush()
+        os.fsync(stream.fileno())
+    temporary.replace(path)
+
+
+def abort_signal(number, _frame):
+    raise InterruptedError('peer replay received ' + signal.Signals(number).name)
+
+
+def install_handlers():
+    previous = {number: signal.getsignal(number) for number in (signal.SIGTERM, signal.SIGINT)}
+    for number in previous:
+        signal.signal(number, abort_signal)
+    return previous
+
+
+def restore_handlers(previous):
+    for number, handler in previous.items():
+        signal.signal(number, handler)
+
+
+def run(selection_path, review_path, output):
+    require(output.parent == ROOT and not output.exists(), 'fresh peer-owned output directory')
+    # Admission reads only terminal small prerequisites and reviewed source files.
+    admitted = admit(selection_path, review_path)
+    original_scope_bytes = [size_tree(p) for p in SCOPES]
+    owner_scope_bytes = [size_tree(p) for p in (OWNER, OWNER_WRAPPER)]
+    peer_preparation_bytes = size_tree(ROOT)
+    require(sum(original_scope_bytes + owner_scope_bytes) + peer_preparation_bytes + LIMITS['owned_output_bytes'] <= LIMITS['shared_bytes'],
+            '3GiB shared ceiling includes peer reservation')
+    require(shutil.disk_usage(ROOT).free >= LIMITS['free_floor_bytes'] + LIMITS['owned_output_bytes'],
+            '8GiB free floor plus peer reservation')
+    output.mkdir(mode=0o700)
+    # Import only the already rehashed cleanup implementation; no transport method is invoked.
+    sys.path.insert(0, str(R2 / 'whole-retention-adoption'))
+    from transport import stop
+    args = [str(PYTHON), '-B', '-W', 'error', str(COLLECTOR / 'replay.py'),
+            '--collection', str(COLLECTOR), '--git-repo', str(GIT_REPO), '--output', str(output / 'replay')]
+    report = dict(schema='trident/pr117-independent-offline-replay-launch/v1', status='running',
+                  started_ns=time.time_ns(), admission=admitted, command=args, cwd=str(ROOT),
+                  environment=ENV, limits=LIMITS, original_scope_bytes=original_scope_bytes,
+                  peer_preparation_bytes=peer_preparation_bytes,
+                  owner_scope_bytes=owner_scope_bytes,
+                  scope='Retained original native-matrix replay; no network, compiler, proof, corpus or transport rerun')
+    save(output / 'receipt.json', report)
+    child = None
+    failure = None
+    tick = time.monotonic()
+    sample_tick = tick
+    select = selectors.DefaultSelector()
+    counts = dict(stdout=0, stderr=0)
+    previous_handlers = install_handlers()
+    def file_limit():
+        resource.setrlimit(resource.RLIMIT_FSIZE, (LIMITS['owned_output_bytes'], LIMITS['owned_output_bytes']))
+    try:
+        with (output / 'stdout').open('xb') as stdout, (output / 'stderr').open('xb') as stderr:
+            streams = dict(stdout=stdout, stderr=stderr)
+            child = subprocess.Popen(args, cwd=ROOT, env=ENV, stdin=subprocess.DEVNULL,
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True,
+                                     preexec_fn=file_limit)
+            child.adoption_owned_group = child.pid
+            report.update(pid=child.pid, owned_group=child.pid)
+            save(output / 'receipt.json', report)
+            select.register(child.stdout, selectors.EVENT_READ, 'stdout')
+            select.register(child.stderr, selectors.EVENT_READ, 'stderr')
+            while child.poll() is None or select.get_map():
+                require(time.monotonic() - tick <= LIMITS['replay_seconds'], 'offline replay deadline')
+                require(shutil.disk_usage(ROOT).free >= LIMITS['free_floor_bytes'], '8GiB free floor')
+                if time.monotonic() >= sample_tick:
+                    used = size_tree(output)
+                    # Keep two 1MiB receipt buffers available for terminal status.
+                    require(used <= LIMITS['owned_output_bytes'] - 2 * MIB, 'peer output preserves terminal reserve')
+                    report['peak_output_bytes'] = max(used, report.get('peak_output_bytes', 0))
+                    sample_tick = time.monotonic() + 0.5
+                for key, _ in select.select(timeout=0.1):
+                    raw = os.read(key.fd, 65536)
+                    if not raw:
+                        select.unregister(key.fileobj)
+                        continue
+                    available = max(0, LIMITS['log_bytes'] - counts[key.data])
+                    streams[key.data].write(raw[:available])
+                    counts[key.data] += len(raw)
+                    require(counts[key.data] <= LIMITS['log_bytes'], 'bounded peer outer log')
+            report['exit_code'] = child.wait()
+        require(report['exit_code'] == 0 and counts['stderr'] == 0, 'quiet successful frozen replay command')
+        result = load(output / 'replay/receipt.json')
+        inputs = admitted['inputs']
+        check_result(result, {k: inputs['collection'][k] for k in ('bytes', 'sha256')},
+                     {k: inputs['accounting'][k] for k in ('bytes', 'sha256')})
+        require(result['checker'] == admitted['checker'], 'same frozen checker result')
+        require(admit(selection_path, review_path) == admitted, 'prerequisites and sources unchanged after replay')
+        final_scope_bytes = [size_tree(p) for p in SCOPES]
+        final_owner_bytes = [size_tree(p) for p in (OWNER, OWNER_WRAPPER)]
+        require(final_scope_bytes == original_scope_bytes, 'original scope sizes unchanged')
+        require(final_owner_bytes == owner_scope_bytes, 'completed owner replay sizes unchanged')
+        require(size_tree(output) <= LIMITS['owned_output_bytes'], 'peer final output ceiling')
+        require(sum(final_scope_bytes + final_owner_bytes) + size_tree(ROOT) <= LIMITS['shared_bytes'], 'shared final ceiling')
+        report.update(status='passed-independent-original-matrix-replay', replay=reference(output / 'replay/receipt.json'),
+                      final_scope_bytes=final_scope_bytes, source_and_prerequisites_unchanged=True,
+                      final_owner_scope_bytes=final_owner_bytes,
+                      safe_summary={k: result[k] for k in ('origin', 'compiler_sha256', 'source_pins',
+                                   'native_producers', 'native_corpus_jobs', 'observations_per_corpus_job')},
+                      archive_count=len(result['archives']))
+    except BaseException as exception:
+        failure = exception
+        report.update(status='failed', error=traceback.format_exc())
+        try:
+            save(output / 'receipt.json', report)
+        except BaseException:
+            report['failure_persistence_error'] = traceback.format_exc()
+    finally:
+        # A repeated cancellation must not bypass the bounded owned cleanup.
+        for number in previous_handlers:
+            signal.signal(number, signal.SIG_IGN)
+        try:
+            report['cleanup'] = stop(child, force_group=True)
+        except BaseException as exception:
+            report.update(status='failed', cleanup_error=traceback.format_exc())
+            if failure is None:
+                failure = exception
+        select.close()
+        if child is not None:
+            child.stdout.close()
+            child.stderr.close()
+            report['exit_code'] = child.returncode
+        report.update(ended_ns=time.time_ns(), elapsed_monotonic_seconds=time.monotonic() - tick)
+        for name in ('stdout', 'stderr'):
+            if (output / name).exists():
+                report[name] = identity(output / name)
+        try:
+            save(output / 'receipt.json', report)
+        finally:
+            restore_handlers(previous_handlers)
+    if failure is not None:
+        raise failure
+    print(json.dumps(dict(status=report['status'], receipt=reference(output / 'receipt.json'))))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--selection', type=Path, required=True)
+    parser.add_argument('--review', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    options = parser.parse_args()
+    run(options.selection.resolve(), options.review.resolve(), options.output.absolute())

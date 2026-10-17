@@ -1,0 +1,116 @@
+[
+  {
+    "bytes": 1059371,
+    "classification": "identity-only-existing-source-inventory",
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/joy-install/source-equivalence.json",
+    "reason": "Exact previously retained source inventory; prior integration archives bind this same identity. No new body copy.",
+    "sha256": "d9aeb78f31383f2da238f30f48eaa090e7e200c0f9104c3675443525aaa426b0"
+  },
+  {
+    "bytes": 12266,
+    "classification": "identity-only-duplicate-document-body",
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/prs/joy/published-document.stdout",
+    "reason": "Duplicate published README body; exact head/Git blob and authenticated readback are bound in the PR receipt.",
+    "sha256": "bf3e5b011a9ec79ab510ff36b1ce6b1cc2b68a10eba6b2ea3161886a9293c78c"
+  },
+  {
+    "bytes": 10853,
+    "classification": "identity-only-duplicate-document-body",
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/prs/trisha/published-document.stdout",
+    "reason": "Duplicate published README body; exact head/Git blob and authenticated readback are bound in the PR receipt.",
+    "sha256": "bb62f3bc615b5dd48272df357456478ba2406ee0359fba651b70217fa87708da"
+  },
+  {
+    "bytes": 69366,
+    "classification": "identity-only-existing-source-inventory",
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/trisha-install/source-equivalence-original.json",
+    "reason": "Exact previously retained source inventory; prior integration archives bind this same identity. No new body copy.",
+    "sha256": "009db17b7f94758903f533da493ea2ea5036b670aabefc4df34a7c13eb954d0d"
+  },
+  {
+    "bytes": 5736,
+    "classification": "identity-only-duplicate-document-body",
+    "command": [
+      "git",
+      "show",
+      "a6b12e584719b69b64a606c5c4a54d6f6c7ae929:audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    ],
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/0.stdout",
+    "reason": "Duplicate immutable document body; target Git blob/API equivalence is recorded in validation/receipt.json.",
+    "sha256": "e6cb719964560da41609d0eafeae4a0d2987f5279e29f2acc361f7d68b1be630"
+  },
+  {
+    "bytes": 9248,
+    "classification": "identity-only-duplicate-document-body",
+    "command": [
+      "gh",
+      "api",
+      "repos/cyberia-to/trident/contents/audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md?ref=a6b12e584719b69b64a606c5c4a54d6f6c7ae929"
+    ],
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/2.stdout",
+    "reason": "Duplicate immutable document body; target Git blob/API equivalence is recorded in validation/receipt.json.",
+    "sha256": "932b5979bcda40e601ffea4044d58cbdc43302984a74455276233684b8a4998b"
+  },
+  {
+    "bytes": 2763,
+    "classification": "identity-only-duplicate-document-body",
+    "command": [
+      "git",
+      "show",
+      "a6b12e584719b69b64a606c5c4a54d6f6c7ae929:audit/self-hosting/bootstrap-results/whole-proof-final/joy-source-bridge/README.md"
+    ],
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/3.stdout",
+    "reason": "Duplicate immutable document body; target Git blob/API equivalence is recorded in validation/receipt.json.",
+    "sha256": "0871b01c440e7e2cff2568505d707887525edf7be0323c49c6fe201c4e5b69d3"
+  },
+  {
+    "bytes": 5194,
+    "classification": "identity-only-duplicate-document-body",
+    "command": [
+      "gh",
+      "api",
+      "repos/cyberia-to/trident/contents/audit/self-hosting/bootstrap-results/whole-proof-final/joy-source-bridge/README.md?ref=a6b12e584719b69b64a606c5c4a54d6f6c7ae929"
+    ],
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/5.stdout",
+    "reason": "Duplicate immutable document body; target Git blob/API equivalence is recorded in validation/receipt.json.",
+    "sha256": "ae4956da2a55ecbac3137f2f19edc7a4a392b4ec9aac4ed7190e9d8f273a9f50"
+  },
+  {
+    "bytes": 5404,
+    "classification": "identity-only-duplicate-document-body",
+    "command": [
+      "git",
+      "show",
+      "a6b12e584719b69b64a606c5c4a54d6f6c7ae929:audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json"
+    ],
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/6.stdout",
+    "reason": "Duplicate immutable document body; target Git blob/API equivalence is recorded in validation/receipt.json.",
+    "sha256": "7857fe9dc809faff1e65ca00ac11eab86c90c14808a2a82c19a906d1400a5214"
+  },
+  {
+    "bytes": 8857,
+    "classification": "identity-only-duplicate-document-body",
+    "command": [
+      "gh",
+      "api",
+      "repos/cyberia-to/trident/contents/audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json?ref=a6b12e584719b69b64a606c5c4a54d6f6c7ae929"
+    ],
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/validation/8.stdout",
+    "reason": "Duplicate immutable document body; target Git blob/API equivalence is recorded in validation/receipt.json.",
+    "sha256": "c4bffa3e3987761e4e7db83979c8f46fc1c9a492aea5521e0d3806f51dda029d"
+  },
+  {
+    "bytes": 1059371,
+    "classification": "identity-only-existing-source-inventory",
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/joy-install/source-equivalence.json",
+    "reason": "Exact previously retained source inventory; prior integration archives bind this same identity. No new body copy.",
+    "sha256": "d9aeb78f31383f2da238f30f48eaa090e7e200c0f9104c3675443525aaa426b0"
+  },
+  {
+    "bytes": 69366,
+    "classification": "identity-only-existing-source-inventory",
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-postmerge-20261003/trisha-install/source-equivalence-original.json",
+    "reason": "Exact previously retained source inventory; prior integration archives bind this same identity. No new body copy.",
+    "sha256": "009db17b7f94758903f533da493ea2ea5036b670aabefc4df34a7c13eb954d0d"
+  }
+]

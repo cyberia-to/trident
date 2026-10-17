@@ -1,0 +1,60 @@
+{
+  "status": "passed-root-frozen-source-tests",
+  "source_manifest": {
+    "bytes": 16156,
+    "sha256": "cd2d58e2c0f0ac022295b9d679d1441376e849cfd41db0307f27f1b7e1731b25"
+  },
+  "started_ns": 1790974494363439000,
+  "commands": [
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "-v",
+        "test_http",
+        "test_tls",
+        "test_accounting"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+      "exit_code": 0,
+      "elapsed_seconds": 8.322534915991127,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 3256,
+        "sha256": "bed977135a26f23016d57b998522446cb6733965191e17f494afc0a0114a8da6"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "-v",
+        "test_completion"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v3",
+      "exit_code": 0,
+      "elapsed_seconds": 3.71434083400527,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 2715,
+        "sha256": "1add5d56b2ef8348377bca4aa73244460f47cdec2194e5d4431ea4b306c4f344"
+      }
+    }
+  ],
+  "sources_unchanged": true,
+  "ended_ns": 1790974506440824000
+}

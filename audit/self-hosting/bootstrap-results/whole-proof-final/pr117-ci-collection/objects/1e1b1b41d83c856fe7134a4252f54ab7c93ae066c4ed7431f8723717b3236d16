@@ -1,0 +1,39 @@
+"""Single-writer shared byte ledger; inventories occur at operation boundaries."""
+import shutil
+import time
+from pathlib import Path
+
+MIB=1024**2
+GIB=1024**3
+
+def require(value,message):
+    if not value:raise ValueError(message)
+
+
+class Budget:
+    def __init__(self,roots,limit=3*GIB,free_floor=8*GIB,seconds=7200):
+        self.roots=roots;self.limit=limit;self.free_floor=free_floor;self.seconds=seconds
+        self.tick=time.monotonic();self.used=0;self.scans=0;self.peak=0;self.reconciliations=[]
+        self.reconcile('initial')
+
+    def fast(self,reserve=0):
+        require(type(reserve) is int and reserve>=0,'nonnegative byte reservation')
+        require(time.monotonic()-self.tick<=self.seconds,'collection total deadline')
+        require(self.used+reserve<=self.limit,'shared original and continuation3GiB cap')
+        require(shutil.disk_usage(self.roots[-1]).free>=self.free_floor+reserve,'8GiB free floor plus reservation')
+
+    def charge(self,count):
+        self.fast(count);self.used+=count;self.peak=max(self.peak,self.used)
+
+    def released(self,count):
+        require(type(count) is int and 0<=count<=self.used,'bounded replacement release');self.used-=count
+
+    def reconcile(self,label):
+        values=[]
+        for root in self.roots:
+            paths=list(root.rglob('*'));require(len(paths)<=500000,'bounded scope inventory')
+            require(all(not p.is_symlink() for p in paths),'ordinary owned scopes without symlinks')
+            values.append(sum(p.stat().st_size for p in paths if p.is_file()))
+        self.used=sum(values);self.scans+=1;self.peak=max(self.peak,self.used);self.fast()
+        self.reconciliations.append(dict(label=label,time_ns=time.time_ns(),scope_bytes=values,bytes=self.used,scan=self.scans))
+        return self.used

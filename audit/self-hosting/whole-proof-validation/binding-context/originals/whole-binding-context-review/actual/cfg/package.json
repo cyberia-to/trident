@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "entry_module": "sample",
+  "entry_function": "main",
+  "modules": [
+    {
+      "logical_path": "bank.values",
+      "file": "bank/values.tri",
+      "origin_name": "sh3-pilot",
+      "origin_version": "1"
+    },
+    {
+      "logical_path": "sample",
+      "file": "sample.tri",
+      "origin_name": "sh3-pilot",
+      "origin_version": "1"
+    }
+  ],
+  "options": {
+    "target": 0,
+    "input_profile": 0,
+    "output_profile": 0,
+    "optimization": 0,
+    "cfg_flags": [
+      "whole_proof_changed"
+    ]
+  },
+  "limits": {
+    "source_bytes": 4096,
+    "modules": 32,
+    "diagnostics": 16,
+    "sequence_length": 65536,
+    "validation_visits": 16777216,
+    "artifact_bytes": 16777216,
+    "artifact_nodes": 196608,
+    "artifact_depth": 4096,
+    "reductions": 100000000,
+    "arena_nodes": 100000000,
+    "evaluator_frames": 65536
+  }
+}

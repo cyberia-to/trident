@@ -1,0 +1,83 @@
+{
+  "status": "passed-independent-source-and-original-replay",
+  "base_revision": "8cb43f652501bf7689211bae793ac1757eb125b7",
+  "findings": [],
+  "files": {
+    "README.md": {
+      "bytes": 5229,
+      "sha256": "769c41cfa5cfa77eebae0593c3e68a98ff628aaa86e0583f37308bada5433162"
+    },
+    "package.py": {
+      "bytes": 5292,
+      "sha256": "17c7455a41ab308ef5a01523cd70ac6b2996b2c533b90e0f6fd44ec3e915cf3a"
+    },
+    "check_delivery.py": {
+      "bytes": 3998,
+      "sha256": "eab0e1fb8d326b47e9526534ec10df28fccf5c2dc58097a8ba263fd8a6b3ca71"
+    },
+    "check_relations.py": {
+      "bytes": 13946,
+      "sha256": "6948417508679d6d66ef8dfeb9bfed6f0d56a65bfe133c806589cd72f66da5e0"
+    },
+    "test_delivery.py": {
+      "bytes": 7319,
+      "sha256": "f7bf728c74adc3b5e5eaf09eafb2f70178a515a49a9900ff0e4782443b63afdf"
+    },
+    "archive.json": {
+      "bytes": 1038,
+      "sha256": "d3b17644a5176f033ce19f0aed823f1a8e7a5f274e8caa5364f0074810137299"
+    },
+    "files.json": {
+      "bytes": 2805571,
+      "sha256": "566b8fb950c84f629ef5a47a9eb5eb653e600f78769af78936ec796ce7ae2a5b"
+    },
+    "validation.json": {
+      "bytes": 9786,
+      "sha256": "178d078d1ff25b7079ff230575c95a070b9343646af2031d5b07d4908fff8372"
+    }
+  },
+  "checks": [
+    "Complete original scope is deterministically snapshotted with membership and content checks before/after",
+    "Bounded archive reader rejects links/traversal/duplicate members and rehashes all6731 members",
+    "Actual producer/fresh-verifier and generation-specific ART1 paths remain distinct despite equal compiler bytes",
+    "Each generation has six actual helper invocations and547 observations with exact binary/source/input/environment bindings",
+    "Optional oracle applicability flags remain distinct from performed assertion flags; original failed development attempts preserved",
+    "Original failed corpus-v1 archive identity remains linked; no inherited partial cases and no SH8 completion claim"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "test_delivery"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result",
+      "exit_code": 0,
+      "tests": 16,
+      "failures": 0,
+      "warnings": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "check_delivery.py",
+        "--originals"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result",
+      "exit_code": 0,
+      "files": 6731,
+      "observations_per_generation": [
+        547,
+        547
+      ]
+    }
+  ],
+  "scope": "Measured corpus evidence delivery only; no new compiler or proof execution"
+}

@@ -1,0 +1,31 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustfmt",
+        "--edition",
+        "2021",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/historical-dynamic/main.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/historical-dynamic",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "generate-lockfile",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance/trident/audit/self-hosting/native-proof-pilots/historical-dynamic",
+      "exit_code": 101
+    }
+  ],
+  "environment": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/Library/Application Support/Zed/external_agents/registry/npx/codex-acp/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/codex-path:/Users/master/.grok/bin:/Users/master/.local/bin:/Users/master/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/master/.grok/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pkg/env/active/bin:/opt/pmk/env/global/bin:/opt/homebrew/bin:/Users/master/.codex/tmp/arg0/codex-arg00dVQaB:/Users/master/Library/Application Support/Zed/external_agents/registry/npx/codex-acp/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/codex-path:/Users/master/.cargo/bin:/Users/master/.foundry/bin:/Users/master/.foundry/bin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target"
+  },
+  "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+  "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\n"
+}

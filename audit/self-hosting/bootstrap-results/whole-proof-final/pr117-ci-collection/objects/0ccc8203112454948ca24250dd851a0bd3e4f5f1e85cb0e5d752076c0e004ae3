@@ -1,0 +1,56 @@
+"""Fixed curl request, bounded response classification and private credential input."""
+import email.utils,re,time
+from urllib.parse import urlsplit
+from collection_common import REPO,RUN,RATE,PROFILE,require
+
+RETRY_CODES={5,6,7,18,28,35,52,55,56,92}
+RETRY_HTTP={408,429,500,502,503,504}
+
+def token_config(token):
+    require(isinstance(token,bytes) and re.fullmatch(rb'[A-Za-z0-9_]{20,4096}',token) is not None,'bounded GitHub token syntax')
+    return b'header = "Authorization: Bearer '+token+b'"\n'
+
+def endpoints(assets):
+    return {f'repos/{REPO}/actions/runs/{RUN}/attempts/1',f'repos/{REPO}/actions/runs/{RUN}/attempts/1/jobs?per_page=100',f'repos/{REPO}/actions/runs/{RUN}/artifacts?per_page=100',f'repos/{REPO}/actions/runs/{RUN}/attempts/1/logs'}|{f"repos/{REPO}/actions/artifacts/{a['id']}"+suffix for a in assets for suffix in ('','/zip')}
+
+def argv(curl,endpoint,body,header_fd):
+    url='https://api.github.com/'+endpoint;parsed=urlsplit(url)
+    require(parsed.scheme=='https' and parsed.netloc=='api.github.com' and parsed.path.startswith('/repos/'+REPO+'/actions/'),'fixed GitHub request origin')
+    args=[curl,'-q','--silent','--show-error','--fail-with-body','--http1.1','--proto','=https','--proto-redir','=https','--disallow-username-in-url','--location','--max-redirs','3','--connect-timeout','60','--max-time','1200','--retry','0','--config','-','--dump-header',f'/dev/fd/{header_fd}','--header','Accept: application/vnd.github+json','--header','X-GitHub-Api-Version: 2022-11-28','--user-agent','trident-pr117-readonly-archive-v4']
+    if body:args+=['--limit-rate',str(RATE)]
+    return args+['--url',url]
+
+def headers(raw,complete=False):
+    require(len(raw)<=PROFILE['header_bytes'] and b'\x00' not in raw,'bounded ordinary response headers')
+    text=raw.decode('iso-8859-1');blocks=re.split(r'\r?\n\r?\n',text);statuses=[];final={}
+    for block in blocks:
+        if not block:continue
+        lines=block.splitlines();match=re.fullmatch(r'HTTP/(?:1\.[01]|2|3) ([0-9]{3})(?: .*)?',lines[0])
+        require(match is not None,'HTTP response status framing');statuses.append(int(match[1]));final={}
+        for line in lines[1:]:
+            require(':' in line and not line[:1].isspace(),'HTTP header framing')
+            key,value=line.split(':',1);key=key.lower();require(re.fullmatch(r'[!#$%&\x27*+.^_`|~0-9a-z-]+',key) is not None,'header field name')
+            final.setdefault(key,[]).append(value.strip())
+    if complete:require(statuses and raw.endswith((b'\r\n\r\n',b'\n\n')),'complete final HTTP header block')
+    require(len(statuses)<=4,'bounded redirects')
+    return dict(statuses=statuses,status=statuses[-1] if statuses else None,fields=final)
+
+def retry(code,response,now=None):
+    status=response['status']
+    # A truncated error body may produce curl18 instead of curl22.
+    # Its permanent HTTP status still rules out another request.
+    if status is not None and status>=400 and status not in RETRY_HTTP:return None
+    eligible=code in RETRY_CODES or (code==22 and status in RETRY_HTTP)
+    if not eligible:return None
+    values=response['fields'].get('retry-after',[]);require(len(values)<=1,'unambiguous Retry-After')
+    delay=PROFILE['backoff_seconds']
+    if values:
+        value=values[0]
+        if re.fullmatch('[0-9]{1,8}',value):after=int(value)
+        else:
+            try:
+                stamp=email.utils.parsedate_to_datetime(value);require(stamp.tzinfo is not None,'timezone in Retry-After');after=max(0,int(stamp.timestamp()-(time.time() if now is None else now)+0.999))
+            except (TypeError,ValueError,OverflowError) as error:raise ValueError('valid bounded Retry-After') from error
+        require(after<=PROFILE['max_retry_after_seconds'],'Retry-After exceeds finite profile; stop')
+        delay=max(delay,after)
+    return delay

@@ -1,0 +1,108 @@
+"""Replay completed transport union through unchanged committed native matrix predicates."""
+import argparse
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+import traceback
+import zipfile
+
+MIB=1024**2
+COMPILER='76a07c08265bd2ef525164472b6b53ac3f0e6cbbedce3250c4202f40ffba34c8'
+
+def require(value,reason):
+    if not value:raise ValueError(reason)
+
+def identity(path):
+    require(path.is_file() and not path.is_symlink(),'regular retained file')
+    with path.open('rb') as source:digest=hashlib.file_digest(source,'sha256').hexdigest()
+    return dict(bytes=path.stat().st_size,sha256=digest)
+
+def load(path):
+    require(path.stat().st_size<=32*MIB,'bounded metadata JSON')
+    return json.loads(path.read_text())
+
+def tree(path):
+    paths=list(path.rglob('*'));require(len(paths)<=50000 and all(not p.is_symlink() for p in paths),'bounded ordinary retained tree')
+    return {str(p.relative_to(path)):identity(p) for p in paths if p.is_file()}
+
+def zip_members(path):
+    result={}
+    with zipfile.ZipFile(path) as archive:
+        members=archive.infolist();require(len(members)<=10000,'bounded original archive entries')
+        require(sum(m.file_size for m in members)<=1024**3,'bounded original archive expansion')
+        for member in members:
+            if member.is_dir():continue
+            require(member.filename not in result,'distinct original archive member')
+            with archive.open(member) as source:digest=hashlib.file_digest(source,'sha256').hexdigest()
+            result[member.filename]=dict(bytes=member.file_size,sha256=digest)
+    return result
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--collection',type=Path,required=True);parser.add_argument('--git-repo',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
+    require(not args.output.exists(),'new isolated replay output');args.output.mkdir();start=time.time_ns()
+    report=dict(schema='trident/original-native-phase-matrix-replay-completion/v3',status='running',started_ns=start,checker=identity(Path(__file__)),command=[sys.executable,*sys.argv],scope='Complete original Actions metadata/ZIP/member receipt replay with the exact committed phase checker; no compiler, prover, native executable or corpus rerun; separate from SH7/SH8 proof acceptance')
+    def save():(args.output/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+    save()
+    try:
+        root=args.collection;data=root/'completed'
+        from validate import admit
+        from completion_common import OLD
+        collected=admit(root)
+        run,attempt,head=collected['run'],collected['attempt'],collected['head'];origin=dict(run_id=str(run),run_attempt=str(attempt),head_sha=head)
+        require(identity(root/'collect.py')==collected['sources'][str(root/'collect.py')],'exact continuation collector source')
+        for name,wanted in collected['terminal_metadata'].items():require(identity(OLD/(name+'.json'))==wanted,'original authenticated terminal metadata')
+        run_value=load(OLD/'run.json');jobs=load(OLD/'jobs.json');assets=load(OLD/'artifacts.json')['artifacts']
+        require(run_value['id']==run and run_value['head_sha']==head and run_value['run_attempt']==attempt and run_value['conclusion']=='success' and run_value['status']=='completed','exact entire original run passed')
+        require(jobs['total_count']==len(jobs['jobs'])==37 and all(j['run_id']==run and j['head_sha']==head and j['run_attempt']==attempt and j['conclusion']=='success' and j['status']=='completed' for j in jobs['jobs']),'all37 actual native jobs passed')
+        require(len(assets)==37 and len(collected['archives'])==38 and len(collected['members'])==38,'all37 original artifacts plus original attempt logs')
+        report.update(origin=origin,collection=identity(data/'receipt.json'),original_failed_collection=collected['original']['receipt'],original_source=collected['original']['source'],reused_original_archives=5,reused_v2_archives=11,continuation_original_archives=21,previous_failed_continuation=collected['history']['v2'],cumulative_attempt_history=collected['prior_attempts'],final_accounting=identity(data/'final-accounting.json'),original_metadata=collected['terminal_metadata'],archives={},phases=[])
+        for name,wanted in collected['archives'].items():
+            plain={k:wanted[k] for k in ('bytes','sha256')};require(identity(Path(wanted['storage']['zip']))==plain,'original ZIP whole identity')
+            require(tree(Path(wanted['storage']['tree']))==collected['members'][name]==zip_members(Path(wanted['storage']['zip'])),'all original ZIP members and restored bytes independently equal')
+            if name.startswith('bootstrap-'):
+                matches=[a for a in assets if a['name']==name];require(len(matches)==1 and matches[0]==wanted['metadata'],'original listed artifact identity')
+                asset=matches[0];require(asset['digest']=='sha256:'+plain['sha256'] and asset['size_in_bytes']==plain['bytes'] and asset['workflow_run']['id']==run and asset['workflow_run']['head_sha']==head,'server digest/run/size binding')
+            report['archives'][name]=dict(**plain,files=len(collected['members'][name]),decoded_bytes=sum(v['bytes'] for v in collected['members'][name].values()))
+        # validate.admit checked every successful and failed original/new transport row.
+        implementation=args.output/'implementation';implementation.mkdir();source_records={}
+        for name in ('bootstrap-runner.py','bootstrap-phases.py','bootstrap_phase_checks.py'):
+            command=['git','show',head+':audit/self-hosting/'+name];raw=subprocess.run(command,cwd=args.git_repo,capture_output=True,timeout=30,check=True)
+            require(not raw.stderr,'quiet committed source read');(implementation/name).write_bytes(raw.stdout);source_records[name]=dict(command=command,identity=identity(implementation/name))
+        for name in ('selfhost-bootstrap.yml','selfhost-bootstrap-repeat.yml'):
+            raw=subprocess.run(['git','show',head+':.github/workflows/'+name],cwd=args.git_repo,capture_output=True,timeout=30,check=True);require(not raw.stderr,'quiet committed workflow read');(implementation/name).write_bytes(raw.stdout)
+        text=(implementation/'selfhost-bootstrap.yml').read_text();pairs=re.findall(r'"(joy|nox|hemera|strata|zheng|bbg|lens|neuron)":"([0-9a-f]{40})"',text)
+        pins=dict(pairs);pins['trident']=head;require(len(pins)==9 and all(v==pins[k] for k,v in pairs),'exact committed nine-repository workflow pins')
+        require('--rust-version 1.95.0' in (implementation/'selfhost-bootstrap-repeat.yml').read_text(),'exact existing native Rust1.95 profile')
+        sys.path.insert(0,str(implementation));spec=importlib.util.spec_from_file_location('bootstrap_phase_checks',implementation/'bootstrap_phase_checks.py');check=importlib.util.module_from_spec(spec);spec.loader.exec_module(check)
+        expected_names={f'bootstrap-phase-{target}-repeat-{repeat}-{role}-attempt-{attempt}':(target,repeat,role) for target in check.B.TARGETS for repeat in (1,2) for role in ('producer','c2','c3')}
+        aggregate_name=f'bootstrap-phase-matrix-comparison-attempt-{attempt}';require({a['name'] for a in assets}==set(expected_names)|{aggregate_name},'exact original platform/phase/repetition inventory')
+        reports=[];selected_jobs=set()
+        for name,(target,repeat,role) in sorted(expected_names.items()):
+            phase=Path(collected['archives'][name]['storage']['tree']);value=load(phase/'receipt.json');require(value['target']==target and value['repeat']==repeat and value['pins']==pins and value['rust_version']=='1.95.0','phase exact target/pins/profile')
+            require(value['ci_origin']==origin and value['implementation']==check.implementation(),'exact original checker/CI source')
+            job_name=f'Bootstrap {target} repeat {repeat} / '+('Self-build C2 and C3' if role=='producer' else 'Corpus C'+role[1]);matches=[j for j in jobs['jobs'] if j['name']==job_name]
+            require(len(matches)==1 and matches[0]['id'] not in selected_jobs,'distinct corresponding original native job');selected_jobs.add(matches[0]['id'])
+            if role=='producer':
+                require(value['phase']=='producer','producer artifact role')
+                builds=[r for r in value['commands'] if r['command'][:2]==['cargo','build']];require(len(builds)==2,'two original native tool builds')
+                for row in builds:require(not re.search(rb'^warning(?:\[[^\]\r\n]+\])?:',(phase/row['stderr']).read_bytes(),re.M),'original native build warning')
+            else:require(value['phase']=='corpus' and value['generation']==int(role[1]),'corpus artifact generation')
+            reports.append((phase,value));report['phases'].append(dict(name=name,job_id=matches[0]['id'],receipt=identity(phase/'receipt.json')))
+        compiler=check.compare_matrix(reports,origin);require(compiler==COMPILER,'all12 native C2/C3 pairs and24 compiler corpora independently replayed')
+        aggregate_root=Path(collected['archives'][aggregate_name]['storage']['tree']);aggregate=load(aggregate_root/'receipt.json');require(aggregate['schema']==check.SCHEMA and aggregate['phase']=='matrix' and aggregate['status']=='passed' and aggregate['ci_origin']==origin and aggregate['implementation']==check.implementation() and aggregate['compiler_sha256']==compiler,'original Actions aggregate agrees')
+        original={Path(r['path'].replace('\\','/')).parent.name:r['sha256'] for r in aggregate['phase_reports']}
+        require(len(aggregate['phase_reports'])==len(original)==36 and original=={r.name:identity(r/'receipt.json')['sha256'] for r,_ in reports},'all36 original aggregate receipt identities')
+        require(load(aggregate_root/'files.json')=={} and {k:aggregate['files'][k] for k in ('bytes','sha256')}==identity(aggregate_root/'files.json'),'original aggregate manifest')
+        require(identity(data/'receipt.json')==report['collection'],'original collection stayed unchanged')
+        report.update(status='passed-original-matrix-replay-completion',compiler_sha256=compiler,source_pins=pins,checker_sources=source_records,native_producers=12,native_corpus_jobs=24,observations_per_corpus_job=sum(check.B.CORPORA.values()))
+    except BaseException:
+        report.update(status='failed',error=traceback.format_exc());raise
+    finally:report['ended_ns']=time.time_ns();save()
+    print(json.dumps(dict(status=report['status'],origin=report['origin'],receipt=identity(args.output/'receipt.json'))))
+
+if __name__=='__main__':main()

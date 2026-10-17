@@ -1,0 +1,22 @@
+--- previous/privacy.py
++++ current/privacy.py
+@@ -28,0 +29,2 @@
++    require(not re.search(rb'(?im)^\s*(?:Proxy-)?Authorization\s*:', data),
++            'plain authorization header')
+@@ -31 +33 @@
+-    require(not re.search(rb'(?m)^\s*\d+\s+\d+\s+\d+\s+.*\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b', data),
++    require(not re.search(rb'(?m)^\s*\d+\s+(?:\d+\s+){1,3}.*\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b', data),
+--- previous/test_delivery.py
++++ current/test_delivery.py
+@@ -172,0 +173,11 @@
++    def test_bsd_two_column_process_rows_rejected(self):
++        rows=''.join(f'{pid} {pgid} Fri Oct  2 21:00:00 2026\n'
++                     for pid,pgid in ((1001,900),(1002,900),(1003,900))).encode()
++        with self.assertRaisesRegex(ValueError,'host process table row'):
++            public_bytes(rows)
++
++    def test_plain_authorization_headers_rejected(self):
++        for prefix in (b'Authorization',b'Proxy-Authorization',b'authorization'):
++            with self.subTest(prefix=prefix),self.assertRaisesRegex(ValueError,'plain authorization header'):
++                public_bytes(prefix+b': Bearer synthetic-opaque-secret\n')
++

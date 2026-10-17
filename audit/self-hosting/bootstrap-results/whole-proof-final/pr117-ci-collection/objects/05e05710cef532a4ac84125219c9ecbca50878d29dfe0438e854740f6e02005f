@@ -1,0 +1,51 @@
+"""Conditional sizing, never a claimed transport or native-matrix result."""
+import argparse,hashlib,json,time
+from pathlib import Path
+from budget import Budget
+from collection_common import *
+from history import admit
+from http_policy import argv
+
+def main():
+    p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);args=p.parse_args();args.output.mkdir()
+    start=time.time_ns();admitted=admit(args.output,Budget(SCOPES));proxy_path=ROOT.parent/'pr116-terminal/completed/receipt.json';proxy=load(proxy_path)
+    old=admitted['archives'];assets={a['name']:a for a in admitted['assets']};missing=sorted(set(assets)-set(old));require(len(missing)==15,'exact remaining15')
+    proxy_members={(name.rsplit('-attempt-',1)[0]+'-attempt-1' if name.startswith('bootstrap-') else 'attempt-1-logs'):members for name,members in proxy['members'].items()}
+    members=dict(admitted['members']);members.update({name:proxy_members[name] for name in missing+['attempt-1-logs']})
+    refs={};reference_sizes={}
+    def ref(name,value):
+        raw=encode(value);reference_sizes[name]=len(raw);require(len(raw)<=32*MIB,'each projected reference bounded')
+        return dict(path=str(ROOT/'completed/inventories'/(name+'.json')),bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+    history=admitted['history'];history_refs={name:ref('prior-scope-'+str(i),value) for i,(name,value) in enumerate(history['all_files'].items())}
+    refs={name:ref(name,value) for name,value in members.items()}
+    maximum_time=9999999999999999999;dummy=dict(bytes=GIB,sha256='f'*64);commands=[];requests=[];backoffs=[]
+    jobs=[('admission-run',f'actions/runs/{RUN}/attempts/1',8*MIB,False),('admission-jobs',f'actions/runs/{RUN}/attempts/1/jobs?per_page=100',8*MIB,False),('admission-artifacts',f'actions/runs/{RUN}/artifacts?per_page=100',8*MIB,False)]
+    for name in missing:jobs.extend([(name+'-metadata',f"actions/artifacts/{assets[name]['id']}",4*MIB,False),(name,f"actions/artifacts/{assets[name]['id']}/zip",assets[name]['size_in_bytes'],True)])
+    jobs.extend([('attempt-1-logs',f'actions/runs/{RUN}/attempts/1/logs',256*MIB,True),('attempt-after',f'actions/runs/{RUN}/attempts/1',4*MIB,False)]);require(len(jobs)==35,'exact final request count')
+    for label,endpoint,maximum,body in jobs:
+        attempts=[]
+        for attempt in range(1,4):
+            name=f'{label}-attempt-{attempt}';attempts.append(name)
+            row=dict(name=name,command=argv('/usr/bin/curl','repos/'+REPO+'/'+endpoint,body,999999),endpoint='repos/'+REPO+'/'+endpoint,private_stdin='existing Github Authorization header; not retained',environment={'PATH':'/usr/bin:/bin:/usr/sbin:/sbin','LANG':'C'},started_ns=maximum_time,ended_ns=maximum_time,pid=9999999999,owned_group=9999999999,stdout_limit=maximum,stderr_limit=MIB,header_limit=65536,timeout_seconds=1200,body_read_rate=RATE if body else None,exit_code=56 if attempt<3 else 0,elapsed_monotonic_seconds=1230.123456789,stdout=dummy,stderr=dummy,headers=dummy,http=dict(statuses=[302,302,302,200],status=200),classification_time_ns=maximum_time,retry_delay_seconds=120 if attempt<3 else None,cleanup=dict(group_empty=True,signals=['TERM','KILL'],exit_code=56,observations=[dict(pid=9999999999,pgid=9999999999)]))
+            if attempt<3:row.update(error='E'*(16*1024),retryable=True);backoffs.append(dict(after_attempt=name,seconds=120,started_ns=maximum_time,ended_ns=maximum_time,elapsed_monotonic_seconds=120.123456789))
+            commands.append(row)
+        prior=admitted['prior_attempts'].get(label,[]) if body else []
+        requests.append(dict(name=label,kind='body' if body else 'metadata',prior_attempts=prior,attempts=attempts,cumulative_attempts=prior+[dict(scope='v4',name=n) for n in attempts],status='passed',successful_command=attempts[-1],path=str(ROOT/'completed'/(attempts[-1]+('.zip' if body else '.json'))),identity=dummy))
+    archives=dict(old)
+    for name in missing+['attempt-1-logs']:
+        archives[name]=dict(bytes=assets[name]['size_in_bytes'] if name in assets else proxy['archives']['attempt-2-logs']['bytes'],sha256='f'*64,storage=dict(zip=str(ROOT/'completed'/(name+'-attempt-3.zip')),tree=str(ROOT/'completed'/name)),command_ref=dict(scope='v4',name=name+'-attempt-3'))
+        if name in assets:archives[name]['metadata']=assets[name]
+    labels=['initial','after-local-credential']
+    for row in commands:
+        name=row['name'];labels.extend(['before-command:'+name,'after-command:'+name])
+        if name.endswith('-attempt-3') and any(j[0]+'-attempt-3'==name and j[3] for j in jobs):labels.extend(['before-extract:'+name,'after-extract:'+name])
+    labels.append('final');rows=[dict(label=label,scan=i,time_ns=maximum_time,scope_bytes=[9999999999]*6,bytes=59999999994) for i,label in enumerate(labels,1)]
+    selected=tools();source=load(ROOT/'sources.json') if (ROOT/'sources.json').exists() else {str(path):identity(path) for path in sorted(ROOT.glob('*.py'))}
+    receipt=dict(schema='trident/exact-attempt-actions-collection-completion/v4',status='passed-completion',run=RUN,attempt=1,head=HEAD,profile=PROFILE,sources=source,review=dummy,started_ns=maximum_time,ended_ns=maximum_time,commands=commands,requests=requests,backoffs=backoffs,archives=archives,member_maps=refs,prior_attempts=admitted['prior_attempts'],history=dict(v3=history['v3'],prior16=history['prior16'],all_files=history_refs),gh=selected['gh'],curl=selected['curl'],python=selected['python'],toolchain=identity(ROOT/'toolchain.json'),credential=dict(command=['gh','auth','token','--hostname','github.com'],started_ns=maximum_time,ended_ns=maximum_time,cleanup={'group_empty':True}),accounting=dict(peak_bytes=3*GIB,scans=len(rows),reconciliations=rows))
+    serialized=len(encode(receipt));reserve=2*MIB;existing={str(scope):sum(p.stat().st_size for p in scope.rglob('*') if p.is_file()) for scope in SCOPES};decoded=sum(v['bytes'] for name in missing+['attempt-1-logs'] for v in members[name].values());zip_bytes=sum(assets[n]['size_in_bytes'] for n in missing);logs=proxy['archives']['attempt-2-logs']['bytes'];sidecar_allowance=96*MIB
+    projected=sum(existing.values())+decoded+zip_bytes+logs+sum(reference_sizes.values())+2*(serialized+reserve)+sidecar_allowance
+    value=dict(status='conditional-final-sizing-not-observed-completion',command=[__import__('sys').executable,*__import__('sys').argv],started_ns=start,ended_ns=time.time_ns(),source=identity(Path(__file__)),admission=dict(archives=len(old),members=sum(len(m) for m in admitted['members'].values()),prior16=admitted['history']['prior16']),proxy=dict(path=str(proxy_path),**identity(proxy_path)),remaining_names=missing,requests=len(jobs),modeled_attempts=len(commands),modeled_backoffs=len(backoffs),modeled_error_bytes_each=16384,main_receipt_serialized_bytes=serialized,extra_main_receipt_reserve=reserve,main_receipt_plus_reserve=serialized+reserve,main_receipt_cap=32*MIB,main_receipt_margin=32*MIB-serialized-reserve,reference_sizes=reference_sizes,reference_total=sum(reference_sizes.values()),largest_reference=max(reference_sizes.values()),reference_cap=32*MIB,existing_scope_bytes=existing,actual_missing_zip_bytes=zip_bytes,proxy_remaining_decoded_bytes=decoded,proxy_logs_bytes=logs,additional_sidecar_partial_allowance=sidecar_allowance,projected_peak_owned_bytes=projected,owned_cap=3*GIB,conditional_owned_margin=3*GIB-projected,assumptions=['Remaining PR117 decoded membership and logs use corresponding actual PR116 archives as a qualified sizing proxy; no remaining PR117 bytes are claimed observed.','Main receipt models three attempts for every35 request,70 failures with16KiB tracebacks,70 backoffs, large numeric fields, full source closure and all reference identities, plus2MiB extra serialization reserve.','Peak projection includes a simultaneous replacement main receipt and96MiB further sidecar/partial allowance; arbitrary full failed-body triples need not fit and fail closed under unchanged3GiB.','Every actual operation independently enforces exact size/hash,32MiB per receipt/reference, shared3GiB physical budget and8GiB free floor; this conditional forecast grants no cap exception.'])
+    require(value['main_receipt_margin']>0 and value['conditional_owned_margin']>0,'conditional projection fits unchanged caps')
+    with (args.output/'projection.json').open('x') as f:f.write(json.dumps(value,indent=2)+'\n')
+    print(json.dumps({k:value[k] for k in ('status','main_receipt_serialized_bytes','main_receipt_margin','reference_total','largest_reference','projected_peak_owned_bytes','conditional_owned_margin')}))
+if __name__=='__main__':main()

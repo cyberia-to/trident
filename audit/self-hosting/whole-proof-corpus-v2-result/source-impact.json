@@ -1,0 +1,90 @@
+{
+  "status": "passed-source-equivalence",
+  "delivery_base": "8cb43f652501bf7689211bae793ac1757eb125b7",
+  "tested_base": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+        "--",
+        "src",
+        "lib",
+        "compiler",
+        "catalog",
+        "silicon",
+        "tests",
+        "Cargo.toml",
+        "Cargo.lock",
+        "build.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "exit_code": 0,
+      "result": {
+        "bytes": 56915,
+        "sha256": "a63b62baf01a096dabf4a56d56fce71fb5e20c37cd4c60f92dc4fe4a40650b52"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        "8cb43f652501bf7689211bae793ac1757eb125b7",
+        "--",
+        "src",
+        "lib",
+        "compiler",
+        "catalog",
+        "silicon",
+        "tests",
+        "Cargo.toml",
+        "Cargo.lock",
+        "build.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "exit_code": 0,
+      "result": {
+        "bytes": 56915,
+        "sha256": "a63b62baf01a096dabf4a56d56fce71fb5e20c37cd4c60f92dc4fe4a40650b52"
+      }
+    }
+  ],
+  "paths": [
+    "src",
+    "lib",
+    "compiler",
+    "catalog",
+    "silicon",
+    "tests",
+    "Cargo.toml",
+    "Cargo.lock",
+    "build.rs"
+  ],
+  "rust_gate": {
+    "receipt": "audit/self-hosting/whole-proof-validation/parallel-v2/delivery/inherited-rust-workspace/receipt.json",
+    "identity": {
+      "bytes": 2823,
+      "sha256": "4032ec0da9b1e51a5efed6bdd9cfd7f681dd2de289aa5e1d3789b9043e1a12aa"
+    },
+    "results": {
+      "passed": 1231,
+      "failed": 0,
+      "ignored": 5
+    },
+    "warnings": []
+  },
+  "review": {
+    "original": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-corpus-v2-result-review/review.json",
+    "retained": "root-review.json",
+    "identity": {
+      "bytes": 2913,
+      "sha256": "d4400b98ad8d9c9b0ca625156c19dcc9c316e6ead7ca15bdd6c5ffb29b135f37"
+    }
+  },
+  "scope": "Exact compiler/Rust/test source reuse of the prior actual Rust 1.89 release workspace gate. No fresh Rust test execution is claimed. New audit checker has its own 16 passing tests."
+}

@@ -1,0 +1,73 @@
+{
+  "scope": "Orchestration validation only; no full clean bootstrap repetition or six-platform acceptance",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_*.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "exit_code": 0,
+      "stdout": {
+        "path": "validation-0.stdout.gz",
+        "sha256": "17d0c0b22c3e049ff0c7ca72cb7e31c091fc570f64bf0f806a38261b582d9e4a",
+        "decompressed_sha256": "84b83c4d02c0c57979278c222c0f17766467c056ea656a3bb84ded6ee17af466"
+      },
+      "stderr": {
+        "path": "validation-0.stderr.gz",
+        "sha256": "df338bc274ac47e780854787c6cc581dbd77d7f1f1d80be39371ff3d60abcdf6",
+        "decompressed_sha256": "d9223f899b82eca310b284f860228b641727e1f9a20bd948e8c3b7d6cc1947b6"
+      }
+    },
+    {
+      "command": [
+        "../actionlint-bin/actionlint",
+        "-version"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "exit_code": 0,
+      "stdout": {
+        "path": "validation-1.stdout.gz",
+        "sha256": "bc659bfaf7150a8289c7e8fef2116fdb45927cf7e99e50d24e371b42efbd79be",
+        "decompressed_sha256": "74b4593e175b323d199f83d239dae2345fe252ebe819414e866bd7e2030ffd27"
+      },
+      "stderr": {
+        "path": "validation-1.stderr.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "../actionlint-bin/actionlint",
+        ".github/workflows/selfhost-bootstrap.yml"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "exit_code": 0,
+      "stdout": {
+        "path": "validation-2.stdout.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "validation-2.stderr.gz",
+        "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+        "decompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "files": {
+    "audit/self-hosting/bootstrap-runner.py": "805af512ad48b99fc77b2e476ef6b1e67e7068ca4c4304a59a366c06110cb0f1",
+    "audit/self-hosting/test_bootstrap_runner.py": "d4f11687e0cc6c038b5745b9212b8cac90212174da8c02c08459947882ef9217",
+    ".github/workflows/selfhost-bootstrap.yml": "76430c2ffc32087a0949378d425b07dde2013575e441fd49ed1931d2f3eb661f",
+    "audit/self-hosting/runner-evidence/check-real-bindings.py": "e39a6c06a2224a0b4b34ad13e9f7511a74b5c9988b70074523e2a3f82a5c1baa"
+  }
+}

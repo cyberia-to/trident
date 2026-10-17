@@ -1,0 +1,52 @@
+{
+  "schema": "trident/full-source-fixed-point-artifacts/v1",
+  "source_revision": "b991d901e6585a40bedd0e0a3d4382c2ad3d89c1",
+  "scope": "Actual chained C1(S)->C2 and C2(S)->C3 byte fixed point; C3 corpus and complete SH4/SH6 remain separate",
+  "first_receipt": "../body-scale/c1-to-c2.json",
+  "first_receipt_sha256": "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f",
+  "source_archive": "../body-scale/sources.tar.gz",
+  "source_archive_sha256": "15ba94f477ff10aac8d082b6cbd5c50f6f5d459c17e1f522d99d5eecb63d670b",
+  "all_94_second_source_files_and_manifest_byte_identical_to_archived_first": true,
+  "checker": "audit/self-hosting/check-selfhost-fixed-point.py",
+  "checker_sha256": "db059dd2eeec314200cd259cd563e88f29a54a52810437fa0d246b23bebee393",
+  "checker_command": [
+    "python3",
+    "audit/self-hosting/check-selfhost-fixed-point.py",
+    "--first",
+    "../measurements/body-scale-closure-20b.json",
+    "--second",
+    "../measurements/c2-to-c3-20b.json",
+    "--inventory-checker",
+    "../target-probe/release/examples/selfhost_inventory",
+    "--joy",
+    "../install-compiler-work-budget/bin/joy",
+    "--output",
+    "../measurements/body-scale-fixed-point.json"
+  ],
+  "files": {
+    "c2-to-c3.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c2-to-c3-20b.json",
+      "bytes": 189277,
+      "sha256": "d4dc01016d06cf738b932fda35a803833bd53d2ba240fb0cdd6db32235b2162a"
+    },
+    "comparison.json": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-fixed-point.json",
+      "bytes": 93919,
+      "sha256": "efc9f4d6cad6923c0d366d407b30e069475a0567f8a080e1cc2570e7daf1fa48"
+    },
+    "c3.dag.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c2-to-c3-20b-files-vgt4vpb1/result.dag",
+      "bytes": 9681676,
+      "sha256": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+      "gzip_bytes": 4038351,
+      "gzip_sha256": "32c164ef4c224188c000eaab9301c531681597adb81bf556d8ab417f966da2c2"
+    },
+    "job.dag.gz": {
+      "original": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/c2-to-c3-20b-files-vgt4vpb1/job.dag",
+      "bytes": 6754045,
+      "sha256": "f4ab623830dcc9e74c718ab489555c49493aab03920e62c66067e7c6f7c69005",
+      "gzip_bytes": 4100729,
+      "gzip_sha256": "7461a7afd438a43632ad0da484369af2889dfd747fa4bf091e1b25f9b192d346"
+    }
+  }
+}

@@ -2,6 +2,12 @@ use std::path::{Path, PathBuf};
 
 use super::{CompileOptions, Diagnostic};
 
+/// Read a regular UTF-8 source file with the compiler's 4 MiB transport bound.
+/// Symlinks to regular files remain supported; streams and oversized files fail.
+pub fn read_source_file(path: &Path) -> std::io::Result<String> {
+    crate::config::text_file::source(path)
+}
+
 /// Resolve source/project input and apply its named profile and dependency paths.
 /// Target selection remains the caller's decision, so a warrior cannot inherit another VM.
 pub fn source_options(

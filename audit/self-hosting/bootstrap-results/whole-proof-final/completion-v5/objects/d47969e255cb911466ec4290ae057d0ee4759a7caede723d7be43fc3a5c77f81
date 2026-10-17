@@ -1,0 +1,138 @@
+"""Authenticate completed transitions without demanding deleted diagnostic bodies."""
+import hashlib
+from pathlib import Path
+from prior_pins_v5 import ERRORS, require, identity, load, same, reference
+from prior_cases_v4 import C2_COST as COST
+from prior_cases_v4 import interrupted_verifier
+from prior_replay_v4 import diagnostic as old_diagnostic
+from prior_quiescence_v4 import inspect_birth_rows, review_quiescence
+
+
+def admission_contract(row, proof, profile):
+    require(row['schema'] == 'trident/retained-cost-construction-admission/v1'
+            and row['status'] == 'passed-construction-admission' and row['generation'] == 2 and row['name'] == 'cost'
+            and row['original_proof'] == proof and row['profile'] == profile,
+            'exact retained C2 construction admission')
+    require(row['accepted_as_rejection'] is False and row['fresh_verification_required'] is True
+            and row['deletion_authorized'] is False and row['expected_fresh_error'] == ERRORS['cost'],
+            'construction-only admission never grants a negative verdict or deletion')
+    require({k:row['certificate'][k] for k in ('bytes','sha256')} == COST,
+            'exact complete C2 cost certificate')
+    s = row['certificate']['stat']
+    require(s['links'] == 1 and s['bytes'] == COST['bytes'] and s['mode'] & 0o170000 == 0o100000
+            and s['inode'] > 0 and s['device'] >= 0 and s['mtime_ns'] > 0 and s['ctime_ns'] > 0,
+            'admitted regular single-link stable inode')
+
+
+def current_observation(base, observation):
+    root = base/'whole-proof-attacks-completion-v3'
+    admission = load(root/'admission.json')
+    regs = [load(p) for p in (root/'native-processes').glob('*.json')]
+    groups = {r['pgid'] for r in regs}
+    processes = {admission['pid'],*admission['children'].values(),*(r['pid'] for r in regs)}
+    cutoff = load(base/'whole-v3-emergency-quiescence/receipt.json')['second_observed_ns']
+    raw = observation['raw_stdout'].encode('ascii')
+    require(observation['command'] == ['/bin/ps','-axo','pid=,pgid=,lstart=']
+            and observation['environment_overrides'] == {'TZ':'UTC','LC_ALL':'C'}
+            and observation['exit_code'] == 0 and observation['deadline_seconds'] == 10
+            and cutoff <= observation['started_ns'] <= observation['ended_ns']
+            and len(raw) <= 4*1024**2 and observation['cutoff_ns'] == cutoff,
+            'actual bounded birth-aware construction admission observation')
+    require(observation['stdout'] == dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+            and observation['overlaps'] == inspect_birth_rows(raw.decode('ascii'),groups,processes,cutoff),
+            'construction admission process bytes and classification')
+    return {k:v for k,v in observation.items() if k != 'raw_stdout'}
+
+
+def cost_construction(base, row, positive, pins):
+    root = base/'whole-proof-attacks-v3-c2'
+    work, shared = root/'whole-c2', base/'whole-proof-attacks-completion-v4'
+    profile = load(base/'whole-proof/profile.json')
+    admission_contract(row,positive['proof'],profile)
+    path = work/'certificate-cost.joysc'
+    require(row['certificate']['path'] == str(path), 'exact retained temporary path')
+    helper,index,noun = root/'target-helper/release/whole-proof-mutator',work/'index.json',work/'result.dag'
+    proof = base/'whole-proof/attempts/c2-selfbuild-1/proof.joysc'
+    directory = root/'attempts/whole-c2-construct-cost'
+    inputs = {str(p):identity(p) for p in (helper,index,noun)}
+    inputs[str(proof)] = positive['proof']
+    command = old_diagnostic(directory,[helper,'mutate',proof,index,noun,path,'cost'],0,
+                             dict(generation=2,mode='cost'),inputs,'helper',3,pins)
+    indexed,built = load(index),load(directory/'stdout')
+    require(built == dict(decoded_bytes=indexed['decoded_bytes'],fixed_changed_bytes=0,
+                         frames=indexed['frames'],mode='cost',source_records=indexed['records'],
+                         source_sha256=positive['proof']['sha256'],terminal_suffix_rebuilt=True,
+                         wire_bytes=COST['bytes']), 'original complete cost construction output')
+    for key,p in (('construction',directory/'receipt.json'),('index',index),('result',noun),('helper',helper)):
+        require(row[key] == reference(p), 'exact original construction provenance '+key)
+    require(row['recipe'] == dict(mode='cost',context=[],certificate=COST,construction_receipt=str(directory/'receipt.json')),
+            'exact original cost recipe')
+    require(row['interrupted_verification'] == interrupted_verifier(root,base,positive['proof'],profile),
+            'interrupted old verifier remains failed')
+    require(row['quiescence'] == review_quiescence(base), 'original failed cleanup followed by distinct later absence')
+    before,after = (current_observation(base,row[k]) for k in ('current_quiescence_before','current_quiescence_after'))
+    require(before['ended_ns'] <= after['started_ns'], 'two ordered admission observations')
+    require(row['clock_observation'] == dict(monotonic_elapsed_seconds=command['elapsed_seconds'],
+            unix_elapsed_seconds=(command['ended_ns']-command['started_ns'])/1e9,
+            claim='Original monotonic guard result; civil elapsed time is reported separately.'), 'separate original construction clocks')
+    return dict(construction=reference(directory/'receipt.json'),admission_clock=row['clock_observation'],
+                original_verification_accepted=False,current_observations=[before,after])
+
+
+def retirement_contract(before, unlinked, final, admission, path):
+    require(before['status'] == 'classified-before-unlink' and before['removed'] is False,
+            'classification durably precedes retirement')
+    require(unlinked == dict(before,status='unlinked-held-inode',removed=True,charged_bytes=COST['bytes']),
+            'unlinked held bytes remain conservatively charged')
+    require(final['status'] == 'passed' and final['removed'] is True and final['charged_bytes'] == 0
+            and final['identity'] == before['identity'] == COST and final['path'] == before['path'] == str(path)
+            and final['failed_original_verification_remains_failed'] is True,
+            'only exact completed C2 temporary retired')
+    stable = ('path','identity','stat','construction_admission','fresh_verification',
+              'failed_original_verification_remains_failed','process_retirement','prelude','time_ns')
+    require(all(final[k] == before[k] for k in stable), 'terminal retirement preserves every before binding')
+    s = admission['certificate']['stat']
+    mapping = dict(device='st_dev',inode='st_ino',bytes='st_size',mtime_ns='st_mtime_ns',
+                   ctime_ns='st_ctime_ns',links='st_nlink',mode='st_mode')
+    require(all(s[k] == before['stat'][v] for k,v in mapping.items()), 'retirement exactly admitted inode and bytes')
+    require(before['time_ns'] <= final['completed_ns'], 'ordered retirement civil events')
+
+
+def prelude_snapshot(suite):
+    import json
+    require(suite['status'] == 'input-changed' and suite.get('error') and suite.get('input_error')
+            and 'immutable_inputs_after' not in suite and len(suite['rejections']) == 1,
+            'only exact failed single-cost suite reconstructs its earlier prelude')
+    snapshot = dict(suite,status='running',rejections=[suite['rejections'][0]])
+    for key in ('error','input_error','ended_ns'):
+        snapshot.pop(key,None)
+    raw = (json.dumps(snapshot,indent=2)+'\n').encode()
+    return dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+
+
+def cost_retirement(base, suite, admission):
+    shared = base/'whole-proof-attacks-completion-v4'
+    work = base/'whole-proof-attacks-v4-c2/whole-c2'
+    path = base/'whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc'
+    before,unlinked,final = (load(shared/p) for p in ('retained-cost-retirement-before.json',
+                           'retained-cost-retirement-unlinked.json','retained-cost-retirement.json'))
+    retirement_contract(before,unlinked,final,admission,path)
+    require(not (shared/'retained-cost-retirement-failed.json').exists(), 'failed retirement cannot be passed')
+    same(shared/'retained-cost-retirement-before.json',final['before'])
+    for field,p in [('construction_admission',work/'retained-cost-admission.json'),
+                    ('fresh_verification',work.parent/'attempts/whole-c2-verify-cost/receipt.json'),
+                    ('process_retirement',shared/'native-processes/whole-c2-verify-cost.retired'),
+                    ('prelude',work/'prelude-complete.json')]:
+        same(p,final[field])
+    ready = load(work/'prelude-complete.json')
+    require(ready['status'] == 'passed' and ready['generation'] == 2 and ready['rejection'] == suite['rejections'][0],
+            'single exact fresh cost rejection completed prelude')
+    same(work/'retained-cost-admission.json',ready['admission'])
+    # The original prelude suite receipt was later extended by the same suite.
+    # Reconstruct its exact serializer bytes from the final immutable fields.
+    require(ready['suite_receipt'] == prelude_snapshot(suite),
+            'authenticated exact prelude snapshot before later suite failure')
+    command = load(work.parent/'attempts/whole-c2-verify-cost/receipt.json')
+    require(command['ended_ns'] <= before['time_ns'] <= final['completed_ns'], 'fresh verification precedes retirement')
+    return reference(shared/'retained-cost-retirement.json')
+

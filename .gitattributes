@@ -1,3 +1,6 @@
 tree-sitter/src/parser.c    linguist-generated=true
 tree-sitter/src/grammar.json linguist-generated=true
 tree-sitter/src/node-types.json linguist-generated=true
+
+# Hash-bound prepared corpus inventory must survive native Windows checkout.
+audit/self-hosting/whole-proof-validation/corpus-v2/prepared-files.json -text

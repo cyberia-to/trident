@@ -1,0 +1,24 @@
+{
+  "status": "passed-independent-corrected-probes",
+  "source": {
+    "path": "selected_quiescence.py",
+    "bytes": 4331,
+    "sha256": "23a0c12bd184d8170790d12c5f01f4c503bc96195b03bc8581dbc7deccf5d857"
+  },
+  "time_ns": 1790967111182234000,
+  "cases": [
+    {
+      "raw": "20 20 Fri Oct  2 00:00:00 2026   \n",
+      "actual_newlines": 1,
+      "expected": "original or ambiguous v4 process still live",
+      "observed": "original or ambiguous v4 process still live"
+    },
+    {
+      "raw": "20 20 Fri Oct  2 00:00:00 2026\n20 30 Fri Oct  2 00:00:00 2026\n",
+      "actual_newlines": 2,
+      "expected": "unique positive process identity",
+      "observed": "unique positive process identity"
+    }
+  ],
+  "scope": "Actual LF-separated synthetic observations; no live process operation or original edit."
+}

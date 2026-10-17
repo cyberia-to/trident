@@ -1,0 +1,228 @@
+{
+  "status": "passed",
+  "groups": [
+    {
+      "status": "passed",
+      "binding": {
+        "pid": 95686,
+        "pgid": 95686,
+        "started": "Fri Oct  2 17:00:34 2026    ",
+        "members": {
+          "95686": "Fri Oct  2 17:00:34 2026    "
+        },
+        "parent": 89763,
+        "argv": [
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+          "verify-artifact",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag",
+          "--input",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag",
+          "--proof",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc",
+          "--output",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag",
+          "--emit",
+          "program",
+          "--arena-nodes",
+          "1000000000",
+          "--budget",
+          "20000000000",
+          "--frames",
+          "65536",
+          "--time-ms",
+          "7200000",
+          "--validation-visits",
+          "16777216",
+          "--resident-nodes",
+          "3145728",
+          "--collection-work",
+          "10000000000",
+          "--proof-bytes",
+          "25769803776",
+          "--proof-decoded-bytes",
+          "103079215104",
+          "--proof-records",
+          "12000000000",
+          "--proof-steps",
+          "16000000000",
+          "--proof-cache-slots",
+          "262144",
+          "--force"
+        ],
+        "attempt": "whole-c2-verify-cost",
+        "coordinator": 89440,
+        "registered_ns": 1790960434071519000
+      },
+      "final": {
+        "status": "empty",
+        "members": []
+      },
+      "events": [
+        {
+          "time_ns": 1790962114897738000,
+          "observation": {
+            "status": "empty",
+            "members": []
+          }
+        }
+      ],
+      "sweep": "before-suite-shutdown"
+    },
+    {
+      "status": "passed",
+      "binding": {
+        "pid": 89761,
+        "pgid": 89761,
+        "started": "Fri Oct  2 16:58:25 2026    ",
+        "members": {
+          "89761": "Fri Oct  2 16:58:25 2026    "
+        }
+      },
+      "final": {
+        "status": "empty",
+        "members": []
+      },
+      "events": [
+        {
+          "time_ns": 1790962114911868000,
+          "observation": {
+            "status": "owned",
+            "members": [
+              {
+                "pid": 89761,
+                "ppid": 89440,
+                "pgid": 89761,
+                "rss_kib": 20704,
+                "state": "Rs",
+                "started": "Fri Oct  2 16:58:25 2026    "
+              }
+            ]
+          }
+        },
+        {
+          "time_ns": 1790962114911879000,
+          "signal": 15
+        },
+        {
+          "time_ns": 1790962115130162000,
+          "observation": {
+            "status": "empty",
+            "members": []
+          }
+        }
+      ]
+    },
+    {
+      "status": "passed",
+      "binding": {
+        "pid": 89763,
+        "pgid": 89763,
+        "started": "Fri Oct  2 16:58:25 2026    ",
+        "members": {
+          "89763": "Fri Oct  2 16:58:25 2026    "
+        }
+      },
+      "final": {
+        "status": "empty",
+        "members": []
+      },
+      "events": [
+        {
+          "time_ns": 1790962115143461000,
+          "observation": {
+            "status": "owned",
+            "members": [
+              {
+                "pid": 89763,
+                "ppid": 89440,
+                "pgid": 89763,
+                "rss_kib": 24416,
+                "state": "Us",
+                "started": "Fri Oct  2 16:58:25 2026    "
+              }
+            ]
+          }
+        },
+        {
+          "time_ns": 1790962115143471000,
+          "signal": 15
+        },
+        {
+          "time_ns": 1790962115368518000,
+          "observation": {
+            "status": "empty",
+            "members": []
+          }
+        }
+      ]
+    },
+    {
+      "status": "passed",
+      "binding": {
+        "pid": 95686,
+        "pgid": 95686,
+        "started": "Fri Oct  2 17:00:34 2026    ",
+        "members": {
+          "95686": "Fri Oct  2 17:00:34 2026    "
+        },
+        "parent": 89763,
+        "argv": [
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+          "verify-artifact",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2.dag",
+          "--input",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/inputs/frozen/c2-job.dag",
+          "--proof",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v3-c2/whole-c2/certificate-cost.joysc",
+          "--output",
+          "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v4-c2/whole-c2/cost.dag",
+          "--emit",
+          "program",
+          "--arena-nodes",
+          "1000000000",
+          "--budget",
+          "20000000000",
+          "--frames",
+          "65536",
+          "--time-ms",
+          "7200000",
+          "--validation-visits",
+          "16777216",
+          "--resident-nodes",
+          "3145728",
+          "--collection-work",
+          "10000000000",
+          "--proof-bytes",
+          "25769803776",
+          "--proof-decoded-bytes",
+          "103079215104",
+          "--proof-records",
+          "12000000000",
+          "--proof-steps",
+          "16000000000",
+          "--proof-cache-slots",
+          "262144",
+          "--force"
+        ],
+        "attempt": "whole-c2-verify-cost",
+        "coordinator": 89440,
+        "registered_ns": 1790960434071519000
+      },
+      "final": {
+        "status": "empty",
+        "members": []
+      },
+      "events": [
+        {
+          "time_ns": 1790962115382611000,
+          "observation": {
+            "status": "empty",
+            "members": []
+          }
+        }
+      ],
+      "sweep": "after-suite-shutdown"
+    }
+  ],
+  "time_ns": 1790962115382629000
+}

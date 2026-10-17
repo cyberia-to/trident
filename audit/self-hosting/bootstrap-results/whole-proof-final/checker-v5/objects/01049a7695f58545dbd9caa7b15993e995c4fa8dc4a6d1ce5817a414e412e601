@@ -1,0 +1,251 @@
+{
+  "schema": "trident/independent-v5-finalchecker-peer-review/v1",
+  "status": "passed-source-review",
+  "reviewed_ns": 1790968318056012000,
+  "reviewer": "noun_memory_review",
+  "source_root": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5",
+  "source_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5/sources.json",
+    "bytes": 3716,
+    "sha256": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584"
+  },
+  "sources": {
+    "PLAN.md": {
+      "bytes": 3245,
+      "sha256": "3e941a7e5c55bf1b028b45e2593747d18bd083e03a79b64808684d663e08a032"
+    },
+    "adaptation.json": {
+      "bytes": 5822,
+      "sha256": "b786ff4061e76182f41d733b6231ac0cd82453c40eae6519e79e2166ff8e8cb4"
+    },
+    "capacity.py": {
+      "bytes": 3744,
+      "sha256": "0ad601b7826fc0a6ce8cb63392eb4d4b3085d4bade8bf466dfb1c17c61aa3c8d"
+    },
+    "cases.py": {
+      "bytes": 8112,
+      "sha256": "2a6d6a96cdaa79112bad591c4860acdd4d518fdfc7c5f1c15609b69f43d7bbcf"
+    },
+    "check.py": {
+      "bytes": 4627,
+      "sha256": "13de33751376bc5a456249c318e4ab2135b69f0a05752b7a9e01d1805139e8b1"
+    },
+    "common.py": {
+      "bytes": 6094,
+      "sha256": "3049ecb1955400353e0007e76fb27a25d70407280d8adfa5abeff5827862b92a"
+    },
+    "historical.py": {
+      "bytes": 6415,
+      "sha256": "3fbe091ff1ca1e9291257f05403b2aca97a07423bc14647409439caccc0edc32"
+    },
+    "historical_quiescence.py": {
+      "bytes": 5803,
+      "sha256": "1346ebaad9391ff6190add0cb14193544f3e0e51138a7919a1615e2eeb64f75a"
+    },
+    "historical_rows.py": {
+      "bytes": 12982,
+      "sha256": "8ad2619be56bda142bbacdf078331836d26fc5d1bf41e44ef9e788edcc20708c"
+    },
+    "history.py": {
+      "bytes": 3007,
+      "sha256": "362ece6969cf85c140a65598aa5912f0308c03f708e74c94ae926415a8d7d5ee"
+    },
+    "legacy_history.py": {
+      "bytes": 14215,
+      "sha256": "be52954608a6f4dd1ce655903fc96e501d043a088cc8b7e4a214ba3e8b3522bb"
+    },
+    "legacy_schedule.py": {
+      "bytes": 10138,
+      "sha256": "edfdb08622d9a2156735c67b743a28cce339ac38cd945bbedf81900956b654ac"
+    },
+    "native.py": {
+      "bytes": 5710,
+      "sha256": "0cc1f5ec2e8e904792cdf727374e333c2683160fa9bd7355262a00fc9c676385"
+    },
+    "pins.json": {
+      "bytes": 102513,
+      "sha256": "4f99cdbc559e2841987fc60013e5bf1217e44a2d2f288af0d32404a7613a0979"
+    },
+    "positive.py": {
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "quiescence.py": {
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "replay_retained_preparation.py": {
+      "bytes": 2338,
+      "sha256": "03abea297034c2e52143a5361449c46b2c860eb84330783c5ba6cec677710ad2"
+    },
+    "schedule.py": {
+      "bytes": 12387,
+      "sha256": "6088c181ae94a7cafb1b4aace802460b98b2b3a01b12a8c03f425df8324bc033"
+    },
+    "selected.py": {
+      "bytes": 6178,
+      "sha256": "6b7fa3be07c7d0b4d0bf78f49f12d1d5d245faf01a2e0a7e7faf159fe9d049cb"
+    },
+    "selected_native.py": {
+      "bytes": 4715,
+      "sha256": "b9ce620df0fb0693ec1d8b133e7cd040e5f5261bf35291e7475f507eddf7ad3e"
+    },
+    "selected_quiescence.py": {
+      "bytes": 4331,
+      "sha256": "23a0c12bd184d8170790d12c5f01f4c503bc96195b03bc8581dbc7deccf5d857"
+    },
+    "selected_schedule.py": {
+      "bytes": 10392,
+      "sha256": "737eecfa20280f8faa5c1f86532a3fba16a1cda999b9e5b4172da26198ac7587"
+    },
+    "selected_transitions.py": {
+      "bytes": 9483,
+      "sha256": "769dbfc1b5254dc8f90f64cb15aba915ee4deca0cff0827e0e9a5ade29a8d141"
+    },
+    "test_checker.py": {
+      "bytes": 10611,
+      "sha256": "2fd8db51e0b6bd5c68abd13bd06b0216226fec90ebc04d8bd25cf75b29fccaf3"
+    },
+    "test_native.py": {
+      "bytes": 7589,
+      "sha256": "c17995e9a7d449fe95ccf261b6d4e735ee895ad509dea3de262966692b3cc673"
+    },
+    "test_schedule_replay.py": {
+      "bytes": 8099,
+      "sha256": "726702bc03fc981122cdc26d365115c3ff558819d2e6a25daa4b8c81d7350f53"
+    },
+    "test_selected.py": {
+      "bytes": 6484,
+      "sha256": "b23996cca50b8e017a61383f1376e9014163a8561aa15d2f1aed1a8557516bc2"
+    },
+    "transitions.py": {
+      "bytes": 4575,
+      "sha256": "c6aa7f9e4554e7538c51a5e3b2bc947eb47963542a1b6349aa4e691f6bff6c42"
+    },
+    "validate.py": {
+      "bytes": 2379,
+      "sha256": "8d17129871ca5bfec70f79319767e0ba2739ea595d839204d0b0c78f8793b065"
+    }
+  },
+  "preparation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5/preparation.json",
+    "bytes": 6637,
+    "sha256": "ba2740931761a85b775ca0198bf2c8abd11b6dc2daaff6abb889a7817039cfda"
+  },
+  "owner_validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5/validation-final-2/receipt.json",
+    "bytes": 5043,
+    "sha256": "e903331607cb72555fb5f710f347971f24b5a07c0e4cf13d00e2c2f803ce3955"
+  },
+  "owner_partial_retained_replay": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5/retained-preparation-1/receipt.json",
+    "bytes": 5740,
+    "sha256": "739f4856167f6134bef2e2d4989c5193a7a62fc6b2f69595b11fa45a34da3af7"
+  },
+  "independent_validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-v5-independent-review/validation-1/receipt.json",
+    "bytes": 7200,
+    "sha256": "c59eef8716c528036bfd39068d1d613467d01650a0593b6fd1fde6c5b6d114f4"
+  },
+  "validation_driver": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-checker-v5-independent-review/validate_review.py",
+    "bytes": 5463,
+    "sha256": "fca9f4fc1d912b29d83c76cadfefa7e3939beacc401fa4bfa0e0fa609bb2e7a9"
+  },
+  "reviewed_scope": [
+    "Read the V5 production adaptations, exact selected-cost import routing and retained-observation replacement, all four test modules, preparation/adaptation/plan, and the unchanged positive admission module.",
+    "Authenticated every source in the exact 29-file manifest and all 547 immutable source/data pins before and after independent offline tests.",
+    "Authenticated the sole test_selected.py correction from superseded 6ce30; the old defective test fixtures and original finding remain preserved.",
+    "Confirmed eight inherited F4 production files byte-identical; selected native/transitions/schedule primitives differ from accepted V5 prior modules only in import routing.",
+    "Compared native retirement ordering to the frozen guard/controller: coordinator retirement may occur after command receipt ends, but must precede generation quiescence. No erroneous earlier retirement constraint added."
+  ],
+  "findings": [],
+  "resolved_preparation_findings": [
+    {
+      "origin": "root",
+      "issue": "Two selected-quiescence fixtures had literal backslash-n and could reject malformed rows instead of the intended owner/duplicate condition.",
+      "resolution": "Only fixtures changed to actual LF with exact error-message assertions; all 80 tests independently pass on 9c56357.",
+      "evidence": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v5/candidate-6ce30-preserved/finding.json",
+        "bytes": 1075,
+        "sha256": "aa6573b47383c94c2892bf944d2c6af89da7ffdcfa2f3c977cd58824aa22315d"
+      }
+    },
+    {
+      "origin": "owner retained preparation",
+      "issue": "Original F4 prefix parser did not strip BSD process-birth trailing spaces.",
+      "resolution": "F5 prefix parser strips the recorded row before strict birth parsing; actual retained partial replay and padding fixture pass. Original F4 remains unchanged and unaccepted."
+    }
+  ],
+  "conclusions": [
+    "The exact ordered partition is enforced: each generation authenticates the nine V2 and three V3 case successes plus two controls; C1 requires eleven fresh V5 rejections, C2 the selected successful V4 cost rejection plus ten fresh V5 rejections. Failed enclosing V2/V3/V4 outcomes are preserved.",
+    "Selected V4 cost authentication binds original proof/profile/source, actual successful construction and fresh verifier command, prelude and classified retirement, current immutable input identities and retained birth-aware before/after observations. The deleted diagnostic body is neither required nor recreated.",
+    "Sequential replay binds exactly 42 native registrations and 23 permits. Every capacity permit replays observed rows, unchanged formulas and 600-second bounded wait; both generations share the original outer monotonic deadline. C2 reservation follows C1 quiescence and includes completed C1 retained bytes.",
+    "Historical survivors remain charged and immutable; new schedule permits no additional historical retirement. Resource and final-owner replay bind sample order, latest/final observations, original process births, and actual empty-retirement times while distinguishing unrelated later identifier reuse.",
+    "Positive producer, fresh verifier and 547-observation compiler corpus admission remains byte-identical to inherited reviewed positive.py. Final fixed-point compiler identity and complete public-witness claim are checked; physical resource observations remain unattested.",
+    "Checker source/review and all prerequisite receipts are required before acceptance; terminal failures cannot become successful suite or coordinator receipts. No blocker remains in this source packet."
+  ],
+  "independent_tests": {
+    "existing_tests": 80,
+    "synthetic_probes": [
+      {
+        "name": "positive-complete-sequential",
+        "outcome": "accepted",
+        "native_commands": 42,
+        "capacity_permits": 23
+      },
+      {
+        "name": "changed-final-child",
+        "outcome": "rejected",
+        "error": "exact successful suite command"
+      },
+      {
+        "name": "latest-does-not-match-last-raw",
+        "outcome": "rejected",
+        "error": "latest observation is the last timed sample"
+      },
+      {
+        "name": "final-before-last-raw",
+        "outcome": "rejected",
+        "error": "ordered resource sample belongs to actual run interval"
+      },
+      {
+        "name": "backward-raw-clock",
+        "outcome": "rejected",
+        "error": "ordered resource sample belongs to actual run interval"
+      },
+      {
+        "name": "surviving-history-not-charged",
+        "outcome": "rejected",
+        "error": "every surviving historical file remains charged and unchanged"
+      },
+      {
+        "name": "retirement-after-generation-quiescence",
+        "outcome": "rejected",
+        "error": "actual empty native group before generation completion"
+      },
+      {
+        "name": "unrelated-terminal-pid-reuse-positive",
+        "outcome": "accepted",
+        "native_commands": 42,
+        "capacity_permits": 23
+      }
+    ],
+    "pins": {
+      "manifest": {
+        "bytes": 102513,
+        "sha256": "4f99cdbc559e2841987fc60013e5bf1217e44a2d2f288af0d32404a7613a0979"
+      },
+      "count": 547,
+      "total_bytes": 47799127
+    },
+    "source_and_pins_unchanged": true
+  },
+  "limits": [
+    "This is source preparation review and offline testing only. It does not assert current V5 completion or SH8 acceptance.",
+    "No actual final checker, whole certificate scan, native proof workload, host process observation, deletion, network transfer, tag, publication or repository edit was executed by this review.",
+    "Actual final acceptance must still replay the completed immutable V5 evidence after both generations and coordinator pass.",
+    "Selected historical result and process snapshots remain local/private; downstream public retention must use safe references rather than copying full nested process data."
+  ],
+  "root_gate_owner": "Root owns F5/independent-review.json and any actual final replay."
+}

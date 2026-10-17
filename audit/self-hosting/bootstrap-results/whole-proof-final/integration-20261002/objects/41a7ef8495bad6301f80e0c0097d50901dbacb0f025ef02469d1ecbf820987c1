@@ -1,0 +1,49 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index d1827ec..ccc15ef 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,10 +1,41 @@
+ # Changelog
+ 
+-## Unreleased — native soft3 proving
++## Unreleased — self-hosted compilation and native soft3 proving
+ 
+-- Complete private proving inside Zheng over Goldilocks and Hemera. Joy now
++Joy runs the Trident compiler as a nox program, preserves its complete output,
++and supports independently verified public certificates of that computation.
++These changes are staged on `release/0.4`; the branch name does not change the
++tested package version. Full self-build adversarial acceptance remains tracked
++in the [Trident self-hosting ledger](../trident/audit/self-hosting-progress.md).
++
++1. Execute complete ART1 programs and JOB1 compiler requests with `run-artifact`.
++   The bounded heap evaluator preserves structured RES1 results and extracted
++   programs, so the compiler can receive sources and return executable nox
++   without a host compiler supplying the result. See
++   [compiler jobs](specs/compiler-jobs.md) and
++   [structured execution](specs/structured-run.md).
++2. Add `prove-artifact` and `verify-artifact` for the public `JOYSC001`
++   certificate. Zheng checks dynamic continuations, complete output and exact
++   semantic charge against independently supplied program/input files, without
++   rerunning the compiler. The format discloses its witness and has linear size
++   and verification work. Its [contract](specs/structured-certificates.md)
++   separates proved logical quantities from observed host memory and time.
++3. Let explicitly selected compacting execution, proving and verification use
++   their own cooperative `--time-ms` deadline up to four hours. The default
++   remains 30 seconds. Work/storage allowances stay independently bounded, and
++   failed execution or verification preserves existing destinations. See the
++   [deadline policy](specs/structured-run.md#explicit-compacting-execution).
++4. Validate the coordinated package across six native platforms and all
++   producer/consumer pairs, with a separately measured macOS 14 ARM consumer.
++   The [accepted package audit](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md)
++   binds exact source/binary identities and compiler-kit results. Public release
++   promotion remains a separate step.
++
++- Implement private proving for the bounded static relation inside Zheng over
++  Goldilocks and Hemera. Joy now
+   proves `divine()` witnesses with `JOYZH001` and verifies in a separate process
+-  without secrets or re-execution. Public proofs remain explicitly disclosing.
++  without secrets or re-execution. Private dynamic compiler proofs remain open;
++  public proofs remain explicitly disclosing.
+ - Bind private programs, public IO, budgets, selected reductions and state roots
+   to the verifier-derived relation. Hidden state queries use authenticated
+   public BBG tables; the database itself remains public.

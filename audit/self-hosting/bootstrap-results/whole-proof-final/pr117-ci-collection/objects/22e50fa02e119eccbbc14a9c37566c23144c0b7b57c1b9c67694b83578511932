@@ -1,0 +1,26 @@
+"""Bounded read-only replay of22 historical ZIPs, never network/native execution."""
+import hashlib,json,sys,time,traceback
+from pathlib import Path
+HERE=Path(__file__).resolve().parent
+SOURCE=HERE.parent/'pr117-completion-v4'
+OUT=HERE/'actual22-1';OUT.mkdir()
+sys.path.insert(0,str(SOURCE))
+from collection_common import identity,SCOPES,tree
+from budget import Budget
+from history import admit
+source={str(p):identity(p) for p in SOURCE.glob('*.py')}
+report={'status':'running','started_ns':time.time_ns(),'command':[sys.executable,*sys.argv],'cwd':str(Path.cwd()),'source_before':source,'scope':'Read-only retained original22 ZIP/member/body/provenance admission plus old-scope equality; writes only independent review files, no network/native.'}
+tick=time.monotonic()
+try:
+ budget=Budget(SCOPES,seconds=120)
+ result=admit(OUT,budget)
+ assert len(result['archives'])==len(result['members'])==22
+ assert all(tree(Path(p))==expected for p,expected in result['history']['all_files'].items())
+ assert source=={str(p):identity(p) for p in SOURCE.glob('*.py')}
+ report.update(status='passed-read-only22-admission',archives={name:{'zip':value['storage']['zip'],'identity':{k:value[k] for k in ('bytes','sha256')},'files':len(result['members'][name]),'decoded_bytes':sum(v['bytes'] for v in result['members'][name].values())} for name,value in result['archives'].items()},prior_attempts=result['prior_attempts'],failed_v3=result['history']['v3'],prior16=result['history']['prior16'],old_scopes_unchanged=True,source_unchanged=True,bytes_under_profile=budget.reconcile('independent-end'))
+except BaseException:
+ report.update(status='failed',error=traceback.format_exc());raise
+finally:
+ report.update(ended_ns=time.time_ns(),elapsed_seconds=time.monotonic()-tick)
+ (OUT/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
+ print(json.dumps({'status':report['status'],'receipt':identity(OUT/'receipt.json'),'elapsed_seconds':report['elapsed_seconds']}))

@@ -1,0 +1,218 @@
+{
+  "status": "passed",
+  "scope": "Actual combined Python/delivery gates; exact production tree and existing source-bound Rust suite compared separately",
+  "index_tree": "27228fb1b10997fecffc34c037ab63db42b08a29",
+  "commands": [
+    {
+      "name": "metadata-git",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_generated_profile_metadata.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 105,
+        "sha256": "2192356ca954d9e8920a6cb11ec4f8e94ab850b755fecc8c8fc0e800335c5139"
+      }
+    },
+    {
+      "name": "bootstrap-phase",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_bootstrap_phases.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 117,
+        "sha256": "77d4a0708937daf568234db9b5cac2f3c59d51999bc0f1b3653228d13a735fe6"
+      }
+    },
+    {
+      "name": "bootstrap-runner",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting",
+        "-p",
+        "test_bootstrap_runner.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 296,
+        "sha256": "5ff07990f1f1215193e8def3375bf973bb7fe271b1bae54b8250f7bc84a19526"
+      },
+      "stderr": {
+        "bytes": 171,
+        "sha256": "b5401538d1f6ce6d734f2a5b6bd5aa03bd0a0baacef68260a04813d712937a02"
+      }
+    },
+    {
+      "name": "corpus-checker-tests",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "audit/self-hosting/whole-proof-corpus-v2-result",
+        "-p",
+        "test_delivery.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 115,
+        "sha256": "94d7dda9f4bb485fa6ae4a828411c9a566199d6416b123f5548799ad72af3028"
+      }
+    },
+    {
+      "name": "corpus-delivery",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py",
+        "--originals"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 1134,
+        "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "corpus-preparation",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "audit/self-hosting/whole-proof-validation/corpus-v2/check_delivery.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 221,
+        "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "parallel-preparation",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "audit/self-hosting/whole-proof-validation/parallel-v2/check_delivery.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 227,
+        "sha256": "7d2ccc6ff1a3ba4f736503967951e8f4e36758bf07c44080240d567e57d3e86b"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "sh7-retention",
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "audit/self-hosting/native-proof-pilots/durable-retention/delivery/check_delivery.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 5529,
+        "sha256": "48f5309b9ce50c0fcc98fa749c6f68e766cb40c94deab7adec4bfdf8321bb964"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "actionlint",
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/native-proof-ci/actionlint-1.7.12/actionlint"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "finished": "2026-10-02T09:14:27.480559+00:00"
+}

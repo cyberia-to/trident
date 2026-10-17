@@ -1,0 +1,48 @@
+{
+  "argv": [
+    "/Users/master/.cargo/bin/rustup",
+    "run",
+    "1.89.0",
+    "cargo",
+    "install",
+    "--path",
+    "cli",
+    "--root",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed",
+    "--locked",
+    "--offline",
+    "--force"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/joy",
+  "env": {
+    "PATH": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin:/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "versions": {
+    "rustc": "rustc 1.89.0 (29483883e 2025-08-04)\nbinary: rustc\ncommit-hash: 29483883eed69d5fb4db01964cdf2af4d86e9cb2\ncommit-date: 2025-08-04\nhost: aarch64-apple-darwin\nrelease: 1.89.0\nLLVM version: 20.1.7\n",
+    "cargo": "cargo 1.89.0 (c24e10642 2025-06-23)\nrelease: 1.89.0\ncommit-hash: c24e1064277fe51ab72011e2612e556ac56addf7\ncommit-date: 2025-06-23\nhost: aarch64-apple-darwin\nlibgit2: 1.9.0 (sys:0.20.2 vendored)\nlibcurl: 8.7.1 (sys:0.4.80+curl-8.12.1 system ssl:(SecureTransport) LibreSSL/3.3.6)\nssl: OpenSSL 3.5.0 8 Apr 2025\nos: Mac OS 26.4.1 [64-bit]\n"
+  },
+  "elapsed_ms": 30924,
+  "exit": 0,
+  "inputs": {
+    "joy": "6e0ec4d8440e2521df08f442d64f54e667044716",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442"
+  },
+  "log_sha256": "3a14f974b468a42ae635a54e6ed5dd9a24d4700d42e65fe51c6467571563e89f",
+  "warnings": [],
+  "binary_sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9",
+  "binary_size": 5635776,
+  "version": "joy 0.5.0\n",
+  "help": "Prove complete pure ART1 execution with a disclosed native certificate\n\nUsage: joy prove-artifact [OPTIONS] --input <INPUT> --output <OUTPUT> <PROGRAM>\n\nArguments:\n  <PROGRAM>  Complete nox ART1 program, including compiler-profile programs\n\nOptions:\n      --input <INPUT>\n          \n  -o, --output <OUTPUT>\n          Public disclosed certificate destination\n      --force\n          \n      --budget <BUDGET>\n          [default: 1000000]\n      --arena-nodes <ARENA_NODES>\n          [default: 196608]\n      --resident-nodes <RESIDENT_NODES>\n          Enable bounded compaction with this resident node ceiling\n      --collection-work <COLLECTION_WORK>\n          Maximum collection work; separate from guest reductions\n      --frames <FRAMES>\n          [default: 16384]\n      --artifact-bytes <ARTIFACT_BYTES>\n          [default: 16777216]\n      --artifact-nodes <ARTIFACT_NODES>\n          [default: 196608]\n      --artifact-depth <ARTIFACT_DEPTH>\n          [default: 4096]\n      --time-ms <TIME_MS>\n          Cooperative deadline inside the execution worker [default: 30000]\n      --source-bytes <SOURCE_BYTES>\n          [default: 4194304]\n      --modules <MODULES>\n          [default: 4096]\n      --diagnostics <DIAGNOSTICS>\n          [default: 1024]\n      --sequence-length <SEQUENCE_LENGTH>\n          [default: 65536]\n      --validation-visits <VALIDATION_VISITS>\n          [default: 1000000]\n      --proof-bytes <PROOF_BYTES>\n          Maximum encoded certificate file bytes [default: 67108864]\n      --proof-decoded-bytes <PROOF_DECODED_BYTES>\n          Maximum decoded certificate payload bytes [default: 268435456]\n      --proof-records <PROOF_RECORDS>\n          Maximum payload records, including noun definitions and resets [default: 4000000]\n      --proof-steps <PROOF_STEPS>\n          Maximum expanded semantic steps, including cached derivations [default: 2000000]\n      --proof-cache-slots <PROOF_CACHE_SLOTS>\n          [default: 65536]\n  -h, --help\n          Print help\n"
+}

@@ -1,0 +1,64 @@
+{
+  "status": "passed",
+  "scope": "Root bounded fixture source/readback and actual focused tests; no whole self-build acceptance",
+  "context_helper": {
+    "bytes": 3442,
+    "sha256": "f729a41401fe20229736018575002f4a201ca67e45580d4ea8eae55c793cd3ec"
+  },
+  "fixture_review": {
+    "bytes": 3911,
+    "sha256": "450db3ffd2a16f27ebbcd37022d46b3be3667abc6ed5975ab9fd5aa6516ff5b8"
+  },
+  "fixture_receipt": {
+    "bytes": 36116,
+    "sha256": "57ba650a775170ca7ad472d517ee26adb6f24fd6dfbbdd439d4f81aec6c52ec0"
+  },
+  "checker": {
+    "bytes": 3507,
+    "sha256": "d763d5fdbe628cbc8a92e581004275168410de99467aeb2061ac8a715996b956"
+  },
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "check_result.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "-v",
+        "test_binding_context"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "files": {
+    "replay.stdout": {
+      "bytes": 446,
+      "sha256": "95dc24a1811e480f46f427992cbccb96ec0028fb8758016cc8bd3552b6c54226"
+    },
+    "tests.stderr": {
+      "bytes": 1018,
+      "sha256": "41357b62f967a17ceb903ef1e04e1106749631cc8b0aeaad1dc1d694535a9c0f"
+    },
+    "tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "replay.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "reviewed_at": "2026-10-02T10:04:15.588036+00:00"
+}

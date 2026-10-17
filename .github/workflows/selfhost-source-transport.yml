@@ -1,0 +1,59 @@
+name: Native self-host source transport
+
+on:
+  push:
+    branches: [test/0.4-source-transport-platforms]
+  pull_request:
+    branches: [release/0.4]
+    paths:
+      - '.github/workflows/selfhost-source-transport.yml'
+      - 'audit/self-hosting/check-source-transport.py'
+      - 'scripts/prepare-selfhost-source.py'
+      - 'scripts/test_prepare_selfhost_source.py'
+      - 'scripts/fixtures/selfhost-kit-metadata.tar.gz'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  transport:
+    name: Source transport ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {target: aarch64-apple-darwin, runner: macos-15, architecture: arm64}
+          - {target: x86_64-apple-darwin, runner: macos-15-intel, architecture: x64}
+          - {target: aarch64-unknown-linux-gnu, runner: ubuntu-24.04-arm, architecture: arm64}
+          - {target: x86_64-unknown-linux-gnu, runner: ubuntu-24.04, architecture: x64}
+          - {target: aarch64-pc-windows-msvc, runner: windows-11-arm, architecture: arm64}
+          - {target: x86_64-pc-windows-msvc, runner: windows-2022, architecture: x64}
+    env:
+      PYTHONUTF8: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      TRANSPORT_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+          architecture: ${{ matrix.architecture }}
+      - name: Run ordinary and optimized transport guards
+        run: >-
+          python -B -W error audit/self-hosting/check-source-transport.py
+          --target ${{ matrix.target }} --output transport-results
+      - name: Retain the original pass, failure and skip reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: source-transport-${{ matrix.target }}-attempt-${{ github.run_attempt }}
+          path: transport-results
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,72 @@
+program native_selfhost_prefix
+
+use vm.nox.noun
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.job
+use std.compiler.nox.module_graph
+use std.compiler.nox.module_order
+use std.compiler.nox.module_store
+use std.compiler.nox.module_functions
+use std.compiler.nox.module_function_order
+use std.compiler.nox.function_plan
+use std.compiler.nox.intrinsic_plan
+use std.compiler.nox.signatures
+
+#[pure]
+fn report(stage: U32, index: U32, error: syntax.Error) -> Noun {
+    noun.pair(noun.atom(as_field(stage)), noun.pair(noun.atom(as_field(index)),
+        noun.pair(noun.atom(as_field(error.code)), noun.pair(noun.atom(as_field(error.start)), noun.atom(as_field(error.end))))))
+}
+
+#[pure]
+fn owner_ranks(modules: seq.Seq, cap: U32) -> seq.Seq {
+    let mut ranks = seq.empty()
+    for owner in 0..4096 {
+        if owner == seq.len(modules) { return ranks }
+        let index = module_store.read(modules, owner).index
+        ranks = seq.push(ranks, noun.atom(as_field(index)), cap)
+    }
+    ranks
+}
+
+// Diagnostic prefix only: [complete JOB1 stop-stage]. Zero runs all prefixes;
+// 1 admission, 2 discovery, 3 ordering, 4 all module bodies, 5 function plan.
+// Stages 100+position stop after that dependency-ordered module is checked.
+// This fixture measures the multi-module branch of package_compile only.
+// It is not the full compiler and never claims to return C2.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let stop = as_u32(noun.as_field(noun.tail(input)))
+    let request = job.read(noun.head(input))
+    if (request.error.code == syntax.ZERO) == false { return report(as_u32(1), request.index, request.error) }
+    if stop == as_u32(1) { return report(stop, syntax.ZERO, syntax.error(0, syntax.ZERO, syntax.ZERO)) }
+    let graph = module_graph.discover(request)
+    if (graph.error.code == syntax.ZERO) == false { return report(as_u32(2), graph.error_index, graph.error) }
+    if stop == as_u32(2) { return report(stop, seq.len(graph.modules), syntax.error(0, syntax.ZERO, syntax.ZERO)) }
+    let ordered = module_order.sort(graph)
+    if (ordered.error.code == syntax.ZERO) == false { return report(as_u32(3), ordered.error_index, ordered.error) }
+    if stop == as_u32(3) { return report(stop, seq.len(ordered.modules), syntax.error(0, syntax.ZERO, syntax.ZERO)) }
+    let mut bank = module_functions.empty(seq.len(graph.modules))
+    for position in 0..4096 {
+        if position == seq.len(ordered.modules) {
+            if stop == as_u32(4) { return report(stop, seq.len(bank.functions), syntax.error(0, syntax.ZERO, syntax.ZERO)) }
+            if bank.entry == signatures.NONE { return report(as_u32(5), request.index, syntax.error(3, syntax.ZERO, syntax.ZERO)) }
+            let sorted = module_function_order.sort_ranked(bank.functions, bank.owners,
+                graph.names, graph.sources, bank.roots, owner_ranks(graph.modules, graph.capacity), graph.capacity)
+            let plan = intrinsic_plan.check(function_plan.ordered(bank.functions, bank.bodies, sorted, bank.entry, graph.capacity), bank.bodies, bank.intrinsics, graph.capacity)
+            let mut index = request.index
+            if plan.error_function < seq.len(bank.owners) {
+                let owner = as_u32(noun.as_field(seq.get(bank.owners, plan.error_function)))
+                index = module_store.read(graph.modules, owner).index
+            }
+            return report(as_u32(5), index, plan.error)
+        }
+        let owner = as_u32(noun.as_field(seq.get(ordered.modules, position)))
+        bank = module_functions.check_profile(graph, owner, request.index, bank, request.profile)
+        let stage = as_u32(100 + as_field(position))
+        if (bank.error.code == syntax.ZERO) == false { return report(stage, module_store.read(graph.modules, owner).index, bank.error) }
+        if stop == stage { return report(stage, owner, syntax.error(0, syntax.ZERO, syntax.ZERO)) }
+    }
+    report(as_u32(4), syntax.ZERO, syntax.error(7, syntax.ZERO, syntax.ZERO))
+}

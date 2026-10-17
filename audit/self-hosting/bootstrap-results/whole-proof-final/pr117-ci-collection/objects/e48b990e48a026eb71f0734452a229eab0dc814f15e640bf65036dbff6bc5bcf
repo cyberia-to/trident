@@ -1,0 +1,138 @@
+{
+  "status": "passed-offline-v2-launch-preparation",
+  "started_ns": 1790979171744283000,
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/admission.py": {
+      "bytes": 8940,
+      "sha256": "9b951197b38b299fa8c4cbbcc64b912e71294c244245b5593c6bcba110846740"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run.py": {
+      "bytes": 9940,
+      "sha256": "72ecb4c1c60a6d731c6cd2edf0d0e7581e59e86be01b7de355b393fbedd550b1"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/test_admission.py": {
+      "bytes": 7216,
+      "sha256": "d08a7ae8719a556b49e2c30f344c20f0cbadab378ac1068e61bd9c5a6b155734"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/test_run.py": {
+      "bytes": 6012,
+      "sha256": "da16b6fadab994bb874a49f4a6499938008379467848523238fe9813dccad8bf"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/PLAN.md": {
+      "bytes": 4741,
+      "sha256": "91bebe51f31154d2cffa76e15c383acb6cd80f0767e3a5aa99b87b1942f3765f"
+    }
+  },
+  "source_manifest": {
+    "bytes": 1236,
+    "sha256": "a8e116fcb5bd0cdea5fa2a46a57f01e178cc5cf5a9d73a93a0ffb60f4fc69f9c"
+  },
+  "commands": [
+    {
+      "command": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-c",
+        "import sys,json,hashlib;from pathlib import Path;p=Path(sys.executable);r=p.resolve(strict=True);b=r.read_bytes();print(json.dumps(dict(reported=sys.executable,resolved=str(r),bytes=len(b),sha256=hashlib.sha256(b).hexdigest())))"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2",
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_TERMINAL_PROMPT": "0"
+      },
+      "started_ns": 1790979171744352000,
+      "ended_ns": 1790979171785364000,
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 267,
+        "sha256": "fdc0e43b5fbda59c64d89dcc8b3a9cd0e44179f6e33358fede353a178589af24"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "-v",
+        "test_admission",
+        "test_run"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2",
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "LANG": "C",
+        "LC_ALL": "C",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_CONFIG_GLOBAL": "/dev/null",
+        "GIT_TERMINAL_PROMPT": "0"
+      },
+      "started_ns": 1790979171785596000,
+      "ended_ns": 1790979171915832000,
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 3457,
+        "sha256": "3680335caa17d949923b6db9814fa8665f15e22824a7b6d12c1fa0501a03059f"
+      }
+    }
+  ],
+  "ended_ns": 1790979171916448000,
+  "source_unchanged": true,
+  "original_peer_source": {
+    "bytes": 1221,
+    "sha256": "dce6957da7280708650c8d2559701bbfbd73f2da12657523edd4076d902446b8"
+  },
+  "original_failed_invocation": {
+    "bytes": 2931,
+    "sha256": "ac0b973ef0a9eedb30e0b87de9360a4638326be7e1b8fd0a9f154fea8645e752"
+  },
+  "owner_wrapper": {
+    "bytes": 5788,
+    "sha256": "c11262868beadb7cfc0d514b8a765f0cac60318565066cc12335bb4b80387e43"
+  },
+  "owner_wrapper_actual_argv": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/replay.py",
+    "--collection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4",
+    "--git-repo",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-1"
+  ],
+  "interpreter_observation": {
+    "reported": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "resolved": "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "bytes": 52448,
+    "sha256": "2477b47fa3ae65b9574eb18a15edb364e96948eaa1875ad3f1c80d780efc9c12"
+  },
+  "observation_scope": "Actual selected-Cellar invocation reported opt alias under the same minimal environment; recorded observation only, no inferred cause. No matrix replay invoked.",
+  "tests_scope": "30 isolated tests, including exact interpreter alias/hash/tail argument admission, altered executable/arguments and original failed peer storage charge"
+}

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-guest-constant-linking.py", line 202, in <module>
+    main()
+    ~~~~^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-guest-constant-linking.py", line 190, in main
+    exercise(Path(temp))
+    ~~~~~~~~^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-guest-constant-linking.py", line 141, in exercise
+    admission = run(['pack-job', '--manifest', path, '--compiler', compiler, '-o', job, *host])
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/check-guest-constant-linking.py", line 111, in run
+    assert result.returncode == expected, record
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'command': ['/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy', 'pack-job', '--manifest', '/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-es4hdpzw/full-short/package.json', '--compiler', '/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/extended-routing-raw-profile.dag', '-o', '/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-guest-constants-es4hdpzw/full-short/job.dag', '--budget', '100000000', '--frames', '65536', '--time-ms', '60000', '--arena-nodes', '786432'], 'exit_code': 1, 'stdout': '', 'stderr': 'error: pack-job requires compiler profile(1,1)\n', 'reference_only': False}

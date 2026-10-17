@@ -1,0 +1,167 @@
+"""Offline fake-command checks and real loopback curl origin-boundary probes."""
+import copy,hashlib,http.server,json,os,subprocess,sys,tempfile,threading,unittest
+from pathlib import Path
+from unittest.mock import patch
+from budget import Budget,MIB
+from collection_common import identity,reference,referenced,ROOT
+from transfer import Transport,RetryableTransport
+import http_policy as policy
+from auth import credential
+
+ENDPOINT='repos/cyberia-to/trident/actions/artifacts/7/zip'
+TOKEN=b'A'*40
+
+def fake(root,script):
+    exe=root/'fake-curl';exe.write_text('#!'+sys.executable+'\nimport sys,os\nconfig=sys.stdin.buffer.read()\nfd=int(sys.argv[sys.argv.index("--dump-header")+1].rsplit("/",1)[1])\n'+script);exe.chmod(0o700)
+    out=root/'out';out.mkdir();budget=Budget([root],limit=16*MIB,free_floor=0,seconds=30);r=dict(commands=[],requests=[],backoffs=[],prior_attempts={});t=Transport(out,dict(path=str(exe),**identity(exe)),budget,r,TOKEN,{ENDPOINT},source_check=lambda:{})
+    return t
+
+class HttpTests(unittest.TestCase):
+    def test_transport_failure_retained_then_exact_success(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);counter=root/'counter'
+            script='from pathlib import Path\np=Path('+repr(str(counter))+')\nn=int(p.read_text()) if p.exists() else 0\np.write_text(str(n+1))\nif n==0:\n sys.stdout.write("p");sys.exit(35)\nos.write(fd,b"HTTP/1.1 200 OK\\r\\nContent-Length: 4\\r\\n\\r\\n")\nsys.stdout.write("okay")\n'
+            t=fake(root,script)
+            with patch.object(t,'wait') as wait:path,name=t.get('body',ENDPOINT,4,True,dict(bytes=4,sha256=hashlib.sha256(b'okay').hexdigest()))
+            self.assertEqual(path.read_bytes(),b'okay');self.assertEqual((t.out/'body-attempt-1.zip').read_bytes(),b'p');self.assertEqual(name,'body-attempt-2');wait.assert_called_once_with('body-attempt-1',60)
+            self.assertTrue(t.receipt['commands'][0]['cleanup']['group_empty']);self.assertNotIn(TOKEN,json.dumps(t.receipt).encode())
+    def test_three_failures_no_fourth_and_cumulative_prior_preserved(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'sys.exit(35)\n');prior=[dict(scope='v3',name=f'body-attempt-{n}') for n in (1,2)];t.receipt['prior_attempts']={'body':prior}
+            with patch.object(t,'wait') as wait,self.assertRaises(RetryableTransport):t.get('body',ENDPOINT,4,True)
+            self.assertEqual(len(t.receipt['commands']),3);self.assertEqual(wait.call_count,2);self.assertFalse((t.out/'body-attempt-4.zip').exists());self.assertEqual(len(t.receipt['requests'][0]['cumulative_attempts']),5);self.assertEqual(len(prior),2)
+    def test_permission_http403_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'os.write(fd,b"HTTP/1.1 403 Forbidden\\r\\n\\r\\n");sys.stdout.write("denied");sys.exit(22)\n')
+            with patch.object(t,'wait') as wait,self.assertRaisesRegex(ValueError,'permanent'):t.get('body',ENDPOINT,32,True)
+            self.assertEqual(len(t.receipt['commands']),1);wait.assert_not_called();self.assertEqual((t.out/'body-attempt-1.zip').read_bytes(),b'denied')
+    def test_auth_and_certificate_failures_are_not_retried(self):
+        for code in (22,60):
+            with self.subTest(code=code),tempfile.TemporaryDirectory() as temp:
+                t=fake(Path(temp),'os.write(fd,b"HTTP/1.1 401 Unauthorized\\r\\n\\r\\n");sys.exit('+str(code)+')\n')
+                with self.assertRaisesRegex(ValueError,'permanent'):t.get('body',ENDPOINT,32,True)
+                self.assertEqual(len(t.receipt['commands']),1)
+    def test_hash_mismatch_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'os.write(fd,b"HTTP/1.1 200 OK\\r\\n\\r\\n");sys.stdout.write("bad")\n')
+            with self.assertRaisesRegex(ValueError,'authenticated body'):t.get('body',ENDPOINT,4,True,dict(bytes=4,sha256='0'*64))
+            self.assertEqual(len(t.receipt['commands']),1)
+    def test_oversized_headers_stop_with_bounded_partial(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'os.write(fd,b"X"*65537)\n')
+            with self.assertRaisesRegex(ValueError,'hard headers cap'):t.get('body',ENDPOINT,4,True)
+            self.assertEqual((t.out/'body-attempt-1.headers').stat().st_size,65536);self.assertEqual(len(t.receipt['commands']),1)
+    def test_oversized_body_stops_with_bounded_partial(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'os.write(fd,b"HTTP/1.1 200 OK\\r\\n\\r\\n");sys.stdout.write("too much")\n')
+            with self.assertRaisesRegex(ValueError,'hard stdout cap'):t.get('body',ENDPOINT,1,True)
+            self.assertEqual((t.out/'body-attempt-1.zip').stat().st_size,1);self.assertEqual(len(t.receipt['commands']),1)
+    def test_actual_timeout_quiescent_before_retry(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'import time\ntime.sleep(3)\n');t.timeout=0.15
+            with patch.object(t,'wait'),self.assertRaises(RetryableTransport):t.get('body',ENDPOINT,4,True)
+            self.assertEqual(len(t.receipt['commands']),3);self.assertTrue(all(r['cleanup']['group_empty'] for r in t.receipt['commands']))
+    def test_known_permanent_http_timeout_stops_without_retry(self):
+        for status in (401,403,404):
+            with self.subTest(status=status),tempfile.TemporaryDirectory() as temp:
+                t=fake(Path(temp),'import time\nos.write(fd,b"HTTP/1.1 '+str(status)+' Denied\\r\\nContent-Length: 100\\r\\n\\r\\n");sys.stdout.write("x");sys.stdout.flush();time.sleep(3)\n');t.timeout=0.15
+                with patch.object(t,'wait') as wait,self.assertRaisesRegex(ValueError,'permanent HTTP'):t.get('body',ENDPOINT,100,True)
+                self.assertEqual(len(t.receipt['commands']),1);wait.assert_not_called();row=t.receipt['commands'][0];self.assertFalse(row['retryable']);self.assertTrue(row['timeout_classification']);self.assertEqual(row['http']['status'],status);self.assertTrue(row['cleanup']['group_empty'])
+    def test_cleanup_failure_prevents_retry(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'sys.exit(35)\n')
+            with patch('transfer.stop',side_effect=ValueError('fixture cleanup failure')),self.assertRaisesRegex(ValueError,'cleanup failed'):t.get('body',ENDPOINT,4,True)
+            self.assertEqual(len(t.receipt['commands']),1)
+    def test_expired_budget_starts_no_attempt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'sys.exit(0)\n');t.budget.tick-=31
+            with self.assertRaisesRegex(ValueError,'total deadline'):t.get('body',ENDPOINT,4,True)
+            self.assertEqual(t.receipt['commands'],[])
+    def test_credential_stays_out_of_argv_environment_and_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);t=fake(root,'assert b"Authorization: Bearer " in config\nos.write(fd,b"HTTP/1.1 200 OK\\r\\n\\r\\n");sys.stdout.write("okay")\n');gh=root/'fake-gh';gh.write_text('#!'+sys.executable+'\nprint("'+TOKEN.decode()+'")\n');gh.chmod(0o700)
+            value=credential(t.out,dict(path=str(gh),**identity(gh)),t.budget,t.receipt);self.assertEqual(value,TOKEN);t.get('body',ENDPOINT,4,True)
+            self.assertNotIn(TOKEN,json.dumps(t.receipt).encode());self.assertNotIn('GH_TOKEN',t.receipt['commands'][0]['environment'])
+            self.assertTrue(all(TOKEN not in f.read_bytes() for f in t.out.iterdir() if f.is_file()))
+    def test_token_config_injection_and_other_origin_rejected(self):
+        for token in (b'A'*20+b'"\nurl="https://evil.test',b'A'*20+b'\rX',b'A'*20+b'\\'):
+            with self.assertRaisesRegex(ValueError,'token syntax'):policy.token_config(token)
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'pass\n')
+            with self.assertRaisesRegex(ValueError,'admitted GET'):t.get('bad','repos/foreign/repository/actions/artifacts/7',4)
+            self.assertEqual(t.receipt['commands'],[])
+    def test_http_retry_after_exact_timestamp_and_ceiling(self):
+        raw=b'HTTP/1.1 503 Unavailable\r\nRetry-After: Thu, 01 Jan 1970 00:18:40 GMT\r\n\r\n';response=policy.headers(raw,True)
+        self.assertEqual(policy.retry(22,response,now=1000),120);self.assertEqual(policy.retry(22,response,now=1001),119)
+        self.assertEqual(policy.retry(22,policy.headers(b'HTTP/1.1 429 Slow\r\nRetry-After: 90\r\n\r\n')),90)
+        with self.assertRaisesRegex(ValueError,'exceeds finite'):policy.retry(22,policy.headers(b'HTTP/1.1 429 Slow\r\nRetry-After: 121\r\n\r\n'))
+        with self.assertRaisesRegex(ValueError,'unambiguous'):policy.retry(22,policy.headers(b'HTTP/1.1 503 Slow\r\nRetry-After: 60\r\nRetry-After: 90\r\n\r\n'))
+    def test_wait_keeps_deadline_active_and_records_declared_delay(self):
+        with tempfile.TemporaryDirectory() as temp:
+            t=fake(Path(temp),'pass\n')
+            with patch.object(t.budget,'fast'),patch('transfer.time.monotonic',side_effect=[0,61,61]):t.wait('failed',60)
+            self.assertEqual(t.receipt['backoffs'][0]['seconds'],60);self.assertEqual(t.receipt['backoffs'][0]['elapsed_monotonic_seconds'],61)
+            t.budget.tick-=31
+            with self.assertRaisesRegex(ValueError,'total deadline'):t.wait('next',60)
+    def test_curl_flags_disable_external_configuration(self):
+        args=policy.argv('/usr/bin/curl',ENDPOINT,True,9);self.assertEqual(args[1],'-q');self.assertIn('--http1.1',args);self.assertNotIn('--location-trusted',args);self.assertNotIn('--insecure',args);self.assertIn('--disallow-username-in-url',args);self.assertEqual(args[args.index('--retry')+1],'0')
+
+class CurlOriginTests(unittest.TestCase):
+    def test_actual_short_permanent_http_response_is_not_retried(self):
+        for status in (401,403,404,418):
+            with self.subTest(status=status),tempfile.TemporaryDirectory() as temp:
+                seen=[]
+                class Short(http.server.BaseHTTPRequestHandler):
+                    def do_GET(self):
+                        seen.append(self.path);self.send_response(status);self.send_header('Content-Length','100');self.send_header('Retry-After','60');self.end_headers();self.wfile.write(b'x')
+                    def log_message(self,*args):pass
+                server=http.server.HTTPServer(('127.0.0.1',0),Short);thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();root=Path(temp);out=root/'out';out.mkdir()
+                t=Transport(out,dict(path='/usr/bin/curl',**identity('/usr/bin/curl')),Budget([root],limit=16*MIB,free_floor=0,seconds=30),dict(commands=[],requests=[],backoffs=[],prior_attempts={}),TOKEN,{ENDPOINT},source_check=lambda:{})
+                def local_args(curl,_endpoint,_body,fd):return [curl,'-q','--silent','--show-error','--fail-with-body','--http1.1','--proto','=http','--max-time','5','--config','-','--dump-header',f'/dev/fd/{fd}','--url',f'http://127.0.0.1:{server.server_port}/short']
+                try:
+                    with patch('transfer.policy.argv',side_effect=local_args),patch.object(t,'wait') as wait,self.assertRaisesRegex(ValueError,'permanent'):t.get('body',ENDPOINT,100,True)
+                    self.assertEqual(len(seen),1);self.assertEqual(len(t.receipt['commands']),1);wait.assert_not_called();row=t.receipt['commands'][0]
+                    self.assertEqual(row['exit_code'],18);self.assertEqual(row['http']['status'],status);self.assertIsNone(row['retry_delay_seconds']);self.assertFalse(row['retryable']);self.assertEqual((out/'body-attempt-1.zip').read_bytes(),b'x');self.assertTrue(row['cleanup']['group_empty'])
+                finally:server.shutdown();server.server_close();thread.join(timeout=2)
+    def redirect(self,target_host):
+        seen=[]
+        class Target(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):seen.append(('target',self.headers.get('Authorization')));self.send_response(200);self.end_headers();self.wfile.write(b'okay')
+            def log_message(self,*args):pass
+        target=http.server.HTTPServer(('127.0.0.1',0),Target)
+        class Origin(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):seen.append(('origin',self.headers.get('Authorization')));self.send_response(302);self.send_header('Location',f'http://{target_host}:{target.server_port}/file');self.end_headers()
+            def log_message(self,*args):pass
+        origin=http.server.HTTPServer(('127.0.0.1',0),Origin);threads=[];read_fd,write_fd=os.pipe()
+        try:
+            for server in (target,origin):
+                thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();threads.append(thread)
+            args=['/usr/bin/curl','-q','--silent','--show-error','--location','--max-redirs','1','--connect-timeout','2','--max-time','5','--proto','=http','--proto-redir','=http','--config','-','--dump-header',f'/dev/fd/{write_fd}','--url',f'http://127.0.0.1:{origin.server_port}/file']
+            with subprocess.Popen(args,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,pass_fds=(write_fd,),env={'PATH':'','LANG':'C'}) as child:
+                os.close(write_fd);write_fd=None;stdout,stderr=child.communicate(policy.token_config(TOKEN),timeout=10)
+            raw=os.read(read_fd,65536);self.assertEqual(child.returncode,0);self.assertEqual(stderr,b'');self.assertEqual(stdout,b'okay');self.assertEqual(seen,[('origin','Bearer '+TOKEN.decode()),('target',None)]);self.assertEqual(policy.headers(raw,True)['statuses'],[302,200])
+        finally:
+            for server in (origin,target):server.shutdown();server.server_close()
+            for thread in threads:thread.join(timeout=2)
+            os.close(read_fd)
+            if write_fd is not None:os.close(write_fd)
+    def test_actual_curl_strips_auth_same_hostname_different_port(self):self.redirect('127.0.0.1')
+    def test_actual_curl_strips_auth_different_hostname(self):self.redirect('localhost')
+
+class ReferenceTests(unittest.TestCase):
+    def test_identity_and_owned_path_are_required(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);b=Budget([root],limit=MIB,free_floor=0);r=reference(root,'map',{'file':{'bytes':1,'sha256':'a'*64}},b)
+            self.assertEqual(referenced(r,root,'map')['file']['bytes'],1)
+            wrong=dict(r,path=str(root.parent/'map.json'))
+            with self.assertRaisesRegex(ValueError,'owned inventory'):referenced(wrong,root,'map')
+            (root/'map.json').write_text('{}')
+            with self.assertRaisesRegex(ValueError,'owned inventory'):referenced(r,root,'map')
+    def test_reference_single_file_cap_and_boolean_length(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);b=Budget([root],limit=64*MIB,free_floor=0)
+            with self.assertRaisesRegex(ValueError,'inventory reference cap'):reference(root,'too-big','x'*(32*MIB),b)
+            self.assertFalse((root/'too-big.json').exists());r=reference(root,'small',{},b);r['bytes']=True
+            with self.assertRaisesRegex(ValueError,'reference schema'):referenced(r,root,'small')
+
+if __name__=='__main__':unittest.main()

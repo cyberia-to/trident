@@ -1,0 +1,102 @@
+"""Isolated launch-failure retention checks; no subprocess is started."""
+import json
+import os
+from pathlib import Path
+import sys
+import signal
+import tempfile
+from types import SimpleNamespace
+import unittest
+from unittest.mock import patch
+
+import run
+
+
+class FailureTests(unittest.TestCase):
+    def test_actual_term_and_interrupt_raise_bounded_exception(self):
+        for number in (signal.SIGTERM, signal.SIGINT):
+            previous = run.install_handlers()
+            try:
+                with self.assertRaisesRegex(InterruptedError, signal.Signals(number).name):
+                    os.kill(os.getpid(), number)
+            finally:
+                run.restore_handlers(previous)
+            for saved, handler in previous.items():
+                self.assertEqual(signal.getsignal(saved), handler)
+
+    def test_atomic_write_counts_old_and_new_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / 'output'
+            output.mkdir()
+            path = output / 'receipt.json'
+            original = b'x' * 90
+            path.write_bytes(original)
+            with (patch.object(run, 'ROOT', root), patch.object(run, 'OWNER', root),
+                  patch.object(run, 'OWNER_WRAPPER', root), patch.object(run, 'SCOPES', ()),
+                  patch.dict(run.LIMITS, owned_output_bytes=100)):
+                with self.assertRaisesRegex(ValueError, 'atomic replacement fits peer'):
+                    run.save(path, {'status': 'passed'})
+            self.assertEqual(path.read_bytes(), original)
+            self.assertFalse(path.with_suffix('.next').exists())
+
+    def test_owner_bytes_participate_in_shared_write_guard(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / 'output'
+            output.mkdir()
+            owner = root / 'owner'
+            owner.mkdir()
+            (owner / 'receipt').write_bytes(b'x' * 90)
+            # Patch peer ROOT to the disjoint output to avoid double counting owner.
+            with (patch.object(run, 'ROOT', output), patch.object(run, 'OWNER', owner),
+                  patch.object(run, 'OWNER_WRAPPER', output), patch.object(run, 'SCOPES', ()),
+                  patch.dict(run.LIMITS, shared_bytes=100)):
+                with self.assertRaisesRegex(ValueError, 'atomic replacement fits shared'):
+                    run.save(output / 'receipt.json', {'status': 'passed'})
+            self.assertFalse((output / 'receipt.json').exists())
+
+    def test_admission_failure_creates_no_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.object(run, 'ROOT', root), patch.object(run, 'admit', side_effect=ValueError('not terminal')):
+                with self.assertRaisesRegex(ValueError, 'not terminal'):
+                    run.run(root / 'selection', root / 'review', root / 'output')
+            self.assertFalse((root / 'output').exists())
+
+    def test_primary_failure_saved_before_cleanup_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / 'output'
+            owner = root / 'owner'
+            owner.mkdir()
+            owner_wrapper = root / 'owner-wrapper'
+            owner_wrapper.mkdir()
+            def stop(child, force_group):
+                before = json.loads((output / 'receipt.json').read_text())
+                self.assertEqual(before['status'], 'failed')
+                self.assertIn('primary spawn failure', before['error'])
+                self.assertIsNone(child)
+                self.assertTrue(force_group)
+                raise RuntimeError('secondary cleanup failure')
+            old_path = list(sys.path)
+            try:
+                with (patch.object(run, 'ROOT', root), patch.object(run, 'R2', root),
+                      patch.object(run, 'OWNER', owner), patch.object(run, 'OWNER_WRAPPER', owner_wrapper),
+                      patch.object(run, 'SCOPES', ()), patch.object(run, 'admit', return_value={}),
+                      patch.object(run.shutil, 'disk_usage', return_value=SimpleNamespace(free=100 * run.GIB)),
+                      patch.object(run.subprocess, 'Popen', side_effect=ValueError('primary spawn failure')),
+                      patch.dict(sys.modules, {'transport': SimpleNamespace(stop=stop)})):
+                    with self.assertRaisesRegex(ValueError, 'primary spawn failure'):
+                        run.run(root / 'selection', root / 'review', output)
+            finally:
+                sys.path[:] = old_path
+            final = json.loads((output / 'receipt.json').read_text())
+            self.assertEqual(final['status'], 'failed')
+            self.assertIn('primary spawn failure', final['error'])
+            self.assertIn('secondary cleanup failure', final['cleanup_error'])
+            self.assertNotIn('exit_code', final)
+
+
+if __name__ == '__main__':
+    unittest.main()

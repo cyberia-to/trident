@@ -1,0 +1,48 @@
+{
+  "schema": "trident/independent-final-watcher-review/v5",
+  "status": "passed-source-review",
+  "sources": {
+    "when_ready.py": {
+      "bytes": 7264,
+      "sha256": "d56faf9f89f6cb4ecad6b13a23c7cc596b3857dc11cd675c7ddf477dff3564e8"
+    },
+    "test_when_ready.py": {
+      "bytes": 4842,
+      "sha256": "f67e10db3d42483bde4055f50b26870a7c2d375d4979623420eb9ae1b5f38c06"
+    }
+  },
+  "checker_manifest": "9c56357c798c6e3e7727c2f55991e66c69b243b88340f7a334461f56fbdc4584",
+  "checker_review": "eeaba901de02584018eb0d4b5f4ceac978c738349b0d4ff2468a9f58f2cf4897",
+  "validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-watcher-v5-independent-review/validation-1/receipt.json",
+    "bytes": 2251,
+    "sha256": "5e785072b92e8a9a06b4f11504bd697bb562c4f31f65f9ac7ee154a872ea7e45"
+  },
+  "review_driver": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-watcher-v5-independent-review/review_watcher.py",
+    "bytes": 6988,
+    "sha256": "afc7f9f3b6fcc949c02ad404a77151f7703d72ebf5ef439bfa70d6f7e5c42c4e"
+  },
+  "original_watcher": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3/when_ready.py",
+    "bytes": 7250,
+    "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+  },
+  "adaptation_diff": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-final-watcher-v5-independent-review/original-v3-diff.stdout",
+    "bytes": 5410,
+    "sha256": "65ef942f554e906f1656384a3976118098308e4e9e5e0149e4493301a0ec61a9"
+  },
+  "findings": [],
+  "review": [
+    "Read complete watcher and six tests; compared narrow original V3 watcher adaptation. It remains external to frozen F5 source.",
+    "Actual checker manifest/review gate rehashed read-only. Ten prerequisites must all pass with stable identical bytes in two observations; failed/input-changed status blocks before launch.",
+    "Fresh output directory and exact single Popen launch prevent implicit reuse/retry; final checker independently enforces full prerequisites. Stop marker is checked before launch.",
+    "Readiness 86400 seconds, poll30, checker3600, and cleanup30+30 remain explicit. Source and prerequisite receipts are rechecked after actual checker success.",
+    "Independent six original tests plus six mocked lifecycle probes passed, including stable success, refusal, changed-source-before-launch, changed-receipt-after-check, readiness timeout, nonzero checker and timeout cleanup.",
+    "No watcher or checker was actually launched; no real process observation/signal, native proof workload, network, deletion or publication.",
+    "Cleanup scope is the exact known read-only checker, which spawns no workload children. This receipt makes no general arbitrary-descendant supervision claim.",
+    "Outer launch must bind watcher source d56faf9f separately; F5 source_gate authenticates checker29 only. Root owns commit/install and any later actual watcher launch."
+  ],
+  "scope": "Source preparation and offline testing only. Neither V5 completion nor SH8 acceptance asserted."
+}

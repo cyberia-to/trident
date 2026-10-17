@@ -1,0 +1,22 @@
+{
+  "status": "actual-suite-failed",
+  "observed_at": "2026-10-02T09:37:27.856971+00:00",
+  "driver_sha256": "9883c418d4c2bcc560ef3add1a66b9324cd806d34372056af6b08776b8ee3132",
+  "generation2_verifier_command_receipt": "whole-proof-attacks-v2-c2/attempts/whole-c2-verify-rebound-job-limit/receipt.json",
+  "observed_error": "error: execution error: certificate transport: certificate format/context mismatch\n",
+  "expected_error": "semantic record: Key",
+  "original_job_limit": 20000000000,
+  "alternate_admitted_job_limit": 19999999999,
+  "rebuilt_context_budget": 20000000000,
+  "production_source": "Joy6e0ec4d rs/structured/certificate/admission.rs uses admitted JOB1 reductions in Context",
+  "preserved_mutant": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-v2-c2/whole-c2/certificate-rebound-job-limit.joysc",
+    "bytes": 10569174820,
+    "sha256": "2f6ce311471e969b92d2d23fda33077bfe7bd3895fe2d415c8e6e0c08b94a4ae"
+  },
+  "protected_output": {
+    "bytes": 39,
+    "sha256": "4fb6bd764fb62070272f00db0efa83a187430e2e9ee8e8d9093cf4ac2d74d33f"
+  },
+  "interpretation": "Incorrect diagnostic construction: header did not bind effective alternate limit, so transport rejected before intended semantic check. No semantic-case pass or SH8 acceptance. Original suites and checker remain failed; no retry or cleanup performed."
+}

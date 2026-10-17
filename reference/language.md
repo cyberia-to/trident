@@ -158,7 +158,10 @@ checked `vm.nox.noun` operations and persistent `std.nox.seq` / `std.nox.bytes`
 wrappers. The 0.4 development compiler implements `Noun` and the seven native
 operations together with parsing, type checking and direct nox lowering.
 Reusable raw calls/loops and the collection wrappers are implemented in 0.4
-development. Production Joy compiler-job admission remains SH1 work.
+development. Joy implements structured compiler-job admission and JOB1/RES1
+validation. The [native compiler subset](self-hosting.md#native-compiler-subset-contract)
+and [acceptance ledger](../audit/self-hosting-progress.md) distinguish this
+development path from full Rust frontend coverage and release acceptance.
 
 `vm.nox.noun` exports `atom(Field) -> Noun`, `pair(Noun, Noun) -> Noun`,
 `head(Noun) -> Noun`, `tail(Noun) -> Noun`, `as_field(Noun) -> Field`,
@@ -510,7 +513,7 @@ fn foo(x: Field) -> Field {
 
 ### I/O and Non-Deterministic Input
 
-Signatures are available only when the resolved target package declares the intrinsic. Triton supports streaming public/secret I/O. Nox programs receive a subject and return a result; they do not support Triton streaming I/O. Joy's stateless public certificates reject secret and state witnesses; distinct private and authenticated-state protocols support the declared bounded cases.
+Signatures are available only when the resolved target package declares the intrinsic. Triton supports streaming public/secret I/O. Nox programs receive a subject and return a result; they do not support Triton streaming I/O. Joy's stateless public certificates reject secret and state witnesses; a distinct authenticated public-state protocol supports bounded public lookups. Secret inputs or explicit `--zk` select Joy's native Zheng private proof, including hidden queries over authenticated public tables when `--state` is supplied. Active scalar `divine()` calls consume witnesses in execution order; missing or excess witnesses are errors. Inputs must be canonical field elements. Public outputs and selected execution cost remain visible.
 
 | Signature | Description |
 |-----------|-------------|
@@ -573,7 +576,7 @@ For sponge, Merkle, and extension field builtins (Tier 2-3), see
 
 ### Portable OS (`os.*`)
 
-Portable `os.neuron`, `os.signal`, and `os.time` modules are design concepts, not implemented libraries. The compiler has an `os.state.read` builtin for nox. Joy authenticates public BBG certificates with JOYST001 and supports bounded hidden queries over complete public tables with JOYZK003. This does not implement live state synchronization or a private database. `lib/os/` is reserved for implemented portable contracts rather than populated with placeholders.
+Portable `os.neuron`, `os.signal`, and `os.time` modules are design concepts, not implemented libraries. The compiler has an `os.state.read` builtin for nox. Joy authenticates public BBG certificates with JOYST001 and supports hidden queries through the native JOYZH001 private profile. Database tables remain public; live state synchronization and a private database require separate implementations. `lib/os/` is reserved for implemented portable contracts rather than populated with placeholders.
 
 Network-specific SDKs are supplied by their owning runtime package. For example, `os.neptune.*` requires the explicit `neptune` target and lives in Trisha. The bare `triton` package does not export Neptune modules. See [os.md](os.md) for the design boundary and [warrior-api.md](warrior-api.md) for implemented package capabilities.
 

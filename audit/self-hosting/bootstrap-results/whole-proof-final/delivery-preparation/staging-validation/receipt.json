@@ -1,0 +1,183 @@
+{
+  "status": "passed-preparation-archive-validation",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/packet/verify-retained.py",
+    "--originals"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/packet",
+  "verifier": {
+    "bytes": 3127,
+    "sha256": "7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446"
+  },
+  "exit_code": 0,
+  "stdout": {
+    "bytes": 418,
+    "sha256": "e2c8a86da366f5e4d6f56b32c425c3b84561c80877437797a4fef55b3ac13b69"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "file_manifest": {
+    "bytes": 13969,
+    "sha256": "a2255061428a81bfc377e3c5de755747f4b9b1846aea3cec805705281ef02877"
+  },
+  "packet_files": 78,
+  "packet_bytes": 448977,
+  "copy_receipt": {
+    "bytes": 15210,
+    "sha256": "d14245c1ad49db5c413fe7b69edd43caa4fc1c4d3bbb593a1064fa0aaf8c1681"
+  },
+  "git_commands": [
+    {
+      "command": [
+        "/usr/bin/git",
+        "--git-dir=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/staging-validation/git",
+        "--work-tree=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/packet",
+        "-c",
+        "core.autocrlf=true",
+        "-c",
+        "core.safecrlf=false",
+        "init",
+        "-q"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--git-dir=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/staging-validation/git",
+        "--work-tree=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/packet",
+        "-c",
+        "core.autocrlf=true",
+        "-c",
+        "core.safecrlf=false",
+        "add",
+        "--",
+        ".gitattributes",
+        "README.md",
+        "copy-receipt.json",
+        "copy.py",
+        "inputs.json",
+        "objects/03b4f8ff0a82c6f405b47e8a465771b62ae253b308e9412f2b34919e3794ebe1",
+        "objects/08c952b3c1ebbb7a50360953ecc7f32a120e80a0d42df721a0eb5dad346f728b",
+        "objects/0f34ab7f7dfb61ebc6df67f4f31f9aa56ea71b76307a00f863e41a81a5e5c517",
+        "objects/0fe3eb21e4f4b7ae0a38c72f3d78786c266fc042a2334dbc21583eda652a2acc",
+        "objects/133f6a7fdb1bea4e4dda62bbe9d12b6ee61672dbe83df6f6b62afc3a92f45e7d",
+        "objects/1f11435b9b42bcab782669e113c22452c4f3a85e32f1a34b4231ff2ab81c1c3e",
+        "objects/22f9add1f39a170508d9fbde3f2f00bed7fa98cd4df3e7f52265a5ff9e0f85bd",
+        "objects/27f007249397affac72f9b5602b695ef54883c363d62997c796901a604632340",
+        "objects/29360024cf5ba6736599c53477b242af5ad3153da99cddf3d19464beb944b7c7",
+        "objects/323b93dc3f1ed6331327bd435a4b7e3baf0a8e4e0fa19854fc0595bfac23a46e",
+        "objects/32c5fa7231710a6262840a6ea7bbe7371aea3d3d7e491ce528fc3ee70a37c57d",
+        "objects/341e062c53c87e6c13611d46aca55db5943f60393cbe2afc94e85da524567373",
+        "objects/37df4c87d2c5368a0544af321f09f229a8961ad79d99177a9e87310edc2f0f41",
+        "objects/3b013337a3d24437727ea38df093b1c6ba3f433f4f98b2c46ccdf5d7ceaa029a",
+        "objects/3bb88fca70ae439c93dfa03aef6a2ef6244b7a7f6cc0754bc9657683b59a667e",
+        "objects/407d612de08e83c127a5231711e1ecc82444993decf823291672c3a5ea738822",
+        "objects/425287e176cfe951d63780f1bb81ec1a661e97ca6ef98cc4ece4fca4da4e60cc",
+        "objects/438e79657b6c9220409566e5043a2d93d71fb505858725d0b5bac341b096499a",
+        "objects/490cf234af80e59e0fbf464612208af0bd5dbaf7e19feac61914cf9f93b9eec0",
+        "objects/4ac697d631305264caefe796c7e3626676e6887160687c102bad5ef8645844e8",
+        "objects/4bc8b4d38e88aff612ca7539c699b9c16180eb5b3ac8d9fa9cd3ac92b1e0774d",
+        "objects/535024bc87cbaa14963e58b9ac214b15b819f930650099337c5f13084f5a9ea0",
+        "objects/56419b743dd5bd33cabd0b2fa21e9150d402b4736d8e109e37fde647955768f2",
+        "objects/598e55d0ec03f45078a39bd288623602043629ff01cd67950389a53c9096eed9",
+        "objects/59d5fc210ff1e501d3592be2614a796051a1e4c636bcc668d68096a18687eeb2",
+        "objects/5fc505b2ea044193bae8b1153ec7b61f63fbf89e3ebb75c3679c47b005f6a1f8",
+        "objects/621c85ad89bcb1cd7843eb38856f5a4e39fac6daea0f5a7f1ce6ab11718b8f10",
+        "objects/6259d09c3bb5b2ad56c1869027d6064df26bfa274f4f020703f55b3e9975c1da",
+        "objects/63b46caa7ce8db6a4e0b7d6b9e2b31b58123370896ef06bf965df17d280d7c3c",
+        "objects/665a69bb2e5ad9d6db35ae5e08458c9aea59b01e00243ec1408b7258f35faf47",
+        "objects/6950ed5d18dd0a2f4e08371829f2d0a552d56ae48657598c7a985b8bd16d48d5",
+        "objects/6b13915ac3a602eb4ee18d26091c2b7ec81c65c94eff1ff56c9facb37f611616",
+        "objects/6c07d776319d53dfdf31d4a78c16ecdcda4bca74dc79240cb74c2e448ce7219c",
+        "objects/6d3a3bd662cc76ab180dc434a6b51bff17bbf12e0fe28345c08f823f5e2e1391",
+        "objects/6d6795109deff1d7e938ab84c784cd720429b1d0bf122e472eef7f2c0ff91b50",
+        "objects/7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446",
+        "objects/70e17996affa21b5ca18110d2a9bbd5696ae3c47b9a705c7d963f972ebc96504",
+        "objects/7195a37ca84b2e7498cae1a7e4c4b60386105965d2e51b5f79ffd42097777256",
+        "objects/71a1d2f13927c8ac54580c38186a0110aad202a9e8c275e0004d89737050038d",
+        "objects/8370a11cb56648443147a5f62a4a92048b567dc438dae7cb256f2a2f19ed14c6",
+        "objects/83d4758d4876e92585f28aedfa9abcc11d3ef2c2f161ee4285660e7b771d747e",
+        "objects/8eb15e792910877acd0ada12af49f9f26c1cec6e9258b71033b044b61824928c",
+        "objects/91a365cb86558f6bf296fe19d66328a55118aa8933a1684b5ca43bb9ad0e2fb5",
+        "objects/93f3f994b9fb4502c087ce6a224e1a5b4193b61bfb85575a80244cc02ee16ab9",
+        "objects/97a2093fe626cb018d2cb52791990b8342ceb7754c8f9d17deb032973acea1a1",
+        "objects/9ec167040eff3ebba2a364b8d8266bfc4fa8f436455e41dc734ac6f7e3512603",
+        "objects/9f0af0e29af4dec45cdd49e01a8fdca51bb20c80b2e205dfc75aa6e322ed853d",
+        "objects/a00a5a0745a5183e614da962ef09a22d1ddcdf5a9932e17c53826422b84804b7",
+        "objects/a2928a17f867fb20f31b52782a06937ba2029be7dc248215f897b138f55ba678",
+        "objects/a64d2760545ab5605fd38a2312babb76c822b381b5d3cfeb16a6a59a5aa16831",
+        "objects/b0ae013262237e8cc2799ff75c1197dc8ecd2d6dca461580b1b47cc8be55c91b",
+        "objects/b13a20b5fd42354d5e664a70c156ed23755321d7220da1d15ba87c893c2a41d0",
+        "objects/b3c33ada62f467408d14cbfa039517ff7b45f07ec40867d26e3c3d995577ae0d",
+        "objects/b4e25b94a3d07b3758409410b0eb6757a127957536757acce536d0719d209195",
+        "objects/ba3fb39c23a3d0fe9b09216512cc9f5c8162b9afdfcbdd220c8a34901c18722b",
+        "objects/bef866fd9b135e4fb89411a7b82123f013d44aa0641addf6af8312971663ac3d",
+        "objects/ca27a6a3978637017e4361c5ec4d09f2992a41f2255ab422c023666f43bde6a8",
+        "objects/d2f216163f07add07ef7278d998656eccb2f1f60190322e085761191fa64f59f",
+        "objects/d40de1e5433b303973933e2f5b980f6fc019b0c857a325d46eab3eaf754ae5a6",
+        "objects/d505c1aba205263f5fe5f16939a26c0e7ee9f75c4dd959d87c26601cbc92bec3",
+        "objects/d9f0f38a201ad1460e5e88f1bc50cb9e7c6b250eba28d0b8fd9932211602e77b",
+        "objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "objects/e73bd7f9bd0b75045b7af9cd80a867bacbe2ac4e06871568725037b4abbd49e3",
+        "objects/ec45c585ce9549f6507e75037b123edf5d1db03e25f7b6527cc3d324a33f59f1",
+        "objects/f0c3d06ff103e83ed469f92bfdf2092682de267232d184f4bf358d9b0e4e3e38",
+        "objects/f1d7e94b33bc5d843c2083b14454183c2b985e1c0b3f913dac5dd90571d6fa0e",
+        "objects/f2da9f3b542c91119e8ca283cc014559b5843f530c0825004f4ebddbddd24afa",
+        "objects/f4a0196d4568122c937b38cf171547a756edf7ec23ef25ac3ba0807192e4b782",
+        "objects/f57bd1a58f0c5ad303f71d66e70421b1636248b912663cacc1523dc30bdf17d0",
+        "objects/f83a3306c6e3b68477c63c319f47d089d495b9c7112c5f1ee08761309d8b8028",
+        "references-only.json",
+        "retained-files.json",
+        "verify-retained.py"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--git-dir=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/staging-validation/git",
+        "--work-tree=/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/packet",
+        "-c",
+        "core.autocrlf=true",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "scope": "Exact small staged preparation archive only. No actual collector, helper edits, native workload or SH8 acceptance."
+}

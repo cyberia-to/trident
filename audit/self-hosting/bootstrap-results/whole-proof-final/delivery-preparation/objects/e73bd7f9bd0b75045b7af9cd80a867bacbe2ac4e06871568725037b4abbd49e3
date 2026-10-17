@@ -1,0 +1,192 @@
+"""Stage a bounded public metadata packet after actual reviewed V5/F5 acceptance."""
+import argparse
+import json
+from pathlib import Path
+import sys
+import time
+from safe_io import Budget, digest, encoded, exact_identity, relative, require
+from privacy import public_bytes
+from catalog import Catalog
+from contracts import F5,V5,WATCH,fresh,prerequisites,accept
+
+ROOT = Path(__file__).resolve().parent
+CAPS = dict(wall_seconds=120, individual_read_bytes=64*1024**2, total_read_bytes=256*1024**2,
+            output_bytes=64*1024**2, catalog_entries=20000, public_stream_bytes=1024**2)
+
+
+def source_gate(root, budget, review_sha):
+    manifest_data = budget.read(root/'sources.json')
+    manifest = json.loads(manifest_data)
+    review_data = budget.read(root/'independent-review.json')
+    require(digest(review_data)['sha256'] == review_sha, 'explicit collector source review identity')
+    review = json.loads(review_data)
+    require(review['status'] == 'passed-source-review' and review['sources'] == manifest,
+            'independently reviewed exact collector source')
+    require(set(manifest) == {p.name for p in root.glob('*.py')} |
+            {'policy.json','PLAN.md','docs-proposal.md','docs-proposal.patch'}, 'complete collector source manifest')
+    for name,value in manifest.items():
+        require(digest(budget.read(root/relative(name))) == exact_identity(value), 'collector source changed')
+    return dict(manifest=digest(manifest_data),review=digest(review_data),sources=manifest)
+
+
+def locked_inputs(catalog,policy):
+    locked = {}
+    for name,value in policy['locked'].items():
+        data = catalog.read(name,value)
+        if name.endswith('.json'):
+            locked[name] = catalog.load(name,value)
+    for scope in (F5,V5):
+        manifest = locked[scope+'/sources.json']
+        review = locked[scope+'/independent-review.json']
+        require(review['status'] == 'passed-source-review' and review['sources'] == manifest,
+                'exact preexisting independent source review')
+        for name,value in manifest.items():
+            path = catalog.name(name if Path(name).is_absolute() else scope+'/'+name)
+            catalog.add(path,value,scope+'/sources.json')
+    pins = locked[F5+'/pins.json']
+    require(pins['status'] == 'frozen-checker-inputs' and len(pins['files']) == 547,
+            'exact frozen F5 dependency closure')
+    for name,value in pins['files'].items():
+        catalog.add(name,value,F5+'/pins.json')
+    require(len(locked[F5+'/sources.json']) == 29 and len(locked[V5+'/sources.json']) == 182,
+            'exact F5/V5 source inventory sizes')
+    for root,value in policy['archive_maps'].items():
+        catalog.archive(root,value)
+    return locked
+
+
+def gather(c,policy,locked):
+    """Metadata only. F5, rather than this collector, verifies proof/resource bodies."""
+    for name in ('stop.json','shutdown.json'):
+        require(not (c.base/V5/name).exists() and not (c.base/V5/name).is_symlink(), 'failed V5 stop marker')
+    watcher = c.load(WATCH+'/receipt.json')
+    # Stop immediately on a waiting/failed watcher; never create an acceptance packet.
+    require(watcher['status'] == 'passed' and watcher['checker_launched'] is True, 'actual watcher is not passed')
+    require(set(watcher['files']) == {'stdout','stderr','final-review.json'}, 'exact watcher output inventory')
+    result = c.load(WATCH+'/final-review.json',watcher['files']['final-review.json'])
+    observed = {name:c.load(name) for name in prerequisites()}
+    summary = accept(c.base,policy,locked,watcher,result,observed,lambda n:digest(c.data[n]))
+    summary['original_F5'] = dict(path=WATCH+'/final-review.json',**digest(c.data[WATCH+'/final-review.json']))
+    summary['original_watcher'] = dict(path=WATCH+'/receipt.json',**digest(c.data[WATCH+'/receipt.json']))
+    summary['source_bindings'] = policy['locked']
+    streams = {WATCH+'/'+name:value for name,value in watcher['files'].items() if name in ('stdout','stderr')}
+    run = observed[V5+'/run-1/receipt.json']
+    c.file_map(V5+'/run-1',run['files'],V5+'/run-1/receipt.json')
+    c.load(V5+'/baseline.json')
+    c.load(V5+'/active-generation.json')
+    preparation = c.load('whole-proof/preparation.json')
+    c.file_map('whole-proof/inputs',preparation['files'],'whole-proof/preparation.json')
+    for g,generation in zip((1,2),result['generations']):
+        for stage in ('selfbuild','fresh-verification'):
+            root = f'whole-proof/attempts/c{g}-{stage}-1'
+            row = observed[root+'/receipt.json']
+            c.file_map(root,row['files'],root+'/receipt.json')
+            for name in ('stdout','stderr'):
+                streams[root+'/'+name] = row['files'][name]
+        corpus = f'whole-proof-corpus-v2/c{g+1}'
+        files = c.load(corpus+'/files.json',observed[corpus+'/receipt.json']['files'],references=False)
+        c.file_map(corpus,files,corpus+'/files.json')
+        for name in ('admission','completed'):
+            c.load(f'{V5}/{name}-c{g}.json',result['completion_schedule'][name+'s' if name=='admission' else 'completed'][str(g)])
+        for case in ('generation',*fresh(g)):
+            permit = c.load(f'{V5}/capacity/c{g}-{case}.json')
+            require(permit['status'] == 'passed-capacity-admission', 'actual capacity permit')
+            # Permit binds its observations; never copy raw capacity/process samples.
+            c.add(f'{V5}/capacity/c{g}-{case}.jsonl',permit['logs'],f'{V5}/capacity/c{g}-{case}.json')
+        expected_commands=[]
+        for case in fresh(g):
+            for action in ('construct','verify'):
+                attempt = f'whole-c{g}-{action}-{case}'
+                root = f'whole-proof-attacks-v5-c{g}/attempts/{attempt}'
+                row = c.load(root+'/receipt.json')
+                require(row['status'] == 'passed' and row['exit_code'] == (0 if action=='construct' else 1)
+                        and row['expected_exit'] == row['exit_code'] and row['inputs_before'] == row['inputs_after'],
+                        'complete exact fresh native command')
+                expected_commands.append(dict(path=str(c.base/root/'receipt.json'),**digest(c.data[root+'/receipt.json'])))
+                c.file_map(root,row['files'],root+'/receipt.json')
+                for name in ('stdout','stderr'):
+                    streams[root+'/'+name] = row['files'][name]
+                for suffix in ('.json','.observed','.retired'):
+                    c.load(f'{V5}/native-processes/{attempt}{suffix}')
+        require(generation['composite_cases']['actual_v5_commands'] == expected_commands, 'actual F5 binds all fresh commands')
+    selected = result['generations'][1]['composite_cases']['c2_cost']['selected']
+    c.load('whole-proof-attacks-v5-c2/whole-c2/selected-v4-cost.json',selected)
+    # All read metadata are rechecked before the final packet receipt. No broad filesystem walk.
+    return summary, streams
+
+
+def packet(c,summary,streams,output,collector_source,final_source_check):
+    require(not output.exists() and not output.is_symlink(), 'fresh destination required')
+    public = {}
+    for name,value in streams.items():
+        require(value['bytes'] <= c.budget.caps['public_stream_bytes'], 'public stream cap')
+        public[name] = public_bytes(c.read(name,value,c.budget.caps['public_stream_bytes']))
+    # Validate generated metadata before even creating the destination.
+    public_bytes(encoded(summary))
+    public_bytes(encoded(c.snapshot()))
+    output.mkdir(mode=0o700)
+    retained=[];objects=set()
+    try:
+        for name,data in sorted(public.items()):
+            value=digest(data);stored='objects/'+value['sha256']
+            if stored not in objects:
+                c.budget.write(output,stored,data);objects.add(stored)
+            retained.append(dict(original=str(c.base/name),**value,stored=stored))
+            c.rows[name]['classification']='exact-public-stream'
+        c.budget.write(output,'retained-files.json',encoded(retained))
+        c.budget.write(output,'dependencies.json',encoded(c.snapshot()))
+        c.budget.write(output,'summary.json',encoded(summary))
+        c.budget.write(output,'collector-source.json',encoded(collector_source))
+        c.budget.write(output,'.gitattributes',b'* -text\n')
+        verifier = c.budget.read(ROOT/'verify-retained.py')
+        require(digest(verifier) == collector_source['sources']['verify-retained.py'], 'copied verifier matches entry source manifest')
+        c.budget.write(output,'verify-retained.py',verifier)
+        c.budget.write(output,'README.md',b'# Actual local final proof evidence\n\nThis packet projects the exact accepted local F5 result bound in summary.json. Raw private receipts and host process observations remain local and are represented by byte identities. Exact public command streams are content addressed; existing source/review archives are referenced without recopying. Proof bodies, binary bodies, signed URLs and full host process snapshots are excluded. dependencies.json labels observed metadata reads separately from identities inherited from reviewed manifests/F5. It is not a standalone proof replay or a durable transport/publication verdict.\n')
+        for name,data in c.data.items():
+            require(digest(c.budget.read(c.base/name)) == digest(data), 'metadata changed after collection')
+        files={p.relative_to(output).as_posix():digest(c.budget.read(p))
+               for p in output.rglob('*') if p.is_file()}
+        require(final_source_check() == collector_source, 'collector source/review changed after entry')
+        receipt=dict(schema='trident/final-local-evidence-delivery/v1',status='passed-local-packet',
+                     files=files,streams=len(retained),objects=len(objects),dependency_entries=len(c.rows),
+                     read_bytes=c.budget.read_bytes,staged_bytes_before_receipt=c.budget.written_bytes,
+                     caps=c.budget.caps,source=collector_source,elapsed_seconds=time.monotonic()-c.budget.start,
+                     scope='Local preparation for owner-reviewed repository delivery. No native execution, proof copy, publication or helper-tree mutation.')
+        public_bytes(encoded(receipt))
+        c.budget.write(output,'receipt.json',encoded(receipt))
+        return receipt
+    except BaseException as error:
+        # Best effort terminal record under the SAME caps; never remove partial originals.
+        try:
+            c.budget.write(output,'failed.json',encoded(dict(status='failed-local-packet',exception_type=type(error).__name__)))
+        except BaseException:
+            pass
+        raise
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--review-sha256',required=True)
+    p.add_argument('--output-name',required=True)
+    args=p.parse_args()
+    budget=Budget(CAPS)
+    policy=json.loads(budget.read(ROOT/'policy.json',65536))
+    require(policy['caps'] == CAPS, 'unchanged fixed collector caps')
+    source=source_gate(ROOT,budget,args.review_sha256)
+    base=Path(policy['base'])
+    require(ROOT == base/'whole-proof-final-delivery-preparation', 'owned preparation location')
+    name=relative(args.output_name)
+    require(len(name.parts)==1, 'single fresh staging name')
+    staging=ROOT/'staging'
+    require(not staging.is_symlink(), 'owned staging directory')
+    c=Catalog(base,budget)
+    locked=locked_inputs(c,policy)
+    summary,streams=gather(c,policy,locked)
+    # No staging directory is created before actual complete source/gate admission.
+    staging.mkdir(exist_ok=True)
+    receipt=packet(c,summary,streams,staging/name,source,lambda:source_gate(ROOT,budget,args.review_sha256))
+    print(json.dumps({k:receipt[k] for k in ('status','streams','objects','dependency_entries')}))
+
+
+if __name__=='__main__':
+    main()

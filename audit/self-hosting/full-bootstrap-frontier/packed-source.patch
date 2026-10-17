@@ -1,0 +1,118 @@
+--- a/lib/std/compiler/nox/lexer.tri
++++ b/lib/std/compiler/nox/lexer.tri
+@@ -11,0 +12 @@
++    let mut word = syntax.ZERO
+@@ -15 +16,5 @@
+-        let c = bytes.get(source, pos)
++        let lane = pos & as_u32(3)
++        if syntax.either(pos == start, lane == syntax.ZERO) {
++            word = bytes.word_at(source, pos)
++        }
++        let c = bytes.word_byte(word, lane)
+@@ -29,0 +35 @@
++    let mut word = syntax.ZERO
+@@ -39 +45,5 @@
+-        let c = bytes.get(source, pos)
++        let lane = pos & as_u32(3)
++        if syntax.either(pos == start, lane == syntax.ZERO) {
++            word = bytes.word_at(source, pos)
++        }
++        let c = bytes.word_byte(word, lane)
+@@ -74,0 +85 @@
++    let mut word = syntax.ZERO
+@@ -78 +89,5 @@
+-        let c = bytes.get(source, pos)
++        let lane = pos & as_u32(3)
++        if syntax.either(pos == start, lane == syntax.ZERO) {
++            word = bytes.word_at(source, pos)
++        }
++        let c = bytes.word_byte(word, lane)
+--- a/lib/std/compiler/nox/module_function_order.tri
++++ b/lib/std/compiler/nox/module_function_order.tri
+@@ -11 +11 @@
+-struct Insert { ids: seq.Seq, gap: U32, done: Bool }
++struct Merge { output: seq.Seq, left: U32, right: U32, middle: U32, end: U32 }
+@@ -48 +48 @@
+-fn insert_chunk(scope: Sources, id: U32, input: Insert) -> Insert {
++fn merge_chunk(scope: Sources, values: seq.Seq, input: Merge, cap: U32) -> Merge {
+@@ -51,5 +51,15 @@
+-        if s.gap == syntax.ZERO { s.done = true return s }
+-        let previous = seq.get(s.ids, syntax.dec(s.gap))
+-        if before(scope, id, as_u32(noun.as_field(previous))) == false { s.done = true return s }
+-        s.ids = seq.set(s.ids, s.gap, previous)
+-        s.gap = syntax.dec(s.gap)
++        if seq.len(s.output) == s.end { return s }
++        let mut take_right = s.left == s.middle
++        if syntax.both(s.left < s.middle, s.right < s.end) {
++            let left = as_u32(noun.as_field(seq.get(values, s.left)))
++            let right = as_u32(noun.as_field(seq.get(values, s.right)))
++            // Equal keys retain the left run's original declaration order.
++            take_right = before(scope, right, left)
++        }
++        if take_right {
++            s.output = seq.push(s.output, seq.get(values, s.right), cap)
++            s.right = syntax.inc(s.right)
++        } else {
++            s.output = seq.push(s.output, seq.get(values, s.left), cap)
++            s.left = syntax.inc(s.left)
++        }
+@@ -61,3 +71,7 @@
+-fn insert(scope: Sources, roots: seq.Seq, id: U32, cap: U32) -> seq.Seq {
+-    let value = noun.atom(as_field(id))
+-    let mut s = Insert { ids: seq.push(roots, value, cap), gap: seq.len(roots), done: false }
++fn merge(scope: Sources, values: seq.Seq, width: U32, output: seq.Seq, cap: U32) -> seq.Seq {
++    let start = seq.len(output)
++    let mut middle = as_u32(as_field(start) + as_field(width))
++    if seq.len(values) < middle { middle = seq.len(values) }
++    let mut end = as_u32(as_field(middle) + as_field(width))
++    if seq.len(values) < end { end = seq.len(values) }
++    let mut s = Merge { output, left: start, right: middle, middle, end }
+@@ -65,2 +79,2 @@
+-        s = insert_chunk(scope, id, s)
+-        if s.done { return seq.set(s.ids, s.gap, value) }
++        s = merge_chunk(scope, values, s, cap)
++        if seq.len(s.output) == s.end { return s.output }
+@@ -68 +82,21 @@
+-    seq.set(s.ids, s.gap, value)
++    s.output
++}
++
++#[pure]
++fn pass(scope: Sources, values: seq.Seq, width: U32, cap: U32) -> seq.Seq {
++    let mut output = seq.empty()
++    for run in 0..4096 {
++        if seq.len(output) == seq.len(values) { return output }
++        output = merge(scope, values, width, output, cap)
++    }
++    output
++}
++
++#[pure]
++fn prefix(roots: seq.Seq, cap: U32) -> seq.Seq {
++    let mut output = seq.empty()
++    for next in 0..4096 {
++        if next == cap { return output }
++        output = seq.push(output, seq.get(roots, next), cap)
++    }
++    output
+@@ -76 +110 @@
+-    let mut result = function_order.Ordered { ids: seq.empty(), next: syntax.ZERO,
++    let mut result = function_order.Ordered { ids: roots, next: seq.len(roots),
+@@ -78,5 +112,12 @@
+-    for next in 0..4096 {
+-        if next == seq.len(roots) { return result }
+-        if seq.len(result.ids) == cap { result.error = syntax.error(7, syntax.ZERO, syntax.ZERO) return result }
+-        result.ids = insert(scope, result.ids, as_u32(noun.as_field(seq.get(roots, next))), cap)
+-        result.next = syntax.inc(next)
++    // Preserve the sorted admitted prefix and processed count on exhaustion.
++    if cap < seq.len(roots) {
++        result.ids = prefix(roots, cap)
++        result.next = cap
++        result.error = syntax.error(7, syntax.ZERO, syntax.ZERO)
++    }
++    let mut width = as_u32(1)
++    // TABLE_CAP is 4096, so twelve doubling passes cover every admitted root.
++    for level in 0..12 {
++        if (width < seq.len(result.ids)) == false { return result }
++        result.ids = pass(scope, result.ids, width, cap)
++        width = as_u32(as_field(width) * 2)

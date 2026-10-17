@@ -5,10 +5,13 @@ SH0–SH8 define native nox/Joy compiler milestones and Zheng proof gates.
 Use the [progress ledger](../audit/self-hosting-progress.md) for current work
 and acceptance evidence. Kelvin stages below are the broader historical vision.
 
-Current coordinated source candidate versions are Trident 0.3, Trisha 0.3 and
-Joy 0.5 with compiler API 3. Historical milestones below retain their original
-versions. Registry installation is not validated for this candidate; use the
-coordinated source archive while the [registry packaging blockers](../audit/release-version-closure.md) remain open.
+The accepted distribution rehearsal uses Trident 0.3, Trisha 0.3 and Joy 0.5
+with compiler API 3. Its [six-platform package evidence](https://github.com/cyberia-to/trisha/blob/95899e8f4fe32b5d7269d92b5e63ef429fbfafac/audit/final-host-ceiling-package/README.md)
+binds the frozen coordinated source archive. `release/0.4` names the integration
+branch; version bumps and public promotion remain separate owner steps.
+Historical milestones below retain their original versions. Registry
+installation remains unvalidated; the [Cargo closure review](../audit/release-version-closure.md)
+records that separate packaging scope and its historical checkpoints.
 
 
 Trident exists to write [CORE](https://cyber.page/core-spec/) — Conserved Observable Reduction
@@ -33,6 +36,18 @@ Three targets before 256k release:
 3. Revolution demos — small proven inference, FHE circuit
    compilation, quantum circuit simulation
 
+Separate trust milestone: [VB — Verified Bootstrap](../roadmap/verified-bootstrap.md)
+is open. It covers a self-contained soft3 bootstrap root with reviewed
+foundational assumptions, own Rs bootstrap through a restricted-Rs interpreter,
+compiler
+binary/source correspondence and semantic correctness, required Rust/Trident
+implementations of Eidos, nox, the full scoped Zheng prover/verifier, complete
+scoped Joy and critical dependencies, with cross-verification. Accepted
+SH0–SH8 execution evidence is its starting point. VB0–VB8 define separate
+acceptance gates; this plan changes no Kelvin temperature or release version.
+The [soft3 ceremony](https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md)
+specifies development order and exactly what executes and compiles each artifact.
+
 ```
 Layer           Current   First Release
 ───────────────────────────────────────
@@ -40,7 +55,7 @@ CORE            256K         64K
 vm spec          32K         16K
 language         32K         32K      ← indexed assignment landed (0.2.0)
 TIR              64K         64K
-Noun            128K        128K      ← SH3 locals/control/functions/scalars/loops/Noun; full generator and self-build pending
+Noun             64K        128K      ← Frozen S1: six-platform self-hosting (SH6) and public self-build proofs (SH8) accepted
 compiler         32K         32K
 std.*           128K         64K
 os.*            128K         64K
@@ -90,7 +105,7 @@ Noun        AST→Noun optimized: subject sharing, dead axis elimination, parall
 cyber stack ✓ nox executor integration (trident build → .nox → nox execute → trace) — joy, 0.2.0
 cyber stack ✓ zheng prover integration (trace → zheng prove → proof) — joy, 0.2.0
 cyber stack os.cyber.* types operational (Particle, Neuron, Cyberlink)
-compiler    ◐ Prototype stages in .tri; lowering integration/self-compilation open
+compiler    ◐ Historical RAM/TIR prototype stages; that pipeline's lowering integration/self-compilation remain open
               lexer (824) → parser (2,723) → typecheck (1,502) →
               codegen (1,979) → optimize (733) → lower (1,121) →
               pipeline (313)
@@ -107,10 +122,10 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ◐ Native .tri arithmetic, typed locals, control, calls, U32 scalars, literal loops and structured Noun values execute on nox (SH2/SH3); full generator and self-build remain open (SH3–SH6)
-cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
+Noun        ✓ Frozen S1 reproducible self-compilation (SH3–SH6), public compiler pilots (SH7) and complete public self-build proofs (SH8) accepted
+cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; private dynamic compiler proof relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
-compiler    ◐ Prototype pipeline emits TIR; lower wiring and self-compilation open
+compiler    ◐ RAM/TIR prototype emits TIR; that pipeline's lower wiring and self-compilation remain open
 std.*       23 std.skill.* shipped
 os.*        3+ OS namespaces operational (incl. os.cyber.*)
 tooling     Web playground: compile .tri in browser
@@ -132,7 +147,7 @@ language    Protocols: compile-time structural typing, grammar frozen
 TIR         TIROp set stable (5+ OS, 1 VM per type prove op set complete)
 Noun        Native compiler data/collection contract specified and implemented (SH0–SH1)
 cyber stack nox VM spec frozen, zheng prover stable
-compiler    ◐ Prototype pipeline in Trident — lower wiring + self-compilation open
+compiler    ◐ RAM/TIR prototype in Trident — that pipeline's lower wiring and self-compilation remain open
 std.*       #[requires]/#[ensures] contracts on all public functions
 os.*        Per-OS namespace governance established
 AI          Proven training: gradient computation inside proof
@@ -627,13 +642,19 @@ The authoritative implementation sequence and acceptance criteria are in
 - SH2: the native compiler emits a program that Joy executes correctly.
 - SH5: it compiles its complete own source into a usable next compiler.
 - SH6: repeated self-builds reach C2 == C3 and reproduce across the CPU targets.
-- SH8: native Zheng proofs bind the actual self-build inputs and outputs.
+- SH7: the native public compiler proof profile covers the accepted compiler pilots; [durable evidence](../audit/self-hosting/native-proof-pilots/durable-retention/README.md) is retained.
+- SH8: [frozen-S1 acceptance](../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md) covers both native public self-build proofs, fresh verification, exact C2/C3, 547 corpus observations each, and 23 distinct rejections plus two original controls per generation.
 
 Rust produces the initial C1 seed. C1 and then C2 execute on nox to build C2
 and C3 from the same source closure. C1 may differ from C2 because the seed
 compiler optimizes differently. Fixed-point comparison establishes reproducible
 self-consistency. Semantic preservation needs separate evidence; a buggy
 compiler can execute faithfully and receive a valid execution proof.
+
+The follow-on [Verified Bootstrap plan](../roadmap/verified-bootstrap.md) makes
+those trust obligations explicit. Its source-correspondence gate addresses
+Thompson-style binary injection; semantic, prover/verifier and complete-delivery
+gates cover the declared stack under documented assumptions. VB remains open.
 
 ## 5.2 Self-Verifying Compiler Optimization
 

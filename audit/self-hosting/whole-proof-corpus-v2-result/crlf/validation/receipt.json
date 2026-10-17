@@ -1,0 +1,1700 @@
+{
+  "base": "5b68e00af9d0e41f8a181471a74e8b01f174f1d9",
+  "changed_paths": [
+    ".gitattributes",
+    "audit/self-hosting/whole-proof-corpus-v2-result/.gitattributes",
+    "audit/self-hosting/whole-proof-corpus-v2-result/crlf/README.md",
+    "audit/self-hosting/whole-proof-corpus-v2-result/crlf/before.json",
+    "audit/self-hosting/whole-proof-corpus-v2-result/crlf/check_checkout.py",
+    "audit/self-hosting/whole-proof-corpus-v2-result/crlf/files.json.filtered.gz",
+    "audit/self-hosting/whole-proof-corpus-v2-result/crlf/prepared-files.json.filtered.gz"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9",
+      "exit_code": 1,
+      "name": "before-both-inventories",
+      "stderr": {
+        "bytes": 1101,
+        "sha256": "f1d04ece7caaf29e109cfb2c35761e79899ad92999536b457b72cca076ea18ac"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9",
+      "exit_code": 1,
+      "name": "before-prepared-inventory",
+      "stderr": {
+        "bytes": 1146,
+        "sha256": "f5f24f35b38290d3282277cd5d060185aa77dd6d519f44bed22939039be11f39"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9",
+      "exit_code": 0,
+      "name": "filtered-result-checker",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1135,
+        "sha256": "e35f3670d3a6c6c44c1fb2bef6c94ad9b98db5f03e0750a23de59ef1a25287da"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-validation/corpus-v2/check_delivery.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9",
+      "exit_code": 0,
+      "name": "filtered-prior-checker",
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 221,
+        "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "test_delivery",
+        "-v"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/postinstall-corpus-crlf/precommit/checkout-k7pd19b9/audit/self-hosting/whole-proof-corpus-v2-result",
+      "exit_code": 0,
+      "name": "filtered-adversarial-tests",
+      "stderr": {
+        "bytes": 1963,
+        "sha256": "fc844fa1f0ea6651129f8987e9d3d97063d2eff3615d786734fc30ae61218461"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "filter_commands": [
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/.gitattributes"
+      ],
+      "blob": {
+        "bytes": 82,
+        "sha256": "4e23d42fd7e3bb0304120e8f7634fd48a82e472d68bbc6f5f070c46c200db99a"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 82,
+        "sha256": "4e23d42fd7e3bb0304120e8f7634fd48a82e472d68bbc6f5f070c46c200db99a"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/.gitattributes",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/README.md"
+      ],
+      "blob": {
+        "bytes": 5229,
+        "sha256": "769c41cfa5cfa77eebae0593c3e68a98ff628aaa86e0583f37308bada5433162"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 5229,
+        "sha256": "769c41cfa5cfa77eebae0593c3e68a98ff628aaa86e0583f37308bada5433162"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/README.md",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/archive.json"
+      ],
+      "blob": {
+        "bytes": 1038,
+        "sha256": "d3b17644a5176f033ce19f0aed823f1a8e7a5f274e8caa5364f0074810137299"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1038,
+        "sha256": "d3b17644a5176f033ce19f0aed823f1a8e7a5f274e8caa5364f0074810137299"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/archive.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check-first.stderr"
+      ],
+      "blob": {
+        "bytes": 2138,
+        "sha256": "32b6ea885a788c2b5a0f28763ff262d7979fd2a4102da788a5c370b9632bb4c1"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2138,
+        "sha256": "32b6ea885a788c2b5a0f28763ff262d7979fd2a4102da788a5c370b9632bb4c1"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check-first.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check-first.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check-first.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check-second.stderr"
+      ],
+      "blob": {
+        "bytes": 2148,
+        "sha256": "d52b29ea4c0a47c138706c53c0741d1cf8adddada203a908f494859137bcf9fb"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2148,
+        "sha256": "d52b29ea4c0a47c138706c53c0741d1cf8adddada203a908f494859137bcf9fb"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check-second.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check-second.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check-second.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check-third.stderr"
+      ],
+      "blob": {
+        "bytes": 2138,
+        "sha256": "bf88c6e84479ea448d39c964777e828f71dec73ff388d3541824ba124112e99d"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2138,
+        "sha256": "bf88c6e84479ea448d39c964777e828f71dec73ff388d3541824ba124112e99d"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check-third.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check-third.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check-third.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py"
+      ],
+      "blob": {
+        "bytes": 3998,
+        "sha256": "eab0e1fb8d326b47e9526534ec10df28fccf5c2dc58097a8ba263fd8a6b3ca71"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 3998,
+        "sha256": "eab0e1fb8d326b47e9526534ec10df28fccf5c2dc58097a8ba263fd8a6b3ca71"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py"
+      ],
+      "blob": {
+        "bytes": 13946,
+        "sha256": "6948417508679d6d66ef8dfeb9bfed6f0d56a65bfe133c806589cd72f66da5e0"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 13946,
+        "sha256": "6948417508679d6d66ef8dfeb9bfed6f0d56a65bfe133c806589cd72f66da5e0"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/check_relations.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/crlf/README.md"
+      ],
+      "blob": {
+        "bytes": 1803,
+        "sha256": "6fb7fbd11911cfbdffa7a9c5491838f109f32c842c2bc7a181f03fde5f7ee3c7"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1803,
+        "sha256": "6fb7fbd11911cfbdffa7a9c5491838f109f32c842c2bc7a181f03fde5f7ee3c7"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/crlf/README.md",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/crlf/before.json"
+      ],
+      "blob": {
+        "bytes": 1786,
+        "sha256": "ac71b1460cf60f26259dfdefdbaef4c431d2ac7a54655b7e98c4c9498bbdd027"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1786,
+        "sha256": "ac71b1460cf60f26259dfdefdbaef4c431d2ac7a54655b7e98c4c9498bbdd027"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/crlf/before.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/crlf/check_checkout.py"
+      ],
+      "blob": {
+        "bytes": 7564,
+        "sha256": "66d9763f05aecac4795931ac0ffa6ee67b8b677ac01871c1627f6d91a222b902"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 7564,
+        "sha256": "66d9763f05aecac4795931ac0ffa6ee67b8b677ac01871c1627f6d91a222b902"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/crlf/check_checkout.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/crlf/files.json.filtered.gz"
+      ],
+      "blob": {
+        "bytes": 240914,
+        "sha256": "47edae9ed3d1fe79ea8cb1c7ef5801bea70ba22fdaf82cc4c0279ed468fb0c71"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 240914,
+        "sha256": "47edae9ed3d1fe79ea8cb1c7ef5801bea70ba22fdaf82cc4c0279ed468fb0c71"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/crlf/files.json.filtered.gz",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/crlf/prepared-files.json.filtered.gz"
+      ],
+      "blob": {
+        "bytes": 966,
+        "sha256": "97af629d8185eb44f8abdf8aa4f7fcd99db5fce463acf3f6e2438023e57d8fb9"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 966,
+        "sha256": "97af629d8185eb44f8abdf8aa4f7fcd99db5fce463acf3f6e2438023e57d8fb9"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/crlf/prepared-files.json.filtered.gz",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/delivery-files.json"
+      ],
+      "blob": {
+        "bytes": 6548,
+        "sha256": "3626d9face3583fbad321a2d257d34fbd4500cbed4f44bd401289be60ba8fe8b"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 6548,
+        "sha256": "3626d9face3583fbad321a2d257d34fbd4500cbed4f44bd401289be60ba8fe8b"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/delivery-files.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/files.json"
+      ],
+      "blob": {
+        "bytes": 2805571,
+        "sha256": "566b8fb950c84f629ef5a47a9eb5eb653e600f78769af78936ec796ce7ae2a5b"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2805571,
+        "sha256": "566b8fb950c84f629ef5a47a9eb5eb653e600f78769af78936ec796ce7ae2a5b"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/files.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/package.py"
+      ],
+      "blob": {
+        "bytes": 5292,
+        "sha256": "17c7455a41ab308ef5a01523cd70ac6b2996b2c533b90e0f6fd44ec3e915cf3a"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 5292,
+        "sha256": "17c7455a41ab308ef5a01523cd70ac6b2996b2c533b90e0f6fd44ec3e915cf3a"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/package.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/package.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/package.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/package.stdout"
+      ],
+      "blob": {
+        "bytes": 1038,
+        "sha256": "d9339bd1c5a8e5be44e3cf322deaa44374a71dd839c3b7b21ec5390317409af8"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1038,
+        "sha256": "d9339bd1c5a8e5be44e3cf322deaa44374a71dd839c3b7b21ec5390317409af8"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/package.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/replay-final.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/replay-final.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/replay-final.stdout"
+      ],
+      "blob": {
+        "bytes": 1134,
+        "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1134,
+        "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/replay-final.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/replay.stderr"
+      ],
+      "blob": {
+        "bytes": 2138,
+        "sha256": "629b1e8811e7daf624a696a18302f32a14a254505f1824842df4ddb363bdc14b"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2138,
+        "sha256": "629b1e8811e7daf624a696a18302f32a14a254505f1824842df4ddb363bdc14b"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/replay.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/replay.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/replay.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/root-review.json"
+      ],
+      "blob": {
+        "bytes": 2913,
+        "sha256": "d4400b98ad8d9c9b0ca625156c19dcc9c316e6ead7ca15bdd6c5ffb29b135f37"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2913,
+        "sha256": "d4400b98ad8d9c9b0ca625156c19dcc9c316e6ead7ca15bdd6c5ffb29b135f37"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/root-review.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/source-impact.json"
+      ],
+      "blob": {
+        "bytes": 2444,
+        "sha256": "ee06bd632586b87f9085eb72fdecb9b66f5096ab9b84079fe10677982d35cdd7"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2444,
+        "sha256": "ee06bd632586b87f9085eb72fdecb9b66f5096ab9b84079fe10677982d35cdd7"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/source-impact.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/successful-corpus.tar.gz"
+      ],
+      "blob": {
+        "bytes": 18476509,
+        "sha256": "c5c6b07d6ff6ba65e680fddb17297810a9b9d60222356b010b906c82d9d9177b"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 18476509,
+        "sha256": "c5c6b07d6ff6ba65e680fddb17297810a9b9d60222356b010b906c82d9d9177b"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/successful-corpus.tar.gz",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py"
+      ],
+      "blob": {
+        "bytes": 7319,
+        "sha256": "f7bf728c74adc3b5e5eaf09eafb2f70178a515a49a9900ff0e4782443b63afdf"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 7319,
+        "sha256": "f7bf728c74adc3b5e5eaf09eafb2f70178a515a49a9900ff0e4782443b63afdf"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/test_delivery.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/tests-final.stderr"
+      ],
+      "blob": {
+        "bytes": 1963,
+        "sha256": "398aafb2156f2ab668b3535b1391c78c6c1a438a886bf1e8042734f6d6e9688f"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1963,
+        "sha256": "398aafb2156f2ab668b3535b1391c78c6c1a438a886bf1e8042734f6d6e9688f"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/tests-final.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/tests-final.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/tests-final.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/tests.stderr"
+      ],
+      "blob": {
+        "bytes": 7718,
+        "sha256": "cf023ac17e4121e097696d7af7ef8d2b065020564718dd735d5460b708426e09"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 7718,
+        "sha256": "cf023ac17e4121e097696d7af7ef8d2b065020564718dd735d5460b708426e09"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/tests.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/tests.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/tests.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validate.py"
+      ],
+      "blob": {
+        "bytes": 4134,
+        "sha256": "4968c83a6453c1ed13e5d66b7c9b93224d8e9ce190b9e432c274b46833cbf208"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 4134,
+        "sha256": "4968c83a6453c1ed13e5d66b7c9b93224d8e9ce190b9e432c274b46833cbf208"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validate.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-head.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-head.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-head.stdout"
+      ],
+      "blob": {
+        "bytes": 41,
+        "sha256": "cda67d685a2519b7e8d4097691c84a953b65cdaecfaeab46854ca13b484f3134"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 41,
+        "sha256": "cda67d685a2519b7e8d4097691c84a953b65cdaecfaeab46854ca13b484f3134"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-head.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-prior-failure.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-prior-failure.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-prior-failure.stdout"
+      ],
+      "blob": {
+        "bytes": 221,
+        "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 221,
+        "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-prior-failure.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-repack.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-repack.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-repack.stdout"
+      ],
+      "blob": {
+        "bytes": 146,
+        "sha256": "9674b6f9116cdeac802909813e23393ed89403b250e33a7032d4d61545431bb3"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 146,
+        "sha256": "9674b6f9116cdeac802909813e23393ed89403b250e33a7032d4d61545431bb3"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-repack.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-replay.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-replay.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-replay.stdout"
+      ],
+      "blob": {
+        "bytes": 1134,
+        "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1134,
+        "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-replay.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-status.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-status.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-status.stdout"
+      ],
+      "blob": {
+        "bytes": 2767,
+        "sha256": "3d8de856e10785a806dc4803dba2cb9c53d40224237dc01619465ea723bb4dcc"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2767,
+        "sha256": "3d8de856e10785a806dc4803dba2cb9c53d40224237dc01619465ea723bb4dcc"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-status.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-tests.stderr"
+      ],
+      "blob": {
+        "bytes": 1963,
+        "sha256": "ef4bb08206ee27e307664d5d0ee194fa94a33c74a99ca1629a7d3961036b054c"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 1963,
+        "sha256": "ef4bb08206ee27e307664d5d0ee194fa94a33c74a99ca1629a7d3961036b054c"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-tests.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-tests.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-tests.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-tracked-diff.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-tracked-diff.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-tracked-diff.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-tracked-diff.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-whitespace.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-whitespace.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation-whitespace.stdout"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation-whitespace.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation.json"
+      ],
+      "blob": {
+        "bytes": 9786,
+        "sha256": "178d078d1ff25b7079ff230575c95a070b9343646af2031d5b07d4908fff8372"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 9786,
+        "sha256": "178d078d1ff25b7079ff230575c95a070b9343646af2031d5b07d4908fff8372"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation.stderr"
+      ],
+      "blob": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation.stderr",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-corpus-v2-result/validation.stdout"
+      ],
+      "blob": {
+        "bytes": 102,
+        "sha256": "9f2279a733481bb35a59b568270b75323eb024a3097a5c317b7296eb98629a03"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 102,
+        "sha256": "9f2279a733481bb35a59b568270b75323eb024a3097a5c317b7296eb98629a03"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-corpus-v2-result/validation.stdout",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/.gitattributes"
+      ],
+      "blob": {
+        "bytes": 77,
+        "sha256": "25795c1a32032a06ad7bc39aa3537e5121de57750bebb824f70531ba233e0ecc"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 79,
+        "sha256": "7e78561fdda884b1cca740b8389da32c2daccf024a2ff99122d2c0b9998e059b"
+      },
+      "hash_bound": false,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/.gitattributes",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/archive.json"
+      ],
+      "blob": {
+        "bytes": 578,
+        "sha256": "b9ad8d0cd4e196ed75aa27a12afc2c52fde8f4bca53c4538cfaa44ebe792c33b"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 592,
+        "sha256": "4e02ffd81ee083e0779368cde3274aa312130b013ce230d34badbba324e761b0"
+      },
+      "hash_bound": false,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/archive.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/check_delivery.py"
+      ],
+      "blob": {
+        "bytes": 2641,
+        "sha256": "c6fb82d71a98e2907c3946f2d9fbe44dd4237954a733ceb7352bfc9afdd3abb7"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2692,
+        "sha256": "c4aa447c00ee2ff0e66f9d7736bbc6230c122faf6efe79f349009d1cc66a637c"
+      },
+      "hash_bound": false,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/check_delivery.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/original-corpus-v1-failed.tar.gz"
+      ],
+      "blob": {
+        "bytes": 3634107,
+        "sha256": "fd22445b088056736e212d457c2c3d64220d5169ba7edb211f32cbc0e9087ad4"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 3634107,
+        "sha256": "fd22445b088056736e212d457c2c3d64220d5169ba7edb211f32cbc0e9087ad4"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/original-corpus-v1-failed.tar.gz",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/original-files.json"
+      ],
+      "blob": {
+        "bytes": 672465,
+        "sha256": "b07a37cb71095231172701180fda76315391e005595ffb287a4dd32d2f6c1da5"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 685431,
+        "sha256": "293c10a4b9d1c6c6f9d46537a5a77e3fe2ee392f400afdea5649508034f9ac96"
+      },
+      "hash_bound": false,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/original-files.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared-files.json"
+      ],
+      "blob": {
+        "bytes": 3909,
+        "sha256": "7fb109ee6c3d23a0dd6d08de94e966ab41c74fb4a8843cde779d57fbb3b11357"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 3909,
+        "sha256": "7fb109ee6c3d23a0dd6d08de94e966ab41c74fb4a8843cde779d57fbb3b11357"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared-files.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/bootstrap-runner.py"
+      ],
+      "blob": {
+        "bytes": 26768,
+        "sha256": "b1afcd9a51c4a92b5254ebb56bbcbe88f4ad81b9cdf98f607f2ff7140a7691fc"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 26768,
+        "sha256": "b1afcd9a51c4a92b5254ebb56bbcbe88f4ad81b9cdf98f607f2ff7140a7691fc"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/bootstrap-runner.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-generated-compiler-profile.py"
+      ],
+      "blob": {
+        "bytes": 19854,
+        "sha256": "6e932595eb575a3eeace39a9aee681a26656f3863022b45e34290cd32214797b"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 19854,
+        "sha256": "6e932595eb575a3eeace39a9aee681a26656f3863022b45e34290cd32214797b"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-generated-compiler-profile.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-constant-linking.py"
+      ],
+      "blob": {
+        "bytes": 13230,
+        "sha256": "0dbbbba9166c674e23a3dbdd027edbf777e7c13880f7d24a6ca985b91c4802c0"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 13230,
+        "sha256": "0dbbbba9166c674e23a3dbdd027edbf777e7c13880f7d24a6ca985b91c4802c0"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-constant-linking.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-function-imports.py"
+      ],
+      "blob": {
+        "bytes": 6343,
+        "sha256": "79d72faa1cc51c489425ea1c4ec12a4c0fc0fa0a4b52162f432a62e75972a27e"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 6343,
+        "sha256": "79d72faa1cc51c489425ea1c4ec12a4c0fc0fa0a4b52162f432a62e75972a27e"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-function-imports.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-intrinsics.py"
+      ],
+      "blob": {
+        "bytes": 7543,
+        "sha256": "60485c00e31a072dc11a33ff8008e220b79e4e22a62a106c2d3e619c739c9a73"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 7543,
+        "sha256": "60485c00e31a072dc11a33ff8008e220b79e4e22a62a106c2d3e619c739c9a73"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-intrinsics.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-type-imports.py"
+      ],
+      "blob": {
+        "bytes": 5246,
+        "sha256": "f14b45836cccd1672e47ae891a666f5cfa2378430a5593e8b406c9292349bffd"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 5246,
+        "sha256": "f14b45836cccd1672e47ae891a666f5cfa2378430a5593e8b406c9292349bffd"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/check-guest-type-imports.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/native_compiler_selection.py"
+      ],
+      "blob": {
+        "bytes": 4879,
+        "sha256": "222b68904b74baff7978211a6f3f11d0c1d478fb7861d4c97747659179f28984"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 4879,
+        "sha256": "222b68904b74baff7978211a6f3f11d0c1d478fb7861d4c97747659179f28984"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/native_compiler_selection.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/run-native-compiler.py"
+      ],
+      "blob": {
+        "bytes": 32386,
+        "sha256": "e94cd0707e1b897e6ba6edcc433c68ec5fa5448bc21b7f3145dd9252f08daac4"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 32386,
+        "sha256": "e94cd0707e1b897e6ba6edcc433c68ec5fa5448bc21b7f3145dd9252f08daac4"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/corpus-path-fix/trident/audit/self-hosting/run-native-compiler.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/independent-review.json"
+      ],
+      "blob": {
+        "bytes": 5083,
+        "sha256": "89cbe0004adf97fedea555a06b8d0cb9e4a1689442fe0c7b2aeeb155c1d873b0"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 5083,
+        "sha256": "89cbe0004adf97fedea555a06b8d0cb9e4a1689442fe0c7b2aeeb155c1d873b0"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/independent-review.json",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/run.py"
+      ],
+      "blob": {
+        "bytes": 7365,
+        "sha256": "2e0679d7792a8d720d590d5e2f22299b912c654e196fae46f0599e63a448534c"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 7365,
+        "sha256": "2e0679d7792a8d720d590d5e2f22299b912c654e196fae46f0599e63a448534c"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/run.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/run_ready.py"
+      ],
+      "blob": {
+        "bytes": 4339,
+        "sha256": "6005ee1c5fad24f27853a70a16de4fbdccdb6d68431f1da0adda89aea2926184"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 4339,
+        "sha256": "6005ee1c5fad24f27853a70a16de4fbdccdb6d68431f1da0adda89aea2926184"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/run_ready.py",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-c",
+        "core.autocrlf=true",
+        "cat-file",
+        "--filters",
+        ":audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/sources.json"
+      ],
+      "blob": {
+        "bytes": 2421,
+        "sha256": "19bcdd23d19b2a4ff2c0ba8a486058ebd4c7e13c5417aebbeed5f71b448640b9"
+      },
+      "exit_code": 0,
+      "filtered": {
+        "bytes": 2421,
+        "sha256": "19bcdd23d19b2a4ff2c0ba8a486058ebd4c7e13c5417aebbeed5f71b448640b9"
+      },
+      "hash_bound": true,
+      "path": "audit/self-hosting/whole-proof-validation/corpus-v2/prepared/whole-proof-corpus-v2/sources.json",
+      "stderr": ""
+    }
+  ],
+  "hash_bound_inputs": 67,
+  "materialized_inputs": 71,
+  "repository": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+  "scope": "Actual Git Windows CRLF filter simulation on macOS, plus materialized checker/test replay; not a native Windows runtime test.",
+  "selected_revision": "5b68e00af9d0e41f8a181471a74e8b01f174f1d9",
+  "selected_tree": "INDEX",
+  "source_impact": {
+    "excluded_audit": "audit/self-hosting/whole-proof-corpus-v2-result/",
+    "excluded_metadata": [
+      ".gitattributes"
+    ],
+    "inventory": {
+      "bytes": 2198695,
+      "sha256": "3c6fafc03a31b9e6f2ad00eb122c6f893dbc1a28b8db3b814189d79531b84972"
+    },
+    "scope": "All tracked files outside the exact attributes/audit delta are byte-identical to the reviewed delivery.",
+    "unchanged_tracked_paths": 12066
+  },
+  "status": "passed"
+}

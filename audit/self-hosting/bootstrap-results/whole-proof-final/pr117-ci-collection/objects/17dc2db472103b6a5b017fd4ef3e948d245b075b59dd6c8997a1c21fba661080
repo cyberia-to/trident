@@ -1,0 +1,77 @@
+{
+  "status": "passed-independent-original-matrix-replay",
+  "exit_code": 0,
+  "started_ns": 1790979375895201000,
+  "ended_ns": 1790979486466481000,
+  "command": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run.py",
+    "--selection",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/selection.json",
+    "--review",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/root-review.json",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run-1"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2",
+  "source_manifest": {
+    "bytes": 1236,
+    "sha256": "a8e116fcb5bd0cdea5fa2a46a57f01e178cc5cf5a9d73a93a0ffb60f4fc69f9c"
+  },
+  "source_review": {
+    "bytes": 4628,
+    "sha256": "d9cbc85ccbf26252c290abc3b9bb40bf5b97e263007ee38e568d6b8cc76b9c9d"
+  },
+  "selection": {
+    "bytes": 1170,
+    "sha256": "fbd5bd104558418204a0a3c86bea3909f85f11271a52423eb7a65854ecdeabc8"
+  },
+  "wrapper": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run-1/receipt.json",
+    "bytes": 6181,
+    "sha256": "575fe0b7fe1ca86364344af794bdbc00f34d594c2328b44adb4a8c54e9b328ef"
+  },
+  "matrix": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run-1/replay/receipt.json",
+    "bytes": 29162,
+    "sha256": "3a34b2396cd45ae2fcbe4248a26fd9ad8c57f142f03ddeea51fec694f8a6c91b"
+  },
+  "stdout": {
+    "bytes": 315,
+    "sha256": "4a4633337a4f74b98d3f5fc8dc90c54876f969b08a3131d002e88cfbc6528a70"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_replay": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2": {
+      "manifest": {
+        "bytes": 1236,
+        "sha256": "a8e116fcb5bd0cdea5fa2a46a57f01e178cc5cf5a9d73a93a0ffb60f4fc69f9c"
+      },
+      "entries": 5,
+      "unchanged": true
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4": {
+      "manifest": {
+        "bytes": 16156,
+        "sha256": "5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf"
+      },
+      "entries": 72,
+      "unchanged": true
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1": {
+      "manifest": {
+        "bytes": 18464,
+        "sha256": "184cd1fa0077db9f92af7a3e8b92551dae340f17a7072bfc5699eca2c5d0c480"
+      },
+      "entries": 82,
+      "unchanged": true
+    }
+  },
+  "scope": "One approved v2 peer replay of retained original native matrix. No new transport/native/proof/corpus execution. The first v1 invocation remains failed pre-spawn."
+}

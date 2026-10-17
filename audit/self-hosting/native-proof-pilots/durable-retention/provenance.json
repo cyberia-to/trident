@@ -1,0 +1,109 @@
+{
+  "schema": "trident/sh7-durable-retention-provenance/v1",
+  "base_commit": "bbcd7e455af1a92c6f2bb971dd3470325fad922f",
+  "scope": "Byte-identical retention of completed SH7 transport evidence and actual acceptance-commit installations; no new proof computation or SH8 acceptance.",
+  "files": [
+    {
+      "path": "transport-audit.tar.gz",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/audit-package/sh7-chunk-transport-audit.tar.gz",
+      "bytes": 138492,
+      "sha256": "9db8e0f08be770423748ca5d376a02be261a22c62d209902a4b2eb92db81de47"
+    },
+    {
+      "path": "transport-audit-manifest.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/audit-package/manifest.json",
+      "bytes": 38107,
+      "sha256": "8dab1d00cfb14a1281fa1202e4dcc8602afe8d607ba08f0135f877dc3e22ebcd"
+    },
+    {
+      "path": "package-command-result.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/audit-package/command-result.json",
+      "bytes": 667,
+      "sha256": "e753ad651c45fa7d28550ae416c892fe82f5cfbed8ff23354a19c19906a26556"
+    },
+    {
+      "path": "transport-review.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/final-review.json",
+      "bytes": 5521,
+      "sha256": "feeae1c947a058e6cdc7093f3ba272587d8f79e3559fa44598470710381e2a25"
+    },
+    {
+      "path": "transport-receipt.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/run-1/receipt.json",
+      "bytes": 57221,
+      "sha256": "4daa2e64c35d3a4b8aaa16652f95165982fedb768a767258df4337b48967489f"
+    },
+    {
+      "path": "remote-parts-manifest.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/run-1/sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+      "bytes": 4763,
+      "sha256": "9bc033f4dffb8e248a55b445db884ca035886705923f2c7a596daa45914febac"
+    },
+    {
+      "path": "root-review/command.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/sh7-transport-root-review/command.json",
+      "bytes": 622,
+      "sha256": "ec3927c4a2b9be144ed1a48c2e0451b4b4b0eb2895bdc88a6bcadd8b7b72ce5b"
+    },
+    {
+      "path": "root-review/initial-invocation.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/sh7-transport-root-review/initial-invocation.json",
+      "bytes": 565,
+      "sha256": "8b5215b418a8563fe7c001c8433f74c42026c6ba86f3445c249d69ad99960bab"
+    },
+    {
+      "path": "root-review/receipt.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/sh7-transport-root-review/receipt.json",
+      "bytes": 5534,
+      "sha256": "503377abe3af314c40443827a6deafb68987a4262099ed84c1e870083d1396dc"
+    },
+    {
+      "path": "root-review/stderr",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/sh7-transport-root-review/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "root-review/stdout",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/sh7-transport-root-review/stdout",
+      "bytes": 161,
+      "sha256": "d1e82fc3963212ad20a6fba10774f3106b7369f5e12c114493ab4467af663db3"
+    },
+    {
+      "path": "postinstall/attempt-1/receipt.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall/receipt.json",
+      "bytes": 2476,
+      "sha256": "a612c4f3153d1fc12882f289381dd588beec4ecebddf9ef32cfe9cd7a71daf06"
+    },
+    {
+      "path": "postinstall/attempt-1/install.stdout",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall/install.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "postinstall/attempt-1/install.stderr",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall/install.stderr",
+      "bytes": 3610,
+      "sha256": "dbd38a4a889c80360bfb1c8b712526c8eb7dbc50dc559b57080c5b620525f58d"
+    },
+    {
+      "path": "postinstall/attempt-2/receipt.json",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall-2/receipt.json",
+      "bytes": 3327,
+      "sha256": "2b1775e3b51ef8b18bff7a64357be973fa472e0f3b254235924ded178c7ca68c"
+    },
+    {
+      "path": "postinstall/attempt-2/install.stdout",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall-2/install.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "postinstall/attempt-2/install.stderr",
+      "original_path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/proof-acceptance-postinstall-2/install.stderr",
+      "bytes": 631,
+      "sha256": "7dbbde06bb30d0a6698d9d09b00cd9364ea050b60480489dab4ef93089f9b4a2"
+    }
+  ]
+}

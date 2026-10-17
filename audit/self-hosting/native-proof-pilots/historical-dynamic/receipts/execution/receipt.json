@@ -1,0 +1,258 @@
+{
+  "schema": "trident/historical-dynamic-probe/v1",
+  "status": "passed",
+  "source_revisions": {
+    "joy": "6e0ec4d8440e2521df08f442d64f54e667044716",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442"
+  },
+  "joy": {
+    "bytes": 5635776,
+    "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+  },
+  "encoder": {
+    "bytes": 466368,
+    "sha256": "e75df19e4d589c54f7753c3554c3cf00211a42f6ebd8357123d7c5800ec491ad"
+  },
+  "historical_probe": {
+    "bytes": 648,
+    "sha256": "d927efa724a339f675b0fc484a6eb1f90ba1dabeb5e14e63dcdffef667b47ed5"
+  },
+  "source": "[2 [[1 0] [3 [[0 2] [1 42]]]]]",
+  "public_inputs": [
+    1
+  ],
+  "commands": [
+    {
+      "name": "encode",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/census/joy/target/release/sh7-historical-dynamic-fixture",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/historical-dynamic-check/execution"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/historical-dynamic-check/execution",
+      "environment": {
+        "PATH": ""
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 0.6394765420118347,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "prove",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "prove-artifact",
+        "program.dag",
+        "--input",
+        "input.dag",
+        "--output",
+        "proof.joysc",
+        "--budget",
+        "100",
+        "--frames",
+        "64",
+        "--time-ms",
+        "10000",
+        "--arena-nodes",
+        "4096",
+        "--proof-bytes",
+        "1048576",
+        "--proof-decoded-bytes",
+        "1048576",
+        "--proof-records",
+        "10000",
+        "--proof-steps",
+        "1000",
+        "--proof-cache-slots",
+        "32"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/historical-dynamic-check/execution",
+      "environment": {
+        "PATH": ""
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 0.010708958026953042,
+      "stdout": {
+        "bytes": 827,
+        "sha256": "7db8fc36ffa23ba78db5520e1e04bac206445a9160d109d80af9ee8a9651d904"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "verify",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "verify-artifact",
+        "program.dag",
+        "--input",
+        "input.dag",
+        "--proof",
+        "proof.joysc",
+        "--output",
+        "verified.dag",
+        "--budget",
+        "100",
+        "--frames",
+        "64",
+        "--time-ms",
+        "10000",
+        "--arena-nodes",
+        "4096",
+        "--proof-bytes",
+        "1048576",
+        "--proof-decoded-bytes",
+        "1048576",
+        "--proof-records",
+        "10000",
+        "--proof-steps",
+        "1000",
+        "--proof-cache-slots",
+        "32"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/historical-dynamic-check/execution",
+      "environment": {
+        "PATH": ""
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 0.009848416026216,
+      "stdout": {
+        "bytes": 757,
+        "sha256": "1244b795eeaa90d8143c47985e7f49128ceddefc7e4e79f514c9706c97c4d421"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "run",
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/production-install/installed/bin/joy",
+        "run-artifact",
+        "program.dag",
+        "--input",
+        "input.dag",
+        "--output",
+        "executed.dag",
+        "--budget",
+        "100",
+        "--frames",
+        "64",
+        "--time-ms",
+        "10000",
+        "--arena-nodes",
+        "4096"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/historical-dynamic-check/execution",
+      "environment": {
+        "PATH": ""
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 0.009072249988093972,
+      "stdout": {
+        "bytes": 649,
+        "sha256": "308bfa34778aeb7b29472343aa4c2a4a0247405084d07305821f9c931b62764f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "verification": {
+    "program_particle": "aa0dc56b46140937223159cf5378b8ac0ed7fcde05ae4e86b055ba81de217312",
+    "input_particle": "e9cfa0b6d133664736f68fd2de2c9d37173556ccf947bb52378f66413f5fffe2",
+    "output_particle": "e1541bed2ef9ae8d2073bbf1d590defeb32aba3fc8b1281d1efbeb4e2c6b84a6",
+    "charged_reductions": 6,
+    "invocations": 6,
+    "expanded_steps": 12,
+    "logical_peak_frames": 3,
+    "semantic_events": 12,
+    "records": 32,
+    "transport": {
+      "decoded_bytes": 413,
+      "frames": 2,
+      "wire_bytes": 406
+    },
+    "format": "joy-nox-disclosed-compiler-v1",
+    "disclosure": "complete public witness",
+    "physical_resource_claim": "unattested"
+  },
+  "expected_output": 42,
+  "output_exactly_expected": true,
+  "files": {
+    "run.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "encode.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "expected.dag": {
+      "bytes": 85,
+      "sha256": "1e6202fb91ac50180352315e148c8209cc36ae08dbdf299498905148a3804a6e"
+    },
+    "verify.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "proof.joysc": {
+      "bytes": 406,
+      "sha256": "7629ffb945b03447c78d65a891d23d0728c17e4ee281e4f8a5141ef9d7b89539"
+    },
+    "verify.stdout": {
+      "bytes": 757,
+      "sha256": "1244b795eeaa90d8143c47985e7f49128ceddefc7e4e79f514c9706c97c4d421"
+    },
+    "run.stdout": {
+      "bytes": 649,
+      "sha256": "308bfa34778aeb7b29472343aa4c2a4a0247405084d07305821f9c931b62764f"
+    },
+    "encode.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "verified.dag": {
+      "bytes": 85,
+      "sha256": "1e6202fb91ac50180352315e148c8209cc36ae08dbdf299498905148a3804a6e"
+    },
+    "prove.stdout": {
+      "bytes": 827,
+      "sha256": "7db8fc36ffa23ba78db5520e1e04bac206445a9160d109d80af9ee8a9651d904"
+    },
+    "executed.dag": {
+      "bytes": 85,
+      "sha256": "1e6202fb91ac50180352315e148c8209cc36ae08dbdf299498905148a3804a6e"
+    },
+    "input.dag": {
+      "bytes": 223,
+      "sha256": "5bf6cbf81d7f4d07e82b9e244ed048e25fad6bfc9d84f0d721aea77f72fee4d9"
+    },
+    "program.dag": {
+      "bytes": 1454,
+      "sha256": "0fca03d83200a5a173a80c939184367160d961037de289c3a57b2a51ae184ccc"
+    },
+    "prove.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

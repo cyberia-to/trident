@@ -1,0 +1,204 @@
+{
+  "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+  "kind": "local working-tree component measurements",
+  "sources_sha256": {
+    "lib/std/nox/bytes.tri": "293a6a44eb56633a8df095184c13bbcdefe4cfcd6a3480adc7b3a4c20f1a53db",
+    "lib/std/nox/tree.tri": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4",
+    "lib/std/nox/seq.tri": "1c70fc4614edd8dafcf667536d488335ae31df436c7c1fd5c2306eb87f37c20b",
+    "lib/std/compiler/nox/utf8.tri": "eec8b5cbe9364a5dab13205bea7e315a6ec5a14e2deb567e86db0bedabbe5fab",
+    "lib/std/compiler/nox/syntax.tri": "2f06cd88eb350f402f6c9ae0118b3edb7a79ba2730747ada96bb01fc51852e89",
+    "lib/vm/core/convert.tri": "bed1495b40f6d3b0085961924fb2ac2bc6a37b22267110dfb8a2b71af6d58b19",
+    "lib/vm/core/field.tri": "45718423e4f0a72eb0e8528993f2c0b7bde9d858e6c7f8ebeaf53aaf313a210a",
+    "lib/vm/nox/noun.tri": "a2795c828bf8a325b82edd59bb73fac9909984e63b2144573183db0a7a4a5603",
+    "tests/native_byte_scale.rs": "02dbbb813e2d5515fbae2b226a53a5c545cc81d33cdbe1d7c8b82241700307fb",
+    "tests/fixtures/native_byte_scale.tri": "4cadb1acf4f8c2314d9aac73bc3f777e2b3d4c7f6c981b0e9c39d3e9bb3bffc1"
+  },
+  "inputs": "ASCII space repeated to the stated byte length",
+  "limits": {
+    "reductions": 1000000000,
+    "arena_capacity": 16777216,
+    "arena_nodes": 12582912,
+    "frames": 65536,
+    "source_bytes": 65536,
+    "validation_visits": 1000000
+  },
+  "limits_origin": "Unchanged explicit component allowances in tests/native_compiler/source_capacity.rs; these are not complete JOB1 acceptance results.",
+  "modes": {
+    "0": "canonical byte admission and exact noun return",
+    "1": "canonical byte admission and complete UTF8 validation"
+  },
+  "baseline": {
+    "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+    "module_overrides": [
+      "std.nox.tree",
+      "std.nox.bytes",
+      "std.compiler.nox.utf8"
+    ],
+    "command": "TRIDENT_BYTE_SCALE_REVISION=b453e3444bc5a8ac9c4e7f78910aeab6c59e0581 CARGO_TARGET_DIR=../target-byte-scale cargo test --release --test native_byte_scale packed_source_scale -- --nocapture",
+    "log": "byte-scale-before.log",
+    "points": [
+      {
+        "mode": 0,
+        "bytes": 128,
+        "reductions": 118011,
+        "nodes": 11840,
+        "frames": 410
+      },
+      {
+        "mode": 1,
+        "bytes": 128,
+        "reductions": 533942,
+        "nodes": 18385,
+        "frames": 643
+      },
+      {
+        "mode": 0,
+        "bytes": 4096,
+        "reductions": 6008331,
+        "nodes": 341649,
+        "frames": 1258
+      },
+      {
+        "mode": 1,
+        "bytes": 4096,
+        "reductions": 28591382,
+        "nodes": 551194,
+        "frames": 1258
+      },
+      {
+        "mode": 0,
+        "bytes": 16384,
+        "reductions": 28360365,
+        "nodes": 1532390,
+        "frames": 1458
+      },
+      {
+        "mode": 1,
+        "bytes": 16384,
+        "reductions": 136042424,
+        "nodes": 2370732,
+        "frames": 2707
+      },
+      {
+        "mode": 0,
+        "bytes": 65536,
+        "reductions": 130778415,
+        "nodes": 6859493,
+        "frames": 2237
+      },
+      {
+        "mode": 1,
+        "bytes": 65536,
+        "reductions": 630908474,
+        "nodes": 10213028,
+        "frames": 8862
+      }
+    ]
+  },
+  "after": {
+    "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+    "working_tree_sources_sha256": {
+      "lib/std/nox/bytes.tri": "293a6a44eb56633a8df095184c13bbcdefe4cfcd6a3480adc7b3a4c20f1a53db",
+      "lib/std/nox/tree.tri": "2f9265b70582d38ccd700632a71087309595757a5cab8b1d4504b513fcc41dd4",
+      "lib/std/nox/seq.tri": "1c70fc4614edd8dafcf667536d488335ae31df436c7c1fd5c2306eb87f37c20b",
+      "lib/std/compiler/nox/utf8.tri": "eec8b5cbe9364a5dab13205bea7e315a6ec5a14e2deb567e86db0bedabbe5fab",
+      "lib/std/compiler/nox/syntax.tri": "2f06cd88eb350f402f6c9ae0118b3edb7a79ba2730747ada96bb01fc51852e89",
+      "lib/vm/core/convert.tri": "bed1495b40f6d3b0085961924fb2ac2bc6a37b22267110dfb8a2b71af6d58b19",
+      "lib/vm/core/field.tri": "45718423e4f0a72eb0e8528993f2c0b7bde9d858e6c7f8ebeaf53aaf313a210a",
+      "lib/vm/nox/noun.tri": "a2795c828bf8a325b82edd59bb73fac9909984e63b2144573183db0a7a4a5603",
+      "tests/native_byte_scale.rs": "02dbbb813e2d5515fbae2b226a53a5c545cc81d33cdbe1d7c8b82241700307fb",
+      "tests/fixtures/native_byte_scale.tri": "4cadb1acf4f8c2314d9aac73bc3f777e2b3d4c7f6c981b0e9c39d3e9bb3bffc1"
+    },
+    "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_byte_scale packed_source_scale -- --nocapture",
+    "log": "byte-scale-measurements.log",
+    "points": [
+      {
+        "mode": 0,
+        "bytes": 128,
+        "reductions": 14124,
+        "nodes": 7712,
+        "frames": 248
+      },
+      {
+        "mode": 1,
+        "bytes": 128,
+        "reductions": 26766,
+        "nodes": 8697,
+        "frames": 248
+      },
+      {
+        "mode": 0,
+        "bytes": 4096,
+        "reductions": 392583,
+        "nodes": 30153,
+        "frames": 1216
+      },
+      {
+        "mode": 1,
+        "bytes": 4096,
+        "reductions": 718021,
+        "nodes": 59532,
+        "frames": 1216
+      },
+      {
+        "mode": 0,
+        "bytes": 16384,
+        "reductions": 1563357,
+        "nodes": 92376,
+        "frames": 1264
+      },
+      {
+        "mode": 1,
+        "bytes": 16384,
+        "reductions": 2857933,
+        "nodes": 209905,
+        "frames": 1264
+      },
+      {
+        "mode": 0,
+        "bytes": 65536,
+        "reductions": 6244671,
+        "nodes": 335001,
+        "frames": 1456
+      },
+      {
+        "mode": 1,
+        "bytes": 65536,
+        "reductions": 11413207,
+        "nodes": 805402,
+        "frames": 1456
+      }
+    ]
+  },
+  "verification": [
+    {
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --test native_collections -- --nocapture",
+      "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+      "log": "byte-scale-collections.log",
+      "result": "19 passed"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_byte_scale -- --nocapture",
+      "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+      "log": "byte-scale-after.log",
+      "result": "6 passed"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo test --release --locked --offline --test native_byte_scale fused_admission -- --nocapture",
+      "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+      "log": "byte-scale-fused-check.log",
+      "result": "1 passed; includes additional final-byte and whole-leaf padding corruption cases"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=../target-byte-scale cargo check --tests --locked --offline",
+      "revision": "b453e3444bc5a8ac9c4e7f78910aeab6c59e0581",
+      "log": "byte-scale-check.log",
+      "result": "passed; zero warnings"
+    }
+  ],
+  "formal_audit": {
+    "file": "byte-scale-audit.json",
+    "result": "unknown; exit 2; aggregate and Noun expressions unsupported by symbolic executor"
+  },
+  "verification_source_note": "Library and fixture hashes are frozen across final checks. The complete six-test run preceded additional corruption vectors in the same fused_admission test; the final scoped rerun executes those vectors against the final harness hash."
+}

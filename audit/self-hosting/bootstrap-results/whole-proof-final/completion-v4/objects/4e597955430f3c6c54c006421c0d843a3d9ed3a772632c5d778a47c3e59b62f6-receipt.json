@@ -1,0 +1,152 @@
+{
+  "status": "passed",
+  "started_ns": 1790956710272858000,
+  "commands": [
+    {
+      "name": "rustc",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+        "-vV"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper",
+      "started_ns": 1790956710272881000,
+      "exit_code": 0,
+      "elapsed_seconds": 0.1308421670109965,
+      "stdout": {
+        "bytes": 192,
+        "sha256": "a3138eb77dfe19d4cdb1d83ceb7c34944715564062936cf209d247cbf5208fae"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "cargo",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "-vV"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper",
+      "started_ns": 1790956710404155000,
+      "exit_code": 0,
+      "elapsed_seconds": 0.13283975003287196,
+      "stdout": {
+        "bytes": 335,
+        "sha256": "930ba319a4044e5620604b209d876301cf1bfb05212aed1d0f68381d3fc6c81e"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustfmt",
+        "--edition",
+        "2021",
+        "main.rs"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper",
+      "started_ns": 1790956710537379000,
+      "exit_code": 0,
+      "elapsed_seconds": 0.04062174999853596,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "test",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper",
+      "started_ns": 1790956710578380000,
+      "exit_code": 0,
+      "elapsed_seconds": 61.282456334040035,
+      "stdout": {
+        "bytes": 922,
+        "sha256": "07aabe0cb50b14b6ad25fbe31839f6069de83bf5eee4ef5d22e0fac538521007"
+      },
+      "stderr": {
+        "bytes": 6773,
+        "sha256": "8cb4e8e34e02a4b0f3f3f60735e871d308aac305a87a37491ee0bee340400078"
+      }
+    },
+    {
+      "name": "build",
+      "command": [
+        "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/helper",
+      "started_ns": 1790956771861994000,
+      "exit_code": 0,
+      "elapsed_seconds": 1.2543240409577265,
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 199,
+        "sha256": "947f1bb475d33a8598e48744d53c0fea1091465b0c9bda0aeade46037d233691"
+      }
+    }
+  ],
+  "env": {
+    "PATH": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin:/Users/master/.cargo/bin:/opt/homebrew/bin:/usr/bin:/bin",
+    "RUSTC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/rustdoc",
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/target-helper",
+    "CARGO_BUILD_JOBS": "2",
+    "RUSTFLAGS": "-D warnings"
+  },
+  "sources": {
+    "Cargo.lock": {
+      "bytes": 31586,
+      "sha256": "2299f3838b9f37294145498a34790a8b57169f0f7e0ecd527f3617eb8e8fc205"
+    },
+    "Cargo.toml": {
+      "bytes": 442,
+      "sha256": "f3c0f91ea813d13c073da1ea6fae72f4f011091d50236740637d104bd2b700ed"
+    },
+    "frames.rs": {
+      "bytes": 15017,
+      "sha256": "9cf4fef3fd2d3f6141a85ba96b3d348b988665a79b4d13c8f271df48e2d04f2f"
+    },
+    "index.rs": {
+      "bytes": 5361,
+      "sha256": "00e3f4f40e5a09f8aaa3230526881810475a3c0923115f7bc5efda0362d585f8"
+    },
+    "main.rs": {
+      "bytes": 2734,
+      "sha256": "d47874954620bbd8fe00284ae3d257f5e7c9cd84dec26d636ec43f72d599047f"
+    },
+    "mutation.rs": {
+      "bytes": 8473,
+      "sha256": "05d7bd37fcbb48fbbe1b57d1a3c926c57d2639ceeb52282d5ede8544050f8002"
+    },
+    "noun.rs": {
+      "bytes": 4114,
+      "sha256": "bd64a225ca4703b9720775897565db4858629992eb644abcf2a1c7c68bdae0c8"
+    }
+  },
+  "binary": {
+    "bytes": 724240,
+    "sha256": "5daf18dd1174d136c0e0dff4d47de7789d2f486725cd8cc73fb41079532a7cc7"
+  },
+  "ended_ns": 1790956773117583000
+}

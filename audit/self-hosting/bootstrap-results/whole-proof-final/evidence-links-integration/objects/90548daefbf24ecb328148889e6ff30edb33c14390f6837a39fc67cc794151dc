@@ -1,0 +1,27 @@
+--- /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/validation/install.py
++++ /Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-20261002/joy-install/install.py
+@@ -12,12 +12,12 @@
+ import traceback
+ 
+ HERE = Path(__file__).resolve().parent
+-BASE = HERE.parent.parent
+-REPO = HERE.parent / 'joy'
++BASE = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
++REPO = BASE / 'joy-release-notes/joy'
+ ACCEPTED = BASE / 'final-distribution/local-macos-final-rust189'
+ SOURCE = ACCEPTED / 'temporary/cyber-candidate/unpacked/cyber-source'
+ TARGET = ACCEPTED / 'temporary/cyber-candidate/candidate/build/joy'
+-BASE_HEAD = '011543e29a9113564581605bcbaf120b14c1a975'
++BASE_HEAD = '15202f42240ba923398908ee0db62d32f1d655f8'
+ SOURCE_SHA = '9334dead92b990a12acf16a2565aeb762a07311dfc2c3d6cb896c0490dc5926e'
+ BINARY_SHA = '7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071'
+ IMPACT_SHA = 'd9aeb78f31383f2da238f30f48eaa090e7e200c0f9104c3675443525aaa426b0'
+@@ -69,7 +69,7 @@
+         assert git('rev-parse', 'HEAD').decode().strip() == head
+         assert not git('status', '--porcelain=v1')
+         assert git('rev-parse', 'HEAD^').decode().strip() == BASE_HEAD
+-        assert sorted(git('diff', '--name-only', BASE_HEAD, head).decode().splitlines()) == ['CHANGELOG.md', 'README.md']
++        assert sorted(git('diff', '--name-only', BASE_HEAD, head).decode().splitlines()) == ['README.md']
+         documents = load(HERE / 'documents.json')
+         for path, wanted in documents.items():
+             assert identity(REPO / path) == wanted

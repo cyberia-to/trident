@@ -1,0 +1,23 @@
+# V5 historical admission
+
+This component replays the unchanged twelve v2/v3 cases and selects the one
+completed v4 C2 cost rejection. The v4 coordinator remains `failed`; both v4
+suite receipts remain `input-changed`. Their interrupted final inventory scans
+are retained as errors. A new read-only inventory comparison supplies a current
+observation, never an invented historical `immutable_inputs_after`.
+
+`review(base, generation, proof, original_verifier, expected)` returns the exact
+previous twelve-case result after invoking its pinned independent checker.
+`admit_v4_c2_cost(base, proof, original_verifier, expected)` authenticates the
+original construction, complete new verifier, protected output, recorded resource
+bounds, process retirement, restricted prelude and later diagnostic retirement.
+Its result is `trident/selected-v4-cost-rejection/v1`,
+`passed-selected-v4-cost`, generation2. It includes the exact rejection, original
+proof/profile, literal failed suite/controller statuses, verification,
+construction admission, retirement and prelude references, the reconstructed
+prelude identity, source manifest, current immutable inputs and quiescence.
+
+The selected case requires no deleted diagnostic body and grants no deletion.
+No process, proof workload, network request or cleanup is launched. Original
+positive proof identity and caller verification are freshly authenticated by the
+pinned prior checker. Numerical limits and twenty-three-case contract stay fixed.

@@ -1,0 +1,122 @@
+[
+  {
+    "label": "head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "base-before",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "branch-before",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/docs/0.4-final-proof-acceptance"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "push",
+    "argv": [
+      "git",
+      "push",
+      "--set-upstream",
+      "origin",
+      "docs/0.4-final-proof-acceptance"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "branch-after",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/docs/0.4-final-proof-acceptance"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "create",
+    "argv": [
+      "gh",
+      "pr",
+      "create",
+      "--repo",
+      "cyberia-to/joy",
+      "--base",
+      "release/0.4",
+      "--head",
+      "docs/0.4-final-proof-acceptance",
+      "--title",
+      "docs: record accepted frozen S1 self-build proofs",
+      "--body-file",
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/final-companion-sh8-20261003/joy-pr-body.md"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "readback",
+    "argv": [
+      "gh",
+      "pr",
+      "view",
+      "31",
+      "--repo",
+      "cyberia-to/joy",
+      "--json",
+      "url,number,state,isDraft,headRefName,headRefOid,baseRefName,baseRefOid,mergeStateStatus,statusCheckRollup,title,body"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "published-document",
+    "argv": [
+      "gh",
+      "api",
+      "repos/cyberia-to/joy/contents/README.md?ref=c5ededb34b4a9ea82b77c2cb540b81be818750d2"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  },
+  {
+    "label": "document-blob",
+    "argv": [
+      "git",
+      "rev-parse",
+      "c5ededb34b4a9ea82b77c2cb540b81be818750d2:README.md"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "status": "failed-precopy-public-text-admission",
+  "time_ns": 1790980401588267000,
+  "source_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-v4-delivery/delivery-files.json",
+    "bytes": 48728,
+    "sha256": "07d2fe48ef496deabc485fa12315d9316dd8821f95eeda2d085bea4265c03543"
+  },
+  "source_files": 258,
+  "all_original_identities_match": true,
+  "privacy_checker": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation/privacy.py",
+    "bytes": 2554,
+    "sha256": "f4a0196d4568122c937b38cf171547a756edf7ec23ef25ac3ba0807192e4b782"
+  },
+  "failures": [
+    {
+      "path": "objects/a8606ae30201c655de8201af7f830be56d78853370c059d091b50b355be3a0ff",
+      "error": "'utf-8' codec can't decode byte 0xf5 in position 8: invalid start byte"
+    }
+  ],
+  "jsonl_admitted_separately": [
+    {
+      "path": "objects/f0b5c8f00a1ee9b2dc678ee0d557eb09fb15a4325c9f4e2319892723e870103e",
+      "original_whole_json_error": "Extra data: line 2 column 1 (char 112)",
+      "separate_json_lines": 15,
+      "individual_lines_passed": true
+    }
+  ],
+  "exact_raw_whitespace": [
+    {
+      "path": "objects/a8606ae30201c655de8201af7f830be56d78853370c059d091b50b355be3a0ff",
+      "whitespace": "-blank-at-eol"
+    },
+    {
+      "path": "objects/cfb659af99f30efb0d5e73e075d5db6cb3704afbec9573ff10832bf411c70a31",
+      "whitespace": "-blank-at-eol"
+    },
+    {
+      "path": "objects/d3f06c8f02c30b2c598006da34ba4119072221f4e0f497e42ce5959e07ab7aee",
+      "whitespace": "-blank-at-eol"
+    }
+  ],
+  "decision": "Retain complete original stage; new stage must reference compiled cache identity without its body and use exact text-object whitespace exceptions. No helper copy, execution or publication occurred."
+}

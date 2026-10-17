@@ -1,0 +1,24 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `release` profile [optimized] target(s) in 6.45s
+     Running tests/native_function_sort.rs (../target-pipeline-review/release/deps/native_function_sort-a547a15cc1ca9759)
+
+running 3 tests
+test native_module_sort_handles_real_compiler_declaration_names ... ignored, compiler-scale ordering component: run explicitly in release mode
+sort-component empty: ranked=false modules=3 functions=6 source_bytes=82 reductions=103575 nodes=18839 frames=315
+sort-component empty: ranked=true modules=3 functions=6 source_bytes=82 reductions=116503 nodes=20824 frames=322
+sort-component one: ranked=false modules=3 functions=6 source_bytes=82 reductions=103938 nodes=18877 frames=315
+sort-component one: ranked=true modules=3 functions=6 source_bytes=82 reductions=163764 nodes=24745 frames=338
+sort-component pairs-stable: ranked=false modules=3 functions=6 source_bytes=82 reductions=452620 nodes=28831 frames=374
+sort-component zero-cap: ranked=false modules=3 functions=6 source_bytes=82 reductions=104733 nodes=18983 frames=315
+sort-component pairs-stable: ranked=true modules=3 functions=6 source_bytes=82 reductions=503572 nodes=39739 frames=377
+sort-component zero-cap: ranked=true modules=3 functions=6 source_bytes=82 reductions=117213 nodes=20890 frames=322
+sort-component prefix-cap: ranked=false modules=3 functions=6 source_bytes=82 reductions=235451 nodes=24007 frames=339
+sort-component prefix-cap: ranked=true modules=3 functions=6 source_bytes=82 reductions=348101 nodes=36154 frames=351
+sort-component all-name-alignments: ranked=false modules=1 functions=24 source_bytes=436 reductions=4330580 nodes=122540 frames=542
+test native_module_sort_preserves_pairs_stability_and_capacity ... ok
+sort-component all-name-alignments: ranked=true modules=1 functions=24 source_bytes=436 reductions=5688802 nodes=134588 frames=547
+test admitted_owner_ranks_preserve_prefix_names_and_stable_members ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.51s

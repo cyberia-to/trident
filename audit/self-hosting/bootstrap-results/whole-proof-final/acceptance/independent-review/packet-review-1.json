@@ -1,0 +1,46 @@
+{
+  "status": "passed-actual-packet-review",
+  "started_ns": 1791051644202214000,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-actual-independent-review/review_packet.py"
+  ],
+  "schema": "trident/actual-final-delivery-independent-review/v1",
+  "packet_receipt": {
+    "path": "whole-proof-final-delivery-preparation/staging/actual-1/receipt.json",
+    "bytes": 10069,
+    "sha256": "82d65779a46a144f6b2e2bfaab543e25e0d8e2131c7da4ecb8e299f332e0e37b"
+  },
+  "F5": {
+    "path": "whole-proof-final-launch-v5/orchestration/final-review.json",
+    "bytes": 137215,
+    "sha256": "46e7171ede86ce006afcb850b610590aa1bbcbd7bcf5ee3a37ec3f59ca617d66"
+  },
+  "watcher": {
+    "path": "whole-proof-final-launch-v5/orchestration/receipt.json",
+    "bytes": 9382,
+    "sha256": "e7cc4efc78edc333df6334fd910822c03ef5912cce0a09b2745573dee49aed41"
+  },
+  "collector_sources": {
+    "path": "whole-proof-final-delivery-preparation/sources.json",
+    "bytes": 1637,
+    "sha256": "d2f216163f07add07ef7278d998656eccb2f1f60190322e085761191fa64f59f"
+  },
+  "collector_review": {
+    "path": "whole-proof-final-delivery-preparation/independent-review.json",
+    "bytes": 4881,
+    "sha256": "29360024cf5ba6736599c53477b242af5ad3153da99cddf3d19464beb944b7c7"
+  },
+  "files": 41,
+  "original_streams": 94,
+  "unique_objects": 33,
+  "dependency_entries": 16703,
+  "actual_packet_bytes": 7683029,
+  "reported_collector_read_bytes": 21427486,
+  "reported_collector_elapsed_seconds": 0.8904849580139853,
+  "privacy": "Every actual packet file and all 94 selected original streams passed the exact frozen strict public_bytes predicate. No raw process snapshots, proof/native bodies, authorization headers or signed URLs were copied by this review.",
+  "scope": "Independent actual packet identity, source/gate, summary, counter, explicit original-stream allowlist and privacy readback. No collector, native proof, final checker, upload, version or publication action.",
+  "ended_ns": 1791051644568675000,
+  "review_read_bytes": 23696811,
+  "observed_metadata_files": 162
+}

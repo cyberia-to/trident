@@ -1,0 +1,60 @@
+{
+  "status": "committed-clean",
+  "base": "15202f42240ba923398908ee0db62d32f1d655f8",
+  "head": "f008a14a6c5e66dca5cfb7acade924618ea5b4a8",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "README.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "exit_code": 0,
+      "label": "add"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "exit_code": 0,
+      "label": "check"
+    },
+    {
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "docs: make cross-repository evidence links resolve on GitHub"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "exit_code": 0,
+      "label": "commit"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "exit_code": 0,
+      "label": "head"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/joy-release-notes/joy",
+      "exit_code": 0,
+      "label": "clean"
+    }
+  ]
+}

@@ -1,0 +1,656 @@
+[
+  {
+    "command": [
+      "/usr/bin/git",
+      "merge-base",
+      "10772124836b68a2df011c912b5776b2454a511f",
+      "15fa1507598ace547d44970d4fe8530137464c0b"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "merge-base",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "sha256": "f7507706af30329db96bceaad68c2b9161d5af85c2e09294c5e4aaa924728aa8"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "origin/release/0.4"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "origin",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "sha256": "e31a1f91fe48d0170b9ed6094c18704d835ac4f79f5c2d3892f5b4a692a27ef9"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "diff",
+      "--name-only",
+      "10772124836b68a2df011c912b5776b2454a511f...15fa1507598ace547d44970d4fe8530137464c0b"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "paths",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 71037,
+      "sha256": "16c19460983e675c9a889e502bf1a8c0db0de13d6c99250b08802256fd0784d6"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "diff",
+      "--name-status",
+      "10772124836b68a2df011c912b5776b2454a511f...15fa1507598ace547d44970d4fe8530137464c0b"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "name-status",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 72123,
+      "sha256": "e35055551004d391aeca22d8557c10c20057bd04df72c5957d1b5a38379615ab"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "diff",
+      "--check",
+      "10772124836b68a2df011c912b5776b2454a511f...15fa1507598ace547d44970d4fe8530137464c0b"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "diff-check",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "diff",
+      "10772124836b68a2df011c912b5776b2454a511f...15fa1507598ace547d44970d4fe8530137464c0b",
+      "--",
+      ".claude/plans/native-compiler-arena.md",
+      ".claude/plans/warrior-release-repair.md",
+      "CHANGELOG.md",
+      "audit/release-version-closure.md",
+      "audit/self-hosting-progress.md",
+      "reference/roadmap.md"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "docs-diff",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 46520,
+      "sha256": "a03dcc874ff630fbf764260cf462855573fab4300c4bb7e82adef8dbf3d89e55"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "diff",
+      "--name-only",
+      "10772124836b68a2df011c912b5776b2454a511f..8da6f8f6efb3eafb4697f3ce7da74e059d18e02e"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "incoming",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 39,
+      "sha256": "4936187787a0d47923081d680203bf15c29cc1d28dc47279cb2e8f25fc0ee624"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:src",
+      "15fa1507598ace547d44970d4fe8530137464c0b:src"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-src",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "f7a71143b5ea6966c67308f321e4eee6b30481da26cbd9542e195fdc15cdaa01"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:Cargo.toml",
+      "15fa1507598ace547d44970d4fe8530137464c0b:Cargo.toml"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-Cargo.toml",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "60d7e4b9876dddbf0308d8ca524795dc40f95589fe8a98347846f9e4f14e78ca"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:Cargo.lock",
+      "15fa1507598ace547d44970d4fe8530137464c0b:Cargo.lock"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-Cargo.lock",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "9c04b221126f5819bf28e090773a0283828731e210805b52d56a189dc63155c5"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:build.rs",
+      "15fa1507598ace547d44970d4fe8530137464c0b:build.rs"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-build.rs",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "0d3d472364739ffed0691263520acacc0b1f7757f01ae956f662eb047de0a701"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:lib",
+      "15fa1507598ace547d44970d4fe8530137464c0b:lib"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-lib",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "b73d355a8a4bcad2f33de6a4eb6623663dc1f13c43ab2a6bc132bd7d92dfe6c3"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:scripts",
+      "15fa1507598ace547d44970d4fe8530137464c0b:scripts"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-scripts",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "bb614693fc319ae8939b1c65753ba111c0011bec8cd6e490abb482fb9ad555e6"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:.github",
+      "15fa1507598ace547d44970d4fe8530137464c0b:.github"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-.github",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "acc9f81a19defd9119945c6e323828ba27ced0c9f20282a432b8ef28c5a88809"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "10772124836b68a2df011c912b5776b2454a511f:.gitattributes",
+      "15fa1507598ace547d44970d4fe8530137464c0b:.gitattributes"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tree-.gitattributes",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 82,
+      "sha256": "75cd5647c699bbaa4d5d247f3b39069354a08ed56a93d3f9024964ecf9ab9c49"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "ls-tree",
+      "-r",
+      "15fa1507598ace547d44970d4fe8530137464c0b"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "tracked",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2424748,
+      "sha256": "d739e64104bccae053bb94d09ed91ea76aa1e0ccfe036bd6775d48ae95bff183"
+    }
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/checker-v4/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-e7fefcb5e48ca275",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 9217,
+      "sha256": "b46af5472494365070fd41390e2f1d12f2f06ed7592df8a6972eea3d1f7bd20f"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/checker-v5/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-a0ab0aeef8891931",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 57503,
+      "sha256": "74bf12dd9b7b1e4959af59379f3236025210068f379e3c06783c7a3d94b7d3c9"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/completion-v4/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-8494c77d70e610f6",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 20514,
+      "sha256": "2505351bfdb80a765f5da58ab92eb0ef29c8b8ca0c6a99ff05dfdfd824dc903f"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/completion-v5/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-f95af0413dc9c1ac",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 25484,
+      "sha256": "723c08b2d7df332229ee75edeec26e801693a26da45a4cc7c0cc114255482739"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/delivery-preparation/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-95b4e78cd146abb6",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41679,
+      "sha256": "d6c908a0314a3f7760f0284294c7ec5dc8b28125a691fa7fbb9458dd19fd2a5a"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/final-launch-v5/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-a4d69c8f7c11665d",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5141,
+      "sha256": "7c7c821f7326414bf7711a02b08c5e5e60077f3dd16dc885f9b584983d37c976"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/helper-v4/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-4c840f93b8fa22ab",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 28944,
+      "sha256": "e806d87c508b9ab5f290ff706f000e6fcf22dd899319965a11169f543e39a352"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/integration-20261002/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-2c55aeac49403d04",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 50193,
+      "sha256": "24766e8b58b81e52db45ae1f1d01dc19ee9f05bab46ee3ca879e4846a32e13ad"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/schedule-v4-failure/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-f09982eb239c7ba5",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3765,
+      "sha256": "daf0cc62691634f7483306b2086f668643bf875ed2e9470801c911f7d52a1e47"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "cat-file",
+      "--batch"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "archive-blob-batch",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdin": {
+      "bytes": 16195,
+      "sha256": "42846ef7d8b4974d0b558017259d2787142eddaac9e7b46d98182f4fcb851ca3"
+    },
+    "stdout": {
+      "bytes": 2267463,
+      "sha256": "d98c167b6dfb63873680695cb2eb9279b98ff70dd619bf4903252b316c0d3bab"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/helper-v4/independent-review/independent-review.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-99a81a8f5e89ac3b",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5210,
+      "sha256": "d0fc00421375c49c9b9dc448955df514d53b6f562003e3ac485997514757b8c2"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/helper-v4/retained-files.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-4c840f93b8fa22ab",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 28944,
+      "sha256": "e806d87c508b9ab5f290ff706f000e6fcf22dd899319965a11169f543e39a352"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/helper-v4/build-1/receipt.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-b45403ecc181ced7",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 5077,
+      "sha256": "4e597955430f3c6c54c006421c0d843a3d9ed3a772632c5d778a47c3e59b62f6"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:audit/self-hosting/bootstrap-results/whole-proof-final/helper-v4/fixture-1/receipt.json"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-f09b2c628c4b207b",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 56493,
+      "sha256": "4c525d7206e22969080a8275a578c6a92f791dd85cfe01bab8791f316ccd0a18"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:.github/workflows/selfhost-bootstrap.yml"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-793d6538f330167b",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 4550,
+      "sha256": "8c5eb9323dfca39213fde8fdfdfc3976e248e56654a0a9568469ec413fd773d4"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:.github/workflows/selfhost-source-transport.yml"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-2998ebad545ff83e",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 2372,
+      "sha256": "fe99ca870db0a3dff6a02f2ed1072c6324b5e1772512edc5908e4fa71370814e"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "show",
+      "15fa1507598ace547d44970d4fe8530137464c0b:.github/workflows/notify-cyber.yml"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "blob-4c65bf3a6a152db8",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 170,
+      "sha256": "e19bd456e7ad1ed979fecaf52c0cbb4cb65f0f547e4f8907d0d1097debc0c929"
+    },
+    "stdout_storage": "identity only; original immutable Git objects remain authoritative, no repeated full object copy"
+  },
+  {
+    "command": [
+      "/usr/bin/git",
+      "rev-parse",
+      "15fa1507598ace547d44970d4fe8530137464c0b^{tree}"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident",
+    "exit_code": 0,
+    "label": "head-tree",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 41,
+      "sha256": "72f38bd720afd103ff065c2f81f21c1cef8ffb1f14538a6e5b65f73f2657176f"
+    }
+  }
+]

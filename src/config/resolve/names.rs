@@ -1,5 +1,5 @@
 //! Canonical owners shared by discovery and direct import scopes.
-pub(crate) fn canonical_module_name(name: &str) -> String {
+pub fn canonical_module_name(name: &str) -> String {
     if let Some(owner) = super::legacy_stdlib_fallback(name) {
         return owner.into();
     }

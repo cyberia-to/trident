@@ -1,0 +1,83 @@
+"""Check two docs-only deltas and exact final Trident acceptance link bodies."""
+import argparse
+import base64
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+
+ROOT = Path(__file__).resolve().parent
+BASE = ROOT.parent.parent
+TRIDENT = BASE / 'whole-proof-helper-v4/trident'
+parser = argparse.ArgumentParser()
+parser.add_argument('--trident-head', required=True)
+args = parser.parse_args()
+assert re.fullmatch('[0-9a-f]{40}', args.trident_head)
+OUT = ROOT / 'validation'
+OUT.mkdir()
+commands = []
+
+
+def identity(data):
+    return {'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
+
+
+def run(argv, cwd):
+    r = subprocess.run(argv, cwd=cwd, capture_output=True, timeout=60)
+    n = len(commands)
+    for label, data in [('stdout', r.stdout), ('stderr', r.stderr)]:
+        (OUT / f'{n}.{label}').write_bytes(data)
+    commands.append({'argv': argv, 'cwd': str(cwd), 'exit_code': r.returncode,
+                     'stdout': {'path': f'{n}.stdout', **identity(r.stdout)},
+                     'stderr': {'path': f'{n}.stderr', **identity(r.stderr)}})
+    (OUT / 'commands.json').write_text(json.dumps(commands, indent=2) + '\n')
+    assert r.returncode == 0, argv
+    return r.stdout
+
+
+prefix = 'audit/self-hosting/bootstrap-results/whole-proof-final/'
+targets = {}
+for path in ['acceptance/README.md', 'joy-source-bridge/README.md', 'acceptance/packet/summary.json']:
+    fullpath = prefix + path
+    original = run(['git', 'show', args.trident_head + ':' + fullpath], TRIDENT)
+    blob = run(['git', 'rev-parse', args.trident_head + ':' + fullpath], TRIDENT).decode().strip()
+    response = json.loads(run(['gh', 'api', 'repos/cyberia-to/trident/contents/' + fullpath + '?ref=' + args.trident_head], TRIDENT))
+    assert response['type'] == 'file' and response['encoding'] == 'base64'
+    assert response['sha'] == blob and base64.b64decode(response['content']) == original
+    url = 'https://github.com/cyberia-to/trident/blob/' + args.trident_head + '/' + fullpath
+    assert response['html_url'] == url
+    targets[path] = {'url': url, 'blob': blob, **identity(original), 'authenticated_api_bytes_equal': True}
+    if path.endswith('summary.json'):
+        assert original == (ROOT / 'original-summary.json').read_bytes()
+summary = json.loads((ROOT / 'original-summary.json').read_text())
+assert summary['status'] == 'accepted-local-F5-projection'
+assert summary['profile'] == 'joy-nox-disclosed-compiler-v1'
+assert len(summary['generations']) == 2
+for row in summary['generations']:
+    assert row['corpus_observations'] == 547 and row['distinct_rejections'] == 23 and row['original_controls'] == 2
+docs = {}
+for name, directory, base, path in [
+    ('joy', 'joy-release-notes/joy', '89088bb27a2d6eaa63ec85aaa2eaec08028c28ad', 'README.md'),
+    ('trisha', 'trisha-delivery-docs-20261002/trisha', 'c9f442c58005249d14e95fc81f125ff7f864ab07', 'audit/README.md'),
+]:
+    repo = BASE / directory
+    assert run(['git', 'rev-parse', 'HEAD'], repo).decode().strip() == base
+    assert run(['git', 'branch', '--show-current'], repo).decode().strip() == 'docs/0.4-final-proof-acceptance'
+    assert run(['git', 'diff', '--name-only', base], repo).decode().splitlines() == [path]
+    run(['git', 'diff', '--check', base], repo)
+    patch = run(['git', 'diff', base, '--', path], repo)
+    (OUT / (name + '.patch')).write_bytes(patch)
+    data = (repo / path).read_bytes()
+    assert b'TRIDENT_ACCEPTANCE_COMMIT' not in data
+    for target in ('acceptance/README.md', 'joy-source-bridge/README.md'):
+        assert data.decode().count('](' + targets[target]['url'] + ')') == 1
+    docs[name] = {'base': base, 'path': path, 'document': identity(data), 'patch': identity(patch)}
+receipt = {'status': 'passed-final-companion-docs-and-immutable-links',
+           'scope': 'Two README-only status updates from actual frozen-S1 F5 summary; original Joy6e0 proof scope kept separate from packaged Joy. No native proof/test run.',
+           'source': identity(Path(__file__).read_bytes()), 'trident_commit': args.trident_head,
+           'summary': identity((ROOT / 'original-summary.json').read_bytes()),
+           'targets': targets, 'documents': docs,
+           'commands': identity((OUT / 'commands.json').read_bytes())}
+(OUT / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+print(json.dumps({'status': receipt['status'], 'receipt': identity((OUT / 'receipt.json').read_bytes())}))

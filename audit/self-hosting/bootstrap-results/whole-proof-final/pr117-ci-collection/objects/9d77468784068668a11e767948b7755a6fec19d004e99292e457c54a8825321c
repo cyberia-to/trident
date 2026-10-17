@@ -1,0 +1,144 @@
+{
+  "status": "conditional-final-sizing-not-observed-completion",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "project.py",
+    "--output",
+    "preparation/projection-status-final"
+  ],
+  "started_ns": 1790974864239773000,
+  "ended_ns": 1790974892438030000,
+  "source": {
+    "bytes": 8624,
+    "sha256": "05e05710cef532a4ac84125219c9ecbca50878d29dfe0438e854740f6e02005f"
+  },
+  "admission": {
+    "archives": 22,
+    "members": 51620,
+    "prior16": {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4/prior16.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v3",
+      "environment": {
+        "PATH": "",
+        "LANG": "C"
+      },
+      "started_ns": 1790974865704879000,
+      "ended_ns": 1790974877997908000,
+      "exit_code": 0,
+      "stdout": {
+        "bytes": 29255,
+        "sha256": "da83242e2fb1bd7b1bd08e91bcdb872981555795ba3d2535dbdeb262826640ae"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "proxy": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr116-terminal/completed/receipt.json",
+    "bytes": 19198481,
+    "sha256": "70b34cef44aa978707a8ac61eaca7000485c5026953eed3137bf86ca10a4f6ac"
+  },
+  "remaining_names": [
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1",
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c3-attempt-1",
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-producer-attempt-1",
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c2-attempt-1",
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c3-attempt-1",
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-producer-attempt-1",
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c2-attempt-1",
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c3-attempt-1",
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-producer-attempt-1",
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c2-attempt-1",
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c3-attempt-1",
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-producer-attempt-1",
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c2-attempt-1",
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c3-attempt-1",
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-producer-attempt-1"
+  ],
+  "requests": 35,
+  "modeled_attempts": 105,
+  "modeled_backoffs": 70,
+  "modeled_error_bytes_each": 16384,
+  "main_receipt_serialized_bytes": 1680024,
+  "extra_main_receipt_reserve": 2097152,
+  "main_receipt_plus_reserve": 3777176,
+  "main_receipt_cap": 33554432,
+  "main_receipt_margin": 29777256,
+  "reference_sizes": {
+    "prior-scope-0": 2915166,
+    "prior-scope-1": 7107110,
+    "prior-scope-2": 4016976,
+    "prior-scope-3": 812,
+    "prior-scope-4": 392,
+    "bootstrap-phase-matrix-comparison-attempt-1": 248,
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-c2-attempt-1": 689198,
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-c3-attempt-1": 689198,
+    "bootstrap-phase-aarch64-apple-darwin-repeat-1-producer-attempt-1": 92545,
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-c2-attempt-1": 689198,
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-c3-attempt-1": 689198,
+    "bootstrap-phase-aarch64-apple-darwin-repeat-2-producer-attempt-1": 92545,
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c2-attempt-1": 689202,
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-c3-attempt-1": 689202,
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-1-producer-attempt-1": 92549,
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c2-attempt-1": 689202,
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-c3-attempt-1": 689202,
+    "bootstrap-phase-aarch64-pc-windows-msvc-repeat-2-producer-attempt-1": 92549,
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c2-attempt-1": 689198,
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-c3-attempt-1": 689198,
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-1-producer-attempt-1": 92545,
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c2-attempt-1": 689198,
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-c3-attempt-1": 689198,
+    "bootstrap-phase-aarch64-unknown-linux-gnu-repeat-2-producer-attempt-1": 92545,
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-c2-attempt-1": 689198,
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-c3-attempt-1": 689198,
+    "bootstrap-phase-x86_64-apple-darwin-repeat-1-producer-attempt-1": 92545,
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c2-attempt-1": 689198,
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-c3-attempt-1": 689198,
+    "bootstrap-phase-x86_64-apple-darwin-repeat-2-producer-attempt-1": 92545,
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c2-attempt-1": 689202,
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-c3-attempt-1": 689202,
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-1-producer-attempt-1": 92549,
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c2-attempt-1": 689202,
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-c3-attempt-1": 689202,
+    "bootstrap-phase-x86_64-pc-windows-msvc-repeat-2-producer-attempt-1": 92549,
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c2-attempt-1": 689198,
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-c3-attempt-1": 689198,
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-1-producer-attempt-1": 92545,
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c2-attempt-1": 689198,
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-c3-attempt-1": 689198,
+    "bootstrap-phase-x86_64-unknown-linux-gnu-repeat-2-producer-attempt-1": 92545,
+    "attempt-1-logs": 13281
+  },
+  "reference_total": 31705325,
+  "largest_reference": 7107110,
+  "reference_cap": 33554432,
+  "existing_scope_bytes": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-terminal": 246936574,
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v2": 739859831,
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v3": 414501072,
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-metadata-probe-1": 8205,
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-connector-probe-1": 4541,
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4": 720094
+  },
+  "actual_missing_zip_bytes": 288202949,
+  "proxy_remaining_decoded_bytes": 691772238,
+  "proxy_logs_bytes": 337952,
+  "additional_sidecar_partial_allowance": 100663296,
+  "projected_peak_owned_bytes": 2522266429,
+  "owned_cap": 3221225472,
+  "conditional_owned_margin": 698959043,
+  "assumptions": [
+    "Remaining PR117 decoded membership and logs use corresponding actual PR116 archives as a qualified sizing proxy; no remaining PR117 bytes are claimed observed.",
+    "Main receipt models three attempts for every35 request,70 failures with16KiB tracebacks,70 backoffs, large numeric fields, full source closure and all reference identities, plus2MiB extra serialization reserve.",
+    "Peak projection includes a simultaneous replacement main receipt and96MiB further sidecar/partial allowance; arbitrary full failed-body triples need not fit and fail closed under unchanged3GiB.",
+    "Every actual operation independently enforces exact size/hash,32MiB per receipt/reference, shared3GiB physical budget and8GiB free floor; this conditional forecast grants no cap exception."
+  ]
+}

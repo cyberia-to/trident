@@ -1,0 +1,13 @@
+{
+  "status": "failed-before-copy",
+  "error": "JSONDecodeError: Expecting value: line 1 column 2 (char 1)",
+  "first_rejected_object": "objects/27bf7a413595dc676b41a03d6a6cb778549dd8efbe325e373f54ad6a03f03906",
+  "diagnosis": "Root reused final-public-stream JSON heuristic on raw Git commit stdout. Both exact Git commit outputs were read in full and are plain text, not JSON. No destination or original source was modified.",
+  "correction": "Only these two exact SHA256 objects use the unchanged inspect_text gate plus strict UTF-8; all others still use public_bytes. No frozen collector code changes.",
+  "exact_git_text_hashes": [
+    "27bf7a413595dc676b41a03d6a6cb778549dd8efbe325e373f54ad6a03f03906",
+    "dc5386f8ffb8fa6a04600c57ccb81f4ac0f6ec6a18e791f17c7c028d3363cc6a"
+  ],
+  "destination_absent_observed": true,
+  "observed_ns": 1790986345194926000
+}

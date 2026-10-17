@@ -1,0 +1,56 @@
+"""One-time combined source/data freeze; no native run or deletion."""
+import json,sys
+from pathlib import Path
+import prior_pins_v5 as pins
+ROOT,BASE=pins.ROOT,pins.BASE
+require,identity,load=pins.require,pins.identity,pins.load
+
+def write(path,value):
+    with path.open('x') as stream:json.dump(value,stream,indent=2);stream.write('\n')
+
+def main():
+    require(not (ROOT/'sources.json').exists(),'fresh combined freeze')
+    require(identity(ROOT/'runner-sources.json')['sha256']=='4e6fef44f9805fbb340ccb52f8e751623fe66f19c2809828b4e7ed0810fb112f','exact reviewed runner')
+    require(identity(ROOT/'prior-admission-sources.json')['sha256']=='509124e2fddf2a8fd3c90034c3bcc71dd741862830dab927e9dff15627884ed6','exact reviewed prior owner')
+    require(identity(ROOT/'root-prior-review.json')['sha256']=='c8a516b2b15ee12f5eaeeb8c4218be0bb4a42d4d391dcb89ee51392c3842e600','exact prior root review')
+    require(identity(ROOT/'root-runner-validation-1/receipt.json')['sha256']=='42a8990645ecef11db763de9a1b5c49b7fa38daccdad6e0647036a74744d17d2','exact runner root review')
+    files={}
+    def add(path,expected=None):
+        path=Path(path);require(path.is_relative_to(BASE),'family closure path')
+        value=identity(path)
+        if expected is not None:require(value==expected,'original owner identity: '+str(path))
+        require(str(path) not in files or files[str(path)]==value,'consistent shared source')
+        files[str(path)]=value
+    for path,value in load(ROOT/'runner-sources.json').items():add(path,value)
+    for path,value in load(ROOT/'prior-admission-sources.json').items():add(ROOT/path,value)
+    for path,value in pins.source_closure(BASE).items():add(path,value)
+    for path,digest in pins.v3_pins(BASE).items():
+        add(BASE/path);require(files[str(BASE/path)]['sha256']==digest,'exact transitive historical pin')
+    for path,value in pins.evidence_pins(BASE).items():add(BASE/path,value)
+    for path in ('whole-proof-attacks-completion-v4/sources.json','whole-proof-attacks-completion-v4/independent-review.json',
+                 'whole-proof-final-review-v3/pins.json','whole-proof-final-review-v2/check.py',
+                 'whole-proof-attacks-completion-v3/prior_cases.py'):
+        add(BASE/path)
+    for path in ('runner-sources.json','prior-admission-sources.json','prior-admission-preparation.json',
+                 'root-prior-review.json','root-runner-validation-1/receipt.json','runner-validation-4/receipt.json',
+                 'actual-2/receipt.json','actual-2/c1.json','actual-2/c2.json','actual-2/c2-cost.json',
+                 'test_integration.py','validate_combined.py','prepare_combined.py'):
+        add(ROOT/path)
+    launch=dict(schema='trident/whole-proof-v5-launch-contract/v1',status='prepared-not-launched',
+                command=[sys.executable,'-B','-W','error',str(ROOT/'run.py')],cwd=str(ROOT),
+                gate='independent-review.json status passed-source-review and sources equal the complete sources.json; fresh run-1 and admissions; all original leases held',
+                plan=identity(ROOT/'plan.json'),runner_manifest=identity(ROOT/'runner-sources.json'),
+                prior_manifest=identity(ROOT/'prior-admission-sources.json'),
+                generation_order=[1,2],fresh_rejections={'1':11,'2':10},historical_rejections={'1':12,'2':12},
+                selected_v4_cost={'1':0,'2':1},historical_controls_per_generation=2,
+                native_commands=42,capacity_permits=23,
+                resource_contract=load(ROOT/'plan.json'),
+                clocks='Each 600-second capacity wait consumes the original 86400-second monotonic outer schedule. Each actual helper keeps 1800 seconds wall/CPU, verifier 7500 seconds wall/CPU; no native retry.',
+                original_outcomes='Both v4 suites remain input-changed; v4 coordinator failed; only exact completed C2 cost rejection is admitted separately.',
+                private_data='Full prior process snapshots stay local. Public delivery retains identity references only.',
+                authority='Preparation packet only; no automatic launch, historical deletion, cap change, tag or publication.')
+    write(ROOT/'launch.json',launch);add(ROOT/'launch.json')
+    write(ROOT/'sources.json',dict(sorted(files.items())))
+    print(json.dumps(dict(files=len(files),manifest=identity(ROOT/'sources.json'),launch=identity(ROOT/'launch.json'))))
+
+if __name__=='__main__':main()

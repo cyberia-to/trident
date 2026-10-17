@@ -1,0 +1,73 @@
+{
+  "scope": "offline synthetic checker/watcher contract tests; no actual final acceptance or watcher launch",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-Werror",
+    "-m",
+    "unittest",
+    "-v",
+    "test_checker",
+    "test_when_ready"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-review-v3",
+  "started_ns": 1790938504818039000,
+  "elapsed_seconds": 0.128577,
+  "exit_code": 0,
+  "sources": {
+    "cases.py": {
+      "bytes": 15066,
+      "sha256": "e7ef592f99e083596cbba48dfb00883d097694ae44e48e619229de946cd7f9ce"
+    },
+    "check.py": {
+      "bytes": 2690,
+      "sha256": "d00a063d81e80c1db2d8264a97e00e359e84810db6ed343bf789942ddd11cbc5"
+    },
+    "common.py": {
+      "bytes": 2691,
+      "sha256": "47fa9aa508f830669ba8b333b714cb6984d2f4f291d331299c408bc06b0d0335"
+    },
+    "history.py": {
+      "bytes": 14208,
+      "sha256": "cd8ebf79f70e195a2cd104cb92396fa471052f6715790d46117c82f97809e9cb"
+    },
+    "positive.py": {
+      "bytes": 9961,
+      "sha256": "2fbcc208982aa5b5c8b46d81592516a21e11c8a14a97fb4948f79f850bead17d"
+    },
+    "quiescence.py": {
+      "bytes": 4369,
+      "sha256": "ef2362c90527011abb3fa3c1f2ae08def9981f9255f883b9fc53b0fb0b262fe8"
+    },
+    "review_prior_resources.py": {
+      "bytes": 2529,
+      "sha256": "06b3a54e42c9b42b89ad574a45c2318384c5fedc5e550d9c354a5d64912c5d34"
+    },
+    "schedule.py": {
+      "bytes": 9629,
+      "sha256": "bca0914426bd7f5ee0c5dd150d8a21ffb288ca5007d96b393b02ae39e519510f"
+    },
+    "test_checker.py": {
+      "bytes": 15898,
+      "sha256": "ed1482c65bc540d6b2c167e3daf18ef24123e020c65c28036015c213c296285b"
+    },
+    "test_when_ready.py": {
+      "bytes": 4823,
+      "sha256": "446ac54848ff51b7ce489dc01b8d904d6de4f21e379b550d8a9f08fe030db344"
+    },
+    "when_ready.py": {
+      "bytes": 7250,
+      "sha256": "fe02073e51095e9b2f205a5de0e0b12d8a5ddc5a32f7c1c11adbcb4e359c1eda"
+    }
+  },
+  "files": {
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 4473,
+      "sha256": "62b31cf04d6643ff9ca947838c5e121242b30d3fb26514ac7d8426faf5a821f4"
+    }
+  }
+}

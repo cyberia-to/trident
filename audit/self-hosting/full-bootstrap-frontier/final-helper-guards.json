@@ -1,0 +1,100 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/0.json",
+        "--entry",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/main.tri",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/0.dag"
+      ],
+      "exit_code": 1,
+      "stderr": "Error: \"snapshot requires a canonical owner: std.field\"\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/1.json",
+        "--entry",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/main.tri",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/1.dag"
+      ],
+      "exit_code": 1,
+      "stderr": "Error: \"snapshot cannot override generated owner: std.target\"\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/2.json",
+        "--entry",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/main.tri",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/2.dag"
+      ],
+      "exit_code": 1,
+      "stderr": "Error: \"snapshot cannot override generated owner: vm.crypto.hash\"\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/3.json",
+        "--entry",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/main.tri",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/3.dag"
+      ],
+      "exit_code": 1,
+      "stderr": "Error: \"snapshot cannot override generated owner: vm.io.io\"\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_runtime_probe",
+        "--artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/absent",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/absent",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/collision.dag"
+      ],
+      "exit_code": 1,
+      "stderr": "Error: \"receipt and result must use distinct paths; choose a .json receipt\"\n"
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/package.json",
+        "--entry",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/0.tri",
+        "--compiler-job",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/reproduced.dag"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-probe/release/examples/selfhost_seed_snapshot",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/package.json",
+        "--entry",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/packed-closure-files-k_n8ecq7/0.tri",
+        "--compiler-job",
+        "--output",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/snapshot-guards-saxfefwn/reproduced.dag"
+      ],
+      "exit_code": 1,
+      "stderr": "Error: \"output already exists\"\n"
+    }
+  ],
+  "reproduced_sha256": "e2dcc0e2b844bb667d30f03e0a4536069d8093cb5ff851a12fa8590f472bb61f",
+  "seed_binary_sha256": "d6cb0e763ba924e445ad13e96c4959b5927e876e5f6da3b647d709e5e914e163",
+  "probe_binary_sha256": "c070210b0af292190eb344cb1361d72d370d8f59538c70b5fd1d0061b541b2e3"
+}

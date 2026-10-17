@@ -33,6 +33,7 @@ impl UnionConfig {
     /// their presence does not establish an installed runtime capability.
     pub fn resolve(name: &str) -> Result<Option<Self>, Diagnostic> {
         if !super::package::identifier(name) { return Ok(None); }
+        #[cfg(feature = "external-targets")]
         if name == "neptune" { return TargetPackage::discover(name).map(|p| p.union); }
         let path = format!("catalog/os/{name}/target.toml");
         crate::resources::get(&path).map(|s| Self::parse_toml(s, Path::new(&path))).transpose()
@@ -134,7 +135,7 @@ impl ResolvedTarget {
     /// 2. Is `<name>` a VM? Load `vm/<name>/target.toml`.
     /// 3. Neither? Error.
     pub fn resolve(name: &str) -> Result<Self, Diagnostic> {
-        if name == "triton" || name == "neptune" || name == "cyber" {
+        if name != "nox" && super::owner_for(name).is_some() {
             let package = TargetPackage::discover(name)?;
             return Ok(Self { vm: package.terrain, os: package.union, state: None });
         }

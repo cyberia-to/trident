@@ -1,0 +1,97 @@
+{
+  "status": "prepared-and-tested-awaiting-independent-review",
+  "scope": "Separate reviewed action after safely retained v1 PID-reuse refusal; no actual action invoked by implementation owner",
+  "sources": {
+    "reclaim_completed_v2.py": {
+      "bytes": 12110,
+      "sha256": "4426d18f9eb5c77629c6ead577c42e0d5468ce5591d0756dc81ce63a65be5026"
+    },
+    "reclamation-plan.json": {
+      "bytes": 1135,
+      "sha256": "68649b2c6c771286e89728ffdc9581096302000e88eab9269ae42e4043a36c37"
+    }
+  },
+  "preserved_v1": {
+    "reclaim_completed.py": {
+      "bytes": 8667,
+      "sha256": "56a6858bb81e2e2a4471653dc246502a692d4253a352310dbbf46460a58a4d84"
+    },
+    "reclamation-review.json": {
+      "bytes": 3522,
+      "sha256": "8109fc53771e2a4bc6134456948f1def29ed1f85d8efda95b0672cbf3b982cd6"
+    },
+    "reclamation-action/receipt.json": {
+      "bytes": 1303,
+      "sha256": "ed888e87cb4fc88ddc0f724f77afc7e9565309b8f54620e0d776a864f1120cbd"
+    }
+  },
+  "exact_unlink_and_journal_functions_unchanged": true,
+  "time_policy": "TZ=UTC, LC_ALL=C, LANG=C; all overlapping births must be strictly later than final observed empty-group shutdown plus2000000000ns; ambiguous/future timestamps refused",
+  "tests": {
+    "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "-W",
+      "error",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3",
+    "exit_code": 0,
+    "passed": 75,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 9963,
+      "sha256": "22e292e59d1acecfb4adb66f89c6ee4e9211ef5ace13cc46331ca6eb34199b85"
+    }
+  },
+  "actual_observation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-attacks-completion-v3/tests/actual-process-observation-final/receipt.json",
+    "bytes": 21908,
+    "sha256": "18e3fb6b26afb97c6d7132fbb49d42c8cdff4d29aa735c7605c17d4890b2b2dd"
+  },
+  "current_reused_rows": [],
+  "test_sources": {
+    "prior_fixture.py": {
+      "bytes": 14167,
+      "sha256": "81c47d4eaca96e8db35adaf555e929d25dd4ee1d9b306c99ae3d417d619f2514"
+    },
+    "test_binding_context.py": {
+      "bytes": 3006,
+      "sha256": "a112158bcf34f307a5238482f9d4077ce7c1ce539e977aa89fedb8e999b91970"
+    },
+    "test_case_matrix.py": {
+      "bytes": 3016,
+      "sha256": "063c8c7e5f8030dc76f0ffd6d8d82301df41a5a5d69ad8d790333ea70e408edd"
+    },
+    "test_parallel_completion.py": {
+      "bytes": 11383,
+      "sha256": "ef3d7376c484f6986b2bd495ce1460315033fd0a2e4a873772c985bb6ed56529"
+    },
+    "test_prior_cases.py": {
+      "bytes": 4666,
+      "sha256": "c01ff4622d38dfa6bfe3a25d2ff1d17353cc99ba2450953fb334f20fae39a70c"
+    },
+    "test_reclamation.py": {
+      "bytes": 5320,
+      "sha256": "ba22fe14d8d65355cd79e25a09794e2377bbf02dc9879acb9ec167ff55e4f704"
+    },
+    "test_reclamation_process_identity.py": {
+      "bytes": 3980,
+      "sha256": "6e11d135889706c0378e01c538bdbdfe1fa8977fb3c49bbc3ee83ca9cce4621d"
+    },
+    "test_reclamation_v2.py": {
+      "bytes": 412,
+      "sha256": "0bf8f2737f94b87a541e12f2c6634de0cc12db2e1f3b3264abdbebb9a734a40e"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+--- previous/catalog.py
++++ current/catalog.py
+@@ -73,0 +74,2 @@
++                    nested = {k:v for k,v in child.items() if k not in ('bytes','sha256','path')}
++                    self.references(nested,origin,pointer+'/'+key.replace('~','~0').replace('/','~1'))
+--- previous/safe_io.py
++++ current/safe_io.py
+@@ -52 +52,3 @@
+-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
++        leaf_before = path.lstat()
++        require(stat.S_ISREG(leaf_before.st_mode) and leaf_before.st_nlink == 1, 'single-link regular input before open')
++        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+--- previous/test_delivery.py
++++ current/test_delivery.py
+@@ -123 +123 @@
+-        with self.assertRaises(OSError):self.b.read(self.root/'sym')
++        with self.assertRaisesRegex(ValueError,'regular input'):self.b.read(self.root/'sym')
+@@ -125,0 +126,14 @@
++
++    def test_fifo_refused_before_any_open(self):
++        os.mkfifo(self.root/'pipe')
++        with patch('safe_io.os.open',side_effect=AssertionError('FIFO must not reach open')):
++            with self.assertRaisesRegex(ValueError,'regular input before open'):
++                self.b.read(self.root/'pipe')
++
++    def test_nested_absolute_key_identity_is_cataloged(self):
++        c=Catalog(self.root,self.b)
++        parent=str(self.root/'parent');child=str(self.root/'child')
++        c.references({parent:dict(I,nested=dict(path=child,bytes=2,sha256='b'*64))},'fixture.json')
++        self.assertEqual(set(c.rows),{'parent','child'})
++        self.assertEqual(c.rows['child']['sha256'],'b'*64)
++        self.assertFalse(c.rows['child']['observed_metadata_bytes'])

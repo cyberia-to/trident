@@ -1,0 +1,104 @@
+{
+  "schema": "trident/whole-binding-context-review/v1",
+  "status": "passed-bounded-fixture",
+  "scope": "Accepted SH7 aggregate fixture only; no whole certificate consumed, no SH8 acceptance",
+  "actual_results": {
+    "status": "passed",
+    "command_receipts": 58,
+    "fresh_verifier_commands": 29,
+    "controls": 2,
+    "original_matrix_rejections": 23,
+    "frame_rejections": 2,
+    "old_hardcoded_reproductions": 2,
+    "source": {
+      "bytes": 3507,
+      "sha256": "d763d5fdbe628cbc8a92e581004275168410de99467aeb2061ac8a715996b956"
+    },
+    "fixture_receipt": {
+      "bytes": 36116,
+      "sha256": "57ba650a775170ca7ad472d517ee26adb6f24fd6dfbbdd439d4f81aec6c52ec0"
+    }
+  },
+  "files": {
+    "binding_context.py": {
+      "bytes": 3442,
+      "sha256": "f729a41401fe20229736018575002f4a201ca67e45580d4ea8eae55c793cd3ec"
+    },
+    "test_binding_context.py": {
+      "bytes": 2906,
+      "sha256": "62148ce796d1f417ffe8aa6f7e82b3d01bc40e36bff555ca08f3aeb6090e16e7"
+    },
+    "run.py": {
+      "bytes": 11480,
+      "sha256": "1e721d0403734b0c57da307fe7435f206f9c56bb38d1534a85525a54a4f06807"
+    },
+    "guard.py": {
+      "bytes": 5864,
+      "sha256": "c98cd24f7a18f4fcfd7ba4bac964e8517407a8666cbf34d02fe449bec860d629"
+    },
+    "check_result.py": {
+      "bytes": 3507,
+      "sha256": "d763d5fdbe628cbc8a92e581004275168410de99467aeb2061ac8a715996b956"
+    },
+    "README.md": {
+      "bytes": 3106,
+      "sha256": "d1c30dcb4441cdc0e9d9c9dd7eac1a3880f248076159e9247345fc0da2c19266"
+    },
+    "sources.json": {
+      "bytes": 4395,
+      "sha256": "39cf35aa9c092e32b4620870ec520cf4c0f981b2da6bb51e9714bb9d807cc460"
+    },
+    "unit-command.json": {
+      "bytes": 742,
+      "sha256": "754dff4404f5e12379c7e5d0ce5e1c5576bf1ff897e3bdfe8c8bfa686b4c4073"
+    },
+    "unit.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unit.stderr": {
+      "bytes": 1018,
+      "sha256": "6e0a2f1fa685a3d5573697c8c4f96a1b57e73819daf7bedaaff49e2b90bd7aeb"
+    },
+    "actual-command.json": {
+      "bytes": 689,
+      "sha256": "87824564886549894f3ce75d36d5a6d32cdf4e33492eafab6f555cfacc47cfe1"
+    },
+    "actual.stdout": {
+      "bytes": 129,
+      "sha256": "50209c82a8b8c566cb47a93306e3f200e680787c71fa420c8b773379ae6639cb"
+    },
+    "actual.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "actual/receipt.json": {
+      "bytes": 36116,
+      "sha256": "57ba650a775170ca7ad472d517ee26adb6f24fd6dfbbdd439d4f81aec6c52ec0"
+    },
+    "check-result.json": {
+      "bytes": 446,
+      "sha256": "95dc24a1811e480f46f427992cbccb96ec0028fb8758016cc8bd3552b6c54226"
+    },
+    "invocation-wrapper-observation.json": {
+      "bytes": 877,
+      "sha256": "46925c73d27d25579352e10805d2389a33084e3bcf352301157d8eaf7ef378e5"
+    }
+  },
+  "source_defect": {
+    "path": "whole-proof-attacks-v2-c2/whole_suite.py",
+    "constructor": "rebound-job-limit",
+    "actual_admitted_budget": 19999999999,
+    "incorrect_context_budget": 20000000000,
+    "expected_rejection": "semantic record: Key",
+    "actual_rejection": "certificate format/context mismatch"
+  },
+  "fix": "Select exact admitted JOB1 reductions and evaluator_frames; preserve other expected coordinates and specific semantic Key expectation.",
+  "constraints": [
+    "Original whole v2 status stays failed; no original evidence edited or deleted.",
+    "Original failed C2 constructor produced a complete negative verifier input; original C1 constructor was interrupted.",
+    "A new composite contract must explicitly authenticate nine prior successes and fourteen new cases per generation.",
+    "Current stop-state reclaim is forbidden; any classified completed-temporary reclamation needs its own explicit reviewed transition."
+  ],
+  "wrapper_observation": "invocation-wrapper-observation.json"
+}

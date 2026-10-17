@@ -117,7 +117,8 @@ arrays and structs. It is accepted only by the native nox backend. `Seq` and `By
 are library struct types, not grammar additions. Their APIs use existing calls,
 qualified names and explicit conversions. No type generics, pointers, mutable
 heap syntax or new loop syntax are introduced by this contract. Runtime execution
-of existing bounded loops and checked dynamic access still require SH1 lowering.
+of existing bounded loops and checked dynamic access uses the implemented
+[native lowering](self-hosting-runtime.md#source-execution).
 
 ---
 

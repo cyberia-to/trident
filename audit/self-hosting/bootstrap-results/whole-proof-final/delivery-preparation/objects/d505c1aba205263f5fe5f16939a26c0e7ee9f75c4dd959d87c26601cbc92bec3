@@ -1,0 +1,59 @@
+"""Offline synthetic privacy and real Git checkout-filter probes only."""
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT=Path(__file__).resolve().parent
+SOURCE=ROOT/'candidate-d2f216'
+sys.path.insert(0,str(SOURCE))
+from safe_io import Budget,digest,encoded
+from privacy import public_bytes
+from catalog import Catalog
+from collect import packet,CAPS
+
+def run():
+    output=ROOT/'probes-final';output.mkdir(mode=0o700)
+    report=dict(status='corrected-source-probe-results',started_ns=time.time_ns(),source=digest((SOURCE/'sources.json').read_bytes()),probes={})
+    rows=b''.join(f'{pid} {pgid} Fri Oct  2 21:00:00 2026\n'.encode() for pid,pgid in ((1001,900),(1002,900),(1003,900)))
+    try:
+        public_bytes(rows)
+        accepted=True
+    except ValueError:
+        accepted=False
+    report['probes']['two_numeric_columns_host_rows']=dict(public_bytes_accepted=accepted,synthetic=digest(rows),rows=3,scope='PID PGID lstart format retained by original process ownership observations')
+    for name,data in [('authorization_header',b'Authorization: Bearer synthetic-opaque-secret\n'),('json_embedded_process_rows',encoded(dict(raw_stdout=rows.decode())))]:
+        try:public_bytes(data);accepted=True
+        except ValueError:accepted=False
+        report['probes'][name]=dict(public_bytes_accepted=accepted,synthetic=digest(data))
+    repo=output/'git-checkout';repo.mkdir()
+    source=dict(sources={'verify-retained.py':digest((SOURCE/'verify-retained.py').read_bytes())})
+    staged=repo/'audit/final-evidence';staged.parent.mkdir()
+    packet(Catalog(repo,Budget(CAPS)),dict(status='synthetic-only'),{},staged,source,lambda:source)
+    env=dict(PATH='/usr/bin:/bin',LANG='C',GIT_CONFIG_NOSYSTEM='1',GIT_CONFIG_GLOBAL='/dev/null',GIT_TERMINAL_PROMPT='0',GIT_NO_LAZY_FETCH='1')
+    commands=[]
+    def git(*args):
+        command=['/usr/bin/git',*args];p=subprocess.run(command,cwd=repo,env=env,capture_output=True,timeout=20)
+        commands.append(dict(command=command,exit_code=p.returncode,stdout=digest(p.stdout),stderr=digest(p.stderr)))
+        if p.returncode:raise RuntimeError('bounded synthetic Git probe failed')
+        return p.stdout
+    git('init','-q')
+    files=sorted(p for p in repo.rglob('*') if p.is_file() and '.git' not in p.parts)
+    git('add','--',*[str(p.relative_to(repo)) for p in files])
+    changed=[];filters={}
+    for path in files:
+        name=str(path.relative_to(repo));raw=path.read_bytes();filtered=git('-c','core.autocrlf=true','cat-file','--filters',':'+name)
+        filters[name]=dict(original=digest(raw),checkout=digest(filtered))
+        if raw!=filtered:changed.append(name)
+    report['probes']['actual_git_autocrlf_filters']=dict(changed=changed,files=filters,commands=commands,git=digest(Path('/usr/bin/git').read_bytes()))
+    assert not changed
+    assert all(not v['public_bytes_accepted'] for k,v in report['probes'].items() if k!='actual_git_autocrlf_filters')
+    report.update(ended_ns=time.time_ns())
+    (output/'receipt.json').write_bytes(encoded(report))
+    print(json.dumps(dict(receipt=digest((output/'receipt.json').read_bytes()),changed=len(changed),two_column_rows_accepted=report['probes']['two_numeric_columns_host_rows']['public_bytes_accepted'])))
+
+if __name__=='__main__':run()

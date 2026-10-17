@@ -1,0 +1,41 @@
+--- validated-noun/install-2.py
++++ proposed-docs/install.py
+@@ -1,5 +1,5 @@
+ """Source-equivalent postcommit install from accepted paths and warm fingerprints."""
+-import hashlib,json,os,re,shutil,signal,subprocess,time,traceback
++import argparse,hashlib,json,os,re,shutil,signal,subprocess,time,traceback
+ from pathlib import Path
+ HERE=Path(__file__).resolve().parent
+ LANE=HERE.parent;BASE=LANE.parent;REPO=LANE/'trisha'
+@@ -7,7 +7,11 @@
+ FAMILY=ACCEPTED/'temporary/cyber-candidate'
+ SOURCE=FAMILY/'unpacked/cyber-source'
+ TARGET=FAMILY/'candidate/build/trisha'
+-OUT=HERE/'postinstall-2';OUT.mkdir()
++parser=argparse.ArgumentParser()
++parser.add_argument('--reviewed-head',required=True)
++args=parser.parse_args()
++if re.fullmatch(r'[0-9a-f]{40}',args.reviewed_head) is None:parser.error('reviewed-head must be a complete Git commit')
++OUT=HERE/'postinstall-1';OUT.mkdir()
+ PREFIX=OUT/'installed'
+ def identity(path):
+     with path.open('rb') as src:digest=hashlib.file_digest(src,'sha256').hexdigest()
+@@ -21,13 +25,15 @@
+ child=None
+ try:
+     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO).decode().strip()
+-    assert head=='5a8e386aa1228c6c37603811f1cfda219d281665'
++    assert head==args.reviewed_head
+     assert not subprocess.check_output(['git','status','--porcelain=v1'],cwd=REPO)
+     report['delivery_head']=head
+-    impact=load(REPO/'audit/whole-retention-byte-closure/source-equivalence.json')
++    impact_path=HERE/'source-equivalence-original.json'
++    assert identity(impact_path)['sha256']=='009db17b7f94758903f533da493ea2ea5036b670aabefc4df34a7c13eb954d0d'
++    impact=load(impact_path)
+     for name,wanted in impact['runtime_files_exact'].items():
+         assert identity(REPO/name)==identity(SOURCE/'trisha'/name)==wanted
+-    report['source_equivalence']=ref(REPO/'audit/whole-retention-byte-closure/source-equivalence.json')
++    report['source_equivalence']=ref(impact_path)
+     report['accepted_candidate']=ref(ACCEPTED/'release-results/candidate.json')
+     report['source_manifest']=ref(SOURCE/'sources.json')
+     assert report['source_manifest']['sha256']=='9334dead92b990a12acf16a2565aeb762a07311dfc2c3d6cb896c0490dc5926e'

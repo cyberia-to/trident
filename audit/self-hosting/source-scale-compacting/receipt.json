@@ -1,0 +1,793 @@
+{
+  "schema": "trident/source-scale-compacting/v1",
+  "status": "failed",
+  "scope": "provided-C2 source-size corpus only; full C2 corpus/fixed point/platform acceptance remain open",
+  "invocation": [
+    "audit/self-hosting/source-scale-compacting/check.py",
+    "--joy",
+    "../install-compiler-work-budget/bin/joy",
+    "--joy-sha256",
+    "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+    "--compiler",
+    "../measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+    "--compiler-sha256",
+    "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+    "--producer-receipt",
+    "../measurements/body-scale-closure-20b.json",
+    "--producer-receipt-sha256",
+    "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f",
+    "--output",
+    "audit/self-hosting/source-scale-compacting/receipt.json"
+  ],
+  "script_sha256": "98191b5f5e874de3cc4efb0a8a2e0839008d2f0b248c2909227d2e90c9310d36",
+  "binary": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+  "compiler": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+  "compiler_sha256_start": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+  "binary_sha256_start": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8",
+  "producer_receipt": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b.json",
+  "producer_receipt_sha256": "354d7be504a511dfaf11303e218487d3dcbb8d11d85948af506f5fb6795e6c2f",
+  "host_flags": [
+    "--arena-nodes",
+    "1000000000",
+    "--budget",
+    "20000000000",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "3600000",
+    "--validation-visits",
+    "16777216",
+    "--resident-nodes",
+    "3145728",
+    "--collection-work",
+    "10000000000"
+  ],
+  "program_host_flags": [
+    "--budget",
+    "1000000",
+    "--arena-nodes",
+    "196608",
+    "--frames",
+    "65536",
+    "--time-ms",
+    "30000"
+  ],
+  "limits": {
+    "modules": 128,
+    "diagnostics": 16,
+    "sequence_length": 65536,
+    "validation_visits": 16777216,
+    "artifact_bytes": 16777216,
+    "artifact_nodes": 196608,
+    "artifact_depth": 4096,
+    "reductions": 20000000000,
+    "arena_nodes": 1000000000,
+    "evaluator_frames": 65536
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":35,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737\",\"source_bytes\":35,\"source_particle\":\"962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a\",\"validation_visits\":202},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1266642834
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/program.dag\",\"execution\":{\"allocated_nodes\":112307,\"arena_reserved_bytes\":419430416,\"charged_reductions\":366104,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":308489,\"peak_resident_nodes\":112307,\"pinned_nodes\":100422,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":112307,\"scratch_bytes\":29360128,\"total_allocations\":112307},\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":202,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":35,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737\",\"source_bytes\":35,\"source_particle\":\"962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a\",\"status\":\"success\"},\"elapsed_micros\":1317520,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8\",\"output_particle\":\"ae1b9447b91e10b9181619c485687573b402d3091e5a3ac2a2294860b63a1682\",\"peak_frames\":397,\"program_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1329900917
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/program.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/zero.dag",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/value.dag",
+        "--budget",
+        "1000000",
+        "--arena-nodes",
+        "196608",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/value.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":662,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 9397458
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"31864710b62bc2141f63facbc896775b45ab23fc44f757761c7346e3676d1a92\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4096,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46\",\"source_bytes\":4096,\"source_particle\":\"2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da\",\"validation_visits\":2226},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1276313167
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/program.dag\",\"execution\":{\"allocated_nodes\":536418,\"arena_reserved_bytes\":419430416,\"charged_reductions\":22122424,\"compaction\":{\"allocation_limit\":1000000000,\"collection_checkpoints\":0,\"collection_work\":0,\"collection_work_limit\":10000000000,\"collections\":0,\"evaluator_checkpoints\":19518969,\"peak_resident_nodes\":536418,\"pinned_nodes\":100447,\"profile\":\"bounded-compaction-v1\",\"reclaimed_nodes\":0,\"resident_limit\":3145728,\"resident_nodes\":536418,\"scratch_bytes\":29360128,\"total_allocations\":536418},\"compiler_job\":{\"compiled_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"diagnostics\":[],\"entry_function\":\"main\",\"entry_module\":\"sample\",\"input_validation_visits\":2226,\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":4096,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46\",\"source_bytes\":4096,\"source_particle\":\"2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"output_validation_visits\":36,\"package_particle\":\"ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da\",\"status\":\"success\"},\"elapsed_micros\":3993247,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"31864710b62bc2141f63facbc896775b45ab23fc44f757761c7346e3676d1a92\",\"output_particle\":\"3fb22500cc3c69ee9d677db70ff337be6ffbbce26c4c4b9fc3c7c572315e5aaa\",\"peak_frames\":32772,\"program_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 4007241083
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/program.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/zero.dag",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/value.dag",
+        "--budget",
+        "1000000",
+        "--arena-nodes",
+        "196608",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "30000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/value.dag\",\"execution\":{\"allocated_nodes\":10,\"arena_reserved_bytes\":26214416,\"charged_reductions\":1,\"elapsed_micros\":736,\"finalizer_cache_bytes\":1048576,\"frame_buffer_bytes\":11534336,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"peak_frames\":1,\"program_particle\":\"48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 9387500
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "pack-job",
+        "--compiler",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--manifest",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/package.json",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/job.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/job.dag\",\"ok\":true,\"package\":{\"compiler_particle\":\"84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3\",\"entry_function\":\"main\",\"entry_module\":\"sample\",\"job_particle\":\"c37d72ace5c39acc085855934c13a418381122321fac86c507e48784fa71e5b9\",\"limits\":{\"arena_nodes\":1000000000,\"artifact_bytes\":16777216,\"artifact_depth\":4096,\"artifact_nodes\":196608,\"diagnostics\":16,\"evaluator_frames\":65536,\"modules\":128,\"reductions\":20000000000,\"sequence_length\":65536,\"source_bytes\":65536,\"validation_visits\":16777216},\"modules\":[{\"logical_path\":\"sample\",\"origin_name\":\"source-capacity\",\"origin_version\":\"1\",\"particle\":\"b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364\",\"source_bytes\":65536,\"source_particle\":\"47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b\"}],\"options\":{\"cfg_flags\":[],\"input_profile\":0,\"optimization\":0,\"output_profile\":0,\"target\":0},\"package_particle\":\"3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075\",\"validation_visits\":32946},\"schema\":\"joy/job-pack/v1\"}\n",
+      "stderr": "",
+      "status": "completed",
+      "elapsed_nanoseconds": 1450428625
+    },
+    {
+      "command": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-compiler-work-budget/bin/joy",
+        "run-artifact",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/body-scale-closure-20b-files-wnfaub83/result.dag",
+        "--input",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/job.dag",
+        "--emit",
+        "program",
+        "-o",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/program.dag",
+        "--arena-nodes",
+        "1000000000",
+        "--budget",
+        "20000000000",
+        "--frames",
+        "65536",
+        "--time-ms",
+        "3600000",
+        "--validation-visits",
+        "16777216",
+        "--resident-nodes",
+        "3145728",
+        "--collection-work",
+        "10000000000"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident",
+      "expected_exit": 0,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "error: execution resource/profile: CompactionFailure { kind: Execution(Frames), stats: CompactionStats { pinned_nodes: 100459, resident_nodes: 1815995, peak_resident_nodes: 1815995, total_allocations: 1815995, reclaimed_nodes: 0, collections: 0, collection_work: 0, scratch_bytes: 29360128, evaluator_checkpoints: 64082200, collection_checkpoints: 0 }, peak_frames: 65536 }\n",
+      "status": "completed",
+      "elapsed_nanoseconds": 11447040292
+    }
+  ],
+  "observations": [
+    {
+      "case": "baseline",
+      "status": "passed",
+      "source_bytes": 35,
+      "source_sha256": "5c9aa89baf258457fb467293f9c205b82a05ff7422dd0c8dc5d115613e04b694",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 35
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 35,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+              "source_bytes": 35,
+              "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+          "validation_visits": 202
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "77b5b7c4b8c286bc59d75d6630113d6faafb414d8bdaa5df2e59a316534bf5ab",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/program.dag",
+        "execution": {
+          "allocated_nodes": 112307,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 366104,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 308489,
+            "peak_resident_nodes": 112307,
+            "pinned_nodes": 100422,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 112307,
+            "scratch_bytes": 29360128,
+            "total_allocations": 112307
+          },
+          "compiler_job": {
+            "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 202,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 35,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "d7cb94c80016e3572d2280b9057f844a1baeca8f2b972eeb7a72de307bbe3737",
+                "source_bytes": 35,
+                "source_particle": "962e3b4fcdd7333c825f1a899751ff803efec7e79ba10b97d4f6da56a21358fb"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "7a501e282f4a8bf5c8ce02f0638c6eebb337ecaf64bae4f55c1f80b6ca16771a",
+            "status": "success"
+          },
+          "elapsed_micros": 1317520,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "57c18bf1a932ca24a855afb89385a523a9a2eea67f08bdba73fca27e35b6c7a8",
+          "output_particle": "ae1b9447b91e10b9181619c485687573b402d3091e5a3ac2a2294860b63a1682",
+          "peak_frames": 397,
+          "program_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+        "schema": "joy/artifact-run/v1"
+      },
+      "program_sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82",
+      "runtime_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/baseline/value.dag",
+        "execution": {
+          "allocated_nodes": 10,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 1,
+          "elapsed_micros": 662,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+          "peak_frames": 1,
+          "program_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 13,
+      "baseline_artifact_bytes_equal": true,
+      "output_sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "case": "valid4096",
+      "status": "passed",
+      "source_bytes": 4096,
+      "source_sha256": "97399baa952797fafd5f9b6cd878076abec9ea5f0441c6a50f763ab295c46d20",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 4096
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "31864710b62bc2141f63facbc896775b45ab23fc44f757761c7346e3676d1a92",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 4096,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46",
+              "source_bytes": 4096,
+              "source_particle": "2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da",
+          "validation_visits": 2226
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "e9ef576ce382b5878ce33e8241322e2cf236955f2ea23a3478af153c85436798",
+      "compiler_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/program.dag",
+        "execution": {
+          "allocated_nodes": 536418,
+          "arena_reserved_bytes": 419430416,
+          "charged_reductions": 22122424,
+          "compaction": {
+            "allocation_limit": 1000000000,
+            "collection_checkpoints": 0,
+            "collection_work": 0,
+            "collection_work_limit": 10000000000,
+            "collections": 0,
+            "evaluator_checkpoints": 19518969,
+            "peak_resident_nodes": 536418,
+            "pinned_nodes": 100447,
+            "profile": "bounded-compaction-v1",
+            "reclaimed_nodes": 0,
+            "resident_limit": 3145728,
+            "resident_nodes": 536418,
+            "scratch_bytes": 29360128,
+            "total_allocations": 536418
+          },
+          "compiler_job": {
+            "compiled_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+            "diagnostics": [],
+            "entry_function": "main",
+            "entry_module": "sample",
+            "input_validation_visits": 2226,
+            "limits": {
+              "arena_nodes": 1000000000,
+              "artifact_bytes": 16777216,
+              "artifact_depth": 4096,
+              "artifact_nodes": 196608,
+              "diagnostics": 16,
+              "evaluator_frames": 65536,
+              "modules": 128,
+              "reductions": 20000000000,
+              "sequence_length": 65536,
+              "source_bytes": 4096,
+              "validation_visits": 16777216
+            },
+            "modules": [
+              {
+                "logical_path": "sample",
+                "origin_name": "source-capacity",
+                "origin_version": "1",
+                "particle": "957093e6f104b651007902a2779acfd9944b0a4a73bc330604c0e51856793c46",
+                "source_bytes": 4096,
+                "source_particle": "2426d731ee35f443e26219ee559f57a751a367a6f85aacf935baab8c1eff617b"
+              }
+            ],
+            "options": {
+              "cfg_flags": [],
+              "input_profile": 0,
+              "optimization": 0,
+              "output_profile": 0,
+              "target": 0
+            },
+            "output_validation_visits": 36,
+            "package_particle": "ef5298b0d131d41f11dfe237746bf46f1fedefef904fdb895c378d4b3382f8da",
+            "status": "success"
+          },
+          "elapsed_micros": 3993247,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "31864710b62bc2141f63facbc896775b45ab23fc44f757761c7346e3676d1a92",
+          "output_particle": "3fb22500cc3c69ee9d677db70ff337be6ffbbce26c4c4b9fc3c7c572315e5aaa",
+          "peak_frames": 32772,
+          "program_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+        "schema": "joy/artifact-run/v1"
+      },
+      "program_sha256": "d6a6504b1f0cb8e93f758cd325c2bab254e20e7e1b50d18993ce6ea77c648b82",
+      "runtime_execution": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid4096/value.dag",
+        "execution": {
+          "allocated_nodes": 10,
+          "arena_reserved_bytes": 26214416,
+          "charged_reductions": 1,
+          "elapsed_micros": 736,
+          "finalizer_cache_bytes": 1048576,
+          "frame_buffer_bytes": 11534336,
+          "input_particle": "47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702",
+          "output_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+          "peak_frames": 1,
+          "program_particle": "48b995197c1f7ff61c0d74fee642095e7a7e64f751fb19258347d6e8eaccb848",
+          "trace_mode": "none",
+          "worker_stack_bytes": 268435456
+        },
+        "ok": true,
+        "published_particle": "ee8165f47a60112ca45cfec8d5dcbef87515e0195ba8c4044b3c0205d02f5b41",
+        "schema": "joy/artifact-run/v1"
+      },
+      "expected": 13,
+      "baseline_artifact_bytes_equal": true,
+      "output_sha256": "348d22b1dca51095cf13e13a4674727db537c8cd07f21af53009022b5e7bb94a"
+    },
+    {
+      "case": "valid65536",
+      "status": "running",
+      "source_bytes": 65536,
+      "source_sha256": "9a0125c744455fa4fa4d31ef3a9247f0e354e5a68fcef8b4be1a5af76587e449",
+      "source_file": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/sample.tri",
+      "manifest": {
+        "version": 1,
+        "entry_module": "sample",
+        "entry_function": "main",
+        "modules": [
+          {
+            "logical_path": "sample",
+            "file": "sample.tri",
+            "origin_name": "source-capacity",
+            "origin_version": "1"
+          }
+        ],
+        "options": {
+          "target": 0,
+          "input_profile": 0,
+          "output_profile": 0,
+          "optimization": 0,
+          "cfg_flags": []
+        },
+        "limits": {
+          "modules": 128,
+          "diagnostics": 16,
+          "sequence_length": 65536,
+          "validation_visits": 16777216,
+          "artifact_bytes": 16777216,
+          "artifact_nodes": 196608,
+          "artifact_depth": 4096,
+          "reductions": 20000000000,
+          "arena_nodes": 1000000000,
+          "evaluator_frames": 65536,
+          "source_bytes": 65536
+        }
+      },
+      "expected_diagnostic": 0,
+      "admission": {
+        "artifact": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/valid65536/job.dag",
+        "ok": true,
+        "package": {
+          "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+          "entry_function": "main",
+          "entry_module": "sample",
+          "job_particle": "c37d72ace5c39acc085855934c13a418381122321fac86c507e48784fa71e5b9",
+          "limits": {
+            "arena_nodes": 1000000000,
+            "artifact_bytes": 16777216,
+            "artifact_depth": 4096,
+            "artifact_nodes": 196608,
+            "diagnostics": 16,
+            "evaluator_frames": 65536,
+            "modules": 128,
+            "reductions": 20000000000,
+            "sequence_length": 65536,
+            "source_bytes": 65536,
+            "validation_visits": 16777216
+          },
+          "modules": [
+            {
+              "logical_path": "sample",
+              "origin_name": "source-capacity",
+              "origin_version": "1",
+              "particle": "b0860371ee819bad4ca4815a2a5c5d36ab63aa7454b75dc89fdbe69843875364",
+              "source_bytes": 65536,
+              "source_particle": "47dd3ca88c3fbea1a23653ccb022ced6ae696beeba42750699b094f59a6abe3b"
+            }
+          ],
+          "options": {
+            "cfg_flags": [],
+            "input_profile": 0,
+            "optimization": 0,
+            "output_profile": 0,
+            "target": 0
+          },
+          "package_particle": "3ac22e250c7b1980e9193026b25d90fdd10d8c11ac75554e8521998ff5b8a075",
+          "validation_visits": 32946
+        },
+        "schema": "joy/job-pack/v1"
+      },
+      "job_sha256": "abd2c78ee26d3e2b41d0a489a4a7b593c2faf938f28f1396db7e3c15884a26e7"
+    }
+  ],
+  "artifact_directory": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9",
+  "compiler_particle": "84710d31df5911098b614ee0455d7a199bfe5349e57a0f97e031d52dd533eeb3",
+  "input_fixture": {
+    "source": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/joy/cli/tests/compiler_vectors.json",
+    "source_sha256": "4b118cd9c9f20764e46b16676d4cb63599dc40c7e8f3a40a47c4fe5962f752ad",
+    "retained": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident/audit/self-hosting/source-scale-compacting/receipt-files-l34ooks9/zero.dag",
+    "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+  },
+  "error": {
+    "kind": "ValueError",
+    "message": "unexpected Joy exit; see retained command"
+  },
+  "compiler_sha256_end": "fe0390b92257edf58686e50571160fc7985b0883ede116c6dcfd0a9f7820b5d0",
+  "binary_sha256_end": "506f665b0567cf8d7d669f152153b72dbbbd4520e926a4f47955d2f0bef487b8"
+}

@@ -1,0 +1,75 @@
+{
+  "status": "prepared-inactive-deterministic-test-fixture",
+  "time_ns": 1790975260110841000,
+  "source_manifest": {
+    "bytes": 16156,
+    "sha256": "5530745285c1b0090bf0dfb542e13b97b7279af64b78c363d1e7f11461ea7baf"
+  },
+  "source_count": 72,
+  "changed_from_bf91": [
+    "test_http.py"
+  ],
+  "production_unchanged": true,
+  "profile_unchanged": true,
+  "root_prior_gate": {
+    "bytes": 1770,
+    "sha256": "43e0751fc9bb5021d1427619b8973e16b20485f799577544be9113d785aa6a13"
+  },
+  "gates": {
+    "bytes": 17928,
+    "sha256": "0ebacdb34b737dde48852cf77e9afe1a76cd29b235bb2075611717cf89ddb8cf"
+  },
+  "current27": "passed14.291s",
+  "original19": {
+    "status": "explicitly reused exact unchanged19test result",
+    "receipt": {
+      "bytes": 18487,
+      "sha256": "db569f42da3376905b62b193082aaf4491d0e3df0f9b7f85aa73a6d764bea42e"
+    }
+  },
+  "bf91_preserved_map": {
+    "bytes": 27349,
+    "sha256": "ed836b1ee1bc01d5463253d56286dc620bdf430044c0449f7368d1e275ba50bd"
+  },
+  "cd2_preserved_map": {
+    "bytes": 30949,
+    "sha256": "855d318f9cac7db930660a3dee7001787c05ed2366d224da6b71b133fae5a94c"
+  },
+  "preceding_preparation": {
+    "bytes": 5310,
+    "sha256": "b96296eefec4a20e7f90d2c908f6e7b7d6f72d4bd559d0b6ba67778a555d50d4"
+  },
+  "projection": {
+    "status": "conditional-not-observed-completion",
+    "original_projector_receipt": {
+      "bytes": 7908,
+      "sha256": "9d77468784068668a11e767948b7755a6fec19d004e99292e457c54a8825321c"
+    },
+    "unchanged_actual22_and_proxy_data": true,
+    "main_receipt_plus_reserve": 3777176,
+    "main_receipt_margin": 29777256,
+    "reference_total": 31705325,
+    "largest_reference": 7107110,
+    "current_existing_scope_bytes": {
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-terminal": 246936574,
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v2": 739859831,
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v3": 414501072,
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-metadata-probe-1": 8205,
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-connector-probe-1": 4541,
+      "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4": 975914
+    },
+    "additional_preparation_bytes": 255820,
+    "updated_projected_peak_owned_bytes": 2522522249,
+    "conditional_owned_margin": 698703223,
+    "assumptions": [
+      "Remaining PR117 decoded membership and logs use corresponding actual PR116 archives as a qualified sizing proxy; no remaining PR117 bytes are claimed observed.",
+      "Main receipt models three attempts for every35 request,70 failures with16KiB tracebacks,70 backoffs, large numeric fields, full source closure and all reference identities, plus2MiB extra serialization reserve.",
+      "Peak projection includes a simultaneous replacement main receipt and96MiB further sidecar/partial allowance; arbitrary full failed-body triples need not fit and fail closed under unchanged3GiB.",
+      "Every actual operation independently enforces exact size/hash,32MiB per receipt/reference, shared3GiB physical budget and8GiB free floor; this conditional forecast grants no cap exception."
+    ]
+  },
+  "network_actions": 0,
+  "credential_reads": 0,
+  "source_unchanged": true,
+  "launch_pending": true
+}

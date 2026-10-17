@@ -1,0 +1,190 @@
+{
+  "changed_paths": [
+    ".claude/plans/host-proof-deadline.md",
+    "audit/host-proof-deadline/.gitattributes",
+    "audit/host-proof-deadline/README.md",
+    "audit/host-proof-deadline/boundary/receipt.json",
+    "audit/host-proof-deadline/boundary/resources.jsonl",
+    "audit/host-proof-deadline/boundary/stderr",
+    "audit/host-proof-deadline/boundary/stdout",
+    "audit/host-proof-deadline/check/receipt.json",
+    "audit/host-proof-deadline/check/resources.jsonl",
+    "audit/host-proof-deadline/check/stderr",
+    "audit/host-proof-deadline/check/stdout",
+    "audit/host-proof-deadline/contract-review/commands.json",
+    "audit/host-proof-deadline/contract-review/files.json",
+    "audit/host-proof-deadline/contract-review/initial-invocation.json",
+    "audit/host-proof-deadline/contract-review/passages.json",
+    "audit/host-proof-deadline/contract-review/review.json",
+    "audit/host-proof-deadline/contract-review/source-map.json",
+    "audit/host-proof-deadline/focused/receipt.json",
+    "audit/host-proof-deadline/focused/resources.jsonl",
+    "audit/host-proof-deadline/focused/stderr",
+    "audit/host-proof-deadline/focused/stdout",
+    "audit/host-proof-deadline/independent-review/commands.json",
+    "audit/host-proof-deadline/independent-review/files.json",
+    "audit/host-proof-deadline/independent-review/review.json",
+    "audit/host-proof-deadline/independent-review/reviewed-source/cli/tests/structured_certificates.rs",
+    "audit/host-proof-deadline/independent-review/reviewed-source/cli/tests/structured_certificates/deadline.rs",
+    "audit/host-proof-deadline/independent-review/reviewed-source/cli/tests/structured_run.rs",
+    "audit/host-proof-deadline/independent-review/reviewed-source/rs/structured/limits.rs",
+    "audit/host-proof-deadline/independent-review/reviewed-source/rs/structured/tests/compaction.rs",
+    "audit/host-proof-deadline/independent-review/reviewed-source/rs/structured/tests/compiler/compaction.rs",
+    "audit/host-proof-deadline/independent-review/reviewed-source/specs/structured-run.md",
+    "audit/host-proof-deadline/independent-review/source-map.json",
+    "audit/host-proof-deadline/independent-review/tracked.diff",
+    "audit/host-proof-deadline/install-path/receipt.json",
+    "audit/host-proof-deadline/install-path/resources.jsonl",
+    "audit/host-proof-deadline/install-path/stderr",
+    "audit/host-proof-deadline/install-path/stdout",
+    "audit/host-proof-deadline/install/receipt.json",
+    "audit/host-proof-deadline/install/resources.jsonl",
+    "audit/host-proof-deadline/install/stderr",
+    "audit/host-proof-deadline/install/stdout",
+    "audit/host-proof-deadline/run.py",
+    "audit/host-proof-deadline/source.patch",
+    "audit/host-proof-deadline/test/receipt.json",
+    "audit/host-proof-deadline/test/resources.jsonl",
+    "audit/host-proof-deadline/test/stderr",
+    "audit/host-proof-deadline/test/stdout",
+    "cli/tests/structured_certificates.rs",
+    "cli/tests/structured_certificates/deadline.rs",
+    "cli/tests/structured_run.rs",
+    "rs/structured/limits.rs",
+    "rs/structured/tests/compaction.rs",
+    "rs/structured/tests/compiler/compaction.rs",
+    "specs/structured-run.md"
+  ],
+  "current_docs_changed_paths": [
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "existing_trial": {
+    "accepted": 15,
+    "actual_commands": 23,
+    "checks": [
+      "Three producer deadlines yield identical complete certificate bytes",
+      "All nine fresh verifier pairings preserve complete logical claim and exact extracted program; physical resources unattested",
+      "Generated program executes to expected fourteen",
+      "Compacting zero/above4h/u64max reject for both operations and preserve destination",
+      "Ordinary five-minute ceiling accepts, higher value rejects without destination replacement",
+      "Actual Joy and fixture bytes unchanged, all original command streams rehashed"
+    ],
+    "receipt": {
+      "bytes": 25214,
+      "sha256": "bb4872d13b51168c7dce252cf3e7b1ce375776767a9ce62492767313afe41452"
+    },
+    "rejected": 8,
+    "review": {
+      "bytes": 1908,
+      "sha256": "0d51bcaca3ad411865e2129479950bd4046961190080dd0f12bea593889e5e02"
+    },
+    "scope": "Actual installed dd61/a96 Joy helper trial; source734 supplies unchanged fixture bytes only, no coordinated final package or whole self-build claim"
+  },
+  "final_package_pins": {
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "joy": "dd61df9128f6da1f97d4698f45f154f05312fe51",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "trisha": "c8836be0103c8d2ead07c409bb117af04cae3449",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9"
+  },
+  "identical_git_objects": {
+    "Cargo.lock": "d1a7b3e6b9e91defd0f7f1213e7809b82fd7dde2",
+    "Cargo.toml": "fd70ab75015376c25246365dbd83ce34917671b9",
+    "cli/Cargo.toml": "9ce675a7a169f022ce8eaa591c159acb051bb2ce",
+    "rs/Cargo.toml": "a11934b478b88727ed40f3f9d79bb6c777e9d97c",
+    "rs/structured/certificate": "350e298f616c1ce0463276a0b2005f6bda5c7d40",
+    "rs/structured/certificate.rs": "37db0112834da08f8d779fe5eb91af24b14dcbd6",
+    "rs/structured/execution.rs": "f7ac86986ff06112888268e1f78d2a472e3c6897",
+    "rs/structured/job.rs": "279bf893b2309310a563a30f2246c12b392e0df8",
+    "rs/structured/job_limits.rs": "6da0df2e6fd7ead5606677eb43e88cbe5e8d3b40",
+    "rs/structured/job_result.rs": "15689bc2acbde35955142e021eb33608f051130b"
+  },
+  "inputs_before_after": {
+    "final-distribution/measurements/source-preparation/source-impact.json": {
+      "bytes": 57010,
+      "sha256": "31666ad0c1dcc7f7b0720e90f0323cd0cc5919b120672e462269b0a6fc4615a8"
+    },
+    "final-distribution/measurements/source-reproduction-readback/sources.json": {
+      "bytes": 4239613,
+      "sha256": "9334dead92b990a12acf16a2565aeb762a07311dfc2c3d6cb896c0490dc5926e"
+    },
+    "final-distribution/root-host-ceiling-review/receipt.json": {
+      "bytes": 25214,
+      "sha256": "bb4872d13b51168c7dce252cf3e7b1ce375776767a9ce62492767313afe41452"
+    },
+    "final-distribution/root-host-ceiling-review/review.json": {
+      "bytes": 1908,
+      "sha256": "0d51bcaca3ad411865e2129479950bd4046961190080dd0f12bea593889e5e02"
+    },
+    "host-deadline/postcommit/receipt.json": {
+      "bytes": 1620,
+      "sha256": "d18d74a3e080eaa452ee95b038ac3b8c35ccbf9d93c54265a9aa66a49c616022"
+    },
+    "whole-proof/installed-source-receipt.json": {
+      "bytes": 4485,
+      "sha256": "e870d61efec2f900b98c3473a1871f2734a7084b39197934b2610440e61927ee"
+    },
+    "whole-proof/preparation.json": {
+      "bytes": 17022,
+      "sha256": "064a0bb97979a390fd476c41bdfd55513fdfc087e06233663eaf8318dcb00865"
+    }
+  },
+  "limitations": [
+    "Original full proof/verifier results remain attached to their original Joy binary and selected profile; they are not tests executed by packaged Joy.",
+    "Source comparison is not binary equality, a new four-hour full-proof result, or closure of pending SH8 negative/final-checker gates.",
+    "No native process, build, test suite, proof body read, network access or original input mutation was performed by this capture."
+  ],
+  "original_install_binary": {
+    "bytes": 5635776,
+    "sha256": "8f42591ece35f192ff6f2328a8360fe0f0959f48a173248b211cd0d8f4d984f9"
+  },
+  "original_install_sibling_pins": {
+    "bbg": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+    "hemera": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+    "honeycrisp": "ff735e6c262926bc9bab7534786a575020cbe442",
+    "lens": "17cafe91431977b738e5b72361187cd01ad93638",
+    "neuron": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+    "nox": "2f09ca3c3f18ae470365310cca8db5208eda75c6",
+    "strata": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+    "trident": "da0d1a59cd8208fab96f219ccedef29122d5221a",
+    "zheng": "0d7ba6d422d9b825f9685e903e55252f88ebecd9"
+  },
+  "production_changed_paths": [
+    "rs/structured/limits.rs"
+  ],
+  "revisions": {
+    "current_documentation_head": "15202f42240ba923398908ee0db62d32f1d655f8",
+    "merged_original_tree": "11b7bad201cbfc03955290b5479fa6684f8e2b82",
+    "original_proof_joy": "6e0ec4d8440e2521df08f442d64f54e667044716",
+    "packaged_joy": "dd61df9128f6da1f97d4698f45f154f05312fe51",
+    "prior_host_ceiling_trial": "a96e1371c78b36d95d6ff9fa20e0591943815ac7"
+  },
+  "scope": "Fixed Git objects and existing install/package metadata only; no binary equivalence or new proof acceptance.",
+  "sibling_pin_comparison": "All nine original non-Joy install pins exactly equal final package pins; Trisha is an additional package member, not a Joy dependency.",
+  "source": {
+    "bytes": 7496,
+    "sha256": "c4ee9f37099d2155517278c6f0591f736c25ac7ba43d6d0ec10678e5a68becf3"
+  },
+  "source_facts": [
+    "The sole production source delta is COMPACT_TIME_MS 7200000 to 14400000 in RunLimits admission for explicitly selected compaction.",
+    "The JOYSC001 envelope, parser, capture, session, verifier pipeline and certificate context sources are byte-identical. Zheng relation, noun memory, semantic stream and Nox evaluator dependencies retain exact original commits.",
+    "Context authenticates program/formula/object/profile/budget/frames; host time_ms is absent. Each process derives its own expiration from host.time_ms.",
+    "Host requests above two hours through four hours become admissible only in the explicit compaction mode. The 30000ms default, ordinary 300000ms ceiling and all work/storage/proof limits are unchanged.",
+    "dd61 to 15202f changes only README and CHANGELOG. This comparison makes no fresh full-certificate runtime assertion for a packaged binary."
+  ],
+  "status": "passed-read-only-source-comparison",
+  "trees": {
+    "11b7bad201cbfc03955290b5479fa6684f8e2b82": "2808d060bba7cb3777e1ef8fa003b3d8634c7c09",
+    "15202f42240ba923398908ee0db62d32f1d655f8": "02490500101d0441cf8afb20cb5e2244bd47c7a5",
+    "6e0ec4d8440e2521df08f442d64f54e667044716": "2808d060bba7cb3777e1ef8fa003b3d8634c7c09",
+    "a96e1371c78b36d95d6ff9fa20e0591943815ac7": "9707ef66811875da57ee13ec78cfb1046ebd13f0",
+    "dd61df9128f6da1f97d4698f45f154f05312fe51": "9707ef66811875da57ee13ec78cfb1046ebd13f0"
+  }
+}

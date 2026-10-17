@@ -465,4 +465,4 @@ pub use native::{
 mod bundle;
 pub use bundle::{bundle_with_assembly, compile_to_bundle};
 mod source;
-pub use source::source_options;
+pub use source::{read_source_file, source_options};

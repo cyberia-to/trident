@@ -1,0 +1,69 @@
+{
+  "status": "passed-postmerge-continuation-and-retained-archive",
+  "scope": "Clean future branches plus exact accepted merge warm installs and small original evidence archive only. No SH8 edit, native proof rerun, helper mutation or publication.",
+  "branches": {
+    "joy": {
+      "head": "89088bb27a2d6eaa63ec85aaa2eaec08028c28ad",
+      "branch": "docs/0.4-final-proof-acceptance",
+      "clean": true,
+      "install": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/joy-install/postinstall-1/receipt.json",
+        "bytes": 8174,
+        "sha256": "3629599195a50da3662ae62e74005e2e24a089b834f71bb3b57db3f2d0e01f4e"
+      },
+      "install_seconds": 0.36719666700810194,
+      "binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/joy-install/postinstall-1/installed/bin/joy",
+        "bytes": 5652336,
+        "sha256": "7b1aee370f6826db73f089054f261a3ef874ad54d2e259fbd26f7d8164ab6071"
+      }
+    },
+    "trisha": {
+      "head": "c9f442c58005249d14e95fc81f125ff7f864ab07",
+      "branch": "docs/0.4-final-proof-acceptance",
+      "clean": true,
+      "install": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/trisha-install/postinstall-1/receipt.json",
+        "bytes": 8220,
+        "sha256": "963af849c5bd88a6e2ef66768ae3980032af62cf02e7aae33c6c9c15aa1702f2"
+      },
+      "install_seconds": 0.6125939159537666,
+      "binary": {
+        "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/trisha-install/postinstall-1/installed/bin/trisha",
+        "bytes": 14091840,
+        "sha256": "fe069879a44b582a47069c5cd849b1eb3da4c75a037e72aa9d107742ecc8173f"
+      }
+    }
+  },
+  "copy_root": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/packet",
+  "destination": "audit/self-hosting/bootstrap-results/whole-proof-final/evidence-links-integration",
+  "packet_files": 124,
+  "packet_bytes": 411424,
+  "original_files": 286,
+  "references_only": 21,
+  "retained_map": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/packet/retained-files.json",
+    "bytes": 98388,
+    "sha256": "1a663a5874948542727902eb9d7be696c731d9bf0130be938d87f6532395aaa6"
+  },
+  "copy_inventory": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/copy-inventory.json",
+    "bytes": 22556,
+    "sha256": "77f20f24e2869da506680825980b06be7389723881b3040c92feb57bd0f8d1bf"
+  },
+  "validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/validation/receipt.json",
+    "bytes": 1393,
+    "sha256": "99116c9cf8106b324ceb0373ccb7f0c11994eb3f4f2e775390f15e58e25eb00c"
+  },
+  "source": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/copy.py",
+    "bytes": 4349,
+    "sha256": "5ceed756df9b3254b92acb6f4dcee36fb6334568f3edbba055900fee15f870b4"
+  },
+  "selection": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/integration/evidence-links-postmerge-20261002/archive-preparation/selection.json",
+    "bytes": 88851,
+    "sha256": "0eb52b01b7574894e09d2502943ebe12c6aa9ae8af3af0ad9ad54439f8531eb8"
+  }
+}

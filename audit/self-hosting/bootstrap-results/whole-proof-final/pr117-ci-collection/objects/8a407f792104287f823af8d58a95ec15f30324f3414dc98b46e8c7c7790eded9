@@ -1,0 +1,23 @@
+"""Offline contradictory ledger observations must fail the independent checker."""
+import copy,unittest
+from accounting import check
+
+class AccountingTests(unittest.TestCase):
+    def fixture(self):
+        samples=[dict(label=name,time_ns=20+n,scope_bytes=[1,1,1,1,1,10],bytes=15,scan=n+1) for n,name in enumerate(('initial','final'))]
+        identity=dict(bytes=12,sha256='a'*64);accounting=dict(peak_bytes=20,scans=2,reconciliations=samples)
+        final=dict(schema='trident/collection-completion-final-accounting/v1',receipt=identity,record_bytes=1,observed_before_record=15,final_scope_bytes=16,peak_charged_before_record=20,reconciliation=dict(label='after-final-receipt',time_ns=50,scope_bytes=[1,1,1,1,1,10],bytes=15,scan=3))
+        return accounting,final,identity
+    def run_check(self,a,f,i):check(a,f,i,1,10,40,['initial','final'],[1]*5)
+    def test_valid_control(self):self.run_check(*self.fixture())
+    def test_negative_boolean_duplicate_and_out_of_interval_samples(self):
+        mutations=[lambda a,f:a.update(peak_bytes=-1),lambda a,f:a['reconciliations'][0].update(bytes=-1),lambda a,f:a['reconciliations'][0].update(scope_bytes=[1]*5+[True]),lambda a,f:a['reconciliations'][1].update(scan=1),lambda a,f:a['reconciliations'][0].update(time_ns=9),lambda a,f:a['reconciliations'][1].update(time_ns=19),lambda a,f:a['reconciliations'][0].update(label='omitted'),lambda a,f:a.update(peak_bytes=14)]
+        for n,mutate in enumerate(mutations):
+            with self.subTest(case=n):
+                a,f,i=self.fixture();mutate(a,f)
+                with self.assertRaises(ValueError):self.run_check(a,f,i)
+    def test_changed_immutable_scope_and_final_sum(self):
+        for mutate in (lambda a,f:a['reconciliations'][0].update(scope_bytes=[0,2,1,1,1,10]),lambda a,f:f.update(final_scope_bytes=17),lambda a,f:f['reconciliation'].update(bytes=14),lambda a,f:f.update(peak_charged_before_record=-1),lambda a,f:f['reconciliation'].update(time_ns=39)):
+            a,f,i=self.fixture();mutate(a,f)
+            with self.assertRaises(ValueError):self.run_check(a,f,i)
+if __name__=='__main__':unittest.main()

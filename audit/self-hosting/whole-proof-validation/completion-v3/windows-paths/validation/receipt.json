@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "-m",
+    "unittest",
+    "audit/self-hosting/test_bootstrap_runner.py",
+    "audit/self-hosting/test_bootstrap_phases.py"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident-windows-paths",
+  "base_revision": "fdeda5fe903c10df4a49b1b247f20f5fa2ae3bdf",
+  "staged_tree": "e75a202aafe9f66404870a1785e27f65f1568946",
+  "exit_code": 0,
+  "elapsed_seconds": 6.43024262500694,
+  "max_tracked_path_utf16": 195,
+  "files": {
+    "stdout": {
+      "bytes": 296,
+      "sha256": "77e7125d3e4fe45bbe93fa4265dfea41f08dee8108ee614e8975f9aeed15ed0e"
+    },
+    "stderr": {
+      "bytes": 190,
+      "sha256": "9c1f61ce691d1551d6538bef74ab90b3b024b9da35f278b84a73eadbabc0b2c1"
+    }
+  },
+  "test_sources": {
+    "audit/self-hosting/test_bootstrap_runner.py": {
+      "bytes": 25326,
+      "sha256": "30bd88b8b2148a4120214eead518cda98c5efbd00632bd2839401b14ba799f2e"
+    },
+    "audit/self-hosting/test_bootstrap_phases.py": {
+      "bytes": 21019,
+      "sha256": "9081192afb374c99570d987db3d4a26c39fcfb51c937388dcc132fdbec9a4e00"
+    }
+  }
+}

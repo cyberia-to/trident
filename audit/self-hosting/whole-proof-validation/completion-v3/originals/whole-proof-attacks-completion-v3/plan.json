@@ -1,0 +1,42 @@
+{
+  "schema": "trident/complete-proof-missing-cases/v3",
+  "status": "prepared-not-launched",
+  "generations": [
+    1,
+    2
+  ],
+  "roots": {
+    "1": "whole-proof-attacks-v3-c1",
+    "2": "whole-proof-attacks-v3-c2"
+  },
+  "original_scope": "whole-proof-attacks",
+  "proofs": {
+    "1": {
+      "bytes": 11977015727,
+      "sha256": "80212be832ce0a5caafa69d9dd346ff20d51ce20fc86892f0c7039492619bbb0"
+    },
+    "2": {
+      "bytes": 10569174820,
+      "sha256": "4db898cbc5133e0b96c758507d32b62aa82c4f39271cedd949b96d641a67de86"
+    }
+  },
+  "shared_disk_bytes": 27917287424,
+  "free_floor_bytes": 8589934592,
+  "combined_sampled_rss_bytes": 12884901888,
+  "mutant_growth_ceiling_bytes": 33554432,
+  "canonical_and_output_bucket_per_generation": 117440512,
+  "metadata_bucket_per_generation": 268435456,
+  "per_stream_log_bytes": 1048576,
+  "readiness_seconds": 15500,
+  "outer_schedule_seconds": 86400,
+  "scope": "Explicit composite case acceptance: replay two actual controls and nine completed distinct v2 cases, then execute fourteen missing cases per generation with admitted JOB1 context. Original v2 suite remains failed; reused cases are never labelled fresh. All previous partials and failed metadata remain charged. Completed wrongly rebound C2 temporary may be reclaimed only by a separately reviewed, exact-byte classified transition. No helper/verifier/profile/resource cap changes, skipped cases, automated retry or release claim.",
+  "retained_scopes": [
+    "whole-proof-attacks",
+    "whole-proof-attacks-v2-c1",
+    "whole-proof-attacks-v2-c2",
+    "whole-proof-attacks-parallel-v2"
+  ],
+  "fresh_rejections_per_generation": 14,
+  "replayed_rejections_per_generation": 9,
+  "replayed_controls_per_generation": 2
+}

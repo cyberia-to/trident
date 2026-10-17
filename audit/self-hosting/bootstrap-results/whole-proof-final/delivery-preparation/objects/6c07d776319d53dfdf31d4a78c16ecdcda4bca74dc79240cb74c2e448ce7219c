@@ -1,0 +1,57 @@
+"""Explicit public-stream admission; private records are never redacted in place."""
+import json
+import re
+from urllib.parse import parse_qs, unquote, urlsplit
+from safe_io import require
+
+SECRET = re.compile(rb'(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-proj-[A-Za-z0-9_-]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)')
+SENSITIVE = {'sig', 'signature', 'token', 'access_token', 'x-amz-signature',
+             'x-amz-security-token', 'x-goog-signature'}
+PRIVATE_KEYS = {'raw_stdout', 'raw_stderr', 'raw_ps', 'process_snapshot',
+                'processes', 'process_rows', 'signed_url', 'authorization'}
+
+
+def inspect(value):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            require(key.lower() not in PRIVATE_KEYS or child in (None, '', [], {}),
+                    'private structured payload')
+            inspect(child)
+    elif isinstance(value, list):
+        for child in value:
+            inspect(child)
+    elif isinstance(value, str):
+        inspect_text(value.encode())
+
+
+def inspect_text(data):
+    require(not SECRET.search(data), 'credential-shaped payload')
+    require(not re.search(rb'(?im)^\s*(?:USER\s+)?PID\s+.*(?:PPID|PGID|COMMAND)', data),
+            'host process table header')
+    require(not re.search(rb'(?m)^\s*\d+\s+\d+\s+\d+\s+.*\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b', data),
+            'host process table row')
+    for raw in re.findall(rb'https?://[^\s"<>]+', data):
+        url = unquote(raw.decode('utf-8'))
+        require(not {k.lower() for k in parse_qs(urlsplit(url).query)} & SENSITIVE,
+                'signed or credential-bearing URL')
+
+
+def public_bytes(data):
+    inspect_text(data)
+    text = data.decode('utf-8')
+    if text.lstrip().startswith(('{', '[')):
+        inspect(json.loads(text))
+    return data
+
+
+def classification(name, archived=False):
+    if archived:
+        return 'already-retained-reference'
+    if name.endswith(('.joysc', '.dag')) or '/bin/' in name or '/target' in name:
+        return 'artifact-reference-no-body'
+    if any(p in name.lower() for p in ('private', 'quiescence', 'process', 'resources.jsonl',
+                                     'baseline.json', 'selected-v4', 'admission', 'receipt.json')):
+        return 'private-original-reference'
+    if name.endswith(('.py', '.rs', '.toml', '.md', '.lock')):
+        return 'source-reference'
+    return 'unreviewed-original-reference'

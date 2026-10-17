@@ -1,0 +1,1528 @@
+{
+  "scope": "Static source model, never a guest execution or reduction measurement.",
+  "command": [
+    "audit/self-hosting/alias-suffix-work-model.py",
+    "--inventory",
+    "../measurements/scaled-inventory.json",
+    "--closure",
+    "audit/self-hosting/full-bootstrap-frontier/scaled-closure.json"
+  ],
+  "revision": "90ac882be8fe8b7af861ac8d8ba7aa9e9f291eb9",
+  "inventory_sha256": "de7681059b2d6b0f54602ef0f541fb6cb56eb73c32010724ccda77077261ecf7",
+  "closure_sha256": "3accd2c592af1871467fc573b72879e676d31bc9b0b1dfc4625de9604e987870",
+  "totals": {
+    "imported_call_sites": 4033,
+    "ordered_use_checks": 38145,
+    "old_basename_location_reads": 772037,
+    "suffix_owner_reads": 61014,
+    "suffix_prefix_reads": 23400
+  },
+  "modules": {
+    "native_compiler": {
+      "imported_call_sites": 5,
+      "ordered_use_checks": 25,
+      "old_basename_location_reads": 555,
+      "suffix_owner_reads": 54,
+      "suffix_prefix_reads": 30
+    },
+    "std.compiler.nox.aggregate_gen": {
+      "imported_call_sites": 8,
+      "ordered_use_checks": 40,
+      "old_basename_location_reads": 656,
+      "suffix_owner_reads": 82,
+      "suffix_prefix_reads": 42
+    },
+    "std.compiler.nox.array_gen": {
+      "imported_call_sites": 37,
+      "ordered_use_checks": 259,
+      "old_basename_location_reads": 4329,
+      "suffix_owner_reads": 490,
+      "suffix_prefix_reads": 231
+    },
+    "std.compiler.nox.array_parse": {
+      "imported_call_sites": 60,
+      "ordered_use_checks": 600,
+      "old_basename_location_reads": 11820,
+      "suffix_owner_reads": 865,
+      "suffix_prefix_reads": 265
+    },
+    "std.compiler.nox.array_size": {
+      "imported_call_sites": 14,
+      "ordered_use_checks": 112,
+      "old_basename_location_reads": 1946,
+      "suffix_owner_reads": 207,
+      "suffix_prefix_reads": 95
+    },
+    "std.compiler.nox.ascii": {
+      "imported_call_sites": 8,
+      "ordered_use_checks": 32,
+      "old_basename_location_reads": 512,
+      "suffix_owner_reads": 80,
+      "suffix_prefix_reads": 48
+    },
+    "std.compiler.nox.ast": {
+      "imported_call_sites": 58,
+      "ordered_use_checks": 290,
+      "old_basename_location_reads": 4756,
+      "suffix_owner_reads": 557,
+      "suffix_prefix_reads": 267
+    },
+    "std.compiler.nox.attributes": {
+      "imported_call_sites": 26,
+      "ordered_use_checks": 156,
+      "old_basename_location_reads": 3016,
+      "suffix_owner_reads": 327,
+      "suffix_prefix_reads": 173
+    },
+    "std.compiler.nox.block_gen": {
+      "imported_call_sites": 45,
+      "ordered_use_checks": 540,
+      "old_basename_location_reads": 11115,
+      "suffix_owner_reads": 829,
+      "suffix_prefix_reads": 292
+    },
+    "std.compiler.nox.blocks": {
+      "imported_call_sites": 38,
+      "ordered_use_checks": 76,
+      "old_basename_location_reads": 988,
+      "suffix_owner_reads": 228,
+      "suffix_prefix_reads": 152
+    },
+    "std.compiler.nox.body": {
+      "imported_call_sites": 66,
+      "ordered_use_checks": 1584,
+      "old_basename_location_reads": 39666,
+      "suffix_owner_reads": 2113,
+      "suffix_prefix_reads": 564
+    },
+    "std.compiler.nox.body_state": {
+      "imported_call_sites": 20,
+      "ordered_use_checks": 140,
+      "old_basename_location_reads": 2660,
+      "suffix_owner_reads": 225,
+      "suffix_prefix_reads": 87
+    },
+    "std.compiler.nox.body_store": {
+      "imported_call_sites": 77,
+      "ordered_use_checks": 462,
+      "old_basename_location_reads": 8470,
+      "suffix_owner_reads": 760,
+      "suffix_prefix_reads": 298
+    },
+    "std.compiler.nox.builtin_gen": {
+      "imported_call_sites": 35,
+      "ordered_use_checks": 245,
+      "old_basename_location_reads": 4550,
+      "suffix_owner_reads": 437,
+      "suffix_prefix_reads": 192
+    },
+    "std.compiler.nox.builtins": {
+      "imported_call_sites": 34,
+      "ordered_use_checks": 204,
+      "old_basename_location_reads": 3298,
+      "suffix_owner_reads": 391,
+      "suffix_prefix_reads": 187
+    },
+    "std.compiler.nox.call_codegen": {
+      "imported_call_sites": 52,
+      "ordered_use_checks": 468,
+      "old_basename_location_reads": 8892,
+      "suffix_owner_reads": 753,
+      "suffix_prefix_reads": 285
+    },
+    "std.compiler.nox.call_frames": {
+      "imported_call_sites": 32,
+      "ordered_use_checks": 64,
+      "old_basename_location_reads": 832,
+      "suffix_owner_reads": 192,
+      "suffix_prefix_reads": 128
+    },
+    "std.compiler.nox.call_graph": {
+      "imported_call_sites": 87,
+      "ordered_use_checks": 609,
+      "old_basename_location_reads": 10962,
+      "suffix_owner_reads": 1055,
+      "suffix_prefix_reads": 446
+    },
+    "std.compiler.nox.call_parse": {
+      "imported_call_sites": 65,
+      "ordered_use_checks": 1040,
+      "old_basename_location_reads": 24700,
+      "suffix_owner_reads": 1449,
+      "suffix_prefix_reads": 436
+    },
+    "std.compiler.nox.check_functions": {
+      "imported_call_sites": 28,
+      "ordered_use_checks": 392,
+      "old_basename_location_reads": 9156,
+      "suffix_owner_reads": 574,
+      "suffix_prefix_reads": 194
+    },
+    "std.compiler.nox.check_scope": {
+      "imported_call_sites": 7,
+      "ordered_use_checks": 42,
+      "old_basename_location_reads": 1106,
+      "suffix_owner_reads": 105,
+      "suffix_prefix_reads": 66
+    },
+    "std.compiler.nox.code_plan": {
+      "imported_call_sites": 18,
+      "ordered_use_checks": 144,
+      "old_basename_location_reads": 2808,
+      "suffix_owner_reads": 232,
+      "suffix_prefix_reads": 88
+    },
+    "std.compiler.nox.codegen": {
+      "imported_call_sites": 107,
+      "ordered_use_checks": 1926,
+      "old_basename_location_reads": 41944,
+      "suffix_owner_reads": 2664,
+      "suffix_prefix_reads": 755
+    },
+    "std.compiler.nox.const_module": {
+      "imported_call_sites": 18,
+      "ordered_use_checks": 144,
+      "old_basename_location_reads": 3402,
+      "suffix_owner_reads": 311,
+      "suffix_prefix_reads": 172
+    },
+    "std.compiler.nox.const_parse": {
+      "imported_call_sites": 49,
+      "ordered_use_checks": 490,
+      "old_basename_location_reads": 9604,
+      "suffix_owner_reads": 809,
+      "suffix_prefix_reads": 322
+    },
+    "std.compiler.nox.constant_exports": {
+      "imported_call_sites": 54,
+      "ordered_use_checks": 324,
+      "old_basename_location_reads": 4482,
+      "suffix_owner_reads": 592,
+      "suffix_prefix_reads": 268
+    },
+    "std.compiler.nox.constant_imports": {
+      "imported_call_sites": 25,
+      "ordered_use_checks": 150,
+      "old_basename_location_reads": 3325,
+      "suffix_owner_reads": 296,
+      "suffix_prefix_reads": 150
+    },
+    "std.compiler.nox.constants": {
+      "imported_call_sites": 100,
+      "ordered_use_checks": 1300,
+      "old_basename_location_reads": 26300,
+      "suffix_owner_reads": 1896,
+      "suffix_prefix_reads": 637
+    },
+    "std.compiler.nox.contexts": {
+      "imported_call_sites": 33,
+      "ordered_use_checks": 99,
+      "old_basename_location_reads": 1617,
+      "suffix_owner_reads": 235,
+      "suffix_prefix_reads": 136
+    },
+    "std.compiler.nox.control_gen": {
+      "imported_call_sites": 47,
+      "ordered_use_checks": 752,
+      "old_basename_location_reads": 16497,
+      "suffix_owner_reads": 1062,
+      "suffix_prefix_reads": 315
+    },
+    "std.compiler.nox.control_parse": {
+      "imported_call_sites": 47,
+      "ordered_use_checks": 658,
+      "old_basename_location_reads": 14147,
+      "suffix_owner_reads": 962,
+      "suffix_prefix_reads": 312
+    },
+    "std.compiler.nox.coverage": {
+      "imported_call_sites": 57,
+      "ordered_use_checks": 684,
+      "old_basename_location_reads": 13794,
+      "suffix_owner_reads": 1011,
+      "suffix_prefix_reads": 333
+    },
+    "std.compiler.nox.declarations": {
+      "imported_call_sites": 33,
+      "ordered_use_checks": 495,
+      "old_basename_location_reads": 10989,
+      "suffix_owner_reads": 726,
+      "suffix_prefix_reads": 239
+    },
+    "std.compiler.nox.digest_gen": {
+      "imported_call_sites": 17,
+      "ordered_use_checks": 68,
+      "old_basename_location_reads": 1207,
+      "suffix_owner_reads": 156,
+      "suffix_prefix_reads": 88
+    },
+    "std.compiler.nox.emit": {
+      "imported_call_sites": 48,
+      "ordered_use_checks": 288,
+      "old_basename_location_reads": 4464,
+      "suffix_owner_reads": 485,
+      "suffix_prefix_reads": 197
+    },
+    "std.compiler.nox.entry_frame": {
+      "imported_call_sites": 12,
+      "ordered_use_checks": 72,
+      "old_basename_location_reads": 1272,
+      "suffix_owner_reads": 154,
+      "suffix_prefix_reads": 82
+    },
+    "std.compiler.nox.expression": {
+      "imported_call_sites": 160,
+      "ordered_use_checks": 3040,
+      "old_basename_location_reads": 71040,
+      "suffix_owner_reads": 4023,
+      "suffix_prefix_reads": 1022
+    },
+    "std.compiler.nox.expression_state": {
+      "imported_call_sites": 0,
+      "ordered_use_checks": 0,
+      "old_basename_location_reads": 0,
+      "suffix_owner_reads": 0,
+      "suffix_prefix_reads": 0
+    },
+    "std.compiler.nox.flow": {
+      "imported_call_sites": 12,
+      "ordered_use_checks": 48,
+      "old_basename_location_reads": 852,
+      "suffix_owner_reads": 129,
+      "suffix_prefix_reads": 81
+    },
+    "std.compiler.nox.formula": {
+      "imported_call_sites": 20,
+      "ordered_use_checks": 60,
+      "old_basename_location_reads": 740,
+      "suffix_owner_reads": 139,
+      "suffix_prefix_reads": 79
+    },
+    "std.compiler.nox.function_exports": {
+      "imported_call_sites": 41,
+      "ordered_use_checks": 246,
+      "old_basename_location_reads": 3403,
+      "suffix_owner_reads": 449,
+      "suffix_prefix_reads": 203
+    },
+    "std.compiler.nox.function_gen": {
+      "imported_call_sites": 66,
+      "ordered_use_checks": 990,
+      "old_basename_location_reads": 22110,
+      "suffix_owner_reads": 1463,
+      "suffix_prefix_reads": 484
+    },
+    "std.compiler.nox.function_imports": {
+      "imported_call_sites": 25,
+      "ordered_use_checks": 150,
+      "old_basename_location_reads": 3325,
+      "suffix_owner_reads": 296,
+      "suffix_prefix_reads": 150
+    },
+    "std.compiler.nox.function_order": {
+      "imported_call_sites": 56,
+      "ordered_use_checks": 336,
+      "old_basename_location_reads": 5600,
+      "suffix_owner_reads": 596,
+      "suffix_prefix_reads": 260
+    },
+    "std.compiler.nox.function_plan": {
+      "imported_call_sites": 28,
+      "ordered_use_checks": 252,
+      "old_basename_location_reads": 4760,
+      "suffix_owner_reads": 397,
+      "suffix_prefix_reads": 149
+    },
+    "std.compiler.nox.group_parse": {
+      "imported_call_sites": 70,
+      "ordered_use_checks": 700,
+      "old_basename_location_reads": 13790,
+      "suffix_owner_reads": 1002,
+      "suffix_prefix_reads": 302
+    },
+    "std.compiler.nox.halting": {
+      "imported_call_sites": 9,
+      "ordered_use_checks": 45,
+      "old_basename_location_reads": 738,
+      "suffix_owner_reads": 81,
+      "suffix_prefix_reads": 36
+    },
+    "std.compiler.nox.header_state": {
+      "imported_call_sites": 9,
+      "ordered_use_checks": 81,
+      "old_basename_location_reads": 1935,
+      "suffix_owner_reads": 143,
+      "suffix_prefix_reads": 66
+    },
+    "std.compiler.nox.headers": {
+      "imported_call_sites": 87,
+      "ordered_use_checks": 1827,
+      "old_basename_location_reads": 42978,
+      "suffix_owner_reads": 2467,
+      "suffix_prefix_reads": 678
+    },
+    "std.compiler.nox.index_parse": {
+      "imported_call_sites": 59,
+      "ordered_use_checks": 590,
+      "old_basename_location_reads": 11623,
+      "suffix_owner_reads": 859,
+      "suffix_prefix_reads": 269
+    },
+    "std.compiler.nox.intrinsic_abi": {
+      "imported_call_sites": 38,
+      "ordered_use_checks": 342,
+      "old_basename_location_reads": 6080,
+      "suffix_owner_reads": 549,
+      "suffix_prefix_reads": 207
+    },
+    "std.compiler.nox.intrinsic_bindings": {
+      "imported_call_sites": 10,
+      "ordered_use_checks": 50,
+      "old_basename_location_reads": 910,
+      "suffix_owner_reads": 108,
+      "suffix_prefix_reads": 60
+    },
+    "std.compiler.nox.intrinsic_plan": {
+      "imported_call_sites": 14,
+      "ordered_use_checks": 126,
+      "old_basename_location_reads": 2828,
+      "suffix_owner_reads": 212,
+      "suffix_prefix_reads": 91
+    },
+    "std.compiler.nox.job": {
+      "imported_call_sites": 78,
+      "ordered_use_checks": 468,
+      "old_basename_location_reads": 6474,
+      "suffix_owner_reads": 873,
+      "suffix_prefix_reads": 405
+    },
+    "std.compiler.nox.lexer": {
+      "imported_call_sites": 79,
+      "ordered_use_checks": 395,
+      "old_basename_location_reads": 6794,
+      "suffix_owner_reads": 895,
+      "suffix_prefix_reads": 500
+    },
+    "std.compiler.nox.loop_gen": {
+      "imported_call_sites": 47,
+      "ordered_use_checks": 517,
+      "old_basename_location_reads": 9964,
+      "suffix_owner_reads": 835,
+      "suffix_prefix_reads": 327
+    },
+    "std.compiler.nox.loop_parse": {
+      "imported_call_sites": 47,
+      "ordered_use_checks": 658,
+      "old_basename_location_reads": 13066,
+      "suffix_owner_reads": 955,
+      "suffix_prefix_reads": 299
+    },
+    "std.compiler.nox.loop_records": {
+      "imported_call_sites": 22,
+      "ordered_use_checks": 44,
+      "old_basename_location_reads": 572,
+      "suffix_owner_reads": 132,
+      "suffix_prefix_reads": 88
+    },
+    "std.compiler.nox.module_function_order": {
+      "imported_call_sites": 118,
+      "ordered_use_checks": 944,
+      "old_basename_location_reads": 16638,
+      "suffix_owner_reads": 1490,
+      "suffix_prefix_reads": 551
+    },
+    "std.compiler.nox.module_functions": {
+      "imported_call_sites": 43,
+      "ordered_use_checks": 817,
+      "old_basename_location_reads": 21801,
+      "suffix_owner_reads": 1177,
+      "suffix_prefix_reads": 386
+    },
+    "std.compiler.nox.module_graph": {
+      "imported_call_sites": 64,
+      "ordered_use_checks": 704,
+      "old_basename_location_reads": 13120,
+      "suffix_owner_reads": 1099,
+      "suffix_prefix_reads": 431
+    },
+    "std.compiler.nox.module_header": {
+      "imported_call_sites": 30,
+      "ordered_use_checks": 150,
+      "old_basename_location_reads": 2670,
+      "suffix_owner_reads": 325,
+      "suffix_prefix_reads": 175
+    },
+    "std.compiler.nox.module_order": {
+      "imported_call_sites": 63,
+      "ordered_use_checks": 378,
+      "old_basename_location_reads": 7245,
+      "suffix_owner_reads": 725,
+      "suffix_prefix_reads": 359
+    },
+    "std.compiler.nox.module_store": {
+      "imported_call_sites": 46,
+      "ordered_use_checks": 138,
+      "old_basename_location_reads": 2070,
+      "suffix_owner_reads": 321,
+      "suffix_prefix_reads": 183
+    },
+    "std.compiler.nox.nominal": {
+      "imported_call_sites": 61,
+      "ordered_use_checks": 366,
+      "old_basename_location_reads": 5795,
+      "suffix_owner_reads": 635,
+      "suffix_prefix_reads": 269
+    },
+    "std.compiler.nox.package_compile": {
+      "imported_call_sites": 29,
+      "ordered_use_checks": 464,
+      "old_basename_location_reads": 11861,
+      "suffix_owner_reads": 813,
+      "suffix_prefix_reads": 382
+    },
+    "std.compiler.nox.parser": {
+      "imported_call_sites": 20,
+      "ordered_use_checks": 320,
+      "old_basename_location_reads": 7460,
+      "suffix_owner_reads": 475,
+      "suffix_prefix_reads": 175
+    },
+    "std.compiler.nox.purity": {
+      "imported_call_sites": 8,
+      "ordered_use_checks": 32,
+      "old_basename_location_reads": 512,
+      "suffix_owner_reads": 80,
+      "suffix_prefix_reads": 48
+    },
+    "std.compiler.nox.qualified_call": {
+      "imported_call_sites": 4,
+      "ordered_use_checks": 24,
+      "old_basename_location_reads": 480,
+      "suffix_owner_reads": 56,
+      "suffix_prefix_reads": 33
+    },
+    "std.compiler.nox.qualified_name": {
+      "imported_call_sites": 17,
+      "ordered_use_checks": 51,
+      "old_basename_location_reads": 986,
+      "suffix_owner_reads": 153,
+      "suffix_prefix_reads": 102
+    },
+    "std.compiler.nox.record_assign": {
+      "imported_call_sites": 36,
+      "ordered_use_checks": 396,
+      "old_basename_location_reads": 8100,
+      "suffix_owner_reads": 575,
+      "suffix_prefix_reads": 183
+    },
+    "std.compiler.nox.record_edit_gen": {
+      "imported_call_sites": 16,
+      "ordered_use_checks": 80,
+      "old_basename_location_reads": 1328,
+      "suffix_owner_reads": 205,
+      "suffix_prefix_reads": 125
+    },
+    "std.compiler.nox.record_frames": {
+      "imported_call_sites": 43,
+      "ordered_use_checks": 172,
+      "old_basename_location_reads": 3311,
+      "suffix_owner_reads": 352,
+      "suffix_prefix_reads": 180
+    },
+    "std.compiler.nox.record_parse": {
+      "imported_call_sites": 116,
+      "ordered_use_checks": 1740,
+      "old_basename_location_reads": 36540,
+      "suffix_owner_reads": 2399,
+      "suffix_prefix_reads": 704
+    },
+    "std.compiler.nox.signatures": {
+      "imported_call_sites": 36,
+      "ordered_use_checks": 216,
+      "old_basename_location_reads": 3492,
+      "suffix_owner_reads": 369,
+      "suffix_prefix_reads": 153
+    },
+    "std.compiler.nox.struct_parse": {
+      "imported_call_sites": 36,
+      "ordered_use_checks": 360,
+      "old_basename_location_reads": 7056,
+      "suffix_owner_reads": 577,
+      "suffix_prefix_reads": 229
+    },
+    "std.compiler.nox.symbols": {
+      "imported_call_sites": 29,
+      "ordered_use_checks": 203,
+      "old_basename_location_reads": 3132,
+      "suffix_owner_reads": 334,
+      "suffix_prefix_reads": 131
+    },
+    "std.compiler.nox.syntax": {
+      "imported_call_sites": 16,
+      "ordered_use_checks": 48,
+      "old_basename_location_reads": 656,
+      "suffix_owner_reads": 157,
+      "suffix_prefix_reads": 109
+    },
+    "std.compiler.nox.terminal": {
+      "imported_call_sites": 33,
+      "ordered_use_checks": 264,
+      "old_basename_location_reads": 4587,
+      "suffix_owner_reads": 435,
+      "suffix_prefix_reads": 171
+    },
+    "std.compiler.nox.tuple_bind": {
+      "imported_call_sites": 57,
+      "ordered_use_checks": 627,
+      "old_basename_location_reads": 12483,
+      "suffix_owner_reads": 943,
+      "suffix_prefix_reads": 325
+    },
+    "std.compiler.nox.tuple_declarations": {
+      "imported_call_sites": 39,
+      "ordered_use_checks": 507,
+      "old_basename_location_reads": 11154,
+      "suffix_owner_reads": 737,
+      "suffix_prefix_reads": 240
+    },
+    "std.compiler.nox.tuple_pattern": {
+      "imported_call_sites": 29,
+      "ordered_use_checks": 232,
+      "old_basename_location_reads": 3973,
+      "suffix_owner_reads": 370,
+      "suffix_prefix_reads": 138
+    },
+    "std.compiler.nox.type_exports": {
+      "imported_call_sites": 23,
+      "ordered_use_checks": 161,
+      "old_basename_location_reads": 2668,
+      "suffix_owner_reads": 275,
+      "suffix_prefix_reads": 114
+    },
+    "std.compiler.nox.type_imports": {
+      "imported_call_sites": 24,
+      "ordered_use_checks": 168,
+      "old_basename_location_reads": 3624,
+      "suffix_owner_reads": 309,
+      "suffix_prefix_reads": 143
+    },
+    "std.compiler.nox.type_parse": {
+      "imported_call_sites": 44,
+      "ordered_use_checks": 484,
+      "old_basename_location_reads": 9900,
+      "suffix_owner_reads": 736,
+      "suffix_prefix_reads": 264
+    },
+    "std.compiler.nox.type_registry": {
+      "imported_call_sites": 22,
+      "ordered_use_checks": 220,
+      "old_basename_location_reads": 4576,
+      "suffix_owner_reads": 351,
+      "suffix_prefix_reads": 135
+    },
+    "std.compiler.nox.types": {
+      "imported_call_sites": 59,
+      "ordered_use_checks": 236,
+      "old_basename_location_reads": 3540,
+      "suffix_owner_reads": 475,
+      "suffix_prefix_reads": 239
+    },
+    "std.compiler.nox.utf8": {
+      "imported_call_sites": 42,
+      "ordered_use_checks": 168,
+      "old_basename_location_reads": 2478,
+      "suffix_owner_reads": 388,
+      "suffix_prefix_reads": 220
+    },
+    "std.nox.bytes": {
+      "imported_call_sites": 189,
+      "ordered_use_checks": 945,
+      "old_basename_location_reads": 11718,
+      "suffix_owner_reads": 2134,
+      "suffix_prefix_reads": 1189
+    },
+    "std.nox.seq": {
+      "imported_call_sites": 19,
+      "ordered_use_checks": 57,
+      "old_basename_location_reads": 722,
+      "suffix_owner_reads": 160,
+      "suffix_prefix_reads": 103
+    },
+    "std.nox.tree": {
+      "imported_call_sites": 178,
+      "ordered_use_checks": 534,
+      "old_basename_location_reads": 6942,
+      "suffix_owner_reads": 1417,
+      "suffix_prefix_reads": 883
+    },
+    "vm.core.convert": {
+      "imported_call_sites": 0,
+      "ordered_use_checks": 0,
+      "old_basename_location_reads": 0,
+      "suffix_owner_reads": 0,
+      "suffix_prefix_reads": 0
+    },
+    "vm.core.field": {
+      "imported_call_sites": 0,
+      "ordered_use_checks": 0,
+      "old_basename_location_reads": 0,
+      "suffix_owner_reads": 0,
+      "suffix_prefix_reads": 0
+    },
+    "vm.nox.noun": {
+      "imported_call_sites": 0,
+      "ordered_use_checks": 0,
+      "old_basename_location_reads": 0,
+      "suffix_owner_reads": 0,
+      "suffix_prefix_reads": 0
+    }
+  },
+  "inferred_positions": [
+    {
+      "position": 0,
+      "stop_stage": 100,
+      "graph_owner": 1,
+      "job_index": 91,
+      "name": "vm.core.convert",
+      "source_bytes": 323,
+      "functions": 3
+    },
+    {
+      "position": 1,
+      "stop_stage": 101,
+      "graph_owner": 3,
+      "job_index": 93,
+      "name": "vm.nox.noun",
+      "source_bytes": 1026,
+      "functions": 7
+    },
+    {
+      "position": 2,
+      "stop_stage": 102,
+      "graph_owner": 4,
+      "job_index": 92,
+      "name": "vm.core.field",
+      "source_bytes": 461,
+      "functions": 5
+    },
+    {
+      "position": 3,
+      "stop_stage": 103,
+      "graph_owner": 6,
+      "job_index": 90,
+      "name": "std.nox.tree",
+      "source_bytes": 12984,
+      "functions": 14
+    },
+    {
+      "position": 4,
+      "stop_stage": 104,
+      "graph_owner": 7,
+      "job_index": 89,
+      "name": "std.nox.seq",
+      "source_bytes": 2130,
+      "functions": 8
+    },
+    {
+      "position": 5,
+      "stop_stage": 105,
+      "graph_owner": 5,
+      "job_index": 88,
+      "name": "std.nox.bytes",
+      "source_bytes": 12478,
+      "functions": 23
+    },
+    {
+      "position": 6,
+      "stop_stage": 106,
+      "graph_owner": 8,
+      "job_index": 77,
+      "name": "std.compiler.nox.syntax",
+      "source_bytes": 1946,
+      "functions": 7
+    },
+    {
+      "position": 7,
+      "stop_stage": 107,
+      "graph_owner": 2,
+      "job_index": 53,
+      "name": "std.compiler.nox.job",
+      "source_bytes": 11465,
+      "functions": 9
+    },
+    {
+      "position": 8,
+      "stop_stage": 108,
+      "graph_owner": 11,
+      "job_index": 87,
+      "name": "std.compiler.nox.utf8",
+      "source_bytes": 5181,
+      "functions": 4
+    },
+    {
+      "position": 9,
+      "stop_stage": 109,
+      "graph_owner": 13,
+      "job_index": 5,
+      "name": "std.compiler.nox.ascii",
+      "source_bytes": 3487,
+      "functions": 7
+    },
+    {
+      "position": 10,
+      "stop_stage": 110,
+      "graph_owner": 12,
+      "job_index": 54,
+      "name": "std.compiler.nox.lexer",
+      "source_bytes": 6461,
+      "functions": 3
+    },
+    {
+      "position": 11,
+      "stop_stage": 111,
+      "graph_owner": 16,
+      "job_index": 86,
+      "name": "std.compiler.nox.types",
+      "source_bytes": 5175,
+      "functions": 7
+    },
+    {
+      "position": 12,
+      "stop_stage": 112,
+      "graph_owner": 15,
+      "job_index": 6,
+      "name": "std.compiler.nox.ast",
+      "source_bytes": 3696,
+      "functions": 11
+    },
+    {
+      "position": 13,
+      "stop_stage": 113,
+      "graph_owner": 14,
+      "job_index": 61,
+      "name": "std.compiler.nox.module_header",
+      "source_bytes": 4591,
+      "functions": 6
+    },
+    {
+      "position": 14,
+      "stop_stage": 114,
+      "graph_owner": 17,
+      "job_index": 63,
+      "name": "std.compiler.nox.module_store",
+      "source_bytes": 2563,
+      "functions": 6
+    },
+    {
+      "position": 15,
+      "stop_stage": 115,
+      "graph_owner": 10,
+      "job_index": 60,
+      "name": "std.compiler.nox.module_graph",
+      "source_bytes": 7434,
+      "functions": 8
+    },
+    {
+      "position": 16,
+      "stop_stage": 116,
+      "graph_owner": 18,
+      "job_index": 62,
+      "name": "std.compiler.nox.module_order",
+      "source_bytes": 4287,
+      "functions": 5
+    },
+    {
+      "position": 17,
+      "stop_stage": 117,
+      "graph_owner": 20,
+      "job_index": 69,
+      "name": "std.compiler.nox.qualified_name",
+      "source_bytes": 2421,
+      "functions": 3
+    },
+    {
+      "position": 18,
+      "stop_stage": 118,
+      "graph_owner": 21,
+      "job_index": 25,
+      "name": "std.compiler.nox.constant_exports",
+      "source_bytes": 3947,
+      "functions": 8
+    },
+    {
+      "position": 19,
+      "stop_stage": 119,
+      "graph_owner": 19,
+      "job_index": 26,
+      "name": "std.compiler.nox.constant_imports",
+      "source_bytes": 2303,
+      "functions": 3
+    },
+    {
+      "position": 20,
+      "stop_stage": 120,
+      "graph_owner": 24,
+      "job_index": 34,
+      "name": "std.compiler.nox.emit",
+      "source_bytes": 3419,
+      "functions": 10
+    },
+    {
+      "position": 21,
+      "stop_stage": 121,
+      "graph_owner": 25,
+      "job_index": 39,
+      "name": "std.compiler.nox.formula",
+      "source_bytes": 1309,
+      "functions": 8
+    },
+    {
+      "position": 22,
+      "stop_stage": 122,
+      "graph_owner": 28,
+      "job_index": 76,
+      "name": "std.compiler.nox.symbols",
+      "source_bytes": 2243,
+      "functions": 3
+    },
+    {
+      "position": 23,
+      "stop_stage": 123,
+      "graph_owner": 27,
+      "job_index": 74,
+      "name": "std.compiler.nox.signatures",
+      "source_bytes": 3074,
+      "functions": 5
+    },
+    {
+      "position": 24,
+      "stop_stage": 124,
+      "graph_owner": 33,
+      "job_index": 64,
+      "name": "std.compiler.nox.nominal",
+      "source_bytes": 4366,
+      "functions": 11
+    },
+    {
+      "position": 25,
+      "stop_stage": 125,
+      "graph_owner": 35,
+      "job_index": 82,
+      "name": "std.compiler.nox.type_exports",
+      "source_bytes": 2521,
+      "functions": 4
+    },
+    {
+      "position": 26,
+      "stop_stage": 126,
+      "graph_owner": 34,
+      "job_index": 83,
+      "name": "std.compiler.nox.type_imports",
+      "source_bytes": 2552,
+      "functions": 3
+    },
+    {
+      "position": 27,
+      "stop_stage": 127,
+      "graph_owner": 32,
+      "job_index": 85,
+      "name": "std.compiler.nox.type_registry",
+      "source_bytes": 2550,
+      "functions": 6
+    },
+    {
+      "position": 28,
+      "stop_stage": 128,
+      "graph_owner": 36,
+      "job_index": 27,
+      "name": "std.compiler.nox.constants",
+      "source_bytes": 7952,
+      "functions": 11
+    },
+    {
+      "position": 29,
+      "stop_stage": 129,
+      "graph_owner": 38,
+      "job_index": 40,
+      "name": "std.compiler.nox.function_exports",
+      "source_bytes": 3690,
+      "functions": 7
+    },
+    {
+      "position": 30,
+      "stop_stage": 130,
+      "graph_owner": 37,
+      "job_index": 42,
+      "name": "std.compiler.nox.function_imports",
+      "source_bytes": 2357,
+      "functions": 3
+    },
+    {
+      "position": 31,
+      "stop_stage": 131,
+      "graph_owner": 41,
+      "job_index": 14,
+      "name": "std.compiler.nox.builtins",
+      "source_bytes": 4055,
+      "functions": 4
+    },
+    {
+      "position": 32,
+      "stop_stage": 132,
+      "graph_owner": 40,
+      "job_index": 50,
+      "name": "std.compiler.nox.intrinsic_abi",
+      "source_bytes": 4896,
+      "functions": 7
+    },
+    {
+      "position": 33,
+      "stop_stage": 133,
+      "graph_owner": 39,
+      "job_index": 51,
+      "name": "std.compiler.nox.intrinsic_bindings",
+      "source_bytes": 1843,
+      "functions": 4
+    },
+    {
+      "position": 34,
+      "stop_stage": 134,
+      "graph_owner": 31,
+      "job_index": 20,
+      "name": "std.compiler.nox.check_scope",
+      "source_bytes": 1227,
+      "functions": 2
+    },
+    {
+      "position": 35,
+      "stop_stage": 135,
+      "graph_owner": 42,
+      "job_index": 9,
+      "name": "std.compiler.nox.blocks",
+      "source_bytes": 1845,
+      "functions": 6
+    },
+    {
+      "position": 36,
+      "stop_stage": 136,
+      "graph_owner": 30,
+      "job_index": 11,
+      "name": "std.compiler.nox.body_state",
+      "source_bytes": 2062,
+      "functions": 3
+    },
+    {
+      "position": 37,
+      "stop_stage": 137,
+      "graph_owner": 29,
+      "job_index": 12,
+      "name": "std.compiler.nox.body_store",
+      "source_bytes": 3967,
+      "functions": 10
+    },
+    {
+      "position": 38,
+      "stop_stage": 138,
+      "graph_owner": 43,
+      "job_index": 38,
+      "name": "std.compiler.nox.flow",
+      "source_bytes": 1947,
+      "functions": 10
+    },
+    {
+      "position": 39,
+      "stop_stage": 139,
+      "graph_owner": 26,
+      "job_index": 15,
+      "name": "std.compiler.nox.call_codegen",
+      "source_bytes": 4570,
+      "functions": 10
+    },
+    {
+      "position": 40,
+      "stop_stage": 140,
+      "graph_owner": 44,
+      "job_index": 13,
+      "name": "std.compiler.nox.builtin_gen",
+      "source_bytes": 2485,
+      "functions": 3
+    },
+    {
+      "position": 41,
+      "stop_stage": 141,
+      "graph_owner": 45,
+      "job_index": 33,
+      "name": "std.compiler.nox.digest_gen",
+      "source_bytes": 1096,
+      "functions": 2
+    },
+    {
+      "position": 42,
+      "stop_stage": 142,
+      "graph_owner": 46,
+      "job_index": 1,
+      "name": "std.compiler.nox.aggregate_gen",
+      "source_bytes": 884,
+      "functions": 1
+    },
+    {
+      "position": 43,
+      "stop_stage": 143,
+      "graph_owner": 47,
+      "job_index": 71,
+      "name": "std.compiler.nox.record_edit_gen",
+      "source_bytes": 2042,
+      "functions": 2
+    },
+    {
+      "position": 44,
+      "stop_stage": 144,
+      "graph_owner": 48,
+      "job_index": 2,
+      "name": "std.compiler.nox.array_gen",
+      "source_bytes": 2611,
+      "functions": 6
+    },
+    {
+      "position": 45,
+      "stop_stage": 145,
+      "graph_owner": 23,
+      "job_index": 22,
+      "name": "std.compiler.nox.codegen",
+      "source_bytes": 9025,
+      "functions": 9
+    },
+    {
+      "position": 46,
+      "stop_stage": 146,
+      "graph_owner": 50,
+      "job_index": 24,
+      "name": "std.compiler.nox.const_parse",
+      "source_bytes": 5842,
+      "functions": 7
+    },
+    {
+      "position": 47,
+      "stop_stage": 147,
+      "graph_owner": 51,
+      "job_index": 7,
+      "name": "std.compiler.nox.attributes",
+      "source_bytes": 4940,
+      "functions": 5
+    },
+    {
+      "position": 48,
+      "stop_stage": 148,
+      "graph_owner": 52,
+      "job_index": 47,
+      "name": "std.compiler.nox.header_state",
+      "source_bytes": 1995,
+      "functions": 2
+    },
+    {
+      "position": 49,
+      "stop_stage": 149,
+      "graph_owner": 55,
+      "job_index": 4,
+      "name": "std.compiler.nox.array_size",
+      "source_bytes": 2623,
+      "functions": 3
+    },
+    {
+      "position": 50,
+      "stop_stage": 150,
+      "graph_owner": 54,
+      "job_index": 84,
+      "name": "std.compiler.nox.type_parse",
+      "source_bytes": 5195,
+      "functions": 3
+    },
+    {
+      "position": 51,
+      "stop_stage": 151,
+      "graph_owner": 53,
+      "job_index": 75,
+      "name": "std.compiler.nox.struct_parse",
+      "source_bytes": 3701,
+      "functions": 2
+    },
+    {
+      "position": 52,
+      "stop_stage": 152,
+      "graph_owner": 49,
+      "job_index": 48,
+      "name": "std.compiler.nox.headers",
+      "source_bytes": 12936,
+      "functions": 13
+    },
+    {
+      "position": 53,
+      "stop_stage": 153,
+      "graph_owner": 61,
+      "job_index": 72,
+      "name": "std.compiler.nox.record_frames",
+      "source_bytes": 2217,
+      "functions": 3
+    },
+    {
+      "position": 54,
+      "stop_stage": 154,
+      "graph_owner": 62,
+      "job_index": 37,
+      "name": "std.compiler.nox.expression_state",
+      "source_bytes": 1314,
+      "functions": 1
+    },
+    {
+      "position": 55,
+      "stop_stage": 155,
+      "graph_owner": 60,
+      "job_index": 73,
+      "name": "std.compiler.nox.record_parse",
+      "source_bytes": 7994,
+      "functions": 7
+    },
+    {
+      "position": 56,
+      "stop_stage": 156,
+      "graph_owner": 59,
+      "job_index": 68,
+      "name": "std.compiler.nox.qualified_call",
+      "source_bytes": 1167,
+      "functions": 1
+    },
+    {
+      "position": 57,
+      "stop_stage": 157,
+      "graph_owner": 64,
+      "job_index": 16,
+      "name": "std.compiler.nox.call_frames",
+      "source_bytes": 1172,
+      "functions": 2
+    },
+    {
+      "position": 58,
+      "stop_stage": 158,
+      "graph_owner": 65,
+      "job_index": 67,
+      "name": "std.compiler.nox.purity",
+      "source_bytes": 2925,
+      "functions": 2
+    },
+    {
+      "position": 59,
+      "stop_stage": 159,
+      "graph_owner": 63,
+      "job_index": 18,
+      "name": "std.compiler.nox.call_parse",
+      "source_bytes": 5978,
+      "functions": 4
+    },
+    {
+      "position": 60,
+      "stop_stage": 160,
+      "graph_owner": 66,
+      "job_index": 49,
+      "name": "std.compiler.nox.index_parse",
+      "source_bytes": 3023,
+      "functions": 2
+    },
+    {
+      "position": 61,
+      "stop_stage": 161,
+      "graph_owner": 67,
+      "job_index": 45,
+      "name": "std.compiler.nox.group_parse",
+      "source_bytes": 3865,
+      "functions": 3
+    },
+    {
+      "position": 62,
+      "stop_stage": 162,
+      "graph_owner": 68,
+      "job_index": 3,
+      "name": "std.compiler.nox.array_parse",
+      "source_bytes": 3401,
+      "functions": 4
+    },
+    {
+      "position": 63,
+      "stop_stage": 163,
+      "graph_owner": 58,
+      "job_index": 36,
+      "name": "std.compiler.nox.expression",
+      "source_bytes": 14226,
+      "functions": 8
+    },
+    {
+      "position": 64,
+      "stop_stage": 164,
+      "graph_owner": 71,
+      "job_index": 81,
+      "name": "std.compiler.nox.tuple_pattern",
+      "source_bytes": 2139,
+      "functions": 4
+    },
+    {
+      "position": 65,
+      "stop_stage": 165,
+      "graph_owner": 72,
+      "job_index": 79,
+      "name": "std.compiler.nox.tuple_bind",
+      "source_bytes": 3341,
+      "functions": 1
+    },
+    {
+      "position": 66,
+      "stop_stage": 166,
+      "graph_owner": 70,
+      "job_index": 80,
+      "name": "std.compiler.nox.tuple_declarations",
+      "source_bytes": 3402,
+      "functions": 3
+    },
+    {
+      "position": 67,
+      "stop_stage": 167,
+      "graph_owner": 69,
+      "job_index": 32,
+      "name": "std.compiler.nox.declarations",
+      "source_bytes": 3337,
+      "functions": 1
+    },
+    {
+      "position": 68,
+      "stop_stage": 168,
+      "graph_owner": 74,
+      "job_index": 28,
+      "name": "std.compiler.nox.contexts",
+      "source_bytes": 1630,
+      "functions": 2
+    },
+    {
+      "position": 69,
+      "stop_stage": 169,
+      "graph_owner": 75,
+      "job_index": 57,
+      "name": "std.compiler.nox.loop_records",
+      "source_bytes": 1065,
+      "functions": 3
+    },
+    {
+      "position": 70,
+      "stop_stage": 170,
+      "graph_owner": 73,
+      "job_index": 30,
+      "name": "std.compiler.nox.control_parse",
+      "source_bytes": 4497,
+      "functions": 3
+    },
+    {
+      "position": 71,
+      "stop_stage": 171,
+      "graph_owner": 76,
+      "job_index": 56,
+      "name": "std.compiler.nox.loop_parse",
+      "source_bytes": 4460,
+      "functions": 2
+    },
+    {
+      "position": 72,
+      "stop_stage": 172,
+      "graph_owner": 77,
+      "job_index": 70,
+      "name": "std.compiler.nox.record_assign",
+      "source_bytes": 2711,
+      "functions": 2
+    },
+    {
+      "position": 73,
+      "stop_stage": 173,
+      "graph_owner": 78,
+      "job_index": 46,
+      "name": "std.compiler.nox.halting",
+      "source_bytes": 751,
+      "functions": 1
+    },
+    {
+      "position": 74,
+      "stop_stage": 174,
+      "graph_owner": 57,
+      "job_index": 10,
+      "name": "std.compiler.nox.body",
+      "source_bytes": 8005,
+      "functions": 8
+    },
+    {
+      "position": 75,
+      "stop_stage": 175,
+      "graph_owner": 80,
+      "job_index": 78,
+      "name": "std.compiler.nox.terminal",
+      "source_bytes": 2396,
+      "functions": 2
+    },
+    {
+      "position": 76,
+      "stop_stage": 176,
+      "graph_owner": 79,
+      "job_index": 31,
+      "name": "std.compiler.nox.coverage",
+      "source_bytes": 4697,
+      "functions": 5
+    },
+    {
+      "position": 77,
+      "stop_stage": 177,
+      "graph_owner": 56,
+      "job_index": 19,
+      "name": "std.compiler.nox.check_functions",
+      "source_bytes": 4607,
+      "functions": 4
+    },
+    {
+      "position": 78,
+      "stop_stage": 178,
+      "graph_owner": 82,
+      "job_index": 43,
+      "name": "std.compiler.nox.function_order",
+      "source_bytes": 5698,
+      "functions": 9
+    },
+    {
+      "position": 79,
+      "stop_stage": 179,
+      "graph_owner": 83,
+      "job_index": 17,
+      "name": "std.compiler.nox.call_graph",
+      "source_bytes": 4925,
+      "functions": 5
+    },
+    {
+      "position": 80,
+      "stop_stage": 180,
+      "graph_owner": 81,
+      "job_index": 44,
+      "name": "std.compiler.nox.function_plan",
+      "source_bytes": 2618,
+      "functions": 3
+    },
+    {
+      "position": 81,
+      "stop_stage": 181,
+      "graph_owner": 87,
+      "job_index": 55,
+      "name": "std.compiler.nox.loop_gen",
+      "source_bytes": 3357,
+      "functions": 6
+    },
+    {
+      "position": 82,
+      "stop_stage": 182,
+      "graph_owner": 86,
+      "job_index": 8,
+      "name": "std.compiler.nox.block_gen",
+      "source_bytes": 4491,
+      "functions": 7
+    },
+    {
+      "position": 83,
+      "stop_stage": 183,
+      "graph_owner": 88,
+      "job_index": 35,
+      "name": "std.compiler.nox.entry_frame",
+      "source_bytes": 833,
+      "functions": 1
+    },
+    {
+      "position": 84,
+      "stop_stage": 184,
+      "graph_owner": 85,
+      "job_index": 29,
+      "name": "std.compiler.nox.control_gen",
+      "source_bytes": 4472,
+      "functions": 5
+    },
+    {
+      "position": 85,
+      "stop_stage": 185,
+      "graph_owner": 89,
+      "job_index": 21,
+      "name": "std.compiler.nox.code_plan",
+      "source_bytes": 2036,
+      "functions": 3
+    },
+    {
+      "position": 86,
+      "stop_stage": 186,
+      "graph_owner": 84,
+      "job_index": 41,
+      "name": "std.compiler.nox.function_gen",
+      "source_bytes": 4938,
+      "functions": 3
+    },
+    {
+      "position": 87,
+      "stop_stage": 187,
+      "graph_owner": 90,
+      "job_index": 52,
+      "name": "std.compiler.nox.intrinsic_plan",
+      "source_bytes": 1599,
+      "functions": 2
+    },
+    {
+      "position": 88,
+      "stop_stage": 188,
+      "graph_owner": 22,
+      "job_index": 66,
+      "name": "std.compiler.nox.parser",
+      "source_bytes": 2977,
+      "functions": 3
+    },
+    {
+      "position": 89,
+      "stop_stage": 189,
+      "graph_owner": 92,
+      "job_index": 23,
+      "name": "std.compiler.nox.const_module",
+      "source_bytes": 3466,
+      "functions": 4
+    },
+    {
+      "position": 90,
+      "stop_stage": 190,
+      "graph_owner": 91,
+      "job_index": 59,
+      "name": "std.compiler.nox.module_functions",
+      "source_bytes": 6045,
+      "functions": 4
+    },
+    {
+      "position": 91,
+      "stop_stage": 191,
+      "graph_owner": 93,
+      "job_index": 58,
+      "name": "std.compiler.nox.module_function_order",
+      "source_bytes": 11204,
+      "functions": 17
+    },
+    {
+      "position": 92,
+      "stop_stage": 192,
+      "graph_owner": 9,
+      "job_index": 65,
+      "name": "std.compiler.nox.package_compile",
+      "source_bytes": 3968,
+      "functions": 3
+    },
+    {
+      "position": 93,
+      "stop_stage": 193,
+      "graph_owner": 0,
+      "job_index": 0,
+      "name": "native_compiler",
+      "source_bytes": 581,
+      "functions": 1
+    }
+  ]
+}

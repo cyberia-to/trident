@@ -1,0 +1,6 @@
+# Archived bytes are source-bound on every native checkout.
+retained/** -text
+delivery/inherited-rust-workspace/** -text
+# Exact original raw command output, never authored source.
+delivery/inherited-rust-workspace/stdout -whitespace
+delivery/inherited-rust-workspace/stderr -whitespace

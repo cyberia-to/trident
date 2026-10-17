@@ -1,0 +1,8 @@
+{
+  "status": "failed-root-format-probe",
+  "operation": "Classify JSON-looking archive text before copy",
+  "exception": "AssertionError",
+  "cause": "The initial probe assumed every non-JSON bracket-leading file was a Git commit stdout under 512 bytes; the first object was the 813-byte Markdown paragraph proposal.",
+  "object_sha256": "191e2b6dba185fe995da8c88f627c709ad2c800552e001a8d91f23a3110b413c",
+  "effect": "Read-only probe; no original/source/destination mutation."
+}

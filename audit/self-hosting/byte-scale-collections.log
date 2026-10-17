@@ -1,0 +1,28 @@
+   Compiling trident-lang v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident)
+   Compiling cyber-nox v0.3.0 (/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox/rs)
+    Finished `release` profile [optimized] target(s) in 21.18s
+     Running tests/native_collections.rs (../target-byte-scale/release/deps/native_collections-1b2e58c737a11af6)
+
+running 19 tests
+test bytes_table::callers_cannot_forge_or_replace_a_byte_tables_validated_storage ... ok
+test only_the_library_can_construct_validated_collection_handles ... ok
+test sequence_updates_keep_pair_leaves_padding_and_old_roots ... ok
+test byte_word_arithmetic_handles_the_last_u32_index ... ok
+test packed_bytes_preserve_exact_values_and_persistent_updates ... ok
+test singleton_tree_shortcuts_preserve_pair_leaves_snapshots_and_bounds ... ok
+test bytes_table::byte_table_reads_and_appends_enforce_their_bounds ... ok
+test raw_tree_geometry_and_updates_cover_height_32_without_wrapping ... ok
+test sparse_bytes_append_to_the_last_u32_length_without_word_count_overflow ... ok
+test collection_operations_reject_bounds_byte_range_and_append_caps ... ok
+test malformed_wrappers_tags_branches_and_padding_fail_admission ... ok
+test bytes_table::byte_tables_retain_validated_handles_after_the_shared_allowance_is_spent ... ok
+test tree_geometry_matches_integer_bit_length_at_every_u32_power_boundary ... ok
+test sequence_validation_matches_the_visit_budget_across_chunks ... ok
+test successive_collections_share_one_allowance_and_return_exact_remainder ... ok
+test bytes_validation_charges_shape_and_word_reads_to_one_allowance ... ok
+test bytes_table::retrieved_byte_handles_keep_word_boundaries_after_updates_and_appends ... ok
+test byte_reads::every_byte_value_survives_each_packed_lane_without_neighbor_contamination ... ok
+test indexed_reads::indexed_reads_preserve_pair_leaves_at_every_u32_height_and_reject_the_end ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.70s
+

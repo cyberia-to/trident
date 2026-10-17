@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/bootstrap-results/source-transport-platforms/replay.py", line 90, in <module>
+    main()
+    ~~~~^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/bootstrap-results/source-transport-platforms/replay.py", line 43, in main
+    require(not parent.samefile(ROOT), 'output overlaps retained inputs')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/portable-native-smoke/trident-transport-ci/audit/self-hosting/bootstrap-results/source-transport-platforms/replay.py", line 19, in require
+    raise ValueError(message)
+ValueError: output overlaps retained inputs

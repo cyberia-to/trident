@@ -1,0 +1,7 @@
+{
+  "status": "corrected-raw-log-attribute",
+  "original_commit": "73ec705a",
+  "original_check": "git diff --cached --check",
+  "original_error": "build-1/test.stdout:15: new blank line at EOF.",
+  "reason": "The exact Rust test stdout contains a final blank line. Preserve its recorded bytes and scope whitespace handling to that single raw log. The original sequential shell erroneously continued to commit after the diff check; history is preserved."
+}

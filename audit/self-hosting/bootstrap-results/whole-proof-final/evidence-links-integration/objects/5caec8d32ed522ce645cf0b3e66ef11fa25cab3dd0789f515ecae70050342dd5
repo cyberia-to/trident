@@ -1,0 +1,60 @@
+{
+  "status": "committed-clean",
+  "base": "9e1af832543a21def306dac84ff918cbb823653d",
+  "head": "be137e7fa582198f13b2afe7f54d29a2aba4db48",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "audit/README.md"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+      "exit_code": 0,
+      "label": "add"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+      "exit_code": 0,
+      "label": "check"
+    },
+    {
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "docs: make cross-repository evidence links resolve on GitHub"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+      "exit_code": 0,
+      "label": "commit"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+      "exit_code": 0,
+      "label": "head"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/trisha-delivery-docs-20261002/trisha",
+      "exit_code": 0,
+      "label": "clean"
+    }
+  ]
+}

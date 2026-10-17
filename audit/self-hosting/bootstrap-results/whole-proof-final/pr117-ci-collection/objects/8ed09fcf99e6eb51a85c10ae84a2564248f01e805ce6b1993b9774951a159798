@@ -1,0 +1,7 @@
+# One owner offline matrix replay
+
+Run only after the exact frozen v4 collector and wrapper both pass. Authenticate the three terminal identities, full72 source map and root gate, then execute frozen replay.py once with --output fixed sibling pr117-completion-v4-owner-replay-1. The wrapper/source/log scope is pr117-completion-v4-owner-replay-wrapper-1; ROOT and OWNER_WRAPPER alias the same directory and are counted once.
+
+Reuse the reviewed peer runner guard:1200 seconds,1MiB each stdout/stderr, per-file32MiB, combined owner result plus entire wrapper scope32MiB with2MiB terminal reserve. Original6scopes, owner result/wrapper and peer preparation participate in deduplicated3GiB shared accounting and8GiB free floor. Minimal offline environment disables Git lazy fetch/config/prompt and contains no credential. No native executable, compiler, corpus, proof or transport runs.
+
+Retain primary failure before cleanup, use exact reviewed owned-group stop, and never retry this replay. A passed result must bind all37archives+logs,12native producers,24corpus jobs and exact compiler/run. Root reviews this wrapper before execution.

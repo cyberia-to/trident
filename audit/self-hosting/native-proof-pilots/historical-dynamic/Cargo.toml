@@ -1,0 +1,14 @@
+[package]
+name = "sh7-historical-dynamic-fixture"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[[bin]]
+name = "sh7-historical-dynamic-fixture"
+path = "main.rs"
+
+[dependencies]
+joy-rs = { path = "../../../../../joy/rs" }
+nox = { package = "cyber-nox", path = "../../../../../nox/rs" }

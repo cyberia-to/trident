@@ -1,0 +1,72 @@
+{
+  "status": "passed-source-review",
+  "sources": {
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/admission.py": {
+      "bytes": 8940,
+      "sha256": "9b951197b38b299fa8c4cbbcc64b912e71294c244245b5593c6bcba110846740"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run.py": {
+      "bytes": 9940,
+      "sha256": "72ecb4c1c60a6d731c6cd2edf0d0e7581e59e86be01b7de355b393fbedd550b1"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/test_admission.py": {
+      "bytes": 7216,
+      "sha256": "d08a7ae8719a556b49e2c30f344c20f0cbadab378ac1068e61bd9c5a6b155734"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/test_run.py": {
+      "bytes": 6012,
+      "sha256": "da16b6fadab994bb874a49f4a6499938008379467848523238fe9813dccad8bf"
+    },
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/PLAN.md": {
+      "bytes": 4741,
+      "sha256": "91bebe51f31154d2cffa76e15c383acb6cd80f0767e3a5aa99b87b1942f3765f"
+    }
+  },
+  "source_manifest": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/sources.json",
+    "bytes": 1236,
+    "sha256": "a8e116fcb5bd0cdea5fa2a46a57f01e178cc5cf5a9d73a93a0ffb60f4fc69f9c"
+  },
+  "reviewed_at_ns": 1790979300473332000,
+  "validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/root-validation-1/receipt.json",
+    "bytes": 1016,
+    "sha256": "2ba1a0ca71fd23f85e3ed101e3536054ddc8d2bfe83b064b7f166475a2b5b396"
+  },
+  "preparation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/preparation/receipt.json",
+    "bytes": 5832,
+    "sha256": "e48b990e48a026eb71f0734452a229eab0dc814f15e640bf65036dbff6bc5bcf"
+  },
+  "original_failed_invocation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/prelaunch-failure-1/receipt.json",
+    "bytes": 2931,
+    "sha256": "ac0b973ef0a9eedb30e0b87de9360a4638326be7e1b8fd0a9f154fea8645e752"
+  },
+  "original_source_gate": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay/root-review.json",
+    "bytes": 5036,
+    "sha256": "50a39e83c5f6d809ecd1373429d85c757fac26cb10d18aa0d9792656efb2fc8b"
+  },
+  "owner_wrapper": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-owner-replay-wrapper-1/receipt.json",
+    "bytes": 5788,
+    "sha256": "c11262868beadb7cfc0d514b8a765f0cac60318565066cc12335bb4b80387e43"
+  },
+  "conclusions": [
+    "Read full v2diff against previously reviewed dce695 source, new tests and plan. Only reported interpreter admission and oldpeer accounting change production behavior.",
+    "Reported absolute interpreter must resolve to exact selectedCellar path and match its52,448B/2477b47f identity; every trailing argument remains exact. Other interpreter paths/bytes and altered argv are rejected by fixtures.",
+    "Actual small selectedCellar invocation under quietENV reproduced opt alias with identical resolved executable identity; no cause inferred.",
+    "Original dce695 source and pre-spawn failure remain immutable in separate scope; all82 original owner source closure identities rehashed successfully.",
+    "Oldpeer scope is included in admission/atomic/final3GiB accounting and remains byte-size stable; original1200s/32MiB/1MiB/8GiB bounds and cleanup are unchanged.",
+    "30 final tests passed independently. No actual matrix replay has run under v2."
+  ],
+  "authorized_once": {
+    "output": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-ci/pr117-completion-v4-independent-replay-v2/run-1",
+    "condition": "same exact four passed terminal prerequisites and selected source/review; one frozen offline matrix replay only"
+  },
+  "limitations": [
+    "The original peer invocation failed before child spawn; v2 source review is not itself matrix acceptance.",
+    "Aggregate child output remains sampled with per-file OS bound as in original reviewed runner."
+  ]
+}

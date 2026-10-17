@@ -1,0 +1,269 @@
+{
+  "archive": {
+    "archive": {
+      "bytes": 18476509,
+      "sha256": "c5c6b07d6ff6ba65e680fddb17297810a9b9d60222356b010b906c82d9d9177b"
+    },
+    "complete_original_bytes": 36087856,
+    "complete_original_files": 6699,
+    "complete_original_scope": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-corpus-v2",
+    "files": 6731,
+    "fixture_revision": "2f1a575a6fbc0704c268f1ae21667830a3c996df",
+    "inventory": {
+      "bytes": 2805571,
+      "sha256": "566b8fb950c84f629ef5a47a9eb5eb653e600f78769af78936ec796ce7ae2a5b"
+    },
+    "joy_revision": "6e0ec4d8440e2521df08f442d64f54e667044716",
+    "logical_bytes": 61907247,
+    "prepared_inventory": {
+      "bytes": 3909,
+      "sha256": "7fb109ee6c3d23a0dd6d08de94e966ab41c74fb4a8843cde779d57fbb3b11357"
+    },
+    "prior_failure_archive": {
+      "bytes": 3634107,
+      "sha256": "fd22445b088056736e212d457c2c3d64220d5169ba7edb211f32cbc0e9087ad4"
+    },
+    "schema": "trident/whole-proof-corpus-delivery/v1",
+    "scope": "Measured C2/C3 corpus results and exact supporting bytes; SH8 acceptance pending."
+  },
+  "commands": [
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result",
+        "-p",
+        "test_delivery.py",
+        "-v"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925431370819000,
+      "exit_code": 0,
+      "name": "tests",
+      "started_ns": 1790925430363659000,
+      "stderr": {
+        "bytes": 1963,
+        "sha256": "ef4bb08206ee27e307664d5d0ee194fa94a33c74a99ca1629a7d3961036b054c"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result/check_delivery.py",
+        "--originals"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925432052683000,
+      "exit_code": 0,
+      "name": "replay",
+      "started_ns": 1790925431370833000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1134,
+        "sha256": "7fe983b83a945233db54865d1bef8c4033148cff4b93c91d64463859a05c66b1"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-validation/corpus-v2/check_delivery.py"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925432203956000,
+      "exit_code": 0,
+      "name": "prior-failure",
+      "started_ns": 1790925432052702000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 221,
+        "sha256": "9343213519f270749febe631532ea35ef24fbfbbc786c688f225b75e1692cbc6"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925432214581000,
+      "exit_code": 0,
+      "name": "head",
+      "started_ns": 1790925432203974000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "sha256": "cda67d685a2519b7e8d4097691c84a953b65cdaecfaeab46854ca13b484f3134"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code",
+        "HEAD",
+        "--"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925432235620000,
+      "exit_code": 0,
+      "name": "tracked-diff",
+      "started_ns": 1790925432214599000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925432256118000,
+      "exit_code": 0,
+      "name": "whitespace",
+      "started_ns": 1790925432235643000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925432297341000,
+      "exit_code": 0,
+      "name": "status",
+      "started_ns": 1790925432256135000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2767,
+        "sha256": "3d8de856e10785a806dc4803dba2cb9c53d40224237dc01619465ea723bb4dcc"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-B",
+        "-W",
+        "error",
+        "-c",
+        "import json, sys, tempfile\nfrom pathlib import Path\nsys.path.insert(0, sys.argv[1])\nimport package\nroot = Path(sys.argv[1])\nold = json.loads((root / 'archive.json').read_bytes())\nsource = Path(old['complete_original_scope']).parent\nwith tempfile.TemporaryDirectory(prefix='repack-', dir=root) as temporary:\n    new = package.package(source, Path(temporary))\n    if new != old:\n        raise ValueError('deterministic package mismatch')\n    print(json.dumps({'status': 'passed', 'archive': new['archive'], 'files': new['files']}))\n",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident/audit/self-hosting/whole-proof-corpus-v2-result"
+      ],
+      "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-validation-v2/trident",
+      "ended_ns": 1790925434524351000,
+      "exit_code": 0,
+      "name": "repack",
+      "started_ns": 1790925432297358000,
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 146,
+        "sha256": "9674b6f9116cdeac802909813e23393ed89403b250e33a7032d4d61545431bb3"
+      }
+    }
+  ],
+  "expected_base": "8cb43f652501bf7689211bae793ac1757eb125b7",
+  "packaging_command": [
+    "python3",
+    "-B",
+    "-W",
+    "error",
+    "audit/self-hosting/whole-proof-corpus-v2-result/package.py",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002",
+    "audit/self-hosting/whole-proof-corpus-v2-result"
+  ],
+  "preserved_development_failures": [
+    "check-first.stderr",
+    "check-second.stderr",
+    "check-third.stderr",
+    "tests.stderr",
+    "replay.stderr"
+  ],
+  "python": {
+    "executable": "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "identity": {
+      "bytes": 52448,
+      "sha256": "2477b47fa3ae65b9574eb18a15edb364e96948eaa1875ad3f1c80d780efc9c12"
+    },
+    "version": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 21.0.0 (clang-2100.0.123.102)]"
+  },
+  "repository_base": "8cb43f652501bf7689211bae793ac1757eb125b7",
+  "runtime_gate_scope": "No new Rust/runtime gate is claimed by this audit-only evidence delivery.",
+  "schema": "trident/whole-proof-corpus-delivery-validation/v1",
+  "source_impact": "Only the new audit/self-hosting/whole-proof-corpus-v2-result/ directory. No tracked source changed.",
+  "sources": {
+    "README.md": {
+      "bytes": 5229,
+      "sha256": "769c41cfa5cfa77eebae0593c3e68a98ff628aaa86e0583f37308bada5433162"
+    },
+    "check_delivery.py": {
+      "bytes": 3998,
+      "sha256": "eab0e1fb8d326b47e9526534ec10df28fccf5c2dc58097a8ba263fd8a6b3ca71"
+    },
+    "check_relations.py": {
+      "bytes": 13946,
+      "sha256": "6948417508679d6d66ef8dfeb9bfed6f0d56a65bfe133c806589cd72f66da5e0"
+    },
+    "package.py": {
+      "bytes": 5292,
+      "sha256": "17c7455a41ab308ef5a01523cd70ac6b2996b2c533b90e0f6fd44ec3e915cf3a"
+    },
+    "test_delivery.py": {
+      "bytes": 7319,
+      "sha256": "f7bf728c74adc3b5e5eaf09eafb2f70178a515a49a9900ff0e4782443b63afdf"
+    },
+    "validate.py": {
+      "bytes": 4134,
+      "sha256": "4968c83a6453c1ed13e5d66b7c9b93224d8e9ce190b9e432c274b46833cbf208"
+    }
+  },
+  "sources_unchanged": true,
+  "status": "passed"
+}

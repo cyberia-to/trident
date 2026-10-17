@@ -1,0 +1,121 @@
+"""Collector admission is a projection of exact accepted F5, never a proof verifier."""
+from pathlib import Path
+from safe_io import require, exact_identity
+
+F5 = 'whole-proof-final-review-v5'
+V5 = 'whole-proof-attacks-completion-v5'
+WATCH = 'whole-proof-final-launch-v5/orchestration'
+NEW = ('cost', 'valid-output-payload', 'valid-output-topology',
+       'valid-output-payload-rebound', 'valid-output-topology-rebound',
+       'omit-terminal', 'drop-first', 'swap-first-two', 'omit-completion',
+       'truncate-last-byte', 'trailing-byte')
+PRIOR = tuple(f'{mode}-{name}' for name in ('compiler','source','dependency','cfg')
+              for mode in ('binding','rebound')) + ('binding-job-limit',)
+ADDITIONAL = ('rebound-job-limit', 'continuation', 'generation')
+
+
+def fresh(g):
+    return NEW if g == 1 else NEW[1:]
+
+
+def prerequisites():
+    paths = {f'whole-proof/attempts/c{g}-{stage}-1/receipt.json': 'passed'
+             for g in (1, 2) for stage in ('selfbuild', 'fresh-verification')}
+    paths.update({f'whole-proof-attacks-v5-c{g}/whole-c{g}/receipt.json': 'passed-completion'
+                  for g in (1, 2)})
+    paths[V5+'/run-1/receipt.json'] = 'passed'
+    paths['whole-proof-corpus-v2/orchestration/receipt.json'] = 'passed'
+    paths.update({f'whole-proof-corpus-v2/c{g}/receipt.json': 'passed' for g in (2, 3)})
+    return paths
+
+
+def numbers(row, keys):
+    result = {}
+    for key in keys:
+        value = row[key]
+        require(type(value) in (int, float) and 0 <= value < float('inf'), 'finite measured '+key)
+        result[key] = value
+    return result
+
+
+def accept(base, policy, locked, watcher, result, observed, identity):
+    """Only typed allowlisted result fields leave this function."""
+    require(watcher['schema'] == 'trident/composite-final-review-watcher/v5'
+            and watcher['status'] == 'passed' and watcher['checker_launched'] is True
+            and watcher['exit_code'] == 0 and not watcher.get('error')
+            and not watcher.get('cleanup_error'), 'actual terminal watcher pass')
+    require(watcher['source_manifest_sha256'] == policy['locked'][F5+'/sources.json']['sha256']
+            and watcher['independent_review_sha256'] == policy['locked'][F5+'/independent-review.json']['sha256'],
+            'watcher exact frozen F5 identities')
+    for key, value in dict(readiness_timeout_seconds=86400, runtime_timeout_seconds=3600,
+                           poll_seconds=30, stable_pass_observations_required=2).items():
+        require(watcher[key] == value, 'unchanged watcher limits')
+    manifest = locked[F5+'/sources.json']
+    require(watcher['reviewed_sources'] == result['checker_sources'] == manifest,
+            'same reviewed checker sources')
+    require(exact_identity(result['independent_review']) == policy['locked'][F5+'/independent-review.json'],
+            'actual result exact independent review')
+    require(result['schema'] == 'trident/proved-self-build-local-review/v5'
+            and result['status'] == 'passed-composite-replay' and not result.get('error'), 'actual F5 pass')
+    expected = prerequisites()
+    require(set(watcher['observed_statuses']) == {str(base/p) for p in expected}, 'exact ten prerequisites')
+    for name, status in expected.items():
+        recorded = watcher['observed_statuses'][str(base/name)]
+        require(recorded == dict(status=status, required=status, identity=identity(name))
+                and observed[name]['status'] == status, 'watcher binds unchanged actual prerequisite')
+    run = observed[V5+'/run-1/receipt.json']
+    require(run['phase'] == 'complete' and run['inputs_unchanged'] is True
+            and not any(run.get(k) for k in ('error','cleanup','cleanup_error')),
+            'complete V5 without hidden failure')
+    require(run['source'] == locked[V5+'/sources.json'], 'V5 exact source closure')
+    require(run['plan'] == policy['locked'][V5+'/plan.json']
+            and exact_identity(run['independent_review']) == policy['locked'][V5+'/independent-review.json'],
+            'V5 exact reviewed plan')
+    schedule = result['completion_schedule']
+    require(schedule['native_commands'] == 42 and schedule['capacity_permits'] == 23,
+            'all sequential native commands and admission permits')
+    require(exact_identity(schedule['receipt']) == identity(V5+'/run-1/receipt.json'), 'schedule binds controller')
+    require([g['generation'] for g in result['generations']] == [1,2], 'two ordered generations')
+    generations = []
+    for g, row in zip((1,2), result['generations']):
+        suite = observed[f'whole-proof-attacks-v5-c{g}/whole-c{g}/receipt.json']
+        require(suite['generation'] == g and suite['original_proof'] == policy['proofs'][str(g)]
+                and not suite.get('error') and not suite.get('input_error')
+                and suite['immutable_inputs_before'] == suite['immutable_inputs_after'], 'unchanged completed suite')
+        require([r['name'] for r in suite['rejections']] == list(fresh(g)), 'exact fresh case partition')
+        case = row['composite_cases']
+        require(case['status'] == 'passed-case-replay' and case['distinct_rejections'] == 23
+                and case['reused_controls'] == 2 and case['original_v2_status'] == 'failed'
+                and case['original_v3_status'] == 'failed' and case['original_v4_status'] == 'input-changed',
+                'completed case replay preserves failed histories')
+        require(set(case['reused_v2_rejections']) == set(PRIOR) and len(case['reused_v2_rejections']) == 9
+                and case['reused_v3_rejections'] == list(ADDITIONAL)
+                and case['fresh_v5_rejections'] == list(fresh(g)), 'exact 9 + 3 + fresh names')
+        require((case['c2_cost'] is None) == (g == 1), 'C2 selected V4 cost is separate')
+        if g == 2:
+            require(case['c2_cost']['original_suite_status'] == 'input-changed'
+                    and case['c2_cost']['original_controller_status'] == 'failed', 'original V4 outcomes unchanged')
+        require(row['proof'] == policy['proofs'][str(g)] and row['corpus_observations'] == 547,
+                'exact full proof and complete extracted compiler corpus')
+        verify = row['verification']
+        require(verify['format'] == 'joy-nox-disclosed-compiler-v1'
+                and verify['disclosure'] == 'complete public witness'
+                and verify['physical_resource_claim'] == 'unattested', 'exact public full-witness profile')
+        for field, name in (('producer_receipt',f'whole-proof/attempts/c{g}-selfbuild-1/receipt.json'),
+                            ('verifier_receipt',f'whole-proof/attempts/c{g}-fresh-verification-1/receipt.json'),
+                            ('corpus_receipt',f'whole-proof-corpus-v2/c{g+1}/receipt.json')):
+            require(row[field] == identity(name), 'positive/corpus receipt bound to actual F5')
+        require(exact_identity(case['suite']) == identity(f'whole-proof-attacks-v5-c{g}/whole-c{g}/receipt.json'),
+                'case replay binds actual suite')
+        generations.append(dict(generation=g, proof=exact_identity(row['proof']),
+                                compiler=exact_identity(row['compiler']), corpus_observations=547,
+                                prior_v2=list(PRIOR), prior_v3=list(ADDITIONAL), fresh_v5=list(fresh(g)),
+                                selected_v4_cost=(g == 2), distinct_rejections=23, original_controls=2,
+                                **numbers(row,('prove_seconds','verify_seconds','sampled_prove_rss_bytes','sampled_verify_rss_bytes'))))
+    require(generations[0]['compiler'] == generations[1]['compiler'], 'extracted compiler fixed point')
+    return dict(schema='trident/final-delivery-public-summary/v1',
+                status='accepted-local-F5-projection', generations=generations,
+                profile='joy-nox-disclosed-compiler-v1', disclosure='complete public witness',
+                physical_resource_claim='unattested', native_commands=42, capacity_permits=23,
+                prior_statuses={'v2':'failed','v3':'failed','v4':'input-changed'},
+                scope='Projection of exact original local F5 acceptance. Full original receipts stay private. Durable proof retention, native CI, package delivery, version changes and owner publication have separate evidence and verdicts.')

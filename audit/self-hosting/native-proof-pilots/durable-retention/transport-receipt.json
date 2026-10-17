@@ -1,0 +1,1801 @@
+{
+  "schema": "trident/sh7-chunk-transport/v1",
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "transport.py",
+    "--parts",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/parts",
+    "--output",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/run-1"
+  ],
+  "started_utc": "2026-10-02T03:41:28.880538+00:00",
+  "repository": "cyberia-to/trisha",
+  "release_id": 389977897,
+  "tag": "candidate-20260916.1",
+  "archive": {
+    "bytes": 602191451,
+    "sha256": "fa0f99785b4f499067683949a4126a1e4837558fbd421c0c4d61fedc39000d61"
+  },
+  "part_manifest": {
+    "bytes": 1435,
+    "sha256": "71da09afe32c78d01bc3a43cd2e80e35a2dd9804fd1e51fd5a1d5cd3f6399f29"
+  },
+  "source": {
+    "transport.py": {
+      "bytes": 8776,
+      "sha256": "172a8aa51fc1a8d47fc5693a2c841c480ede154204249e3c91577d5787321991"
+    },
+    "chunks.py": {
+      "bytes": 5136,
+      "sha256": "82278c7c2baef6b2e6d780ee29978783059a7aa745b47d05fd1edb2c12d43080"
+    }
+  },
+  "upload_workers": 4,
+  "upload_wall_seconds": 7200,
+  "scope": "Evidence transport only; proof caps unchanged; no tag, publication, overwrite or deletion.",
+  "commands": [
+    {
+      "name": "part-03-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:41:28.935410+00:00",
+      "wall_seconds": 7200,
+      "pid": 98333,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:29.480096+00:00",
+      "elapsed_ns": 544271125,
+      "stdout": {
+        "path": "logs/part-03-before.stdout",
+        "bytes": 44024,
+        "sha256": "f82f6131d249934ae9cb4fcd1e277fb7657f99829405ec1d1a2e69279c47e246"
+      },
+      "stderr": {
+        "path": "logs/part-03-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:41:28.935874+00:00",
+      "wall_seconds": 7200,
+      "pid": 98334,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:29.879526+00:00",
+      "elapsed_ns": 942158792,
+      "stdout": {
+        "path": "logs/part-02-before.stdout",
+        "bytes": 44024,
+        "sha256": "f82f6131d249934ae9cb4fcd1e277fb7657f99829405ec1d1a2e69279c47e246"
+      },
+      "stderr": {
+        "path": "logs/part-02-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:41:28.937423+00:00",
+      "wall_seconds": 7200,
+      "pid": 98335,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:29.480721+00:00",
+      "elapsed_ns": 541777375,
+      "stdout": {
+        "path": "logs/part-01-before.stdout",
+        "bytes": 44024,
+        "sha256": "f82f6131d249934ae9cb4fcd1e277fb7657f99829405ec1d1a2e69279c47e246"
+      },
+      "stderr": {
+        "path": "logs/part-01-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:41:28.940862+00:00",
+      "wall_seconds": 7200,
+      "pid": 98336,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:29.526165+00:00",
+      "elapsed_ns": 584988542,
+      "stdout": {
+        "path": "logs/part-04-before.stdout",
+        "bytes": 44024,
+        "sha256": "f82f6131d249934ae9cb4fcd1e277fb7657f99829405ec1d1a2e69279c47e246"
+      },
+      "stderr": {
+        "path": "logs/part-04-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-before-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:41:29.481428+00:00",
+      "wall_seconds": 7200,
+      "pid": 98348,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:41:30.193403+00:00",
+      "elapsed_ns": 711582042,
+      "stdout": {
+        "path": "logs/part-03-before-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-03-before-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-01-before-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:41:29.481843+00:00",
+      "wall_seconds": 7200,
+      "pid": 98349,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:41:29.926961+00:00",
+      "elapsed_ns": 443958625,
+      "stdout": {
+        "path": "logs/part-01-before-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-01-before-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-04-before-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:41:29.527307+00:00",
+      "wall_seconds": 7200,
+      "pid": 98354,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:41:30.245116+00:00",
+      "elapsed_ns": 717642417,
+      "stdout": {
+        "path": "logs/part-04-before-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-04-before-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-02-before-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:41:29.890777+00:00",
+      "wall_seconds": 7200,
+      "pid": 98357,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:41:30.439573+00:00",
+      "elapsed_ns": 548625667,
+      "stdout": {
+        "path": "logs/part-02-before-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-02-before-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-01-before-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:41:29.927598+00:00",
+      "wall_seconds": 7200,
+      "pid": 98360,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.063219+00:00",
+      "elapsed_ns": 1135472833,
+      "stdout": {
+        "path": "logs/part-01-before-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-01-before-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-before-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:41:30.194295+00:00",
+      "wall_seconds": 7200,
+      "pid": 98364,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.103624+00:00",
+      "elapsed_ns": 909083000,
+      "stdout": {
+        "path": "logs/part-03-before-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-03-before-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-before-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:41:30.245769+00:00",
+      "wall_seconds": 7200,
+      "pid": 98368,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.182156+00:00",
+      "elapsed_ns": 936209416,
+      "stdout": {
+        "path": "logs/part-04-before-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-04-before-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-before-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:41:30.440159+00:00",
+      "wall_seconds": 7200,
+      "pid": 98372,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.336178+00:00",
+      "elapsed_ns": 895836375,
+      "stdout": {
+        "path": "logs/part-02-before-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-02-before-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-before-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:41:31.064138+00:00",
+      "wall_seconds": 7200,
+      "pid": 98382,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.718980+00:00",
+      "elapsed_ns": 654629875,
+      "stdout": {
+        "path": "logs/part-01-before-assets.stdout",
+        "bytes": 43280,
+        "sha256": "e69af9c8006e73d0917141ef501db6d3f9085254330038ce7d93b3f77a422646"
+      },
+      "stderr": {
+        "path": "logs/part-01-before-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-before-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:41:31.104235+00:00",
+      "wall_seconds": 7200,
+      "pid": 98385,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.602042+00:00",
+      "elapsed_ns": 497619250,
+      "stdout": {
+        "path": "logs/part-03-before-assets.stdout",
+        "bytes": 43280,
+        "sha256": "e69af9c8006e73d0917141ef501db6d3f9085254330038ce7d93b3f77a422646"
+      },
+      "stderr": {
+        "path": "logs/part-03-before-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-before-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:41:31.183078+00:00",
+      "wall_seconds": 7200,
+      "pid": 98388,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.730743+00:00",
+      "elapsed_ns": 547466417,
+      "stdout": {
+        "path": "logs/part-04-before-assets.stdout",
+        "bytes": 43280,
+        "sha256": "e69af9c8006e73d0917141ef501db6d3f9085254330038ce7d93b3f77a422646"
+      },
+      "stderr": {
+        "path": "logs/part-04-before-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-before-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:41:31.337109+00:00",
+      "wall_seconds": 7200,
+      "pid": 98393,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:41:31.880947+00:00",
+      "elapsed_ns": 543626542,
+      "stdout": {
+        "path": "logs/part-02-before-assets.stdout",
+        "bytes": 43280,
+        "sha256": "e69af9c8006e73d0917141ef501db6d3f9085254330038ce7d93b3f77a422646"
+      },
+      "stderr": {
+        "path": "logs/part-02-before-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-upload",
+      "argv": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/parts/sh7-fa0f99785b4f-20261002T033741Z.part-03-of-05",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "started_utc": "2026-10-02T03:41:31.603219+00:00",
+      "wall_seconds": 7200,
+      "pid": 98396,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:14.606517+00:00",
+      "elapsed_ns": 943020960000,
+      "stdout": {
+        "path": "logs/part-03-upload.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "logs/part-03-upload.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-upload",
+      "argv": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/parts/sh7-fa0f99785b4f-20261002T033741Z.part-01-of-05",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "started_utc": "2026-10-02T03:41:31.720068+00:00",
+      "wall_seconds": 7200,
+      "pid": 98400,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:02:15.174902+00:00",
+      "elapsed_ns": 1243472479291,
+      "stdout": {
+        "path": "logs/part-01-upload.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "logs/part-01-upload.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-upload",
+      "argv": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/parts/sh7-fa0f99785b4f-20261002T033741Z.part-04-of-05",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "started_utc": "2026-10-02T03:41:31.731712+00:00",
+      "wall_seconds": 7200,
+      "pid": 98401,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:56:49.924261+00:00",
+      "elapsed_ns": 918210251542,
+      "stdout": {
+        "path": "logs/part-04-upload.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "logs/part-04-upload.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-upload",
+      "argv": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/parts/sh7-fa0f99785b4f-20261002T033741Z.part-02-of-05",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "started_utc": "2026-10-02T03:41:31.882035+00:00",
+      "wall_seconds": 7200,
+      "pid": 98410,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:58:03.099173+00:00",
+      "elapsed_ns": 991234785875,
+      "stdout": {
+        "path": "logs/part-02-upload.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "logs/part-02-upload.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-after",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:56:49.925807+00:00",
+      "wall_seconds": 7200,
+      "pid": 2501,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:56:50.785598+00:00",
+      "elapsed_ns": 859338708,
+      "stdout": {
+        "path": "logs/part-04-after.stdout",
+        "bytes": 45585,
+        "sha256": "0d10dafb737b7d91e58c57e71d6cd38104a3f96d92380c96c417b909d6b1fd8c"
+      },
+      "stderr": {
+        "path": "logs/part-04-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-after-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:56:50.786459+00:00",
+      "wall_seconds": 7200,
+      "pid": 2512,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:56:51.283928+00:00",
+      "elapsed_ns": 497265209,
+      "stdout": {
+        "path": "logs/part-04-after-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-04-after-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-04-after-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:56:51.284652+00:00",
+      "wall_seconds": 7200,
+      "pid": 2515,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:56:52.248745+00:00",
+      "elapsed_ns": 963837209,
+      "stdout": {
+        "path": "logs/part-04-after-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-04-after-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-after-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:56:52.249595+00:00",
+      "wall_seconds": 7200,
+      "pid": 2528,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:56:52.793532+00:00",
+      "elapsed_ns": 543718167,
+      "stdout": {
+        "path": "logs/part-04-after-assets.stdout",
+        "bytes": 49314,
+        "sha256": "6fb0fe5848f276e5d7919c5e623bece850c6de08bee382563a99b2e60f5bcbb0"
+      },
+      "stderr": {
+        "path": "logs/part-04-after-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-04-download",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/assets/604735954",
+        "-H",
+        "Accept: application/octet-stream"
+      ],
+      "started_utc": "2026-10-02T03:56:52.794566+00:00",
+      "wall_seconds": 7200,
+      "pid": 2535,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:19.159511+00:00",
+      "elapsed_ns": 26364778958,
+      "stdout": {
+        "path": "downloaded/sh7-fa0f99785b4f-20261002T033741Z.part-04-of-05",
+        "bytes": 134217728,
+        "sha256": "ea91a206859779901695a37af40427fe156c0cdbc5bfae4127f8d5c5abde5f5d"
+      },
+      "stderr": {
+        "path": "logs/part-04-download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-after",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:57:14.607262+00:00",
+      "wall_seconds": 7200,
+      "pid": 2591,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:15.188018+00:00",
+      "elapsed_ns": 580525250,
+      "stdout": {
+        "path": "logs/part-03-after.stdout",
+        "bytes": 47146,
+        "sha256": "705a1642825ffe436a92852b35dcda9d29bf4a18d5a81de3bb4131227b011a38"
+      },
+      "stderr": {
+        "path": "logs/part-03-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-after-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:57:15.188878+00:00",
+      "wall_seconds": 7200,
+      "pid": 2594,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:57:16.040477+00:00",
+      "elapsed_ns": 851390334,
+      "stdout": {
+        "path": "logs/part-03-after-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-03-after-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-03-after-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:57:16.041405+00:00",
+      "wall_seconds": 7200,
+      "pid": 2603,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:16.944658+00:00",
+      "elapsed_ns": 903011916,
+      "stdout": {
+        "path": "logs/part-03-after-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-03-after-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-after-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:57:16.945449+00:00",
+      "wall_seconds": 7200,
+      "pid": 2611,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:17.547008+00:00",
+      "elapsed_ns": 601328875,
+      "stdout": {
+        "path": "logs/part-03-after-assets.stdout",
+        "bytes": 49384,
+        "sha256": "9333a33a54a63cf0c2abfa5d6e206ae7da8c6fedc98bdbd674b63116096b0b21"
+      },
+      "stderr": {
+        "path": "logs/part-03-after-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-03-download",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/assets/604735940",
+        "-H",
+        "Accept: application/octet-stream"
+      ],
+      "started_utc": "2026-10-02T03:57:17.550900+00:00",
+      "wall_seconds": 7200,
+      "pid": 2614,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:58:02.057371+00:00",
+      "elapsed_ns": 44506250833,
+      "stdout": {
+        "path": "downloaded/sh7-fa0f99785b4f-20261002T033741Z.part-03-of-05",
+        "bytes": 134217728,
+        "sha256": "3705cd7cbae3bc26dfeb5031f9be8f7a8388c48ea0bfad0d83d90d5bd0f296c6"
+      },
+      "stderr": {
+        "path": "logs/part-03-download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:57:19.439820+00:00",
+      "wall_seconds": 7200,
+      "pid": 2619,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:20.025320+00:00",
+      "elapsed_ns": 585076709,
+      "stdout": {
+        "path": "logs/part-05-before.stdout",
+        "bytes": 47146,
+        "sha256": "705a1642825ffe436a92852b35dcda9d29bf4a18d5a81de3bb4131227b011a38"
+      },
+      "stderr": {
+        "path": "logs/part-05-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-before-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:57:20.026210+00:00",
+      "wall_seconds": 7200,
+      "pid": 2625,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:57:20.505700+00:00",
+      "elapsed_ns": 474875708,
+      "stdout": {
+        "path": "logs/part-05-before-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-05-before-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-05-before-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:57:20.506400+00:00",
+      "wall_seconds": 7200,
+      "pid": 2629,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:21.411173+00:00",
+      "elapsed_ns": 904551292,
+      "stdout": {
+        "path": "logs/part-05-before-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-05-before-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-before-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:57:21.412051+00:00",
+      "wall_seconds": 7200,
+      "pid": 2640,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:57:22.065060+00:00",
+      "elapsed_ns": 652756583,
+      "stdout": {
+        "path": "logs/part-05-before-assets.stdout",
+        "bytes": 49384,
+        "sha256": "9333a33a54a63cf0c2abfa5d6e206ae7da8c6fedc98bdbd674b63116096b0b21"
+      },
+      "stderr": {
+        "path": "logs/part-05-before-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-upload",
+      "argv": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/parts/sh7-fa0f99785b4f-20261002T033741Z.part-05-of-05",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "started_utc": "2026-10-02T03:57:22.067566+00:00",
+      "wall_seconds": 7200,
+      "pid": 2645,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:03.730263+00:00",
+      "elapsed_ns": 1601622929083,
+      "stdout": {
+        "path": "logs/part-05-upload.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "logs/part-05-upload.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-after",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T03:58:03.099763+00:00",
+      "wall_seconds": 7200,
+      "pid": 2912,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:58:03.649270+00:00",
+      "elapsed_ns": 549276209,
+      "stdout": {
+        "path": "logs/part-02-after.stdout",
+        "bytes": 48707,
+        "sha256": "e415a087beae59b6a503cae751e4c5f4829d9cf4deeef091eb7bdcae42d94a73"
+      },
+      "stderr": {
+        "path": "logs/part-02-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-after-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T03:58:03.650396+00:00",
+      "wall_seconds": 7200,
+      "pid": 2916,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T03:58:04.210846+00:00",
+      "elapsed_ns": 560187750,
+      "stdout": {
+        "path": "logs/part-02-after-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-02-after-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-02-after-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T03:58:04.211692+00:00",
+      "wall_seconds": 7200,
+      "pid": 2920,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:58:05.157658+00:00",
+      "elapsed_ns": 945724833,
+      "stdout": {
+        "path": "logs/part-02-after-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-02-after-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-after-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T03:58:05.158555+00:00",
+      "wall_seconds": 7200,
+      "pid": 2928,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:58:05.706062+00:00",
+      "elapsed_ns": 547266250,
+      "stdout": {
+        "path": "logs/part-02-after-assets.stdout",
+        "bytes": 50944,
+        "sha256": "febb21233266ba25e493497c1ae7a5248cc2c6dcb1d9d000c5d1468868c1af4b"
+      },
+      "stderr": {
+        "path": "logs/part-02-after-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-02-download",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/assets/604735948",
+        "-H",
+        "Accept: application/octet-stream"
+      ],
+      "started_utc": "2026-10-02T03:58:05.707477+00:00",
+      "wall_seconds": 7200,
+      "pid": 2932,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T03:58:31.723674+00:00",
+      "elapsed_ns": 26015980334,
+      "stdout": {
+        "path": "downloaded/sh7-fa0f99785b4f-20261002T033741Z.part-02-of-05",
+        "bytes": 134217728,
+        "sha256": "b13f392403873271f79def35260cf9f58d8a6fffe6ed4f7588ced0e46ccfadc0"
+      },
+      "stderr": {
+        "path": "logs/part-02-download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-after",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T04:02:15.175662+00:00",
+      "wall_seconds": 7200,
+      "pid": 3628,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:02:15.664160+00:00",
+      "elapsed_ns": 488249375,
+      "stdout": {
+        "path": "logs/part-01-after.stdout",
+        "bytes": 50268,
+        "sha256": "3373a186c2205a8d22cd132d4c2b8f44a8898ccc36f5f9348d478e60084d0aea"
+      },
+      "stderr": {
+        "path": "logs/part-01-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-after-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T04:02:15.665360+00:00",
+      "wall_seconds": 7200,
+      "pid": 3631,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T04:02:16.144836+00:00",
+      "elapsed_ns": 479206416,
+      "stdout": {
+        "path": "logs/part-01-after-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-01-after-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-01-after-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T04:02:16.145582+00:00",
+      "wall_seconds": 7200,
+      "pid": 3635,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:02:17.769321+00:00",
+      "elapsed_ns": 1622989125,
+      "stdout": {
+        "path": "logs/part-01-after-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-01-after-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-after-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T04:02:17.770259+00:00",
+      "wall_seconds": 7200,
+      "pid": 3643,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:02:18.315914+00:00",
+      "elapsed_ns": 545409875,
+      "stdout": {
+        "path": "logs/part-01-after-assets.stdout",
+        "bytes": 51014,
+        "sha256": "9b88a3fd7b594c2c69f0ae025facb393b5d7825ad87f7e9f4b3deed8d900256c"
+      },
+      "stderr": {
+        "path": "logs/part-01-after-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-01-download",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/assets/604735950",
+        "-H",
+        "Accept: application/octet-stream"
+      ],
+      "started_utc": "2026-10-02T04:02:18.317385+00:00",
+      "wall_seconds": 7200,
+      "pid": 3647,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:02:45.034749+00:00",
+      "elapsed_ns": 26717101667,
+      "stdout": {
+        "path": "downloaded/sh7-fa0f99785b4f-20261002T033741Z.part-01-of-05",
+        "bytes": 134217728,
+        "sha256": "179a573010f0306511b499be93f260073d05c19589623c2518124a02ea7e55db"
+      },
+      "stderr": {
+        "path": "logs/part-01-download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-after",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T04:24:03.731601+00:00",
+      "wall_seconds": 7200,
+      "pid": 7780,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:04.354400+00:00",
+      "elapsed_ns": 622496833,
+      "stdout": {
+        "path": "logs/part-05-after.stdout",
+        "bytes": 51828,
+        "sha256": "447f8bb22ed0f64fe38ce17d5751dc91aec22564c6938fbbe057b0cc23fb31f5"
+      },
+      "stderr": {
+        "path": "logs/part-05-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-after-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T04:24:04.355760+00:00",
+      "wall_seconds": 7200,
+      "pid": 7783,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T04:24:04.903810+00:00",
+      "elapsed_ns": 547638458,
+      "stdout": {
+        "path": "logs/part-05-after-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/part-05-after-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "part-05-after-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T04:24:04.904857+00:00",
+      "wall_seconds": 7200,
+      "pid": 7787,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:05.835534+00:00",
+      "elapsed_ns": 930302958,
+      "stdout": {
+        "path": "logs/part-05-after-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/part-05-after-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-after-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T04:24:05.836318+00:00",
+      "wall_seconds": 7200,
+      "pid": 7793,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:06.395101+00:00",
+      "elapsed_ns": 558495792,
+      "stdout": {
+        "path": "logs/part-05-after-assets.stdout",
+        "bytes": 51084,
+        "sha256": "6a34990ff7d3bade50119397490c4db87513ec06672f82b79ed899125b6aa936"
+      },
+      "stderr": {
+        "path": "logs/part-05-after-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "part-05-download",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/assets/604756140",
+        "-H",
+        "Accept: application/octet-stream"
+      ],
+      "started_utc": "2026-10-02T04:24:06.396298+00:00",
+      "wall_seconds": 7200,
+      "pid": 7798,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:19.630738+00:00",
+      "elapsed_ns": 13233697125,
+      "stdout": {
+        "path": "downloaded/sh7-fa0f99785b4f-20261002T033741Z.part-05-of-05",
+        "bytes": 65320539,
+        "sha256": "e36abc535c3e370d615830eeb7d08b6e88c86b218aaab91172f656bf8fbd4831"
+      },
+      "stderr": {
+        "path": "logs/part-05-download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-before",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T04:24:20.684088+00:00",
+      "wall_seconds": 7200,
+      "pid": 7824,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:21.236274+00:00",
+      "elapsed_ns": 551806666,
+      "stdout": {
+        "path": "logs/manifest-before.stdout",
+        "bytes": 51828,
+        "sha256": "447f8bb22ed0f64fe38ce17d5751dc91aec22564c6938fbbe057b0cc23fb31f5"
+      },
+      "stderr": {
+        "path": "logs/manifest-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-before-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T04:24:21.237148+00:00",
+      "wall_seconds": 7200,
+      "pid": 7830,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T04:24:21.738249+00:00",
+      "elapsed_ns": 500850667,
+      "stdout": {
+        "path": "logs/manifest-before-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/manifest-before-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "manifest-before-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T04:24:21.738956+00:00",
+      "wall_seconds": 7200,
+      "pid": 7833,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:22.713505+00:00",
+      "elapsed_ns": 974252250,
+      "stdout": {
+        "path": "logs/manifest-before-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/manifest-before-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-before-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T04:24:22.714247+00:00",
+      "wall_seconds": 7200,
+      "pid": 7838,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:23.196083+00:00",
+      "elapsed_ns": 481547917,
+      "stdout": {
+        "path": "logs/manifest-before-assets.stdout",
+        "bytes": 51084,
+        "sha256": "6a34990ff7d3bade50119397490c4db87513ec06672f82b79ed899125b6aa936"
+      },
+      "stderr": {
+        "path": "logs/manifest-before-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-upload",
+      "argv": [
+        "gh",
+        "release",
+        "upload",
+        "candidate-20260916.1",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/sh7-chunk-transport/run-1/sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+        "--repo",
+        "cyberia-to/trisha"
+      ],
+      "started_utc": "2026-10-02T04:24:23.196946+00:00",
+      "wall_seconds": 7200,
+      "pid": 7843,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:25.309294+00:00",
+      "elapsed_ns": 2112038042,
+      "stdout": {
+        "path": "logs/manifest-upload.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "logs/manifest-upload.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-after",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T04:24:25.309990+00:00",
+      "wall_seconds": 7200,
+      "pid": 7850,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:25.761109+00:00",
+      "elapsed_ns": 450807250,
+      "stdout": {
+        "path": "logs/manifest-after.stdout",
+        "bytes": 53376,
+        "sha256": "797d6e04b1e8e8e93087d471d71c482578d2003cd9c060cfb739fbdb1cb486e9"
+      },
+      "stderr": {
+        "path": "logs/manifest-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-after-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T04:24:25.762074+00:00",
+      "wall_seconds": 7200,
+      "pid": 7853,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T04:24:26.323503+00:00",
+      "elapsed_ns": 561140958,
+      "stdout": {
+        "path": "logs/manifest-after-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/manifest-after-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "manifest-after-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T04:24:26.324539+00:00",
+      "wall_seconds": 7200,
+      "pid": 7860,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:27.212426+00:00",
+      "elapsed_ns": 887584875,
+      "stdout": {
+        "path": "logs/manifest-after-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/manifest-after-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-after-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T04:24:27.213517+00:00",
+      "wall_seconds": 7200,
+      "pid": 7865,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:27.773557+00:00",
+      "elapsed_ns": 559685583,
+      "stdout": {
+        "path": "logs/manifest-after-assets.stdout",
+        "bytes": 52632,
+        "sha256": "1d2fa4af460a5fe31f171659dd3875061b2fe3bd0e30c0eab7d52833e6333fcd"
+      },
+      "stderr": {
+        "path": "logs/manifest-after-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "manifest-download",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/assets/604791641",
+        "-H",
+        "Accept: application/octet-stream"
+      ],
+      "started_utc": "2026-10-02T04:24:27.774784+00:00",
+      "wall_seconds": 7200,
+      "pid": 7868,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:29.089240+00:00",
+      "elapsed_ns": 1314179458,
+      "stdout": {
+        "path": "downloaded/sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+        "bytes": 4763,
+        "sha256": "9bc033f4dffb8e248a55b445db884ca035886705923f2c7a596daa45914febac"
+      },
+      "stderr": {
+        "path": "logs/manifest-download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "final-draft",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/releases/389977897"
+      ],
+      "started_utc": "2026-10-02T04:24:29.090831+00:00",
+      "wall_seconds": 7200,
+      "pid": 7873,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:29.650165+00:00",
+      "elapsed_ns": 559022667,
+      "stdout": {
+        "path": "logs/final-draft.stdout",
+        "bytes": 53376,
+        "sha256": "797d6e04b1e8e8e93087d471d71c482578d2003cd9c060cfb739fbdb1cb486e9"
+      },
+      "stderr": {
+        "path": "logs/final-draft.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "final-draft-tag",
+      "argv": [
+        "gh",
+        "api",
+        "repos/cyberia-to/trisha/git/ref/tags/candidate-20260916.1"
+      ],
+      "started_utc": "2026-10-02T04:24:29.651325+00:00",
+      "wall_seconds": 7200,
+      "pid": 7876,
+      "exit_code": 1,
+      "ended_utc": "2026-10-02T04:24:30.211761+00:00",
+      "elapsed_ns": 560091000,
+      "stdout": {
+        "path": "logs/final-draft-tag.stdout",
+        "bytes": 114,
+        "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a"
+      },
+      "stderr": {
+        "path": "logs/final-draft-tag.stderr",
+        "bytes": 25,
+        "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6"
+      }
+    },
+    {
+      "name": "final-draft-selected",
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "candidate-20260916.1",
+        "--repo",
+        "cyberia-to/trisha",
+        "--json",
+        "databaseId,isDraft,tagName,publishedAt"
+      ],
+      "started_utc": "2026-10-02T04:24:30.212900+00:00",
+      "wall_seconds": 7200,
+      "pid": 7885,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:31.084107+00:00",
+      "elapsed_ns": 870877625,
+      "stdout": {
+        "path": "logs/final-draft-selected.stdout",
+        "bytes": 92,
+        "sha256": "0f753f571822bbaf6db08fb83c30816ade4c7300ffc2727f4a26b35687c24f6b"
+      },
+      "stderr": {
+        "path": "logs/final-draft-selected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "final-draft-assets",
+      "argv": [
+        "gh",
+        "api",
+        "--paginate",
+        "--slurp",
+        "repos/cyberia-to/trisha/releases/389977897/assets?per_page=100"
+      ],
+      "started_utc": "2026-10-02T04:24:31.085051+00:00",
+      "wall_seconds": 7200,
+      "pid": 7892,
+      "exit_code": 0,
+      "ended_utc": "2026-10-02T04:24:31.578972+00:00",
+      "elapsed_ns": 493618708,
+      "stdout": {
+        "path": "logs/final-draft-assets.stdout",
+        "bytes": 52632,
+        "sha256": "1d2fa4af460a5fe31f171659dd3875061b2fe3bd0e30c0eab7d52833e6333fcd"
+      },
+      "stderr": {
+        "path": "logs/final-draft-assets.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "assets": {
+    "part-04": {
+      "id": 604735954,
+      "name": "sh7-fa0f99785b4f-20261002T033741Z.part-04-of-05",
+      "size": 134217728,
+      "digest": "sha256:ea91a206859779901695a37af40427fe156c0cdbc5bfae4127f8d5c5abde5f5d",
+      "state": "uploaded",
+      "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604735954",
+      "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.part-04-of-05",
+      "downloaded": {
+        "bytes": 134217728,
+        "sha256": "ea91a206859779901695a37af40427fe156c0cdbc5bfae4127f8d5c5abde5f5d"
+      }
+    },
+    "part-03": {
+      "id": 604735940,
+      "name": "sh7-fa0f99785b4f-20261002T033741Z.part-03-of-05",
+      "size": 134217728,
+      "digest": "sha256:3705cd7cbae3bc26dfeb5031f9be8f7a8388c48ea0bfad0d83d90d5bd0f296c6",
+      "state": "uploaded",
+      "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604735940",
+      "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.part-03-of-05",
+      "downloaded": {
+        "bytes": 134217728,
+        "sha256": "3705cd7cbae3bc26dfeb5031f9be8f7a8388c48ea0bfad0d83d90d5bd0f296c6"
+      }
+    },
+    "part-02": {
+      "id": 604735948,
+      "name": "sh7-fa0f99785b4f-20261002T033741Z.part-02-of-05",
+      "size": 134217728,
+      "digest": "sha256:b13f392403873271f79def35260cf9f58d8a6fffe6ed4f7588ced0e46ccfadc0",
+      "state": "uploaded",
+      "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604735948",
+      "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.part-02-of-05",
+      "downloaded": {
+        "bytes": 134217728,
+        "sha256": "b13f392403873271f79def35260cf9f58d8a6fffe6ed4f7588ced0e46ccfadc0"
+      }
+    },
+    "part-01": {
+      "id": 604735950,
+      "name": "sh7-fa0f99785b4f-20261002T033741Z.part-01-of-05",
+      "size": 134217728,
+      "digest": "sha256:179a573010f0306511b499be93f260073d05c19589623c2518124a02ea7e55db",
+      "state": "uploaded",
+      "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604735950",
+      "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.part-01-of-05",
+      "downloaded": {
+        "bytes": 134217728,
+        "sha256": "179a573010f0306511b499be93f260073d05c19589623c2518124a02ea7e55db"
+      }
+    },
+    "part-05": {
+      "id": 604756140,
+      "name": "sh7-fa0f99785b4f-20261002T033741Z.part-05-of-05",
+      "size": 65320539,
+      "digest": "sha256:e36abc535c3e370d615830eeb7d08b6e88c86b218aaab91172f656bf8fbd4831",
+      "state": "uploaded",
+      "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604756140",
+      "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.part-05-of-05",
+      "downloaded": {
+        "bytes": 65320539,
+        "sha256": "e36abc535c3e370d615830eeb7d08b6e88c86b218aaab91172f656bf8fbd4831"
+      }
+    },
+    "manifest": {
+      "id": 604791641,
+      "name": "sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+      "size": 4763,
+      "digest": "sha256:9bc033f4dffb8e248a55b445db884ca035886705923f2c7a596daa45914febac",
+      "state": "uploaded",
+      "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604791641",
+      "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+      "downloaded": {
+        "bytes": 4763,
+        "sha256": "9bc033f4dffb8e248a55b445db884ca035886705923f2c7a596daa45914febac"
+      }
+    }
+  },
+  "failures": [],
+  "reassembled": {
+    "bytes": 602191451,
+    "sha256": "fa0f99785b4f499067683949a4126a1e4837558fbd421c0c4d61fedc39000d61"
+  },
+  "completed_utc": "2026-10-02T04:24:31.825353+00:00",
+  "remote_manifest": {
+    "id": 604791641,
+    "name": "sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+    "size": 4763,
+    "digest": "sha256:9bc033f4dffb8e248a55b445db884ca035886705923f2c7a596daa45914febac",
+    "state": "uploaded",
+    "url": "https://api.github.com/repos/cyberia-to/trisha/releases/assets/604791641",
+    "browser_download_url": "https://github.com/cyberia-to/trisha/releases/download/untagged-175a500089154bd1773f/sh7-fa0f99785b4f-20261002T033741Z.manifest.json",
+    "downloaded": {
+      "bytes": 4763,
+      "sha256": "9bc033f4dffb8e248a55b445db884ca035886705923f2c7a596daa45914febac"
+    }
+  }
+}

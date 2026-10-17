@@ -1,0 +1,56 @@
+program native_constant_export_rows
+
+use vm.nox.noun
+use std.nox.bytes
+use std.nox.seq
+use std.compiler.nox.syntax
+use std.compiler.nox.constant_exports
+
+#[pure]
+fn word(row: Noun, index: U32) -> Field {
+    let mut rest = row
+    for step in 0..8 {
+        if step == index { return noun.as_field(noun.head(rest)) }
+        rest = noun.tail(rest)
+    }
+    0
+}
+
+#[pure]
+fn bindings(rows: seq.Seq, cap: U32) -> constant_exports.Bank {
+    let mut bank = constant_exports.empty(as_u32(3))
+    for index in 0..4096 {
+        if index == seq.len(rows) { return bank }
+        let row = seq.get(rows, index)
+        bank = constant_exports.push(bank, constant_exports.Binding {
+            owner: as_u32(word(row, as_u32(0))),
+            name: syntax.token(1, as_u32(word(row, as_u32(1))), as_u32(word(row, as_u32(2))), 0),
+            ty: word(row, as_u32(3)), value: word(row, as_u32(4)),
+            literal_owner: as_u32(word(row, as_u32(5))),
+            literal: syntax.token(2, as_u32(word(row, as_u32(6))), as_u32(word(row, as_u32(7))), word(row, as_u32(4))) }, cap)
+    }
+    bank
+}
+
+// [source [caller [rows [owner [query-start query-end]]]]]. Source admission
+// stays public; only the fixture builds resolved private-bank records.
+#[pure]
+fn main(input: Noun) -> Noun {
+    let source = bytes.from_noun(noun.head(input), as_u32(65536), as_u32(1000000))
+    let body = noun.tail(input)
+    let caller = bytes.from_noun(noun.head(body), as_u32(65536), as_u32(1000000))
+    let rest = noun.tail(body)
+    let rows = seq.from_noun(noun.head(rest), as_u32(4096), as_u32(1000000))
+    let query = noun.tail(rest)
+    let span = noun.tail(query)
+    let bank = bindings(rows, as_u32(4096))
+    let found = constant_exports.find(bank, as_u32(noun.as_field(noun.head(query))), source, caller,
+        syntax.token(1, as_u32(noun.as_field(noun.head(span))), as_u32(noun.as_field(noun.tail(span))), 0))
+    if found.exists == false { return noun.atom(0) }
+    let value = constant_exports.read(bank, found.id)
+    let literal = noun.pair(noun.atom(as_field(value.literal.start)), noun.atom(as_field(value.literal.end)))
+    let origin = noun.pair(noun.atom(as_field(value.literal_owner)), literal)
+    let data = noun.pair(noun.atom(value.ty), noun.pair(noun.atom(value.value), origin))
+    let name = noun.pair(noun.atom(as_field(value.name.start)), noun.pair(noun.atom(as_field(value.name.end)), data))
+    noun.pair(noun.atom(as_field(found.id) + 1), noun.pair(noun.atom(as_field(value.owner)), name))
+}

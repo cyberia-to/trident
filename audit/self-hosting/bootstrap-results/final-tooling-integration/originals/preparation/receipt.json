@@ -1,0 +1,29 @@
+{
+  "status": "isolated-worktree-created",
+  "base": "87e2909f6ab2dfc01a97add0fe0402cbd9cd838c",
+  "reviewed_inputs": {
+    "refs/heads/docs/0.4-sh7-durable-retention": "87e2909f6ab2dfc01a97add0fe0402cbd9cd838c",
+    "refs/heads/test/0.4-whole-proof-parallel": "01e45e55ef9f68eaeccca270dd0bb00bc58a4bba",
+    "refs/heads/fix/0.4-corpus-metadata-git": "2f1a575a6fbc0704c268f1ae21667830a3c996df"
+  },
+  "branch": "test/0.4-final-selfhost-acceptance",
+  "scope": "Integrate existing reviewed tooling units; no new SH8/native acceptance claim; no release/default branch mutation",
+  "head_check_command": [
+    "git",
+    "ls-remote",
+    "--heads",
+    "origin",
+    "refs/heads/docs/0.4-sh7-durable-retention",
+    "refs/heads/test/0.4-whole-proof-parallel",
+    "refs/heads/fix/0.4-corpus-metadata-git"
+  ],
+  "worktree_command": [
+    "git",
+    "worktree",
+    "add",
+    "-b",
+    "test/0.4-final-selfhost-acceptance",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/final-integration/trident",
+    "87e2909f6ab2dfc01a97add0fe0402cbd9cd838c"
+  ]
+}

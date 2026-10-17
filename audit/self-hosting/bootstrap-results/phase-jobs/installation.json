@@ -1,0 +1,74 @@
+{
+  "command": [
+    "cargo",
+    "install",
+    "--path",
+    ".",
+    "--root",
+    "../install-phase-delivery",
+    "--locked",
+    "--offline",
+    "--force"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-phases",
+  "environment": {
+    "CARGO_TARGET_DIR": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/target-root",
+    "PATH_prefix": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/install-phase-delivery/bin"
+  },
+  "exit_code": 0,
+  "warning_lines": 0,
+  "source_revision": "51e984cca290197ef90fa7e7393840626b319eca",
+  "log_sha256": "8ac26ef91fe129eda82b1f1e9f145dc618c5d6e3be6ba2288852c2ca570619d7",
+  "post_install_family": {
+    "trident-phases": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/trident-phases",
+      "revision": "51e984cca290197ef90fa7e7393840626b319eca",
+      "status_after": "?? audit/self-hosting/bootstrap-results/phase-jobs/\n"
+    },
+    "joy": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/joy",
+      "revision": "ec83bd8d85b20a8bd20d2d14b0f25aab0f75e9fe",
+      "status_after": ""
+    },
+    "nox": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/nox",
+      "revision": "f8047c22cc6075d5171c0fbe520174e78e94ccb6",
+      "status_after": ""
+    },
+    "hemera": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/hemera",
+      "revision": "a931a0a8e7ed369852ce0f8bc6451a59745ee692",
+      "status_after": ""
+    },
+    "strata": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/strata",
+      "revision": "d2eb1763b8caf04e6c7647ac6fe99761519c2ef9",
+      "status_after": ""
+    },
+    "zheng": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/zheng",
+      "revision": "b54b209b91b8bf99c2975c4c24493a2411c23079",
+      "status_after": ""
+    },
+    "bbg": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/bbg",
+      "revision": "1d39975ad199b48c350fa4cc011cbf6f289480ee",
+      "status_after": ""
+    },
+    "lens": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/lens",
+      "revision": "17cafe91431977b738e5b72361187cd01ad93638",
+      "status_after": " M brakedown/src/public.rs\n M brakedown/src/tests.rs\n M cli/src/artifact.rs\n M core/src/fri.rs\n M core/src/lib.rs\n M core/tests/serde_roundtrip.rs\n"
+    },
+    "neuron": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/neuron",
+      "revision": "fd24e768d623604b67e20b4b93fa8e82c83ac373",
+      "status_after": ""
+    }
+  },
+  "qualification": "Local rebuild after core commit. This post-install family snapshot includes pre-existing Lens edits and receipt files; it supplies no clean-origin native bootstrap or release acceptance.",
+  "binaries": {
+    "trident": "2a4fca3f538db68f9cfdf041a69fa4844b35809238a3ebfe0d698418b328b822",
+    "trident-lsp": "dd0b99228ef30cdae45073b61cc32b66e709d5a75d3c08fadede50c059bb03d4"
+  }
+}

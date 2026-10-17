@@ -1,0 +1,44 @@
+test_active_exact_mutation_permit (test_schedule.AuthorizationTests.test_active_exact_mutation_permit) ... ok
+test_c2_cost_cannot_be_reexecuted (test_schedule.AuthorizationTests.test_c2_cost_cannot_be_reexecuted) ... ok
+test_changed_immutable_admission_rejects_permit (test_schedule.AuthorizationTests.test_changed_immutable_admission_rejects_permit) ... ok
+test_missing_case_permit_blocks_native (test_schedule.AuthorizationTests.test_missing_case_permit_blocks_native) ... ok
+test_next_generation_cannot_run_early (test_schedule.AuthorizationTests.test_next_generation_cannot_run_early) ... ok
+test_old_admission_not_overwritten_for_second_generation (test_schedule.AuthorizationTests.test_old_admission_not_overwritten_for_second_generation) ... ok
+test_previous_generation_cannot_run (test_schedule.AuthorizationTests.test_previous_generation_cannot_run) ... ok
+test_unfinished_quiescent_state_rejects (test_schedule.AuthorizationTests.test_unfinished_quiescent_state_rejects) ... ok
+test_wrong_command_kind_rejects (test_schedule.AuthorizationTests.test_wrong_command_kind_rejects) ... ok
+test_actual_free_success_first_observation (test_schedule.CapacityTests.test_actual_free_success_first_observation) ... ok
+test_capacity_permit_is_never_retried (test_schedule.CapacityTests.test_capacity_permit_is_never_retried) ... ok
+test_current_inventory_recomputed_each_observation (test_schedule.CapacityTests.test_current_inventory_recomputed_each_observation) ... ok
+test_delayed_physical_space_observed_then_admitted (test_schedule.CapacityTests.test_delayed_physical_space_observed_then_admitted) ... ok
+test_existing_retained_bytes_cannot_be_dropped (test_schedule.CapacityTests.test_existing_retained_bytes_cannot_be_dropped) ... ok
+test_no_projection_credit_before_physical_observation (test_schedule.CapacityTests.test_no_projection_credit_before_physical_observation) ... ok
+test_only_active_generation_mutant_reserved (test_schedule.CapacityTests.test_only_active_generation_mutant_reserved) ... ok
+test_outer_schedule_not_extended_by_capacity_wait (test_schedule.CapacityTests.test_outer_schedule_not_extended_by_capacity_wait) ... ok
+test_physical_extra_ten_gib_headroom_preserved (test_schedule.CapacityTests.test_physical_extra_ten_gib_headroom_preserved) ... ok
+test_shared_stop_refuses_capacity (test_schedule.CapacityTests.test_shared_stop_refuses_capacity) ... ok
+test_empty_after_permission_error_is_separate_observation (test_schedule.OwnershipTests.test_empty_after_permission_error_is_separate_observation) ... ok
+test_empty_is_observed (test_schedule.OwnershipTests.test_empty_is_observed) ... ok
+test_finished_child_without_binding_is_not_claimed_never_started (test_schedule.OwnershipTests.test_finished_child_without_binding_is_not_claimed_never_started) ... ok
+test_known_descendant_keeps_leaderless_group_bound (test_schedule.OwnershipTests.test_known_descendant_keeps_leaderless_group_bound) ... ok
+test_late_native_registration_is_swept_after_suites (test_schedule.OwnershipTests.test_late_native_registration_is_swept_after_suites) ... ok
+test_malformed_registry_does_not_skip_known_child (test_schedule.OwnershipTests.test_malformed_registry_does_not_skip_known_child) ... ok
+test_one_cleanup_failure_does_not_skip_other_groups (test_schedule.OwnershipTests.test_one_cleanup_failure_does_not_skip_other_groups) ... ok
+test_permission_error_is_retained_and_not_success (test_schedule.OwnershipTests.test_permission_error_is_retained_and_not_success) ... ok
+test_process_inventory_is_bounded_and_utc (test_schedule.OwnershipTests.test_process_inventory_is_bounded_and_utc) ... ok
+test_reused_identifier_never_becomes_owned (test_schedule.OwnershipTests.test_reused_identifier_never_becomes_owned) ... ok
+test_snapshot_failure_only_signals_owned_direct_child (test_schedule.OwnershipTests.test_snapshot_failure_only_signals_owned_direct_child) ... ok
+test_snapshot_failure_with_original_binding_still_cleans_direct_child (test_schedule.OwnershipTests.test_snapshot_failure_with_original_binding_still_cleans_direct_child) ... ok
+test_unbound_group_never_signalled (test_schedule.OwnershipTests.test_unbound_group_never_signalled) ... ok
+test_unbound_started_child_is_still_handled (test_schedule.OwnershipTests.test_unbound_started_child_is_still_handled) ... ok
+test_unknown_leaderless_group_is_not_adopted (test_schedule.OwnershipTests.test_unknown_leaderless_group_is_not_adopted) ... ok
+test_all_prior_leases_present (test_schedule.ScopeTests.test_all_prior_leases_present) ... ok
+test_all_v4_scopes_still_charged (test_schedule.ScopeTests.test_all_v4_scopes_still_charged) ... ok
+test_no_old_path_can_be_reclaimed (test_schedule.ScopeTests.test_no_old_path_can_be_reclaimed) ... ok
+test_one_mutant_across_both_generations (test_schedule.ScopeTests.test_one_mutant_across_both_generations) ... ok
+test_original_caps_unchanged (test_schedule.ScopeTests.test_original_caps_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 0.034s
+
+OK

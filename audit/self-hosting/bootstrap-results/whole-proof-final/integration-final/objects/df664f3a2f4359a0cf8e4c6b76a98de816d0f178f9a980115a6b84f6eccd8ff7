@@ -1,0 +1,84 @@
+"""Retain exact small Trident installation and merge records for final delivery."""
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+B = Path('/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002')
+H = B / 'whole-proof-helper-v4/trident'
+DEST = H / 'audit/self-hosting/bootstrap-results/whole-proof-final/integration-final'
+sys.path.insert(0, str(B / 'whole-proof-final-delivery-preparation'))
+from privacy import public_bytes
+
+
+def identity(data):
+    return dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+
+
+def main():
+    files = []
+    for directory in ('trident-final-sh8-pr120', 'trident-final-sh8-pr120-wrapper'):
+        root = B / 'integration' / directory
+        files.extend(sorted(root.iterdir()))
+    for directory in ('postinstall-final-sh8', 'postinstall-final-sh8-merged'):
+        root = B / 'whole-proof-helper-v4' / directory
+        files.extend(root / name for name in ('run.py', 'started.json', 'receipt.json', 'stdout', 'stderr'))
+    files.extend(B / 'integration/final-sh8-local-acceptance' / name
+                 for name in ('staged-validation.json', 'run-merge.py', 'pr-body.md', 'retain-integration.py'))
+    files.append(Path('/Users/master/cyber/.worktrees/selfhost-0.4-full-bootstrap/measurements/merge-accepted-pr-v2.py'))
+    assert len(set(files)) == len(files)
+    bodies = []
+    for path in files:
+        assert path.is_file() and not path.is_symlink() and path.stat().st_size < 1024**2
+        data = path.read_bytes()
+        public_bytes(data)
+        bodies.append((path, data, identity(data)))
+    assert sum(len(data) for _, data, _ in bodies) < 8 * 1024**2
+    assert not DEST.exists()
+    (DEST / 'objects').mkdir(parents=True)
+    rows = []
+    attributes = {'* -text'}
+    for path, data, value in bodies:
+        name = 'objects/' + value['sha256']
+        target = DEST / name
+        if not target.exists():
+            target.write_bytes(data)
+        assert target.read_bytes() == data
+        rows.append(dict(original=str(path), **value, stored=name))
+        if any(line.endswith((b' ', b'\t')) for line in data.splitlines()):
+            attributes.add(name + ' whitespace=-blank-at-eol')
+    (DEST / 'retained-files.json').write_text(json.dumps(rows, indent=2) + '\n')
+    (DEST / '.gitattributes').write_text('\n'.join(sorted(attributes)) + '\n')
+    verifier = (B / 'whole-proof-final-delivery-preparation/verify-retained.py').read_bytes()
+    assert identity(verifier)['sha256'] == '7084b3e31fff02d78533e48998ac2994afc1cbd2744a6586fe9335315ceae446'
+    (DEST / 'verify-retained.py').write_bytes(verifier)
+    merges = {}
+    for repo, pr in (('trident', 120), ('joy', 31), ('trisha', 28)):
+        path = B / 'integration' / f'{repo}-final-sh8-pr{pr}' / 'receipt.json'
+        raw = path.read_bytes()
+        row = json.loads(raw)
+        assert row['status'] == 'passed' and row['expected_tree'] == row['actual_tree']
+        merges[repo] = dict(pr=pr, head=row['head'], base=row['base'], merge=row['merge'],
+                            tree=row['actual_tree'], receipt=dict(original=str(path), **identity(raw)))
+    installs = {}
+    for phase, revision in (('postinstall-final-sh8', merges['trident']['head']),
+                            ('postinstall-final-sh8-merged', merges['trident']['merge'])):
+        path = B / 'whole-proof-helper-v4' / phase / 'receipt.json'
+        raw = path.read_bytes()
+        row = json.loads(raw)
+        assert row['status'] == 'passed' and row['revision'] == revision and row['clean_after']
+        assert not row['warning_lines'] and row['exit_code'] == 0
+        installs[phase] = dict(revision=revision, command=row['command'],
+                               seconds=row['elapsed_seconds'], binaries=row['binaries'],
+                               receipt=dict(original=str(path), **identity(raw)))
+    assert len({json.dumps(x['binaries'], sort_keys=True) for x in installs.values()}) == 1
+    result = dict(status='accepted-final-sh8-integration', merges=merges, trident_installs=installs,
+                  retained_originals=len(rows), scope='Exact reviewed feature merges into release/0.4 and source-bound installations. Original self-build acceptance remains bound to its frozen source/binary. Companion install details have their own retained packet. Version/default-branch/tag/registry/public promotion are separate owner actions.')
+    data = (json.dumps(result, indent=2) + '\n').encode()
+    public_bytes(data)
+    (DEST / 'integration.json').write_bytes(data)
+    print(json.dumps(dict(status=result['status'], originals=len(rows), unique_objects=len(set(row['stored'] for row in rows)))))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,41 @@
+{
+  "status": "passed-reviewed-preparation-delivery",
+  "base_revision": "95abe2088f74bb21a5cf475b6220c246e4951ae7",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-W",
+    "error",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/delivery-preparation/verify-retained.py",
+    "--originals"
+  ],
+  "cwd": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/delivery-preparation",
+  "started_ns": 1790979126179770000,
+  "ended_ns": 1790979126255140000,
+  "exit_code": 0,
+  "source_copy_map": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/delivery.json",
+    "bytes": 36630,
+    "sha256": "d65095da382d1ee20d82f3518b223525390c678575126381d93fb4d69329d10b"
+  },
+  "source_validation": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-final-delivery-preparation-archive/staging-validation/receipt.json",
+    "bytes": 9703,
+    "sha256": "c33d9135c751dde4373a873e85a5819dfa04458f89b692031a296c47973aedcd"
+  },
+  "copied_files": 91,
+  "copied_bytes": 474344,
+  "source_and_destination_match": true,
+  "privacy_checked_all_copied_files": true,
+  "stdout": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/delivery-preparation/root-validation/stdout",
+    "bytes": 418,
+    "sha256": "e2c8a86da366f5e4d6f56b32c425c3b84561c80877437797a4fef55b3ac13b69"
+  },
+  "stderr": {
+    "path": "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident/audit/self-hosting/bootstrap-results/whole-proof-final/delivery-preparation/root-validation/stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scope": "Preparation-only evidence and scripts; no actual collector or SH8 acceptance. No compiler/runtime source changes."
+}
