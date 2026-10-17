@@ -44,7 +44,7 @@ nox is a STRICT UPGRADE over Nock for trident: every Nock operation maps to a no
 
 ### replace Tip5 with hemera
 
-trident's stdlib uses Tip5 (5-round Goldilocks hash). the polynomial proof system uses [[hemera]] (24-round Poseidon2, x⁻¹ S-box). one hash across the entire stack:
+trident's stdlib uses Tip5 (5-round Goldilocks hash). the polynomial proof system uses [[hemera]] (60-round Poseidon2, x⁷ S-box in every round; hemera 0.4). one hash across the entire stack:
 
 ```
 current:   trident uses Tip5, cyber stack uses hemera → two hashes, two security analyses
@@ -121,7 +121,7 @@ nox cost model:
   patterns 1-4:         1 field op each
   patterns 5-10:        1 field op each (field arithmetic)
   patterns 11-14:       1 field op each (bitwise, but ~32 constraints in F_p)
-  pattern 15 (hash):    736 constraints (hemera, rare — ~3 per execution)
+  pattern 15 (hash):    ~1,440 constraints (hemera 0.4, rare — ~3 per execution)
   pattern 16 (hint):    1 (witness injection)
 
   fold overhead:        +30 field ops per step (proof-carrying)
@@ -138,10 +138,10 @@ trident build main.tri --engine nox --costs
   function        steps    field_ops    fold_cost    hemera    total
   ────────        ─────    ─────────    ─────────    ──────    ─────
   transfer()      12       12           360          0         372
-  mint_card()     45       48           1,350        736       2,134
-  verify_sig()    200      264          6,000        736       7,000
+  mint_card()     45       48           1,350        1,440     2,838
+  verify_sig()    200      264          6,000        1,440     7,704
 
-  total:          257      324          7,710        1,472     9,506
+  total:          257      324          7,710        2,880     10,914
 
   decider: +89 constraints
   proof size: ~2 KiB
