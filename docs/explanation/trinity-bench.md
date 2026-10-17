@@ -497,3 +497,40 @@ Trinity proves the Rosetta Stone unification:
 - Each domain contributes meaningfully to the computation
 
 `trident build std/trinity/inference.tri` -> `trisha prove` -> `trisha verify`.
+
+## Polynomial State and the Trinity
+
+The state the trinity program reads is one polynomial, not a forest of hash
+trees: bbg commits the whole graph to a single polynomial over Goldilocks and
+opens it through lens. Three consequences hold for the three pillars, and each
+was argued in March 2026 before the decision was implemented; what follows is
+the part that survived.
+
+- **Quantum.** Polynomial commitments add a computational assumption, but the
+  lens in use is Brakedown, a hash-based scheme whose soundness rests on
+  hemera collision resistance, the same hash the tree nodes used. The trust
+  root is unchanged; the post-quantum floor is not lowered.
+- **Privacy.** Public records (particles, axons, neuron aggregates) and
+  private records (cyberlinks, spends, balances) keep their separation; the
+  private side is a mutator set over its own polynomial. A private transition
+  proof references state through one opening per read instead of one hash path
+  per read.
+- **AI.** Graph reads inside a proof are field operations, not hash paths.
+  That is what lets the tri-kernel convergence fit a zheng circuit at all, and
+  what makes a compiled model's embedding lookup a polynomial evaluation.
+
+The shift among the four hardware primitives (fma, ntt, p2r, lut): p2r is
+released from state authentication and left with Fiat–Shamir and signal
+identity; fma and ntt take on state reads and updates. On a Goldilocks field
+processor that frees p2r units for proof throughput.
+
+Numbers from the March argument that measurement has since replaced. In
+September 2026 the single non-recursive per-ticket proof measured 1–2 KB and
+its decide/verify 9–19 ms, not the predicted tens of microseconds. The
+constant-size recursive path has since landed on zheng `release/0.4`: an IVC
+step per segment and a three-level wrap chain (profile 6) end in a final
+proof bounded at 64,213 B for every transcript (63,029 B measured), verified
+in about 2 ms; on an M4 Max the IVC step takes about 1.2 s and the wrap chain
+23.7 s on Metal (zheng `audit/ivc-speed-2026-10.md`, 2026-10-14, hemera 0.3
+figures). Polynomial state removed a bottleneck; it did not make every
+projection true.
