@@ -524,9 +524,13 @@ released from state authentication and left with Fiat–Shamir and signal
 identity; fma and ntt take on state reads and updates. On a Goldilocks field
 processor that frees p2r units for proof throughput.
 
-Numbers from the March argument that measurement has since replaced: proof
-size landed at 1–2 KB as predicted; the per-ticket decide/verify measured
-9–19 ms, not the predicted tens of microseconds; the constant-size recursive
-step over Brakedown is blocked until the tensor-Merkle binding is proven
-(lens issue #6). Polynomial state removed a bottleneck; it did not make every
+Numbers from the March argument that measurement has since replaced. In
+September 2026 the single non-recursive per-ticket proof measured 1–2 KB and
+its decide/verify 9–19 ms, not the predicted tens of microseconds. The
+constant-size recursive path has since landed on zheng `release/0.4`: an IVC
+step per segment and a three-level wrap chain (profile 6) end in a final
+proof bounded at 64,213 B for every transcript (63,029 B measured), verified
+in about 2 ms; on an M4 Max the IVC step takes about 1.2 s and the wrap chain
+23.7 s on Metal (zheng `audit/ivc-speed-2026-10.md`, 2026-10-14, hemera 0.3
+figures). Polynomial state removed a bottleneck; it did not make every
 projection true.
