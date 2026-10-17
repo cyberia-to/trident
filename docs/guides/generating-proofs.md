@@ -8,22 +8,28 @@
 
 > **Two targets, two proof systems.** Since 0.2.0 the default target is
 > **nox** (the soft3 stack): `trident build` emits `.nox`, and the
-> **joy** warrior runs, proves and verifies it — a **zheng** proof
-> (SuperSpartan + Brakedown + HyperNova folding), verified without
-> re-execution. Triton VM and its STARK remain fully supported via
+> **joy** warrior runs, proves and verifies it — a **zheng** proof:
+> Spartan (SuperSpartan) sumcheck over CCS on Goldilocks, hemera for
+> Merkle trees and Fiat–Shamir, carried in the one `ZHENGPF1` envelope.
+> The profiles are the public v3 certificate (witness disclosed, every
+> row checked exactly), the succinct profile (witness committed, one
+> WHIR opening) and the zk profile veil (masked sumchecks plus a hiding
+> Reed–Solomon commitment). The verifier recompiles the CCS from the
+> program and never re-executes it. Triton VM and its STARK remain fully supported via
 > `--target triton` and the trisha warrior. On the default target the
 > whole chain is:
 >
 > ```
 > trident build hello.tri                 # hello.nox
-> trident prove hello.tri --secret 7,13   # hello.zheng (via joy, ~14 ms, 20 KB)
+> trident prove hello.tri --secret 7,13   # hello.zheng (via joy)
 > trident verify hello.zheng              # Verification: PASS (zheng proof)
 > ```
 >
 > `trident run/prove/verify` delegate to the warrior registered for the
 > target. The Triton-specific material below stays accurate for
 > `--target triton`; zheng's construction lives in the zheng repo
-> (`specs/superspartan.md`, `accumulator.md`, `decider.md`).
+> (`specs/execution.md`, `specs/soundness.md`); the repair that
+> retired the old folded design is soft3 `proposals/proof-system-repair.md`.
 
 A Trident program that compiles, runs, and produces the right output is only
 halfway done. The point of writing in Trident is not just to compute a result
