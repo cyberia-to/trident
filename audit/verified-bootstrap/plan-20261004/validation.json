@@ -1,0 +1,845 @@
+{
+  "status": "passed-documentation-validation",
+  "command": [
+    "python3",
+    "/Users/master/cyber/.worktrees/verified-bootstrap-plan-20261004/soft3/audit/verified-bootstrap/plan-20261004/check-docs.py",
+    "--soft3",
+    "/Users/master/cyber/.worktrees/verified-bootstrap-plan-20261004/soft3",
+    "--rs",
+    "/Users/master/cyber/.worktrees/verified-bootstrap-plan-20261004/rs",
+    "--trident",
+    "/Users/master/cyber/.worktrees/selfhost-0.4-finalization-20261002/whole-proof-helper-v4/trident"
+  ],
+  "base_revision": "68b5d5dcf2f0b38ea42e043e6c5556b276b88dc5",
+  "head_at_validation": "68b5d5dcf2f0b38ea42e043e6c5556b276b88dc5",
+  "documents_sha256": {
+    "roadmap/verified-bootstrap.md": "a5aff7ef3ee9addea485d88e8050ad4cf94c037ac0f04686eed7615bc0912184",
+    "roadmap/bounded-metaprogramming.md": "2020689d712a562b917a809a108b8851e3e7e953880cf0cc2062d07cd13586a6",
+    "roadmap/README.md": "17cebe14ed723ae58bfe9e2317f8706797e30e5b05f026f02278d1c3f51e871f",
+    "reference/roadmap.md": "62fd38c96726912ab75bda44303fafd36bb269816282e1b6f01945a61db9be6a",
+    "audit/self-hosting-progress.md": "3a23dcb267464f68bada2b1b045ba08f2dfee4abe150fac4b8184f0681180f8e",
+    ".claude/plans/verified-bootstrap.md": "bfb0dca5c6e1fafb46ed4730adcb71798fbc50a2d6f80f0ffb2af74e012f4078"
+  },
+  "checks": [
+    "whitespace",
+    "documentation-and-audit-only diff",
+    "new local links and coordinated branch targets resolve locally",
+    "accepted design with all implementation gates open",
+    "agent memory within 1000 lines"
+  ],
+  "resolved_links": [
+    {
+      "document": "roadmap/verified-bootstrap.md",
+      "link": "https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md"
+    },
+    {
+      "document": "roadmap/verified-bootstrap.md",
+      "link": "https://github.com/cyberia-to/rs/blob/docs/verified-bootstrap-rs/roadmap/verified-bootstrap.md"
+    },
+    {
+      "document": "roadmap/verified-bootstrap.md",
+      "link": "../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "roadmap/verified-bootstrap.md",
+      "link": "bounded-metaprogramming.md"
+    },
+    {
+      "document": "roadmap/bounded-metaprogramming.md",
+      "link": "verified-bootstrap.md"
+    },
+    {
+      "document": "roadmap/bounded-metaprogramming.md",
+      "link": "../reference/language.md#size-generic-functions"
+    },
+    {
+      "document": "roadmap/bounded-metaprogramming.md",
+      "link": "../reference/roadmap.md"
+    },
+    {
+      "document": "roadmap/bounded-metaprogramming.md",
+      "link": "noun-types.md"
+    },
+    {
+      "document": "roadmap/README.md",
+      "link": "verified-bootstrap.md"
+    },
+    {
+      "document": "roadmap/README.md",
+      "link": "bounded-metaprogramming.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "self-hosting.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/self-hosting-progress.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/release-version-closure.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "self-hosting.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../roadmap/verified-bootstrap.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/full-release-preparation.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "self-hosting.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/self-hosting-progress.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/self-hosting/native-proof-pilots/durable-retention/README.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../roadmap/verified-bootstrap.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "self-hosting.md"
+    },
+    {
+      "document": "reference/roadmap.md",
+      "link": "../audit/self-hosting-progress.md#planning-estimate"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../roadmap/verified-bootstrap.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-proof-pilots/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-proof-pilots/durable-retention/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/whole-proof-corpus-v2-result/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-feature-coverage.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-frame-chunks/full-gate.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/example-build/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/c2-corpus/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/fixed-point/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/c3-corpus/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/orchestration/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/run-36353842247/intel-deadline/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/run-36353842247/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/split-repetitions/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/run-36359020560/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/run-36382085561/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/archive-tool/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/pr117-ci-collection/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/body-scale/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/c2-corpus/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/c3-corpus/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/fixed-point/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/semantic-observer-integration/integration.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/noun-cost-integration/integration.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/noun-cost-joy-integration/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-proof-pilots/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/cpu-proof-integration/root-review.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/supplied-compiler-integration/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/full-bootstrap-compacting/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/fixed-point-job-binding/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/extended-compiler-routing/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh0-contract-and-compiler-subset"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-runtime.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh1-native-bootstrap-foundation"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-profile.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh2-first-native-compiler"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-source-compiler.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh3-compiler-language-coverage"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-feature-coverage.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh4-complete-project-and-runtime-scale"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh5-first-self-compilation"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/lexer-bootstrap/c2-corpus/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh6-reproducible-bootstrap"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/run-36382085561/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh7-native-proof-relation"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-proof-pilots/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh8-proved-self-compilation"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/native-acceptance-integration/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../roadmap/verified-bootstrap.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "https://github.com/cyberia-to/soft3/blob/docs/verified-bootstrap-ceremony/docs/verified-bootstrap.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting.md#sh6-reproducible-bootstrap"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-subset.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-subset.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh0-inventory-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting-data.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-data.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-data-vectors.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../reference/self-hosting-jobs.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-jobs.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/job-vectors.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-runtime.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh0-runtime-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-profile.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-source-compiler.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/block-expressions.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/zero-width-values.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/resolved-halting.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-locals.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-control.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-functions.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-arena.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-scalars.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-loops.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-nouns.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-types.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-digest.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-tuples.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-records.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-record-writes.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-arrays.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/typed-constants.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-constants.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-assertions.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-attributes.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/final-callable-exports.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/explicit-imports.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-package.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/strict-module-paths.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-module-graph.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/constant-bindings.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-constant-linking.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-function-imports.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/nominal-bindings-combined.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-type-imports.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/generated-compiler-profiles.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-intrinsics.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-indexed-reads.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-source-inventory.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/source-capacity.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-noun.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-control.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-control-design.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-collections.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-wrapper-privacy.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/byte-discard.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/job-word.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/function-sort-scale.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/full-bootstrap-frontier.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-routing/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/fixed-point-checker/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../roadmap/verified-bootstrap.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting-2026-09-23/probes.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "soft3-self-compilation-readiness-2026-09-23.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting-readiness-2026-09-23.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting-2026-09-23/probes.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/body-scale/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/bootstrap-results/whole-proof-final/acceptance/packet/summary.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting-readiness-2026-09-23.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "soft3-self-compilation-readiness-2026-09-23.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting-2026-09-23/probes.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh0-inventory-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-data.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-jobs.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh0-runtime-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh1-control-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh1-collections-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-profile.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/shared-validation-budget.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh2-native-compiler-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh3-block-expressions-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh3-zero-width-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/resolved-halting.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh3-native-locals-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-control.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-functions.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-arena.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-scalars.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-loops.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-nouns.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-types.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-digest.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/sh3-native-tuples-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/unique-struct-initializers-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-nominal-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-records-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-record-writes-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/native-compiler-arrays-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/typed-constants-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-package-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-constant-linking-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-function-imports-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/nominal-bindings-combined-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-type-imports-validation.json"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/generated-compiler-profiles.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/guest-intrinsics.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/source-capacity.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/full-bootstrap-frontier.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-routing/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/fixed-point-checker/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/full-bootstrap-compacting/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/body-scale/README.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "self-hosting/compiler-feature-coverage.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../.claude/plans/native-compiler-scalars.md"
+    },
+    {
+      "document": "audit/self-hosting-progress.md",
+      "link": "../.claude/plans/native-compiler-loops.md"
+    },
+    {
+      "document": ".claude/plans/verified-bootstrap.md",
+      "link": "../../roadmap/verified-bootstrap.md"
+    }
+  ],
+  "inherited_missing_links_unchanged": [],
+  "claude_markdown_lines": 993,
+  "new_cargo_build_or_test_run": false,
+  "bootstrap_acceptance": "none; this validates planning documents only",
+  "executable_input_equivalence_command": [
+    "git",
+    "diff",
+    "--quiet",
+    "a3cef15f6474c02363a042e648a39369785f2dbf",
+    "--",
+    ".",
+    ":(exclude)*.md",
+    ":(exclude)audit/self-hosting/bootstrap-results/verified-bootstrap-dual-plan/**",
+    ":(exclude)audit/self-hosting/bootstrap-results/verified-bootstrap-own-root/**",
+    ":(exclude)audit/verified-bootstrap/plan-20261004/**"
+  ],
+  "reused_green_tests": "audit/self-hosting/bootstrap-results/verified-bootstrap-dual-plan/release-check.json"
+}

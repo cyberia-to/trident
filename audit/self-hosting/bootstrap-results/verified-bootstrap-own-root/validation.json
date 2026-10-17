@@ -1,0 +1,38 @@
+{
+  "status": "passed-documentation-validation",
+  "base_revision": "8f08a1aaa326576eda8ef63b7362f424c14eb48f",
+  "tested_executable_revision": "a3cef15f6474c02363a042e648a39369785f2dbf",
+  "new_test_run": false,
+  "reused_validation": "../verified-bootstrap-dual-plan/release-check.json",
+  "reuse_basis": "git diff of all non-Markdown paths against tested revision is empty, excluding only the prior retained planning-validation receipts. Language and SH contracts unchanged.",
+  "equivalence_command": [
+    "git",
+    "diff",
+    "--quiet",
+    "a3cef15f6474c02363a042e648a39369785f2dbf",
+    "--",
+    ".",
+    ":(exclude)*.md",
+    ":(exclude)audit/self-hosting/bootstrap-results/verified-bootstrap-dual-plan/**"
+  ],
+  "documentation": {
+    ".claude/plans/verified-bootstrap.md": "1f69cf5bb1124990497f5e317a1df1c839be36a665db981c5a3cc8c98d55a9bb",
+    "audit/self-hosting-progress.md": "bb464f71e5ea3fe5a82dc3ad80c0bb7053798190a54b006c7de7b9faae2c9e55",
+    "reference/roadmap.md": "16451373440f83b8eb4c0bcbc48573c5e5da413db241a590706d81f0db3b6492",
+    "roadmap/README.md": "561a6dda2b86555d61d286d8f6d579c6aa0440e6a403d716e28d8ea8a3fd7a3f",
+    "roadmap/bounded-metaprogramming.md": "1680775c75e858d7cea58fa9d31cafdb2cd8f33e641753da930f2499b842acb9",
+    "roadmap/verified-bootstrap.md": "92be3feb4724563df0470d264a8317b617f0ad4aa8bb518cdc7b06006bc060cf"
+  },
+  "checks": [
+    "documentation-only change",
+    "changed-file whitespace",
+    "relative links",
+    "all VB gates open",
+    "foreign root dependency removed from active documents",
+    "foundational assumptions explicit",
+    "native seed precedes kernel/interpreter acceptance",
+    "no language or SH contract change",
+    "independent read-only review passed: acyclic root, explicit assumptions, no foreign prerequisites"
+  ],
+  "claude_lines": 993
+}

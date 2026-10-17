@@ -1,0 +1,27 @@
+[
+  {
+    "command": [
+      "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+      "check",
+      "--workspace",
+      "--locked",
+      "--offline"
+    ],
+    "exit_code": 0,
+    "warnings": [],
+    "base_revision": "a3cef15f6474c02363a042e648a39369785f2dbf"
+  },
+  {
+    "command": [
+      "/Users/master/.rustup/toolchains/1.89.0-aarch64-apple-darwin/bin/cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--quiet"
+    ],
+    "exit_code": 101,
+    "warnings": [],
+    "base_revision": "a3cef15f6474c02363a042e648a39369785f2dbf"
+  }
+]
