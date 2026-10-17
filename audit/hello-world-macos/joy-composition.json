@@ -1,0 +1,1366 @@
+{
+  "binary": "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+  "sha256": "3408767cd09f1c4ede2c44e9d99d402810fc1dbdf8c4be6866f8b3d06c7e75f3",
+  "file_bytes": 8389808,
+  "revisions": {
+    "trident": "9d52ee8fbb68833a65b52ebe9254bf24bbcd52d0",
+    "joy": "a15adb7310db5b159b4e72ce0dfd0fea2ff01c7d",
+    "trisha": "f5c94f5ec5d6d52943c8f416f343513b9d33c85e",
+    "nox": "c9f7486a74fe81bfc194b598da40f6343ecb2ef1"
+  },
+  "commands": [
+    "xcrun size -m /Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+    "xcrun nm -n --demangle --defined-only /Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy"
+  ],
+  "segments": [
+    {
+      "name": "__PAGEZERO",
+      "file_offset": 0,
+      "file_bytes": 0,
+      "virtual_bytes": 4294967296
+    },
+    {
+      "name": "__TEXT",
+      "file_offset": 0,
+      "file_bytes": 6799360,
+      "virtual_bytes": 6799360
+    },
+    {
+      "name": "__DATA_CONST",
+      "file_offset": 6799360,
+      "file_bytes": 81920,
+      "virtual_bytes": 81920
+    },
+    {
+      "name": "__DATA",
+      "file_offset": 6881280,
+      "file_bytes": 16384,
+      "virtual_bytes": 16384
+    },
+    {
+      "name": "__LINKEDIT",
+      "file_offset": 6897664,
+      "file_bytes": 1492144,
+      "virtual_bytes": 1507328
+    }
+  ],
+  "sections": [
+    {
+      "name": "__text",
+      "segment": "__TEXT",
+      "address": 4294969536,
+      "bytes": 4846508,
+      "offset": 2240,
+      "flags": 2147484672
+    },
+    {
+      "name": "__stubs",
+      "segment": "__TEXT",
+      "address": 4299816044,
+      "bytes": 1152,
+      "offset": 4848748,
+      "flags": 2147484680
+    },
+    {
+      "name": "__stub_helper",
+      "segment": "__TEXT",
+      "address": 4299817196,
+      "bytes": 1176,
+      "offset": 4849900,
+      "flags": 2147484672
+    },
+    {
+      "name": "__gcc_except_tab",
+      "segment": "__TEXT",
+      "address": 4299818372,
+      "bytes": 203944,
+      "offset": 4851076,
+      "flags": 0
+    },
+    {
+      "name": "__const",
+      "segment": "__TEXT",
+      "address": 4300022400,
+      "bytes": 1056096,
+      "offset": 5055104,
+      "flags": 0
+    },
+    {
+      "name": "__cstring",
+      "segment": "__TEXT",
+      "address": 4301078496,
+      "bytes": 49764,
+      "offset": 6111200,
+      "flags": 2
+    },
+    {
+      "name": "__unwind_info",
+      "segment": "__TEXT",
+      "address": 4301128260,
+      "bytes": 88368,
+      "offset": 6160964,
+      "flags": 0
+    },
+    {
+      "name": "__eh_frame",
+      "segment": "__TEXT",
+      "address": 4301216632,
+      "bytes": 533672,
+      "offset": 6249336,
+      "flags": 1744830475
+    },
+    {
+      "name": "__got",
+      "segment": "__DATA_CONST",
+      "address": 4301766656,
+      "bytes": 16,
+      "offset": 6799360,
+      "flags": 6
+    },
+    {
+      "name": "__const",
+      "segment": "__DATA_CONST",
+      "address": 4301766672,
+      "bytes": 79296,
+      "offset": 6799376,
+      "flags": 0
+    },
+    {
+      "name": "__la_symbol_ptr",
+      "segment": "__DATA",
+      "address": 4301848576,
+      "bytes": 768,
+      "offset": 6881280,
+      "flags": 7
+    },
+    {
+      "name": "__data",
+      "segment": "__DATA",
+      "address": 4301849344,
+      "bytes": 9376,
+      "offset": 6882048,
+      "flags": 0
+    },
+    {
+      "name": "__thread_vars",
+      "segment": "__DATA",
+      "address": 4301858720,
+      "bytes": 384,
+      "offset": 6891424,
+      "flags": 19
+    },
+    {
+      "name": "__thread_data",
+      "segment": "__DATA",
+      "address": 4301859104,
+      "bytes": 32,
+      "offset": 6891808,
+      "flags": 17
+    },
+    {
+      "name": "__thread_bss",
+      "segment": "__DATA",
+      "address": 4301859136,
+      "bytes": 296,
+      "offset": 0,
+      "flags": 18
+    },
+    {
+      "name": "__bss",
+      "segment": "__DATA",
+      "address": 4301859432,
+      "bytes": 160,
+      "offset": 0,
+      "flags": 1
+    },
+    {
+      "name": "__common",
+      "segment": "__DATA",
+      "address": 4301859592,
+      "bytes": 88,
+      "offset": 0,
+      "flags": 1
+    }
+  ],
+  "embedded_resources": {
+    "file_count": 176,
+    "source_bytes": 904777,
+    "all_found_verbatim": true,
+    "note": "sum of source lengths, not disjoint section occupancy; strings may overlap",
+    "files": [
+      [
+        "lib/std/compiler/codegen.tri",
+        69183,
+        true
+      ],
+      [
+        "lib/std/compiler/lexer.tri",
+        30261,
+        true
+      ],
+      [
+        "lib/std/compiler/lower.tri",
+        29714,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/aggregate_gen.tri",
+        884,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/array_gen.tri",
+        2611,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/array_parse.tri",
+        3401,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/array_size.tri",
+        2623,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/ascii.tri",
+        3487,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/ast.tri",
+        3696,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/attributes.tri",
+        4940,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/block_gen.tri",
+        4491,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/blocks.tri",
+        1845,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/body.tri",
+        8005,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/body_state.tri",
+        2062,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/body_store.tri",
+        3967,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/builtin_gen.tri",
+        2485,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/builtins.tri",
+        4055,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/call_codegen.tri",
+        4570,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/call_frames.tri",
+        1172,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/call_graph.tri",
+        4925,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/call_parse.tri",
+        5978,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/check_functions.tri",
+        4607,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/check_scope.tri",
+        1227,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/code_plan.tri",
+        2036,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/codegen.tri",
+        9025,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/const_module.tri",
+        3466,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/const_parse.tri",
+        5842,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/constant_exports.tri",
+        3947,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/constant_imports.tri",
+        2303,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/constants.tri",
+        7952,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/contexts.tri",
+        1630,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/control_gen.tri",
+        4472,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/control_parse.tri",
+        4497,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/coverage.tri",
+        4697,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/declarations.tri",
+        3337,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/digest_gen.tri",
+        1096,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/emit.tri",
+        3419,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/entry_frame.tri",
+        833,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/expression.tri",
+        14226,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/expression_state.tri",
+        1314,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/flow.tri",
+        1947,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/formula.tri",
+        1309,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/function_exports.tri",
+        3690,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/function_gen.tri",
+        4938,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/function_imports.tri",
+        2357,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/function_order.tri",
+        2991,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/function_plan.tri",
+        2618,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/group_parse.tri",
+        3865,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/halting.tri",
+        751,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/header_state.tri",
+        1995,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/headers.tri",
+        12936,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/index_parse.tri",
+        3023,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/intrinsic_abi.tri",
+        4896,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/intrinsic_bindings.tri",
+        1843,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/intrinsic_plan.tri",
+        1599,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/job.tri",
+        10007,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/lexer.tri",
+        6461,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/loop_gen.tri",
+        3357,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/loop_parse.tri",
+        4460,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/loop_records.tri",
+        1065,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/module_function_order.tri",
+        3336,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/module_functions.tri",
+        6045,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/module_graph.tri",
+        7434,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/module_header.tri",
+        4591,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/module_order.tri",
+        4287,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/module_store.tri",
+        2563,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/nominal.tri",
+        4366,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/package_compile.tri",
+        3437,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/parser.tri",
+        2977,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/purity.tri",
+        2925,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/qualified_call.tri",
+        1167,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/qualified_name.tri",
+        2421,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/record_assign.tri",
+        2711,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/record_edit_gen.tri",
+        2042,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/record_frames.tri",
+        2217,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/record_parse.tri",
+        7994,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/signatures.tri",
+        3074,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/struct_parse.tri",
+        3701,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/symbols.tri",
+        2243,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/syntax.tri",
+        1946,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/terminal.tri",
+        2396,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/tuple_bind.tri",
+        3341,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/tuple_declarations.tri",
+        3402,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/tuple_pattern.tri",
+        2139,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/type_exports.tri",
+        2521,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/type_imports.tri",
+        2552,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/type_parse.tri",
+        5195,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/type_registry.tri",
+        2550,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/types.tri",
+        5175,
+        true
+      ],
+      [
+        "lib/std/compiler/nox/utf8.tri",
+        2175,
+        true
+      ],
+      [
+        "lib/std/compiler/optimize.tri",
+        29408,
+        true
+      ],
+      [
+        "lib/std/compiler/parser.tri",
+        93548,
+        true
+      ],
+      [
+        "lib/std/compiler/pipeline.tri",
+        10739,
+        true
+      ],
+      [
+        "lib/std/compiler/typecheck.tri",
+        57287,
+        true
+      ],
+      [
+        "lib/std/crypto/bigint.tri",
+        17839,
+        true
+      ],
+      [
+        "lib/std/crypto/ecdsa.tri",
+        4873,
+        true
+      ],
+      [
+        "lib/std/crypto/ed25519.tri",
+        9468,
+        true
+      ],
+      [
+        "lib/std/crypto/keccak256.tri",
+        29290,
+        true
+      ],
+      [
+        "lib/std/crypto/lut_sponge.tri",
+        7423,
+        true
+      ],
+      [
+        "lib/std/crypto/poseidon.tri",
+        6995,
+        true
+      ],
+      [
+        "lib/std/crypto/poseidon2.tri",
+        23748,
+        true
+      ],
+      [
+        "lib/std/crypto/preimage.tri",
+        284,
+        true
+      ],
+      [
+        "lib/std/crypto/secp256k1.tri",
+        12105,
+        true
+      ],
+      [
+        "lib/std/crypto/sha256.tri",
+        31912,
+        true
+      ],
+      [
+        "lib/std/fhe/lwe.tri",
+        9347,
+        true
+      ],
+      [
+        "lib/std/fhe/pbs.tri",
+        10519,
+        true
+      ],
+      [
+        "lib/std/fhe/rlwe.tri",
+        6539,
+        true
+      ],
+      [
+        "lib/std/io/storage.tri",
+        541,
+        true
+      ],
+      [
+        "lib/std/math/fibonacci.tri",
+        1599,
+        true
+      ],
+      [
+        "lib/std/math/lut.tri",
+        2994,
+        true
+      ],
+      [
+        "lib/std/nn/tensor.tri",
+        7834,
+        true
+      ],
+      [
+        "lib/std/nox/bytes.tri",
+        6874,
+        true
+      ],
+      [
+        "lib/std/nox/seq.tri",
+        2130,
+        true
+      ],
+      [
+        "lib/std/nox/tree.tri",
+        10242,
+        true
+      ],
+      [
+        "lib/std/private/poly.tri",
+        7486,
+        true
+      ],
+      [
+        "lib/std/quantum/gates.tri",
+        10159,
+        true
+      ],
+      [
+        "lib/std/target.tri",
+        171,
+        true
+      ],
+      [
+        "lib/std/trinity/inference.tri",
+        12007,
+        true
+      ],
+      [
+        "lib/vm/core/assert.tri",
+        340,
+        true
+      ],
+      [
+        "lib/vm/core/convert.tri",
+        323,
+        true
+      ],
+      [
+        "lib/vm/core/field.tri",
+        461,
+        true
+      ],
+      [
+        "lib/vm/core/u32.tri",
+        277,
+        true
+      ],
+      [
+        "lib/vm/io/io.tri",
+        251,
+        true
+      ],
+      [
+        "lib/vm/io/mem.tri",
+        491,
+        true
+      ],
+      [
+        "lib/vm/nox/noun.tri",
+        1026,
+        true
+      ],
+      [
+        "catalog/os/aleo/target.toml",
+        432,
+        true
+      ],
+      [
+        "catalog/os/android/target.toml",
+        454,
+        true
+      ],
+      [
+        "catalog/os/aptos/target.toml",
+        445,
+        true
+      ],
+      [
+        "catalog/os/arbitrum/target.toml",
+        472,
+        true
+      ],
+      [
+        "catalog/os/aztec/target.toml",
+        468,
+        true
+      ],
+      [
+        "catalog/os/boundless/target.toml",
+        480,
+        true
+      ],
+      [
+        "catalog/os/browser/target.toml",
+        418,
+        true
+      ],
+      [
+        "catalog/os/cosmwasm/target.toml",
+        470,
+        true
+      ],
+      [
+        "catalog/os/ethereum/states/arbitrum.toml",
+        313,
+        true
+      ],
+      [
+        "catalog/os/ethereum/states/base.toml",
+        297,
+        true
+      ],
+      [
+        "catalog/os/ethereum/states/mainnet.toml",
+        308,
+        true
+      ],
+      [
+        "catalog/os/ethereum/states/optimism.toml",
+        317,
+        true
+      ],
+      [
+        "catalog/os/ethereum/states/sepolia.toml",
+        323,
+        true
+      ],
+      [
+        "catalog/os/ethereum/target.toml",
+        435,
+        true
+      ],
+      [
+        "catalog/os/icp/target.toml",
+        466,
+        true
+      ],
+      [
+        "catalog/os/linux/target.toml",
+        458,
+        true
+      ],
+      [
+        "catalog/os/macos/target.toml",
+        445,
+        true
+      ],
+      [
+        "catalog/os/miden/target.toml",
+        480,
+        true
+      ],
+      [
+        "catalog/os/near/target.toml",
+        442,
+        true
+      ],
+      [
+        "catalog/os/neptune/owner.toml",
+        56,
+        true
+      ],
+      [
+        "catalog/os/nervos/target.toml",
+        438,
+        true
+      ],
+      [
+        "catalog/os/nockchain/target.toml",
+        455,
+        true
+      ],
+      [
+        "catalog/os/openvm-network/target.toml",
+        467,
+        true
+      ],
+      [
+        "catalog/os/polkadot/target.toml",
+        457,
+        true
+      ],
+      [
+        "catalog/os/solana/target.toml",
+        444,
+        true
+      ],
+      [
+        "catalog/os/starknet/target.toml",
+        459,
+        true
+      ],
+      [
+        "catalog/os/succinct/target.toml",
+        462,
+        true
+      ],
+      [
+        "catalog/os/sui/target.toml",
+        434,
+        true
+      ],
+      [
+        "catalog/os/ton/target.toml",
+        415,
+        true
+      ],
+      [
+        "catalog/os/wasi/target.toml",
+        405,
+        true
+      ],
+      [
+        "catalog/vm/arm64/target.toml",
+        631,
+        true
+      ],
+      [
+        "catalog/vm/avm/target.toml",
+        619,
+        true
+      ],
+      [
+        "catalog/vm/aztec/target.toml",
+        598,
+        true
+      ],
+      [
+        "catalog/vm/cairo/target.toml",
+        553,
+        true
+      ],
+      [
+        "catalog/vm/ckb/target.toml",
+        589,
+        true
+      ],
+      [
+        "catalog/vm/evm/target.toml",
+        591,
+        true
+      ],
+      [
+        "catalog/vm/jolt/target.toml",
+        604,
+        true
+      ],
+      [
+        "catalog/vm/miden/target.toml",
+        575,
+        true
+      ],
+      [
+        "catalog/vm/movevm/target.toml",
+        589,
+        true
+      ],
+      [
+        "catalog/vm/nock/target.toml",
+        580,
+        true
+      ],
+      [
+        "catalog/vm/nox/target.toml",
+        1195,
+        true
+      ],
+      [
+        "catalog/vm/openvm/target.toml",
+        541,
+        true
+      ],
+      [
+        "catalog/vm/polkavm/target.toml",
+        640,
+        true
+      ],
+      [
+        "catalog/vm/riscv/target.toml",
+        628,
+        true
+      ],
+      [
+        "catalog/vm/risczero/target.toml",
+        603,
+        true
+      ],
+      [
+        "catalog/vm/sbpf/target.toml",
+        601,
+        true
+      ],
+      [
+        "catalog/vm/sp1/target.toml",
+        528,
+        true
+      ],
+      [
+        "catalog/vm/triton/owner.toml",
+        37,
+        true
+      ],
+      [
+        "catalog/vm/tvm/target.toml",
+        619,
+        true
+      ],
+      [
+        "catalog/vm/wasm/target.toml",
+        565,
+        true
+      ],
+      [
+        "catalog/vm/x86-64/target.toml",
+        634,
+        true
+      ]
+    ]
+  },
+  "symbols": {
+    "groups": {
+      "alloc": 419608,
+      "core": 559364,
+      "clap_builder": 325824,
+      "serde_json": 169880,
+      "joy_rs": 165596,
+      "trident": 568452,
+      "std": 164752,
+      "joy": 44928,
+      "bbg": 7956,
+      "zheng": 145200,
+      "other": 744564,
+      "nox": 52556,
+      "nebu": 5888,
+      "trisha_rs": 12444,
+      "triton_vm": 1287288,
+      "twenty_first": 171680,
+      "triton_air": 528
+    },
+    "counts": {
+      "alloc": 1016,
+      "core": 1820,
+      "clap_builder": 474,
+      "serde_json": 247,
+      "joy_rs": 234,
+      "trident": 858,
+      "std": 665,
+      "joy": 31,
+      "bbg": 26,
+      "zheng": 233,
+      "other": 1686,
+      "nox": 106,
+      "nebu": 19,
+      "trisha_rs": 14,
+      "triton_vm": 428,
+      "twenty_first": 330,
+      "triton_air": 7
+    },
+    "largest": [
+      [
+        449480,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..x_field_element..XFieldElement$GT$$GT$::evaluate_transition_constraints::h7a7af8a47a2a3db5"
+      ],
+      [
+        366140,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..b_field_element..BFieldElement$GT$$GT$::evaluate_transition_constraints::hc0e0370d0151d473"
+      ],
+      [
+        57484,
+        "triton_vm",
+        "triton_vm::table::degree_lowering::DegreeLoweringTable::fill_derived_main_columns::_$u7b$$u7b$closure$u7d$$u7d$::hd69797a3fcc0f903"
+      ],
+      [
+        54292,
+        "triton_vm",
+        "triton_vm::table::degree_lowering::DegreeLoweringTable::fill_derived_aux_columns::_$u7b$$u7b$closure$u7d$$u7d$::hd3bd1ee537fe140a"
+      ],
+      [
+        30340,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..x_field_element..XFieldElement$GT$$GT$::evaluate_consistency_constraints::h44393f892190b02c"
+      ],
+      [
+        26508,
+        "trident",
+        "trident::typecheck::file::_$LT$impl$u20$trident..typecheck..TypeChecker$GT$::check_file::h14706d9e8a4af172"
+      ],
+      [
+        25540,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..b_field_element..BFieldElement$GT$$GT$::evaluate_initial_constraints::hc681da4d32bd0903"
+      ],
+      [
+        23496,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..x_field_element..XFieldElement$GT$$GT$::evaluate_initial_constraints::h761ece71f7a6755d"
+      ],
+      [
+        20212,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..b_field_element..BFieldElement$GT$$GT$::evaluate_consistency_constraints::hea7255f806077e36"
+      ],
+      [
+        17760,
+        "triton_vm",
+        "triton_vm::stark::Prover::prove::h3e3032fe6bdf9522"
+      ],
+      [
+        16844,
+        "trident",
+        "trident::config::target::package::_::_$LT$impl$u20$serde_core..ser..Serialize$u20$for$u20$trident..config..target..package..TargetPackage$GT$::serialize::h47f207462ad75826"
+      ],
+      [
+        16812,
+        "trident",
+        "trident::typecheck::block::_$LT$impl$u20$trident..typecheck..TypeChecker$GT$::check_block::hc3990f8d84fdf31e"
+      ],
+      [
+        15592,
+        "clap_builder",
+        "clap_builder::parser::parser::Parser::get_matches_with::h9344a2c4d4241fa8"
+      ],
+      [
+        12644,
+        "trident",
+        "trident::typecheck::expr::_$LT$impl$u20$trident..typecheck..TypeChecker$GT$::check_expr::h97de791d77af251a"
+      ],
+      [
+        12564,
+        "clap_builder",
+        "clap_builder::builder::command::Command::_build_self::hfd6225d107e14fd8"
+      ],
+      [
+        12472,
+        "trident",
+        "trident::typecheck::builtins::_$LT$impl$u20$trident..typecheck..TypeChecker$GT$::register_builtins::h2a9eaa4b03180310"
+      ],
+      [
+        12236,
+        "trident",
+        "trident::ir::tree::lower::nox::NoxCompiler::compile_expr::heb48e75fd053d337"
+      ],
+      [
+        11840,
+        "triton_vm",
+        "triton_vm::stark::Verifier::verify::hbfb55c9d5a5ed0f8"
+      ],
+      [
+        11804,
+        "other",
+        "ariadne::write::_$LT$impl$u20$ariadne..Report$LT$S$GT$$GT$::write_for_stream::hc1b0288e3460045c"
+      ],
+      [
+        11800,
+        "zheng",
+        "zheng::ccs::universal::build::hd7b2d2f2f0375347"
+      ],
+      [
+        11008,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..x_field_element..XFieldElement$GT$$GT$::evaluate_terminal_constraints::h8da04dc125ba7945"
+      ],
+      [
+        10904,
+        "other",
+        "triton_isa::parser::an_instruction::hae201dbd117a2ed9"
+      ],
+      [
+        10052,
+        "trident",
+        "trident::typecheck::imports::_$LT$impl$u20$trident..typecheck..TypeChecker$GT$::import_scope::heb108b420bcdf2cc"
+      ],
+      [
+        10024,
+        "serde_json",
+        "_$LT$$RF$mut$u20$serde_json..de..Deserializer$LT$R$GT$$u20$as$u20$serde_core..de..Deserializer$GT$::deserialize_struct::hff349bc5e00603ae"
+      ],
+      [
+        9696,
+        "trident",
+        "trident::config::target::TerrainConfig::parse_toml::h6196286af9c2a26d"
+      ],
+      [
+        9684,
+        "clap_builder",
+        "_$LT$joy..artifact_limits..LimitArgs$u20$as$u20$clap_builder..derive..Args$GT$::augment_args::h009c1de37b4487a7"
+      ],
+      [
+        9584,
+        "std",
+        "std::backtrace_rs::symbolize::gimli::resolve"
+      ],
+      [
+        9572,
+        "clap_builder",
+        "clap_builder::output::help_template::HelpTemplate::write_templated_help::h76aef8761fbd3c85"
+      ],
+      [
+        9532,
+        "trident",
+        "trident::ir::tree::lower::nox::native::compile::hb4a030efbc516459"
+      ],
+      [
+        9304,
+        "trident",
+        "trident::syntax::parser::items::_$LT$impl$u20$trident..syntax..parser..Parser$GT$::parse_items::hcd111fa2553babaf"
+      ],
+      [
+        9044,
+        "triton_vm",
+        "_$LT$triton_vm..table..master_table..MasterAuxTable$u20$as$u20$triton_vm..table..auxiliary_table..Evaluable$LT$twenty_first..math..b_field_element..BFieldElement$GT$$GT$::evaluate_terminal_constraints::h76b244685f9c4c89"
+      ],
+      [
+        9040,
+        "clap_builder",
+        "_$LT$joy..verify..VerifyArgs$u20$as$u20$clap_builder..derive..Args$GT$::augment_args::h0b55a720a3963c90"
+      ],
+      [
+        8648,
+        "core",
+        "miniz_oxide::inflate::core::decompress::h07babfd8ce2341fd"
+      ],
+      [
+        8580,
+        "trident",
+        "trident::ir::tree::lower::nox::native::flow::_$LT$impl$u20$trident..ir..tree..lower..nox..native..Compiler$GT$::statement::h757edf43a5d8881f"
+      ],
+      [
+        8436,
+        "zheng",
+        "zheng::execution::relation::eval::_$LT$impl$u20$zheng..execution..relation..Builder$GT$::eval::h4ed8c996332deb4c"
+      ],
+      [
+        8280,
+        "trident",
+        "trident::syntax::parser::stmts::_$LT$impl$u20$trident..syntax..parser..Parser$GT$::parse_block::h04dd6820efeaab78"
+      ],
+      [
+        8228,
+        "joy",
+        "joy::build_cmd::cmd_build::h3ce232c6553ea82f"
+      ],
+      [
+        8076,
+        "clap_builder",
+        "_$LT$joy..prove..ProveArgs$u20$as$u20$clap_builder..derive..Args$GT$::augment_args::h1e30142cc114cfdd"
+      ],
+      [
+        7968,
+        "trident",
+        "trident::ir::tree::lower::nox::NoxCompiler::compile_stmts_k::h35d10c99d20a862b"
+      ],
+      [
+        7816,
+        "std",
+        "<std::backtrace_rs::symbolize::gimli::Context>::new"
+      ],
+      [
+        7220,
+        "trident",
+        "trident::ir::tree::lower::nox::modules::_$LT$impl$u20$trident..ir..tree..lower..nox..NoxCompiler$GT$::compile_modules_profile::h65850251b7a96bae"
+      ],
+      [
+        7196,
+        "trident",
+        "trident::typecheck::constants::resolve::h343d4051a7ff459e"
+      ],
+      [
+        7048,
+        "other",
+        "<gimli::read::dwarf::Unit<gimli::read::endian_slice::EndianSlice<gimli::endianity::LittleEndian>, usize>>::new"
+      ],
+      [
+        6952,
+        "trident",
+        "trident::api::pipeline::PreparedProject::specialize_with_origins::hb13153f5cd756980"
+      ],
+      [
+        6524,
+        "triton_vm",
+        "triton_vm::table::processor::auxiliary_column_for_u32_lookup_argument::hcfcb259119b2cff3"
+      ],
+      [
+        6484,
+        "clap_builder",
+        "_$LT$joy..run..RunArgs$u20$as$u20$clap_builder..derive..Args$GT$::augment_args::h86296349d002bfc1"
+      ],
+      [
+        6288,
+        "core",
+        "_$LT$alloc..vec..Vec$LT$T$C$A$GT$$u20$as$u20$core..clone..Clone$GT$::clone::h6cf572083edfeeae"
+      ],
+      [
+        6248,
+        "core",
+        "<core::cell::once::OnceCell<core::result::Result<addr2line::line::Lines, gimli::read::Error>>>::try_init::<<core::cell::once::OnceCell<core::result::Result<addr2line::line::Lines, gimli::read::Error>>>::get_or_init<<addr2line::line::LazyLines>::borrow<gimli::read::endian_slice::EndianSlice<gimli::endianity::LittleEndian>>::{closure#0}>::{closure#0}, !>"
+      ],
+      [
+        6228,
+        "twenty_first",
+        "twenty_first::math::polynomial::Polynomial$LT$FF$GT$::fast_modular_coset_interpolate::hafe75e2664a16a60"
+      ],
+      [
+        6188,
+        "clap_builder",
+        "clap_builder::parser::validator::Validator::validate::h07cdd4a3f88f357b"
+      ]
+    ]
+  },
+  "symbol_method": "Approximate adjacent nm text-symbol address intervals, including alignment. Group by first matching crate name, including generic type names. Excludes constant and unwind sections. Not a removable-size estimate or exclusive crate ownership."
+}
