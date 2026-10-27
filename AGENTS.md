@@ -1,4 +1,6 @@
-# Trident
+# AGENTS.md — trident
+
+> the doctrine of the home is `~/cyber/AGENTS.md`; it applies here first. Claude Code receives both files at session start through `~/.config/cyber/agents-md.nu`; other agents read them in order.
 
 A building block for a cyberstate with superintelligence. Trident is a provable language
 designed to unite every thinking entity on the planet — agents, people,
