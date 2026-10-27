@@ -1,0 +1,66 @@
+[
+  {
+    "name": "scalar-control",
+    "source": "program sample\nfn main(x: Field) -> Field { x + 1 }\n",
+    "check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "OK: /tmp/trident-selfhost-assessment-20260923/soft3/scalar-control.tri\n",
+      "seconds": 0.011
+    },
+    "build": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> /tmp/trident-selfhost-assessment-20260923/soft3/scalar-control.nox\n",
+      "seconds": 0.004
+    }
+  },
+  {
+    "name": "entry-59-words",
+    "source": "program sample\nfn main(xs: [Field; 59]) -> Field { xs[0] }\n",
+    "check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "OK: /tmp/trident-selfhost-assessment-20260923/soft3/entry-59-words.tri\n",
+      "seconds": 0.003
+    },
+    "build": {
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Diagnostic { severity: Error, message: \"nox: entry aggregate exceeds the element limit\", span: Span { file_id: 0, start: 0, end: 0 }, notes: [], help: None }\n",
+      "seconds": 0.004
+    }
+  },
+  {
+    "name": "loop-4097",
+    "source": "program sample\nfn main(n: U32) -> Field { let mut x: Field = 0 for i in 0..n bounded 4097 { x = x + 1 } x }\n",
+    "check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "OK: /tmp/trident-selfhost-assessment-20260923/soft3/loop-4097.tri\n",
+      "seconds": 0.003
+    },
+    "build": {
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Diagnostic { severity: Error, message: \"nox: loop unroll of 4097 iterations exceeds limit 4096 (bound the loop tighter, or await recursive-core lowering)\", span: Span { file_id: 0, start: 0, end: 0 }, notes: [], help: None }\n",
+      "seconds": 0.003
+    }
+  },
+  {
+    "name": "dynamic-index",
+    "source": "program sample\nfn main(i: U32) -> Field { let xs: [Field; 2] = [7, 9] xs[i] }\n",
+    "check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "OK: /tmp/trident-selfhost-assessment-20260923/soft3/dynamic-index.tri\n",
+      "seconds": 0.003
+    },
+    "build": {
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Diagnostic { severity: Error, message: \"nox: array index must be a compile-time constant on the nox target (dynamic indexing awaits eq-chain selection)\", span: Span { file_id: 0, start: 0, end: 0 }, notes: [], help: None }\n",
+      "seconds": 0.003
+    }
+  }
+]

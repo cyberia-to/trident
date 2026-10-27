@@ -1,0 +1,385 @@
+{
+  "date": "2026-09-23",
+  "reviewed_master": "360b737e073ca2f969ab0c78460b4228bcac7b78",
+  "released_compiler_commit": "531e93c4a08bd715a8e8ec61d2089ba7768c6d39",
+  "versions": {
+    "trident": "0.3.0",
+    "trisha": "0.3.0",
+    "joy": "0.5.0"
+  },
+  "archive_url": "https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-aarch64-apple-darwin.tar.gz",
+  "archive_sha256": "dca19d65224f9e99a6ac3d1f8d84961f4361f300246380903fb3b37718d314ae",
+  "compiler_modules": [
+    {
+      "path": "lib/std/compiler/codegen.tri",
+      "lines": 1991,
+      "bytes": 69183,
+      "sha256": "3057b4d2a53d9dcac3eb4dd26946987d6c8306424214349f6d023a9a9738ce33",
+      "rust_check_exit_code": 0
+    },
+    {
+      "path": "lib/std/compiler/lexer.tri",
+      "lines": 829,
+      "bytes": 30261,
+      "sha256": "8200e2b107d8406b27a0b049ae20951d0ec2ef0e69b69258d30df802e6898c41",
+      "rust_check_exit_code": 0
+    },
+    {
+      "path": "lib/std/compiler/lower.tri",
+      "lines": 1121,
+      "bytes": 29714,
+      "sha256": "f6558b46a9b36217433b50624d66e7ea083662182ddf84d8fbba06e382ea346e",
+      "rust_check_exit_code": 0
+    },
+    {
+      "path": "lib/std/compiler/optimize.tri",
+      "lines": 733,
+      "bytes": 29408,
+      "sha256": "bf51305d4772ab9df097120d903de88397f5b4a90a532cbe1ae1d62eddbc0ef9",
+      "rust_check_exit_code": 0
+    },
+    {
+      "path": "lib/std/compiler/parser.tri",
+      "lines": 2732,
+      "bytes": 93548,
+      "sha256": "4d421c868615240cf0d33da2f9762ab38e9b08876d30a105658f7c2767d9f8d5",
+      "rust_check_exit_code": 0
+    },
+    {
+      "path": "lib/std/compiler/pipeline.tri",
+      "lines": 312,
+      "bytes": 10739,
+      "sha256": "2a8c8bcb0ccb2623a4f101be5ff729cdf88f4370aae43a35d07beb5232919365",
+      "rust_check_exit_code": 0
+    },
+    {
+      "path": "lib/std/compiler/typecheck.tri",
+      "lines": 1519,
+      "bytes": 57287,
+      "sha256": "eddb71d033388c23e1f1469478fc93da5f189c0fd489c055aca3c99ce55ca06b",
+      "rust_check_exit_code": 0
+    }
+  ],
+  "probe_wrapper_source": "program compiler_pipeline_fixture\nuse vm.io.mem\nuse vm.core.convert\nuse std.compiler.pipeline\nfn main() {\nlet n = pub_read()\nassert(convert.as_u32(n) < convert.as_u32(1025))\nfor i in 0..n bounded 1024 { mem.write(1000 + convert.as_field(i), pub_read()) }\nmem.write(2000 + 0,1000)\nmem.write(2000 + 1,n)\nmem.write(2000 + 4,1)\nmem.write(2000 + 5,5)\nmem.write(2000 + 6,10)\nmem.write(2000 + 7,3)\nmem.write(2000 + 8,16)\nmem.write(2000 + 9,1073741824)\nmem.write(2000 + 10,100000)\npipeline.compile(2000)\n\nlet count = mem.read(2003)\nlet base = mem.read(2002)\npub_write(count)\npub_write(mem.read(2011))\nfor i in 0..count bounded 1024 {\npub_write(mem.read(base + convert.as_field(i) * 4 + 0))\npub_write(mem.read(base + convert.as_field(i) * 4 + 1))\npub_write(mem.read(base + convert.as_field(i) * 4 + 2))\npub_write(mem.read(base + convert.as_field(i) * 4 + 3))\n}\n}\n",
+  "probe_wrapper_tasm_sha256": "d17e764061b81ad3147200bf9bb20b52c7039a0dd21a6b7413de825a475c08f8",
+  "triton_wrapper_build_exit_code": 0,
+  "nox_wrapper_build_exit_code": 1,
+  "nox_missing_intrinsics": [
+    "@operator:divmod",
+    "pub_read",
+    "pub_write",
+    "ram_read",
+    "ram_write"
+  ],
+  "cases": [
+    {
+      "name": "arithmetic",
+      "source": "program sample fn main() -> Field { 2 + 3 * 4 }",
+      "rust_check_exit_code": 0,
+      "vm_exit_code": 0,
+      "compiler_error_count": 0,
+      "tir_record_count": 9,
+      "tir_records": [
+        [
+          9,
+          3,
+          0,
+          0
+        ],
+        [
+          7,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          2,
+          0,
+          0
+        ],
+        [
+          12,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          4,
+          0,
+          0
+        ],
+        [
+          18,
+          0,
+          0,
+          0
+        ],
+        [
+          16,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vm_cycles": 107565,
+      "elapsed_seconds": 0.123
+    },
+    {
+      "name": "explicit-return",
+      "source": "program sample fn main() -> Field { return 7 }",
+      "rust_check_exit_code": 0,
+      "vm_exit_code": 0,
+      "compiler_error_count": 0,
+      "tir_record_count": 5,
+      "tir_records": [
+        [
+          9,
+          3,
+          0,
+          0
+        ],
+        [
+          7,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          7,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vm_cycles": 81023,
+      "elapsed_seconds": 0.119
+    },
+    {
+      "name": "local-variable",
+      "source": "program sample fn main() -> Field { let x: Field = 7 x }",
+      "rust_check_exit_code": 0,
+      "vm_exit_code": 0,
+      "compiler_error_count": 1,
+      "tir_record_count": 5,
+      "tir_records": [
+        [
+          9,
+          3,
+          0,
+          0
+        ],
+        [
+          7,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vm_cycles": 99849,
+      "elapsed_seconds": 0.12
+    },
+    {
+      "name": "two-functions",
+      "source": "program sample fn helper() -> Field { 7 } fn main() -> Field { helper() }",
+      "rust_check_exit_code": 0,
+      "vm_exit_code": 0,
+      "compiler_error_count": 0,
+      "tir_record_count": 5,
+      "tir_records": [
+        [
+          9,
+          0,
+          0,
+          0
+        ],
+        [
+          7,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          7,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vm_cycles": 112476,
+      "elapsed_seconds": 0.123
+    },
+    {
+      "name": "two-functions-distinct",
+      "source": "program sample fn helper() -> Field { 7 } fn main() -> Field { 9 }",
+      "rust_check_exit_code": 0,
+      "vm_exit_code": 0,
+      "compiler_error_count": 0,
+      "tir_record_count": 5,
+      "tir_records": [
+        [
+          9,
+          0,
+          0,
+          0
+        ],
+        [
+          7,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          7,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vm_cycles": 105538,
+      "elapsed_seconds": 0.117
+    },
+    {
+      "name": "parameters",
+      "source": "program sample fn add(a: Field, b: Field) -> Field { a + b } fn main() -> Field { add(2, 3) }",
+      "rust_check_exit_code": 0,
+      "vm_exit_code": 0,
+      "compiler_error_count": 2,
+      "tir_record_count": 9,
+      "tir_records": [
+        [
+          9,
+          0,
+          0,
+          0
+        ],
+        [
+          7,
+          3,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          16,
+          0,
+          0,
+          0
+        ],
+        [
+          15,
+          1,
+          0,
+          0
+        ],
+        [
+          13,
+          1,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vm_cycles": 184839,
+      "elapsed_seconds": 0.139
+    }
+  ],
+  "excluded_probe": {
+    "name": "imported-call",
+    "reason": "Rust check rejected the source too; excluded as an invalid differential comparison"
+  },
+  "limits": [
+    "VM exit 0 reports wrapper execution, not compiler acceptance.",
+    "Output is optimized numeric TIR; emitted target programs were not executed.",
+    "No self-build or full bootstrap was attempted."
+  ]
+}

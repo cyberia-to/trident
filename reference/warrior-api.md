@@ -151,6 +151,24 @@ Neptune runtime modules and Triton baselines live in Trisha. The core discovery 
 come from their runtime packages. The release audit records current proof-support
 limits; this API contract does not certify the cryptography of a linked warrior.
 
+## Planned warriors
+
+| Warrior | Intended target family | Scope |
+|---|---|---|
+| vitalina | Ethereum | Ethereum prover |
+| gaw | Polkadot (DOT) | Polkadot execution/proof adapter |
+| tolya | Solana (SOL) | Solana execution/proof adapter |
+| pearla | Pearl | Blockchain inference |
+| zenda | Zcash | Zcash proof adapter |
+
+These sibling projects are development stubs with `cli/`, `rs/` and a
+`reference/warrior.md` contract. `status` emits identity metadata; execution,
+proving, verification, deployment and `describe` remain unimplemented and fail
+explicitly. Their `catalog/os/<family>/owner.toml` records use `status = "stub"`.
+The installed-runtime registry continues to accept only implemented owners;
+these names do not enable new Trident targets or claim a proof backend.
+See the [stub roster](../../warriors/stubs.md) for workspace locations.
+
 ## Target packages (compiler API 3)
 
 The owner-approved target resource contract uses `target::TargetPackage`.
