@@ -24,6 +24,9 @@ pub fn compile_to_ebpf<const N: usize>(
     if num_params > MAX_PARAMS { return Err(CompileError::NoParams); }
     let mut e = EbpfEmitter::new(num_params);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result_reg = e.pop_reg();
     // Move result to r0
     if result_reg != 0 {
@@ -47,6 +50,8 @@ struct EbpfEmitter {
     next_scratch: u8,
     subject: Vec<u8>,
     loop_state: Option<EbpfLoopState>,
+    /// Set when a register was handed out while all scratch registers held live values
+    scratch_overflow: bool,
 }
 
 // Scratch registers: r6, r7, r8, r9
@@ -56,10 +61,13 @@ impl EbpfEmitter {
     fn new(num_params: u32) -> Self {
         // Args: r1-r5. Subject: last param = depth 0 (head)
         let subject: Vec<u8> = (0..num_params).rev().map(|i| (1 + i) as u8).collect();
-        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None }
+        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None, scratch_overflow: false }
     }
 
     fn push_reg(&mut self) -> u8 {
+        if self.reg_stack.len() >= SCRATCH_REGS.len() {
+            self.scratch_overflow = true;
+        }
         let reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
         self.next_scratch += 1;
         self.reg_stack.push(reg);
@@ -338,12 +346,12 @@ impl EbpfEmitter {
         // Use BPF stack for spill: [r10 - 8] = ah, [r10 - 16] = bh
         // Registers: r0 = temp, dst = result, ra/rb = inputs
 
-        let mask32: i32 = -1; // 0xFFFFFFFF as i32 (AND mask)
+        let mask32: i32 = -1; // 0xFFFFFFFF as i32; ALU32 AND K zero-extends, so -1 keeps the low 32 bits
 
         // Save al, ah, bl, bh to stack
         // [r10-8] = al = ra & 0xFFFFFFFF
         self.emit(ebpf_mov64(0, ra));
-        self.emit(ebpf_and64_imm(0, mask32));
+        self.emit(ebpf_and32_imm(0, mask32));
         self.emit(ebpf_stx64(10, 0, -8));  // [r10-8] = al
 
         // [r10-16] = ah = ra >> 32
@@ -353,7 +361,7 @@ impl EbpfEmitter {
 
         // [r10-24] = bl = rb & 0xFFFFFFFF
         self.emit(ebpf_mov64(0, rb));
-        self.emit(ebpf_and64_imm(0, mask32));
+        self.emit(ebpf_and32_imm(0, mask32));
         self.emit(ebpf_stx64(10, 0, -24)); // [r10-24] = bl
 
         // [r10-32] = bh = rb >> 32
@@ -378,7 +386,7 @@ impl EbpfEmitter {
         self.emit(ebpf_stx64(10, 0, -48));     // [r10-48] = hi (partial)
 
         // lo = lo_lo + (mid1 & mask) << 32
-        self.emit(ebpf_and64_imm(dst, mask32)); // dst = mid1 & mask
+        self.emit(ebpf_and32_imm(dst, mask32)); // dst = mid1 & mask
         self.emit(ebpf_lsh64_imm(dst, 32));     // dst = (mid1 & mask) << 32
         self.emit(ebpf_ldx64(0, 10, -40));      // r0 = lo_lo
         self.emit(ebpf_add64(dst, 0));           // dst = lo_lo + mid1_lo<<32
@@ -403,7 +411,7 @@ impl EbpfEmitter {
         self.emit(ebpf_stx64(10, ra, -48));
 
         // lo += (mid2 & mask) << 32
-        self.emit(ebpf_and64_imm(dst, mask32));
+        self.emit(ebpf_and32_imm(dst, mask32));
         self.emit(ebpf_lsh64_imm(dst, 32));
         self.emit(ebpf_ldx64(0, 10, -40));       // r0 = lo
         self.emit(ebpf_add64(dst, 0));            // dst = lo + mid2_lo<<32
@@ -498,7 +506,7 @@ impl EbpfEmitter {
         let dst = self.push_reg();
         self.emit(ebpf_mov64(dst, ra));
         self.emit(ebpf_xor64_imm(dst, -1));
-        self.emit(ebpf_and64_imm(dst, 0xFFFF_FFFFu32 as i32));
+        self.emit(ebpf_and32_imm(dst, 0xFFFF_FFFFu32 as i32));
         Ok(())
     }
 
@@ -511,7 +519,7 @@ impl EbpfEmitter {
         let dst = self.push_reg();
         self.emit(ebpf_mov64(dst, ra));
         self.emit(ebpf_lsh64(dst, rb));
-        self.emit(ebpf_and64_imm(dst, 0xFFFF_FFFFu32 as i32));
+        self.emit(ebpf_and32_imm(dst, 0xFFFF_FFFFu32 as i32));
         Ok(())
     }
 
@@ -544,7 +552,8 @@ fn ebpf_lsh64(dst: u8, src: u8) -> u64 { ebpf_insn(0x6F, dst, src, 0, 0) }
 fn ebpf_mov64(dst: u8, src: u8) -> u64 { ebpf_insn(0xBF, dst, src, 0, 0) }
 
 fn ebpf_add64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0x07, dst, 0, 0, imm) }
-fn ebpf_and64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0x57, dst, 0, 0, imm) }
+// ALU32 AND K (0x54): 32-bit ops zero the upper 32 bits of dst, so imm -1 masks to the low 32.
+fn ebpf_and32_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0x54, dst, 0, 0, imm) }
 fn ebpf_xor64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0xA7, dst, 0, 0, imm) }
 fn ebpf_mov64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0xB7, dst, 0, 0, imm) }
 fn ebpf_lsh64_imm(dst: u8, imm: u32) -> u64 { ebpf_insn(0x67, dst, 0, 0, imm as i32) }
@@ -560,3 +569,123 @@ fn ebpf_jlt(dst: u8, src: u8, off: i16) -> u64 { ebpf_insn(0xAD, dst, src, off, 
 fn ebpf_ja(off: i16) -> u64 { ebpf_insn(0x05, 0, 0, off, 0) }
 
 fn ebpf_exit() -> u64 { ebpf_insn(0x95, 0, 0, 0, 0) }
+
+
+#[cfg(test)]
+mod anclas_criba {
+    use super::*;
+    use nebu::Goldilocks;
+
+    fn atomo(o: &mut Order<1024>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
+    fn axis(o: &mut Order<1024>, ax: u64) -> NounId {
+        let t = atomo(o, 0);
+        let a = atomo(o, ax);
+        o.pair(t, a).unwrap()
+    }
+    fn binaria(o: &mut Order<1024>, tag: u64, l: NounId, r: NounId) -> NounId {
+        let body = o.pair(l, r).unwrap();
+        let t = atomo(o, tag);
+        o.pair(t, body).unwrap()
+    }
+    fn instrucciones(code: &[u8]) -> Vec<u64> {
+        code.chunks_exact(8).map(|c| u64::from_le_bytes(c.try_into().unwrap())).collect()
+    }
+    /// Instrucciones ALU64 AND K con imm = -1 (opcode 0x57): identidad, no enmascara.
+    fn and64_k_menos_uno(code: &[u8]) -> usize {
+        instrucciones(code).iter().filter(|i| (**i & 0xFF) == 0x57 && (**i >> 32) == 0xFFFF_FFFF).count()
+    }
+    /// Instrucciones ALU32 AND K con imm = -1 (opcode 0x54): enmascaran a 32 bits.
+    fn and32_k_menos_uno(code: &[u8]) -> usize {
+        instrucciones(code).iter().filter(|i| (**i & 0xFF) == 0x54 && (**i >> 32) == 0xFFFF_FFFF).count()
+    }
+
+    /// Cubre: helper ALU32 (opcode 0x54) y el flujo completo de emit_mul (patron 7).
+    /// No cubre: ejecucion en un kernel/VM eBPF.
+    #[test]
+    fn mul_enmascara_a_32_bits_con_alu32_y_no_con_and64_menos_uno() {
+        assert_eq!(ebpf_and32_imm(0, -1) & 0xFF, 0x54, "ALU32|K|AND = 0x54");
+        let mut o = Order::<1024>::new();
+        let a0 = axis(&mut o, 2);
+        let a1 = axis(&mut o, 6);
+        let formula = binaria(&mut o, 7, a0, a1);
+        let code = compile_to_ebpf(&o, formula, 2).unwrap();
+        assert_eq!(and64_k_menos_uno(&code), 0,
+            "silicon-src-3.CL-LOG.2: ALU64 AND K con imm -1 es identidad, no enmascara a 32 bits");
+        assert_eq!(and32_k_menos_uno(&code), 4,
+            "emit_mul debe enmascarar con ALU32 AND K -1 en exactamente 4 sitios: al, bl, mid1, mid2");
+    }
+
+    /// Misma clase de defecto en emit_not (patron 13): AND 0xFFFFFFFF como ALU64 K (-1) es identidad.
+    #[test]
+    fn not_enmascara_a_32_bits_con_alu32() {
+        let mut o = Order::<1024>::new();
+        let a0 = axis(&mut o, 2);
+        let t = atomo(&mut o, 13);
+        let formula = o.pair(t, a0).unwrap();
+        let code = compile_to_ebpf(&o, formula, 1).unwrap();
+        assert_eq!(and64_k_menos_uno(&code), 0, "emit_not: AND64 K -1 es identidad");
+        assert_eq!(and32_k_menos_uno(&code), 1, "emit_not debe enmascarar con ALU32 AND K -1");
+    }
+
+    /// Misma clase de defecto en emit_shl (patron 14).
+    #[test]
+    fn shl_enmascara_a_32_bits_con_alu32() {
+        let mut o = Order::<1024>::new();
+        let a0 = axis(&mut o, 2);
+        let a1 = axis(&mut o, 6);
+        let formula = binaria(&mut o, 14, a0, a1);
+        let code = compile_to_ebpf(&o, formula, 2).unwrap();
+        assert_eq!(and64_k_menos_uno(&code), 0, "emit_shl: AND64 K -1 es identidad");
+        assert_eq!(and32_k_menos_uno(&code), 1, "emit_shl debe enmascarar con ALU32 AND K -1");
+    }
+}
+
+#[cfg(test)]
+mod anclas_sil1 {
+    use super::*;
+    use nebu::Goldilocks;
+
+    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
+    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
+        let t = atomo(o, 0);
+        let a = atomo(o, ax);
+        o.pair(t, a).unwrap()
+    }
+    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
+        let body = o.pair(l, r).unwrap();
+        let t = atomo(o, tag);
+        o.pair(t, body).unwrap()
+    }
+    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
+    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
+    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
+        let mut f = axis(o, 2);
+        for _ in 1..vivos {
+            let hoja = axis(o, 2);
+            f = binaria(o, 5, hoja, f);
+        }
+        f
+    }
+    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
+        matches!(r, Err(CompileError::ScratchOverflow))
+    }
+
+    #[test]
+    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
+        assert_eq!(SCRATCH_REGS.len(), 4);
+        let mut o = Order::<4096>::new();
+        let f = suma_viva(&mut o, SCRATCH_REGS.len() as u32 + 1);
+        let r = compile_to_ebpf(&o, f, 1);
+        assert!(es_scratch_overflow(&r), "SIL-1.A: 5 valores vivos con 4 scratch deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
+    }
+
+    #[test]
+    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
+        let cap = SCRATCH_REGS.len() as u32;
+        for vivos in [cap - 1, cap] {
+            let mut o = Order::<4096>::new();
+            let f = suma_viva(&mut o, vivos);
+            assert!(compile_to_ebpf(&o, f, 1).is_ok(), "{vivos} vivos caben en {cap} scratch");
+        }
+    }
+}

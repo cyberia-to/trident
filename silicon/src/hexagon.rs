@@ -45,6 +45,9 @@ pub fn compile_to_hexagon<const N: usize>(
     }
     let mut e = HexagonEmitter::new(num_params);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result = e.pop_reg();
     Ok(e.finish(&result))
 }
@@ -60,6 +63,8 @@ struct HexagonEmitter {
     /// Subject model: maps depth -> register name.
     subject: Vec<String>,
     loop_state: Option<HexagonLoopState>,
+    /// Set when a register was handed out while all scratch registers were allocated
+    scratch_overflow: bool,
 }
 
 #[derive(Clone)]
@@ -89,10 +94,14 @@ impl HexagonEmitter {
             reg_stack: Vec::new(),
             subject,
             loop_state: None,
+            scratch_overflow: false,
         }
     }
 
     fn alloc_scratch(&mut self) -> String {
+        if self.next_scratch >= SCRATCH_COUNT {
+            self.scratch_overflow = true;
+        }
         let r = format!("R{}", SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT));
         self.next_scratch += 1;
         r
@@ -117,6 +126,7 @@ impl HexagonEmitter {
     }
 
     fn pop_reg(&mut self) -> String {
+        self.next_scratch = self.next_scratch.saturating_sub(1);
         self.reg_stack.pop().unwrap_or_else(|| "R6".to_string())
     }
 
@@ -211,12 +221,21 @@ impl HexagonEmitter {
         let (b_tag, body_formula) = formula_parts(order, b_formula)?;
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
+        // The bound value stays on the register stack while the body runs;
+        // afterwards the body result takes its place.
         self.emit_formula(order, value_formula)?;
-        let val = self.pop_reg();
+        let val = self.reg_stack.last().cloned().unwrap_or_else(|| "R6".to_string());
         self.subject.insert(0, val);
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        let res = self.pop_reg();
+        self.pop_reg(); // the bound value
+        let dst = self.push_reg();
+        if dst != res {
+            self.emit_packet(&format!("{} = {}", dst, res));
+        }
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
@@ -267,15 +286,18 @@ impl HexagonEmitter {
         let (_, rest) = body_pair(order, cons_body)?;
 
         let mut cur = rest;
-        let mut new_vals = Vec::new();
+        let mut evaluated = 0;
         for _ in ls.carried.iter() {
             let (tag, cb) = formula_parts(order, cur)?;
             if tag != 3 { break; }
             let (val_formula, tail) = body_pair(order, cb)?;
             self.emit_formula(order, val_formula)?;
-            new_vals.push(self.pop_reg());
+            evaluated += 1;
             cur = tail;
         }
+        // Every new value stays live until all are computed; pop in reverse.
+        let mut new_vals: Vec<String> = (0..evaluated).map(|_| self.pop_reg()).collect();
+        new_vals.reverse();
         for (i, cr) in ls.carried.iter().enumerate() {
             if i < new_vals.len() {
                 self.emit_packet(&format!("{} = {}", cr, new_vals[i]));
@@ -320,9 +342,9 @@ impl HexagonEmitter {
     fn emit_add<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // 32-bit wrapping add
         self.emit_packet(&format!("{} = add({}, {})", dst, ra, rb));
@@ -332,9 +354,9 @@ impl HexagonEmitter {
     fn emit_sub<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // 32-bit wrapping sub
         self.emit_packet(&format!("{} = sub({}, {})", dst, ra, rb));
@@ -344,9 +366,9 @@ impl HexagonEmitter {
     fn emit_mul<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // MPY: 32x32 → lower 32 bits
         self.emit_packet(&format!("{} = mpyi({}, {})", dst, ra, rb));
@@ -356,9 +378,9 @@ impl HexagonEmitter {
     fn emit_eq<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         let pred = self.alloc_pred();
         // nox eq: 0 if equal, 1 if not
@@ -374,9 +396,9 @@ impl HexagonEmitter {
     fn emit_lt<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         let pred = self.alloc_pred();
         // nox lt: 0 if a<b (unsigned), 1 if a>=b
@@ -401,9 +423,9 @@ impl HexagonEmitter {
     fn emit_xor<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         self.emit_packet(&format!("{} = xor({}, {})", dst, ra, rb));
         Ok(())
@@ -412,9 +434,9 @@ impl HexagonEmitter {
     fn emit_and<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         self.emit_packet(&format!("{} = and({}, {})", dst, ra, rb));
         Ok(())
@@ -431,9 +453,9 @@ impl HexagonEmitter {
     fn emit_shl<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // ASL = arithmetic/logical shift left
         self.emit_packet(&format!("{} = asl({}, {})", dst, ra, rb));
@@ -465,5 +487,224 @@ impl HexagonEmitter {
         // Return
         out.push_str("    { jumpr R31 }\n");
         out
+    }
+}
+
+#[cfg(test)]
+mod anclas_sil1 {
+    use super::*;
+    use nebu::Goldilocks;
+
+    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
+    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
+        let t = atomo(o, 0);
+        let a = atomo(o, ax);
+        o.pair(t, a).unwrap()
+    }
+    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
+        let body = o.pair(l, r).unwrap();
+        let t = atomo(o, tag);
+        o.pair(t, body).unwrap()
+    }
+    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
+    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
+    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
+        let mut f = axis(o, 2);
+        for _ in 1..vivos {
+            let hoja = axis(o, 2);
+            f = binaria(o, 5, hoja, f);
+        }
+        f
+    }
+    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
+        matches!(r, Err(CompileError::ScratchOverflow))
+    }
+
+    #[test]
+    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
+        assert_eq!(SCRATCH_COUNT, 10);
+        let mut o = Order::<4096>::new();
+        let f = suma_viva(&mut o, SCRATCH_COUNT + 1);
+        let r = compile_to_hexagon(&o, f, 1);
+        assert!(es_scratch_overflow(&r), "SIL-1.A: 11 valores vivos con 10 scratch deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
+    }
+
+    #[test]
+    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
+        for vivos in [SCRATCH_COUNT - 1, SCRATCH_COUNT] {
+            let mut o = Order::<4096>::new();
+            let f = suma_viva(&mut o, vivos);
+            assert!(compile_to_hexagon(&o, f, 1).is_ok(), "{vivos} vivos caben en {SCRATCH_COUNT} scratch");
+        }
+    }
+
+    // ── grupo A2: el asignador de hexagon debe liberar al consumir ─────────
+
+    fn cita(o: &mut Order<4096>, v: u64) -> NounId {
+        let t = atomo(o, 1);
+        let a = atomo(o, v);
+        o.pair(t, a).unwrap()
+    }
+
+    /// Interprete minimo del texto emitido para formulas sin saltos: ejecuta
+    /// `{ Rd = ... }` sobre 32 registros u32 (semantica de 32 bits de la fase 1)
+    /// y devuelve R0 al llegar a `jumpr R31`.
+    fn ejecuta(asm: &str, params: &[u32]) -> u32 {
+        let mut r = [0u32; 32];
+        for (i, p) in params.iter().enumerate() {
+            r[i] = *p;
+        }
+        fn reg(s: &str) -> usize { s.trim().trim_start_matches('R').parse().expect("registro") }
+        fn val(r: &[u32; 32], s: &str) -> u32 {
+            let s = s.trim();
+            if let Some(h) = s.strip_prefix("##0x") {
+                u32::from_str_radix(h, 16).unwrap()
+            } else if let Some(d) = s.strip_prefix('#') {
+                d.parse().unwrap()
+            } else {
+                r[reg(s)]
+            }
+        }
+        for linea in asm.lines() {
+            let l = linea.trim().trim_start_matches('{').trim_end_matches('}').trim();
+            if l.is_empty() || l.starts_with("//") || l.starts_with('.') || l.ends_with(':') {
+                continue;
+            }
+            if l == "jumpr R31" {
+                return r[0];
+            }
+            let (dst, rhs) = l.split_once('=').expect("asignacion");
+            let rhs = rhs.trim();
+            let nuevo = if let Some(args) = rhs.strip_suffix(')') {
+                let (op, a) = args.split_once('(').expect("operacion");
+                let v: Vec<u32> = a.split(',').map(|x| val(&r, x)).collect();
+                match op {
+                    "add" => v[0].wrapping_add(v[1]),
+                    "sub" => v[0].wrapping_sub(v[1]),
+                    "mpyi" => v[0].wrapping_mul(v[1]),
+                    "xor" => v[0] ^ v[1],
+                    "and" => v[0] & v[1],
+                    "asl" => v[0].wrapping_shl(v[1]),
+                    "not" => !v[0],
+                    _ => panic!("operacion no soportada por el interprete: {op}"),
+                }
+            } else {
+                val(&r, rhs)
+            };
+            r[reg(dst)] = nuevo;
+        }
+        panic!("el codigo no termina en jumpr R31")
+    }
+
+    /// Suma a la derecha de `vivos` citas distintas 1..=vivos, todas vivas a la vez.
+    fn suma_viva_citas(o: &mut Order<4096>, vivos: u32) -> NounId {
+        let mut f = cita(o, vivos as u64);
+        for i in (1..vivos).rev() {
+            let hoja = cita(o, i as u64);
+            f = binaria(o, 5, hoja, f);
+        }
+        f
+    }
+
+    /// SIL-1, grupo A2: pop_reg no decrementaba next_scratch; tras 10 asignaciones
+    /// TOTALES se reciclaba R6 aunque la profundidad viva fuera 2. Con el
+    /// overflow de A, una cadena larga a profundidad baja daba Err espurio.
+    #[test]
+    fn cadena_larga_de_sumas_a_profundidad_baja_compila_y_suma() {
+        let mut o = Order::<4096>::new();
+        let mut f = cita(&mut o, 1);
+        for i in 2..=16u64 {
+            let hoja = cita(&mut o, i);
+            f = binaria(&mut o, 5, f, hoja);
+        }
+        let asm = compile_to_hexagon(&o, f, 0).expect("profundidad viva 2: no es overflow");
+        assert_eq!(ejecuta(&asm, &[]), 136);
+    }
+
+    /// Con capacidad exacta de valores vivos todos los registros son distintos y el resultado es el de referencia.
+    #[test]
+    fn suma_con_capacidad_vivos_da_el_valor_de_referencia() {
+        let mut o = Order::<4096>::new();
+        let f = suma_viva_citas(&mut o, SCRATCH_COUNT);
+        let asm = compile_to_hexagon(&o, f, 0).expect("capacidad exacta");
+        assert_eq!(ejecuta(&asm, &[]), 55);
+    }
+
+    /// Guarda: liberar al consumir exige que los operandos sigan vivos mientras se emite el otro.
+    /// sub(100, add(7, mul(3, 4))) = 81.
+    #[test]
+    fn binarios_anidados_dan_el_valor_de_referencia() {
+        let mut o = Order::<4096>::new();
+        let (c3, c4, c7, c100) = (cita(&mut o, 3), cita(&mut o, 4), cita(&mut o, 7), cita(&mut o, 100));
+        let m = binaria(&mut o, 7, c3, c4);
+        let s = binaria(&mut o, 5, c7, m);
+        let f = binaria(&mut o, 6, c100, s);
+        let asm = compile_to_hexagon(&o, f, 0).unwrap();
+        assert_eq!(ejecuta(&asm, &[]), 81);
+    }
+
+    /// Guarda: add sobre dos parametros no puede leer el mismo registro dos veces.
+    #[test]
+    fn add_de_dos_parametros_lee_registros_distintos() {
+        let mut o = Order::<4096>::new();
+        let a0 = axis(&mut o, 2);
+        let a1 = axis(&mut o, 6);
+        let f = binaria(&mut o, 5, a0, a1);
+        let asm = compile_to_hexagon(&o, f, 2).unwrap();
+        assert_eq!(ejecuta(&asm, &[1000, 20]), 1020);
+        let linea = asm.lines().find(|l| l.contains("= add(")).expect("add");
+        let args = linea.split_once("add(").unwrap().1.trim_end_matches([' ', '}', ')']);
+        let (ra, rb) = args.split_once(',').unwrap();
+        assert_ne!(ra.trim(), rb.trim(), "operandos en el mismo registro: {linea}");
+    }
+
+    /// Guarda: el valor ligado por un let sigue vivo mientras se compila el cuerpo.
+    /// let x = 3+4 in 5+x = 12.
+    #[test]
+    fn let_conserva_el_valor_ligado_durante_el_cuerpo() {
+        let mut o = Order::<4096>::new();
+        let (c3, c4, c5) = (cita(&mut o, 3), cita(&mut o, 4), cita(&mut o, 5));
+        let valor = binaria(&mut o, 5, c3, c4);
+        let uno = axis(&mut o, 1);
+        let t3 = atomo(&mut o, 3);
+        let cons = { let b = o.pair(valor, uno).unwrap(); o.pair(t3, b).unwrap() };
+        let x = axis(&mut o, 2);
+        let cuerpo = binaria(&mut o, 5, c5, x);
+        let t1 = atomo(&mut o, 1);
+        let cuerpo_citado = o.pair(t1, cuerpo).unwrap();
+        let f = binaria(&mut o, 2, cons, cuerpo_citado);
+        let asm = compile_to_hexagon(&o, f, 0).expect("let");
+        assert_eq!(ejecuta(&asm, &[]), 12);
+    }
+
+    /// Guarda: los nuevos valores de un back-edge con dos carried locals salen de registros distintos.
+    #[test]
+    fn back_edge_con_dos_carried_asigna_desde_registros_distintos() {
+        let mut o = Order::<4096>::new();
+        // loop: [2 [[3 [[1 0] [3 [i0 [3 [i1 [0 1]]]]]]] [1 back_edge]]]
+        let (i0, i1) = (cita(&mut o, 1), cita(&mut o, 2));
+        let uno = axis(&mut o, 1);
+        let t3 = atomo(&mut o, 3);
+        let fin_inits = { let b = o.pair(i1, uno).unwrap(); o.pair(t3, b).unwrap() };
+        let inits = { let b = o.pair(i0, fin_inits).unwrap(); o.pair(t3, b).unwrap() };
+        let ranura = cita(&mut o, 0);
+        let a = { let b = o.pair(ranura, inits).unwrap(); o.pair(t3, b).unwrap() };
+        // back-edge: [2 [[3 [[1 0] [3 [v0 [3 [v1 [0 1]]]]]]] [0 2]]]
+        let (v0, v1) = (cita(&mut o, 10), cita(&mut o, 20));
+        let fin_vals = { let b = o.pair(v1, uno).unwrap(); o.pair(t3, b).unwrap() };
+        let vals = { let b = o.pair(v0, fin_vals).unwrap(); o.pair(t3, b).unwrap() };
+        let ranura2 = cita(&mut o, 0);
+        let nuevo_sujeto = { let b = o.pair(ranura2, vals).unwrap(); o.pair(t3, b).unwrap() };
+        let eje = axis(&mut o, 2);
+        let back_edge = binaria(&mut o, 2, nuevo_sujeto, eje);
+        let t1 = atomo(&mut o, 1);
+        let cuerpo = o.pair(t1, back_edge).unwrap();
+        let f = binaria(&mut o, 2, a, cuerpo);
+        let asm = compile_to_hexagon(&o, f, 0).expect("loop");
+        let lineas: Vec<&str> = asm.lines().collect();
+        let j = lineas.iter().position(|l| l.contains("jump .L")).expect("back-edge");
+        let fuente = |l: &str| l.split_once('=').unwrap().1.trim().trim_end_matches('}').trim().to_string();
+        let (s0, s1) = (fuente(lineas[j - 2]), fuente(lineas[j - 1]));
+        assert_ne!(s0, s1, "ambos carried se asignan desde {s0}: el segundo valor piso al primero");
     }
 }
