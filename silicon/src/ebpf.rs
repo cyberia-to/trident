@@ -338,12 +338,12 @@ impl EbpfEmitter {
         // Use BPF stack for spill: [r10 - 8] = ah, [r10 - 16] = bh
         // Registers: r0 = temp, dst = result, ra/rb = inputs
 
-        let mask32: i32 = -1; // 0xFFFFFFFF as i32 (AND mask)
+        let mask32: i32 = -1; // 0xFFFFFFFF as i32; ALU32 AND K zero-extends, so -1 keeps the low 32 bits
 
         // Save al, ah, bl, bh to stack
         // [r10-8] = al = ra & 0xFFFFFFFF
         self.emit(ebpf_mov64(0, ra));
-        self.emit(ebpf_and64_imm(0, mask32));
+        self.emit(ebpf_and32_imm(0, mask32));
         self.emit(ebpf_stx64(10, 0, -8));  // [r10-8] = al
 
         // [r10-16] = ah = ra >> 32
@@ -353,7 +353,7 @@ impl EbpfEmitter {
 
         // [r10-24] = bl = rb & 0xFFFFFFFF
         self.emit(ebpf_mov64(0, rb));
-        self.emit(ebpf_and64_imm(0, mask32));
+        self.emit(ebpf_and32_imm(0, mask32));
         self.emit(ebpf_stx64(10, 0, -24)); // [r10-24] = bl
 
         // [r10-32] = bh = rb >> 32
@@ -378,7 +378,7 @@ impl EbpfEmitter {
         self.emit(ebpf_stx64(10, 0, -48));     // [r10-48] = hi (partial)
 
         // lo = lo_lo + (mid1 & mask) << 32
-        self.emit(ebpf_and64_imm(dst, mask32)); // dst = mid1 & mask
+        self.emit(ebpf_and32_imm(dst, mask32)); // dst = mid1 & mask
         self.emit(ebpf_lsh64_imm(dst, 32));     // dst = (mid1 & mask) << 32
         self.emit(ebpf_ldx64(0, 10, -40));      // r0 = lo_lo
         self.emit(ebpf_add64(dst, 0));           // dst = lo_lo + mid1_lo<<32
@@ -403,7 +403,7 @@ impl EbpfEmitter {
         self.emit(ebpf_stx64(10, ra, -48));
 
         // lo += (mid2 & mask) << 32
-        self.emit(ebpf_and64_imm(dst, mask32));
+        self.emit(ebpf_and32_imm(dst, mask32));
         self.emit(ebpf_lsh64_imm(dst, 32));
         self.emit(ebpf_ldx64(0, 10, -40));       // r0 = lo
         self.emit(ebpf_add64(dst, 0));            // dst = lo + mid2_lo<<32
@@ -498,7 +498,7 @@ impl EbpfEmitter {
         let dst = self.push_reg();
         self.emit(ebpf_mov64(dst, ra));
         self.emit(ebpf_xor64_imm(dst, -1));
-        self.emit(ebpf_and64_imm(dst, 0xFFFF_FFFFu32 as i32));
+        self.emit(ebpf_and32_imm(dst, 0xFFFF_FFFFu32 as i32));
         Ok(())
     }
 
@@ -511,7 +511,7 @@ impl EbpfEmitter {
         let dst = self.push_reg();
         self.emit(ebpf_mov64(dst, ra));
         self.emit(ebpf_lsh64(dst, rb));
-        self.emit(ebpf_and64_imm(dst, 0xFFFF_FFFFu32 as i32));
+        self.emit(ebpf_and32_imm(dst, 0xFFFF_FFFFu32 as i32));
         Ok(())
     }
 
@@ -544,7 +544,8 @@ fn ebpf_lsh64(dst: u8, src: u8) -> u64 { ebpf_insn(0x6F, dst, src, 0, 0) }
 fn ebpf_mov64(dst: u8, src: u8) -> u64 { ebpf_insn(0xBF, dst, src, 0, 0) }
 
 fn ebpf_add64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0x07, dst, 0, 0, imm) }
-fn ebpf_and64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0x57, dst, 0, 0, imm) }
+// ALU32 AND K (0x54): 32-bit ops zero the upper 32 bits of dst, so imm -1 masks to the low 32.
+fn ebpf_and32_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0x54, dst, 0, 0, imm) }
 fn ebpf_xor64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0xA7, dst, 0, 0, imm) }
 fn ebpf_mov64_imm(dst: u8, imm: i32) -> u64 { ebpf_insn(0xB7, dst, 0, 0, imm) }
 fn ebpf_lsh64_imm(dst: u8, imm: u32) -> u64 { ebpf_insn(0x67, dst, 0, 0, imm as i32) }
@@ -560,3 +561,73 @@ fn ebpf_jlt(dst: u8, src: u8, off: i16) -> u64 { ebpf_insn(0xAD, dst, src, off, 
 fn ebpf_ja(off: i16) -> u64 { ebpf_insn(0x05, 0, 0, off, 0) }
 
 fn ebpf_exit() -> u64 { ebpf_insn(0x95, 0, 0, 0, 0) }
+
+
+#[cfg(test)]
+mod anclas_criba {
+    use super::*;
+    use nebu::Goldilocks;
+
+    fn atomo(o: &mut Order<1024>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
+    fn axis(o: &mut Order<1024>, ax: u64) -> NounId {
+        let t = atomo(o, 0);
+        let a = atomo(o, ax);
+        o.pair(t, a).unwrap()
+    }
+    fn binaria(o: &mut Order<1024>, tag: u64, l: NounId, r: NounId) -> NounId {
+        let body = o.pair(l, r).unwrap();
+        let t = atomo(o, tag);
+        o.pair(t, body).unwrap()
+    }
+    fn instrucciones(code: &[u8]) -> Vec<u64> {
+        code.chunks_exact(8).map(|c| u64::from_le_bytes(c.try_into().unwrap())).collect()
+    }
+    /// Instrucciones ALU64 AND K con imm = -1 (opcode 0x57): identidad, no enmascara.
+    fn and64_k_menos_uno(code: &[u8]) -> usize {
+        instrucciones(code).iter().filter(|i| (**i & 0xFF) == 0x57 && (**i >> 32) == 0xFFFF_FFFF).count()
+    }
+    /// Instrucciones ALU32 AND K con imm = -1 (opcode 0x54): enmascaran a 32 bits.
+    fn and32_k_menos_uno(code: &[u8]) -> usize {
+        instrucciones(code).iter().filter(|i| (**i & 0xFF) == 0x54 && (**i >> 32) == 0xFFFF_FFFF).count()
+    }
+
+    /// Cubre: helper ALU32 (opcode 0x54) y el flujo completo de emit_mul (patron 7).
+    /// No cubre: ejecucion en un kernel/VM eBPF.
+    #[test]
+    fn mul_enmascara_a_32_bits_con_alu32_y_no_con_and64_menos_uno() {
+        assert_eq!(ebpf_and32_imm(0, -1) & 0xFF, 0x54, "ALU32|K|AND = 0x54");
+        let mut o = Order::<1024>::new();
+        let a0 = axis(&mut o, 2);
+        let a1 = axis(&mut o, 6);
+        let formula = binaria(&mut o, 7, a0, a1);
+        let code = compile_to_ebpf(&o, formula, 2).unwrap();
+        assert_eq!(and64_k_menos_uno(&code), 0,
+            "silicon-src-3.CL-LOG.2: ALU64 AND K con imm -1 es identidad, no enmascara a 32 bits");
+        assert!(and32_k_menos_uno(&code) >= 3,
+            "emit_mul debe enmascarar con ALU32 AND K -1 (>=3 sitios: al, bl, mid1/mid2)");
+    }
+
+    /// Misma clase de defecto en emit_not (patron 13): AND 0xFFFFFFFF como ALU64 K (-1) es identidad.
+    #[test]
+    fn not_enmascara_a_32_bits_con_alu32() {
+        let mut o = Order::<1024>::new();
+        let a0 = axis(&mut o, 2);
+        let t = atomo(&mut o, 13);
+        let formula = o.pair(t, a0).unwrap();
+        let code = compile_to_ebpf(&o, formula, 1).unwrap();
+        assert_eq!(and64_k_menos_uno(&code), 0, "emit_not: AND64 K -1 es identidad");
+        assert_eq!(and32_k_menos_uno(&code), 1, "emit_not debe enmascarar con ALU32 AND K -1");
+    }
+
+    /// Misma clase de defecto en emit_shl (patron 14).
+    #[test]
+    fn shl_enmascara_a_32_bits_con_alu32() {
+        let mut o = Order::<1024>::new();
+        let a0 = axis(&mut o, 2);
+        let a1 = axis(&mut o, 6);
+        let formula = binaria(&mut o, 14, a0, a1);
+        let code = compile_to_ebpf(&o, formula, 2).unwrap();
+        assert_eq!(and64_k_menos_uno(&code), 0, "emit_shl: AND64 K -1 es identidad");
+        assert_eq!(and32_k_menos_uno(&code), 1, "emit_shl debe enmascarar con ALU32 AND K -1");
+    }
+}

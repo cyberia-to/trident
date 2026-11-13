@@ -469,7 +469,7 @@ impl Arm64Emitter {
         self.emit_u32(arm64_cmp(ra, rb));
         // cset dst, ne (nox: 0=equal, 1=not equal)
         // CSET Xd, ne = CSINC Xd, XZR, XZR, eq  (condition EQ=0)
-        self.emit_u32(0x9A9F17E0 | (dst as u32)); // CSINC dst, xzr, xzr, eq → 1 if ne
+        self.emit_u32(0x9A9F07E0 | (dst as u32)); // CSINC dst, xzr, xzr, eq → 1 if ne
         Ok(())
     }
 
@@ -610,4 +610,40 @@ fn arm64_lsl(rd: u8, rn: u8, shift: u8) -> u32 {
     let immr = (64 - shift as u32) & 63;
     let imms = 63 - shift as u32;
     0xD3400000 | (immr << 16) | (imms << 10) | ((rn as u32) << 5) | (rd as u32)
+}
+
+#[cfg(test)]
+mod anclas_criba {
+    use super::*;
+    use nebu::Goldilocks;
+
+    /// Compila `[9 [a0 a1]]` (nox eq) con 2 parametros y devuelve las palabras de 32 bits.
+    fn palabras_de_eq() -> Vec<u32> {
+        let mut o = Order::<1024>::new();
+        let ax2 = o.atom(Goldilocks::new(2)).unwrap();
+        let t0 = o.atom(Goldilocks::new(0)).unwrap();
+        let a0 = o.pair(t0, ax2).unwrap();
+        let ax6 = o.atom(Goldilocks::new(6)).unwrap();
+        let t0b = o.atom(Goldilocks::new(0)).unwrap();
+        let a1 = o.pair(t0b, ax6).unwrap();
+        let body = o.pair(a0, a1).unwrap();
+        let tag = o.atom(Goldilocks::new(9)).unwrap();
+        let formula = o.pair(tag, body).unwrap();
+        let code = compile_to_arm64(&o, formula, 2).unwrap();
+        code.chunks_exact(4)
+            .map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]]))
+            .collect()
+    }
+
+    /// nox eq: 0 si iguales, 1 si distintos => CSET dst, ne = CSINC Xd, XZR, XZR, EQ.
+    /// CSINC (64 bit) = 0x9A800400 | Rm<<16 | cond<<12 | Rn<<5 | Rd; XZR=31; EQ=0b0000
+    /// => base 0x9A9F07E0. La base 0x9A9F17E0 lleva cond=NE (=CSET eq, 1 si iguales).
+    #[test]
+    fn eq_emite_cset_ne_con_condicion_eq() {
+        let palabras = palabras_de_eq();
+        let cset_ne = palabras.iter().filter(|w| (**w & !0x1F) == 0x9A9F07E0).count();
+        let cset_eq = palabras.iter().filter(|w| (**w & !0x1F) == 0x9A9F17E0).count();
+        assert_eq!(cset_eq, 0, "silicon-src-2.CL-LOG.6: 0x9A9F17E0 es CSET eq (1 si IGUAL), contrato nox exige 1 si NE");
+        assert_eq!(cset_ne, 1, "silicon-src-2.CL-LOG.6: eq debe emitir exactamente un CSINC Xd,XZR,XZR,EQ (0x9A9F07E0)");
+    }
 }

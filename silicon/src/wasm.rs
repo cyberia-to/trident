@@ -32,8 +32,8 @@ const OP_LOCAL_TEE: u8 = 0x22;
 const OP_I64_CONST: u8 = 0x42;
 const OP_I64_EQZ: u8 = 0x50;
 const OP_I64_EQ: u8 = 0x51;
-const OP_I64_LT_U: u8 = 0x53;
-const OP_I64_GE_U: u8 = 0x57;
+const OP_I64_LT_U: u8 = 0x54;
+const OP_I64_GE_U: u8 = 0x5A;
 const OP_I64_ADD: u8 = 0x7C;
 const OP_I64_SUB: u8 = 0x7D;
 const OP_I64_MUL: u8 = 0x7E;
@@ -643,7 +643,7 @@ fn emit_goldilocks_mul() -> (Vec<u8>, u32) {
     (c, num_locals)
 }
 
-const OP_I64_GT_U: u8 = 0x55;
+const OP_I64_GT_U: u8 = 0x56;
 
 // ── WASM module assembly ─────────────────────────────────────────
 
@@ -768,5 +768,28 @@ fn leb128_i64(buf: &mut Vec<u8>, mut val: i64) {
             buf.push(byte); break;
         }
         buf.push(byte | 0x80);
+    }
+}
+
+#[cfg(test)]
+mod anclas_criba {
+    use super::*;
+
+    /// Opcodes numericos de WebAssembly (spec, seccion "Numeric Instructions"):
+    /// i64.eq=0x51 i64.ne=0x52 i64.lt_s=0x53 i64.lt_u=0x54 i64.gt_s=0x55
+    /// i64.gt_u=0x56 i64.le_s=0x57 i64.le_u=0x58 i64.ge_s=0x59 i64.ge_u=0x5A.
+    #[test]
+    fn opcode_i64_lt_u_es_el_de_la_spec() {
+        assert_eq!(OP_I64_LT_U, 0x54, "silicon-src-1.CL-LOG.1: i64.lt_u es 0x54 (0x53 es i64.lt_s)");
+    }
+
+    #[test]
+    fn opcode_i64_ge_u_es_el_de_la_spec() {
+        assert_eq!(OP_I64_GE_U, 0x5A, "silicon-src-1.CL-LOG.2: i64.ge_u es 0x5A (0x57 es i64.le_s)");
+    }
+
+    #[test]
+    fn opcode_i64_gt_u_es_el_de_la_spec() {
+        assert_eq!(OP_I64_GT_U, 0x56, "silicon-src-1.CL-LOG.3: i64.gt_u es 0x56 (0x55 es i64.gt_s)");
     }
 }
