@@ -50,6 +50,9 @@ pub enum CompileError {
     AxisError(u64),
     /// Subject has no parameters (axis beyond available params)
     NoParams,
+    /// More simultaneously live values than scratch registers: the allocator
+    /// would hand out a register that still holds a live value
+    ScratchOverflow,
 }
 
 /// Resolve nox axis address to parameter index.

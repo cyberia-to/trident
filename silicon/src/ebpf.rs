@@ -24,6 +24,9 @@ pub fn compile_to_ebpf<const N: usize>(
     if num_params > MAX_PARAMS { return Err(CompileError::NoParams); }
     let mut e = EbpfEmitter::new(num_params);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result_reg = e.pop_reg();
     // Move result to r0
     if result_reg != 0 {
@@ -47,6 +50,8 @@ struct EbpfEmitter {
     next_scratch: u8,
     subject: Vec<u8>,
     loop_state: Option<EbpfLoopState>,
+    /// Set when a register was handed out while all scratch registers held live values
+    scratch_overflow: bool,
 }
 
 // Scratch registers: r6, r7, r8, r9
@@ -56,10 +61,13 @@ impl EbpfEmitter {
     fn new(num_params: u32) -> Self {
         // Args: r1-r5. Subject: last param = depth 0 (head)
         let subject: Vec<u8> = (0..num_params).rev().map(|i| (1 + i) as u8).collect();
-        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None }
+        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None, scratch_overflow: false }
     }
 
     fn push_reg(&mut self) -> u8 {
+        if self.reg_stack.len() >= SCRATCH_REGS.len() {
+            self.scratch_overflow = true;
+        }
         let reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
         self.next_scratch += 1;
         self.reg_stack.push(reg);
@@ -603,8 +611,8 @@ mod anclas_criba {
         let code = compile_to_ebpf(&o, formula, 2).unwrap();
         assert_eq!(and64_k_menos_uno(&code), 0,
             "silicon-src-3.CL-LOG.2: ALU64 AND K con imm -1 es identidad, no enmascara a 32 bits");
-        assert!(and32_k_menos_uno(&code) >= 3,
-            "emit_mul debe enmascarar con ALU32 AND K -1 (>=3 sitios: al, bl, mid1/mid2)");
+        assert_eq!(and32_k_menos_uno(&code), 4,
+            "emit_mul debe enmascarar con ALU32 AND K -1 en exactamente 4 sitios: al, bl, mid1, mid2");
     }
 
     /// Misma clase de defecto en emit_not (patron 13): AND 0xFFFFFFFF como ALU64 K (-1) es identidad.
@@ -629,5 +637,55 @@ mod anclas_criba {
         let code = compile_to_ebpf(&o, formula, 2).unwrap();
         assert_eq!(and64_k_menos_uno(&code), 0, "emit_shl: AND64 K -1 es identidad");
         assert_eq!(and32_k_menos_uno(&code), 1, "emit_shl debe enmascarar con ALU32 AND K -1");
+    }
+}
+
+#[cfg(test)]
+mod anclas_sil1 {
+    use super::*;
+    use nebu::Goldilocks;
+
+    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
+    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
+        let t = atomo(o, 0);
+        let a = atomo(o, ax);
+        o.pair(t, a).unwrap()
+    }
+    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
+        let body = o.pair(l, r).unwrap();
+        let t = atomo(o, tag);
+        o.pair(t, body).unwrap()
+    }
+    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
+    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
+    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
+        let mut f = axis(o, 2);
+        for _ in 1..vivos {
+            let hoja = axis(o, 2);
+            f = binaria(o, 5, hoja, f);
+        }
+        f
+    }
+    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
+        matches!(r, Err(CompileError::ScratchOverflow))
+    }
+
+    #[test]
+    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
+        assert_eq!(SCRATCH_REGS.len(), 4);
+        let mut o = Order::<4096>::new();
+        let f = suma_viva(&mut o, SCRATCH_REGS.len() as u32 + 1);
+        let r = compile_to_ebpf(&o, f, 1);
+        assert!(es_scratch_overflow(&r), "SIL-1.A: 5 valores vivos con 4 scratch deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
+    }
+
+    #[test]
+    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
+        let cap = SCRATCH_REGS.len() as u32;
+        for vivos in [cap - 1, cap] {
+            let mut o = Order::<4096>::new();
+            let f = suma_viva(&mut o, vivos);
+            assert!(compile_to_ebpf(&o, f, 1).is_ok(), "{vivos} vivos caben en {cap} scratch");
+        }
     }
 }
