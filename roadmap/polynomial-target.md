@@ -5,13 +5,13 @@ crystal-domain: cyber
 status: draft
 date: 2026-03-25
 ---
-> superseded: this page was written against the retired zheng design (Merkle-free Brakedown, unchecked HyperNova fold), which was unsound; its old size and time figures do not hold. The body below now names the current design (Spartan over CCS, one WHIR opening, phase-3 ARC-style accumulation) and the goal (≤ 64 KB, verify ≤ 1 ms, constant in steps). The repair and the measured numbers live in [[soft3/proposals/proof-system-repair|soft3 proposals/proof-system-repair]].
+> superseded: this page was written against the retired zheng design (Merkle-free Brakedown, unchecked HyperNova fold), which was unsound; its old size and time figures do not hold. The body below now names the current design (Spartan over CCS, one WHIR opening, phase-3 ARC-style accumulation) and the goal (≤ 64 KB, verify ≤ 1 ms, constant in steps). The repair and the measured numbers live in [[soft3/projects/proof-system-repair|soft3 proposals/proof-system-repair]].
 
 # polynomial target — nox engine for the polynomial proof system
 
 ## the opportunity
 
-trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[soft3/proposals/proof-system-repair|polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[soft3/proposals/proof-system-repair|hash-based proofs with one WHIR opening (goal ≤ 64 KB, verify ≤ 1 ms)]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history as one WHIR opening of the final accumulator (phase 3 of the repair, landing this release; size and time TODO(F-numbers)).
+trident compiles to 20 VM targets. none of them is [[nox]]. adding nox as an engine target gives every trident program access to the [[soft3/projects/proof-system-repair|polynomial proof system]]: [[proof-carrying computation|proof-carrying]] execution, [[soft3/projects/proof-system-repair|hash-based proofs with one WHIR opening (goal ≤ 64 KB, verify ≤ 1 ms)]], [[polynomial nouns|O(1) data access]], [[state jets|3-5 constraint state operations]], and a decider that verifies all history as one WHIR opening of the final accumulator (phase 3 of the repair, landing this release; size and time TODO(F-numbers)).
 
 no language change. no new syntax. one new compilation backend. the polynomial proof system becomes available to every `.tri` program.
 
@@ -255,4 +255,4 @@ trident's 14 algebraically irreducible languages ALL compile through nox:
 
 14 languages → 16 nox patterns → 1 polynomial proof system → succinct profile today: hash.tri 15,921 B proof, verify 7.96 ms; a 2^20 relation 71,081 B, verify 270 ms (zheng audit/succinct-profile-2026-10.md). the goal is ≤ 64 KB, verify ≤ 1 ms, constant in the number of steps; it is not met yet.
 
-see [[soft3/proposals/proof-system-repair|polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[WHIR]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
+see [[soft3/projects/proof-system-repair|polynomial proof system]] for the proof architecture, [[nox]] for the 16 patterns, [[polynomial nouns]] for the data model, [[WHIR]] for the PCS, [[state jets|state-operations]] for CCS jets, [[hemera]] for the hash
