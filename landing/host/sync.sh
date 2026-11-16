@@ -2,6 +2,7 @@
 # sync the trident.pink landing from the public repo into the nginx docroot.
 # runs from cron on cyberproxy as user cyber, once a minute.
 umask 022
+date -u +%FT%TZ > "$0.last"  # the heartbeat the apparatus cockpit's ticks read: this run, whether or not anything changed
 CLONE=/home/cyber/trident-pink-site
 DOCROOT_FILE=/home/cyber/trident-pink-docroot
 REL=https://github.com/cyberia-to/trident/releases/download/set-2026-09-17
