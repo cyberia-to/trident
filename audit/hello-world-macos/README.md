@@ -8,7 +8,14 @@ snapshots, file SHA-256 values, compiler versions and revisions.
 
 ## Inputs and reproduction
 
-- Trident: `9d52ee8fbb68833a65b52ebe9254bf24bbcd52d0`.
+- Trident: `9d52ee8fbb68833a65b52ebe9254bf24bbcd52d0` is the worktree HEAD
+  recorded by `git rev-parse HEAD` at measurement time. The installed
+  `trident` binary was built at
+  `40a86dee44e8ea5132c510950a0e4876a96bbadb`, the revision the accepted
+  receipt in `../self-hosting/source-capacity-validation.json` pins;
+  `40a86dee..9d52ee8f` changes audit documents only, no compiler source,
+  and the binary SHA-256 values in [the receipt](measurements.json) match
+  that receipt's `binaries` block.
 - Joy: `a15adb7310db5b159b4e72ce0dfd0fea2ff01c7d`.
 - nox: `c9f7486a74fe81bfc194b598da40f6343ecb2ef1`.
 - Installed executables: `../selfhost-0.4-source-capacity/install-release/bin/`
@@ -54,8 +61,9 @@ codesign --force --sign - joy.stripped
 The C source calls `puts("Hello, world!")`; Rust calls
 `println!("Hello, world!")`. Both execute successfully and print exactly
 `Hello, world!\n`. These are ordinary optimized builds, not a search for the
-smallest possible native executable. Their sizes do not independently
-validate the tweet's other language claims.
+smallest possible native executable. Their sizes bound these two toolchains
+on this machine and nothing else; they validate no claim about any other
+language.
 
 ## Output and scope checks
 
@@ -105,7 +113,8 @@ does not by itself introduce native Mach-O compilation or terminal I/O.
 
 The receipt checks real execution, exact decoded bytes, program sizes and
 binary identities. Only audit documents change on this branch. Accepted
-compiler/runtime validation at the pinned revision is recorded in
+compiler/runtime validation at `40a86dee`, the revision the installed
+binaries were built at, is recorded in
 `../self-hosting/source-capacity-validation.json`; the measured executables
 match its accepted reproduction receipt. No implementation, target package,
 release pin or self-hosting milestone changes in this report.

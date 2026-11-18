@@ -182,6 +182,23 @@
       "flags": 1
     }
   ],
+  "joy_dependency_lines": {
+    "note": "quoted 2026-11-18 from the joy repository at the pinned revision; not part of the 2026-09-27 run",
+    "commands": [
+      "git -C joy show a15adb7310db5b159b4e72ce0dfd0fea2ff01c7d:cli/Cargo.toml",
+      "git -C joy show a15adb7310db5b159b4e72ce0dfd0fea2ff01c7d:rs/Cargo.toml"
+    ],
+    "cli/Cargo.toml": [
+      "16: [dependencies]",
+      "19: trident-lang = { version = \"0.3.0\", path = \"../../trident\" }"
+    ],
+    "rs/Cargo.toml": [
+      "12: [dependencies]",
+      "13: trisha-rs = { version = \"0.3.0\", path = \"../../trisha/rs\" }",
+      "14: trident-lang = { version = \"0.3.0\", path = \"../../trident\" }",
+      "17: zheng = { version = \"0.4.0\", path = \"../../zheng/rs\", features = [\"serde\"] }"
+    ]
+  },
   "embedded_resources": {
     "file_count": 176,
     "source_bytes": 904777,

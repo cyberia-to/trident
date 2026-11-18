@@ -2,7 +2,8 @@
 
 This measures the same installed Joy binary and revisions as [Hello World](README.md).
 The [composition receipt](joy-composition.json) records the binary SHA-256,
-source revisions, Mach-O sections, approximate code groups and embedded files.
+source revisions, Mach-O sections, approximate code groups, embedded files and
+the quoted joy dependency lines.
 All MB below use decimal bytes. These are observations, not size targets.
 
 ## File contents
@@ -23,8 +24,11 @@ The remaining file size is 7,175,792 bytes; stripping does not remove features.
 Joy's `cli/main.rs` exposes build, run, run-artifact, pack-job, prove and verify
 from one executable. `load_bundle` can compile `.tri` source at runtime.
 `cli/Cargo.toml` directly depends on `trident-lang`; `rs/Cargo.toml` directly
-and unconditionally depends on Trident, Zheng and `trisha-rs`. The private
-execution path calls `trisha_rs::ccs::Checker`, which uses Triton proving.
+and unconditionally depends on Trident, Zheng and `trisha-rs`. Both files live
+in the joy repository, so the receipt's `joy_dependency_lines` quotes those
+lines verbatim at the pinned joy revision, with the command that read them.
+The private execution path calls `trisha_rs::ccs::Checker`, which uses Triton
+proving.
 Consequently selecting `joy run` does not eliminate the code needed by the
 other CLI subcommands from the distributed executable.
 
@@ -71,7 +75,13 @@ precompiled Hello World only uses a subset. Runtime selection of a command
 does not let the linker discard the other reachable commands.
 
 A smaller application distribution would need an execution-only build with
-compiler/resources and proof backends omitted at build time. The complete Joy
+compiler/resources and proof backends omitted at build time. One such knob
+already exists for part of the resources: Trident's `external-targets` is a
+default feature (`Cargo.toml:27-28`), and with it off `build.rs:14-23` drops
+`catalog/` and the top-level `lib/std/compiler/*.tri` files from the embedded
+set. Joy depends on `trident-lang` with default features, so the measured
+binary carries them; no build with the feature disabled was measured in this
+audit, so its effect on the file size is unknown. The complete Joy
 development/proving tool can remain available separately. Small-build flags
 and stripping can then optimize that execution build. No such production
 split or minimum-runtime size was implemented or measured in this audit.
