@@ -2,10 +2,9 @@
 
 Planned warrior: **zenda** — warrior for Zcash.
 
-Status: stub. The sibling `zenda/` project provides an identity CLI and an
-implementation contract. Target ABI, proof profile and runtime support are
-pending. This catalog entry reserves ownership; it enables no compiler,
-execution, proof or deployment capability.
+Status: stub. `owner.toml` reserves the name for zenda; target ABI, proof
+profile and runtime support are pending. This catalog entry enables no compiler,
+execution, proof or deployment capability, and no implementation of it exists in
+this repository.
 
-See [planned warriors](../../../reference/warrior-api.md#planned-warriors)
-and `zenda/reference/warrior.md` in the sibling workspace.
+See [planned warriors](../../../reference/warrior-api.md#planned-warriors).

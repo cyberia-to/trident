@@ -161,13 +161,11 @@ limits; this API contract does not certify the cryptography of a linked warrior.
 | pearla | Pearl | Blockchain inference |
 | zenda | Zcash | Zcash proof adapter |
 
-These sibling projects are development stubs with `cli/`, `rs/` and a
-`reference/warrior.md` contract. `status` emits identity metadata; execution,
-proving, verification, deployment and `describe` remain unimplemented and fail
-explicitly. Their `catalog/os/<family>/owner.toml` records use `status = "stub"`.
-The installed-runtime registry continues to accept only implemented owners;
-these names do not enable new Trident targets or claim a proof backend.
-See the [stub roster](../../warriors/stubs.md) for workspace locations.
+Each `catalog/os/<family>/owner.toml` record carries `owner` and
+`status = "stub"`, and that record is the whole of the reservation. This
+repository holds no target package, lowering, cost model or receipt for any of
+these names. The installed-runtime registry continues to accept only implemented
+owners; these names do not enable new Trident targets or claim a proof backend.
 
 ## Target packages (compiler API 3)
 

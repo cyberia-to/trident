@@ -1,14 +1,17 @@
 # Self-hosting on soft3 — progress ledger
 
-Active 0.4 work now lives in the [isolated branch workspace](../../.worktrees/selfhost-0.4/trident/audit/self-hosting-progress.md).
-SH0.1 was merged into `release/0.4` through [PR #56](https://github.com/cyberia-to/trident/pull/56).
-Continue there on `feat/0.4-sh0-native-data` for SH0.2. The checklist below is
-retained as the initial local planning snapshot; it is not the live ledger.
-
-Updated: 2026-09-23. Working contract:
+This is the `master` ledger, updated 2026-09-23. Working contract:
 [reference/self-hosting.md](../reference/self-hosting.md).
-This ledger is the current execution checklist. Dated assessments and receipts
-retain their original observations; they are not substituted for gate evidence.
+It is the execution checklist for `master`: every statement below, including the
+gate table and the SH0.1 checkbox, records the position on this branch, where no
+SH milestone is closed and SH0.1 is the next task.
+
+0.4 execution continues on its own branch with its own ledger at the same path:
+[audit/self-hosting-progress.md on `release/0.4`](https://github.com/cyberia-to/trident/blob/release/0.4/audit/self-hosting-progress.md).
+SH0.1 was closed there by [PR #56](https://github.com/cyberia-to/trident/pull/56)
+and SH0.2 is next; that progress is not carried into the table below and does not
+close a gate on `master`. Dated assessments and receipts retain their original
+observations; they are not substituted for gate evidence.
 
 ## Current position
 
