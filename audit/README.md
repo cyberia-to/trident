@@ -17,3 +17,4 @@ Canonical language and interface contracts live in [reference](../reference/READ
   locked source dependencies and distribution boundaries.
 - [Formal validation](formal-release-validation.md) — exact module inventory,
   counterexamples and incomplete proof obligations.
+- [Hello world size on macOS, 2026-09-27](hello-world-macos/README.md) — a Trident hello world as a nox formula (292 B), a Joy bundle (691 B) and with the macOS Joy runtime (8.39 MB installed), beside C and Rust baselines; where compiler and prover cost sits inside Joy.

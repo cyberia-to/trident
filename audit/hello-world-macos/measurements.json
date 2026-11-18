@@ -1,0 +1,432 @@
+{
+  "root": "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity",
+  "directory": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+  "commands": [
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/trident",
+        "build",
+        "hello.tri",
+        "--target",
+        "nox",
+        "--profile",
+        "release",
+        "-o",
+        "hello.nox"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "Compiled -> hello.nox\n"
+    },
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+        "build",
+        "hello.tri",
+        "--profile",
+        "release",
+        "--emit",
+        "bundle",
+        "--force",
+        "-o",
+        "hello.bundle.json"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "hello.bundle.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+        "run",
+        "hello.nox"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "72\n101\n108\n108\n111\n44\n32\n119\n111\n114\n108\n100\n33\n10\n0\n",
+      "stderr": "Executed in 44 reductions\n"
+    },
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+        "run",
+        "hello.bundle.json"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "72\n101\n108\n108\n111\n44\n32\n119\n111\n114\n108\n100\n33\n10\n0\n",
+      "stderr": "Executed in 44 reductions\n"
+    },
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+        "build",
+        "hello_raw.tri",
+        "--profile",
+        "release",
+        "--emit",
+        "artifact",
+        "-o",
+        "hello.art1.dag"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "hello.art1.dag\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "xcrun",
+        "clang",
+        "-Os",
+        "hello.c",
+        "-o",
+        "hello-c"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./hello-c"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "Hello, world!\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "rustc",
+        "-C",
+        "opt-level=z",
+        "-C",
+        "strip=symbols",
+        "-C",
+        "panic=abort",
+        "-C",
+        "lto=yes",
+        "hello.rs",
+        "-o",
+        "hello-rust"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./hello-rust"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "Hello, world!\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "uname",
+        "-sm"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "Darwin arm64\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "sw_vers"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4.1\nBuildVersion:\t\t25E253\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "xcrun",
+        "clang",
+        "--version"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "Apple clang version 21.0.0 (clang-2100.0.123.102)\nTarget: arm64-apple-darwin25.4.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "rustc",
+        "--version"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/trident",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "9d52ee8fbb68833a65b52ebe9254bf24bbcd52d0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/joy",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "a15adb7310db5b159b4e72ce0dfd0fea2ff01c7d\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/trisha",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "f5c94f5ec5d6d52943c8f416f343513b9d33c85e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/nox",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "c9f7486a74fe81bfc194b598da40f6343ecb2ef1\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "otool",
+        "-L",
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy:\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "strip",
+        "-x",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv/joy.stripped"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "codesign",
+        "--force",
+        "--sign",
+        "-",
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv/joy.stripped"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv/joy.stripped: replacing existing signature\n"
+    },
+    {
+      "argv": [
+        "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv/joy.stripped",
+        "run",
+        "hello.nox"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "72\n101\n108\n108\n111\n44\n32\n119\n111\n114\n108\n100\n33\n10\n0\n",
+      "stderr": "Executed in 44 reductions\n"
+    },
+    {
+      "argv": [
+        "./hello.sh"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "Hello, world!\n",
+      "stderr": "Executed in 44 reductions\n"
+    },
+    {
+      "argv": [
+        "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+        "run-artifact",
+        "hello.art1.dag",
+        "--input",
+        "zero.dag",
+        "-o",
+        "hello.result.dag"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv",
+      "exit_code": 0,
+      "stdout": "{\"artifact\":\"hello.result.dag\",\"execution\":{\"allocated_nodes\":110,\"arena_reserved_bytes\":26214416,\"charged_reductions\":51,\"elapsed_micros\":2793,\"frame_buffer_bytes\":2883584,\"input_particle\":\"47ff2df1749c1a6c30bba58202ddb7dacacdf95db5f2abacff8fcb81202f7702\",\"output_particle\":\"fabef57b1f0b32403f2ad4ffb7220d2a0c32bd079701f2c461b82c0f24b9a26f\",\"peak_frames\":20,\"program_particle\":\"86f690e8a41a0038fa854432e4ad644433844a878f3345e445bc8ca67d6d207a\",\"trace_mode\":\"none\",\"worker_stack_bytes\":268435456},\"ok\":true,\"published_particle\":\"fabef57b1f0b32403f2ad4ffb7220d2a0c32bd079701f2c461b82c0f24b9a26f\",\"schema\":\"joy/artifact-run/v1\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "./hello.sh"
+      ],
+      "cwd": "/var/folders/gc/64p7ymwx60144drqltvslckr0000gn/T/trident-hello-macos-_4rcyszv/stripped-package",
+      "exit_code": 0,
+      "stdout": "Hello, world!\n",
+      "stderr": "Executed in 44 reductions\n"
+    }
+  ],
+  "files": {
+    "hello.c": {
+      "bytes": 71,
+      "sha256": "3639396b97cc0503d78386cb565c2d2b5da44b6175cad40b2da50f29c942b264"
+    },
+    "hello_raw.tri": {
+      "bytes": 457,
+      "sha256": "817707db47edccbc073bf855cdbf6d3c75ec5aa5a538b356cf7bebec6f228f46"
+    },
+    "hello-c": {
+      "bytes": 33432,
+      "sha256": "20ab72928967b477db2c82f12e311030169f11c18216805c2c8936f485905c0b"
+    },
+    "hello.bundle.json": {
+      "bytes": 691,
+      "sha256": "08e4a9a973e6520d3c6f1d3bbfaae0e9ca284ee912418e44e91b778952171ffd"
+    },
+    "hello-rust": {
+      "bytes": 285904,
+      "sha256": "42df9643cc35663f388cca1f3e3a38195fa78d07ef3f38a2631482ee2ea78d36"
+    },
+    "zero.dag": {
+      "bytes": 85,
+      "sha256": "7b658a799adf0f027ec2b44fdb463847b2ef4bf49f7f7af1166a3291781f66cd"
+    },
+    "joy.stripped": {
+      "bytes": 7175792,
+      "sha256": "78baeb1efdba25c8fa3d885e43d3b49e46e75906b702ab7184a6c24275110b05"
+    },
+    "hello.nox": {
+      "bytes": 292,
+      "sha256": "6b11ba56befaa61b194c469e7b4a174ea6160fda3c21b5a663b816001c03c9cd"
+    },
+    "hello.rs": {
+      "bytes": 41,
+      "sha256": "bda35ebc77c6059c2f278052820706cb903b572aa4a7ba58f67cf453f0947a61"
+    },
+    "hello.art1.dag": {
+      "bytes": 8113,
+      "sha256": "8f53893a010a687190c43f89b5abcf3f338c9d2b98931019c4ea2f58c65a3009"
+    },
+    "hello.result.dag": {
+      "bytes": 1894,
+      "sha256": "164053dcec65e2ada12d9c80bd5f7698867b37a26eb7cdaa2af63b99a4da1848"
+    },
+    "hello.sh": {
+      "bytes": 110,
+      "sha256": "a2be78cbd71756fdac352dd3835debcf8622c933e645484d17367ed50926bbc8"
+    },
+    "joy": {
+      "bytes": 8389808,
+      "sha256": "3408767cd09f1c4ede2c44e9d99d402810fc1dbdf8c4be6866f8b3d06c7e75f3"
+    },
+    "hello.tri": {
+      "bytes": 114,
+      "sha256": "13539ad8e33af689f1e470da2916971aab8907ce2c94a0fa6020dcf69376f4e0"
+    }
+  },
+  "platform": {
+    "machine": "Darwin arm64",
+    "macos": "ProductName:\t\tmacOS\nProductVersion:\t\t26.4.1\nBuildVersion:\t\t25E253",
+    "clang": "Apple clang version 21.0.0 (clang-2100.0.123.102)\nTarget: arm64-apple-darwin25.4.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
+    "rust": "rustc 1.95.0 (59807616e 2026-04-14) (Homebrew)"
+  },
+  "revisions": {
+    "trident": "9d52ee8fbb68833a65b52ebe9254bf24bbcd52d0",
+    "joy": "a15adb7310db5b159b4e72ce0dfd0fea2ff01c7d",
+    "trisha": "f5c94f5ec5d6d52943c8f416f343513b9d33c85e",
+    "nox": "c9f7486a74fe81bfc194b598da40f6343ecb2ef1"
+  },
+  "installed_binaries": {
+    "trident": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/trident",
+      "bytes": 8646064,
+      "sha256": "0f04968b4c145fdc12478b6429d4f514e9cf042fab028ee5258088aade383636"
+    },
+    "joy": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/joy",
+      "bytes": 8389808,
+      "sha256": "3408767cd09f1c4ede2c44e9d99d402810fc1dbdf8c4be6866f8b3d06c7e75f3"
+    },
+    "trisha": {
+      "path": "/Users/master/cyber/.worktrees/selfhost-0.4-source-capacity/install-release/bin/trisha",
+      "bytes": 13451120,
+      "sha256": "b11d00c8b3c68c1582ee1027920b6e76bcdfcc0cbaa8d060d14f4a7b7903c09d"
+    }
+  },
+  "verification": {
+    "nox_and_bundle_atoms": [
+      72,
+      101,
+      108,
+      108,
+      111,
+      44,
+      32,
+      119,
+      111,
+      114,
+      108,
+      100,
+      33,
+      10,
+      0
+    ],
+    "decoded_text": "Hello, world!\n",
+    "shell_stdout_exact": true,
+    "artifact_decoded_text_exact": true,
+    "note": "The first exploratory assertion failed because Joy flattens and prints the final list terminator 0. This receipt explicitly checks that terminator; shell rendering excludes it.",
+    "stripped_package_stdout_exact": true
+  },
+  "package_bytes": 8390210,
+  "source_snapshots": {
+    "hello.tri": "program hello\n\nfn main() -> [Field; 14] {\n    [72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33, 10]\n}\n",
+    "hello_raw.tri": "program hello_raw\nuse vm.nox.noun\nfn main(input: Noun) -> Noun {\n    noun.pair(noun.atom(72), noun.pair(noun.atom(101), noun.pair(noun.atom(108), noun.pair(noun.atom(108), noun.pair(noun.atom(111), noun.pair(noun.atom(44), noun.pair(noun.atom(32), noun.pair(noun.atom(119), noun.pair(noun.atom(111), noun.pair(noun.atom(114), noun.pair(noun.atom(108), noun.pair(noun.atom(100), noun.pair(noun.atom(33), noun.pair(noun.atom(10), noun.atom(0)))))))))))))))\n}\n",
+    "hello.c": "#include <stdio.h>\nint main(void) { puts(\"Hello, world!\"); return 0; }\n",
+    "hello.rs": "fn main() { println!(\"Hello, world!\"); }\n",
+    "hello.sh": "#!/bin/sh\nset -eu\ncd -- \"$(dirname -- \"$0\")\"\n./joy run hello.nox | /usr/bin/awk '$0 != 0 { printf \"%c\", $0 }'\n",
+    "hello.nox": "[2 [[3 [[4 [[9 [[0 1] [1 0]]] [[1 0] [8 [1 0]]]]] [0 1]]] [1 [2 [[0 3] [1 [2 [[1 0] [1 [3 [[1 72] [3 [[1 101] [3 [[1 108] [3 [[1 108] [3 [[1 111] [3 [[1 44] [3 [[1 32] [3 [[1 119] [3 [[1 111] [3 [[1 114] [3 [[1 108] [3 [[1 100] [3 [[1 33] [3 [[1 10] [1 0]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
+    "hello.bundle.json": "{\"assembly\":\"[2 [[3 [[4 [[9 [[0 1] [1 0]]] [[1 0] [8 [1 0]]]]] [0 1]]] [1 [2 [[0 3] [1 [2 [[1 0] [1 [3 [[1 72] [3 [[1 101] [3 [[1 108] [3 [[1 108] [3 [[1 111] [3 [[1 44] [3 [[1 32] [3 [[1 119] [3 [[1 111] [3 [[1 114] [3 [[1 108] [3 [[1 100] [3 [[1 33] [3 [[1 10] [1 0]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]\",\"cost\":{\"estimated_proving_ns\":0,\"padded_height\":135,\"reductions\":108},\"entry_point\":\"main\",\"functions\":[{\"hash\":\"5d7026cd2f157dedfc8a40b3744149f9cfc734839e9c53539e2db4064be4c234\",\"name\":\"main\",\"signature\":\"fn main() -> [Field; 14]\"}],\"name\":\"hello\",\"source_hash\":\"e31ff9d8097fea63397082a8b3c7e80346cd3f03902b5622ea5b921da289d664\",\"target_os\":null,\"target_vm\":\"nox\",\"version\":\"0.1.0\"}"
+  },
+  "methodology": {
+    "sizes": "Path.stat().st_size: uncompressed file bytes, not allocated disk blocks or memory",
+    "package": "joy + hello.nox + hello.sh; system sh/awk/dylibs supplied by macOS",
+    "optimized_package_bytes": 7176194,
+    "artifact_comparison": "ART1 uses a distinct main(Noun)->Noun source ABI; its size difference is not just serialization overhead",
+    "compiler_required_to_run_precompiled_program": false,
+    "proof_generated": false
+  }
+}
