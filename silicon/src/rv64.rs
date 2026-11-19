@@ -2,7 +2,7 @@
 //!
 //! Hand-emitted machine code, no dependencies.
 //! Args in a0-a7 (x10-x17), return in a0 (x10).
-//! Scratch: t1-t2 (x6-x7), t3-t6 (x28-x31) = 6 regs; t0 (x5) is the dedicated temporary.
+//! Scratch: t2 (x7), t3-t6 (x28-x31) = 5 value regs; t0 (x5) and t1 (x6) are dedicated temporaries.
 //! Has MULHU for upper 64 bits of 64×64 multiply.
 
 
@@ -53,9 +53,9 @@ struct Rv64Emitter {
     scratch_overflow: bool,
 }
 
-// Scratch: t1(x6), t2(x7), t3(x28), t4(x29), t5(x30), t6(x31). t0(x5) is the fixed
-// temporary of sub/mul/not/shl and never carries a value.
-const SCRATCH_REGS: [u8; 6] = [6, 7, 28, 29, 30, 31];
+// Scratch: t2(x7), t3(x28), t4(x29), t5(x30), t6(x31). t0(x5) is the fixed temporary of
+// sub/mul/not/shl and t1(x6) is the second temporary of mul; neither carries a value.
+const SCRATCH_REGS: [u8; 5] = [7, 28, 29, 30, 31];
 
 impl Rv64Emitter {
     fn new(num_params: u32) -> Self {
@@ -64,12 +64,20 @@ impl Rv64Emitter {
         Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None, scratch_overflow: false }
     }
 
-    fn push_reg(&mut self) -> u8 {
-        if self.reg_stack.len() >= SCRATCH_REGS.len() {
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
+    fn alloc_reg_raw(&mut self) -> u8 {
+        if self.next_scratch as usize >= SCRATCH_REGS.len() {
             self.scratch_overflow = true;
         }
         let reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
         self.next_scratch += 1;
+        reg
+    }
+
+    fn push_reg(&mut self) -> u8 {
+        let reg = self.alloc_reg_raw();
         self.reg_stack.push(reg);
         reg
     }
@@ -155,13 +163,11 @@ impl Rv64Emitter {
         &mut self, order: &Order<N>, loop_body: NounId, inits: &[NounId],
     ) -> Result<(), CompileError> {
         // Allocate scratch registers for formula slot + carried locals
-        let formula_reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
-        self.next_scratch += 1;
+        let formula_reg = self.alloc_reg_raw();
 
         let mut carried_regs = Vec::new();
         for _ in 0..inits.len() {
-            let r = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
-            self.next_scratch += 1;
+            let r = self.alloc_reg_raw();
             carried_regs.push(r);
         }
 
@@ -330,9 +336,10 @@ impl Rv64Emitter {
         let ra = self.pop_reg();
         let dst = self.push_reg();
 
-        // lo = ra * rb (MUL), hi = ra * rb upper (MULHU)
-        self.emit_u32(rv64_mul(dst, ra, rb));   // dst = lo
+        // hi = ra * rb upper (MULHU), lo = ra * rb (MUL). dst aliases ra, so MULHU must
+        // read the operands before MUL writes dst.
         self.emit_u32(rv64_mulhu(5, ra, rb));   // t0 = hi
+        self.emit_u32(rv64_mul(dst, ra, rb));   // dst = lo
 
         // Reduce: result = lo + hi*(2^32-1) mod P
         // t1 = hi << 32
@@ -593,79 +600,5 @@ fn rv64_bltu(rs1: u8, rs2: u8, imm: i32) -> u32 { rv64_branch(rs1, rs2, imm, 6) 
 fn rv64_bgeu(rs1: u8, rs2: u8, imm: i32) -> u32 { rv64_branch(rs1, rs2, imm, 7) }
 
 #[cfg(test)]
-mod anclas_sil1 {
-    use super::*;
-    use nebu::Goldilocks;
-
-    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
-    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
-        let t = atomo(o, 0);
-        let a = atomo(o, ax);
-        o.pair(t, a).unwrap()
-    }
-    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
-        let body = o.pair(l, r).unwrap();
-        let t = atomo(o, tag);
-        o.pair(t, body).unwrap()
-    }
-    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
-    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
-    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
-        let mut f = axis(o, 2);
-        for _ in 1..vivos {
-            let hoja = axis(o, 2);
-            f = binaria(o, 5, hoja, f);
-        }
-        f
-    }
-    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
-        matches!(r, Err(CompileError::ScratchOverflow))
-    }
-
-    fn palabras(code: &[u8]) -> Vec<u32> {
-        code.chunks_exact(4).map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect()
-    }
-
-    #[test]
-    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
-        let mut o = Order::<4096>::new();
-        let f = suma_viva(&mut o, SCRATCH_REGS.len() as u32 + 1);
-        let r = compile_to_rv64(&o, f, 1);
-        assert!(es_scratch_overflow(&r), "SIL-1.A: capacidad+1 valores vivos deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
-    }
-
-    #[test]
-    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
-        let cap = SCRATCH_REGS.len() as u32;
-        for vivos in [cap - 1, cap] {
-            let mut o = Order::<4096>::new();
-            let f = suma_viva(&mut o, vivos);
-            assert!(compile_to_rv64(&o, f, 1).is_ok(), "{vivos} vivos caben en {cap} scratch");
-        }
-    }
-
-    /// SIL-1, grupo C: x5 (t0) es el temporal fijo de sub/not/shl/mul y no puede ser scratch de valores.
-    #[test]
-    fn x5_no_es_scratch_de_valores() {
-        assert!(!SCRATCH_REGS.contains(&5), "SIL-1.C: x5 (t0) es temporal dedicado, no puede portar valores");
-        assert_eq!(SCRATCH_REGS.len(), 6);
-    }
-
-    /// SIL-1, grupo C: en un mul compilado, x5 no aparece como rd/rs1/rs2 de MUL ni como fuente de MULHU
-    /// (si es destino temporal de MULHU).
-    #[test]
-    fn mul_no_usa_x5_como_operando_valor() {
-        let mut o = Order::<4096>::new();
-        let a0 = axis(&mut o, 2);
-        let a1 = axis(&mut o, 6);
-        let f = binaria(&mut o, 7, a0, a1);
-        let w = palabras(&compile_to_rv64(&o, f, 2).unwrap());
-        let campos = |x: u32| ((x >> 7) & 0x1F, (x >> 15) & 0x1F, (x >> 20) & 0x1F);
-        let mul = w.iter().find(|x| (**x & 0xFE00_707F) == 0x0200_0033).expect("MUL");
-        let mulhu = w.iter().find(|x| (**x & 0xFE00_707F) == 0x0200_3033).expect("MULHU");
-        let (rd, rs1, rs2) = campos(*mul);
-        assert!(rd != 5 && rs1 != 5 && rs2 != 5, "SIL-1.C: mul x{rd}, x{rs1}, x{rs2} usa x5 (t0) como valor");
-        let (_, rs1h, rs2h) = campos(*mulhu);
-        assert!(rs1h != 5 && rs2h != 5, "SIL-1.C: mulhu lee x{rs1h}/x{rs2h}; x5 es su destino temporal");
-    }
-}
+#[path = "rv64_anchors.rs"]
+mod anchors;

@@ -100,12 +100,20 @@ impl X64Emitter {
         Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None, scratch_overflow: false }
     }
 
-    fn push_reg(&mut self) -> u8 {
-        if self.reg_stack.len() >= SCRATCH.len() {
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
+    fn alloc_reg_raw(&mut self) -> u8 {
+        if self.next_scratch as usize >= SCRATCH.len() {
             self.scratch_overflow = true;
         }
         let reg = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
         self.next_scratch += 1;
+        reg
+    }
+
+    fn push_reg(&mut self) -> u8 {
+        let reg = self.alloc_reg_raw();
         self.reg_stack.push(reg);
         reg
     }
@@ -190,13 +198,11 @@ impl X64Emitter {
         &mut self, order: &Order<N>, loop_body: NounId, inits: &[NounId],
     ) -> Result<(), CompileError> {
         // Allocate scratch registers for formula slot + carried locals
-        let formula_reg = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
-        self.next_scratch += 1;
+        let formula_reg = self.alloc_reg_raw();
 
         let mut carried_regs = Vec::new();
         for _ in 0..inits.len() {
-            let r = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
-            self.next_scratch += 1;
+            let r = self.alloc_reg_raw();
             carried_regs.push(r);
         }
 
@@ -592,68 +598,5 @@ fn patch_rel32(code: &mut Vec<u8>, offset: usize, target: usize) {
 }
 
 #[cfg(test)]
-mod anclas_sil1 {
-    use super::*;
-    use nebu::Goldilocks;
-
-    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
-    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
-        let t = atomo(o, 0);
-        let a = atomo(o, ax);
-        o.pair(t, a).unwrap()
-    }
-    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
-        let body = o.pair(l, r).unwrap();
-        let t = atomo(o, tag);
-        o.pair(t, body).unwrap()
-    }
-    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
-    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
-    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
-        let mut f = axis(o, 2);
-        for _ in 1..vivos {
-            let hoja = axis(o, 2);
-            f = binaria(o, 5, hoja, f);
-        }
-        f
-    }
-    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
-        matches!(r, Err(CompileError::ScratchOverflow))
-    }
-
-    #[test]
-    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
-        assert_eq!(SCRATCH.len(), 6);
-        let mut o = Order::<4096>::new();
-        let f = suma_viva(&mut o, SCRATCH.len() as u32 + 1);
-        let r = compile_to_x86_64(&o, f, 1);
-        assert!(es_scratch_overflow(&r), "SIL-1.A: 7 valores vivos con 6 scratch deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
-    }
-
-    #[test]
-    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
-        let cap = SCRATCH.len() as u32;
-        for vivos in [cap - 1, cap] {
-            let mut o = Order::<4096>::new();
-            let f = suma_viva(&mut o, vivos);
-            assert!(compile_to_x86_64(&o, f, 1).is_ok(), "{vivos} vivos caben en {cap} scratch");
-        }
-    }
-
-    /// SIL-1, grupo B: rama underflow de sub, `mov dst, P` pisaba ra (== dst) antes de `add dst, ra`.
-    /// La constante P debe materializarse en un temporal que no sea scratch (rax).
-    #[test]
-    fn sub_underflow_no_materializa_p_en_un_scratch() {
-        let mut o = Order::<4096>::new();
-        let a0 = axis(&mut o, 2);
-        let a1 = axis(&mut o, 6);
-        let f = binaria(&mut o, 6, a0, a1);
-        let code = compile_to_x86_64(&o, f, 2).unwrap();
-        let p_le = P.to_le_bytes();
-        let i = code.windows(8).position(|w| w == p_le).expect("MOV reg, imm64 P en la rama underflow");
-        let (rex, op) = (code[i - 2], code[i - 1]);
-        assert_eq!(rex & 0xF8, 0x48, "REX.W");
-        let reg = ((rex & 1) << 3) | (op - 0xB8);
-        assert!(!SCRATCH.contains(&reg), "SIL-1.B: P se carga en r{reg} (scratch, aliasa ra) antes del ADD con ra");
-    }
-}
+#[path = "x86_64_anchors.rs"]
+mod anchors;

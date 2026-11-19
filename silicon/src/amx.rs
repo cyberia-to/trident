@@ -115,8 +115,11 @@ impl AmxEmitter {
         }
     }
 
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
     fn alloc_scratch(&mut self) -> String {
-        if self.reg_stack.len() >= SCRATCH_REGS.len() {
+        if self.next_scratch as usize >= SCRATCH_REGS.len() {
             self.scratch_overflow = true;
         }
         let r = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
@@ -707,67 +710,5 @@ mod tests {
 }
 
 #[cfg(test)]
-mod anclas_sil1 {
-    use super::*;
-    use nebu::Goldilocks;
-
-    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
-    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
-        let t = atomo(o, 0);
-        let a = atomo(o, ax);
-        o.pair(t, a).unwrap()
-    }
-    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
-        let body = o.pair(l, r).unwrap();
-        let t = atomo(o, tag);
-        o.pair(t, body).unwrap()
-    }
-    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
-    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
-    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
-        let mut f = axis(o, 2);
-        for _ in 1..vivos {
-            let hoja = axis(o, 2);
-            f = binaria(o, 5, hoja, f);
-        }
-        f
-    }
-    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
-        matches!(r, Err(CompileError::ScratchOverflow))
-    }
-
-    #[test]
-    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
-        assert_eq!(SCRATCH_REGS.len(), 7);
-        let mut o = Order::<4096>::new();
-        let f = suma_viva(&mut o, SCRATCH_REGS.len() as u32 + 1);
-        let r = compile_to_amx(&o, f, 1);
-        assert!(es_scratch_overflow(&r), "SIL-1.A: 8 valores vivos con 7 scratch deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
-    }
-
-    #[test]
-    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
-        let cap = SCRATCH_REGS.len() as u32;
-        for vivos in [cap - 1, cap] {
-            let mut o = Order::<4096>::new();
-            let f = suma_viva(&mut o, vivos);
-            assert!(compile_to_amx(&o, f, 1).is_ok(), "{vivos} vivos caben en {cap} scratch");
-        }
-    }
-
-    /// SIL-1, grupo B: rama underflow de sub, `sub dst, x16, rb` pisaba ra (== dst) antes de `add dst, dst, ra`.
-    #[test]
-    fn sub_underflow_no_escribe_ra_antes_de_sumarlo() {
-        let mut o = Order::<4096>::new();
-        let a0 = axis(&mut o, 2);
-        let a1 = axis(&mut o, 6);
-        let f = binaria(&mut o, 6, a0, a1);
-        let asm = compile_to_amx(&o, f, 2).unwrap();
-        let lineas: Vec<&str> = asm.lines().map(str::trim).collect();
-        let cmp = lineas.iter().find(|l| l.starts_with("cmp ")).expect("cmp ra, rb");
-        let ra = cmp["cmp ".len()..].split(',').next().unwrap().trim();
-        let sub16 = lineas.iter().find(|l| l.starts_with("sub ") && l.contains(", x16, ")).expect("sub rd, x16, rb");
-        let dst = sub16["sub ".len()..].split(',').next().unwrap().trim();
-        assert_ne!(dst, ra, "SIL-1.B: `{sub16}` escribe ra ({ra}) antes de sumarlo");
-    }
-}
+#[path = "amx_anchors.rs"]
+mod anchors;

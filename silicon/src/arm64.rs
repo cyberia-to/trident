@@ -91,13 +91,21 @@ impl Arm64Emitter {
         }
     }
 
-    /// Allocate a scratch register for a formula result.
-    fn push_reg(&mut self) -> u8 {
-        if self.reg_stack.len() >= SCRATCH_COUNT as usize {
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
+    fn alloc_reg_raw(&mut self) -> u8 {
+        if self.next_scratch >= SCRATCH_COUNT {
             self.scratch_overflow = true;
         }
         let reg = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
         self.next_scratch += 1;
+        reg
+    }
+
+    /// Allocate a scratch register for a formula result.
+    fn push_reg(&mut self) -> u8 {
+        let reg = self.alloc_reg_raw();
         self.reg_stack.push(reg);
         reg
     }
@@ -187,13 +195,11 @@ impl Arm64Emitter {
         &mut self, order: &Order<N>, loop_body: NounId, inits: &[NounId],
     ) -> Result<(), CompileError> {
         // Allocate registers for formula slot + carried locals
-        let formula_reg = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
-        self.next_scratch += 1;
+        let formula_reg = self.alloc_reg_raw();
 
         let mut carried_regs = Vec::new();
         for _ in 0..inits.len() {
-            let r = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
-            self.next_scratch += 1;
+            let r = self.alloc_reg_raw();
             carried_regs.push(r);
         }
 
@@ -624,124 +630,5 @@ fn arm64_lsl(rd: u8, rn: u8, shift: u8) -> u32 {
 }
 
 #[cfg(test)]
-mod anclas_criba {
-    use super::*;
-    use nebu::Goldilocks;
-
-    /// Compila `[9 [a0 a1]]` (nox eq) con 2 parametros y devuelve las palabras de 32 bits.
-    fn palabras_de_eq() -> Vec<u32> {
-        let mut o = Order::<1024>::new();
-        let ax2 = o.atom(Goldilocks::new(2)).unwrap();
-        let t0 = o.atom(Goldilocks::new(0)).unwrap();
-        let a0 = o.pair(t0, ax2).unwrap();
-        let ax6 = o.atom(Goldilocks::new(6)).unwrap();
-        let t0b = o.atom(Goldilocks::new(0)).unwrap();
-        let a1 = o.pair(t0b, ax6).unwrap();
-        let body = o.pair(a0, a1).unwrap();
-        let tag = o.atom(Goldilocks::new(9)).unwrap();
-        let formula = o.pair(tag, body).unwrap();
-        let code = compile_to_arm64(&o, formula, 2).unwrap();
-        code.chunks_exact(4)
-            .map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]]))
-            .collect()
-    }
-
-    /// nox eq: 0 si iguales, 1 si distintos => CSET dst, ne = CSINC Xd, XZR, XZR, EQ.
-    /// CSINC (64 bit) = 0x9A800400 | Rm<<16 | cond<<12 | Rn<<5 | Rd; XZR=31; EQ=0b0000
-    /// => base 0x9A9F07E0. La base 0x9A9F17E0 lleva cond=NE (=CSET eq, 1 si iguales).
-    #[test]
-    fn eq_emite_cset_ne_con_condicion_eq() {
-        let palabras = palabras_de_eq();
-        let cset_ne = palabras.iter().filter(|w| (**w & !0x1F) == 0x9A9F07E0).count();
-        let cset_eq = palabras.iter().filter(|w| (**w & !0x1F) == 0x9A9F17E0).count();
-        assert_eq!(cset_eq, 0, "silicon-src-2.CL-LOG.6: 0x9A9F17E0 es CSET eq (1 si IGUAL), contrato nox exige 1 si NE");
-        assert_eq!(cset_ne, 1, "silicon-src-2.CL-LOG.6: eq debe emitir exactamente un CSINC Xd,XZR,XZR,EQ (0x9A9F07E0)");
-    }
-}
-
-#[cfg(test)]
-mod anclas_sil1 {
-    use super::*;
-    use nebu::Goldilocks;
-
-    fn atomo(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
-    fn axis(o: &mut Order<4096>, ax: u64) -> NounId {
-        let t = atomo(o, 0);
-        let a = atomo(o, ax);
-        o.pair(t, a).unwrap()
-    }
-    fn binaria(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
-        let body = o.pair(l, r).unwrap();
-        let t = atomo(o, tag);
-        o.pair(t, body).unwrap()
-    }
-    /// Suma anidada a la derecha con `vivos` hojas vivas a la vez: cada `a` queda
-    /// en su registro mientras se emite `b` (vivos=1 es una hoja; vivos=n son n-1 sumas).
-    fn suma_viva(o: &mut Order<4096>, vivos: u32) -> NounId {
-        let mut f = axis(o, 2);
-        for _ in 1..vivos {
-            let hoja = axis(o, 2);
-            f = binaria(o, 5, hoja, f);
-        }
-        f
-    }
-    fn es_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
-        matches!(r, Err(CompileError::ScratchOverflow))
-    }
-
-    fn palabras(code: &[u8]) -> Vec<u32> {
-        code.chunks_exact(4).map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect()
-    }
-
-    /// SIL-1 (issue #130), grupo A: con mas valores vivos que registros scratch el
-    /// asignador entregaba un registro ya vivo sin error.
-    #[test]
-    fn suma_con_capacidad_mas_uno_vivos_devuelve_scratch_overflow() {
-        assert_eq!(SCRATCH_COUNT, 7);
-        let mut o = Order::<4096>::new();
-        let f = suma_viva(&mut o, SCRATCH_COUNT as u32 + 1);
-        let r = compile_to_arm64(&o, f, 1);
-        assert!(es_scratch_overflow(&r), "SIL-1.A: 8 valores vivos con 7 scratch deben dar ScratchOverflow, dio {:?}", r.as_ref().map(|c| c.len()));
-    }
-
-    #[test]
-    fn suma_con_hasta_capacidad_vivos_sigue_compilando() {
-        for vivos in [SCRATCH_COUNT as u32 - 1, SCRATCH_COUNT as u32] {
-            let mut o = Order::<4096>::new();
-            let f = suma_viva(&mut o, vivos);
-            assert!(compile_to_arm64(&o, f, 1).is_ok(), "{vivos} vivos caben en {SCRATCH_COUNT} scratch");
-        }
-    }
-
-    /// SIL-1, grupo B: tras pop(rb),pop(ra),push(dst) dst aliasa ra; MUL dst,ra,rb
-    /// escribia ra antes de que UMULH lo leyera.
-    /// No cubre: ejecucion en hardware ARM64.
-    #[test]
-    fn mul_emite_umulh_antes_de_que_mul_escriba_dst() {
-        let mut o = Order::<4096>::new();
-        let a0 = axis(&mut o, 2);
-        let a1 = axis(&mut o, 6);
-        let f = binaria(&mut o, 7, a0, a1);
-        let w = palabras(&compile_to_arm64(&o, f, 2).unwrap());
-        let i_mul = w.iter().position(|x| (*x & 0xFFE0_FC00) == 0x9B00_7C00).expect("MUL");
-        let i_umulh = w.iter().position(|x| (*x & 0xFFE0_FC00) == 0x9BC0_7C00).expect("UMULH");
-        let mul = w[i_mul];
-        assert_eq!(mul & 0x1F, (mul >> 5) & 0x1F, "premisa: dst aliasa ra");
-        assert!(i_umulh < i_mul, "SIL-1.B: UMULH (idx {i_umulh}) lee ra despues de que MUL (idx {i_mul}) lo escribio");
-    }
-
-    /// SIL-1, grupo B: rama underflow de sub, `sub dst,x16,rb` pisaba ra (== dst) antes de `add dst,dst,ra`.
-    #[test]
-    fn sub_underflow_no_escribe_ra_antes_de_sumarlo() {
-        let mut o = Order::<4096>::new();
-        let a0 = axis(&mut o, 2);
-        let a1 = axis(&mut o, 6);
-        let f = binaria(&mut o, 6, a0, a1);
-        let w = palabras(&compile_to_arm64(&o, f, 2).unwrap());
-        let ra = (w[0] & 0x1F) as u8; // primer mov: destino del primer operando
-        let i = w.iter()
-            .position(|x| (*x & 0xFFE0_FC00) == 0xCB00_0000 && ((*x >> 5) & 0x1F) == 16)
-            .expect("sub rd, x16, rb de la rama underflow");
-        assert_ne!((w[i] & 0x1F) as u8, ra, "SIL-1.B: sub rd,x16,rb escribe ra (x{ra}) antes de add rd,rd,ra");
-    }
-}
+#[path = "arm64_anchors.rs"]
+mod anchors;
