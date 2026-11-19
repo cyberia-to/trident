@@ -1,18 +1,15 @@
 # trident.pink — the landing
 
-Lives inside the [trident](https://github.com/cyberia-to/trident) repo
-as `landing/` — folded in from the standalone `trident-pink` repo
-(full history preserved via `git subtree`). One page: **the provable
-language** — native release downloads, proof modes, the Trinity demo,
-language features, targets and family links (cyberia · soft3 · cyb · cyber).
-Static HTML, no build; the hero video is re-encoded from `../media/tri.gif`.
+One screen of the doors' family (nox.band, joy.technology, cy.army and the others): the pitch, three facts, the
+links and the ladder of soft3, in pink, with Trisha beside the copy. `index.html`, `fonts/`, `favicon.svg` and
+`robots.txt` are built by the apparatus (`apparatus/sites/doors/build.py`, the `trident.pink` door) and copied
+here; edit the door there, not this file. The media stay here.
 
-Trinity's homepage pitch is **AI. Privacy. Quantum. One field.** It links to
-the [arithmetic contract](../reference/trinity-arithmetic.md) and
-[Trident source](../lib/std/trinity/inference.tri). Keep its research-demo
-status visible: the current implementation demonstrates arithmetic on Triton;
-secure FHE/private inference remain research goals and the quantum stage is
-simulated. The contract defines current guarantees.
+The proof is stated as measured on the 0.4 line — 16 to 64 KB, 0.05 to 1.1 s on a laptop, verified in under a
+third of a second (`soft3/audit/proof-latency-2026-10.md`). The page before 2026-11-19 led with "3 ms · 2.2 KB",
+which was the public execution certificate of 0.3.0 and no proof size.
+
+The page no longer plays the set; its files remain release assets and the sync still keeps them in the docroot.
 
 ## The set
 
