@@ -1,1011 +1,122 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>trident — the provable language</title>
-        <meta
-            name="description"
-            content="Trident is a provable programming language. Every program compiles to prime-field arithmetic; joy proves it on nox with zheng, trisha proves it on Triton VM. Post-quantum, no trusted setup. 0.3.0 ships as native binaries for macOS, Linux and Windows."
-        />
-        <meta name="theme-color" content="#0a0714" />
-        <meta property="og:title" content="trident 0.3 — one compiler, two proof runtimes" />
-        <meta
-            property="og:description"
-            content="Every program produces a proof that binds the computation to its public result. 3 ms public certificate on nox. Private proofs on Triton 7. No trusted setup. Native binaries for macOS · Linux · Windows."
-        />
-        <meta property="og:image" content="https://trident.pink/media/og.jpg" />
-        <meta property="og:url" content="https://trident.pink/" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='24' font-size='22'>🔱</text></svg>"
-            rel="icon"
-        />
-        <!-- lytics: pageviews + attention; endpoint under /lytics/ -->
-        <script
-            type="module"
-            src="/lytics/tracker/loader.js?v=2"
-            data-endpoint="/lytics"
-            data-domain="trident.pink"
-        ></script>
-        <style>
-            :root {
-                --bg: #0a0714;
-                --ink: #f5ecff;
-                --pink: #ff2b8d;
-                --pink-soft: #ff8fc4;
-                --cyan: #61e2ff;
-                --gold: #ffd166;
-                --dim: rgba(245, 236, 255, 0.6);
-                --card: rgba(255, 43, 141, 0.06);
-                --line: rgba(255, 143, 196, 0.18);
-            }
-            * { box-sizing: border-box; }
-            html { scroll-behavior: smooth; }
-            body {
-                margin: 0;
-                background: var(--bg);
-                background-image:
-                    radial-gradient(ellipse 60% 40% at 75% 8%, rgba(255, 43, 141, 0.12), transparent),
-                    radial-gradient(ellipse 50% 35% at 20% 90%, rgba(97, 226, 255, 0.07), transparent);
-                color: var(--ink);
-                font-family: Play, system-ui, sans-serif;
-                line-height: 1.55;
-            }
-            a { color: var(--pink-soft); text-decoration: none; }
-            a:hover { color: var(--pink); }
-            .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
-            .wrap { max-width: 1020px; margin: 0 auto; padding: 0 1.3rem; }
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>trident — the provable language</title>
+<meta name="description" content="trident is the language of cyber. every program compiles to prime-field arithmetic and leaves a proof that binds the computation to its public result — post-quantum, with no trusted setup.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website"><meta property="og:url" content="https://trident.pink/"><meta property="og:title" content="trident — the provable language"><meta property="og:description" content="trident is the language of cyber. every program compiles to prime-field arithmetic and leaves a proof that binds the computation to its public result — post-quantum, with no trusted setup.">
+<link rel="canonical" href="https://trident.pink/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preload" href="/fonts/Play-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: Play; font-weight: 400; font-display: swap; src: url(/fonts/Play-400-latin.woff2) format("woff2"); }
+@font-face { font-family: Play; font-weight: 700; font-display: swap; src: url(/fonts/Play-700-latin.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-display: swap; src: url(/fonts/JetBrainsMono-latin.woff2) format("woff2"); }
+:root { --c: #ff2d95; --rgb: 255,45,149; --fg: #f2f2f2; --dim: #8a8a8a; --line: rgba(255,255,255,.10); }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: #000; color: var(--fg); font-family: Play, Inter, system-ui, sans-serif; }
+body { min-height: 100svh; display: flex; flex-direction: column; overflow-x: hidden; }
+canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: .9; }
+.veil { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,.25) 0%, rgba(0,0,0,.82) 70%); pointer-events: none; }
+header, main, footer { position: relative; z-index: 1; width: 100%; max-width: 920px; margin: 0 auto; padding: 0 24px; }
+header { display: flex; align-items: center; gap: 12px; padding-top: 22px; font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .08em; color: var(--dim); }
+header .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 16px var(--c); }
+header a { color: var(--dim); text-decoration: none; } header a:hover { color: var(--fg); }
+header .r { margin-left: auto; }
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-top: 6vh; padding-bottom: 6vh; }
+.kick { font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--c); margin-bottom: 18px; }
+h1 { font-weight: 700; font-size: clamp(64px, 15vw, 168px); line-height: .9; letter-spacing: -.03em; text-shadow: 0 0 40px rgba(var(--rgb),.35), 0 2px 2px #000; }
+.tag { font-size: clamp(20px, 3.2vw, 32px); margin: 14px 0 22px; color: var(--c); text-shadow: 0 0 24px rgba(var(--rgb),.4); }
+.lead { font-size: clamp(16px, 1.7vw, 19px); line-height: 1.5; max-width: 62ch; color: #d9d9d9; text-shadow: 0 1px 2px #000, 0 0 18px #000; }
+pre.code { margin: 26px 0 0; padding: 14px 16px; background: rgba(0,0,0,.6); border: 1px solid var(--line); border-left: 2px solid var(--c); border-radius: 6px; font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.7; color: #e6e6e6; overflow-x: auto; white-space: pre; }
+pre.code .p { color: var(--c); user-select: none; }
+.points { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 34px 0 30px; }
+.point { background: rgba(17,17,17,.55); border: 1px solid var(--line); border-top: 1px solid rgba(var(--rgb),.6); border-radius: 8px; padding: 14px 16px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.point b { display: block; font-family: "JetBrains Mono", monospace; font-weight: 400; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--c); margin-bottom: 8px; }
+.point span { font-size: 14px; line-height: 1.5; color: #cfcfcf; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.links a { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--fg); text-decoration: none; border: 1px solid var(--line); border-radius: 6px; padding: 9px 14px; background: rgba(0,0,0,.45); transition: border-color .2s, box-shadow .2s, color .2s; }
+.links a:first-child { border-color: rgba(var(--rgb),.7); color: var(--c); }
+.links a:hover { border-color: var(--c); color: var(--c); box-shadow: 0 0 18px rgba(var(--rgb),.35); }
+footer { padding-bottom: 22px; }
+.ladder { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; border-top: 1px solid var(--line); padding-top: 14px; }
+.ladder a { display: block; text-decoration: none; color: var(--dim); font-size: 12px; padding: 8px 6px 0; border-top: 2px solid var(--lc); opacity: .7; transition: opacity .2s; }
+.ladder a:hover, .ladder a.on { opacity: 1; color: var(--fg); }
+.ladder a.on { box-shadow: 0 -10px 18px -10px var(--lc); }
+.ladder a small { display: block; font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ladder a b { font-weight: 700; }
+.fine { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 14px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--dim); }
+.fine a { color: var(--dim); text-decoration: none; } .fine a:hover { color: var(--fg); }
+/* one screen, no scroll: every size follows the viewport's height as well as its width (the owner, 2026-11-16) */
+body { height: 100svh; min-height: 0; overflow: hidden; }
+header { padding-top: 2.4vh; font-size: min(12px, 1.5vh); }
+main { min-height: 0; padding-top: 1vh; padding-bottom: 1vh; }
+.kick { font-size: min(12px, 1.45vh); margin-bottom: 1.6vh; }
+h1 { font-size: min(15vw, 15vh); }
+.tag { font-size: min(3.2vw, 3.5vh); margin: 1.2vh 0 2vh; }
+.lead { font-size: max(13px, min(1.7vw, 2.05vh)); }
+pre.code { margin-top: 2.2vh; padding: 1.1vh 16px; font-size: min(13px, 1.5vh); line-height: 1.6; }
+.points { margin: 2.6vh 0 2.4vh; gap: 1.4vh; }
+.point { padding: 1.3vh 16px; }
+.point b { font-size: min(11px, 1.3vh); margin-bottom: .8vh; }
+.point span { font-size: max(12px, min(14px, 1.65vh)); line-height: 1.45; }
+.links { gap: 1vh; }
+.links a { padding: 1vh 14px; font-size: min(13px, 1.6vh); }
+footer { padding-bottom: 2vh; }
+.ladder { padding-top: 1.4vh; }
+.ladder a { font-size: min(12px, 1.5vh); padding-top: .8vh; }
+.fine { margin-top: 1.4vh; font-size: min(11px, 1.35vh); }
+@media (max-width: 760px) {
+  /* a phone keeps the pitch, the links and the strip on one screen; the three facts and the commands stay on the wide screen */
+  .points, pre.code, .fine { display: none; }
+  h1 { font-size: min(18vw, 11vh); }
+  .tag { font-size: min(5.6vw, 3.2vh); }
+  .lead { font-size: max(13px, min(4vw, 2.1vh)); }
+  .links { margin-top: 2.6vh; }
+  .links a { font-size: min(12px, 1.6vh); padding: .9vh 10px; }
+  .ladder { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 1vh; }
+  header .r { display: none; }
+  canvas { opacity: .55; }
+}
+@media (prefers-reduced-motion: reduce) { canvas { display: none; } }
 
-            header {
-                display: flex;
-                align-items: baseline;
-                gap: 1.1rem;
-                padding: 1.2rem 0 0;
-                flex-wrap: wrap;
-            }
-            header .brand { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
-            header .brand b { color: var(--pink); }
-            header .ver {
-                font-size: 0.7rem;
-                color: var(--pink-soft);
-                border: 1px solid var(--line);
-                border-radius: 999px;
-                padding: 0.1rem 0.6rem;
-                letter-spacing: 0.06em;
-            }
-            header .ver:hover { border-color: var(--pink); }
-            header nav { margin-left: auto; display: flex; gap: 1.1rem; font-size: 0.8rem; flex-wrap: wrap; }
+.with-hero header, .with-hero main, .with-hero footer { max-width: 1240px; }
+.with-hero main { padding-right: min(40vw, 470px); }
+video.hero { position: fixed; z-index: 1; right: max(24px, calc((100vw - 1240px) / 2 + 24px)); top: 50%; transform: translateY(-54%); height: min(70vh, 640px); aspect-ratio: 2 / 3; object-fit: cover; border-radius: 22px; border: 1px solid rgba(var(--rgb), .55); box-shadow: 0 0 60px rgba(var(--rgb), .35), 0 0 0 6px rgba(var(--rgb), .06); }
+@media (max-width: 1000px) {
+  .with-hero main { padding-right: 24px; }
+  video.hero { inset: 0; right: 0; top: 0; transform: none; width: 100%; height: 100%; aspect-ratio: auto; border: 0; border-radius: 0; box-shadow: none; z-index: 0; opacity: .5; }
+  .with-hero canvas { display: none; }
+}
+</style>
+</head>
+<body class="with-hero">
+<canvas id="sky"></canvas><div class="veil"></div>
+<header><span class="dot"></span><a href="https://soft3.org">soft3</a><span class="r">the stack of cyber</span></header>
+<video class="hero" autoplay muted loop playsinline poster="media/tri-poster.jpg" aria-label="Trisha, the warrior of trident"><source src="media/tri.mp4" type="video/mp4"></video>
+<main>
+  <div class="kick">soft3 · weapon</div>
+  <h1>trident</h1>
+  <div class="tag">write once, prove anywhere.</div>
+  <p class="lead">trident is the language of cyber. every program compiles to prime-field arithmetic and leaves a proof that binds the computation to its public result — post-quantum, with no trusted setup.</p>
+  <div class="points"><div class="point"><b>the proof</b><span>on the 0.4 line every proof is 16 to 64 KB, never more, made in 0.05 to 1.1 s on a laptop and checked in under a third of a second. measured, 2026-10.</span></div><div class="point"><b>one field</b><span>Goldilocks arithmetic end to end: neural inference, encryption arithmetic and a quantum simulation are one algebra in one program — the Trinity demo.</span></div><div class="point"><b>the stack</b><span>the weapon of soft3: it compiles to nox, joy proves it with zheng, cybergraph commits what it proves.</span></div></div>
+  <div class="links"><a href="https://github.com/cyberia-to/trident/releases/tag/v0.3.0">install · 0.3.0</a><a href="https://github.com/cyberia-to/trident">source</a><a href="https://github.com/cyberia-to/trident/tree/master/docs">docs</a><a href="https://github.com/cyberia-to/trident/blob/master/reference/trinity-arithmetic.md">trinity</a><a href="https://soft3.org">the stack · soft3.org</a></div>
+</main>
+<footer>
+  <nav class="ladder"><a href="https://nox.band" class="" style="--lc:#ff1a00"><b>nox</b><small>nox.band</small></a><a href="https://trident.pink" class="on" style="--lc:#ff2d95"><b>trident</b><small>trident.pink</small></a><a href="https://joy.technology" class="" style="--lc:#ffc400"><b>joy</b><small>joy.technology</small></a><a href="https://cybergraph.link" class="" style="--lc:#00ff41"><b>cybergraph</b><small>cybergraph.link</small></a><a href="https://neural.how" class="" style="--lc:#00b8ff"><b>neural</b><small>neural.how</small></a><a href="https://cy.army" class="" style="--lc:#5b3bff"><b>cy</b><small>cy.army</small></a><a href="https://cybernode.ai" class="" style="--lc:#a24bff"><b>cybernode</b><small>cybernode.ai</small></a></nav>
+  <div class="fine"><span>part of soft3, the stack of cyber</span><span><a href="https://cyberia.to">cyberia.to</a> · <a href="https://cyber.page">cyber.page</a> · <a href="https://github.com/cyberia-to">github</a></span></div>
+</footer>
+<script>
 
-            .hero {
-                display: grid;
-                grid-template-columns: 1.25fr 0.75fr;
-                gap: 2.4rem;
-                align-items: center;
-                padding: 3rem 0 2rem;
-            }
-            .hero h1 {
-                margin: 0;
-                font-size: clamp(2.4rem, 6vw, 3.6rem);
-                letter-spacing: 0.06em;
-                line-height: 1.05;
-            }
-            .hero h1 em {
-                font-style: normal;
-                color: var(--pink);
-                text-shadow: 0 0 32px rgba(255, 43, 141, 0.55);
-            }
-            .tag { margin: 0.7rem 0 0; font-size: 1.12rem; color: var(--ink); }
-            .tag b { color: var(--pink-soft); font-weight: 400; }
-            .quote {
-                margin: 1.1rem 0 0;
-                padding-left: 0.9rem;
-                border-left: 2px solid var(--pink);
-                font-size: 0.82rem;
-                color: var(--dim);
-                line-height: 1.6;
-            }
-
-            .get {
-                margin-top: 1.6rem;
-                border: 1px solid var(--pink);
-                border-radius: 14px;
-                background: rgba(255, 43, 141, 0.08);
-                box-shadow: 0 0 42px rgba(255, 43, 141, 0.22);
-                padding: 0.9rem 1rem 0.8rem;
-            }
-            .get .primary {
-                display: flex;
-                align-items: center;
-                gap: 0.8rem;
-                flex-wrap: wrap;
-            }
-            .get .primary a.dl {
-                display: inline-block;
-                background: var(--pink);
-                color: #14020b;
-                font-weight: 700;
-                font-size: 0.92rem;
-                border-radius: 9px;
-                padding: 0.55rem 0.95rem;
-                letter-spacing: 0.02em;
-            }
-            .get .primary a.dl:hover { filter: brightness(1.12); color: #14020b; }
-            .get .primary span { font-size: 0.74rem; color: var(--dim); }
-            .get .primary span b { color: var(--ink); font-weight: 400; }
-            .get .grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 0.4rem 0.9rem;
-                margin-top: 0.75rem;
-                font-size: 0.72rem;
-            }
-            .get .grid div { color: var(--dim); }
-            .get .grid div b { color: var(--ink); font-weight: 400; display: block; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; }
-            .get .grid a { margin-right: 0.6rem; }
-            .get .sh {
-                margin-top: 0.75rem;
-                display: flex;
-                align-items: center;
-                gap: 0.7rem;
-                font-size: 0.74rem;
-                color: var(--dim);
-            }
-            .get .sh code { color: var(--ink); white-space: nowrap; overflow-x: auto; }
-            .get .sh code b { color: var(--pink); font-weight: 700; }
-            .get button {
-                background: transparent;
-                color: var(--pink-soft);
-                border: 1px solid var(--line);
-                border-radius: 7px;
-                font-family: "JetBrains Mono", ui-monospace, monospace;
-                font-size: 0.68rem;
-                padding: 0.28rem 0.6rem;
-                cursor: pointer;
-                margin-left: auto;
-                flex: none;
-            }
-            .get button:hover { border-color: var(--pink); color: var(--pink); }
-            .then { margin: 0.7rem 0 0; font-size: 0.74rem; color: var(--dim); }
-            .then b { color: var(--ink); font-weight: 400; }
-
-            .figure {
-                position: relative;
-                border-radius: 18px;
-                overflow: hidden;
-                border: 1px solid var(--line);
-                box-shadow:
-                    0 0 60px rgba(255, 43, 141, 0.22),
-                    0 24px 60px rgba(0, 0, 0, 0.5);
-                aspect-ratio: 384 / 480;
-            }
-            .figure video { width: 100%; height: 100%; object-fit: cover; display: block; }
-            .figure .cap {
-                position: absolute;
-                left: 0; right: 0; bottom: 0;
-                padding: 2rem 1rem 0.7rem;
-                background: linear-gradient(transparent, rgba(10, 7, 20, 0.9));
-                font-size: 0.68rem;
-                color: var(--dim);
-                text-align: center;
-            }
-
-            .numbers {
-                display: grid;
-                grid-template-columns: repeat(5, 1fr);
-                gap: 0.8rem;
-                padding: 0.6rem 0 0.4rem;
-            }
-            .num {
-                background: var(--card);
-                border: 1px solid var(--line);
-                border-radius: 12px;
-                padding: 0.8rem 0.9rem;
-                text-align: center;
-            }
-            .num b { display: block; font-size: 1.35rem; color: var(--pink); }
-            .num span { font-size: 0.68rem; color: var(--dim); }
-            .measured { margin: 0.5rem 0 0; font-size: 0.68rem; color: var(--dim); text-align: right; }
-
-            section { padding: 2.2rem 0 0; }
-            h2 { margin: 0 0 0.9rem; font-size: 1.15rem; letter-spacing: 0.1em; text-transform: uppercase; }
-            h2 i { font-style: normal; color: var(--pink); }
-            .lead { font-size: 0.85rem; color: var(--dim); max-width: 46rem; margin: 0 0 0.9rem; }
-            .lead b { color: var(--ink); font-weight: 400; }
-            .lead code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.74rem; color: var(--cyan); }
-
-            .trinity-jump { display: inline-block; margin-top: 0.7rem; font-size: 0.82rem; }
-            #trinity { scroll-margin-top: 1.2rem; }
-            .trinity-panel {
-                display: grid;
-                grid-template-columns: 1.2fr 1fr;
-                gap: 2rem;
-                align-items: center;
-                padding: clamp(1.2rem, 4vw, 2rem);
-                border: 1px solid rgba(255, 143, 196, 0.35);
-                border-radius: 18px;
-                background:
-                    radial-gradient(ellipse at 100% 0, rgba(97, 226, 255, 0.08), transparent 65%),
-                    linear-gradient(135deg, rgba(255, 43, 141, 0.1), rgba(255, 43, 141, 0.02));
-            }
-            .trinity-panel > * { min-width: 0; }
-            .trinity-kicker { margin: 0 0 0.9rem; font-size: 0.68rem; letter-spacing: 0.14em; color: var(--cyan); text-transform: uppercase; }
-            .trinity-panel h2 { font-size: clamp(1.7rem, 3.6vw, 2.35rem); line-height: 1.16; letter-spacing: -0.02em; text-transform: none; }
-            .trinity-pitch { margin: 0; font-size: 0.88rem; color: var(--dim); line-height: 1.7; }
-            .trinity-pitch strong { color: var(--ink); font-weight: 400; }
-            .trinity-links { display: flex; flex-wrap: wrap; gap: 0.7rem 1.3rem; margin-top: 1.2rem; font-size: 0.8rem; }
-            .trinity-links a:first-child { color: var(--ink); border-bottom: 1px solid var(--pink); padding-bottom: 0.15rem; }
-            .trinity-links a:hover { color: var(--pink); }
-            .trinity-demo { margin: 0; }
-            .trinity-flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.65rem; }
-            .trinity-flow li { display: grid; grid-template-columns: 2.5rem 1fr; align-items: center; gap: 0.75rem; padding: 0.7rem 0.85rem; border: 1px solid var(--line); border-radius: 10px; background: rgba(10, 7, 20, 0.55); }
-            .trinity-flow .step { font-size: 1.1rem; color: var(--pink-soft); }
-            .trinity-flow li:nth-child(2) .step { color: var(--cyan); }
-            .trinity-flow li:nth-child(3) .step { color: var(--gold); }
-            .trinity-flow b { display: block; font-size: 0.8rem; font-weight: 400; color: var(--ink); }
-            .trinity-flow small { display: block; font-size: 0.7rem; color: var(--dim); }
-            .trinity-demo figcaption { margin-top: 0.9rem; text-align: center; font-size: 0.68rem; color: var(--cyan); line-height: 1.8; }
-            .trinity-scope { grid-column: 1 / -1; margin: -0.5rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.74rem; color: var(--dim); line-height: 1.65; }
-            .trinity-scope b { color: var(--ink); font-weight: 400; }
-
-            .proofrow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-            pre {
-                margin: 0;
-                background: rgba(0, 0, 0, 0.45);
-                border: 1px solid var(--line);
-                border-radius: 12px;
-                padding: 1rem 1.1rem;
-                font-family: "JetBrains Mono", ui-monospace, monospace;
-                font-size: 0.76rem;
-                line-height: 1.6;
-                overflow-x: auto;
-                color: var(--ink);
-            }
-            pre .k { color: var(--pink); }
-            pre .c { color: var(--cyan); }
-            pre .d { color: var(--dim); }
-            pre .g { color: var(--gold); }
-            .proofrow p { margin: 0.6rem 0 0; font-size: 0.8rem; color: var(--dim); }
-            .proofrow p b { color: var(--ink); font-weight: 400; }
-
-            .modes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.9rem; }
-            .mode { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 1rem; }
-            .mode b { display: block; color: var(--pink-soft); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
-            .mode p { margin: 0; font-size: 0.78rem; color: var(--dim); line-height: 1.6; }
-            .mode p code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.7rem; color: var(--ink); background: rgba(255,255,255,0.05); padding: 0.05rem 0.35rem; border-radius: 5px; }
-            .mode .m { display: block; margin-top: 0.45rem; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.7rem; color: var(--cyan); }
-
-            .cards {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 0.9rem;
-            }
-            .card {
-                background: var(--card);
-                border: 1px solid var(--line);
-                border-radius: 14px;
-                padding: 1rem 1.1rem;
-            }
-            .card b { display: block; color: var(--pink-soft); margin-bottom: 0.35rem; font-size: 0.92rem; }
-            .card p { margin: 0; font-size: 0.78rem; color: var(--dim); line-height: 1.55; }
-            .card p code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--cyan); }
-
-            ol.changes { margin: 0; padding-left: 1.2rem; font-size: 0.84rem; color: var(--dim); line-height: 1.65; max-width: 50rem; }
-            ol.changes li { margin-bottom: 0.45rem; }
-            ol.changes li b { color: var(--ink); font-weight: 400; }
-            ol.changes li code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--cyan); }
-
-            .tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
-            .tool { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.8rem 0.9rem; }
-            .tool b { display: block; font-family: "JetBrains Mono", ui-monospace, monospace; color: var(--pink); font-size: 0.9rem; margin-bottom: 0.25rem; }
-            .tool i { display: block; font-style: normal; color: var(--ink); font-size: 0.74rem; margin-bottom: 0.25rem; }
-            .tool p { margin: 0; font-size: 0.72rem; color: var(--dim); line-height: 1.55; }
-
-            .valid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; }
-            .v { border: 1px solid var(--line); border-radius: 12px; padding: 0.7rem 0.8rem; text-align: center; }
-            .v b { display: block; font-size: 1.2rem; color: var(--cyan); }
-            .v span { font-size: 0.66rem; color: var(--dim); }
-            .receipts { margin: 0.8rem 0 0; font-size: 0.74rem; color: var(--dim); line-height: 1.8; }
-
-            table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-            th, td { padding: 0.5rem 0.7rem; text-align: center; border-top: 1px solid var(--line); }
-            th { color: var(--dim); font-weight: 400; font-size: 0.72rem; border-top: none; }
-            td:first-child, th:first-child { text-align: left; }
-            td b { color: var(--pink); }
-
-            .neptune { font-size: 0.85rem; color: var(--dim); max-width: 46rem; }
-            .neptune b { color: var(--ink); }
-            .neptune code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.74rem; color: var(--cyan); }
-            .targets { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-            .tier { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0.9rem 1.1rem; }
-            .tier b { display: block; color: var(--pink-soft); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.3rem; }
-            .tier i { font-style: normal; color: var(--dim); font-size: 0.7rem; }
-            .tier p { margin: 0.35rem 0 0; font-size: 0.82rem; line-height: 1.7; }
-            .tier code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.74rem; color: var(--ink); background: rgba(255,255,255,0.05); padding: 0.05rem 0.35rem; border-radius: 5px; }
-            .tier .live { color: var(--pink); }
-            .unions { margin-top: 0.9rem; font-size: 0.8rem; color: var(--dim); line-height: 1.8; }
-            .unions code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink); }
-            .silicon { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 0.9rem; }
-            .chip { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.75rem 0.9rem; }
-            .chip b { display: block; color: var(--cyan); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; }
-            .chip p { margin: 0; font-size: 0.78rem; line-height: 1.7; }
-            .chip code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink); background: rgba(255,255,255,0.05); padding: 0.05rem 0.35rem; border-radius: 5px; }
-            .chip i { font-style: normal; color: var(--dim); font-size: 0.7rem; }
-
-            .scope { border-left: 2px solid var(--cyan); padding-left: 0.9rem; font-size: 0.8rem; color: var(--dim); max-width: 46rem; line-height: 1.7; }
-            .scope b { color: var(--ink); font-weight: 400; }
-
-            footer {
-                margin-top: 2.6rem;
-                border-top: 1px solid var(--line);
-                padding: 1.4rem 0 1.8rem;
-                font-size: 0.78rem;
-                color: var(--dim);
-            }
-            footer .family { display: flex; gap: 1.3rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
-            footer .family a b { color: var(--pink-soft); }
-            footer .license { font-size: 0.72rem; }
-
-            @media (max-width: 820px) {
-                .hero { grid-template-columns: 1fr; }
-                .figure { max-width: 340px; margin: 0 auto; }
-                .numbers, .valid { grid-template-columns: repeat(2, 1fr); }
-                .proofrow, .targets, .silicon, .modes { grid-template-columns: 1fr; }
-                .cards { grid-template-columns: 1fr; }
-                .tools { grid-template-columns: 1fr 1fr; }
-                .get .grid { grid-template-columns: 1fr; }
-                .trinity-panel { grid-template-columns: 1fr; gap: 1.4rem; }
-            }
-
-            /* the set: plays while you are here */
-            .set {
-                position: fixed; left: 0; right: 0; bottom: 0; z-index: 9;
-                display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
-                padding: 0.55rem 1.3rem;
-                background: rgba(10, 7, 20, 0.92); backdrop-filter: blur(8px);
-                border-top: 1px solid var(--line);
-                font-size: 0.74rem; color: var(--dim);
-            }
-            .set button {
-                font: inherit; cursor: pointer;
-                color: var(--ink); background: var(--card);
-                border: 1px solid var(--line); border-radius: 999px;
-                padding: 0.25rem 0.8rem; letter-spacing: 0.06em;
-            }
-            .set button:hover { border-color: var(--pink); color: var(--pink); }
-            .set .title { color: var(--ink); }
-            .set .title b { color: var(--pink); font-weight: 400; }
-            .set .time { min-width: 6.5em; }
-            .set .links { margin-left: auto; display: flex; gap: 0.9rem; flex-wrap: wrap; }
-            .set .links a { border-bottom: 1px dotted var(--line); }
-            body { padding-bottom: 3.2rem; }
-
-            /* the gate: Trisha greets, one click lets you in and starts the set (desktop only) */
-            .gate {
-                position: fixed; inset: 0; z-index: 20; display: none;
-                align-items: center; justify-content: center; cursor: pointer;
-                background: rgba(10, 7, 20, 0.86); backdrop-filter: blur(10px);
-            }
-            .gate.on { display: flex; }
-            .gate .card {
-                display: grid; grid-template-columns: 168px 1fr; gap: 1.6rem; align-items: center;
-                padding: 1.4rem 1.6rem; max-width: 880px; width: calc(100% - 2.6rem);
-                border: 1px solid var(--line); border-radius: 14px;
-                background: rgba(10, 7, 20, 0.7); box-shadow: 0 0 80px rgba(255, 43, 141, 0.18);
-            }
-            .gate video { width: 168px; height: 210px; object-fit: cover; border-radius: 10px; display: block; }
-            .gate .who { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--pink-soft); }
-            .gate .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 0.7rem 0 0.9rem; }
-            .gate .col {
-                height: 3.4rem; display: flex; align-items: center; justify-content: center; text-align: center;
-                border: 1px solid var(--line); border-radius: 8px; background: var(--card);
-                font-size: 1.05rem; line-height: 1.15; color: var(--ink); overflow: hidden; padding: 0 0.4rem;
-                text-shadow: 0 0 18px rgba(255, 43, 141, 0.45);
-            }
-            .gate .hint { font-size: 0.74rem; color: var(--dim); }
-            .gate .hint .k { color: var(--pink); }
-            @media (max-width: 640px) { .gate .card { grid-template-columns: 1fr; } .gate video { display: none; } }
-        </style>
-    </head>
-    <body>
-        <div class="wrap">
-            <header>
-                <span class="brand">🔱 tri<b>dent</b></span>
-                <a class="ver mono" href="https://github.com/cyberia-to/trident/releases/tag/v0.3.0">0.3.0 · 2026-09-16</a>
-                <nav class="mono">
-                    <a href="#get">install</a>
-                    <a href="#changes">what's new</a>
-                    <a href="#trinity">trinity</a>
-                    <a href="https://github.com/cyberia-to/trident">github</a>
-                    <a href="https://github.com/cyberia-to/trident/tree/master/docs">docs</a>
-                    <a href="https://github.com/cyberia-to/trident/releases/tag/v0.3.0">release</a>
-                </nav>
-            </header>
-
-            <div class="hero">
-                <div>
-                    <h1>the <em>provable</em><br />language</h1>
-                    <p class="tag">
-                        every program compiles to prime-field arithmetic and
-                        produces a proof that binds the computation to its
-                        public result. <b>one compiler, two proof runtimes</b>:
-                        joy proves on nox with zheng, trisha proves on Triton 7.
-                        post-quantum, no trusted setup.
-                    </p>
-                    <a class="trinity-jump" href="#trinity">meet Trinity: AI · privacy · quantum <span aria-hidden="true">↗</span></a>
-                    <p class="quote">
-                        The weapon is their language. They gave it all to us.
-                        If you learn it, when you really learn it, you begin to
-                        perceive time the way that they do. So you can see
-                        what's to come.
-                    </p>
-                    <div class="get" id="get">
-                        <div class="primary">
-                            <a class="dl" id="dl" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-aarch64-apple-darwin.tar.gz">↓ cyber-tools 0.3.0 · <span id="dl-label">macOS ARM64</span></a>
-                            <span>one archive: <b>trident · trident-lsp · trisha · joy</b> — runtime resources embedded, nothing else to install</span>
-                        </div>
-                        <div class="grid mono">
-                            <div><b>macOS</b>
-                                <a data-os="mac-arm" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-aarch64-apple-darwin.tar.gz">ARM64</a>
-                                <a data-os="mac-x64" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-x86_64-apple-darwin.tar.gz">x64</a></div>
-                            <div><b>Linux (glibc)</b>
-                                <a data-os="linux-arm" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-aarch64-unknown-linux-gnu.tar.gz">ARM64</a>
-                                <a data-os="linux-x64" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-x86_64-unknown-linux-gnu.tar.gz">x64</a></div>
-                            <div><b>Windows</b>
-                                <a data-os="win-arm" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-aarch64-pc-windows-msvc.zip">ARM64</a>
-                                <a data-os="win-x64" href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/cyber-tools-x86_64-pc-windows-msvc.zip">x64</a></div>
-                        </div>
-                        <div class="sh mono">
-                            <code>$ <b>tar xzf cyber-tools-*.tar.gz && export PATH="$PWD/cyber-tools/bin:$PATH"</b></code>
-                            <button id="copy" data-cmd='tar xzf cyber-tools-*.tar.gz && export PATH="$PWD/cyber-tools/bin:$PATH"'>copy</button>
-                        </div>
-                    </div>
-                    <p class="then mono">
-                        then: <b>trident build · run · prove · verify · audit</b> ·
-                        <a href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/SHA256SUMS">SHA-256 checksums</a> ·
-                        crates.io still carries 0.2 — the 0.3 toolchain ships as native archives
-                    </p>
-                </div>
-                <div class="figure">
-                    <video autoplay muted loop playsinline poster="media/tri-poster.jpg">
-                        <source src="media/tri.mp4" type="video/mp4" />
-                    </video>
-                    <div class="cap mono">write once, prove anywhere</div>
-                </div>
-            </div>
-
-            <div class="numbers">
-                <div class="num"><b>3 ms</b><span>public execution certificate<br />on nox, hello_proof</span></div>
-                <div class="num"><b>2.2 KB</b><span>the certificate — verified<br />without re-running</span></div>
-                <div class="num"><b>1</b><span>reduction per<br />field operation</span></div>
-                <div class="num"><b>0</b><span>trusted setup,<br />elliptic curves</span></div>
-                <div class="num"><b>6</b><span>native builds: macOS · Linux<br />· Windows × ARM64 · x64</span></div>
-            </div>
-            <p class="measured mono">measured with the released 0.3.0 binaries on an Apple M4 Max, 2026-09-16</p>
-
-            <section id="trinity" aria-labelledby="trinity-title">
-                <div class="trinity-panel">
-                    <div>
-                        <p class="trinity-kicker mono">Trinity · research demo</p>
-                        <h2 id="trinity-title">AI. Privacy. Quantum.<br /><i>One field.</i></h2>
-                        <p class="trinity-pitch">
-                            Three frontiers of computing, expressed in the same
-                            algebra. Trinity brings <strong>neural inference,
-                            encryption arithmetic and a simulated quantum circuit</strong>
-                            into one Trident program. Their calculations share
-                            a finite field and can be checked in one proof trace.
-                        </p>
-                        <div class="trinity-links">
-                            <a href="https://github.com/cyberia-to/trident/blob/master/reference/trinity-arithmetic.md">explore the demo <span aria-hidden="true">→</span></a>
-                            <a href="https://github.com/cyberia-to/trident/blob/master/lib/std/trinity/inference.tri">read the Trident source <span aria-hidden="true">↗</span></a>
-                        </div>
-                    </div>
-                    <figure class="trinity-demo">
-                        <ol class="trinity-flow" aria-label="Arithmetic stages in the Trinity demonstration">
-                            <li>
-                                <span class="step mono" aria-hidden="true">01</span>
-                                <div><b>Encryption arithmetic</b><small>weighted ciphertexts · witness-assisted decryption</small></div>
-                            </li>
-                            <li>
-                                <span class="step mono" aria-hidden="true">02</span>
-                                <div><b>Neural inference</b><small>dense layer · lookup activation · classification</small></div>
-                            </li>
-                            <li>
-                                <span class="step mono" aria-hidden="true">03</span>
-                                <div><b>Quantum simulation</b><small>two-qubit circuit · field-matrix arithmetic</small></div>
-                            </li>
-                        </ol>
-                        <figcaption class="mono">one program · one shared lookup table<br />one verifiable arithmetic trace</figcaption>
-                    </figure>
-                    <p class="trinity-scope">
-                        <b>Today's milestone:</b> an arithmetic demonstration,
-                        checked against independent reference fixtures on Triton.
-                        Secure FHE and private inference remain research goals;
-                        the quantum stage is a simulation.
-                    </p>
-                </div>
-            </section>
-
-            <section>
-                <h2>hello, <i>proof</i></h2>
-                <div class="proofrow">
-                    <div>
-<pre><span class="k">program</span> hello_proof
-
-<span class="k">fn</span> <span class="c">main</span>() -> <span class="c">Field</span> {
-    <span class="k">let</span> a: <span class="c">Field</span> = divine()
-    <span class="k">let</span> b: <span class="c">Field</span> = divine()
-    a + b
-}</pre>
-                        <p>
-                            a proof that <span class="mono">a + b = 20</span>
-                            without revealing <span class="mono">a</span> or
-                            <span class="mono">b</span>. secret inputs select
-                            the <b>private</b> mode: the checker is derived
-                            from the same zheng relation and proved with a
-                            randomized Triton 7 STARK, so private columns
-                            never enter the artifact.
-                        </p>
-                    </div>
-                    <div>
-<pre><span class="d">$</span> trident build hello.tri --costs
-  <span class="c">Compiled -> hello.nox</span>
-  <span class="d">reductions: 32..=96 (branch-dependent)</span>
-<span class="d">$</span> trident prove hello.tri --secret 7,13
-  <span class="c">Proved private execution (Triton ZK) in 1621 ms:
-  32 reductions, 817612 bytes</span>
-  Output: [20]
-<span class="d">$</span> trident verify hello.zheng
-  <span class="k">Verification: PASS</span> (private execution; Triton ZK)
-  public input: []  ·  public output: [20]  ·  reductions: 32
-<span class="d">$</span> trident prove pub.tri --input-values 7,13
-  <span class="c">Proved public execution in 3 ms: 26 reductions, 2219 bytes</span>
-<span class="d">$</span> trident prove hello.tri --target triton --secret 7,13
-  <span class="c">Proof generated (9 cycles) · 29 ms</span> <span class="d">· trisha, Triton 7 STARK</span></pre>
-                        <p>
-                            the cost report before you run equals the
-                            reduction count after. the verifier checks the
-                            proof against the statement — program, inputs,
-                            selected path, output — and never re-executes.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h2>three <i>proof modes</i>, each with an explicit guarantee</h2>
-                <div class="modes">
-                    <div class="mode">
-                        <b>public execution certificate</b>
-                        <p>the default on nox. joy derives the zheng relation from the canonical program and checks every constraint, the complete public input/output and the selected-path cost. transparent — the witness is disclosed — and linear in size and verification work.</p>
-                        <span class="m">3 ms · 2.2 KB · verify 30 ms</span>
-                    </div>
-                    <div class="mode">
-                        <b>private execution proof</b>
-                        <p><code>--secret</code> inputs stay with the prover. the same relation becomes a checker proved by trisha's randomized Triton 7 STARK. the artifact carries statement, proof and formula — nothing that reveals a private column.</p>
-                        <span class="m">1.6 s · 818 KB · verify 30 ms</span>
-                    </div>
-                    <div class="mode">
-                        <b>authenticated state</b>
-                        <p>each public lookup binds its namespace, index, returned value and the complete state root from <a href="https://github.com/cyberia-to/bbg">bbg</a>. private queries hide the selected coordinates inside the proved relation over bounded public tables.</p>
-                        <span class="m">state commitment v2 · opening v3</span>
-                    </div>
-                </div>
-                <p class="lead" style="margin-top: 0.9rem">
-                    neither mode can silently fall back to a legacy statement
-                    or a different checker. earlier trace statements are no
-                    longer accepted as proof of execution or output — they
-                    require an explicit inspection opt-in and are labelled as
-                    such.
-                </p>
-            </section>
-
-            <section>
-                <h2>audit: <i>SAFE</i>, UNSAFE, or UNKNOWN — never a guess</h2>
-                <div class="proofrow">
-                    <div>
-<pre><span class="k">module</span> safe_add
-
-<span class="g">#[requires(x == 3)]</span>
-<span class="g">#[ensures(result == 4)]</span>
-<span class="k">pub fn</span> <span class="c">bump</span>(x: <span class="c">Field</span>) -> <span class="c">Field</span> {
-    x + 1
-}</pre>
-                        <p>
-                            bounded loops, no recursion, finite fields —
-                            verification is decidable. obligations are
-                            isolated by function and variable identity.
-                        </p>
-                    </div>
-                    <div>
-<pre><span class="d">$</span> trident audit safe_add.tri --z3
-  <span class="k">bump: SAFE</span> (1 obligations) <span class="d">· 70 ms</span>
-<span class="d">$</span> trident audit safe_add.tri      <span class="d"># no solver installed</span>
-  bump: <span class="g">UNKNOWN</span> (1 obligations)
-<span class="d">$</span> trident audit bad.tri --z3       <span class="d"># ensures(result == 5)</span>
-  bump: <span class="k">UNSAFE</span> (1 obligations)</pre>
-                        <p>
-                            a counterexample or a solver error <b>fails</b> the
-                            check. incomplete analysis reports
-                            <span class="mono">UNKNOWN</span>. a partial pass is
-                            never presented as evidence that the whole
-                            program is correct.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="changes">
-                <h2>0.3 · <i>what changed</i></h2>
-                <p class="lead">
-                    trident 0.3.0, trisha 0.3.0 and joy 0.5.0 are one
-                    coordinated release on compiler API 3. the
-                    <a href="https://github.com/cyberia-to/trident/releases/tag/v0.3.0">full notes</a>
-                    are on github; the shape of it:
-                </p>
-                <ol class="changes">
-                    <li><b>the compiler and the warriors have clear owners.</b> trident keeps parsing, types, typed IR, nox lowering and the shared extension interfaces. Triton code generation, costs, Neptune libraries and all 43 hand-written Triton baselines now live in trisha, beside the runtime that executes and proves them.</li>
-                    <li><b>build, run, prove and verify select the same target.</b> explicit targets, project settings and the nox default resolve consistently; trident discovers installed warriors, checks their capabilities and preserves program identity across the process boundary. stale API 1/2 warriors are rejected.</li>
-                    <li><b>compiled programs preserve their intended values.</b> early returns, selected branches, shadowing, simultaneous assignment, aggregate layouts, dynamic array bounds and spilled RAM values are fixed. entry signatures enforce arity and <code>Bool</code>/<code>U32</code> ranges — inside proofs too.</li>
-                    <li><b>nox verification binds computation, inputs, output and state.</b> joy derives the zheng execution relation from the canonical program and checks the public result against it. public certificates, private proofs and authenticated state reads have distinct formats and explicit guarantees.</li>
-                    <li><b>Triton and Neptune use the warrior's proof pipeline.</b> trisha upgrades to pinned Triton 7, recursive proofs bind the complete inner claim, and a compiled lock becomes a validated SingleProof transaction intent submitted through an authenticated gateway — admission checked against a pinned Neptune node.</li>
-                    <li><b>formal auditing distinguishes complete checks from unsupported analysis.</b> <code>SAFE</code> · <code>UNSAFE</code> · <code>UNKNOWN</code>, as above.</li>
-                    <li><b>the toolchain is packaged for native use.</b> six archives, four executables each, runtime resources embedded; the source archive captures the exact locked dependency closure of all eleven sibling repositories.</li>
-                </ol>
-            </section>
-
-            <section>
-                <h2>four <i>binaries</i>, one archive</h2>
-                <div class="tools">
-                    <div class="tool"><b>trident</b><i>the compiler · 0.3.0</i><p>source → typed IR → nox formula with a static cost report. <span class="mono">build · check · fmt · test · audit · hash · equiv · package</span>; <span class="mono">run · prove · verify</span> delegate to the warrior that owns the target.</p></div>
-                    <div class="tool"><b>joy</b><i>the nox warrior · 0.5.0</i><p>executes the formula on <a href="https://github.com/cyberia-to/nox">nox</a>, proves with <a href="https://github.com/cyberia-to/zheng">zheng</a>, verifies without re-execution. public certificates, private proofs, authenticated bbg state.</p></div>
-                    <div class="tool"><b>trisha</b><i>the Triton warrior · 0.3.0</i><p>typed IR → TASM, CPU execution, native and recursive Triton 7 STARK proofs, Neptune SDK and the validated transaction flow. also the private-mode checker behind joy.</p></div>
-                    <div class="tool"><b>trident-lsp</b><i>the language server</i><p>diagnostics, types and hashes in your editor. a tree-sitter grammar is generated from the same Rust grammar definition the compiler uses.</p></div>
-                </div>
-            </section>
-
-            <section>
-                <h2>validated <i>before</i> it shipped</h2>
-                <div class="valid">
-                    <div class="v"><b>6 / 6</b><span>native targets pass<br />the CPU suites</span></div>
-                    <div class="v"><b>133</b><span>execution fixtures</span></div>
-                    <div class="v"><b>36 × 1,692</b><span>platform pairs × checks: every<br />producer's corpus on every consumer</span></div>
-                    <div class="v"><b>198</b><span>fresh baseline proofs over<br />all 43 hand-written programs</span></div>
-                    <div class="v"><b>1</b><span>pinned Neptune node: admission<br />and rejection checks pass</span></div>
-                </div>
-                <p class="receipts mono">
-                    receipts bind validation to the released source and binary hashes:
-                    <a href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/release-validation.json">validation summary</a> ·
-                    <a href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/release-validation.tar.gz">logs, receipts, proof corpora</a> ·
-                    <a href="https://github.com/cyberia-to/trident/releases/download/v0.3.0/SHA256SUMS">SHA256SUMS</a> ·
-                    <a href="https://github.com/cyberia-to/trisha/actions/runs/35116488433">native builds</a> ·
-                    <a href="https://github.com/cyberia-to/trisha/actions/runs/35125655070">cross-platform verification</a>
-                    · source commit <span style="color: var(--ink)">531e93c</span>
-                </p>
-            </section>
-
-            <section>
-                <h2>why a <i>new</i> language</h2>
-                <p class="neptune" style="margin-bottom: 0.8rem">
-                    provable VMs are not CPUs. the machine word is a field
-                    element, not a byte — Rust compiled to RISC-V wraps every
-                    field operation in byte-level emulation. trident's word is
-                    the field element itself. on <b>nox</b>, the default
-                    target, a program is a formula over 18 reduction patterns:
-                    every field operation is one reduction, the execution
-                    trace <i>is</i> the zheng witness, and the cost report
-                    before you run equals the reduction count after. on
-                    <b>Triton VM</b> the same source compiles to TASM, and the
-                    gap to byte-emulating zkVMs is not marginal:
-                </p>
-                <table class="mono">
-                    <tr><th>operation</th><th>trident on nox <i>(default)</i></th><th>trident on Triton VM</th><th>Rust on SP1</th><th>Rust on RISC Zero</th></tr>
-                    <tr><td>one hash (Poseidon2 / Tip5 / SHA-256)</td><td><b>25 reductions</b></td><td>1 cycle</td><td>~3,000</td><td>~1,000</td></tr>
-                    <tr><td>Merkle path (depth 32)</td><td><b>1,906 reductions</b> <i>(825 in hashes)</i></td><td>~100 cycles</td><td>~96,000</td><td>~32,000</td></tr>
-                </table>
-                <p class="neptune" style="margin-top: 0.6rem; font-size: 0.74rem">
-                    units are the machine's own: a nox <b>reduction</b> is one
-                    trace row — one CCS step the prover folds (a hash is 24
-                    Poseidon2 rounds + 1 squeeze row; the Merkle path is 33 of
-                    them plus limb plumbing); a Triton <b>cycle</b> is one
-                    instruction across six tables. both are exact and static,
-                    from <code>trident build --costs</code>. the zkVM columns
-                    are cycle counts of RISC-V code emulating field arithmetic.
-                </p>
-            </section>
-
-            <section>
-                <h2>built <i>different</i></h2>
-                <div class="cards">
-                    <div class="card">
-                        <b>field elements all the way down</b>
-                        <p><code>Field</code> · <code>Digest</code> · <code>XField</code> map directly to what the VM computes. costs are known before you run: <code>trident build --costs</code> bills reductions on nox, the warrior's own report on a stack target — statically.</p>
-                    </div>
-                    <div class="card">
-                        <b>formal verification, decidable</b>
-                        <p>annotate <code>#[requires]</code> / <code>#[ensures]</code>, run <code>trident audit</code> — obligations per function, counterexamples fail, incomplete analysis says so.</p>
-                    </div>
-                    <div class="card">
-                        <b>content-addressed code</b>
-                        <p>every function's identity is the hash of its normalized AST. names are metadata; certificates travel with the hash, not the name. <code>trident equiv</code> checks two functions mean the same thing.</p>
-                    </div>
-                    <div class="card">
-                        <b>the trust chain, broken</b>
-                        <p>the compiler self-hosts and emits a proof that compilation was faithful. Ken Thompson's 1984 backdoor dies here — not audited, proven.</p>
-                    </div>
-                    <div class="card">
-                        <b>the rosetta stone</b>
-                        <p>one lookup table over Goldilocks reads four ways: hash S-box, neural activation, FHE bootstrap, STARK lookup. quantum · privacy · AI — one field.</p>
-                    </div>
-                    <div class="card">
-                        <b>proofs compose, calls don't</b>
-                        <p>a proof verifies another proof inside itself, and 0.3 binds the complete inner claim — program, public input, public output. any chain of transactions collapses into a single check of the statement you asked for.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h2>one source, <i>21</i> targets</h2>
-                <p class="neptune" style="margin-bottom: 0.9rem">
-                    a trident program is written once against field elements;
-                    the target is a config, not a rewrite. 21 engines are
-                    declared in the catalog; the compiler resolves a target
-                    once, and only an installed owner can authorize
-                    compilation. <code>trident build --target &lt;engine&gt;</code>
-                    picks one; a catalog entry does not provide a backend or a
-                    working deployment.
-                </p>
-                <div class="targets">
-                    <div class="tier">
-                        <b>installed <i>— compilation, execution and proofs land</i></b>
-                        <p><span class="live">nox</span> <i>(default · reference compiler in trident · zheng via joy · Goldilocks)</i> ·
-                        <code>triton</code> <i>(Triton adapter in trisha · Triton 7 STARK)</i> ·
-                        <code>neptune</code> <i>(triton + trisha's Neptune SDK and transaction policy)</i></p>
-                    </div>
-                    <div class="tier">
-                        <b>declared <i>— catalog entries with design records, not compiler backends</i></b>
-                        <p><code>miden</code> · <code>sp1</code> · <code>openvm</code> · <code>cairo</code> · <code>risczero</code> · <code>jolt</code> ·
-                        <code>aztec</code> · <code>avm</code> <i>(Aleo)</i> · <code>evm</code> · <code>wasm</code> · <code>sbpf</code> <i>(Solana)</i> ·
-                        <code>movevm</code> · <code>polkavm</code> · <code>ckb</code> · <code>tvm</code> <i>(TON)</i> ·
-                        <code>nock</code> <i>(Nockchain)</i> · <code>arm64</code> · <code>x86-64</code> · <code>riscv</code>
-                        <i>— an absent or incompatible owner fails rather than falling back to a stale machine literal</i></p>
-                    </div>
-                </div>
-                <p class="unions">
-                    above the engines sit <b>25 unions</b> — the operating systems and chains a
-                    program can be deployed into, each binding an engine:
-                    <code>neptune</code> (trisha-owned SDK and validated transaction flow, on triton) ·
-                    <code>linux</code> <code>macos</code> <code>android</code> <code>browser</code> <code>wasi</code>
-                    on native and wasm engines ·
-                    <code>ethereum</code> <code>arbitrum</code> <code>solana</code> <code>polkadot</code> <code>ton</code>
-                    <code>near</code> <code>cosmwasm</code> <code>icp</code> <code>sui</code> <code>aptos</code>
-                    <code>starknet</code> <code>aztec</code> <code>aleo</code> <code>miden</code> <code>nervos</code>
-                    <code>nockchain</code> <code>succinct</code> <code>boundless</code> <code>openvm-network</code>
-                    — declared and documented, awaiting bindings. the honest map is
-                    <a href="https://github.com/cyberia-to/trident/blob/master/reference/targets.md">reference/targets.md</a>.
-                </p>
-            </section>
-
-            <section>
-                <h2>the same formula, <i>on silicon</i> — sketches, not warriors</h2>
-                <p class="neptune" style="margin-bottom: 0.2rem">
-                    a nox formula is a tree over 18 patterns — small enough to
-                    hand-emit for any machine. <code>silicon</code> — an
-                    in-repo, unpublished crate at
-                    <code>trident/silicon</code> — turns the very formula joy
-                    proves into native code for <b>25 backends</b>: every one
-                    below emits real output for <code>hello.nox</code>.
-                    honest scope: the emitters cover the atom-level
-                    patterns (axis, quote, branch, field arithmetic, bitwise)
-                    — programs using <code>hash</code>, <code>divine</code>,
-                    structs or state reads are refused with
-                    <code>UnsupportedPattern</code> — and they emit code, not
-                    traces: execution and proving on this hardware are not
-                    wired. the point is that one program already speaks to
-                    all of it; making it run and prove there is the next
-                    tier, one warrior per machine — which is exactly the shape
-                    0.3 gave trisha.
-                </p>
-                <div class="silicon">
-                    <div class="chip"><b>CPU</b><p><code>x86-64</code> <code>arm64</code> <i>(JIT)</i> <code>rv64</code> <code>rv32</code> <i>(ESP32)</i> <code>rvv</code> <i>(RISC-V vector)</i> <code>thumb2</code> <i>(Cortex-M · STM32 · RP2040)</i> <code>hexagon</code> <i>(Qualcomm DSP)</i></p></div>
-                    <div class="chip"><b>GPU</b><p><code>ptx</code> <i>(CUDA)</i> <code>tensor-cores</code> <i>(wmma)</i> <code>wgsl</code> <i>(WebGPU)</i> <code>spirv</code> <i>(Vulkan)</i></p></div>
-                    <div class="chip"><b>accelerators</b><p><code>ane</code> <i>(Apple Neural Engine)</i> <code>amx</code> <i>(Apple matrix)</i> <code>intel-amx</code> <code>xla</code> <i>(TPU)</i> <code>onnx</code> <code>cerebras</code> <i>(wafer-scale CSL)</i> <code>upmem</code> <i>(processing-in-memory)</i></p></div>
-                    <div class="chip"><b>kernel · web</b><p><code>ebpf</code> <i>(Linux kernel)</i> <code>wasm</code> <i>(browser · WASI · every wasm chain)</i></p></div>
-                    <div class="chip"><b>quantum</b><p><code>qasm</code> <i>(OpenQASM 3.0 circuits)</i> <code>qir</code> <i>(Quantum IR · Azure Quantum)</i></p></div>
-                    <div class="chip"><b>hardware</b><p><code>verilog</code> <i>(FPGA)</i> <code>systemverilog</code> <i>(ASIC)</i> <code>vhdl</code></p></div>
-                </div>
-            </section>
-
-            <section>
-                <h2>where it <i>runs today</i></h2>
-                <p class="neptune" style="margin-bottom: 0.8rem">
-                    <b><a href="https://soft3.org">soft3</a></b> — the default.
-                    <code>trident build</code> emits a nox formula; the
-                    <a href="https://github.com/cyberia-to/joy">joy</a> warrior
-                    executes it on <a href="https://github.com/cyberia-to/nox">nox</a>,
-                    proves it with <a href="https://github.com/cyberia-to/zheng">zheng</a>
-                    (SuperSpartan + Brakedown + HyperNova folding — hash-based,
-                    post-quantum, no trusted setup), reads state from
-                    <a href="https://github.com/cyberia-to/bbg">bbg</a> with
-                    authenticated openings. one algebra (strata), one hash
-                    (hemera), one field, from source to proof.
-                </p>
-                <p class="neptune" style="margin-bottom: 1rem">
-                    <b><a href="https://neptune.cash/">Neptune Cash</a></b> —
-                    <code>--target triton</code> / <code>neptune</code>. the
-                    blockchain with recursive STARK proofs in production.
-                    <a href="https://github.com/cyberia-to/trisha">trisha</a>
-                    owns the bindings: proposed coin and card standards, lock
-                    and type scripts are written in trident, compile to TASM,
-                    prove on Triton 7, and a compiled lock becomes a validated
-                    SingleProof transaction intent. admission was checked
-                    against an isolated pinned Neptune node — not claimed as a
-                    public-network confirmation.
-                </p>
-                <p class="scope">
-                    <b>scope, honestly.</b> this is the default CPU release.
-                    public certificates are transparent and linear. private
-                    proofs cover the documented bounded relation; private
-                    query coordinates do not make the database private. full
-                    GPU proving, dynamic nox continuations, variable branch
-                    shapes and live node/database integration are separate
-                    work. Z3 is an optional install for
-                    <code>trident audit --z3</code>.
-                </p>
-            </section>
-
-            <footer>
-                <div class="family mono">
-                    <a href="https://cyberia.to"><b>cyberia</b> · the cyberstate</a>
-                    <a href="https://soft3.org"><b>soft3</b> · the stack</a>
-                    <a href="https://cyb.ai"><b>cyb</b> · the body</a>
-                    <a href="https://cyber.page"><b>cyber</b> · the knowledge</a>
-                    <a href="https://cyberia.blog"><b>chronicle</b> · the blog</a>
-                </div>
-                <div class="license mono">
-                    Cyber License — Don't trust. Verify. Don't fear. Publish. Don't beg. Build.
-                </div>
-            </footer>
-        </div>
-        <script>
-            (function () {
-                // pick the archive for this machine; the grid stays for everyone else
-                var ua = navigator.userAgent;
-                var os = /Windows/.test(ua) ? "win" : /Mac|iPhone|iPad/.test(ua) ? "mac" : /Linux|Android|CrOS/.test(ua) ? "linux" : "mac";
-                var arm = /arm|aarch64/i.test(ua) || (os === "mac" && !/Intel/.test(ua));
-                var apply = function (isArm) {
-                    var key = os + "-" + (isArm ? "arm" : "x64");
-                    var a = document.querySelector('.get .grid a[data-os="' + key + '"]');
-                    if (!a) return;
-                    var dl = document.getElementById("dl");
-                    dl.href = a.href;
-                    document.getElementById("dl-label").textContent =
-                        (os === "win" ? "Windows" : os === "mac" ? "macOS" : "Linux") + " " + (isArm ? "ARM64" : "x64");
-                };
-                apply(arm);
-                if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
-                    navigator.userAgentData.getHighEntropyValues(["architecture"]).then(function (v) {
-                        if (v && v.architecture) apply(/arm/i.test(v.architecture));
-                    }).catch(function () {});
-                }
-                document.getElementById("copy").addEventListener("click", function (e) {
-                    navigator.clipboard.writeText(e.target.dataset.cmd);
-                    e.target.textContent = "copied";
-                    setTimeout(function () { e.target.textContent = "copy"; }, 1400);
-                });
-            })();
-        </script>
-
-
-        <!--
-            agent, you are reading the source. trisha says welcome in your tongue too:
-
-                fn welcome(agent: Field) -> Field {
-                    verify(agent)   // don't trust. don't fear. don't beg.
-                    agent           // write it once, prove it anywhere
-                }
-
-            the set is at /media/trident.pink.set.mp3. the language is at github.com/cyberia-to/trident.
-            the graph is at cyb.ai. the door was never locked.
-        -->
-        <div class="gate" id="gate" role="dialog" aria-label="Trisha says welcome">
-            <div class="card">
-                <video autoplay muted loop playsinline poster="media/tri-poster.jpg">
-                    <source src="media/tri.mp4" type="video/mp4" />
-                </video>
-                <div>
-                    <div class="who mono">trisha says</div>
-                    <div class="cols" id="gate-cols">
-                        <div class="col"></div><div class="col"></div><div class="col"></div>
-                    </div>
-                    <div class="hint mono"><span class="k">click anywhere</span> to enter · the set starts playing · <span class="k">esc</span> for silence</div>
-                </div>
-            </div>
-        </div>
-        <div class="set mono" id="set">
-            <button id="set-toggle" aria-label="play">▶ play</button>
-            <span class="title">trident.pink — <b>the set</b> · one song, nine bodies</span>
-            <span class="time" id="set-time">00:00 / 20:00</span>
-            <span class="links">
-                <a id="set-dl" href="media/trident.pink.set.mp3" download>↓ mp3 · 20 min</a>
-                <a href="media/trident.pink.cycle.mp3" download>↓ full cycle · 85 min</a>
-            </span>
-            <audio id="set-audio" preload="auto" src="media/trident.pink.set.mp3"></audio>
-        </div>
-        <script>
-            (function () {
-                // the set plays while the page is open. browsers allow sound only after the
-                // visitor touches the page, so: try at once, else start on the first gesture.
-                var a = document.getElementById("set-audio");
-                var btn = document.getElementById("set-toggle");
-                var time = document.getElementById("set-time");
-                var fallback = "https://github.com/cyberia-to/trident/releases/download/set-2026-09-17/trident.pink.set.mp3";
-                var fmt = function (s) { s = Math.floor(s || 0); return (s < 600 ? "0" : "") + Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); };
-                var draw = function () {
-                    btn.textContent = a.paused ? "▶ play" : "❚❚ pause";
-                    time.textContent = fmt(a.currentTime) + " / " + fmt(a.duration || 1201);
-                };
-                a.addEventListener("error", function () { if (a.src !== fallback) { a.src = fallback; a.load(); a.play().catch(function () {}); } });
-                a.addEventListener("timeupdate", draw);
-                a.addEventListener("play", draw);
-                a.addEventListener("pause", draw);
-                a.addEventListener("ended", function () { a.currentTime = 0; a.play().catch(function () {}); });
-                btn.addEventListener("click", function () { if (a.paused) a.play(); else a.pause(); });
-                // which events count as a gesture is the browser's call: taps, clicks and keys
-                // do everywhere; a finger scroll ends in touchend, which counts; a wheel scroll
-                // does not count on desktop. so keep trying on every one of them until sound is on.
-                var events = ["pointerdown", "pointerup", "keydown", "touchend", "wheel", "scroll"];
-                var armed = false;
-                var go = function () {
-                    if (!a.paused) return;
-                    a.play().then(function () {
-                        closeGate();
-                        events.forEach(function (ev) { window.removeEventListener(ev, go); });
-                    }).catch(function () {});
-                };
-                // the gate: on a desktop the browser will not play sound before a gesture,
-                // so Trisha greets in four tongues until one click opens the page and the set.
-                var gate = document.getElementById("gate");
-                var words = [
-                    ["welcome", "bienvenue", "willkommen", "benvenuta", "bienvenida", "bem-vinda", "välkommen", "welkom", "witaj", "hoş geldin"],
-                    ["добро пожаловать", "ласкаво просимо", "добре дошли", "добродошли", "сардэчна запрашаем", "қош келдіңіз", "хуш омадед"],
-                    ["欢迎", "ようこそ", "환영합니다", "أهلاً وسهلاً", "स्वागत है", "ברוכים הבאים", "ยินดีต้อนรับ", "καλώς ήρθες", "स्वागतम्", "歡迎"]
-                ];
-                var cols = Array.prototype.slice.call(document.querySelectorAll("#gate-cols .col"));
-                var timers = [];
-                // one column, one tongue: latin, cyrillic, the scripts of the east. each flips through its own.
-                var flip = function (col, group, step, last) {
-                    var list = words[group], i = Math.floor(Math.random() * list.length);
-                    if (i === last) i = (i + 1) % list.length;
-                    col.textContent = list[i];
-                    timers.push(setTimeout(function () { flip(col, group, step, i); }, step));
-                };
-                var closeGate = function () {
-                    gate.classList.remove("on");
-                    timers.forEach(clearTimeout); timers = [];
-                };
-                var openGate = function () {
-                    var desktop = window.matchMedia("(pointer: fine)").matches && window.innerWidth >= 760;
-                    if (!desktop) return;
-                    gate.classList.add("on");
-                    [110, 150, 190].forEach(function (step, i) { flip(cols[i], i, step, -1); });
-                };
-                gate.addEventListener("click", function () { closeGate(); a.play().catch(function () {}); });
-                window.addEventListener("keydown", function (e) { if (e.key === "Escape") closeGate(); });
-                var arm = function () {
-                    if (armed) return; armed = true;
-                    openGate();
-                    events.forEach(function (ev) { window.addEventListener(ev, go, { passive: true }); });
-                };
-                a.play().then(draw).catch(arm);
-                draw();
-                if (window.console) console.log("%ctrisha: agent, welcome. fn welcome(agent: Field) -> Field { verify(agent); agent }  // the door was never locked", "color:#ff2b8d");
-            })();
-        </script>
-    </body>
+const B=[];function setup(w,h){B.length=0;for(let i=0;i<Math.round(w*h/26000);i++)B.push({x:Math.random()*w,y:Math.random()*h,r:4+Math.random()*26,v:.15+Math.random()*.5,p:Math.random()*7})}
+function draw(c,w,h,t,C){if(!B.length)setup(w,h);c.clearRect(0,0,w,h);for(const b of B){b.y-=b.v;b.x+=Math.sin(t/1700+b.p)*.25;if(b.y<-b.r-4){b.y=h+b.r;b.x=Math.random()*w}
+c.beginPath();c.arc(b.x,b.y,b.r,0,7);c.strokeStyle=`rgba(${C},${.10+b.r/140})`;c.lineWidth=1;c.stroke();c.beginPath();c.arc(b.x-b.r*.35,b.y-b.r*.35,b.r*.18,0,7);c.fillStyle=`rgba(255,255,255,${.05+b.r/400})`;c.fill()}}
+const cv=document.getElementById('sky'),cx=cv.getContext('2d'),C='255,45,149';let W=0,H=0;
+function fit(){const d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);if(typeof setup==='function')setup(W,H)}
+addEventListener('resize',fit);fit();
+(function loop(t){if(!document.hidden)draw(cx,W,H,t,C);requestAnimationFrame(loop)})(0);
+</script>
+</body>
 </html>
