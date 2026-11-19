@@ -1,0 +1,7 @@
+program differential_secp256k1_gx
+use std.crypto.secp256k1
+fn main() -> (U32, U32, U32, U32, U32, U32, U32, U32) {
+    let g = secp256k1.generator()
+    let gx = g.x
+    (gx.l0, gx.l1, gx.l2, gx.l3, gx.l4, gx.l5, gx.l6, gx.l7)
+}

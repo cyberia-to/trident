@@ -277,6 +277,43 @@ fn ed25519_and_secp256k1_prime_getters_match_integer_definitions() {
 }
 
 #[test]
+fn secp256k1_order_and_generator_match_sec2_constants() {
+    // SEC 2 v2.0 section 2.4.1: secp256k1 order n and generator G = (Gx, Gy).
+    // Expected limbs derive from the canonical hex, not from the .tri decimals.
+    fn limbs_le_u32(hex: &str) -> Vec<u64> {
+        assert_eq!(hex.len(), 64, "256-bit constant needs 64 hex digits");
+        (0..8)
+            .map(|i| {
+                let end = hex.len() - 8 * i;
+                u64::from_str_radix(&hex[end - 8..end], 16).unwrap()
+            })
+            .collect()
+    }
+    for (name, hex) in [
+        (
+            "secp256k1_order",
+            "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141",
+        ),
+        (
+            "secp256k1_gx",
+            "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798",
+        ),
+        (
+            "secp256k1_gy",
+            "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8",
+        ),
+    ] {
+        let mut expected = limbs_le_u32(hex);
+        expected.push(0); // aggregate terminator
+        assert_eq!(
+            execute(&fixture(name), &[], &[]).unwrap(),
+            expected,
+            "{name}"
+        );
+    }
+}
+
+#[test]
 fn sha256_init_returns_the_standard_eight_word_iv() {
     // SHA-256 initial hash words; this fixture does not exercise compression.
     let expected = vec![
