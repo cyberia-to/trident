@@ -1,5 +1,10 @@
 # Roadmap
 
+The active self-hosting path is [Self-hosting on soft3](self-hosting.md):
+SH0–SH8 define native nox/Joy compiler milestones and Zheng proof gates.
+Use the [progress ledger](../audit/self-hosting-progress.md) for current work
+and acceptance evidence. Kelvin stages below are the broader historical vision.
+
 Current coordinated source candidate versions are Trident 0.3, Trisha 0.3 and
 Joy 0.5 with compiler API 3. Historical milestones below retain their original
 versions. Registry installation is not validated for this candidate; use the
@@ -23,7 +28,7 @@ Noun layers cleared most of their 256K items.
 
 Three targets before 256k release:
 
-1. Self-hosting — compiler compiles itself in Trident
+1. Self-hosting — compiler compiles itself on nox through Joy; [SH0–SH6](self-hosting.md)
 2. Atlas — on-chain package registry live
 3. Revolution demos — small proven inference, FHE circuit
    compilation, quantum circuit simulation
@@ -102,7 +107,7 @@ Quantum     Quantum circuit simulation backend
 CORE        Transaction circuit, STARK verifier as CORE program
 language    ✓ Indexed assignment (arr[i] = val, s.field = val) — 0.2.0, both targets
 TIR         ◐ Prototype builder/optimizer/lowerer; self-hosting not established
-Noun        ✓ NounBuilder self-hosted in .tri
+Noun        ◐ Rust NounBuilder exists; native .tri generator and self-build remain open (SH3–SH6)
 cyber stack ◐ Bounded public/private execution and authenticated public BBG state proofs work; dynamic relations/live sync remain open
 cyber stack ✓ Warrior binary for cyber target (like trisha for Triton) — joy, 0.2.0
 compiler    ◐ Prototype pipeline emits TIR; lower wiring and self-compilation open
@@ -116,14 +121,16 @@ Quantum     Hybrid programs: classical control + quantum subroutines
 
 ## 32K — first release
 
-Compiler compiles itself. Atlas live. Revolution demos ship.
+Target criteria for this stage: compiler compiles itself, Atlas is live and
+revolution demos ship. Current self-hosting acceptance is tracked by SH0–SH8;
+the CPU release does not establish these future milestones.
 
 ```
 CORE        Self-verifying: CORE proves its own execution
 vm spec     Intrinsic set stable: no new vm.* builtins
 language    Protocols: compile-time structural typing, grammar frozen
 TIR         TIROp set stable (5+ OS, 1 VM per type prove op set complete)
-Noun        Noun type proposal (reference/props/noun-types.md) resolved
+Noun        Native compiler data/collection contract specified and implemented (SH0–SH1)
 cyber stack nox VM spec frozen, zheng prover stable
 compiler    ◐ Prototype pipeline in Trident — lower wiring + self-compilation open
 std.*       #[requires]/#[ensures] contracts on all public functions
@@ -611,29 +618,30 @@ The compiler generates `merkle_step` TASM instructions and manages the authentic
 
 ## 5.1 Trident Compiler Written in Trident
 
-The endgame: `trident.trd` — a single Trident source file that, when compiled and executed on Triton VM, takes a Trident source as input and produces TASM as output. The execution produces a STARK proof.
+The compiler is a Trident project executed on nox through Joy. It consumes
+a complete source/dependency package and produces a native nox artifact.
+The authoritative implementation sequence and acceptance criteria are in
+[Self-hosting on soft3](self-hosting.md), with current evidence in the
+[progress ledger](../audit/self-hosting-progress.md).
 
-**Implications**:
-- The compiler's correctness is not argued — it's proven via verification, every time it runs
-- Any compiler bug produces an invalid proof (the STARK catches it)
-- You don't trust the developer (verify the proof of execution)
-- You don't trust the compiler (verify the proof of compilation)
-- You don't trust the optimizer (verify the proof of optimization)
-- Mathematics, all the way down
+- SH2: the native compiler emits a program that Joy executes correctly.
+- SH5: it compiles its complete own source into a usable next compiler.
+- SH6: repeated self-builds reach C2 == C3 and reproduce across the CPU targets.
+- SH8: native Zheng proofs bind the actual self-build inputs and outputs.
 
-**Bootstrapping sequence**:
-1. Write initial Trident compiler in Rust (trusted, hand-audited)
-2. Write Trident compiler in Trident
-3. Compile (2) using (1) → produces TASM + STARK proof
-4. Run the compiled Trident compiler to compile itself → produces new TASM + new STARK proof
-5. Verify that outputs of (3) and (4) are identical (fixed point)
-6. If fixed point reached: the compiler is self-consistent. Trust only the STARK verifier.
+Rust produces the initial C1 seed. C1 and then C2 execute on nox to build C2
+and C3 from the same source closure. C1 may differ from C2 because the seed
+compiler optimizes differently. Fixed-point comparison establishes reproducible
+self-consistency. Semantic preservation needs separate evidence; a buggy
+compiler can execute faithfully and receive a valid execution proof.
 
 ## 5.2 Self-Verifying Compiler Optimization
 
-From the Self-Optimizing Compilation paper: the neural optimizer, the verifier, and the training loop are all Trident programs compiled by the system they improve. This creates a convergent fixed point where the compiler can no longer improve its own compilation.
-
-The compiler optimizes its own code. The optimizer is itself compiled code. The optimization of the optimizer's compilation is verified by a STARK proof generated by the same system. Turtles all the way down — but with proofs at every level.
+Longer-term work can express optimizers and training loops in Trident and run
+them through the same native compiler. An execution proof authenticates the
+optimization run. Proving that a rewrite preserves semantics requires a
+verified transformation or translation validation. A bootstrap fixed point
+does not establish optimality, convergence of training or compiler correctness.
 
 ---
 
@@ -1450,12 +1458,12 @@ STARK constraints define an algebraic variety over the Goldilocks field. The geo
 |---|---|---|---|---|
 | **P0** | Algebraic Passes | Constant folding, Fermat reduction, strength reduction, batch inversion, dead elimination, algebraic CSE | 4 weeks | 20-40% proof cost reduction for free |
 | **P1** | Type System | Proof-cost types, refinement types, linear types for crypto | 6 weeks | Catches entire classes of bugs at compile time |
-| **P2** | Formal Verification | Requires/ensures, invariant-carrying loops | 4 weeks | Proof of execution = proof of correctness |
+| **P2** | Formal Verification | Requires/ensures, invariant-carrying loops | 4 weeks | Checks stated source contracts; execution proofs have a separate claim |
 | **P3** | Supercompilation | Driving + folding over field arithmetic, loop-to-closed-form | 6 weeks | Orders of magnitude reduction for iterative code |
 | **P4** | Neural Compilation | nn.trd, evolutionary training, trace predictor, cost surrogate | 8 weeks | Self-improving compiler |
 | **P5** | Cryptographic Primitives | Private/Public types, commitment syntax, Merkle iterators | 4 weeks | 10× developer productivity for ZK code |
 | **P6** | Developer Tooling | Cost highlighting, REPL, proof explorer, CI/CD | 6 weeks | Adoption accelerator |
-| **P7** | Self-Hosting | Trident compiler in Trident, bootstrap verification | 8 weeks | Ultimate trust elimination |
+| **P7** | Self-Hosting | [Native nox/Joy milestones SH0–SH8](self-hosting.md) | [Current planning estimate](../audit/self-hosting-progress.md#planning-estimate) | Reproducible bootstrap, then native proofs of compilation execution |
 | **P8** | Execution Models | Lazy proving, incremental proving, speculative execution | 6 weeks | Throughput optimization |
 | **P9** | Interoperability | Proof-carrying code, cross-VM composition, foreign proofs | 6 weeks | Ecosystem integration |
 | **P10** | Math Foundations | Categorical semantics, Galois optimization, algebraic geometry | Ongoing | Theoretical correctness backbone |

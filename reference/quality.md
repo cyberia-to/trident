@@ -1,9 +1,10 @@
 # Quality Control
 
-Trident targets provable compilation: the compiler will self-host on
-Triton VM and produce a STARK proof that compilation was correct. Every
-line of code may end up inside a proof circuit. Quality here means
-soundness — a bug isn't just a bug, it's a potential soundness hole.
+Trident targets [self-hosting on soft3](self-hosting.md): a compiler executed
+on nox through Joy, followed by native Zheng proofs of compilation execution.
+Semantic preservation requires its own validation; an execution proof alone
+does not establish it. Every line of code may end up inside a proof relation.
+Quality requires correct compilation and sound verification.
 
 ## Forbidden Patterns
 

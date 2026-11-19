@@ -332,6 +332,10 @@ The Rust compiler is the current implementation. `lib/std/compiler/` contains
 experimental components, not a complete self-hosted compiler or a proof
 that this compiler binary faithfully implements the language.
 
+[Self-hosting on soft3](reference/self-hosting.md) defines the native nox/Joy
+milestones and acceptance gates. The [progress ledger](audit/self-hosting-progress.md)
+records the current task and implementation evidence.
+
 Triton execution and STARK proving belong to [Trisha](../trisha).
 `trisha bench --full` requires explicit input/output fixtures and verifies
 proofs for the measured programs. Missing fixtures are reported as
@@ -410,6 +414,11 @@ os.<target>.*     Target-specific APIs      Neptune modules supplied by Trisha
 The warriors live beside the compiler:
 [joy](https://github.com/cyberia-to/joy) (nox, the cyber battlefield) and
 [trisha](https://github.com/cyberia-to/trisha) (Triton VM, Neptune).
+
+Development stubs reserve five more warriors: **vitalina** (Ethereum),
+**gaw** (Polkadot/DOT), **tolya** (Solana/SOL), **pearla** (Pearl inference),
+and **zenda** (Zcash). See [planned warriors](reference/warrior-api.md#planned-warriors)
+for their ownership and current stub status.
 
 ---
 

@@ -48,6 +48,7 @@ Implementation reviews and release validation are indexed in
 | [Intermediate Representation](ir.md) | TIR operations (54 ops, 4 tiers), lowering paths |
 | [Target Reference](targets.md) | OS model, target profiles, cost models |
 | [Warrior API](warrior-api.md) | What a warrior may link: the library contract, features, stability |
+| [Self-hosting on soft3](self-hosting.md) | Working SH0–SH8 milestones: native compiler, self-build, reproducible bootstrap and Zheng proofs |
 
 ## Token Standards
 
