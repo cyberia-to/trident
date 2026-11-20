@@ -46,40 +46,40 @@ pub fn field_prime() -> bigint.U256 {
 // Limbs (little-endian U32):
 //   l0 = 0xD0364141 = 3493216577
 //   l1 = 0xBFD25E8C = 3218235020
-//   l2 = 0xAF48A03B = 2940343355
-//   l3 = 0xBAAEDCE6 = 3132675814
+//   l2 = 0xAF48A03B = 2940772411
+//   l3 = 0xBAAEDCE6 = 3132021990
 //   l4 = 0xFFFFFFFE = 4294967294
 //   l5 = 0xFFFFFFFF = 4294967295
 //   l6 = 0xFFFFFFFF = 4294967295
 //   l7 = 0xFFFFFFFF = 4294967295
 pub fn curve_order() -> bigint.U256 {
-    bigint.U256 { l0: convert.as_u32(3493216577), l1: convert.as_u32(3218235020), l2: convert.as_u32(2940343355), l3: convert.as_u32(3132675814), l4: convert.as_u32(4294967294), l5: convert.as_u32(4294967295), l6: convert.as_u32(4294967295), l7: convert.as_u32(4294967295) }
+    bigint.U256 { l0: convert.as_u32(3493216577), l1: convert.as_u32(3218235020), l2: convert.as_u32(2940772411), l3: convert.as_u32(3132021990), l4: convert.as_u32(4294967294), l5: convert.as_u32(4294967295), l6: convert.as_u32(4294967295), l7: convert.as_u32(4294967295) }
 }
 
 // Generator point G for secp256k1.
 // Gx = 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798
-// Gy = 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A6855419E3611342DBE4F8E4
+// Gy = 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8
 pub fn generator() -> Point {
-    let gx: bigint.U256 = bigint.U256 { l0: convert.as_u32(385357848), l1: convert.as_u32(1508515163), l2: convert.as_u32(769304793), l3: convert.as_u32(43804891), l4: convert.as_u32(3464365831), l5: convert.as_u32(1436269205), l6: convert.as_u32(4192901036), l7: convert.as_u32(2043936894) }
+    let gx: bigint.U256 = bigint.U256 { l0: convert.as_u32(385357720), l1: convert.as_u32(1509065051), l2: convert.as_u32(768485593), l3: convert.as_u32(43777243), l4: convert.as_u32(3464956679), l5: convert.as_u32(1436574357), l6: convert.as_u32(4191992748), l7: convert.as_u32(2042521214) }
     // Gx limbs (little-endian)
-    //   0x16F81798 = 385357848
-    //   0x59F2815B = 1508515163
-    //   0x2DCE28D9 = 769304793
-    //   0x029BFCDB = 43804891
-    //   0xCE870B07 = 3464365831
-    //   0x55A06295 = 1436269205
-    //   0xF9DCBBAC = 4192901036
-    //   0x79BE667E = 2043936894
-    let gy: bigint.U256 = bigint.U256 { l0: convert.as_u32(3689778404), l1: convert.as_u32(3815017282), l2: convert.as_u32(2794056729), l3: convert.as_u32(4246237256), l4: convert.as_u32(235930792), l5: convert.as_u32(1571797500), l6: convert.as_u32(649247845), l7: convert.as_u32(1211900535) }
+    //   0x16F81798 = 385357720
+    //   0x59F2815B = 1509065051
+    //   0x2DCE28D9 = 768485593
+    //   0x029BFCDB = 43777243
+    //   0xCE870B07 = 3464956679
+    //   0x55A06295 = 1436574357
+    //   0xF9DCBBAC = 4191992748
+    //   0x79BE667E = 2042521214
+    let gy: bigint.U256 = bigint.U256 { l0: convert.as_u32(4212184248), l1: convert.as_u32(2621952143), l2: convert.as_u32(2793755673), l3: convert.as_u32(4246189128), l4: convert.as_u32(235997352), l5: convert.as_u32(1571093500), l6: convert.as_u32(648266853), l7: convert.as_u32(1211816567) }
     // Gy limbs (little-endian)
-    //   0xDBE4F8E4 = 3689778404
-    //   0xE3611342 = 3815017282
-    //   0xA6855419 = 2794056729
-    //   0xFD17B448 = 4246237256
-    //   0x0E1108A8 = 235930792
-    //   0x5DA4FBFC = 1571797500
-    //   0x26A3C465 = 649247845
-    //   0x483ADA77 = 1211900535
+    //   0xFB10D4B8 = 4212184248
+    //   0x9C47D08F = 2621952143
+    //   0xA6855419 = 2793755673
+    //   0xFD17B448 = 4246189128
+    //   0x0E1108A8 = 235997352
+    //   0x5DA4FBFC = 1571093500
+    //   0x26A3C465 = 648266853
+    //   0x483ADA77 = 1211816567
     Point { x: gx, y: gy }
 }
 

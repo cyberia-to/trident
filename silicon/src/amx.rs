@@ -61,6 +61,9 @@ pub fn compile_to_amx<const N: usize>(
     }
     let mut e = AmxEmitter::new(num_params);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result = e.pop_reg();
     Ok(e.finish(&result))
 }
@@ -78,6 +81,8 @@ struct AmxEmitter {
     amx_active: bool,
     /// Whether any AMX mul was emitted (need stack staging area)
     needs_amx_staging: bool,
+    /// Set when a register was handed out while all scratch registers held live values
+    scratch_overflow: bool,
 }
 
 #[derive(Clone)]
@@ -106,10 +111,17 @@ impl AmxEmitter {
             loop_state: None,
             amx_active: false,
             needs_amx_staging: false,
+            scratch_overflow: false,
         }
     }
 
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
     fn alloc_scratch(&mut self) -> String {
+        if self.next_scratch as usize >= SCRATCH_REGS.len() {
+            self.scratch_overflow = true;
+        }
         let r = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
         self.next_scratch += 1;
         r.to_string()
@@ -224,11 +236,19 @@ impl AmxEmitter {
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
         self.emit_formula(order, value_formula)?;
-        let val = self.pop_reg();
+        let val = self.reg_stack.last().cloned().unwrap_or_else(|| "x9".into());
         self.subject.insert(0, val);
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        if dst != res {
+            self.emit(&format!("mov {}, {}", dst, res));
+        }
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
@@ -281,15 +301,18 @@ impl AmxEmitter {
         let (_, rest) = body_pair(order, cons_body)?;
 
         let mut cur = rest;
-        let mut new_vals = Vec::new();
+        let mut evaluated = 0;
         for _ in ls.carried.iter() {
             let (tag, cb) = formula_parts(order, cur)?;
             if tag != 3 { break; }
             let (val_formula, tail) = body_pair(order, cb)?;
             self.emit_formula(order, val_formula)?;
-            new_vals.push(self.pop_reg());
+            evaluated += 1;
             cur = tail;
         }
+        // Every new value stays live until all are computed; pop in reverse.
+        let mut new_vals: Vec<String> = (0..evaluated).map(|_| self.pop_reg()).collect();
+        new_vals.reverse();
         for (i, cr) in ls.carried.iter().enumerate() {
             if i < new_vals.len() && new_vals[i] != *cr {
                 self.emit(&format!("mov {}, {}", cr, new_vals[i]));
@@ -379,8 +402,9 @@ impl AmxEmitter {
         // underflow: dst = P - rb + ra
         self.emit_label(&lbl_no_underflow);
         self.emit_mov_imm64("x16", P);
-        self.emit(&format!("sub {}, x16, {}", dst, rb));
-        self.emit(&format!("add {}, {}, {}", dst, dst, ra));
+        // dst aliases ra: build P - rb in x17 so ra survives until the add.
+        self.emit(&format!("sub x17, x16, {}", rb));
+        self.emit(&format!("add {}, x17, {}", dst, ra));
         self.emit_label(&lbl_end);
         Ok(())
     }
@@ -695,3 +719,7 @@ mod tests {
         assert!(!asm.contains("amx_set"), "scalar op should not enable AMX");
     }
 }
+
+#[cfg(test)]
+#[path = "amx_anchors.rs"]
+mod anchors;

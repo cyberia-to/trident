@@ -47,6 +47,9 @@ fn compile_impl<const N: usize>(
 ) -> Result<Vec<u8>, CompileError> {
     let mut e = X64Emitter::new(num_params, abi_params, stack_base);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result = e.pop_reg();
     if result != 0 { e.emit_mov(0, result); }
     e.code.push(0xC3); // RET
@@ -78,6 +81,8 @@ struct X64Emitter {
     next_scratch: u8,
     subject: Vec<Loc>,
     loop_state: Option<X64LoopState>,
+    /// Set when a register was handed out while all scratch registers held live values
+    scratch_overflow: bool,
 }
 
 impl X64Emitter {
@@ -92,12 +97,23 @@ impl X64Emitter {
                 Loc::Stack(stack_base + ((i - reg_count) as i32) * 8)
             }
         }).collect();
-        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None }
+        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None, scratch_overflow: false }
+    }
+
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
+    fn alloc_reg_raw(&mut self) -> u8 {
+        if self.next_scratch as usize >= SCRATCH.len() {
+            self.scratch_overflow = true;
+        }
+        let reg = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
+        self.next_scratch += 1;
+        reg
     }
 
     fn push_reg(&mut self) -> u8 {
-        let reg = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
-        self.next_scratch += 1;
+        let reg = self.alloc_reg_raw();
         self.reg_stack.push(reg);
         reg
     }
@@ -171,24 +187,28 @@ impl X64Emitter {
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
         self.emit_formula(order, value_formula)?;
-        let val_reg = self.pop_reg();
+        let val_reg = self.reg_stack.last().copied().unwrap_or(SCRATCH[0]);
         self.subject.insert(0, Loc::Reg(val_reg));
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        self.emit_mov(dst, res);
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
         &mut self, order: &Order<N>, loop_body: NounId, inits: &[NounId],
     ) -> Result<(), CompileError> {
         // Allocate scratch registers for formula slot + carried locals
-        let formula_reg = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
-        self.next_scratch += 1;
+        let formula_reg = self.alloc_reg_raw();
 
         let mut carried_regs = Vec::new();
         for _ in 0..inits.len() {
-            let r = SCRATCH[(self.next_scratch as usize) % SCRATCH.len()];
-            self.next_scratch += 1;
+            let r = self.alloc_reg_raw();
             carried_regs.push(r);
         }
 
@@ -339,10 +359,11 @@ impl X64Emitter {
         let jae_off = self.code.len();
         self.code.extend_from_slice(&[0x0F, 0x83, 0, 0, 0, 0]); // JAE (no borrow)
 
-        // underflow: dst = P - rb + ra
-        self.emit_mov_imm64(dst, P);
-        self.emit_rr(0x29, dst, rb); // SUB dst, rb
-        self.emit_rr(0x01, dst, ra); // ADD dst, ra
+        // underflow: dst = P - rb + ra, built in rax because dst aliases ra
+        self.emit_mov_imm64(0, P);
+        self.emit_rr(0x29, 0, rb); // SUB rax, rb
+        self.emit_rr(0x01, 0, ra); // ADD rax, ra
+        self.emit_mov(dst, 0);
         let jmp_off = self.code.len();
         self.code.extend_from_slice(&[0xE9, 0, 0, 0, 0]); // JMP end
 
@@ -581,3 +602,7 @@ fn patch_rel32(code: &mut Vec<u8>, offset: usize, target: usize) {
     let rel = (target as i32) - ((offset + 4) as i32);
     code[offset..offset + 4].copy_from_slice(&rel.to_le_bytes());
 }
+
+#[cfg(test)]
+#[path = "x86_64_anchors.rs"]
+mod anchors;

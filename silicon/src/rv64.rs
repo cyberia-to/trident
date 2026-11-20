@@ -2,7 +2,7 @@
 //!
 //! Hand-emitted machine code, no dependencies.
 //! Args in a0-a7 (x10-x17), return in a0 (x10).
-//! Scratch: t0-t2 (x5-x7), t3-t6 (x28-x31) = 7 regs.
+//! Scratch: t2 (x7), t3-t6 (x28-x31) = 5 value regs; t0 (x5) and t1 (x6) are dedicated temporaries.
 //! Has MULHU for upper 64 bits of 64×64 multiply.
 
 
@@ -23,6 +23,9 @@ pub fn compile_to_rv64<const N: usize>(
     if num_params > MAX_PARAMS { return Err(CompileError::NoParams); }
     let mut e = Rv64Emitter::new(num_params);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result_reg = e.pop_reg();
     // Move result to a0 (x10)
     if result_reg != 10 {
@@ -46,21 +49,35 @@ struct Rv64Emitter {
     next_scratch: u8,
     subject: Vec<u8>,
     loop_state: Option<Rv64LoopState>,
+    /// Set when a register was handed out while all scratch registers held live values
+    scratch_overflow: bool,
 }
 
-// Scratch: t0(x5), t1(x6), t2(x7), t3(x28), t4(x29), t5(x30), t6(x31)
-const SCRATCH_REGS: [u8; 7] = [5, 6, 7, 28, 29, 30, 31];
+// Scratch: t2(x7), t3(x28), t4(x29), t5(x30), t6(x31). t0(x5) is the fixed temporary of
+// sub/mul/not/shl and t1(x6) is the second temporary of mul; neither carries a value.
+const SCRATCH_REGS: [u8; 5] = [7, 28, 29, 30, 31];
 
 impl Rv64Emitter {
     fn new(num_params: u32) -> Self {
         // Args: a0=x10..a7=x17. Subject: last param=depth 0 (head)
         let subject: Vec<u8> = (0..num_params).rev().map(|i| (10 + i) as u8).collect();
-        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None }
+        Self { code: Vec::with_capacity(512), reg_stack: Vec::new(), next_scratch: 0, subject, loop_state: None, scratch_overflow: false }
+    }
+
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
+    fn alloc_reg_raw(&mut self) -> u8 {
+        if self.next_scratch as usize >= SCRATCH_REGS.len() {
+            self.scratch_overflow = true;
+        }
+        let reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
+        self.next_scratch += 1;
+        reg
     }
 
     fn push_reg(&mut self) -> u8 {
-        let reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
-        self.next_scratch += 1;
+        let reg = self.alloc_reg_raw();
         self.reg_stack.push(reg);
         reg
     }
@@ -135,24 +152,28 @@ impl Rv64Emitter {
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
         self.emit_formula(order, value_formula)?;
-        let val_reg = self.pop_reg();
+        let val_reg = self.reg_stack.last().copied().unwrap_or(SCRATCH_REGS[0]);
         self.subject.insert(0, val_reg);
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        if dst != res { self.emit_u32(rv64_addi(dst, res, 0)); }
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
         &mut self, order: &Order<N>, loop_body: NounId, inits: &[NounId],
     ) -> Result<(), CompileError> {
         // Allocate scratch registers for formula slot + carried locals
-        let formula_reg = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
-        self.next_scratch += 1;
+        let formula_reg = self.alloc_reg_raw();
 
         let mut carried_regs = Vec::new();
         for _ in 0..inits.len() {
-            let r = SCRATCH_REGS[(self.next_scratch as usize) % SCRATCH_REGS.len()];
-            self.next_scratch += 1;
+            let r = self.alloc_reg_raw();
             carried_regs.push(r);
         }
 
@@ -273,10 +294,13 @@ impl Rv64Emitter {
         let ra = self.pop_reg();
         let dst = self.push_reg();
 
+        // dst aliases ra, so keep a copy of ra in x6 (t1) for the overflow guard:
+        // comparing dst against itself would make the guard always taken.
+        self.emit_u32(rv64_addi(6, ra, 0));
         // dst = ra + rb
         self.emit_u32(rv64_add(dst, ra, rb));
-        // Goldilocks reduction
-        self.emit_goldilocks_reduce_add(dst, ra);
+        // Goldilocks reduction (x5 is its constant temporary, x6 holds the original ra)
+        self.emit_goldilocks_reduce_add(dst, 6);
         Ok(())
     }
 
@@ -301,10 +325,10 @@ impl Rv64Emitter {
         let bltu_imm = (underflow as i32) - (bltu_off as i32);
         self.code[bltu_off..bltu_off + 4].copy_from_slice(&rv64_bltu(ra, rb, bltu_imm).to_le_bytes());
 
-        // t0 = P
+        // t0 = P; dst aliases ra, so build P - rb in x6 (t1) and keep ra intact for the add.
         self.emit_load_imm64(5, P); // t0
-        self.emit_u32(rv64_sub(dst, 5, rb));
-        self.emit_u32(rv64_add(dst, dst, ra));
+        self.emit_u32(rv64_sub(6, 5, rb));
+        self.emit_u32(rv64_add(dst, 6, ra));
 
         let end = self.code.len();
         let jal_imm = (end as i32) - (jal_off as i32);
@@ -321,9 +345,10 @@ impl Rv64Emitter {
         let ra = self.pop_reg();
         let dst = self.push_reg();
 
-        // lo = ra * rb (MUL), hi = ra * rb upper (MULHU)
-        self.emit_u32(rv64_mul(dst, ra, rb));   // dst = lo
+        // hi = ra * rb upper (MULHU), lo = ra * rb (MUL). dst aliases ra, so MULHU must
+        // read the operands before MUL writes dst.
         self.emit_u32(rv64_mulhu(5, ra, rb));   // t0 = hi
+        self.emit_u32(rv64_mul(dst, ra, rb));   // dst = lo
 
         // Reduce: result = lo + hi*(2^32-1) mod P
         // t1 = hi << 32
@@ -582,3 +607,7 @@ fn rv64_branch(rs1: u8, rs2: u8, imm: i32, funct3: u32) -> u32 {
 fn rv64_beq(rs1: u8, rs2: u8, imm: i32) -> u32 { rv64_branch(rs1, rs2, imm, 0) }
 fn rv64_bltu(rs1: u8, rs2: u8, imm: i32) -> u32 { rv64_branch(rs1, rs2, imm, 6) }
 fn rv64_bgeu(rs1: u8, rs2: u8, imm: i32) -> u32 { rv64_branch(rs1, rs2, imm, 7) }
+
+#[cfg(test)]
+#[path = "rv64_anchors.rs"]
+mod anchors;

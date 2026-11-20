@@ -45,6 +45,9 @@ pub fn compile_to_hexagon<const N: usize>(
     }
     let mut e = HexagonEmitter::new(num_params);
     e.emit_formula(order, formula)?;
+    if e.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     let result = e.pop_reg();
     Ok(e.finish(&result))
 }
@@ -60,6 +63,8 @@ struct HexagonEmitter {
     /// Subject model: maps depth -> register name.
     subject: Vec<String>,
     loop_state: Option<HexagonLoopState>,
+    /// Set when a register was handed out while all scratch registers were allocated
+    scratch_overflow: bool,
 }
 
 #[derive(Clone)]
@@ -89,10 +94,14 @@ impl HexagonEmitter {
             reg_stack: Vec::new(),
             subject,
             loop_state: None,
+            scratch_overflow: false,
         }
     }
 
     fn alloc_scratch(&mut self) -> String {
+        if self.next_scratch >= SCRATCH_COUNT {
+            self.scratch_overflow = true;
+        }
         let r = format!("R{}", SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT));
         self.next_scratch += 1;
         r
@@ -117,6 +126,7 @@ impl HexagonEmitter {
     }
 
     fn pop_reg(&mut self) -> String {
+        self.next_scratch = self.next_scratch.saturating_sub(1);
         self.reg_stack.pop().unwrap_or_else(|| "R6".to_string())
     }
 
@@ -211,12 +221,21 @@ impl HexagonEmitter {
         let (b_tag, body_formula) = formula_parts(order, b_formula)?;
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
+        // The bound value stays on the register stack while the body runs;
+        // afterwards the body result takes its place.
         self.emit_formula(order, value_formula)?;
-        let val = self.pop_reg();
+        let val = self.reg_stack.last().cloned().unwrap_or_else(|| "R6".to_string());
         self.subject.insert(0, val);
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        let res = self.pop_reg();
+        self.pop_reg(); // the bound value
+        let dst = self.push_reg();
+        if dst != res {
+            self.emit_packet(&format!("{} = {}", dst, res));
+        }
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
@@ -267,15 +286,18 @@ impl HexagonEmitter {
         let (_, rest) = body_pair(order, cons_body)?;
 
         let mut cur = rest;
-        let mut new_vals = Vec::new();
+        let mut evaluated = 0;
         for _ in ls.carried.iter() {
             let (tag, cb) = formula_parts(order, cur)?;
             if tag != 3 { break; }
             let (val_formula, tail) = body_pair(order, cb)?;
             self.emit_formula(order, val_formula)?;
-            new_vals.push(self.pop_reg());
+            evaluated += 1;
             cur = tail;
         }
+        // Every new value stays live until all are computed; pop in reverse.
+        let mut new_vals: Vec<String> = (0..evaluated).map(|_| self.pop_reg()).collect();
+        new_vals.reverse();
         for (i, cr) in ls.carried.iter().enumerate() {
             if i < new_vals.len() {
                 self.emit_packet(&format!("{} = {}", cr, new_vals[i]));
@@ -320,9 +342,9 @@ impl HexagonEmitter {
     fn emit_add<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // 32-bit wrapping add
         self.emit_packet(&format!("{} = add({}, {})", dst, ra, rb));
@@ -332,9 +354,9 @@ impl HexagonEmitter {
     fn emit_sub<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // 32-bit wrapping sub
         self.emit_packet(&format!("{} = sub({}, {})", dst, ra, rb));
@@ -344,9 +366,9 @@ impl HexagonEmitter {
     fn emit_mul<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // MPY: 32x32 → lower 32 bits
         self.emit_packet(&format!("{} = mpyi({}, {})", dst, ra, rb));
@@ -356,9 +378,9 @@ impl HexagonEmitter {
     fn emit_eq<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         let pred = self.alloc_pred();
         // nox eq: 0 if equal, 1 if not
@@ -374,9 +396,9 @@ impl HexagonEmitter {
     fn emit_lt<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         let pred = self.alloc_pred();
         // nox lt: 0 if a<b (unsigned), 1 if a>=b
@@ -401,9 +423,9 @@ impl HexagonEmitter {
     fn emit_xor<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         self.emit_packet(&format!("{} = xor({}, {})", dst, ra, rb));
         Ok(())
@@ -412,9 +434,9 @@ impl HexagonEmitter {
     fn emit_and<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         self.emit_packet(&format!("{} = and({}, {})", dst, ra, rb));
         Ok(())
@@ -431,9 +453,9 @@ impl HexagonEmitter {
     fn emit_shl<const N: usize>(&mut self, order: &Order<N>, body: NounId) -> Result<(), CompileError> {
         let (a, b) = body_pair(order, body)?;
         self.emit_formula(order, a)?;
-        let ra = self.pop_reg();
         self.emit_formula(order, b)?;
         let rb = self.pop_reg();
+        let ra = self.pop_reg();
         let dst = self.push_reg();
         // ASL = arithmetic/logical shift left
         self.emit_packet(&format!("{} = asl({}, {})", dst, ra, rb));
@@ -467,3 +489,7 @@ impl HexagonEmitter {
         out
     }
 }
+
+#[cfg(test)]
+#[path = "hexagon_anchors.rs"]
+mod anchors;

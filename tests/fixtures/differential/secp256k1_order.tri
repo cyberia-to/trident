@@ -1,0 +1,6 @@
+program differential_secp256k1_order
+use std.crypto.secp256k1
+fn main() -> (U32, U32, U32, U32, U32, U32, U32, U32) {
+    let n = secp256k1.curve_order()
+    (n.l0, n.l1, n.l2, n.l3, n.l4, n.l5, n.l6, n.l7)
+}

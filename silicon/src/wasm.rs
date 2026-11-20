@@ -32,8 +32,8 @@ const OP_LOCAL_TEE: u8 = 0x22;
 const OP_I64_CONST: u8 = 0x42;
 const OP_I64_EQZ: u8 = 0x50;
 const OP_I64_EQ: u8 = 0x51;
-const OP_I64_LT_U: u8 = 0x53;
-const OP_I64_GE_U: u8 = 0x57;
+const OP_I64_LT_U: u8 = 0x54;
+const OP_I64_GE_U: u8 = 0x5A;
 const OP_I64_ADD: u8 = 0x7C;
 const OP_I64_SUB: u8 = 0x7D;
 const OP_I64_MUL: u8 = 0x7E;
@@ -643,7 +643,7 @@ fn emit_goldilocks_mul() -> (Vec<u8>, u32) {
     (c, num_locals)
 }
 
-const OP_I64_GT_U: u8 = 0x55;
+const OP_I64_GT_U: u8 = 0x56;
 
 // ── WASM module assembly ─────────────────────────────────────────
 
@@ -770,3 +770,7 @@ fn leb128_i64(buf: &mut Vec<u8>, mut val: i64) {
         buf.push(byte | 0x80);
     }
 }
+
+#[cfg(test)]
+#[path = "wasm_anchors.rs"]
+mod anchors;

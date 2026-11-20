@@ -38,6 +38,9 @@ pub fn compile_to_arm64<const N: usize>(
     }
     let mut emitter = Arm64Emitter::new(num_params);
     emitter.emit_formula(order, formula)?;
+    if emitter.scratch_overflow {
+        return Err(CompileError::ScratchOverflow);
+    }
     // Move result from top of virtual stack to x0
     let result_reg = emitter.pop_reg();
     if result_reg != 0 {
@@ -66,6 +69,8 @@ struct Arm64Emitter {
     subject: Vec<u8>,
     /// Current loop state (for back-edge emission)
     loop_state: Option<Arm64LoopState>,
+    /// Set when a register was handed out while all scratch registers held live values
+    scratch_overflow: bool,
 }
 
 // Scratch registers: x9, x10, x11, x12, x13, x14, x15
@@ -82,13 +87,25 @@ impl Arm64Emitter {
             next_scratch: 0,
             subject,
             loop_state: None,
+            scratch_overflow: false,
         }
+    }
+
+    /// Raw allocation indexed by `next_scratch`, the number of values live right now
+    /// (every pop decrements it). Exhaustion is flagged when that index is past the pool,
+    /// so loop registers, which never enter `reg_stack`, are counted as well.
+    fn alloc_reg_raw(&mut self) -> u8 {
+        if self.next_scratch >= SCRATCH_COUNT {
+            self.scratch_overflow = true;
+        }
+        let reg = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
+        self.next_scratch += 1;
+        reg
     }
 
     /// Allocate a scratch register for a formula result.
     fn push_reg(&mut self) -> u8 {
-        let reg = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
-        self.next_scratch += 1;
+        let reg = self.alloc_reg_raw();
         self.reg_stack.push(reg);
         reg
     }
@@ -159,9 +176,10 @@ impl Arm64Emitter {
         let (b_tag, body_formula) = formula_parts(order, b_formula)?;
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
-        // Compile value, result in a register
+        // Compile value, result in a register; it stays on the register stack
+        // while the body runs so the body cannot reuse that register.
         self.emit_formula(order, value_formula)?;
-        let val_reg = self.pop_reg();
+        let val_reg = self.reg_stack.last().copied().unwrap_or(SCRATCH_BASE);
 
         // Push register onto subject model
         self.subject.insert(0, val_reg);
@@ -171,20 +189,24 @@ impl Arm64Emitter {
         // Restore subject
         self.subject.remove(0);
 
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        self.emit_mov_reg(dst, res);
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
         &mut self, order: &Order<N>, loop_body: NounId, inits: &[NounId],
     ) -> Result<(), CompileError> {
         // Allocate registers for formula slot + carried locals
-        let formula_reg = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
-        self.next_scratch += 1;
+        let formula_reg = self.alloc_reg_raw();
 
         let mut carried_regs = Vec::new();
         for _ in 0..inits.len() {
-            let r = SCRATCH_BASE + (self.next_scratch % SCRATCH_COUNT);
-            self.next_scratch += 1;
+            let r = self.alloc_reg_raw();
             carried_regs.push(r);
         }
 
@@ -383,9 +405,10 @@ impl Arm64Emitter {
         let blo = 0x54000003 | (blo_imm << 5);
         self.code[blo_off..blo_off + 4].copy_from_slice(&blo.to_le_bytes());
 
+        // dst aliases ra: build P - rb in x17 so ra survives until the add.
         self.emit_mov_imm64(16, P);
-        self.emit_u32(arm64_sub(dst, 16, rb));
-        self.emit_u32(arm64_add(dst, dst, ra));
+        self.emit_u32(arm64_sub(17, 16, rb));
+        self.emit_u32(arm64_add(dst, 17, ra));
 
         let end = self.code.len();
         let b_imm = ((end - b_off) / 4) as u32;
@@ -405,8 +428,9 @@ impl Arm64Emitter {
 
         // ARM64 has UMULH for upper 64 bits of 64×64 multiply!
         // lo = ra * rb
-        self.emit_u32(arm64_mul(dst, ra, rb));      // MUL dst, ra, rb
+        // dst aliases ra: UMULH reads ra first, MUL (which writes dst) goes last.
         self.emit_u32(arm64_umulh(17, ra, rb));      // UMULH x17, ra, rb (hi)
+        self.emit_u32(arm64_mul(dst, ra, rb));      // MUL dst, ra, rb
 
         // Reduce: result = lo + hi * (2^32 - 1)  mod p
         // hi_shifted = hi << 32
@@ -469,7 +493,7 @@ impl Arm64Emitter {
         self.emit_u32(arm64_cmp(ra, rb));
         // cset dst, ne (nox: 0=equal, 1=not equal)
         // CSET Xd, ne = CSINC Xd, XZR, XZR, eq  (condition EQ=0)
-        self.emit_u32(0x9A9F17E0 | (dst as u32)); // CSINC dst, xzr, xzr, eq → 1 if ne
+        self.emit_u32(0x9A9F07E0 | (dst as u32)); // CSINC dst, xzr, xzr, eq → 1 if ne
         Ok(())
     }
 
@@ -611,3 +635,7 @@ fn arm64_lsl(rd: u8, rn: u8, shift: u8) -> u32 {
     let imms = 63 - shift as u32;
     0xD3400000 | (immr << 16) | (imms << 10) | ((rn as u32) << 5) | (rd as u32)
 }
+
+#[cfg(test)]
+#[path = "arm64_anchors.rs"]
+mod anchors;
