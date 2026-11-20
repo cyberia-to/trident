@@ -171,3 +171,24 @@ fn add_overflow_guard_compares_the_sum_against_a_distinct_register() {
     assert_ne!(rs1_of(bgeu), rs2_of(bgeu),
         "R2: BGEU x{}, x{} compares the sum with itself, the overflow correction is unreachable", rs1_of(bgeu), rs2_of(bgeu));
 }
+
+/// Review round 3: the value bound by a let must stay alive while the body is compiled.
+/// `let x = 3+4 in 5+x`: the load of 5 must not land in the register holding 3+4, and
+/// the body must still read that register afterwards.
+#[test]
+fn let_keeps_bound_value_alive_during_body() {
+    let mut o = Order::<4096>::new();
+    let f = let_sum_then_add(&mut o);
+    let words = words_of(&compile_to_rv64(&o, f, 0).expect("let"));
+    // ADDI rd, x0, imm (li)
+    let li = |imm: u32| words.iter().position(|w| (*w & 0x000F_F07F) == 0x13 && (*w >> 20) == imm);
+    let i3 = li(3).expect("li 3");
+    let i5 = li(5).expect("li 5");
+    // The sum 3+4 is written back into the register that received 3.
+    let bound = rd_of(words[i3]);
+    assert_ne!(rd_of(words[i5]), bound, "let: the body's li 5 overwrites x{bound}, which holds the bound value 3+4");
+    // ADDI rd, bound, 0 (mv) after the load of 5
+    let reads_bound = words[i5 + 1..].iter()
+        .any(|w| (*w & 0xFFF0_707F) == 0x13 && rs1_of(*w) == bound);
+    assert!(reads_bound, "let: nothing after the body's li 5 reads the bound value in x{bound}");
+}

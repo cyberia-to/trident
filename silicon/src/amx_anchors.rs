@@ -91,3 +91,25 @@ fn back_edge_with_two_carried_assigns_from_distinct_registers() {
     let (s0, s1) = (source(lines[j - 2]), source(lines[j - 1]));
     assert_ne!(s0, s1, "both carried locals are assigned from {s0}: the second value overwrote the first");
 }
+
+/// Review round 3: the value bound by a let must stay alive while the body is compiled.
+/// `let x = 3+4 in 5+x`: the load of 5 must not land in the register holding 3+4, and
+/// the body must still read that register afterwards.
+#[test]
+fn let_keeps_bound_value_alive_during_body() {
+    let mut o = Order::<4096>::new();
+    let f = let_sum_then_add(&mut o);
+    let asm = compile_to_amx(&o, f, 0).expect("let");
+    let lines: Vec<&str> = asm.lines().map(str::trim).collect();
+    let movz = |imm: &str| lines.iter().position(|l| l.starts_with("movz ") && l.ends_with(&format!(", #0x{imm}")));
+    let dst_of = |l: &str| l["movz ".len()..].split(',').next().unwrap().trim().to_string();
+    let i3 = movz("3").expect("movz of 3");
+    let i5 = movz("5").expect("movz of 5");
+    // The sum 3+4 is written back into the register that received 3.
+    let bound = dst_of(lines[i3]);
+    assert_ne!(dst_of(lines[i5]), bound, "let: the body's movz of 5 overwrites {bound}, which holds the bound value 3+4");
+    let reads_bound = lines[i5 + 1..].iter().any(|l| {
+        l.strip_prefix("mov ").and_then(|r| r.split_once(',')).map(|(_, s)| s.trim() == bound).unwrap_or(false)
+    });
+    assert!(reads_bound, "let: nothing after the body's movz of 5 reads the bound value in {bound}");
+}

@@ -69,3 +69,17 @@ pub(crate) fn loop_with_sum_body<const N: usize>(o: &mut Order<N>, carried: u64)
 pub(crate) fn words_of(code: &[u8]) -> Vec<u32> {
     code.chunks_exact(4).map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect()
 }
+
+/// Let formula `let x = 3+4 in 5+x` (= 12): the bound value is a sum, the body
+/// is another sum that reads it, so the body allocates registers while `x` is live.
+pub(crate) fn let_sum_then_add<const N: usize>(o: &mut Order<N>) -> NounId {
+    let (c3, c4, c5) = (quote_of(o, 3), quote_of(o, 4), quote_of(o, 5));
+    let value = binary_of(o, 5, c3, c4);
+    let one = axis_of(o, 1);
+    let cons = cons_of(o, value, one);
+    let x = axis_of(o, 2);
+    let body = binary_of(o, 5, c5, x);
+    let t1 = atom_of(o, 1);
+    let quoted_body = o.pair(t1, body).unwrap();
+    binary_of(o, 2, cons, quoted_body)
+}

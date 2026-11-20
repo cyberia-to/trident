@@ -93,3 +93,23 @@ fn shallow_loop_still_compiles() {
     let r = compile_to_ebpf(&o, f, 0);
     assert!(r.is_ok(), "R2: loop with 1 carried local fits in the scratch pool, got {:?}", r.as_ref().map(|c| c.len()));
 }
+
+/// Review round 3: the value bound by a let must stay alive while the body is compiled.
+/// `let x = 3+4 in 5+x`: the load of 5 must not land in the register holding 3+4, and
+/// the body must still read that register afterwards.
+#[test]
+fn let_keeps_bound_value_alive_during_body() {
+    let mut o = Order::<4096>::new();
+    let f = let_sum_then_add(&mut o);
+    let insns = instructions(&compile_to_ebpf(&o, f, 0).expect("let"));
+    let dst_of = |i: u64| ((i >> 8) & 0xF) as u8;
+    let ld_imm = |imm: u64| insns.iter().position(|i| (*i & 0xFF) == 0x18 && (*i >> 32) == imm);
+    let i3 = ld_imm(3).expect("LD_IMM64 of 3");
+    let i5 = ld_imm(5).expect("LD_IMM64 of 5");
+    // The sum 3+4 is written back into the register that received 3.
+    let bound = dst_of(insns[i3]);
+    assert_ne!(dst_of(insns[i5]), bound, "let: the body's LD_IMM64 of 5 overwrites r{bound}, which holds the bound value 3+4");
+    let reads_bound = insns[i5 + 2..].iter()
+        .any(|i| (*i & 0xFF) == 0xBF && (((*i >> 12) & 0xF) as u8) == bound);
+    assert!(reads_bound, "let: nothing after the body's LD_IMM64 of 5 reads the bound value in r{bound}");
+}

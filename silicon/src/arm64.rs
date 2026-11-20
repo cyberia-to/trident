@@ -176,9 +176,10 @@ impl Arm64Emitter {
         let (b_tag, body_formula) = formula_parts(order, b_formula)?;
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
-        // Compile value, result in a register
+        // Compile value, result in a register; it stays on the register stack
+        // while the body runs so the body cannot reuse that register.
         self.emit_formula(order, value_formula)?;
-        let val_reg = self.pop_reg();
+        let val_reg = self.reg_stack.last().copied().unwrap_or(SCRATCH_BASE);
 
         // Push register onto subject model
         self.subject.insert(0, val_reg);
@@ -188,7 +189,13 @@ impl Arm64Emitter {
         // Restore subject
         self.subject.remove(0);
 
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        self.emit_mov_reg(dst, res);
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(

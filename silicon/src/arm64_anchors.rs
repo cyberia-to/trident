@@ -106,3 +106,23 @@ fn shallow_loop_still_compiles() {
         assert!(r.is_ok(), "R2: loop with {carried} carried locals fits in the scratch pool, got {:?}", r.as_ref().map(|c| c.len()));
     }
 }
+
+/// Review round 3: the value bound by a let must stay alive while the body is compiled.
+/// `let x = 3+4 in 5+x`: the load of 5 must not land in the register holding 3+4, and
+/// the body must still read that register afterwards.
+#[test]
+fn let_keeps_bound_value_alive_during_body() {
+    let mut o = Order::<4096>::new();
+    let f = let_sum_then_add(&mut o);
+    let words = words_of(&compile_to_arm64(&o, f, 0).expect("let"));
+    let rd = |w: u32| w & 0x1F;
+    let movz = |imm: u32| words.iter().position(|w| (*w & 0xFFE0_0000) == 0xD280_0000 && ((*w >> 5) & 0xFFFF) == imm);
+    let i3 = movz(3).expect("MOVZ of 3");
+    let i5 = movz(5).expect("MOVZ of 5");
+    // The sum 3+4 is written back into the register that received 3.
+    let bound = rd(words[i3]);
+    assert_ne!(rd(words[i5]), bound, "let: the body's MOVZ of 5 overwrites x{bound}, which holds the bound value 3+4");
+    let reads_bound = words[i5 + 1..].iter()
+        .any(|w| (*w & 0xFFE0_FFE0) == 0xAA00_03E0 && ((*w >> 16) & 0x1F) == bound);
+    assert!(reads_bound, "let: nothing after the body's MOVZ of 5 reads the bound value in x{bound}");
+}

@@ -157,11 +157,17 @@ impl EbpfEmitter {
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
         self.emit_formula(order, value_formula)?;
-        let val_reg = self.pop_reg();
+        let val_reg = self.reg_stack.last().copied().unwrap_or(SCRATCH_REGS[0]);
         self.subject.insert(0, val_reg);
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        if dst != res { self.emit(ebpf_mov64(dst, res)); }
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(

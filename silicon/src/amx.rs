@@ -236,11 +236,19 @@ impl AmxEmitter {
         if b_tag != 1 { return Err(CompileError::UnsupportedPattern(2)); }
 
         self.emit_formula(order, value_formula)?;
-        let val = self.pop_reg();
+        let val = self.reg_stack.last().cloned().unwrap_or_else(|| "x9".into());
         self.subject.insert(0, val);
         let result = self.emit_formula(order, body_formula);
         self.subject.remove(0);
-        result
+        result?;
+        // The body result takes the place of the bound value.
+        let res = self.pop_reg();
+        self.pop_reg();
+        let dst = self.push_reg();
+        if dst != res {
+            self.emit(&format!("mov {}, {}", dst, res));
+        }
+        Ok(())
     }
 
     fn emit_loop<const N: usize>(
