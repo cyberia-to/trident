@@ -293,15 +293,18 @@ impl AmxEmitter {
         let (_, rest) = body_pair(order, cons_body)?;
 
         let mut cur = rest;
-        let mut new_vals = Vec::new();
+        let mut evaluated = 0;
         for _ in ls.carried.iter() {
             let (tag, cb) = formula_parts(order, cur)?;
             if tag != 3 { break; }
             let (val_formula, tail) = body_pair(order, cb)?;
             self.emit_formula(order, val_formula)?;
-            new_vals.push(self.pop_reg());
+            evaluated += 1;
             cur = tail;
         }
+        // Every new value stays live until all are computed; pop in reverse.
+        let mut new_vals: Vec<String> = (0..evaluated).map(|_| self.pop_reg()).collect();
+        new_vals.reverse();
         for (i, cr) in ls.carried.iter().enumerate() {
             if i < new_vals.len() && new_vals[i] != *cr {
                 self.emit(&format!("mov {}, {}", cr, new_vals[i]));

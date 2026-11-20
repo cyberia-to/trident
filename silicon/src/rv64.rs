@@ -288,10 +288,13 @@ impl Rv64Emitter {
         let ra = self.pop_reg();
         let dst = self.push_reg();
 
+        // dst aliases ra, so keep a copy of ra in x6 (t1) for the overflow guard:
+        // comparing dst against itself would make the guard always taken.
+        self.emit_u32(rv64_addi(6, ra, 0));
         // dst = ra + rb
         self.emit_u32(rv64_add(dst, ra, rb));
-        // Goldilocks reduction
-        self.emit_goldilocks_reduce_add(dst, ra);
+        // Goldilocks reduction (x5 is its constant temporary, x6 holds the original ra)
+        self.emit_goldilocks_reduce_add(dst, 6);
         Ok(())
     }
 
@@ -316,10 +319,10 @@ impl Rv64Emitter {
         let bltu_imm = (underflow as i32) - (bltu_off as i32);
         self.code[bltu_off..bltu_off + 4].copy_from_slice(&rv64_bltu(ra, rb, bltu_imm).to_le_bytes());
 
-        // t0 = P
+        // t0 = P; dst aliases ra, so build P - rb in x6 (t1) and keep ra intact for the add.
         self.emit_load_imm64(5, P); // t0
-        self.emit_u32(rv64_sub(dst, 5, rb));
-        self.emit_u32(rv64_add(dst, dst, ra));
+        self.emit_u32(rv64_sub(6, 5, rb));
+        self.emit_u32(rv64_add(dst, 6, ra));
 
         let end = self.code.len();
         let jal_imm = (end as i32) - (jal_off as i32);

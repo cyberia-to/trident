@@ -1,32 +1,7 @@
 //! Regression anchors for the Hexagon backend (SIL-1).
 
 use super::*;
-use nebu::Goldilocks;
-
-fn atom_of(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
-fn axis_of(o: &mut Order<4096>, ax: u64) -> NounId {
-    let t = atom_of(o, 0);
-    let a = atom_of(o, ax);
-    o.pair(t, a).unwrap()
-}
-fn binary_of(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
-    let body = o.pair(l, r).unwrap();
-    let t = atom_of(o, tag);
-    o.pair(t, body).unwrap()
-}
-/// Right-nested sum with `live` leaves alive at once: each `a` stays in its
-/// register while `b` is emitted (live=1 is a leaf; live=n is n-1 sums).
-fn live_sum(o: &mut Order<4096>, live: u32) -> NounId {
-    let mut f = axis_of(o, 2);
-    for _ in 1..live {
-        let leaf = axis_of(o, 2);
-        f = binary_of(o, 5, leaf, f);
-    }
-    f
-}
-fn is_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
-    matches!(r, Err(CompileError::ScratchOverflow))
-}
+use crate::anchor_support::*;
 
 #[test]
 fn sum_with_capacity_plus_one_live_returns_scratch_overflow() {
@@ -47,12 +22,6 @@ fn sum_up_to_capacity_live_still_compiles() {
 }
 
 // -- group A2: the hexagon allocator must free on consume ------------------
-
-fn quote_lit(o: &mut Order<4096>, v: u64) -> NounId {
-    let t = atom_of(o, 1);
-    let a = atom_of(o, v);
-    o.pair(t, a).unwrap()
-}
 
 /// Minimal interpreter of the emitted text for jump-free formulas: executes
 /// `{ Rd = ... }` over 32 u32 registers (the 32-bit semantics of phase 1)
@@ -106,9 +75,9 @@ fn run_asm(asm: &str, params: &[u32]) -> u32 {
 
 /// Right-nested sum of `live` distinct quotes 1..=live, all alive at once.
 fn live_quote_sum(o: &mut Order<4096>, live: u32) -> NounId {
-    let mut f = quote_lit(o, live as u64);
+    let mut f = quote_of(o, live as u64);
     for i in (1..live).rev() {
-        let leaf = quote_lit(o, i as u64);
+        let leaf = quote_of(o, i as u64);
         f = binary_of(o, 5, leaf, f);
     }
     f
@@ -120,9 +89,9 @@ fn live_quote_sum(o: &mut Order<4096>, live: u32) -> NounId {
 #[test]
 fn long_add_chain_at_low_depth_compiles_and_sums() {
     let mut o = Order::<4096>::new();
-    let mut f = quote_lit(&mut o, 1);
+    let mut f = quote_of(&mut o, 1);
     for i in 2..=16u64 {
-        let leaf = quote_lit(&mut o, i);
+        let leaf = quote_of(&mut o, i);
         f = binary_of(&mut o, 5, f, leaf);
     }
     let asm = compile_to_hexagon(&o, f, 0).expect("live depth 2: not an overflow");
@@ -143,7 +112,7 @@ fn sum_at_capacity_live_gives_reference_value() {
 #[test]
 fn nested_binaries_give_reference_value() {
     let mut o = Order::<4096>::new();
-    let (c3, c4, c7, c100) = (quote_lit(&mut o, 3), quote_lit(&mut o, 4), quote_lit(&mut o, 7), quote_lit(&mut o, 100));
+    let (c3, c4, c7, c100) = (quote_of(&mut o, 3), quote_of(&mut o, 4), quote_of(&mut o, 7), quote_of(&mut o, 100));
     let m = binary_of(&mut o, 7, c3, c4);
     let s = binary_of(&mut o, 5, c7, m);
     let f = binary_of(&mut o, 6, c100, s);
@@ -171,7 +140,7 @@ fn add_of_two_params_reads_distinct_registers() {
 #[test]
 fn let_keeps_bound_value_alive_during_body() {
     let mut o = Order::<4096>::new();
-    let (c3, c4, c5) = (quote_lit(&mut o, 3), quote_lit(&mut o, 4), quote_lit(&mut o, 5));
+    let (c3, c4, c5) = (quote_of(&mut o, 3), quote_of(&mut o, 4), quote_of(&mut o, 5));
     let value = binary_of(&mut o, 5, c3, c4);
     let one = axis_of(&mut o, 1);
     let t3 = atom_of(&mut o, 3);
@@ -190,18 +159,18 @@ fn let_keeps_bound_value_alive_during_body() {
 fn back_edge_with_two_carried_assigns_from_distinct_registers() {
     let mut o = Order::<4096>::new();
     // loop: [2 [[3 [[1 0] [3 [i0 [3 [i1 [0 1]]]]]]] [1 back_edge]]]
-    let (i0, i1) = (quote_lit(&mut o, 1), quote_lit(&mut o, 2));
+    let (i0, i1) = (quote_of(&mut o, 1), quote_of(&mut o, 2));
     let one = axis_of(&mut o, 1);
     let t3 = atom_of(&mut o, 3);
     let inits_tail = { let b = o.pair(i1, one).unwrap(); o.pair(t3, b).unwrap() };
     let inits = { let b = o.pair(i0, inits_tail).unwrap(); o.pair(t3, b).unwrap() };
-    let slot = quote_lit(&mut o, 0);
+    let slot = quote_of(&mut o, 0);
     let a = { let b = o.pair(slot, inits).unwrap(); o.pair(t3, b).unwrap() };
     // back-edge: [2 [[3 [[1 0] [3 [v0 [3 [v1 [0 1]]]]]]] [0 2]]]
-    let (v0, v1) = (quote_lit(&mut o, 10), quote_lit(&mut o, 20));
+    let (v0, v1) = (quote_of(&mut o, 10), quote_of(&mut o, 20));
     let vals_tail = { let b = o.pair(v1, one).unwrap(); o.pair(t3, b).unwrap() };
     let vals = { let b = o.pair(v0, vals_tail).unwrap(); o.pair(t3, b).unwrap() };
-    let slot2 = quote_lit(&mut o, 0);
+    let slot2 = quote_of(&mut o, 0);
     let new_subject = { let b = o.pair(slot2, vals).unwrap(); o.pair(t3, b).unwrap() };
     let axis = axis_of(&mut o, 2);
     let back_edge = binary_of(&mut o, 2, new_subject, axis);

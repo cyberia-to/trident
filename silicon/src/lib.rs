@@ -37,6 +37,10 @@ pub mod cerebras;
 pub mod upmem;
 pub mod intel_amx;
 
+#[cfg(test)]
+#[path = "anchor_support.rs"]
+pub(crate) mod anchor_support;
+
 /// Compiled value — either a constant or derived from computation.
 /// The compiler walks the formula tree and produces a sequence of
 /// typed operations in the target's native format.

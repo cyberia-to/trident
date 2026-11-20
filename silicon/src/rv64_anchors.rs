@@ -1,61 +1,8 @@
 //! Regression anchors for the RV64 backend (SIL-1 and review round 3).
 
 use super::*;
-use nebu::Goldilocks;
+use crate::anchor_support::*;
 
-fn atom_of(o: &mut Order<4096>, v: u64) -> NounId { o.atom(Goldilocks::new(v)).unwrap() }
-fn axis_of(o: &mut Order<4096>, ax: u64) -> NounId {
-    let t = atom_of(o, 0);
-    let a = atom_of(o, ax);
-    o.pair(t, a).unwrap()
-}
-fn quote_of(o: &mut Order<4096>, v: u64) -> NounId {
-    let t = atom_of(o, 1);
-    let a = atom_of(o, v);
-    o.pair(t, a).unwrap()
-}
-fn binary_of(o: &mut Order<4096>, tag: u64, l: NounId, r: NounId) -> NounId {
-    let body = o.pair(l, r).unwrap();
-    let t = atom_of(o, tag);
-    o.pair(t, body).unwrap()
-}
-fn cons_of(o: &mut Order<4096>, head: NounId, tail: NounId) -> NounId {
-    let body = o.pair(head, tail).unwrap();
-    let t = atom_of(o, 3);
-    o.pair(t, body).unwrap()
-}
-/// Right-nested sum with `live` leaves alive at once: each `a` stays in its
-/// register while `b` is emitted (live=1 is a leaf; live=n is n-1 sums).
-fn live_sum(o: &mut Order<4096>, live: u32) -> NounId {
-    let mut f = axis_of(o, 2);
-    for _ in 1..live {
-        let leaf = axis_of(o, 2);
-        f = binary_of(o, 5, leaf, f);
-    }
-    f
-}
-fn is_scratch_overflow<T>(r: &Result<T, CompileError>) -> bool {
-    matches!(r, Err(CompileError::ScratchOverflow))
-}
-/// Loop formula `[2 [[3 [[1 0] inits]] [1 body]]]` with `carried` init values and
-/// a body that adds two live values: `add(axis 2, axis 2)`.
-fn loop_with_sum_body(o: &mut Order<4096>, carried: u64) -> NounId {
-    let mut chain = axis_of(o, 1);
-    for i in 0..carried {
-        let init = quote_of(o, i + 1);
-        chain = cons_of(o, init, chain);
-    }
-    let slot = quote_of(o, 0);
-    let setup = cons_of(o, slot, chain);
-    let (l, r) = (axis_of(o, 2), axis_of(o, 2));
-    let body = binary_of(o, 5, l, r);
-    let t1 = atom_of(o, 1);
-    let quoted_body = o.pair(t1, body).unwrap();
-    binary_of(o, 2, setup, quoted_body)
-}
-fn words_of(code: &[u8]) -> Vec<u32> {
-    code.chunks_exact(4).map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect()
-}
 fn is_mul(w: u32) -> bool { (w & 0xFE00_707F) == 0x0200_0033 }
 fn is_mulhu(w: u32) -> bool { (w & 0xFE00_707F) == 0x0200_3033 }
 fn rd_of(w: u32) -> u32 { (w >> 7) & 0x1F }
@@ -187,4 +134,40 @@ fn mul_operands_avoid_dedicated_temporaries() {
         assert!(r != 5 && r != 6, "R1: mul/mulhu operand field uses x{r}");
     }
     assert_eq!(rd_of(mulhu), 5);
+}
+
+/// `f(a1, a2)` over two parameters for a binary pattern tag, compiled for RV64.
+fn compiled_binary_words(tag: u64) -> Vec<u32> {
+    let mut o = Order::<4096>::new();
+    let a0 = axis_of(&mut o, 2);
+    let a1 = axis_of(&mut o, 6);
+    let f = binary_of(&mut o, tag, a0, a1);
+    words_of(&compile_to_rv64(&o, f, 2).unwrap())
+}
+
+/// Review round 2, R1: pop,pop,push makes `dst` alias `ra`. The underflow branch
+/// built `P - rb` straight into `dst`, destroying `ra` before `add dst, dst, ra`
+/// (which then computed 2*(P - rb) instead of P - rb + ra).
+#[test]
+fn sub_underflow_does_not_write_ra_before_adding_it() {
+    let w = compiled_binary_words(6);
+    let is_sub = |x: u32| (x & 0xFE00_707F) == 0x4000_0033;
+    let first_sub = *w.iter().find(|x| is_sub(**x)).expect("non-underflow SUB ra, rb");
+    let ra = rs1_of(first_sub);
+    assert_eq!(rd_of(first_sub), ra, "premise: dst aliases ra");
+    // The other SUB reads P in rs1 (a register that is not ra): it builds P - rb.
+    let p_sub = *w.iter().find(|x| is_sub(**x) && rs1_of(**x) != ra).expect("SUB rd, P, rb of the underflow branch");
+    assert_ne!(rd_of(p_sub), ra, "R1: `sub x{}, x{}, x{}` writes ra (x{ra}) before it is added back", rd_of(p_sub), rs1_of(p_sub), rs2_of(p_sub));
+}
+
+/// Review round 2, R2: `emit_add` passed `dst` (== `ra`) as the reference of the
+/// overflow guard, so the emitted `BGEU dst, dst` was always taken and the
+/// 0xFFFFFFFF correction for sums that wrap 2^64 was unreachable.
+#[test]
+fn add_overflow_guard_compares_the_sum_against_a_distinct_register() {
+    let w = compiled_binary_words(5);
+    let is_bgeu = |x: u32| (x & 0x0000_707F) == 0x0000_7063;
+    let bgeu = *w.iter().find(|x| is_bgeu(**x)).expect("BGEU overflow guard");
+    assert_ne!(rs1_of(bgeu), rs2_of(bgeu),
+        "R2: BGEU x{}, x{} compares the sum with itself, the overflow correction is unreachable", rs1_of(bgeu), rs2_of(bgeu));
 }
